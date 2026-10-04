@@ -41,12 +41,17 @@ export component LoginScriptWindow inherits Window {
     in property <[TableRow]> steps;
     in property <[TableRow]> cookies;
     in property <[TableRow]> examples;
+    in property <bool> deleting;
+    in property <bool> step-selected;
+    in property <bool> step-up;
+    in property <bool> step-down;
     in property <bool> one-credential;
     in property <bool> any-credential;
     in property <bool> child-open;
     in property <string> question;
     in property <string> error;
     in property <string> check-result;
+    callback step-clicked(int);
     callback credential-clicked(int, bool, bool);
     callback credential-activated(int);
     callback action(string);
@@ -57,13 +62,14 @@ export component LoginScriptWindow inherits Window {
         ListTable { vertical-stretch: 1; columns: [{title: "name", width: 180px}, {title: "input type", width: 140px}, {title: "permitted input", width: 350px, stretch: true}]; rows: root.credentials; row-clicked(i, ctrl, shift) => { if !root.child-open && root.question == "" { root.credential-clicked(i, ctrl, shift); } } row-activated(i) => { if !root.child-open && root.question == "" { root.credential-activated(i); } } }
         HorizontalLayout { spacing: 6px; Button { text: "add"; enabled: !root.child-open && root.question == ""; clicked => { root.action("add-credential"); } } Button { text: "edit"; enabled: root.one-credential && !root.child-open && root.question == ""; clicked => { root.action("edit-credential"); } } Button { text: "delete"; enabled: root.any-credential && !root.child-open && root.question == ""; clicked => { root.action("delete-credential"); } } Button { text: "check credentials"; enabled: !root.child-open && root.question == ""; clicked => { root.action("check-credentials"); } } }
         Text { text: "login steps"; color: Theme.text; font-weight: 700; }
-        ListTable { vertical-stretch: 1; columns: [{title: "step", width: 700px, stretch: true}]; rows: root.steps; }
+        ListTable { vertical-stretch: 1; columns: [{title: "step", width: 700px, stretch: true}]; rows: root.steps; row-clicked(i,c,s) => { root.step-clicked(i); } row-activated(i) => { root.step-clicked(i); root.action("edit-step"); } }
+        HorizontalLayout { spacing: 6px; Button { text: "add"; enabled: !root.child-open && root.question == ""; clicked => { root.action("add-step"); } } Button { text: "edit"; enabled: root.step-selected && !root.child-open && root.question == ""; clicked => { root.action("edit-step"); } } Button { text: "delete"; enabled: root.step-selected && !root.child-open && root.question == ""; clicked => { root.action("delete-step"); } } Button { text: "up"; enabled: root.step-up && !root.child-open && root.question == ""; clicked => { root.action("step-up"); } } Button { text: "down"; enabled: root.step-down && !root.child-open && root.question == ""; clicked => { root.action("step-down"); } } }
         Text { text: "cookies required to consider session logged in"; color: Theme.text; font-weight: 700; }
         ListTable { vertical-stretch: 1; columns: [{title: "cookie name", width: 280px}, {title: "permitted value", width: 400px, stretch: true}]; rows: root.cookies; }
         Text { text: "example domains"; color: Theme.text; font-weight: 700; }
         ListTable { vertical-stretch: 1; columns: [{title: "domain", width: 220px}, {title: "access", width: 120px}, {title: "description", width: 400px, stretch: true}]; rows: root.examples; }
         if root.check-result != "": Text { text: root.check-result; color: Theme.text; wrap: word-wrap; }
-        if root.question != "": VerticalLayout { spacing: 4px; Text { text: root.question; color: Theme.text; wrap: word-wrap; } HorizontalLayout { alignment: end; spacing: 6px; Button { text: "ok as invalid"; clicked => { root.action("confirm"); } } Button { text: "go back"; clicked => { root.action("back"); } } } }
+        if root.question != "": VerticalLayout { spacing: 4px; Text { text: root.question; color: Theme.text; wrap: word-wrap; } HorizontalLayout { alignment: end; spacing: 6px; Button { text: root.deleting ? "yes" : "ok as invalid"; clicked => { root.action("confirm"); } } Button { text: root.deleting ? "no" : "go back"; clicked => { root.action("back"); } } } }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         HorizontalLayout { alignment: end; spacing: 6px; Button { text: "apply"; enabled: !root.child-open && root.question == ""; clicked => { root.action("apply"); } } Button { text: "cancel"; clicked => { root.action("cancel"); } } }
     }

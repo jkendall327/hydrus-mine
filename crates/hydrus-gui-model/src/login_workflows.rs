@@ -185,3 +185,99 @@ impl ScriptsEditor {
 pub fn script_warning(script: &LoginScript) -> Option<String> {
     script.check_valid().err().map(|error| format!("There is a problem with this script. The reason is:\n\n{error}\n\nDo you want to proceed with this invalid script, or go back and fix it?"))
 }
+
+/// One login step draft with sorted, named VARIABLE/VETO response parsers.
+#[derive(Debug, Clone)]
+pub struct StepEditor {
+    pub step: hydrus_parse::login::LoginStep,
+    pub selection: ListSelection<usize>,
+}
+impl StepEditor {
+    pub fn new(step: &hydrus_parse::login::LoginStep) -> Self {
+        Self {
+            step: step.clone(),
+            selection: ListSelection::default(),
+        }
+    }
+    pub fn order(&self) -> Vec<usize> {
+        let mut order = (0..self.step.content_parsers.len()).collect::<Vec<_>>();
+        order.sort_by(|&a, &b| {
+            self.step.content_parsers[a]
+                .name
+                .cmp(&self.step.content_parsers[b].name)
+        });
+        order
+    }
+    pub fn put(
+        &mut self,
+        index: Option<usize>,
+        mut parser: hydrus_parse::content::ContentParser,
+    ) -> Result<(), String> {
+        if !matches!(
+            parser.kind,
+            hydrus_parse::content::ContentKind::Variable { .. }
+                | hydrus_parse::content::ContentKind::Veto { .. }
+        ) {
+            return Err("Login response parsers must produce a temporary variable or veto.".into());
+        }
+        parser.name = non_dupe_name(&parser.name, &|name| {
+            self.step
+                .content_parsers
+                .iter()
+                .enumerate()
+                .any(|(i, old)| Some(i) != index && old.name == name)
+        });
+        let i = if let Some(i) = index.filter(|&i| i < self.step.content_parsers.len()) {
+            self.step.content_parsers[i] = parser;
+            i
+        } else {
+            self.step.content_parsers.push(parser);
+            self.step.content_parsers.len() - 1
+        };
+        self.selection.select_only(Some(i));
+        Ok(())
+    }
+    pub fn import(
+        &mut self,
+        definitions: Vec<hydrus_downloader_exchange::Definition>,
+    ) -> Result<(), String> {
+        use hydrus_downloader_exchange::Native;
+        let parsers = definitions
+            .into_iter()
+            .map(|definition| match definition.native {
+                Native::Content(parser)
+                    if matches!(
+                        parser.kind,
+                        hydrus_parse::content::ContentKind::Variable { .. }
+                            | hydrus_parse::content::ContentKind::Veto { .. }
+                    ) =>
+                {
+                    Ok(parser)
+                }
+                _ => Err("Import only temporary-variable or veto content parsers.".to_owned()),
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        for parser in parsers {
+            self.put(None, parser)?;
+        }
+        Ok(())
+    }
+    pub fn delete(&mut self) {
+        let mut selected = self.selection.in_order(&self.order());
+        selected.sort_unstable();
+        for i in selected.into_iter().rev() {
+            self.step.content_parsers.remove(i);
+        }
+        self.selection.select_only(None);
+    }
+    pub fn value(&self) -> hydrus_parse::login::LoginStep {
+        let mut step = self.step.clone();
+        step.content_parsers = self
+            .order()
+            .into_iter()
+            .map(|i| step.content_parsers[i].clone())
+            .collect();
+        step.cleanse();
+        step
+    }
+}

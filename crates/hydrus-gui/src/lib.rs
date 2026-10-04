@@ -53,6 +53,7 @@ mod import_window;
 mod importer_list_menu;
 pub mod locations_window;
 pub mod login_credential_window;
+pub mod login_step_window;
 pub mod login_workflows_window;
 mod manage_notes_window;
 mod manage_ratings_window;

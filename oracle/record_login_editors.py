@@ -102,7 +102,44 @@ def record(session):
         script_list.append({'do': 'rename duplicate', 'state': script_list_state()})
         scripts_panel.deleteLater()
 
-        return {'manager': manager.GetSerialisableTuple(), 'script_rows': script_rows, 'script_list': script_list, 'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
+        from hydrus.client.gui.parsing import ClientGUIParsing as PG
+        step_panel = G.EditLoginStepPanel(gui, first)
+        content_list = step_panel._content_parsers
+        def step_state():
+            return {'value': step_panel.GetValue().GetSerialisableTuple(), 'content_rows': table(content_list._content_parsers)}
+        step_states = [{'state': step_state()}]
+        content_action = ['renamed response', HC.CONTENT_TYPE_VARIABLE, 'token', True]
+        permitted = []
+        class ContentDialog(QW.QWidget):
+            def __init__(self, *args, **kwargs): super().__init__(gui)
+            def __enter__(self): return self
+            def __exit__(self, *args): return False
+            def SetPanel(self, panel): self.panel = panel
+            def exec(self):
+                permitted.append([self.panel._content_type.itemText(i) for i in range(self.panel._content_type.count())])
+                self.panel._name.setText(content_action[0])
+                self.panel._content_type.SetValue(content_action[1])
+                if content_action[1] == HC.CONTENT_TYPE_VARIABLE: self.panel._temp_variable_name.setText(content_action[2])
+                return QW.QDialog.DialogCode.Accepted if content_action[3] else QW.QDialog.DialogCode.Rejected
+        PG.ClientGUITopLevelWindowsPanels.DialogEdit = ContentDialog
+        content_list._content_parsers.SelectDatas([content_list.GetData()[0]])
+        content_list._Edit()
+        step_states.append({'do': 'edit variable', 'state': step_state()})
+        content_list._AddContentParser(content_list.GetData()[0].Duplicate())
+        step_states.append({'do': 'import duplicate', 'state': step_state()})
+        content_action[:] = ['cancelled parser', HC.CONTENT_TYPE_VARIABLE, 'cancelled', False]
+        content_list._Add()
+        step_states.append({'do': 'cancel add', 'state': step_state()})
+        content_action[:] = ['abort response', HC.CONTENT_TYPE_VETO, '', True]
+        content_list._Add()
+        step_states.append({'do': 'add veto', 'state': step_state()})
+        step_panel._name.setText('edited request')
+        step_panel._scheme.SetValue('https'); step_panel._method.SetValue('POST')
+        step_panel._subdomain.SetValue(''); step_panel._path.setText('signin')
+        step_states.append({'do': 'request fields', 'state': step_state()})
+        step_panel.deleteLater()
+
+        return {'step_states': step_states, 'permitted_content_types': permitted, 'manager': manager.GetSerialisableTuple(), 'script_rows': script_rows, 'script_list': script_list, 'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
                 'credential_types': [[i, L.credential_type_str_lookup[i]] for i in [0, 1]], 'access_types': [[i, L.login_access_type_str_lookup[i], L.login_access_type_default_description_lookup[i]] for i in range(4)]}
     return controller.CallBlockingToQt(gui, qt)
 recorder.record = record

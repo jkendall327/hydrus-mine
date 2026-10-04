@@ -112,3 +112,74 @@ fn preserved_credentials_load_then_native_save_controls_domain_warnings() {
             .is_empty()
     );
 }
+
+#[test]
+fn login_step_content_replays_reference_unique_import_cancel_sort_and_request_cleanup() {
+    use hydrus_downloader_exchange::{Definition, Native};
+    use hydrus_gui_model::login_workflows::StepEditor;
+    use hydrus_parse::content::ContentKind;
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let states = fixture["step_states"].as_array().unwrap();
+    let decode = |i: usize| {
+        legacy::login_step(
+            &SerialisableObject::from_tuple_str(&states[i]["state"]["value"].to_string()).unwrap(),
+        )
+        .unwrap()
+    };
+    let mut editor = StepEditor::new(&decode(0));
+    assert_eq!(
+        hydrus_downloader_exchange::logins::step_tuple(&editor.value()).unwrap(),
+        states[0]["state"]["value"]
+    );
+    let mut parser = editor.step.content_parsers[0].clone();
+    parser.name = "renamed response".into();
+    parser.kind = ContentKind::Variable {
+        name: "token".into(),
+    };
+    editor.put(Some(0), parser.clone()).unwrap();
+    assert_eq!(
+        hydrus_downloader_exchange::logins::step_tuple(&editor.value()).unwrap(),
+        states[1]["state"]["value"]
+    );
+    editor
+        .import(vec![Definition::new(Native::Content(parser))])
+        .unwrap();
+    assert_eq!(
+        hydrus_downloader_exchange::logins::step_tuple(&editor.value()).unwrap(),
+        states[2]["state"]["value"]
+    );
+    assert_eq!(states[2]["state"], states[3]["state"]);
+    let before = editor.value();
+    let invalid = hydrus_gui_model::parser_editors::new_content();
+    let allowed = editor.step.content_parsers[0].clone();
+    assert!(
+        editor
+            .import(vec![
+                Definition::new(Native::Content(allowed)),
+                Definition::new(Native::Content(invalid))
+            ])
+            .is_err()
+    );
+    assert_eq!(editor.value(), before, "mixed imports must remain atomic");
+    let veto = decode(4).content_parsers.remove(0);
+    editor.put(None, veto).unwrap();
+    assert_eq!(
+        hydrus_downloader_exchange::logins::step_tuple(&editor.value()).unwrap(),
+        states[4]["state"]["value"]
+    );
+    editor.step.name = "edited request".into();
+    editor.step.scheme = "https".into();
+    editor.step.method = "POST".into();
+    editor.step.subdomain = None;
+    editor.step.path = "signin".into();
+    assert_eq!(
+        hydrus_downloader_exchange::logins::step_tuple(&editor.value()).unwrap(),
+        states[5]["state"]["value"]
+    );
+    let order = editor.order();
+    editor.selection.click(&order, 0, false, false);
+    editor.selection.click(&order, 2, true, false);
+    editor.delete();
+    assert_eq!(editor.value().content_parsers.len(), 1);
+    assert_eq!(editor.value().content_parsers[0].name, "renamed response");
+}

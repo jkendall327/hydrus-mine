@@ -1625,8 +1625,13 @@ imports regenerate keys and make names unique. Credential definitions expose the
 name, normal/password presentation and shared permitted-input matcher. Credential
 entry masks passwords, validates live and reproduces the advisory acceptance
 question for blank or invalid values. Child edits wait for the owning script and
-script-list Apply; closing a parent cancels its children. Existing step, cookie
-and example-domain rows are preserved and shown, but remain read-only in this slice.
+script-list Apply; closing a parent cancels its children. The step queue supports add/edit/delete and order changes. Each step edits name,
+scheme, method, optional subdomain and path, with the reference subdomain/path
+cleanup. Its response content list supports extended selection, unique named
+VARIABLE/VETO nodes, shared formula/live preview, delete confirmation and reviewed
+JSON/PNG exchange. Parent cancellation discards every nested formula/parser.
+Request argument dictionaries, required-cookie matchers and script example-domain
+rows are preserved and shown, but remain read-only in this slice.
 
 ## Network sessions and HTTP headers
 

@@ -1,4 +1,721 @@
 {
+ "step_states": [
+  {
+   "state": {
+    "value": [
+     74,
+     "establish session",
+     2,
+     [
+      "http",
+      "GET",
+      ".",
+      "/start",
+      {},
+      {
+       "lang": "en"
+      },
+      {},
+      [
+       21,
+       2,
+       []
+      ],
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          30,
+          7,
+          [
+           "csrf variable",
+           14,
+           [
+            136,
+            1,
+            [
+             "dummy-csrf",
+             1,
+             "",
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ],
+           "csrf"
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "content_rows": [
+     [
+      "csrf variable",
+      "temp variable \"csrf\""
+     ]
+    ]
+   }
+  },
+  {
+   "do": "edit variable",
+   "state": {
+    "value": [
+     74,
+     "establish session",
+     2,
+     [
+      "http",
+      "GET",
+      ".",
+      "/start",
+      {},
+      {
+       "lang": "en"
+      },
+      {},
+      [
+       21,
+       2,
+       []
+      ],
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          30,
+          7,
+          [
+           "renamed response",
+           14,
+           [
+            136,
+            1,
+            [
+             "dummy-csrf",
+             1,
+             "",
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ],
+           "token"
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "content_rows": [
+     [
+      "renamed response",
+      "temp variable \"token\""
+     ]
+    ]
+   }
+  },
+  {
+   "do": "import duplicate",
+   "state": {
+    "value": [
+     74,
+     "establish session",
+     2,
+     [
+      "http",
+      "GET",
+      ".",
+      "/start",
+      {},
+      {
+       "lang": "en"
+      },
+      {},
+      [
+       21,
+       2,
+       []
+      ],
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          30,
+          7,
+          [
+           "renamed response",
+           14,
+           [
+            136,
+            1,
+            [
+             "dummy-csrf",
+             1,
+             "",
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ],
+           "token"
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          30,
+          7,
+          [
+           "renamed response (1)",
+           14,
+           [
+            136,
+            1,
+            [
+             "dummy-csrf",
+             1,
+             "",
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ],
+           "token"
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "content_rows": [
+     [
+      "renamed response",
+      "temp variable \"token\""
+     ],
+     [
+      "renamed response (1)",
+      "temp variable \"token\""
+     ]
+    ]
+   }
+  },
+  {
+   "do": "cancel add",
+   "state": {
+    "value": [
+     74,
+     "establish session",
+     2,
+     [
+      "http",
+      "GET",
+      ".",
+      "/start",
+      {},
+      {
+       "lang": "en"
+      },
+      {},
+      [
+       21,
+       2,
+       []
+      ],
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          30,
+          7,
+          [
+           "renamed response",
+           14,
+           [
+            136,
+            1,
+            [
+             "dummy-csrf",
+             1,
+             "",
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ],
+           "token"
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          30,
+          7,
+          [
+           "renamed response (1)",
+           14,
+           [
+            136,
+            1,
+            [
+             "dummy-csrf",
+             1,
+             "",
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ],
+           "token"
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "content_rows": [
+     [
+      "renamed response",
+      "temp variable \"token\""
+     ],
+     [
+      "renamed response (1)",
+      "temp variable \"token\""
+     ]
+    ]
+   }
+  },
+  {
+   "do": "add veto",
+   "state": {
+    "value": [
+     74,
+     "establish session",
+     2,
+     [
+      "http",
+      "GET",
+      ".",
+      "/start",
+      {},
+      {
+       "lang": "en"
+      },
+      {},
+      [
+       21,
+       2,
+       []
+      ],
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          30,
+          7,
+          [
+           "abort response",
+           8,
+           [
+            27,
+            8,
+            [
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 62,
+                 3,
+                 [
+                  0,
+                  "a",
+                  {},
+                  null,
+                  null,
+                  false,
+                  [
+                   51,
+                   1,
+                   [
+                    3,
+                    "",
+                    null,
+                    null,
+                    "example string"
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ],
+             0,
+             "href",
+             "",
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ],
+           [
+            false,
+            [
+             51,
+             1,
+             [
+              3,
+              "",
+              null,
+              null,
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          30,
+          7,
+          [
+           "renamed response",
+           14,
+           [
+            136,
+            1,
+            [
+             "dummy-csrf",
+             1,
+             "",
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ],
+           "token"
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          30,
+          7,
+          [
+           "renamed response (1)",
+           14,
+           [
+            136,
+            1,
+            [
+             "dummy-csrf",
+             1,
+             "",
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ],
+           "token"
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "content_rows": [
+     [
+      "abort response",
+      "veto: abort response"
+     ],
+     [
+      "renamed response",
+      "temp variable \"token\""
+     ],
+     [
+      "renamed response (1)",
+      "temp variable \"token\""
+     ]
+    ]
+   }
+  },
+  {
+   "do": "request fields",
+   "state": {
+    "value": [
+     74,
+     "edited request",
+     2,
+     [
+      "https",
+      "POST",
+      null,
+      "/signin",
+      {},
+      {
+       "lang": "en"
+      },
+      {},
+      [
+       21,
+       2,
+       []
+      ],
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          30,
+          7,
+          [
+           "abort response",
+           8,
+           [
+            27,
+            8,
+            [
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 62,
+                 3,
+                 [
+                  0,
+                  "a",
+                  {},
+                  null,
+                  null,
+                  false,
+                  [
+                   51,
+                   1,
+                   [
+                    3,
+                    "",
+                    null,
+                    null,
+                    "example string"
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ],
+             0,
+             "href",
+             "",
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ],
+           [
+            false,
+            [
+             51,
+             1,
+             [
+              3,
+              "",
+              null,
+              null,
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          30,
+          7,
+          [
+           "renamed response",
+           14,
+           [
+            136,
+            1,
+            [
+             "dummy-csrf",
+             1,
+             "",
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ],
+           "token"
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          30,
+          7,
+          [
+           "renamed response (1)",
+           14,
+           [
+            136,
+            1,
+            [
+             "dummy-csrf",
+             1,
+             "",
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ],
+           "token"
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "content_rows": [
+     [
+      "abort response",
+      "veto: abort response"
+     ],
+     [
+      "renamed response",
+      "temp variable \"token\""
+     ],
+     [
+      "renamed response (1)",
+      "temp variable \"token\""
+     ]
+    ]
+   }
+  }
+ ],
+ "permitted_content_types": [
+  [
+   "temporary variable",
+   "veto"
+  ],
+  [
+   "temporary variable",
+   "veto"
+  ],
+  [
+   "temporary variable",
+   "veto"
+  ]
+ ],
  "manager": [
   48,
   1,

@@ -20,6 +20,7 @@ use std::{
 pub struct Slots {
     pub scripts: Rc<RefCell<Option<LoginScriptsWindow>>>,
     pub script: Rc<RefCell<Option<LoginScriptWindow>>>,
+    pub step: crate::login_step_window::Slots,
     pub definition: crate::login_credential_window::DefinitionSlot,
     pub credentials: crate::login_credential_window::CredentialsSlot,
     pub strings: crate::string_processor_window::Slots,
@@ -51,6 +52,7 @@ impl Slots {
         if let Some(window) = script {
             window.invoke_action("cancel".into());
         }
+        self.step.cancel();
         crate::login_credential_window::cancel_definition(&self.definition);
         crate::login_credential_window::cancel_credentials(&self.credentials);
         self.strings.cancel_all();
@@ -95,6 +97,7 @@ struct ScriptState {
     script: LoginScript,
     selection: ListSelection<usize>,
     credentials: BTreeMap<String, String>,
+    step_selected: Option<usize>,
 }
 impl ScriptState {
     fn order(&self) -> Vec<usize> {
@@ -133,9 +136,17 @@ fn show_script(window: &LoginScriptWindow, state: &ScriptState) {
             .script
             .steps
             .iter()
-            .map(|step| row(vec![step.name.clone()], false))
+            .enumerate()
+            .map(|(i, step)| row(vec![step.name.clone()], state.step_selected == Some(i)))
             .collect::<Vec<_>>(),
     )));
+    window.set_step_selected(state.step_selected.is_some());
+    window.set_step_up(state.step_selected.is_some_and(|i| i > 0));
+    window.set_step_down(
+        state
+            .step_selected
+            .is_some_and(|i| i + 1 < state.script.steps.len()),
+    );
     window.set_cookies(ModelRc::new(VecModel::from(
         state
             .script
@@ -188,14 +199,16 @@ pub fn open_script(
         script: script.clone(),
         selection: ListSelection::default(),
         credentials: BTreeMap::new(),
+        step_selected: None,
     }));
     show_script(&window, &state.borrow());
     let active = Rc::new(Cell::new(true));
-    let deleting = Rc::new(Cell::new(false));
+    let deleting = Rc::new(Cell::new(0_u8));
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slot = Rc::downgrade(&slots.script);
         let definition = slots.definition.clone();
+        let step = slots.step.clone();
         let credentials = slots.credentials.clone();
         let strings = slots.strings.clone();
         let active = active.clone();
@@ -203,6 +216,7 @@ pub fn open_script(
             if !active.replace(false) {
                 return;
             }
+            step.cancel();
             crate::login_credential_window::cancel_definition(&definition);
             crate::login_credential_window::cancel_credentials(&credentials);
             strings.cancel_all();
@@ -336,10 +350,34 @@ pub fn open_script(
             }
         }
     });
+    window.on_step_clicked({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let active = active.clone();
+        move |index| {
+            if !active.get() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if window.get_child_open() || !window.get_question().is_empty() {
+                return;
+            }
+            if let Ok(i) = usize::try_from(index)
+                && i < state.borrow().script.steps.len()
+            {
+                state.borrow_mut().step_selected = Some(i);
+                show_script(&window, &state.borrow());
+            }
+        }
+    });
     window.on_action({
         let weak = window.as_weak();
         let state = state.clone();
         let credentials_slot = slots.credentials.clone();
+        let step_slot = slots.step.clone();
+        let store = store.clone();
         let active = active.clone();
         let close = close.clone();
         let edit = edit.clone();
@@ -362,6 +400,76 @@ pub fn open_script(
                 return;
             }
             match action.as_str() {
+                "add-step" | "edit-step" => {
+                    let index = if action == "edit-step" {
+                        state.borrow().step_selected
+                    } else {
+                        None
+                    };
+                    if action == "edit-step" && index.is_none() {
+                        return;
+                    }
+                    let step = index
+                        .and_then(|i| state.borrow().script.steps.get(i).cloned())
+                        .unwrap_or_default();
+                    let accepted: crate::login_step_window::Applied = Rc::new({
+                        let weak = weak.clone();
+                        let state = state.clone();
+                        let active = active.clone();
+                        move |step| {
+                            if !active.get() {
+                                return Err("The login script editor has closed.".into());
+                            }
+                            let mut state = state.borrow_mut();
+                            let i = if let Some(i) = index {
+                                state.script.steps[i] = step;
+                                i
+                            } else {
+                                state.script.steps.push(step);
+                                state.script.steps.len() - 1
+                            };
+                            state.step_selected = Some(i);
+                            if let Some(window) = weak.upgrade() {
+                                show_script(&window, &state);
+                            }
+                            Ok(())
+                        }
+                    });
+                    match crate::login_step_window::open(&store, &step, &step_slot, accepted) {
+                        Ok(child) => {
+                            window.set_child_open(true);
+                            let weak = weak.clone();
+                            child.on_closed(move || {
+                                if let Some(window) = weak.upgrade() {
+                                    window.set_child_open(false);
+                                }
+                            });
+                        }
+                        Err(error) => window.set_error(error.to_string().into()),
+                    }
+                }
+                "delete-step" => {
+                    if state.borrow().step_selected.is_some() {
+                        deleting.set(2);
+                        window.set_deleting(true);
+                        window.set_question("Remove 1 selected?".into());
+                    }
+                }
+                "step-up" | "step-down" => {
+                    let mut state = state.borrow_mut();
+                    if let Some(i) = state.step_selected {
+                        let target = if action == "step-up" {
+                            i.checked_sub(1)
+                        } else {
+                            Some(i + 1).filter(|&i| i < state.script.steps.len())
+                        };
+                        if let Some(j) = target {
+                            state.script.steps.swap(i, j);
+                            state.step_selected = Some(j);
+                            show_script(&window, &state);
+                        }
+                    }
+                }
                 "add-credential" => edit(None),
                 "edit-credential" => {
                     let selected = state.borrow().selection.one();
@@ -371,23 +479,32 @@ pub fn open_script(
                 }
                 "delete-credential" => {
                     if !state.borrow().selection.is_empty() {
-                        deleting.set(true);
+                        deleting.set(1);
+                        window.set_deleting(true);
                         window.set_question("Remove all selected?".into());
                     }
                 }
                 "back" => {
-                    deleting.set(false);
+                    deleting.set(0);
+                    window.set_deleting(false);
                     window.set_question("".into());
                 }
-                "confirm" if deleting.get() => {
+                "confirm" if deleting.get() > 0 => {
                     let mut state = state.borrow_mut();
-                    let mut selected = state.selection.in_order(&state.order());
-                    selected.sort_unstable();
-                    for index in selected.into_iter().rev() {
-                        state.script.credentials.remove(index);
+                    if deleting.get() == 2 {
+                        if let Some(i) = state.step_selected.take() {
+                            state.script.steps.remove(i);
+                        }
+                    } else {
+                        let mut selected = state.selection.in_order(&state.order());
+                        selected.sort_unstable();
+                        for index in selected.into_iter().rev() {
+                            state.script.credentials.remove(index);
+                        }
+                        state.selection.select_only(None);
                     }
-                    state.selection.select_only(None);
-                    deleting.set(false);
+                    deleting.set(0);
+                    window.set_deleting(false);
                     window.set_question("".into());
                     show_script(&window, &state);
                 }
@@ -505,6 +622,7 @@ pub fn open_scripts(store: &Arc<Store>, slots: &Slots) -> Result<LoginScriptsWin
     let children = Slots {
         scripts: Rc::default(),
         script: slots.script.clone(),
+        step: slots.step.clone(),
         definition: slots.definition.clone(),
         credentials: slots.credentials.clone(),
         strings: slots.strings.clone(),

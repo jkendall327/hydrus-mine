@@ -218,3 +218,135 @@ fn network_login_scripts_menu_reaches_persisted_editor() {
     window.invoke_action("cancel".into());
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
 }
+
+#[test]
+fn script_step_content_preview_apply_and_parent_cancel_are_owned_and_restricted() {
+    let (_dir, store, original) = store();
+    let rendered = headless::init();
+    let slots = Slots::default();
+    let list = windows::open_scripts(&store, &slots).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let script = slots.script.borrow().as_ref().unwrap().clone_strong();
+    script.invoke_step_clicked(0);
+    script.invoke_action("edit-step".into());
+    let step = slots.step.step.borrow().as_ref().unwrap().clone_strong();
+    let pixels = headless::render(&rendered.get(rendered.count() - 1).unwrap(), 880, 680);
+    assert!(step.get_footer_y() >= 0.0 && step.get_footer_y() + step.get_footer_height() <= 680.0);
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("login_step.png"),
+        &pixels,
+        880,
+        680,
+    )
+    .unwrap();
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let cells = step.get_content().row_data(0).unwrap().cells;
+    assert_eq!(
+        cells.row_data(1).unwrap(),
+        fixture["step_states"][0]["state"]["content_rows"][0][1]
+            .as_str()
+            .unwrap()
+    );
+    step.invoke_content_clicked(0, false, false);
+    step.invoke_action("edit-content".into());
+    let content = slots
+        .step
+        .parsers
+        .content
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let choices = content.get_fields().row_data(1).unwrap().options;
+    assert_eq!(
+        serde_json::to_value(
+            (0..choices.row_count())
+                .map(|i| choices.row_data(i).unwrap().to_string())
+                .collect::<Vec<_>>()
+        )
+        .unwrap(),
+        fixture["permitted_content_types"][0]
+    );
+    assert!(content.get_document().is_empty());
+    content.invoke_action("test".into());
+    assert!(content.get_preview().contains("dummy-csrf"));
+    content.invoke_text_edited(0, "renamed response".into());
+    content.invoke_text_edited(5, "token".into());
+    content.invoke_action("apply".into());
+    assert_eq!(
+        step.get_content()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(0)
+            .unwrap(),
+        "renamed response"
+    );
+    step.set_name("edited request".into());
+    step.set_path("signin".into());
+    step.set_has_subdomain(true);
+    step.set_subdomain("".into());
+    step.invoke_action("apply".into());
+    assert_eq!(
+        script
+            .get_steps()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(0)
+            .unwrap(),
+        "edited request"
+    );
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+    script.invoke_action("apply".into());
+    assert!(!script.get_question().is_empty());
+    script.invoke_action("confirm".into());
+    list.invoke_action("apply".into());
+    let saved = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(saved.scripts[0].steps[0].path, "/signin");
+    assert!(saved.scripts[0].steps[0].subdomain.is_none());
+    assert_eq!(
+        saved.scripts[0].steps[0].static_args,
+        original.scripts[0].steps[0].static_args
+    );
+    let list = windows::open_scripts(&store, &slots).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let script = slots.script.borrow().as_ref().unwrap().clone_strong();
+    script.invoke_step_clicked(0);
+    script.invoke_action("edit-step".into());
+    let step = slots.step.step.borrow().as_ref().unwrap().clone_strong();
+    step.invoke_content_clicked(0, false, false);
+    step.invoke_action("edit-content".into());
+    let content = slots
+        .step
+        .parsers
+        .content
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    content.invoke_action("formula".into());
+    let formula = slots
+        .step
+        .parsers
+        .formula
+        .formula
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let pixels = headless::render(&rendered.get(rendered.count() - 1).unwrap(), 900, 650);
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
+    list.invoke_action("cancel".into());
+    assert!(slots.step.step.borrow().is_none());
+    assert!(slots.step.parsers.content.borrow().is_none());
+    assert!(slots.step.parsers.formula.formula.borrow().is_none());
+    formula.invoke_apply();
+    content.invoke_action("apply".into());
+    step.invoke_action("apply".into());
+    script.invoke_action("apply".into());
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
+}
