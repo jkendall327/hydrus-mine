@@ -1671,3 +1671,8 @@ cogs now edit both contexts transactionally. Their two-level native popups
 use the reference service groups, separators, checks and advanced-view order.
 They edit each sort independently and preserve its full saved context metadata.
 The page-level sort cog remains a separate, unclaimed workflow.
+
+Command-palette preferences and snapshot-based provider/queue models are now
+present, with fresh Qt recordings. The native Ctrl+P window, calculator provider,
+Options editor and action dispatch remain pending in this first reusable slice;
+no command-palette completion is claimed by the model alone.

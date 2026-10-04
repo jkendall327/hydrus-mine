@@ -4,6 +4,7 @@
 
 pub mod autocomplete;
 pub mod bandwidth;
+pub mod command_palette;
 pub mod conn;
 pub mod content;
 pub mod counts;

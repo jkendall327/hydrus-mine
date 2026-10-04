@@ -104,3 +104,5 @@ pub mod namespace_sorts;
 pub mod viewer_cursor;
 
 pub mod sort_cog;
+
+pub mod command_palette;

@@ -1,0 +1,430 @@
+{
+  "initial": {
+    "show_page_of_pages": false,
+    "initially_show_all_pages": true,
+    "initially_show_history": true,
+    "initially_show_favourite_searches": false,
+    "fav_searches_open_new_page": true,
+    "show_main_menu": false,
+    "show_media_menu": false,
+    "limit_page_results": null,
+    "limit_history_results": 10,
+    "limit_favourite_searches_results": null,
+    "threshold": 1,
+    "order": [
+      0,
+      1,
+      2,
+      4,
+      3,
+      5
+    ],
+    "threshold_bounds": [
+      1,
+      64
+    ],
+    "limit_bounds": [
+      1,
+      1000000
+    ]
+  },
+  "events": [
+    {
+      "provider": 3,
+      "query": "Palette",
+      "rows": [
+        {
+          "text": [
+            "<b>Palette</b> Alpha",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> Beta",
+            "child of 'Palette Nested'"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> Gamma",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 4,
+      "query": "Palette",
+      "rows": [
+        {
+          "text": [
+            "<b>Palette</b> Gamma",
+            "1st result in history"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> Beta",
+            "2nd result in history"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> Alpha",
+            "3rd result in history"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 5,
+      "query": "Favourite",
+      "rows": [
+        {
+          "text": [
+            "<b>Favourite</b> Alpha",
+            "Palette Folder - <i>favourite search</i>"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Favourite</b> Beta",
+            ""
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 5,
+      "query": "Palette Folder",
+      "rows": [
+        {
+          "text": [
+            "Favourite Alpha",
+            "<b>Palette Folder</b> - <i>favourite search</i>"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 1,
+      "query": "Palette",
+      "rows": [
+        {
+          "text": [
+            "<b>Palette</b> Launch",
+            "Palette Synthetic"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> checked",
+            "Palette Synthetic"
+          ],
+          "toggled": true,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> disabled",
+            "Palette Synthetic"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 1,
+      "query": "pa",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "2+3*4",
+      "rows": [
+        {
+          "text": [
+            "14",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "sqrt(16)",
+      "rows": [
+        {
+          "text": [
+            "4.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "pow(2,3)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "1/0",
+      "rows": []
+    },
+    {
+      "provider": 3,
+      "query": "Palette",
+      "rows": [
+        {
+          "text": [
+            "<b>Palette</b> Alpha",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> Nested",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> Beta",
+            "child of 'Palette Nested'"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> Gamma",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 3,
+      "query": "Palette",
+      "rows": [
+        {
+          "text": [
+            "<b>Palette</b> Alpha",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 4,
+      "query": "Palette",
+      "rows": [
+        {
+          "text": [
+            "<b>Palette</b> Gamma",
+            "1st result in history"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 5,
+      "query": "Favourite",
+      "rows": [
+        {
+          "text": [
+            "<b>Favourite</b> Alpha",
+            "Palette Folder - <i>favourite search</i>"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 3,
+      "query": "Pal",
+      "rows": []
+    },
+    {
+      "provider": 3,
+      "query": "Pale",
+      "rows": [
+        {
+          "text": [
+            "<b>Pale</b>tte Alpha",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Pale</b>tte Nested",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Pale</b>tte Beta",
+            "child of 'Palette Nested'"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Pale</b>tte Gamma",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 3,
+      "query": "   ",
+      "rows": []
+    },
+    {
+      "provider": 1,
+      "query": "Pal",
+      "rows": []
+    },
+    {
+      "provider": 1,
+      "query": "Pale",
+      "rows": [
+        {
+          "text": [
+            "<b>Pale</b>tte Launch",
+            "Palette Synthetic"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Pale</b>tte checked",
+            "Palette Synthetic"
+          ],
+          "toggled": true,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Pale</b>tte disabled",
+            "Palette Synthetic"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    }
+  ],
+  "selected": {
+    "page": "Palette Alpha",
+    "menu_calls": [
+      "launch"
+    ],
+    "favourite": {
+      "name": "Favourite Alpha",
+      "new_pages": 1
+    }
+  },
+  "queue_events": [
+    [
+      1,
+      0,
+      2,
+      4,
+      3,
+      5
+    ],
+    [
+      1,
+      2,
+      4,
+      3,
+      5
+    ],
+    [
+      1,
+      2,
+      4,
+      3,
+      5
+    ],
+    [
+      1,
+      2,
+      4,
+      3,
+      5,
+      0
+    ]
+  ],
+  "questions": [
+    "Remove 1 selected?",
+    {
+      "text": "Select a provider to add:",
+      "choices": [
+        [
+          "calculator",
+          0,
+          "calculator"
+        ]
+      ]
+    }
+  ],
+  "persisted": {
+    "order": [
+      1,
+      2,
+      4,
+      3,
+      5,
+      0
+    ]
+  }
+}

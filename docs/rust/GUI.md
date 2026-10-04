@@ -2534,3 +2534,11 @@ selection. Enter or double-click activates the selected batch; unchanged fetches
 and decoration changes retain it. The reference steps are recorded in
 `oracle/fixtures/write_tag_selection.json`. Staged tags still wait for Apply,
 and cancelled owners ignore later selection and activation callbacks.
+
+The command-palette provider model now matches the recorded Qt page-tree,
+newest-first history, favourite name/folder and menu-leaf filtering rules. Its
+provider queue supports extended selection, movement, confirmed removal and
+cancelled re-addition. Workers use immutable snapshots and query identities so
+late results cannot revive a closed palette or replace a newer query. Native
+window and launch wiring is still being added; these helpers alone do not yet
+expose a command palette in the client.
