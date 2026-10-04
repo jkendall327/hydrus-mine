@@ -70,7 +70,10 @@ fn the_grid_draws_each_thumbnail_s_ratings() {
     );
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
-    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     let first = bound.current.borrow().borrow().results()[0];

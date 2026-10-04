@@ -177,7 +177,8 @@ fn login_exchange_reviews_without_mutating_then_parent_apply_persists_unique_scr
     assert!(exchange.get_ready());
     assert_eq!(list.get_rows().row_count(), 1);
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
-    exchange.invoke_action("apply".into());
+    exchange.invoke_action("accept".into());
+    assert!(slots.exchange.0.borrow().is_none());
     assert_eq!(list.get_rows().row_count(), 2);
     assert!(!list.get_child_open());
     list.invoke_action("apply".into());
@@ -191,7 +192,7 @@ fn login_exchange_reviews_without_mutating_then_parent_apply_persists_unique_scr
     list.invoke_action("cancel".into());
     child.set_text(fixture["script"].to_string().into());
     child.invoke_action("review".into());
-    child.invoke_action("apply".into());
+    child.invoke_action("accept".into());
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
 }
 

@@ -749,7 +749,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .noneable_integers
             .get("media_viewer_cursor_autohide_time_ms")
         {
-            viewer_cursor.autohide_ms = value.map(|delay| delay.clamp(100, 100000) as u32);
+            viewer_cursor.autohide_ms = value.map(|delay| delay.clamp(100, 100_000) as u32);
         }
         insert_setting(&mut input, &viewer_cursor)?;
         let mut viewer_background = crate::settings::ViewerBackgroundSettings::default();

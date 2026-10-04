@@ -8,7 +8,6 @@ use std::sync::Arc;
 
 use hydrus_core::HashId;
 use hydrus_core::media_viewer::InfoLineSettings;
-use hydrus_gui::SearchPage;
 use hydrus_gui::info_lines::status_line;
 use hydrus_gui::status::{Facts, Items, facts, status};
 use hydrus_store::Store;
@@ -99,7 +98,7 @@ fn the_status_bar_is_the_reference_s() {
 #[test]
 fn a_search_page_says_why_it_is_empty() {
     let (_dir, store) = store();
-    let mut page = SearchPage::new(store);
+    let mut page = super::common::all_local_page(store);
     assert_eq!(page.status(), "no search done yet");
     page.add_predicate("system:inbox");
     // (the inbox file in the trash isn't in "my files")

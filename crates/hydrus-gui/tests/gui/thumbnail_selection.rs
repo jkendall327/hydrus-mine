@@ -34,7 +34,10 @@ fn several_thumbnails_are_selected_and_acted_on() {
     let store: Arc<Store> = Store::open(native.path()).unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
-    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
     ui.invoke_search_edited("system:inbox".into());
     ui.invoke_search_accepted();
     let page = bound.current.borrow().clone();
