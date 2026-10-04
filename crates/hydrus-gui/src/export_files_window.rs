@@ -83,7 +83,11 @@ pub fn open(
     });
     let preferences: Preferences = store.read(settings::get).unwrap_or_default();
     let naming: settings::ExportSettings = store.read(settings::get).unwrap_or_default();
-    window.set_destination(preferences.destination.clone().into());
+    let destination = export_files::default_directory(store, &naming);
+    if naming.default_directory.is_none() && !destination.is_empty() {
+        std::fs::create_dir_all(&destination).map_err(|error| error.to_string())?;
+    }
+    window.set_destination(destination.into());
     window.set_phrase(naming.phrase.into());
     window.set_trash(preferences.trash);
     let state = Rc::new(RefCell::new(State {
@@ -497,11 +501,11 @@ pub fn open(
             s.preferences.destination = w.get_destination().into();
             s.preferences.trash = w.get_trash();
             let preferences = s.preferences.clone();
-            let mut naming: settings::ExportSettings =
-                store.read(settings::get).unwrap_or_default();
-            naming.phrase = w.get_phrase().into();
+            let phrase: String = w.get_phrase().into();
             if let Err(e) = store.write(move |ctx| {
                 settings::set(ctx.conn(), &preferences)?;
+                let mut naming: settings::ExportSettings = settings::get(ctx.conn())?;
+                naming.phrase = phrase;
                 settings::set(ctx.conn(), &naming)
             }) {
                 w.set_status(e.to_string().into());

@@ -773,6 +773,8 @@ impl Setting for ExportFolders {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
 pub struct ExportSettings {
+    /// The starting manual-export directory (none: the home hydrus_export folder).
+    pub default_directory: Option<String>,
     /// The phrase new export folders start with.
     pub phrase: String,
     /// The longest whole path (none: the platform's).
@@ -787,6 +789,7 @@ pub struct ExportSettings {
 impl Default for ExportSettings {
     fn default() -> Self {
         Self {
+            default_directory: None,
             phrase: "{hash}".into(),
             path_character_limit: None,
             dirname_character_limit: None,

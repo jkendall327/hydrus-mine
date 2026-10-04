@@ -194,6 +194,8 @@ pub enum Kind {
     SavedSession,
     GallerySource,
     Text,
+    /// An editable folder path with the shared native directory picker.
+    Directory,
     NoneableText {
         none_phrase: &'static str,
     },
@@ -1329,34 +1331,54 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "exporting",
-            vec![boxed(
-                "all exports",
-                vec![
-                    check(
-                        "ADVANCED: Always apply NTFS filename rules to export filenames: ",
-                        |s| s.export.always_apply_ntfs_rules,
-                        |s, v| s.export.always_apply_ntfs_rules = v,
-                    ),
-                    noneable(
-                        "ADVANCED: Export path length limit (characters/bytes): ",
-                        none("let hydrus decide", 250, (96, 8192), None),
-                        |s| s.export.path_character_limit,
-                        |s, v| s.export.path_character_limit = v,
-                    ),
-                    noneable(
-                        "ADVANCED: Export dirname length limit (characters/bytes): ",
-                        none("let hydrus decide", 64, (16, 8192), None),
-                        |s| s.export.dirname_character_limit,
-                        |s, v| s.export.dirname_character_limit = v,
-                    ),
-                    int(
-                        "ADVANCED: Export filename length limit (characters/bytes): ",
-                        (16, 8192),
-                        |s| s.export.filename_character_limit,
-                        |s, v| s.export.filename_character_limit = v,
-                    ),
-                ],
-            )],
+            vec![
+                boxed(
+                    "all exports",
+                    vec![
+                        check(
+                            "ADVANCED: Always apply NTFS filename rules to export filenames: ",
+                            |s| s.export.always_apply_ntfs_rules,
+                            |s, v| s.export.always_apply_ntfs_rules = v,
+                        ),
+                        noneable(
+                            "ADVANCED: Export path length limit (characters/bytes): ",
+                            none("let hydrus decide", 250, (96, 8192), None),
+                            |s| s.export.path_character_limit,
+                            |s, v| s.export.path_character_limit = v,
+                        ),
+                        noneable(
+                            "ADVANCED: Export dirname length limit (characters/bytes): ",
+                            none("let hydrus decide", 64, (16, 8192), None),
+                            |s| s.export.dirname_character_limit,
+                            |s, v| s.export.dirname_character_limit = v,
+                        ),
+                        int(
+                            "ADVANCED: Export filename length limit (characters/bytes): ",
+                            (16, 8192),
+                            |s| s.export.filename_character_limit,
+                            |s, v| s.export.filename_character_limit = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "export folder",
+                    vec![opt(
+                        "Default export directory: ",
+                        Kind::Directory,
+                        Rc::new(|s| {
+                            Value::Text(s.export.default_directory.clone().unwrap_or_default())
+                        }),
+                        Rc::new(|s, value| match value {
+                            Value::Text(path) => {
+                                s.export.default_directory =
+                                    (!path.trim().is_empty()).then(|| path.clone());
+                                Ok(())
+                            }
+                            _ => Err(wrong("Default export directory: ")),
+                        }),
+                    )],
+                ),
+            ],
         ),
         page(
             "file search",

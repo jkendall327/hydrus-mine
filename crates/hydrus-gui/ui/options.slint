@@ -22,7 +22,7 @@ export struct OptionRow {
     // a tag sort (its type, order and grouping), 13 checker options (a
     // button, `text`, opening their editor), 14 regex favourites,
     // 15 tag service/session, 16 local location, 17 favourite tags,
-    // 18 notebook chooser (reserved), 19 gallery source.
+    // 18 notebook chooser (reserved), 19 gallery source, 20 directory path.
     kind: int,
     label: string,
     // how many boxes it is in
@@ -115,6 +115,7 @@ export component OptionsWindow inherits Window {
     callback number-edited(int, int);
     callback none-toggled(int, bool);
     callback text-edited(int, string);
+    callback directory-browse(int);
     callback choice-chosen(int, int);
     // (a sort's type, or its order, by its place in the row's lists)
     callback sort-chosen(int, int);
@@ -270,6 +271,17 @@ export component OptionsWindow inherits Window {
                                 width: 260px;
                                 text: row.text;
                                 edited(text) => { root.text-edited(i, text); }
+                            }
+                            if row.kind == 20: HorizontalLayout {
+                                width: 260px;
+                                LineEdit {
+                                    text: row.text;
+                                    edited(text) => { root.text-edited(i, text); }
+                                }
+                                Button {
+                                    text: "browse";
+                                    clicked => { root.directory-browse(i); }
+                                }
                             }
                             if row.kind == 7: HorizontalLayout {
                                 width: 260px;

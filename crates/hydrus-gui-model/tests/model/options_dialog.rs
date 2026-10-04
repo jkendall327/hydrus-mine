@@ -52,7 +52,12 @@ fn same_time(a: f64, b: Option<f64>) -> bool {
 }
 
 /// The reference's widgets that are a control of ours.
-const WIDGETS: &[&str] = &["MediaSortControl", "MediaCollectControl", "TagSortControl"];
+const WIDGETS: &[&str] = &[
+    "MediaSortControl",
+    "MediaCollectControl",
+    "TagSortControl",
+    "DirPickerCtrl",
+];
 
 fn is_control(item: &Json) -> bool {
     CONTROLS.iter().any(|k| item.get(*k).is_some())
@@ -197,6 +202,10 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
             (names != theirs_names || chosen != theirs["choice"].as_str())
                 .then(|| format!("service {chosen:?} of {names:?}"))
         }
+        (Kind::Directory, Value::Text(path)) => (theirs["widget"] != "DirPickerCtrl"
+            || theirs["items"][0]["text"] != *path
+            || theirs["items"][1]["button"] != "browse")
+            .then(|| format!("directory {path:?}")),
         (Kind::Text, Value::Text(t)) => (theirs["text"] != *t).then(|| format!("text {t:?}")),
         (Kind::NoneableText { none_phrase }, Value::NoneableText { none, text }) => {
             let ours = (!none).then_some(text.as_str());
@@ -1862,4 +1871,69 @@ fn zoom_switch_and_animation_loop_controls_match_reference_and_stage_changes() {
     let saved = store.read(Settings::load).unwrap().viewer_playback;
     assert_eq!(saved.zoom_switch, 3);
     assert!(!saved.always_loop);
+}
+
+#[test]
+fn export_default_directory_matches_recorded_blank_literal_and_portable_paths() {
+    let reference = hydrus_testkit::fixture_json("export_default_directory.json");
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let settings = store.read(Settings::load).unwrap();
+    let offered = pages(&settings);
+    let page = offered
+        .iter()
+        .find(|page| page.name == "exporting")
+        .unwrap();
+    let option = page
+        .options()
+        .into_iter()
+        .find(|option| option.label == reference["label"].as_str().unwrap())
+        .unwrap();
+    assert_eq!(option.kind, Kind::Directory);
+    assert!(
+        matches!(page.items.last(), Some(Item::Box(title, _)) if *title == reference["box"].as_str().unwrap())
+    );
+    for case in reference["cases"].as_array().unwrap() {
+        // Native settings hold resolved paths; imported reference portable paths
+        // are resolved against the source database by the import consumer.
+        let shown = case["shown"]
+            .as_str()
+            .unwrap()
+            .replace("<DB>", directory.path().to_str().unwrap());
+        let mut before = settings.clone();
+        before.export.default_directory = (!shown.is_empty()).then_some(shown.clone());
+        assert_eq!((option.get)(&before), Value::Text(shown));
+        let entered = case["entered"]
+            .as_str()
+            .unwrap()
+            .replace("<DB>", directory.path().to_str().unwrap());
+        let mut after = before.clone();
+        (option.set)(&mut after, &Value::Text(entered)).unwrap();
+        assert_eq!(before.export.phrase, after.export.phrase);
+        if case["saved"].is_null() {
+            assert!(after.export.default_directory.is_none());
+            assert!(
+                std::path::Path::new(&hydrus_gui_model::export_files::default_directory(
+                    &store,
+                    &after.export
+                ))
+                .ends_with("hydrus_export")
+            );
+        } else {
+            let expected = directory.path().join(case["saved"].as_str().unwrap());
+            assert_eq!(
+                hydrus_gui_model::export_files::default_directory(&store, &after.export),
+                expected.to_string_lossy().as_ref()
+            );
+        }
+    }
+    let mut portable = settings.export;
+    portable.default_directory = Some("synthetic exports 日本".into());
+    assert_eq!(
+        hydrus_gui_model::export_files::default_directory(&store, &portable),
+        directory
+            .path()
+            .join("synthetic exports 日本")
+            .to_string_lossy()
+    );
 }
