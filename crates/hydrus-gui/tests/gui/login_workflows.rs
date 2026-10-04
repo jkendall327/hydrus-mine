@@ -2053,28 +2053,40 @@ fn reopened_domain_manager_monitors_and_cancels_actual_engine_owned_demand_proce
         let trigger = trigger.clone();
         let domain = site.domain.clone();
         move || {
-            tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap().block_on(async move {
-                let engine = Arc::new(hydrus_net::NetEngine::new(store, hydrus_net::NetOptions { obey_bandwidth: false, detect_sleep: false, max_jobs: 1, max_jobs_per_domain: 1, network_timeout: 2, max_get_attempts: 1, max_connection_attempts: 1, ..Default::default() }).unwrap());
-                send.send(engine.clone()).unwrap();
-                let request = hydrus_net::Request::get(format!("http://{domain}/data"));
-                let fetch = engine.fetch(&request,&trigger);
-                tokio::pin!(fetch);
-                loop {
-                    tokio::select! {
-                        result = &mut fetch => { engine.publish_runtime().unwrap(); break result; },
-                        () = tokio::time::sleep(Duration::from_millis(25)) => { engine.publish_runtime().unwrap(); }
-                    }
-                }
-            })
+            tokio::runtime::Builder::new_current_thread()
+                .enable_all()
+                .build()
+                .unwrap()
+                .block_on(async move {
+                    let engine = Arc::new(
+                        hydrus_net::NetEngine::new(
+                            store,
+                            hydrus_net::NetOptions {
+                                obey_bandwidth: false,
+                                detect_sleep: false,
+                                max_jobs: 1,
+                                max_jobs_per_domain: 1,
+                                network_timeout: 2,
+                                max_get_attempts: 1,
+                                max_connection_attempts: 1,
+                                ..Default::default()
+                            },
+                        )
+                        .unwrap(),
+                    );
+                    send.send(engine.clone()).unwrap();
+                    let request = hydrus_net::Request::get(format!("http://{domain}/data"));
+                    engine.fetch(&request, &trigger).await
+                })
         }
     });
     let engine = receive.recv_timeout(Duration::from_secs(5)).unwrap();
     until_login(|| {
         engine.runtime_snapshot().login.is_some() && !site.requests.lock().unwrap().is_empty()
     });
-    engine.publish_runtime().unwrap();
+    let monitor_store = Store::open(store.dir()).unwrap();
     let slots = hydrus_gui::login_domains_window::Slots::default();
-    let first = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    let first = hydrus_gui::login_domains_window::open(&monitor_store, &slots).unwrap();
     assert!(first.get_running());
     assert!(
         first
@@ -2086,7 +2098,7 @@ fn reopened_domain_manager_monitors_and_cancels_actual_engine_owned_demand_proce
         engine.runtime_snapshot().login.is_some(),
         "closing the monitor preserves the engine-owned login"
     );
-    let window = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    let window = hydrus_gui::login_domains_window::open(&monitor_store, &slots).unwrap();
     assert!(window.get_running());
     let before = store.read(hydrus_store::logins::load).unwrap();
     window.invoke_action("delete".into());
@@ -2127,7 +2139,7 @@ fn reopened_domain_manager_monitors_and_cancels_actual_engine_owned_demand_proce
             .unwrap()
             .is_empty()
     );
-    let reopened = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    let reopened = hydrus_gui::login_domains_window::open(&monitor_store, &slots).unwrap();
     assert!(!reopened.get_running());
     assert!(
         reopened

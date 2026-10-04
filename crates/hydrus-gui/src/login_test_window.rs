@@ -229,17 +229,36 @@ impl RunSlot {
                         NetEngine::new(store.clone(), NetOptions::from_settings(&options))
                             .map_err(|e| e.to_string())?
                     };
-                    let execution = runtime.block_on(hydrus_net::login::execute_with_results(
-                        &engine,
-                        &store,
-                        &script,
-                        &domain,
-                        &credentials,
-                        &job,
-                        |result| {
-                            let _ = send.send(RunEvent::Result(result.clone()));
-                        },
-                    ));
+                    let observed = |result: &hydrus_net::login::TestResult| {
+                        let _ = send.send(RunEvent::Result(result.clone()));
+                    };
+                    let execution = if test {
+                        runtime.block_on(hydrus_net::login::execute_with_results(
+                            &engine,
+                            &store,
+                            &script,
+                            &domain,
+                            &credentials,
+                            &job,
+                            observed,
+                        ))
+                    } else {
+                        match runtime.block_on(engine.run_login_with_results(
+                            &script,
+                            &domain,
+                            &credentials,
+                            &job,
+                            observed,
+                        )) {
+                            Ok(execution) => execution,
+                            Err(hydrus_net::NetError::Cancelled) => Execution {
+                                results: Vec::new(),
+                                variables: BTreeMap::new(),
+                                outcome: Outcome::Cancelled,
+                            },
+                            Err(error) => return Err(error.to_string()),
+                        }
+                    };
                     engine.save_bandwidth().map_err(|e| e.to_string())?;
                     Ok(execution)
                 };

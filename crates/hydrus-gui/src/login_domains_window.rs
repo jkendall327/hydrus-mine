@@ -150,12 +150,10 @@ fn monitor_process(
     store: &Store,
     process: &RefCell<Option<(String, u64)>>,
 ) {
-    let snapshot = store
-        .read(hydrus_store::settings::get::<hydrus_store::network_runtime::Snapshot>)
-        .ok();
-    let active = snapshot
-        .filter(|snapshot| snapshot.fresh(jiff::Timestamp::now().as_second()))
-        .and_then(|snapshot| snapshot.login.map(|login| (login.epoch.clone(), login)));
+    let active = hydrus_store::login_runtime::current(store)
+        .ok()
+        .flatten()
+        .map(|login| (login.epoch.clone(), login));
     if !run.busy()
         && let Some((epoch, login)) = active
     {
@@ -269,7 +267,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
         if action=="cancel-login"{
             if run.busy(){run.cancel();}
             else if let Some((epoch, id))=process.borrow().clone(){
-                if let Err(error)=store.write(move |ctx|hydrus_store::network_runtime::send(ctx.conn(), hydrus_store::network_runtime::Command {epoch, job:id, action:hydrus_store::network_runtime::JobAction::CancelLogin})){window.set_error(error.to_string().into());}
+                if let Err(error)=hydrus_store::login_runtime::cancel(&store, epoch, id){window.set_error(error.to_string().into());}
             }
             return;
         }
