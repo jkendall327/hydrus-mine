@@ -7,6 +7,7 @@
 
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
+import { ExportPatternButton } from "export_pattern.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { Asking } from "subscriptions.slint";
 import { DurationField, TimeFields } from "options.slint";
@@ -484,9 +485,15 @@ export component ExportFolderWindow inherits Window {
     // why what was typed couldn't be added
     in property <string> error;
     in-out property <string> phrase;
+    in property <[string]> pattern-shortcuts;
+    in property <string> pattern-heading;
+    callback pattern-chosen(int);
     in-out property <bool> overwrite-next;
     in-out property <bool> overwrite-always;
     in property <string> sidecars;
+    in property <string> examples-label: "update test example files";
+    in property <bool> examples-enabled: true;
+    callback update-examples();
     // the sidecars button clicked
     callback edit-sidecars();
     in property <bool> asking;
@@ -608,7 +615,14 @@ export component ExportFolderWindow inherits Window {
                     }
                     Group {
                         title: "filenames";
-                        LineEdit { text <=> root.phrase; }
+                        HorizontalLayout {
+                            LineEdit { text <=> root.phrase; }
+                            ExportPatternButton {
+                                labels: root.pattern-shortcuts;
+                                heading: root.pattern-heading;
+                                selected(index) => { root.pattern-chosen(index); }
+                            }
+                        }
                     }
                     Group {
                         title: "sidecar exporting";
@@ -624,6 +638,11 @@ export component ExportFolderWindow inherits Window {
                         Button {
                             text: root.sidecars;
                             clicked => { root.edit-sidecars(); }
+                        }
+                        Button {
+                            text: root.examples-label;
+                            enabled: root.examples-enabled;
+                            clicked => { root.update-examples(); }
                         }
                     }
                 }

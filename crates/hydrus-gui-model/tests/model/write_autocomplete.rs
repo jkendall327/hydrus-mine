@@ -617,9 +617,11 @@ fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
                 }
             }
             Action::Domain(..) | Action::Locations(..) => {
-                panic!("unexpected domain action in tag menu replay")
+                panic!("unexpected domain action in tag menu replay");
             }
-            Action::Relationship { .. } => panic!("unexpected relationship action in menu replay"),
+            Action::Relationship { .. } | Action::LaunchMany { .. } => {
+                panic!("unexpected relationship or multiple-page action in write-menu replay");
+            }
             Action::Launch {
                 location,
                 context,

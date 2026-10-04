@@ -1,0 +1,2479 @@
+{
+  "initial": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+  "canvas": [
+    1000,
+    750
+  ],
+  "notes": {
+    "alpha": "synthetic first background note",
+    "zeta": "synthetic second background note"
+  },
+  "events": [
+    {
+      "values": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "hovers_enabled": false,
+      "calls": [],
+      "draws": [],
+      "visible_pixels": 0,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "Notes",
+          "input_y": 0
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            6,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            23,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            42,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            59,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 1840,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        }
+      ],
+      "visible_pixels": 1519,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        },
+        {
+          "kind": "Notes",
+          "input_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            105,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            122,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            141,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            158,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 3359,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        true,
+        false,
+        false
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "TopMiddle"
+        }
+      ],
+      "draws": [
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        }
+      ],
+      "visible_pixels": 1529,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        true,
+        false,
+        true
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "TopMiddle"
+        },
+        {
+          "kind": "Notes",
+          "input_y": 0
+        }
+      ],
+      "draws": [
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            6,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            23,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            42,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            59,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 3369,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "TopMiddle"
+        },
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        }
+      ],
+      "visible_pixels": 3048,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "TopMiddle"
+        },
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        },
+        {
+          "kind": "Notes",
+          "input_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            105,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            122,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            141,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            158,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 4888,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "Tags"
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        }
+      ],
+      "visible_pixels": 939,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "Tags"
+        },
+        {
+          "kind": "Notes",
+          "input_y": 0
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            6,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            23,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            42,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            59,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 2779,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        false,
+        true,
+        false
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "Tags"
+        },
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        }
+      ],
+      "visible_pixels": 2458,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "Tags"
+        },
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        },
+        {
+          "kind": "Notes",
+          "input_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            105,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            122,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            141,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            158,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 4298,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "Tags"
+        },
+        {
+          "kind": "TopMiddle"
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        }
+      ],
+      "visible_pixels": 2468,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "Tags"
+        },
+        {
+          "kind": "TopMiddle"
+        },
+        {
+          "kind": "Notes",
+          "input_y": 0
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            6,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            23,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            42,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            59,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 4308,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "Tags"
+        },
+        {
+          "kind": "TopMiddle"
+        },
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        }
+      ],
+      "visible_pixels": 3987,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "hovers_enabled": false,
+      "calls": [
+        {
+          "kind": "Tags"
+        },
+        {
+          "kind": "TopMiddle"
+        },
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        },
+        {
+          "kind": "Notes",
+          "input_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            105,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            122,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            141,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            158,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 5827,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "hovers_enabled": true,
+      "calls": [],
+      "draws": [],
+      "visible_pixels": 0,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "Notes",
+          "input_y": 0
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            6,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            23,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            42,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            59,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 1840,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        }
+      ],
+      "visible_pixels": 1519,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        },
+        {
+          "kind": "Notes",
+          "input_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            105,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            122,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            141,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            158,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 3359,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        true,
+        false,
+        false
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "TopMiddle"
+        }
+      ],
+      "draws": [
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        }
+      ],
+      "visible_pixels": 1529,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        true,
+        false,
+        true
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "TopMiddle"
+        },
+        {
+          "kind": "Notes",
+          "input_y": 0
+        }
+      ],
+      "draws": [
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            6,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            23,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            42,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            59,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 3369,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "TopMiddle"
+        },
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        }
+      ],
+      "visible_pixels": 3048,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "TopMiddle"
+        },
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        },
+        {
+          "kind": "Notes",
+          "input_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            105,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            122,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            141,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            158,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 4888,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "Tags"
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        }
+      ],
+      "visible_pixels": 939,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "Tags"
+        },
+        {
+          "kind": "Notes",
+          "input_y": 0
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            6,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            23,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            42,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            59,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 2779,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        false,
+        true,
+        false
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "Tags"
+        },
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        }
+      ],
+      "visible_pixels": 2458,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "Tags"
+        },
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        },
+        {
+          "kind": "Notes",
+          "input_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            105,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            122,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            141,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            158,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 4298,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "Tags"
+        },
+        {
+          "kind": "TopMiddle"
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        }
+      ],
+      "visible_pixels": 2468,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "Tags"
+        },
+        {
+          "kind": "TopMiddle"
+        },
+        {
+          "kind": "Notes",
+          "input_y": 0
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            6,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            23,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            42,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            59,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 4308,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "Tags"
+        },
+        {
+          "kind": "TopMiddle"
+        },
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        }
+      ],
+      "visible_pixels": 3987,
+      "opaque_cover_pixels": 0
+    },
+    {
+      "values": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "hovers_enabled": true,
+      "calls": [
+        {
+          "kind": "Tags"
+        },
+        {
+          "kind": "TopMiddle"
+        },
+        {
+          "kind": "TopRight",
+          "output_y": 99
+        },
+        {
+          "kind": "Notes",
+          "input_y": 99
+        }
+      ],
+      "draws": [
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            5.0,
+            108.0,
+            15.0
+          ],
+          "text": "meta:low resolution"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            19.0,
+            65.0,
+            15.0
+          ],
+          "text": "format:jpeg"
+        },
+        {
+          "kind": "Tags",
+          "rect": [
+            7.0,
+            33.0,
+            38.0,
+            15.0
+          ],
+          "text": "page:3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            492.0,
+            3.0,
+            15.0,
+            15.0
+          ],
+          "text": "p3"
+        },
+        {
+          "kind": "TopMiddle",
+          "rect": [
+            329.0,
+            21.0,
+            341.0,
+            15.0
+          ],
+          "text": "1.7 KB jpeg (64x48) | 1562.50% | imported: 4 days 18 hours ago"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            970,
+            42,
+            23,
+            11
+          ],
+          "text": "0"
+        },
+        {
+          "kind": "TopRight",
+          "rect": [
+            953.0,
+            80.0,
+            43.0,
+            15.0
+          ],
+          "text": "my files"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            884,
+            105,
+            32,
+            15
+          ],
+          "text": "alpha"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            122,
+            192,
+            15
+          ],
+          "text": "synthetic first background note"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            887,
+            141,
+            26,
+            15
+          ],
+          "text": "zeta"
+        },
+        {
+          "kind": "Notes",
+          "rect": [
+            804,
+            158,
+            192,
+            15
+          ],
+          "text": "synthetic second background note"
+        }
+      ],
+      "visible_pixels": 5827,
+      "opaque_cover_pixels": 0
+    }
+  ]
+}

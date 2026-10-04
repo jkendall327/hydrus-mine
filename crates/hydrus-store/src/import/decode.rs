@@ -112,6 +112,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &pauses)?;
+    let boot = options
+        .as_ref()
+        .and_then(|o| o.booleans.get("boot_with_network_traffic_paused"))
+        .copied()
+        .unwrap_or(false);
+    insert_setting(&mut input, &crate::settings::NetworkBootPause(boot))?;
     if let Some(&advanced) = options
         .as_ref()
         .and_then(|o| o.booleans.get("advanced_mode"))
@@ -220,6 +226,57 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         .unwrap_or_default();
     insert_setting(&mut input, &insertion)?;
     insert_setting(&mut input, &notebook_creation)?;
+    let mut page_chooser = crate::settings::PageChooserSettings::default();
+    if let Some(options) = &options {
+        for (key, target) in [
+            (
+                "show_all_my_files_on_page_chooser",
+                &mut page_chooser.show_combined,
+            ),
+            (
+                "show_all_my_files_on_page_chooser_at_top",
+                &mut page_chooser.combined_at_top,
+            ),
+            (
+                "show_local_files_on_page_chooser",
+                &mut page_chooser.show_storage,
+            ),
+            (
+                "show_local_files_on_page_chooser_at_top",
+                &mut page_chooser.storage_at_top,
+            ),
+        ] {
+            if let Some(&value) = options.booleans.get(key) {
+                *target = value;
+            }
+        }
+    }
+    insert_setting(&mut input, &page_chooser)?;
+    let mut navigation = crate::settings::PageNavigationSettings::default();
+    if let Some(options) = &options {
+        navigation.confirm_all_closes = options
+            .booleans
+            .get("confirm_all_page_closes")
+            .copied()
+            .unwrap_or(false);
+        navigation.focus_search_on_change = options
+            .booleans
+            .get("set_search_focus_on_page_change")
+            .copied()
+            .unwrap_or(false);
+        if let Some(&value) = options.integers.get("page_nav_history_max_entries") {
+            navigation.history_entries = u16::try_from(value.clamp(1, 1000)).unwrap_or(100);
+        }
+    }
+    insert_setting(&mut input, &navigation)?;
+    let import_ui = crate::settings::ImportOptionsUiSettings {
+        simple: options
+            .as_ref()
+            .and_then(|options| options.booleans.get("import_options_simple_mode"))
+            .copied()
+            .unwrap_or(true),
+    };
+    insert_setting(&mut input, &import_ui)?;
     let mut lifecycle = crate::settings::GuiSessionSettings::default();
     if let Some(value) = legacy_options.get("default_gui_session") {
         lifecycle.startup = value
@@ -516,6 +573,13 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             int("subscription_network_error_delay").unwrap_or(n.subscription_network_error_delay);
         n.subscription_other_error_delay =
             int("subscription_other_error_delay").unwrap_or(n.subscription_other_error_delay);
+        if let Some(threshold) = options
+            .noneable_integers
+            .get("subscription_file_error_cancel_threshold")
+        {
+            n.subscription_file_error_cancel_threshold =
+                threshold.and_then(|value| u64::try_from(value).ok());
+        }
         n.process_subs_in_random_order =
             boolean("process_subs_in_random_order").unwrap_or(n.process_subs_in_random_order);
         n.max_simultaneous_subscriptions =
@@ -680,6 +744,62 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             viewer_canvas.seek_nub_width = (*value).clamp(1, 63) as u32;
         }
         insert_setting(&mut input, &viewer_canvas)?;
+        let mut viewer_cursor = crate::settings::ViewerCursorSettings::default();
+        if let Some(value) = options
+            .noneable_integers
+            .get("media_viewer_cursor_autohide_time_ms")
+        {
+            viewer_cursor.autohide_ms = value.map(|delay| delay.clamp(100, 100000) as u32);
+        }
+        insert_setting(&mut input, &viewer_cursor)?;
+        let mut viewer_background = crate::settings::ViewerBackgroundSettings::default();
+        for (key, target) in [
+            (
+                "draw_tags_hover_in_media_viewer_background",
+                &mut viewer_background.tags,
+            ),
+            (
+                "draw_top_hover_in_media_viewer_background",
+                &mut viewer_background.information,
+            ),
+            (
+                "draw_top_right_hover_in_media_viewer_background",
+                &mut viewer_background.ratings,
+            ),
+            (
+                "draw_notes_hover_in_media_viewer_background",
+                &mut viewer_background.notes,
+            ),
+        ] {
+            if let Some(&value) = options.booleans.get(key) {
+                *target = value;
+            }
+        }
+        insert_setting(&mut input, &viewer_background)?;
+        let mut viewer_closing = crate::settings::ViewerClosingSettings::default();
+        for (key, field) in [
+            (
+                "focus_media_tab_on_viewer_close_if_possible",
+                &mut viewer_closing.reselect_page,
+            ),
+            (
+                "focus_media_thumb_on_viewer_close",
+                &mut viewer_closing.select_exit_media,
+            ),
+            (
+                "activate_main_gui_on_focusing_viewer_close",
+                &mut viewer_closing.activate_focusing,
+            ),
+            (
+                "activate_main_gui_on_viewer_close",
+                &mut viewer_closing.activate_always,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        insert_setting(&mut input, &viewer_closing)?;
         let mut viewer_focus = crate::settings::ViewerFocusSettings::default();
         for (key, field) in [
             (
@@ -2552,6 +2672,68 @@ mod tests {
     }
 
     #[test]
+    fn subscription_file_failure_threshold_imports_none_and_number() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<crate::network::NetworkSettings>(
+                input.settings["network"].clone(),
+            )
+            .unwrap()
+            .subscription_file_error_cancel_threshold
+        };
+        assert_eq!(decoded(), Some(5));
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, 5]]"#,
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, null]]"#,
+            )],
+        );
+        assert_eq!(decoded(), None);
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, null]]"#,
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, 19]]"#,
+            )],
+        );
+        assert_eq!(decoded(), Some(19));
+    }
+
+    #[test]
+    fn network_boot_preference_converts_without_changing_live_pause() {
+        use crate::settings::{NetworkBootPause, Pauses};
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        assert_eq!(
+            decoded().settings["boot_with_network_traffic_paused"],
+            false
+        );
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "boot_with_network_traffic_paused"], [0, false]]"#,
+                r#"[[0, "boot_with_network_traffic_paused"], [0, true]]"#,
+            )],
+        );
+        let input = decoded();
+        let boot: NetworkBootPause =
+            serde_json::from_value(input.settings["boot_with_network_traffic_paused"].clone())
+                .unwrap();
+        assert!(boot.0);
+        let pauses: Pauses = serde_json::from_value(input.settings["pauses"].clone()).unwrap();
+        let before: Pauses = serde_json::from_value(
+            decode_input(&LegacyDb::open(hydrus_testkit::legacy_fixture("basic").path()).unwrap())
+                .unwrap()
+                .settings["pauses"]
+                .clone(),
+        )
+        .unwrap();
+        assert_eq!(pauses, before, "import does not apply a boot action");
+    }
+
+    #[test]
     fn tag_dialog_defaults_import_independently_of_autocomplete_defaults() {
         use crate::tag_editing::TagEditingSettings;
         let source = hydrus_testkit::legacy_fixture("basic");
@@ -2893,6 +3075,122 @@ mod tests {
                 seek_height: 37,
                 seek_hidden_height: None,
                 seek_nub_width: 19
+            }
+        );
+    }
+
+    #[test]
+    fn cursor_autohide_import_preserves_timeout_and_do_not_hide() {
+        use crate::settings::ViewerCursorSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerCursorSettings>(input.settings["viewer_cursor"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), ViewerCursorSettings::default());
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "media_viewer_cursor_autohide_time_ms"], [0, 700]]"#,
+                r#"[[0, "media_viewer_cursor_autohide_time_ms"], [0, 1250]]"#,
+            )],
+        );
+        assert_eq!(decoded().autohide_ms, Some(1250));
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "media_viewer_cursor_autohide_time_ms"], [0, 1250]]"#,
+                r#"[[0, "media_viewer_cursor_autohide_time_ms"], [0, null]]"#,
+            )],
+        );
+        assert_eq!(decoded().autohide_ms, None);
+    }
+
+    #[test]
+    fn passive_background_options_import_each_draw_key() {
+        use crate::settings::ViewerBackgroundSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerBackgroundSettings>(
+                input.settings["viewer_background"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), ViewerBackgroundSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "draw_tags_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_tags_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_top_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_top_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_top_right_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_top_right_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_notes_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_notes_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerBackgroundSettings {
+                tags: false,
+                information: false,
+                ratings: false,
+                notes: false
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_closing_options_import_each_independent_preference() {
+        use crate::settings::ViewerClosingSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerClosingSettings>(
+                input.settings["viewer_closing"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), ViewerClosingSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "focus_media_tab_on_viewer_close_if_possible"], [0, false]]"#,
+                    r#"[[0, "focus_media_tab_on_viewer_close_if_possible"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "focus_media_thumb_on_viewer_close"], [0, true]]"#,
+                    r#"[[0, "focus_media_thumb_on_viewer_close"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "activate_main_gui_on_focusing_viewer_close"], [0, false]]"#,
+                    r#"[[0, "activate_main_gui_on_focusing_viewer_close"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "activate_main_gui_on_viewer_close"], [0, false]]"#,
+                    r#"[[0, "activate_main_gui_on_viewer_close"], [0, true]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerClosingSettings {
+                reselect_page: true,
+                select_exit_media: false,
+                activate_focusing: true,
+                activate_always: true
             }
         );
     }

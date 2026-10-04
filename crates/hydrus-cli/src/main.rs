@@ -504,6 +504,11 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         }
     };
     say(ClientApiState::Starting);
+    // An attached daemon belongs to an already-booted GUI; restarting it
+    // must not undo a live Resume. Standalone serve is its own client boot.
+    if !attached {
+        hydrus_store::settings::apply_network_boot_pause(&store)?;
+    }
     let state = AppState::new(store.clone())?;
     let runtime = tokio::runtime::Runtime::new()?;
     runtime.block_on(async move {

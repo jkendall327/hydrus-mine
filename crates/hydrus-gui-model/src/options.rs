@@ -32,7 +32,8 @@ use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FavouriteTags, FileHandlingSettings, FileSearchSettings,
     FileViewingStatistics, FolderSettings, GuiSettings, NotebookCreationSettings,
     OptionsPreferences, PageSettings, SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
-    ViewerCanvasSettings, ViewerFocusSettings, ViewerHoverSettings, ViewerPointerSettings,
+    ViewerBackgroundSettings, ViewerCanvasSettings, ViewerClosingSettings, ViewerCursorSettings,
+    ViewerFocusSettings, ViewerHoverSettings, ViewerPointerSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -86,11 +87,15 @@ settings! {
     gui: GuiSettings,
     gui_sessions: hydrus_store::settings::GuiSessionSettings,
     info_line: InfoLineSettings,
+    import_options: hydrus_core::import_options::ImportOptionsManager,
+    import_options_ui: hydrus_store::settings::ImportOptionsUiSettings,
     media_viewer: MediaViewerSettings,
     network: NetworkSettings,
     notebooks: NotebookSettings,
     notebook_creation: NotebookCreationSettings,
     page_insertion: hydrus_store::settings::PageInsertion,
+    page_chooser: hydrus_store::settings::PageChooserSettings,
+    page_navigation: hydrus_store::settings::PageNavigationSettings,
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
@@ -112,9 +117,12 @@ settings! {
     url_classes: UrlClassSettings,
     windows: WindowSettings,
     viewer_canvas: ViewerCanvasSettings,
+    viewer_background: ViewerBackgroundSettings,
     viewer_hovers: ViewerHoverSettings,
     viewer_pointer: ViewerPointerSettings,
     viewer_focus: ViewerFocusSettings,
+    viewer_closing: ViewerClosingSettings,
+    viewer_cursor: ViewerCursorSettings,
 }
 
 /// An option's value as its control holds it.
@@ -129,6 +137,7 @@ pub enum Value {
     /// The index of the item chosen.
     Choice(usize),
     SavedSession(Option<String>),
+    GallerySource(Option<crate::gallery_source::KeyAndName>),
     Text(String),
     /// Text, or none (the reference's `NoneableTextCtrl`); the text is
     /// kept while none, as its text box keeps it.
@@ -153,6 +162,7 @@ pub enum Value {
     RegexFavourites(RegexFavourites),
     /// Shared favourite tags, staged until the parent options dialog applies.
     FavouriteTags(FavouriteTags),
+    ImportOptions(crate::import_options_panel::Value),
     TagService(hydrus_core::ServiceKey),
     Location(hydrus_core::search::context::LocationContext),
 }
@@ -180,6 +190,7 @@ pub enum Kind {
     Choice(&'static [&'static str]),
     /// Named GUI sessions plus the blank-page startup choice.
     SavedSession,
+    GallerySource,
     Text,
     NoneableText {
         none_phrase: &'static str,
@@ -212,6 +223,8 @@ pub enum Kind {
     LocalLocation,
     /// A detached tag list editor sharing write autocomplete.
     FavouriteTags,
+    /// The transactional manager page, including simple-mode presentation.
+    ImportOptions,
     /// Real tag services, optionally including all known tags.
     TagService {
         combined: bool,
@@ -1069,6 +1082,18 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "gallery downloader",
                     vec![
+                        opt(
+                            "Default download source:",
+                            Kind::GallerySource,
+                            Rc::new(|s| Value::GallerySource(s.gallery.gug.clone())),
+                            Rc::new(|s, v| match v {
+                                Value::GallerySource(value) => {
+                                    s.gallery.gug.clone_from(value);
+                                    Ok(())
+                                }
+                                _ => Err("expected a gallery source".into()),
+                            }),
+                        ),
                         int(
                             "Additional fixed time (in seconds) to wait between gallery page fetches:",
                             (1, 3600),
@@ -1101,6 +1126,15 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             (1, 3600),
                             |s| s.bandwidth.gallery_page_wait_subscriptions,
                             |s, v| s.bandwidth.gallery_page_wait_subscriptions = v,
+                        ),
+                        noneable(
+                            "If a subscription has this many failed file imports, stop and continue later:",
+                            none("no limit", 5, (1, 1_000_000), Some("errors")),
+                            |s| signed(s.network.subscription_file_error_cancel_threshold),
+                            |s, value| {
+                                s.network.subscription_file_error_cancel_threshold =
+                                    unsigned(value);
+                            },
                         ),
                         check(
                             "Sync subscriptions in random order:",
@@ -1573,6 +1607,26 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                     .unwrap_or_default();
                             },
                         ),
+                        check(
+                            "In new page chooser, show \"combined local file domains\" if appropriate:",
+                            |s| s.page_chooser.show_combined,
+                            |s, v| s.page_chooser.show_combined = v,
+                        ),
+                        check(
+                            "  Put it at the top:",
+                            |s| s.page_chooser.combined_at_top,
+                            |s, v| s.page_chooser.combined_at_top = v,
+                        ),
+                        check(
+                            "In new page chooser, show \"hydrus local file storage\":",
+                            |s| s.page_chooser.show_storage,
+                            |s, v| s.page_chooser.show_storage = v,
+                        ),
+                        check(
+                            "  Put it at the top:",
+                            |s| s.page_chooser.storage_at_top,
+                            |s, v| s.page_chooser.storage_at_top = v,
+                        ),
                         choice(
                             "When closing the current tab, move focus: ",
                             &[
@@ -1583,9 +1637,32 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s, value| s.notebooks.close_focus_left = value == 0,
                         ),
                         check(
+                            "Confirm when closing any page: ",
+                            |s| s.page_navigation.confirm_all_closes,
+                            |s, v| s.page_navigation.confirm_all_closes = v,
+                        ),
+                        check(
                             "Confirm when closing a non-empty importer page: ",
                             |s| s.downloader_pages.confirm_non_empty_close,
                             |s, v| s.downloader_pages.confirm_non_empty_close = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "navigation and drag-and-drop",
+                    vec![
+                        int(
+                            "Maximum entries to show in page navigation history: ",
+                            (1, 1000),
+                            |s| i64::from(s.page_navigation.history_entries),
+                            |s, v| {
+                                s.page_navigation.history_entries = u16::try_from(v).unwrap_or(100);
+                            },
+                        ),
+                        check(
+                            "When switching to pages, move keyboard focus to any text input field: ",
+                            |s| s.page_navigation.focus_search_on_change,
+                            |s, v| s.page_navigation.focus_search_on_change = v,
                         ),
                     ],
                 ),
@@ -1678,6 +1755,27 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         |s, value| s.gui_sessions.warn_large_session = value,
                     ),
                 ],
+            )],
+        ),
+        page(
+            "import options",
+            vec![opt(
+                "",
+                Kind::ImportOptions,
+                Rc::new(|settings| {
+                    Value::ImportOptions(crate::import_options_panel::Value {
+                        manager: settings.import_options.clone(),
+                        ui: settings.import_options_ui.clone(),
+                    })
+                }),
+                Rc::new(|settings, value| match value {
+                    Value::ImportOptions(value) => {
+                        settings.import_options = value.manager.clone();
+                        settings.import_options_ui = value.ui.clone();
+                        Ok(())
+                    }
+                    _ => Err(wrong("import options")),
+                }),
             )],
         ),
         page(
@@ -1844,6 +1942,15 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "mouse behaviour",
                     vec![
+                        noneable(
+                            "Time until mouse cursor autohides on media viewer:",
+                            none("do not autohide", 700, (100, 100000), Some("ms")),
+                            |settings| settings.viewer_cursor.autohide_ms.map(i64::from),
+                            |settings, value| {
+                                settings.viewer_cursor.autohide_ms =
+                                    value.map(|delay| delay as u32);
+                            },
+                        ),
                         check(
                             "Do not allow mouse media drag-panning when the media has duration:",
                             |settings| settings.viewer_pointer.disallow_duration_drag,
@@ -1935,6 +2042,35 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                     ],
                 ),
+                boxed(
+                    "closing focus",
+                    vec![
+                        check(
+                            "When closing the media viewer, re-select original search page: ",
+                            |settings| settings.viewer_closing.reselect_page,
+                            |settings, value| settings.viewer_closing.reselect_page = value,
+                        ),
+                        check(
+                            "When closing the media viewer, tell original search page to select exit media: ",
+                            |settings| settings.viewer_closing.select_exit_media,
+                            |settings, value| {
+                                settings.viewer_closing.select_exit_media = value;
+                            },
+                        ),
+                        check(
+                            "ADVANCED: When closing the media viewer with the above focusing options, activate Main GUI: ",
+                            |settings| settings.viewer_closing.activate_focusing,
+                            |settings, value| {
+                                settings.viewer_closing.activate_focusing = value;
+                            },
+                        ),
+                        check(
+                            "DEBUG: When closing the media viewer at any time, activate Main GUI: ",
+                            |settings| settings.viewer_closing.activate_always,
+                            |settings, value| settings.viewer_closing.activate_always = value,
+                        ),
+                    ],
+                ),
             ],
         ),
         page(
@@ -1942,11 +2078,33 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             vec![
                 boxed(
                     "background",
-                    vec![check(
-                        "Draw index text (bottom-right) in the viewer background:",
-                        |settings| settings.viewer_hovers.index_background,
-                        |settings, value| settings.viewer_hovers.index_background = value,
-                    )],
+                    vec![
+                        check(
+                            "Draw tags (left) in the viewer background:",
+                            |settings| settings.viewer_background.tags,
+                            |settings, value| settings.viewer_background.tags = value,
+                        ),
+                        check(
+                            "Draw file information (top) in the viewer background:",
+                            |settings| settings.viewer_background.information,
+                            |settings, value| settings.viewer_background.information = value,
+                        ),
+                        check(
+                            "Draw ratings and locations (top-right) in the viewer background:",
+                            |settings| settings.viewer_background.ratings,
+                            |settings, value| settings.viewer_background.ratings = value,
+                        ),
+                        check(
+                            "Draw notes (right) in the viewer background:",
+                            |settings| settings.viewer_background.notes,
+                            |settings, value| settings.viewer_background.notes = value,
+                        ),
+                        check(
+                            "Draw index text (bottom-right) in the viewer background:",
+                            |settings| settings.viewer_hovers.index_background,
+                            |settings, value| settings.viewer_hovers.index_background = value,
+                        ),
+                    ],
                 ),
                 boxed(
                     "hover windows",
@@ -2882,6 +3040,27 @@ impl Editor {
         }
     }
 
+    /// The staged default downloader pair, independent of the selected page.
+    pub fn edited_gallery_source(&self) -> Option<crate::gallery_source::KeyAndName> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| match value {
+                Value::GallerySource(current) => Some(current.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.gallery.gug.clone())
+    }
+
+    pub fn set_gallery_source(&mut self, current: Option<crate::gallery_source::KeyAndName>) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::GallerySource(_)) {
+                *value = Value::GallerySource(current);
+                return;
+            }
+        }
+    }
+
     /// The current favourites draft, independent of the selected options page.
     pub fn edited_regex_favourites(&self) -> RegexFavourites {
         self.values
@@ -2902,6 +3081,32 @@ impl Editor {
         for value in self.values.iter_mut().flatten() {
             if matches!(value, Value::RegexFavourites(_)) {
                 *value = Value::RegexFavourites(favourites);
+                return;
+            }
+        }
+    }
+
+    /// All defaults/profiles and their presentation preference, staged together.
+    pub fn edited_import_options(&self) -> crate::import_options_panel::Value {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| {
+                if let Value::ImportOptions(value) = value {
+                    Some(value.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| crate::import_options_panel::Value {
+                manager: self.before.import_options.clone(),
+                ui: self.before.import_options_ui.clone(),
+            })
+    }
+    pub fn set_import_options(&mut self, draft: crate::import_options_panel::Value) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::ImportOptions(_)) {
+                *value = Value::ImportOptions(draft);
                 return;
             }
         }

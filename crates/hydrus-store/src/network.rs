@@ -544,6 +544,8 @@ pub struct NetworkSettings {
     pub downloader_network_error_delay: u64,
     pub subscription_network_error_delay: i64,
     pub subscription_other_error_delay: i64,
+    /// Non-DataMissing file failures allowed per sync; None never abandons.
+    pub subscription_file_error_cancel_threshold: Option<u64>,
     pub process_subs_in_random_order: bool,
     pub max_simultaneous_subscriptions: u32,
     /// `replace_percent_twenty_with_space_in_gug_input`.
@@ -573,6 +575,7 @@ impl Default for NetworkSettings {
             downloader_network_error_delay: 90 * 60,
             subscription_network_error_delay: 12 * 3600,
             subscription_other_error_delay: 36 * 3600,
+            subscription_file_error_cancel_threshold: Some(5),
             process_subs_in_random_order: true,
             max_simultaneous_subscriptions: 1,
             gug_percent_twenty_is_space: false,

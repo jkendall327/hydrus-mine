@@ -291,3 +291,143 @@ fn text_fields_read_and_write_lists_and_renames() {
     );
     assert_eq!(renames_text(&renames), "comment -> artist comment");
 }
+
+#[test]
+fn defaults_editor_uses_parent_stack_and_retains_hidden_custom_kinds() {
+    use hydrus_core::import_options::UrlClassKind;
+    use hydrus_gui_model::import_options_editor::{Editor, default_kinds};
+    let mut manager = ImportOptionsManager::default();
+    let post = manager
+        .caller_default(CallerType::PostUrls)
+        .unwrap()
+        .clone();
+    let empty = ImportOptionsSlice::default();
+    let editor = Editor::new_for_defaults(&manager, CallerType::PostUrls, true, &post, &[]);
+    assert_eq!(editor.source(Kind::Tags), "global");
+    assert_eq!(editor.source(Kind::Notes), "global");
+    assert!(!editor.kinds.contains(&Kind::Prefetch));
+    let url = Editor::new_for_defaults(
+        &manager,
+        CallerType::UrlClass,
+        true,
+        &empty,
+        &[("site".into(), UrlClassKind::Other)],
+    );
+    assert_eq!(url.source(Kind::Tags), "gallery/post urls");
+    let watch = Editor::new_for_defaults(
+        &manager,
+        CallerType::UrlClass,
+        true,
+        &empty,
+        &[("thread".into(), UrlClassKind::Watchable)],
+    );
+    assert_eq!(watch.source(Kind::Tags), "watchable urls");
+    assert_ne!(url.values.tags, watch.values.tags);
+    manager.url_class_defaults.push((
+        "thread".into(),
+        ImportOptionsSlice {
+            notes: Some(NoteImportOptions {
+                get_notes: false,
+                ..NoteImportOptions::default()
+            }),
+            ..ImportOptionsSlice::default()
+        },
+    ));
+    let watch = Editor::new_for_defaults(
+        &manager,
+        CallerType::UrlClass,
+        true,
+        &empty,
+        &[("thread".into(), UrlClassKind::Watchable)],
+    );
+    assert!(watch.values.notes.as_ref().unwrap().get_notes);
+    assert_eq!(watch.source(Kind::Notes), "global");
+    let custom = ImportOptionsSlice {
+        notes: Some(NoteImportOptions::default()),
+        ..ImportOptionsSlice::default()
+    };
+    assert_eq!(
+        default_kinds(CallerType::Subscription, true, &custom),
+        [Kind::Locations, Kind::Presentation, Kind::Notes]
+    );
+    let importer = Editor::new(&manager, CallerType::Subscription, true, &empty);
+    assert_eq!(importer.kinds.len(), 8);
+    let fixture = hydrus_testkit::fixture_json("import_options_panel.json");
+    for step in fixture["steps"].as_array().unwrap() {
+        let Some(call) = step["calls"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|call| call["kinds"].is_array())
+        else {
+            continue;
+        };
+        let caller = match step["action"].as_str().unwrap() {
+            "_EditDefault" => CallerType::PostUrls,
+            "_EditURLClass" => CallerType::UrlClass,
+            _ => CallerType::Favourites,
+        };
+        assert_eq!(
+            serde_json::json!(
+                default_kinds(caller, true, &empty)
+                    .iter()
+                    .map(|kind| kind.code())
+                    .collect::<Vec<_>>()
+            ),
+            call["kinds"]
+        );
+    }
+}
+
+#[test]
+fn caller_defaults_lists_and_fallback_labels_match_real_reference_editors() {
+    use hydrus_core::import_options::UrlClassKind;
+    use hydrus_gui_model::import_options_editor::Editor;
+    let manager = ImportOptionsManager::default();
+    let fixture = hydrus_testkit::fixture_json("import_options_panel.json");
+    for case in fixture["editors"].as_array().unwrap() {
+        let caller = CallerType::from_code(case["caller"].as_i64().unwrap()).unwrap();
+        let urls = case["url_keys"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|key| {
+                let key = key.as_str().unwrap().to_owned();
+                let kind = if key.starts_with("02") {
+                    UrlClassKind::Watchable
+                } else {
+                    UrlClassKind::Other
+                };
+                (key, kind)
+            })
+            .collect::<Vec<_>>();
+        let own = manager.caller_default(caller).cloned().unwrap_or_default();
+        let editor = Editor::new_for_defaults(
+            &manager,
+            caller,
+            case["simple"].as_bool().unwrap(),
+            &own,
+            &urls,
+        );
+        assert_eq!(
+            serde_json::json!(
+                editor
+                    .kinds
+                    .iter()
+                    .map(|kind| kind.code())
+                    .collect::<Vec<_>>()
+            ),
+            case["kinds"]
+        );
+        assert_eq!(
+            serde_json::json!(
+                editor
+                    .kinds
+                    .iter()
+                    .map(|&kind| editor.source(kind))
+                    .collect::<Vec<_>>()
+            ),
+            case["sources"]
+        );
+    }
+}

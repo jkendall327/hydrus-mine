@@ -1035,7 +1035,7 @@ fn open_editor(
                         e.subsidiary_selection.select_many(&added); e.subsidiary_selected = e.subsidiary_selection.one();
                         drop(e); refresh(); Ok(())
                     }});
-                    let child = crate::downloader_interchange_window::open_subsidiaries(&slots.exchange, action == "import-subsidiary", parsers, preview, applied)?;
+                    let child = crate::downloader_interchange_window::open_subsidiaries_with_store(&store,&slots.exchange, action == "import-subsidiary", parsers, preview, applied)?;
                     let refresh = refresh.clone(); child.on_closed(move || refresh());
                 }
                 "duplicate-subsidiary" => {
@@ -1203,6 +1203,7 @@ fn show_list(w: &ParserListWindow, s: &mut ListState, slots: &Slots) {
     w.set_selected(!s.selection.in_order(&s.order).is_empty());
     w.set_child_open(slots.page.borrow().is_some() || slots.exchange.has_open());
     w.set_parser_choices(strings(s.draft.parsers.iter().map(|p| p.name.clone())));
+    w.set_gaps_exist(s.links && s.draft.gaps_exist());
 }
 /// Open either named page parsers or direct URL-class links on native settings.
 pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserListWindow, String> {
@@ -1335,6 +1336,56 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
             refresh();
         }
     });
+    let mut api_pairs = {
+        let state = state.borrow();
+        let draft = &state.draft;
+        draft
+            .api_pairs()
+            .into_iter()
+            .map(|(source, target)| {
+                vec![
+                    draft.classes.url_classes[source].name.clone(),
+                    draft.classes.url_classes[target].name.clone(),
+                ]
+            })
+            .collect::<Vec<_>>()
+    };
+    api_pairs.sort();
+    w.set_api_columns(ModelRc::new(VecModel::from(
+        ["url class", "api/redirect url class"]
+            .into_iter()
+            .map(|title| TableColumn {
+                title: title.into(),
+                width: 400.,
+                stretch: true,
+            })
+            .collect::<Vec<_>>(),
+    )));
+    w.set_api_rows(table(api_pairs.iter().cloned().map(|row| (row, false))));
+    w.on_api_sort({
+        let weak = w.as_weak();
+        let active = active.clone();
+        let rows = Rc::new(RefCell::new(api_pairs));
+        move |column, ascending| {
+            if !active.get() {
+                return;
+            }
+            let Ok(column) = usize::try_from(column) else {
+                return;
+            };
+            if column > 1 {
+                return;
+            }
+            let mut rows = rows.borrow_mut();
+            rows.sort_by(|a, b| {
+                let order = a[column].cmp(&b[column]);
+                if ascending { order } else { order.reverse() }
+            });
+            if let Some(w) = weak.upgrade() {
+                w.set_api_rows(table(rows.iter().cloned().map(|row| (row, false))));
+            }
+        }
+    });
     w.on_action({
         let weak = w.as_weak();
         let state = state.clone();
@@ -1375,8 +1426,17 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                             w.set_question("Remove all selected?".into());
                         }
                     }
+                    "auto-link" => {
+                        let mut s = state.borrow_mut();
+                        if s.links && w.get_links_tab() == 0 && s.draft.gaps_exist() {
+                            s.draft.try_fill_gaps();
+                        }
+                    }
                     "link" | "clear" => {
                         let mut s = state.borrow_mut();
+                        if !s.links || w.get_links_tab() != 0 {
+                            return Ok(());
+                        }
                         let classes = s
                             .selection
                             .in_order(&s.order)

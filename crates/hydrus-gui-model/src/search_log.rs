@@ -291,6 +291,7 @@ impl ImportStep {
     }
     /// Index 0/1 are the actual Yes/No buttons; cancellation never advances.
     /// The reference's duplicate No branch returns without importing anything.
+    #[must_use]
     pub fn answer(self, index: i32, more: bool) -> Self {
         match (self, index) {
             (Self::Duplicates { new, .. }, 0) => Self::after_duplicates(new, more),

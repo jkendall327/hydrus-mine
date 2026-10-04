@@ -392,14 +392,115 @@ impl Draft {
     }
     /// Classes which can directly own a parser; redirect sources use their target.
     pub fn linkable(&self) -> Vec<usize> {
+        let sources = self
+            .api_pairs()
+            .into_iter()
+            .map(|(i, _)| i)
+            .collect::<std::collections::HashSet<_>>();
         self.classes
             .url_classes
             .iter()
             .enumerate()
-            .filter(|(_, c)| can_link(c))
+            .filter(|(i, c)| {
+                matches!(
+                    c.url_type,
+                    UrlType::Post | UrlType::Gallery | UrlType::Watchable
+                ) && !sources.contains(i)
+            })
             .map(|(i, _)| i)
             .collect()
     }
+    /// The reference's direct API/redirect pairs, using source example URLs.
+    /// Failed converters and self matches are skipped, not followed recursively.
+    pub fn api_pairs(&self) -> Vec<(usize, usize)> {
+        let collapse = self.classes.collapse_leading_slashes;
+        let mut order = (0..self.classes.url_classes.len()).collect::<Vec<_>>();
+        order
+            .sort_by_key(|&i| std::cmp::Reverse(self.classes.url_classes[i].sorting_key(collapse)));
+        let mut pairs = Vec::new();
+        for &i in &order {
+            let class = &self.classes.url_classes[i];
+            if !class.uses_api_url() {
+                continue;
+            }
+            let Ok(url) = class.api_url(&class.example_url, collapse) else {
+                continue;
+            };
+            if let Some(&target) = order
+                .iter()
+                .find(|&&j| i != j && self.classes.url_classes[j].matches(&url, collapse))
+            {
+                pairs.push((i, target));
+            }
+        }
+        pairs
+    }
+
+    /// Match parser examples as the reference STATICLinkURLClassesAndParsers does.
+    pub fn auto_link_candidates(&self) -> Vec<(String, String)> {
+        let collapse = self.classes.collapse_leading_slashes;
+        let mut classes = (0..self.classes.url_classes.len()).collect::<Vec<_>>();
+        classes
+            .sort_by_key(|&i| std::cmp::Reverse(self.classes.url_classes[i].sorting_key(collapse)));
+        let sources = self
+            .api_pairs()
+            .into_iter()
+            .map(|(i, _)| i)
+            .collect::<std::collections::HashSet<_>>();
+        let mut parsers = self.parsers.iter().collect::<Vec<_>>();
+        parsers.sort_by_cached_key(|parser| parser.name.clone());
+        let mut candidates = Vec::new();
+        for parser in parsers {
+            for example in &parser.example_urls {
+                let Some(&i) = classes.iter().find(|&&i| {
+                    !sources.contains(&i) && self.classes.url_classes[i].matches(example, collapse)
+                }) else {
+                    continue;
+                };
+                let class = &self.classes.url_classes[i];
+                let key = hex::encode(&class.key);
+                if matches!(
+                    class.url_type,
+                    UrlType::Post | UrlType::Gallery | UrlType::Watchable
+                ) && !self
+                    .classes
+                    .parser_links
+                    .iter()
+                    .any(|(k, p)| k == &key && p.is_some())
+                    && !candidates.iter().any(|(k, _)| k == &key)
+                {
+                    candidates.push((key, parser.key.clone()));
+                }
+            }
+        }
+        candidates
+    }
+
+    /// The actual Qt auto-fill owner iterates only already-linked rows when
+    /// applying its new/unlinked candidates. The sets are disjoint, so its
+    /// button leaves gaps unchanged; preserve this fixture-backed boundary.
+    pub fn try_fill_gaps(&mut self) {
+        let candidates = self.auto_link_candidates();
+        for (class_key, parser_key) in &mut self.classes.parser_links {
+            if parser_key.is_some()
+                && let Some((_, new)) = candidates.iter().find(|(key, _)| key == &*class_key)
+            {
+                *parser_key = Some(new.clone());
+            }
+        }
+    }
+
+    pub fn gaps_exist(&self) -> bool {
+        self.linkable().into_iter().any(|i| {
+            let key = hex::encode(&self.classes.url_classes[i].key);
+            !self
+                .classes
+                .parser_links
+                .iter()
+                .any(|(class, parser)| class == &key && parser.is_some())
+        })
+    }
+
     /// Stage an association using keys, validating both endpoints.
     pub fn link(&mut self, class_key: &str, parser_key: Option<&str>) -> Result<(), String> {
         if !self
@@ -417,7 +518,7 @@ impl Draft {
             .classes
             .parser_links
             .iter_mut()
-            .find(|(key, _)| key == class_key)
+            .find(|(key, _)| key == &*class_key)
         {
             *old = value;
         } else {

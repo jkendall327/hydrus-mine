@@ -16,6 +16,9 @@ use hydrus_parse::sidecar::{
 };
 use hydrus_store::services::ServiceRegistry as Services;
 
+#[path = "sidecar_object_names.rs"]
+pub mod object_names;
+
 /// Which way metadata moves.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Context {

@@ -55,6 +55,19 @@ pub enum WorkError {
     /// A parser could not read a page.
     #[error("{0}")]
     Parse(String),
+    /// An import raised the reference's `DataMissing` exception.
+    #[error("{0}")]
+    DataMissing(String),
+    /// Another file/parser/import failure, distinct from a veto.
+    #[error("{0}")]
+    File(String),
+}
+
+/// A file seed's work, retaining the error class before status text erases it.
+#[derive(Debug)]
+pub struct FileWorkOutcome {
+    pub did_work: bool,
+    pub error: Option<WorkError>,
 }
 
 /// Downloads and imports for the store's import queues.

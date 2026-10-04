@@ -197,6 +197,21 @@ impl TagMenu {
                     launcher(location, context, predicates, duplicate);
                 }
             }
+            Action::LaunchMany {
+                location,
+                context,
+                pages,
+            } => {
+                let launcher = SEARCH_LAUNCHER.with(|slot| slot.borrow().clone());
+                if let Some(launcher) = launcher {
+                    for predicates in pages {
+                        if !(self.editable)() {
+                            break;
+                        }
+                        launcher(location.clone(), context.clone(), predicates, false);
+                    }
+                }
+            }
             Action::Favourite { .. } => {
                 if let Err(e) = action.persist(&self.store) {
                     (self.error)(&format!("could not update favourite tags: {e}"));

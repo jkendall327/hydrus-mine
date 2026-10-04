@@ -21,6 +21,7 @@ mod force_filetype;
 mod formula_editors;
 mod import_options_editor;
 mod import_options_overwrite;
+mod import_options_panel;
 mod importer_menu;
 mod local_import_dialog;
 mod login_workflows;
@@ -29,6 +30,8 @@ mod manage_notes;
 mod merge_options_editor;
 mod merge_summaries;
 mod options_dialog;
+mod page_chooser_options;
+mod page_navigation_options;
 mod ratings_editor;
 mod recent_predicates;
 mod search_log;
@@ -83,3 +86,9 @@ mod unselected_tag_cap;
 mod write_autocomplete;
 
 mod network_job_control;
+
+mod gallery_source;
+mod subscription_quality;
+mod viewer_closing;
+
+mod viewer_cursor;

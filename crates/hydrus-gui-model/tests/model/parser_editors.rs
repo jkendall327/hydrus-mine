@@ -321,3 +321,119 @@ fn recorded_subsidiary_queue_import_and_duplicate_preserve_keys_and_select_new_r
         );
     }
 }
+
+#[test]
+fn auto_fill_reference_owner_leaves_candidates_unapplied_and_reviews_api_pairs() {
+    use hydrus_legacy::objects::domain;
+    let fixture = hydrus_testkit::fixture_json("parser_auto_links.json");
+    let classes = fixture["classes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| {
+            domain::url_class(&SerialisableObject::from_tuple_str(&value.to_string()).unwrap())
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let parsers = fixture["parsers"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| {
+            parsers::page_parser(&SerialisableObject::from_tuple_str(&value.to_string()).unwrap())
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let invalid = fixture["invalid_classes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| {
+            domain::url_class(&SerialisableObject::from_tuple_str(&value.to_string()).unwrap())
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let draft = Draft::new(
+        parsers.clone(),
+        UrlClassSettings {
+            url_classes: invalid,
+            ..UrlClassSettings::default()
+        },
+    );
+    assert_eq!(
+        serde_json::json!(draft.api_pairs()),
+        fixture["invalid_api_pairs"]
+    );
+    for case in fixture["cases"].as_array().unwrap() {
+        let links = case["existing"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|pair| {
+                (
+                    hex::encode(
+                        &classes
+                            .iter()
+                            .find(|class| class.name == pair[0].as_str().unwrap())
+                            .unwrap()
+                            .key,
+                    ),
+                    Some(
+                        parsers
+                            .iter()
+                            .find(|parser| parser.name == pair[1].as_str().unwrap())
+                            .unwrap()
+                            .key
+                            .clone(),
+                    ),
+                )
+            })
+            .collect();
+        let mut draft = Draft::new(
+            parsers.clone(),
+            UrlClassSettings {
+                url_classes: classes.clone(),
+                parser_links: links,
+                ..UrlClassSettings::default()
+            },
+        );
+        let mut candidates = draft
+            .auto_link_candidates()
+            .iter()
+            .map(|(class, parser)| {
+                (
+                    classes
+                        .iter()
+                        .find(|value| hex::encode(&value.key) == *class)
+                        .unwrap()
+                        .name
+                        .clone(),
+                    parsers
+                        .iter()
+                        .find(|value| value.key == *parser)
+                        .unwrap()
+                        .name
+                        .clone(),
+                )
+            })
+            .collect::<Vec<_>>();
+        candidates.sort();
+        assert_eq!(serde_json::json!(candidates), case["candidates"]);
+        assert_eq!(
+            draft.gaps_exist(),
+            case["steps"][0]["gaps_exist"].as_bool().unwrap()
+        );
+        let pairs = draft
+            .api_pairs()
+            .iter()
+            .map(|(source, target)| (&classes[*source].name, &classes[*target].name))
+            .collect::<Vec<_>>();
+        assert_eq!(serde_json::json!(pairs), case["api_pairs"]);
+        let before = draft.classes.clone();
+        draft.try_fill_gaps();
+        assert_eq!(
+            draft.classes, before,
+            "actual Qt owner does not install its new candidates"
+        );
+    }
+}

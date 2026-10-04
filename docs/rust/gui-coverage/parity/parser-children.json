@@ -10,14 +10,22 @@
     "c55c726dc9f7ae91650ba00755299db47701b641",
     "2b5015e642d20c1bd83450fe31ac63334735e8aa",
     "449c0957e2b5b72dd5f20c527dde2264a707d09e",
-    "57e9248907ae4cbaf953421192e4d8ffd087cfc6"
+    "57e9248907ae4cbaf953421192e4d8ffd087cfc6",
+    "38189276a8c5fe2223821f1e3119450470b8dc54",
+    "3d898d7ef54a6dde94eb9449f9af53849287008b",
+    "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
+    "de70266f3f02b2d0bb328ae384462eee67b407e7",
+    "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+    "ef2baf6b241220e1f4b241c26b1aa515d75cbaca",
+    "6ba6d6017eb0deb18d9bd12f468806caf501647b",
+    "2142abbc0c616e3ea084d340d0e90510131d729c"
   ],
   "validation": {
-    "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states; real router queues in import/export contexts, six node kinds, exact vetoes, duplication, PNG and sidecar worker output",
+    "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states; real router queues in import/export contexts, six node kinds, exact vetoes, duplication, PNG and sidecar worker output; export-folder four real database query refreshes, states, media IDs/hashes and first-example source strings; shared real Qt export-pattern menu and all eight clipboard payloads; actual manual-export tag sidebar ten media/sort/removal states, pending/petitioned counts, exact copy menus and native page launch inputs; double-click confirmed no-op; real JSON sidecar exporter object-name queue 14 states, nine text entries and two deletion questions with actual EditTextPanel validation",
     "formatting": "cargo fmt --all, git diff --check and Python recorder syntax check passed",
     "rust_tests": "authored exact model reference replays, real-store GUI persistence, recursive/stale owner regressions and saved router consumer assertions; root asynchronous CI pending; no local Cargo builds",
     "rendered_ui": "reference screenshot inspected; native headless render assertions authored and pending root CI",
-    "slint_source_check": "passed against merged ea4dc4f7 with cached compiler; no Cargo build"
+    "slint_source_check": "passed with cached Slint compiler after 2142abbc; no Cargo build"
   },
   "entries": [
     {
@@ -83,8 +91,8 @@
       "before": "missing",
       "proposed_status": "first_pass",
       "proposedStatus": "first_pass",
-      "behavior": "Recursive subsidiary add/edit/delete and extended selected queues support standalone wrapper clipboard/PNG import/export, key-preserving duplication and recorded Remove all selected? confirmation/cancel. Separators, sorting, descendant parsers, inert editor context and converter sample data survive exact reference tuple/PNG roundtrips. Edits stay staged until page/list Apply; saved parser consumers produce the recorded multiline notes, and forced owner close invalidates retained exchange/recursive callbacks.",
-      "exactBehavior": "Recursive subsidiary add/edit/delete and extended selected queues support standalone wrapper clipboard/PNG import/export, key-preserving duplication and recorded Remove all selected? confirmation/cancel. Separators, sorting, descendant parsers, inert editor context and converter sample data survive exact reference tuple/PNG roundtrips. Edits stay staged until page/list Apply; saved parser consumers produce the recorded multiline notes, and forced owner close invalidates retained exchange/recursive callbacks.",
+      "behavior": "Recursive subsidiary add/edit/delete and extended selected queues support standalone wrapper clipboard/PNG import/export, key-preserving duplication and recorded Remove all selected? confirmation/cancel. Separators, sorting, descendant parsers, inert editor context and converter sample data survive exact reference tuple/PNG roundtrips. Edits stay staged until page/list Apply; saved parser consumers produce the recorded multiline notes, and forced owner close invalidates retained exchange/recursive callbacks. Selected queue PNG export opens the owned reference title/description/width panel with exact object type/count/size summary and default title. Edited title/description reach the readable header, width reaches the carrier, successful saves remember the directory and decoded payloads retain the recursive wrapper/router. Owner mutations are blocked while the child is open; queue/parser close invalidates retained exports.",
+      "exactBehavior": "Recursive subsidiary add/edit/delete and extended selected queues support standalone wrapper clipboard/PNG import/export, key-preserving duplication and recorded Remove all selected? confirmation/cancel. Separators, sorting, descendant parsers, inert editor context and converter sample data survive exact reference tuple/PNG roundtrips. Edits stay staged until page/list Apply; saved parser consumers produce the recorded multiline notes, and forced owner close invalidates retained exchange/recursive callbacks. Selected queue PNG export opens the owned reference title/description/width panel with exact object type/count/size summary and default title. Edited title/description reach the readable header, width reaches the carrier, successful saves remember the directory and decoded payloads retain the recursive wrapper/router. Owner mutations are blocked while the child is open; queue/parser close invalidates retained exports.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
@@ -121,6 +129,30 @@
           "line": 158,
           "commit": "24fbb367ec67b29eca8c53b62905adf1ba8acf80",
           "symbol": "open_subsidiaries"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/png_export.rs",
+          "line": 21,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "object_payload_description"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/png_export.rs",
+          "line": 90,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "encode_with_summary"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/png_export_window.rs",
+          "line": 81,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "open_with_summary"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_interchange_window.rs",
+          "line": 262,
+          "commit": "3d898d7ef54a6dde94eb9449f9af53849287008b",
+          "symbol": "open_subsidiaries_with_store"
         }
       ],
       "test_anchors": [
@@ -159,6 +191,18 @@
           "line": 1271,
           "commit": "24fbb367ec67b29eca8c53b62905adf1ba8acf80",
           "symbol": "subsidiary_queue_exchange_is_staged_preserves_wrappers_and_reaches_saved_parser"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_test_data.rs",
+          "line": 57,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "typed_png_summary_and_header_keep_the_recorded_object_package"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1571,
+          "commit": "3d898d7ef54a6dde94eb9449f9af53849287008b",
+          "symbol": "subsidiary_export_uses_owned_reference_png_parameters_and_discards_stale_export"
         }
       ],
       "reference_evidence": {
@@ -169,13 +213,19 @@
         "exchange_recorder": "oracle/record_subsidiary_exchange.py",
         "exchange_fixture": "oracle/fixtures/subsidiary_exchange.json",
         "exchange_png": "oracle/fixtures/subsidiary_exchange.png",
-        "exchange_visual": "oracle/fixtures/subsidiary_exchange_editor.png"
+        "exchange_visual": "oracle/fixtures/subsidiary_exchange_editor.png",
+        "png_parameters_recorder": "oracle/record_parser_png_export.py",
+        "png_parameters_fixture": "oracle/fixtures/parser_png_export.json",
+        "png_parameters_visual": "oracle/fixtures/parser_png_export_editor.png",
+        "png_parameters_recording": "passed: four real typed single/queue PNG panels, exact summary/title/width defaults, title/description edits, real .png writes, remembered directory and decoded payloads"
       },
       "limitations": [
-        "Mixed or unsupported packages reject atomically instead of partially accepting valid rows."
+        "Mixed or unsupported packages reject atomically instead of partially accepting valid rows.",
+        "Selected queues export as one PNG bundle; the reference export-each-object-to-PNGs dialog remains absent and is not claimed here."
       ],
       "limits": [
-        "Mixed or unsupported packages reject atomically instead of partially accepting valid rows."
+        "Mixed or unsupported packages reject atomically instead of partially accepting valid rows.",
+        "Selected queues export as one PNG bundle; the reference export-each-object-to-PNGs dialog remains absent and is not claimed here."
       ]
     },
     {
@@ -184,8 +234,8 @@
       "before": "missing",
       "proposed_status": "first_pass",
       "proposedStatus": "first_pass",
-      "behavior": "Reusable router example panel shows a source selector and per-object input path/media hash, sorted imported strings, and router-processed strings (literal no changes for inert processors). Actual TXT/JSON sidecar importers and read-only media metadata drive the results, including duplicates, missing sidecars, notes with preserved newlines, URLs, and exact HTML-in-JSON error text. Source processor and JSON formula children receive pre-source-processor texts from the first example; router processors receive every source output from that first example. Owner cancellation invalidates retained children; accepted processing is staged and reaches saved real-store router consumers.",
-      "exactBehavior": "Reusable router example panel shows a source selector and per-object input path/media hash, sorted imported strings, and router-processed strings (literal no changes for inert processors). Actual TXT/JSON sidecar importers and read-only media metadata drive the results, including duplicates, missing sidecars, notes with preserved newlines, URLs, and exact HTML-in-JSON error text. Source processor and JSON formula children receive pre-source-processor texts from the first example; router processors receive every source output from that first example. Owner cancellation invalidates retained children; accepted processing is staged and reaches saved real-store router consumers.",
+      "behavior": "Reusable router example panel shows a source selector and per-object input path/media hash, sorted imported strings, and router-processed strings (literal no changes for inert processors). Actual TXT/JSON sidecar importers and read-only media metadata drive the results, including duplicates, missing sidecars, notes with preserved newlines, URLs, and exact HTML-in-JSON error text. Source processor and JSON formula children receive pre-source-processor texts from the first example; router processors receive every source output from that first example. Owner cancellation invalidates retained children; accepted processing is staged and reaches saved real-store router consumers. Export-folder update test example files runs the current query asynchronously, applies ascending size only when a system limit removes matching results, samples up to 25 stored media results, and passes these to actual router/source processor previews. Exact loading/got-N/reset button states and retained examples after query changes match the reference. Closing the folder/list discards pending publication and invalidates stale Apply/child callbacks; reopening starts empty. The staged query reaches the persisted folder and real search consumer without exporting files.",
+      "exactBehavior": "Reusable router example panel shows a source selector and per-object input path/media hash, sorted imported strings, and router-processed strings (literal no changes for inert processors). Actual TXT/JSON sidecar importers and read-only media metadata drive the results, including duplicates, missing sidecars, notes with preserved newlines, URLs, and exact HTML-in-JSON error text. Source processor and JSON formula children receive pre-source-processor texts from the first example; router processors receive every source output from that first example. Owner cancellation invalidates retained children; accepted processing is staged and reaches saved real-store router consumers. Export-folder update test example files runs the current query asynchronously, applies ascending size only when a system limit removes matching results, samples up to 25 stored media results, and passes these to actual router/source processor previews. Exact loading/got-N/reset button states and retained examples after query changes match the reference. Closing the folder/list discards pending publication and invalidates stale Apply/child callbacks; reopening starts empty. The staged query reaches the persisted folder and real search consumer without exporting files.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/sidecar_editors.rs",
@@ -204,6 +254,18 @@
           "line": 758,
           "commit": "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
           "symbol": "open_router"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/folders.rs",
+          "line": 17,
+          "commit": "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
+          "symbol": "export_test_examples"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/folders_window.rs",
+          "line": 1280,
+          "commit": "de70266f3f02b2d0bb328ae384462eee67b407e7",
+          "symbol": "open_export_folder"
         }
       ],
       "test_anchors": [
@@ -218,23 +280,39 @@
           "line": 632,
           "commit": "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
           "symbol": "router_examples_follow_reference_source_tabs_and_processor_children_without_exports"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/folders.rs",
+          "line": 362,
+          "commit": "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
+          "symbol": "export_folder_examples_use_recorded_queries_limits_and_media_contexts"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 1189,
+          "commit": "de70266f3f02b2d0bb328ae384462eee67b407e7",
+          "symbol": "export_folder_query_examples_refresh_media_and_reach_source_children"
         }
       ],
       "reference_evidence": {
         "recorder": "oracle/record_sidecar_testing.py",
         "fixture": "oracle/fixtures/sidecar_testing.json",
         "visual_reference": "oracle/fixtures/sidecar_testing.png",
-        "actual_recording": "passed: seven real Qt source-table states; generated documents and synthetic sidecars.example media URLs/notes"
+        "actual_recording": "passed: seven real Qt source-table states; generated documents and synthetic sidecars.example media URLs/notes",
+        "export_folder_examples_recorder": "oracle/record_export_folder_examples.py",
+        "export_folder_examples_fixture": "oracle/fixtures/export_folder_examples.json",
+        "export_folder_examples_visual": "oracle/fixtures/export_folder_examples_editor.png",
+        "export_folder_examples_recording": "passed: real Qt query work/publish callbacks against basic database, four unrestricted/limited/nonmatching queries, 25 result bound, exact button states and actual first-media URL strings; scheduler alone deferred for deterministic capture"
       },
       "limitations": [
         "Uses a source selector and table instead of the reference notebook.",
-        "The export-folder parent update-test-example-files search button is not yet implemented; filename tagging, import folders and manual exports supply bounded owner examples.",
-        "General filesystem I/O errors include the operating-system error text; the recorded formula parse error is asserted exactly."
+        "General filesystem I/O errors include the operating-system error text; the recorded formula parse error is asserted exactly.",
+        "Unlimited queries use stable file-id order rather than depending on Python set iteration; limited all-known-file queries use native deterministic size selection rather than reference random sampling when database-level sorting is unavailable."
       ],
       "limits": [
         "Uses a source selector and table instead of the reference notebook.",
-        "The export-folder parent update-test-example-files search button is not yet implemented; filename tagging, import folders and manual exports supply bounded owner examples.",
-        "General filesystem I/O errors include the operating-system error text; the recorded formula parse error is asserted exactly."
+        "General filesystem I/O errors include the operating-system error text; the recorded formula parse error is asserted exactly.",
+        "Unlimited queries use stable file-id order rather than depending on Python set iteration; limited all-known-file queries use native deterministic size selection rather than reference random sampling when database-level sorting is unavailable."
       ]
     },
     {
@@ -333,8 +411,8 @@
       "before": "partial",
       "proposed_status": "partial",
       "proposedStatus": "partial",
-      "behavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content.",
-      "exactBehavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content.",
+      "behavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content. Selected queue PNG export opens the owned reference title/description/width panel with exact object type/count/size summary and default title. Edited title/description reach the readable header, width reaches the carrier, successful saves remember the directory and decoded payloads retain the recursive wrapper/router. Owner mutations are blocked while the child is open; queue/parser close invalidates retained exports. Export-folder update test example files runs the current query asynchronously, applies ascending size only when a system limit removes matching results, samples up to 25 stored media results, and passes these to actual router/source processor previews. Exact loading/got-N/reset button states and retained examples after query changes match the reference. Closing the folder/list discards pending publication and invalidates stale Apply/child callbacks; reopening starts empty. The staged query reaches the persisted folder and real search consumer without exporting files.",
+      "exactBehavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content. Selected queue PNG export opens the owned reference title/description/width panel with exact object type/count/size summary and default title. Edited title/description reach the readable header, width reaches the carrier, successful saves remember the directory and decoded payloads retain the recursive wrapper/router. Owner mutations are blocked while the child is open; queue/parser close invalidates retained exports. Export-folder update test example files runs the current query asynchronously, applies ascending size only when a system limit removes matching results, samples up to 25 stored media results, and passes these to actual router/source processor previews. Exact loading/got-N/reset button states and retained examples after query changes match the reference. Closing the folder/list discards pending publication and invalidates stale Apply/child callbacks; reopening starts empty. The staged query reaches the persisted folder and real search consumer without exporting files.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-downloader-exchange/src/routers.rs",
@@ -365,6 +443,42 @@
           "line": 193,
           "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
           "symbol": "open_routers"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/png_export.rs",
+          "line": 21,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "object_payload_description"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/png_export.rs",
+          "line": 90,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "encode_with_summary"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/png_export_window.rs",
+          "line": 81,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "open_with_summary"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_interchange_window.rs",
+          "line": 232,
+          "commit": "3d898d7ef54a6dde94eb9449f9af53849287008b",
+          "symbol": "open_routers_with_store"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/folders.rs",
+          "line": 17,
+          "commit": "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
+          "symbol": "export_test_examples"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/folders_window.rs",
+          "line": 1280,
+          "commit": "de70266f3f02b2d0bb328ae384462eee67b407e7",
+          "symbol": "open_export_folder"
         }
       ],
       "test_anchors": [
@@ -391,6 +505,30 @@
           "line": 1024,
           "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
           "symbol": "closing_manual_export_discards_its_pending_router_exchange"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_test_data.rs",
+          "line": 57,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "typed_png_summary_and_header_keep_the_recorded_object_package"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 1087,
+          "commit": "3d898d7ef54a6dde94eb9449f9af53849287008b",
+          "symbol": "router_png_child_has_recorded_parameters_and_closes_with_its_queue_owner"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/folders.rs",
+          "line": 362,
+          "commit": "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
+          "symbol": "export_folder_examples_use_recorded_queries_limits_and_media_contexts"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 1189,
+          "commit": "de70266f3f02b2d0bb328ae384462eee67b407e7",
+          "symbol": "export_folder_query_examples_refresh_media_and_reach_source_children"
         }
       ],
       "reference_evidence": {
@@ -398,21 +536,29 @@
         "fixture": "oracle/fixtures/router_exchange.json",
         "png": "oracle/fixtures/router_exchange.png",
         "visual_reference": "oracle/fixtures/router_exchange_editor.png",
-        "actual_recording": "passed: real Qt queue controls and clipboard, all six node kinds, exact direction/source warnings, selected duplication, reference PNG decode, v2 upgrade and real generated sidecar write"
+        "actual_recording": "passed: real Qt queue controls and clipboard, all six node kinds, exact direction/source warnings, selected duplication, reference PNG decode, v2 upgrade and real generated sidecar write",
+        "png_parameters_recorder": "oracle/record_parser_png_export.py",
+        "png_parameters_fixture": "oracle/fixtures/parser_png_export.json",
+        "png_parameters_visual": "oracle/fixtures/parser_png_export_editor.png",
+        "png_parameters_recording": "passed: four real typed single/queue PNG panels, exact summary/title/width defaults, title/description edits, real .png writes, remembered directory and decoded payloads",
+        "export_folder_examples_recorder": "oracle/record_export_folder_examples.py",
+        "export_folder_examples_fixture": "oracle/fixtures/export_folder_examples.json",
+        "export_folder_examples_visual": "oracle/fixtures/export_folder_examples_editor.png",
+        "export_folder_examples_recording": "passed: real Qt query work/publish callbacks against basic database, four unrestricted/limited/nonmatching queries, 25 result bound, exact button states and actual first-media URL strings; scheduler alone deferred for deterministic capture"
       },
       "limitations": [
         "The sidecar-router parent remains partial here: no broad parent/descendant completion is inferred from queue exchange.",
         "Unsupported mixed packages are rejected atomically rather than appending a permitted subset with a warning.",
-        "PNG exchange uses the existing shared review/path export UI; the separate reference title/description/width export panel is not connected to this owner yet.",
-        "Export-folder query results are still not provided as media examples; existing manual-export/import-folder/filename-tagging examples remain covered.",
-        "Non-stub timestamps and unsupported processors are rejected before staging so unrepresentable data is not silently lost."
+        "Non-stub timestamps and unsupported processors are rejected before staging so unrepresentable data is not silently lost.",
+        "Selected queues export as one PNG bundle; the reference export-each-object-to-PNGs dialog remains absent and is not claimed here.",
+        "Unlimited queries use stable file-id order rather than depending on Python set iteration; limited all-known-file queries use native deterministic size selection rather than reference random sampling when database-level sorting is unavailable."
       ],
       "limits": [
         "The sidecar-router parent remains partial here: no broad parent/descendant completion is inferred from queue exchange.",
         "Unsupported mixed packages are rejected atomically rather than appending a permitted subset with a warning.",
-        "PNG exchange uses the existing shared review/path export UI; the separate reference title/description/width export panel is not connected to this owner yet.",
-        "Export-folder query results are still not provided as media examples; existing manual-export/import-folder/filename-tagging examples remain covered.",
-        "Non-stub timestamps and unsupported processors are rejected before staging so unrepresentable data is not silently lost."
+        "Non-stub timestamps and unsupported processors are rejected before staging so unrepresentable data is not silently lost.",
+        "Selected queues export as one PNG bundle; the reference export-each-object-to-PNGs dialog remains absent and is not claimed here.",
+        "Unlimited queries use stable file-id order rather than depending on Python set iteration; limited all-known-file queries use native deterministic size selection rather than reference random sampling when database-level sorting is unavailable."
       ]
     },
     {
@@ -560,6 +706,262 @@
         "Existing PyJson constraints for duplicate object keys and lone UTF-16 surrogates apply.",
         "Read-only raw previews use the native layout instead of Qt tabs; post-conversion/separation preview tabs remain outside this slice."
       ]
+    },
+    {
+      "reference_id": "audit-network-export-folder-examples",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Export-folder update test example files runs the actual current query on a worker and publishes up to 25 media examples to router and source child previews. It matches reference loading/got-N/reset states, size selection only when a local query limit removes results, previous examples retained after query changes, and empty results. Closing the folder/list discards pending results and stale mutations; edited queries remain staged until owner Apply and reach the persisted real query consumer. Folder and manual-export filename boxes expose the real shared pattern shortcuts menu: exact heading, seven labels and separator groups, clipboard phrases including Unicode placeholders; the reference heading itself is enabled and copies its own text. Choosing an item preserves the staged filename pattern; copied phrases reach the existing native filename generator after paste/accept. Invalid, closed, child-modal, working or pending-question callbacks cannot copy from a stale owner.",
+      "exactBehavior": "Export-folder update test example files runs the actual current query on a worker and publishes up to 25 media examples to router and source child previews. It matches reference loading/got-N/reset states, size selection only when a local query limit removes results, previous examples retained after query changes, and empty results. Closing the folder/list discards pending results and stale mutations; edited queries remain staged until owner Apply and reach the persisted real query consumer. Folder and manual-export filename boxes expose the real shared pattern shortcuts menu: exact heading, seven labels and separator groups, clipboard phrases including Unicode placeholders; the reference heading itself is enabled and copies its own text. Choosing an item preserves the staged filename pattern; copied phrases reach the existing native filename generator after paste/accept. Invalid, closed, child-modal, working or pending-question callbacks cannot copy from a stale owner.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/folders.rs",
+          "line": 17,
+          "commit": "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
+          "symbol": "export_test_examples"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/folders_window.rs",
+          "line": 1280,
+          "commit": "de70266f3f02b2d0bb328ae384462eee67b407e7",
+          "symbol": "open_export_folder"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/export_files.rs",
+          "line": 41,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "pattern_shortcut"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/export_pattern.slint",
+          "line": 3,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "ExportPatternButton"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/folders.rs",
+          "line": 362,
+          "commit": "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
+          "symbol": "export_folder_examples_use_recorded_queries_limits_and_media_contexts"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 1189,
+          "commit": "de70266f3f02b2d0bb328ae384462eee67b407e7",
+          "symbol": "export_folder_query_examples_refresh_media_and_reach_source_children"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/export_files.rs",
+          "line": 376,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "shared_pattern_menu_copies_recorded_phrases_including_its_heading"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/export_files.rs",
+          "line": 135,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "shared_pattern_shortcuts_copy_without_editing_and_guard_closed_owners"
+        }
+      ],
+      "reference_evidence": {
+        "export_folder_examples_recorder": "oracle/record_export_folder_examples.py",
+        "export_folder_examples_fixture": "oracle/fixtures/export_folder_examples.json",
+        "export_folder_examples_visual": "oracle/fixtures/export_folder_examples_editor.png",
+        "export_folder_examples_recording": "passed: real Qt query work/publish callbacks against basic database, four unrestricted/limited/nonmatching queries, 25 result bound, exact button states and actual first-media URL strings; scheduler alone deferred for deterministic capture",
+        "pattern_recorder": "oracle/record_export_pattern_shortcuts.py",
+        "pattern_fixture": "oracle/fixtures/export_pattern_shortcuts.json",
+        "pattern_visual": "oracle/fixtures/export_pattern_shortcuts_editor.png",
+        "pattern_recording": "passed: actual shared Qt ExportPatternButton menu, heading enabled/copies own text, seven phrases, labels/separators/tooltips and unchanged owner phrase"
+      },
+      "limitations": [
+        "Unlimited results use stable file-id order rather than Python set iteration. Reference export-folder UI disallows all-known-file queries; imported all-known contexts retain native deterministic size selection and are outside this original clicked leaf.",
+        "Native shortcut menus do not reproduce Qt bold-heading styling or per-action hover tooltips. No extra filename-preview panel or worker is invented: original source line 449 only refreshes the media test context."
+      ],
+      "limits": [
+        "Unlimited results use stable file-id order rather than Python set iteration. Reference export-folder UI disallows all-known-file queries; imported all-known contexts retain native deterministic size selection and are outside this original clicked leaf.",
+        "Native shortcut menus do not reproduce Qt bold-heading styling or per-action hover tooltips. No extra filename-preview panel or worker is invented: original source line 449 only refreshes the media test context."
+      ]
+    },
+    {
+      "reference_id": "audit-network-export-examples",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "partial",
+      "proposedStatus": "partial",
+      "behavior": "Folder and manual-export filename boxes expose the real shared pattern shortcuts menu: exact heading, seven labels and separator groups, clipboard phrases including Unicode placeholders; the reference heading itself is enabled and copies its own text. Choosing an item preserves the staged filename pattern; copied phrases reach the existing native filename generator after paste/accept. Invalid, closed, child-modal, working or pending-question callbacks cannot copy from a stale owner. The read-only files' tags sidebar now shows all-known DISPLAY_ACTUAL current/pending/petitioned counts for selected files or all kept files, preserves surviving selected tag IDs, locally sorts tag/subtag/count with separately remembered orders and namespace grouping. Exact raw/subtag/count/underscore copy menus and Ctrl+C/A, normal extended selection, middle/Shift-middle AND/OR launches, native AND/OR/separate/duplicate page consumers, relationship editors and immediate favourite/most-used mutations share owner guards. Double-click is a reference no-op; closing discards pending answers and stops each-page dispatch after synchronous owner closure.",
+      "exactBehavior": "Folder and manual-export filename boxes expose the real shared pattern shortcuts menu: exact heading, seven labels and separator groups, clipboard phrases including Unicode placeholders; the reference heading itself is enabled and copies its own text. Choosing an item preserves the staged filename pattern; copied phrases reach the existing native filename generator after paste/accept. Invalid, closed, child-modal, working or pending-question callbacks cannot copy from a stale owner. The read-only files' tags sidebar now shows all-known DISPLAY_ACTUAL current/pending/petitioned counts for selected files or all kept files, preserves surviving selected tag IDs, locally sorts tag/subtag/count with separately remembered orders and namespace grouping. Exact raw/subtag/count/underscore copy menus and Ctrl+C/A, normal extended selection, middle/Shift-middle AND/OR launches, native AND/OR/separate/duplicate page consumers, relationship editors and immediate favourite/most-used mutations share owner guards. Double-click is a reference no-op; closing discards pending answers and stops each-page dispatch after synchronous owner closure.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/export_files.rs",
+          "line": 41,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "pattern_shortcut"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/export_pattern.slint",
+          "line": 3,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "ExportPatternButton"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/export_files_tags.rs",
+          "line": 73,
+          "commit": "ef2baf6b241220e1f4b241c26b1aa515d75cbaca",
+          "symbol": "refresh"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/export_files_tags.rs",
+          "line": 227,
+          "commit": "ef2baf6b241220e1f4b241c26b1aa515d75cbaca",
+          "symbol": "menu"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/export_files_window.rs",
+          "line": 49,
+          "commit": "6ba6d6017eb0deb18d9bd12f468806caf501647b",
+          "symbol": "open"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/export_tags.slint",
+          "line": 4,
+          "commit": "6ba6d6017eb0deb18d9bd12f468806caf501647b",
+          "symbol": "ExportTags"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/export_files.rs",
+          "line": 376,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "shared_pattern_menu_copies_recorded_phrases_including_its_heading"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/export_files.rs",
+          "line": 135,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "shared_pattern_shortcuts_copy_without_editing_and_guard_closed_owners"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/export_files.rs",
+          "line": 443,
+          "commit": "ef2baf6b241220e1f4b241c26b1aa515d75cbaca",
+          "symbol": "selected_export_tags_counts_sort_selection_and_copy_match_actual_panel"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/export_files.rs",
+          "line": 319,
+          "commit": "6ba6d6017eb0deb18d9bd12f468806caf501647b",
+          "symbol": "selected_export_tag_sidebar_copies_launches_native_pages_persists_favourites_and_closes"
+        }
+      ],
+      "reference_evidence": {
+        "pattern_recorder": "oracle/record_export_pattern_shortcuts.py",
+        "pattern_fixture": "oracle/fixtures/export_pattern_shortcuts.json",
+        "pattern_visual": "oracle/fixtures/export_pattern_shortcuts_editor.png",
+        "pattern_recording": "passed: actual shared Qt ExportPatternButton menu, heading enabled/copies own text, seven phrases, labels/separators/tooltips and unchanged owner phrase",
+        "sidebar_recorder": "oracle/record_export_selected_tags.py",
+        "sidebar_fixture": "oracle/fixtures/export_selected_tags.json",
+        "sidebar_visual": "oracle/fixtures/export_selected_tags_editor.png",
+        "sidebar_recording": "passed: actual ReviewExportFilesPanel/ListBoxTagsMedia; ten real selected/all/removed media and local sort states, synthetic pending/petitioned mapping updates in private basic store, exact popup copy payloads and page launch predicates, no-op double click; popup/clipboard/launch publication intercepted for observation only; no exports performed"
+      },
+      "limitations": [
+        "Generic media-tag maintenance→regenerate tag display and advanced experimental storage/display-type switching remain unported, along with full keyboard navigation. This combined original feature and manual-export parent remain Partial.",
+        "Native shortcut menus omit Qt bold-heading styling/action hover tooltips; the tag sidebar uses native Slint presentation, without Qt per-row custom-painted sibling/parent decoration."
+      ],
+      "limits": [
+        "Generic media-tag maintenance→regenerate tag display and advanced experimental storage/display-type switching remain unported, along with full keyboard navigation. This combined original feature and manual-export parent remain Partial.",
+        "Native shortcut menus omit Qt bold-heading styling/action hover tooltips; the tag sidebar uses native Slint presentation, without Qt per-row custom-painted sibling/parent decoration."
+      ]
+    },
+    {
+      "reference_id": "audit-shared-sidecar-destination-json",
+      "previous_status": "partial",
+      "before": "partial",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "JSON sidecar destination object names use the actual ordered queue with add, edit the first selected row, double-click editing, up/down from the correct edge and X/delete confirmation (Remove N selected?). Enter Text child asks Enter the JSON Object name., rejects empty input with Cannot enter blank text here!, and preserves accepted duplicate names, spaces, whitespace-only names and embedded newlines exactly. Literal row identities and extended selection survive reorder; accepting/cancelling a text child stages/discards only its name. Apply returns the complete native exporter; cancelling or closing the exporter/router owner closes descendants and suppresses retained child/parent callbacks. Saved router settings reach the real manual export worker, merging nested duplicate/newline keys into an existing JSON sidecar while preserving unrelated object contents.",
+      "exactBehavior": "JSON sidecar destination object names use the actual ordered queue with add, edit the first selected row, double-click editing, up/down from the correct edge and X/delete confirmation (Remove N selected?). Enter Text child asks Enter the JSON Object name., rejects empty input with Cannot enter blank text here!, and preserves accepted duplicate names, spaces, whitespace-only names and embedded newlines exactly. Literal row identities and extended selection survive reorder; accepting/cancelling a text child stages/discards only its name. Apply returns the complete native exporter; cancelling or closing the exporter/router owner closes descendants and suppresses retained child/parent callbacks. Saved router settings reach the real manual export worker, merging nested duplicate/newline keys into an existing JSON sidecar while preserving unrelated object contents.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sidecar_object_names.rs",
+          "line": 45,
+          "commit": "2142abbc0c616e3ea084d340d0e90510131d729c",
+          "symbol": "accept"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sidecar_object_names.rs",
+          "line": 77,
+          "commit": "2142abbc0c616e3ea084d340d0e90510131d729c",
+          "symbol": "move_selected"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/sidecar_object_names.rs",
+          "line": 18,
+          "commit": "2142abbc0c616e3ea084d340d0e90510131d729c",
+          "symbol": "bind"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sidecar_editors.rs",
+          "line": 587,
+          "commit": "2142abbc0c616e3ea084d340d0e90510131d729c",
+          "symbol": "json_object_name_queue_replays_literal_reference_rows_and_exporter_values"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 1405,
+          "commit": "2142abbc0c616e3ea084d340d0e90510131d729c",
+          "symbol": "json_object_names_use_staged_text_children_and_saved_router_worker"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_sidecar_json_names.py",
+        "fixture": "oracle/fixtures/sidecar_json_names.json",
+        "visual": "oracle/fixtures/sidecar_json_names_editor.png",
+        "recording": "passed: actual EditSingleFileMetadataExporterWidget/QueueListBox on private basic fixture; text-dialog publication intercepted but accepted values/errors come from actual EditTextPanel.GetValue, real add/edit/reorder/delete callbacks, no exports performed in Python recording"
+      },
+      "limitations": [
+        "The native queue uses the existing ListTable/SessionDialog geometry and omits the reference explanatory queue hover tooltip; no native window or reference alias is counted as a second implementation leaf.",
+        "Sidecar source/exporter/router parent assessments remain Partial for their independent boundaries. Native Rust regressions are authored for root asynchronous CI; reference recording and cached Slint compilation passed locally."
+      ],
+      "limits": [
+        "The native queue uses the existing ListTable/SessionDialog geometry and omits the reference explanatory queue hover tooltip; no native window or reference alias is counted as a second implementation leaf.",
+        "Sidecar source/exporter/router parent assessments remain Partial for their independent boundaries. Native Rust regressions are authored for root asynchronous CI; reference recording and cached Slint compilation passed locally."
+      ]
+    }
+  ],
+  "native_navigation": [
+    {
+      "parent_id": "dialog.sidecar.destination",
+      "parent_component": "SidecarNodeWindow",
+      "child_id": "catalog.sessiondialog",
+      "child_component": "SessionDialog",
+      "relationship": "owned_child",
+      "condition": "Context::Export and JSON exporter; object-name queue Add/Edit opens Enter Text, X/Delete opens Are you sure?",
+      "owner_slot": "sidecars_window::Slots::object_name",
+      "exact_behavior": "Existing SessionDialog reused; parent Apply/change-type/queue edits are blocked during the child, Cancel/close invalidates pending name/answer and force-closes it. No new native Window type or reference ID.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/sidecar_object_names.rs",
+          "line": 18,
+          "commit": "2142abbc0c616e3ea084d340d0e90510131d729c",
+          "symbol": "bind"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 1405,
+          "commit": "2142abbc0c616e3ea084d340d0e90510131d729c",
+          "symbol": "json_object_names_use_staged_text_children_and_saved_router_worker"
+        }
+      ],
+      "referenceImplementationLeafCount": 0
     }
   ]
 }

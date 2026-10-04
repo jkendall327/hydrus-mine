@@ -357,8 +357,11 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
     for (boxes, item) in mine {
         let Item::Opt(option) = item else { continue };
         // This reference page embeds the list; native opens the same transaction
-        // in a child window, covered by dedicated regex/write-tag recordings.
-        if matches!(option.kind, Kind::RegexFavourites | Kind::FavouriteTags) {
+        // in a child window, covered by dedicated regex/write-tag/gallery-source recordings.
+        if matches!(
+            option.kind,
+            Kind::RegexFavourites | Kind::FavouriteTags | Kind::GallerySource | Kind::ImportOptions
+        ) {
             continue;
         }
         let found = rows
@@ -374,6 +377,14 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
             continue;
         };
         after = at + 1;
+        // This older whole-dialog fixture did not introspect this private
+        // noneable widget. Its real Qt bounds/value states are recorded and
+        // replayed separately in subscription_failure_limit.json.
+        if option.label
+            == "If a subscription has this many failed file imports, stop and continue later:"
+        {
+            continue;
+        }
         let value = (option.get)(settings);
         if let Some(why) = compare(&option.kind, &value, &row.control, store) {
             problems.push(format!("{}: {:?}: {why}", page.name, option.label));
@@ -1463,5 +1474,252 @@ fn viewer_focus_controls_stage_independent_reference_policies() {
             event["hover_requires_focus"].as_bool().unwrap()
         );
     }
+    assert_eq!(store.read(Settings::load).unwrap(), settings);
+}
+
+#[test]
+fn closing_controls_stage_all_reference_preferences_without_persisting() {
+    use hydrus_gui_model::options::{Editor, Row as EditorRow};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("viewer_closing_options.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    let registry = pages(&settings);
+    let page = registry
+        .iter()
+        .find(|page| page.name == "media viewer")
+        .unwrap();
+    let reference = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "media viewer")
+        .unwrap();
+    let problems = page_problems(page, &reference["items"], &settings, &store);
+    assert!(problems.is_empty(), "{problems:?}");
+    let mut editor = Editor::new(settings.clone());
+    let index = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "media viewer")
+        .unwrap();
+    editor.show_page(index);
+    let labels = [
+        "When closing the media viewer, re-select original search page: ",
+        "When closing the media viewer, tell original search page to select exit media: ",
+        "ADVANCED: When closing the media viewer with the above focusing options, activate Main GUI: ",
+        "DEBUG: When closing the media viewer at any time, activate Main GUI: ",
+    ];
+    let rows: Vec<_> = labels
+        .iter()
+        .map(|label| {
+            editor
+                .rows()
+                .iter()
+                .position(|row| matches!(row, EditorRow::Opt {option,..} if option.label == *label))
+                .unwrap()
+        })
+        .collect();
+    for event in fixture["events"].as_array().unwrap() {
+        for (&index, value) in rows.iter().zip(event["values"].as_array().unwrap()) {
+            editor.check(index, value.as_bool().unwrap());
+        }
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty(), "{problems:?}");
+        assert_eq!(
+            serde_json::json!([
+                applied.viewer_closing.reselect_page,
+                applied.viewer_closing.select_exit_media,
+                applied.viewer_closing.activate_focusing,
+                applied.viewer_closing.activate_always
+            ]),
+            event["values"]
+        );
+    }
+    assert_eq!(store.read(Settings::load).unwrap(), settings);
+}
+
+#[test]
+fn passive_background_controls_match_reference_and_stage_independent_copies() {
+    use hydrus_gui_model::options::{Editor, Row as EditorRow};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("viewer_background_options.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    assert_eq!(
+        serde_json::json!([
+            settings.viewer_background.tags,
+            settings.viewer_background.information,
+            settings.viewer_background.ratings,
+            settings.viewer_background.notes
+        ]),
+        fixture["initial"]
+    );
+    let registry = pages(&settings);
+    let page = registry
+        .iter()
+        .find(|page| page.name == "media viewer hovers")
+        .unwrap();
+    let reference = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "media viewer hovers")
+        .unwrap();
+    let problems = page_problems(page, &reference["items"], &settings, &store);
+    assert!(problems.is_empty(), "{problems:?}");
+    let mut editor = Editor::new(settings.clone());
+    let page = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "media viewer hovers")
+        .unwrap();
+    editor.show_page(page);
+    let labels = [
+        "Draw tags (left) in the viewer background:",
+        "Draw file information (top) in the viewer background:",
+        "Draw ratings and locations (top-right) in the viewer background:",
+        "Draw notes (right) in the viewer background:",
+    ];
+    let rows: Vec<_> = labels
+        .iter()
+        .map(|label| {
+            editor
+                .rows()
+                .iter()
+                .position(|row| matches!(row, EditorRow::Opt {option,..} if option.label == *label))
+                .unwrap()
+        })
+        .collect();
+    for event in fixture["events"].as_array().unwrap() {
+        for (&index, value) in rows.iter().zip(event["values"].as_array().unwrap()) {
+            editor.check(index, value.as_bool().unwrap());
+        }
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty(), "{problems:?}");
+        assert_eq!(
+            serde_json::json!([
+                applied.viewer_background.tags,
+                applied.viewer_background.information,
+                applied.viewer_background.ratings,
+                applied.viewer_background.notes
+            ]),
+            event["values"]
+        );
+        assert_eq!(
+            applied.viewer_hovers, settings.viewer_hovers,
+            "passive copies do not change popups"
+        );
+    }
+    assert_eq!(store.read(Settings::load).unwrap(), settings);
+}
+
+#[test]
+fn subscription_file_failure_limit_replays_qt_noneable_states_in_parent_transaction() {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = hydrus_store::Store::open(native.path()).unwrap();
+    let fixture = hydrus_testkit::fixture_json("subscription_failure_limit.json");
+    for state in fixture["options"]["states"].as_array().unwrap() {
+        let before_settings = store.read(Settings::load).unwrap();
+        let stored_before = before_settings
+            .network
+            .subscription_file_error_cancel_threshold;
+        assert_eq!(serde_json::json!(stored_before), state["saved_before"]);
+        let mut editor = hydrus_gui_model::options::Editor::new(before_settings);
+        let page = editor
+            .page_names()
+            .iter()
+            .position(|name| *name == "downloading")
+            .unwrap();
+        editor.show_page(page);
+        let row = editor.rows().iter().position(|row| matches!(row, hydrus_gui_model::options::Row::Opt {option,..} if option.label == "If a subscription has this many failed file imports, stop and continue later:")).unwrap();
+        let value = state["given"].as_i64();
+        editor.none(row, value.is_none());
+        if let Some(value) = value {
+            editor.number(row, value);
+        }
+        let (after, before, errors) = editor.applied();
+        assert!(errors.is_empty());
+        assert_eq!(
+            serde_json::json!(after.network.subscription_file_error_cancel_threshold),
+            state["value"]
+        );
+        assert_eq!(
+            store
+                .read(Settings::load)
+                .unwrap()
+                .network
+                .subscription_file_error_cancel_threshold,
+            stored_before
+        );
+        let before = before.clone();
+        store
+            .write(move |ctx| after.save(ctx.conn(), &before))
+            .unwrap();
+        assert_eq!(
+            serde_json::json!(
+                store
+                    .read(Settings::load)
+                    .unwrap()
+                    .network
+                    .subscription_file_error_cancel_threshold
+            ),
+            state["saved_after"]
+        );
+    }
+}
+
+#[test]
+fn cursor_autohide_control_matches_reference_default_bounds_and_none() {
+    use hydrus_gui_model::options::{Editor, Row as EditorRow};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("viewer_cursor_options.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    assert_eq!(
+        settings.viewer_cursor.autohide_ms.map(u64::from),
+        fixture["initial"].as_u64()
+    );
+    let registry = pages(&settings);
+    let page = registry
+        .iter()
+        .find(|page| page.name == "media viewer")
+        .unwrap();
+    let reference = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "media viewer")
+        .unwrap();
+    let problems = page_problems(page, &reference["items"], &settings, &store);
+    assert!(problems.is_empty(), "{problems:?}");
+    let mut editor = Editor::new(settings.clone());
+    let index = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "media viewer")
+        .unwrap();
+    editor.show_page(index);
+    let row = editor.rows().iter().position(|row| matches!(row, EditorRow::Opt {option,..} if option.label == "Time until mouse cursor autohides on media viewer:")).unwrap();
+    for event in fixture["events"].as_array().unwrap() {
+        let value = event["value"].as_i64();
+        editor.none(row, value.is_none());
+        if let Some(value) = value {
+            editor.number(row, value);
+        }
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty(), "{problems:?}");
+        assert_eq!(applied.viewer_cursor.autohide_ms.map(i64::from), value);
+    }
+    editor.number(row, 99);
+    assert_eq!(editor.applied().0.viewer_cursor.autohide_ms, Some(100));
+    editor.number(row, 100001);
+    assert_eq!(editor.applied().0.viewer_cursor.autohide_ms, Some(100000));
     assert_eq!(store.read(Settings::load).unwrap(), settings);
 }

@@ -582,3 +582,93 @@ fn recorded_router_tables_and_child_strings_use_real_sidecars_and_read_only_medi
         assert!(case["processor_context"].as_object().unwrap().is_empty());
     }
 }
+
+#[test]
+fn json_object_name_queue_replays_literal_reference_rows_and_exporter_values() {
+    use editors::object_names::ObjectNames;
+    let reference = hydrus_testkit::fixture_json("sidecar_json_names.json");
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let mut names = ObjectNames::new(&[]);
+    let initial = exporter(&object(&reference["states"][0]["serialised"])).unwrap();
+    let mut editor = ExporterEditor::new(&initial, &store.snapshot().services);
+    for state in reference["states"].as_array().unwrap() {
+        match state["case"].as_str().unwrap() {
+            "add" => {
+                names
+                    .accept(
+                        None,
+                        state["names"]
+                            .as_array()
+                            .unwrap()
+                            .last()
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_owned(),
+                    )
+                    .unwrap();
+            }
+            "blank_add_veto" => {
+                assert_eq!(
+                    names.accept(None, String::new()).unwrap_err(),
+                    reference["inputs"][6]["error"]
+                );
+            }
+            "edit_first_of_selection" => {
+                names.click(1, false, false);
+                names.click(3, true, false);
+                let (id, _) = names.first_selected().unwrap();
+                names
+                    .accept(
+                        Some(id),
+                        reference["inputs"][7]["answer"]
+                            .as_str()
+                            .unwrap()
+                            .to_owned(),
+                    )
+                    .unwrap();
+            }
+            "up_selected" => {
+                names.move_selected(-1);
+            }
+            "down_selected" => {
+                names.move_selected(1);
+            }
+            "cancel_delete" => {
+                assert_eq!(
+                    names.delete_question().unwrap(),
+                    reference["questions"][0]["message"]
+                );
+            }
+            "delete_selected" => {
+                assert_eq!(
+                    names.delete_question().unwrap(),
+                    reference["questions"][1]["message"]
+                );
+                names.delete();
+            }
+            _ => {}
+        }
+        assert_eq!(json!(names.names()), state["names"]);
+        assert_eq!(
+            json!(
+                (0..names.names().len())
+                    .filter(|&i| names.selected(i))
+                    .collect::<Vec<_>>()
+            ),
+            state["selected"]
+        );
+        editor.nested = names.names();
+        assert_eq!(
+            editor.value().unwrap(),
+            exporter(&object(&state["serialised"])).unwrap()
+        );
+    }
+    names.click(0, false, false);
+    let selected = names.first_selected().unwrap();
+    names.move_selected(-1);
+    assert_eq!(names.first_selected().unwrap(), selected);
+    names.move_selected(99);
+    assert_eq!(names.first_selected().unwrap(), selected);
+}

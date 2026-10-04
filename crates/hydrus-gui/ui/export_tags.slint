@@ -1,0 +1,55 @@
+// Read-only ListBoxTagsMedia sidebar within the existing manual-export window.
+import { ComboBox, ScrollView } from "std-widgets.slint";
+import { ListText, Theme } from "theme.slint";
+export component ExportTags inherits FocusScope {
+    in property <[ListText]> rows;
+    in property <[bool]> selected;
+    in property <int> sort-type;
+    in property <[string]> orders;
+    in property <int> order;
+    in property <int> group;
+    callback clicked(int,bool,bool);
+    callback middle-clicked(int,bool,bool);
+    callback context-menu(int,length,length);
+    callback sort-chosen(int,int);
+    callback copy();
+    callback select-all();
+    key-pressed(event) => {
+        if event.modifiers.control && (event.text == "c" || event.text == "C") { root.copy(); return accept; }
+        if event.modifiers.control && (event.text == "a" || event.text == "A") { root.select-all(); return accept; }
+        reject
+    }
+    Rectangle {
+        border-width: 1px; border-color: Theme.border; background: Theme.panel;
+        VerticalLayout {
+            padding: 5px; spacing: 4px;
+            Text { text: "files' tags"; color: Theme.text; font-weight: 700; horizontal-alignment: center; }
+            ComboBox { model: ["sort by tag", "sort by subtag", "sort by count"]; current-index: root.sort-type; selected => {root.sort-chosen(0,self.current-index);} }
+            HorizontalLayout {
+                ComboBox { model: root.orders; current-index: root.order; selected => {root.sort-chosen(1,self.current-index);} }
+                if root.sort-type != 1: ComboBox { model: ["no grouping", "namespace (a-z)", "namespace (user)"]; current-index: root.group; selected => {root.sort-chosen(2,self.current-index);} }
+            }
+            ScrollView {
+                vertical-stretch: 1;
+                VerticalLayout {
+                    alignment: start; spacing: 0px;
+                    for row[index] in root.rows: Rectangle {
+                        height: 22px;
+                        background: root.selected[index] ? Theme.highlight : touch.has-hover ? Theme.hover : transparent;
+                        Text { x: 4px; width: parent.width - 8px; text: row.text; color: root.selected[index] ? Theme.highlight-text : row.colour; vertical-alignment: center; overflow: elide; }
+                        touch := TouchArea {
+                            pointer-event(event) => {
+                                if event.kind == PointerEventKind.down {
+                                    root.focus();
+                                    if event.button == PointerEventButton.left {root.clicked(index,event.modifiers.control,event.modifiers.shift);}
+                                    if event.button == PointerEventButton.middle {root.middle-clicked(index,event.modifiers.control,event.modifiers.shift);}
+                                    if event.button == PointerEventButton.right {root.context-menu(index,self.absolute-position.x + self.mouse-x,self.absolute-position.y + self.mouse-y);}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

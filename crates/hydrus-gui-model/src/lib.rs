@@ -33,6 +33,7 @@ pub mod force_filetype;
 pub mod formula_editors;
 pub mod import_options_editor;
 pub mod import_options_overwrite;
+pub mod import_options_panel;
 pub mod importer_menu;
 pub mod info_lines;
 pub mod list_selection;
@@ -62,6 +63,7 @@ pub mod simple_downloader;
 pub mod sort;
 pub mod status;
 pub mod string_editors;
+pub mod subscription_quality;
 pub mod subscriptions_dedupe;
 pub mod subscriptions_dialog;
 pub mod subscriptions_list;
@@ -93,3 +95,8 @@ pub mod write_autocomplete;
 
 pub mod network_job_control;
 pub mod write_tag_menu;
+
+pub mod gallery_source;
+pub mod viewer_closing;
+
+pub mod viewer_cursor;

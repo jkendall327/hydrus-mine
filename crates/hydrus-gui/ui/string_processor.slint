@@ -10,6 +10,7 @@ import { Theme } from "theme.slint";
 import { Asking } from "subscriptions.slint";
 import { ListTable, TableRow } from "list_table.slint";
 import { RegexTools } from "regex_tools.slint";
+import { MenuPane, MenuPanes } from "main_menu.slint";
 
 component Box inherits Rectangle {
     in property <string> title;
@@ -251,6 +252,12 @@ export component StringStepWindow inherits Window {
     in property <string> favourite-status;
     callback favourite-copied(int);
     callback manage-favourites();
+    in property <[MenuPane]> favourite-panes;
+    callback favourite-menu(length, length);
+    callback favourite-line-hovered(int, int, length, length, length);
+    callback favourite-line-clicked(int, int, length, length, length);
+    callback favourite-placed(int, length, length, length);
+    callback favourite-dismissed();
     in property <[string]> regex-components;
     in property <[string]> regex-groups;
     callback regex-tool(int, int);
@@ -548,8 +555,7 @@ export component StringStepWindow inherits Window {
         }
         if root.show-match-regex || root.kind == 3: HorizontalLayout {
             spacing: 6px;
-            ComboBox { horizontal-stretch: 1; model: root.favourites; current-index: -1; enabled: !root.child-open; selected(_) => { root.favourite-copied(self.current-index); } }
-            Button { text: "manage favourites"; enabled: !root.child-open; clicked => { root.manage-favourites(); } }
+            Button { text: "favourites ▾"; enabled: !root.child-open; clicked => { root.favourite-menu(self.absolute-position.x, self.absolute-position.y+self.height); } }
         }
         if (root.show-match-regex || root.kind == 3) && root.favourite-status != "": Label { text: root.favourite-status; }
         if root.kind == 5: Box {
@@ -625,6 +631,16 @@ export component StringStepWindow inherits Window {
             apply => { root.apply(); }
             cancel => { root.cancel(); }
         }
+    }
+    if root.favourite-panes.length > 0: MenuPanes {
+        width: root.width;
+        height: root.height;
+        top: 0px;
+        panes: root.favourite-panes;
+        dismiss => { root.favourite-dismissed(); }
+        placed(p,x,y,w) => { root.favourite-placed(p,x,y,w); }
+        line-hovered(p,l,r,t,left) => { root.favourite-line-hovered(p,l,r,t,left); }
+        line-clicked(p,l,r,t,left) => { root.favourite-line-clicked(p,l,r,t,left); }
     }
 }
 

@@ -14,7 +14,10 @@ use std::{
 
 /// An owned exchange child, cancelled with its parent editor.
 #[derive(Clone, Default)]
-pub struct Slots(pub Rc<RefCell<Option<DownloaderExchangeWindow>>>);
+pub struct Slots(
+    pub Rc<RefCell<Option<DownloaderExchangeWindow>>>,
+    pub crate::png_export_window::Slots,
+);
 impl Drop for Slots {
     fn drop(&mut self) {
         if Rc::strong_count(&self.0) == 1 {
@@ -44,6 +47,7 @@ impl Slots {
         if let Some(w) = window {
             w.invoke_action("cancel".into());
         }
+        self.1.cancel();
     }
 }
 /// Validate a package without mutations and describe its concrete decisions.
@@ -224,6 +228,109 @@ pub fn open_routers(
     Ok(window)
 }
 
+/// Open a router package with the reference owned title/width PNG export child.
+pub fn open_routers_with_store(
+    store: &Arc<Store>,
+    slots: &Slots,
+    importing: bool,
+    routers: Vec<hydrus_parse::sidecar::Router>,
+    preview: Preview<hydrus_parse::sidecar::Router>,
+    applied: Apply<hydrus_parse::sidecar::Router>,
+) -> Result<DownloaderExchangeWindow, String> {
+    let payload = if importing {
+        None
+    } else {
+        Some((
+            hydrus_downloader_exchange::routers::encode_text(&routers)
+                .map_err(|e| e.to_string())?,
+            routers.len(),
+        ))
+    };
+    let window = open_routers(slots, importing, routers, preview, applied)?;
+    if let Some((payload, count)) = payload {
+        let summary = hydrus_gui_model::png_export::object_payload_description(
+            &payload,
+            "Metadata Single File Router",
+            count,
+        );
+        attach_png(store, slots, &window, payload, summary);
+    }
+    Ok(window)
+}
+
+/// Open a subsidiary package with the reference owned title/width PNG export child.
+pub fn open_subsidiaries_with_store(
+    store: &Arc<Store>,
+    slots: &Slots,
+    importing: bool,
+    parsers: Vec<hydrus_parse::content::SubsidiaryPageParser>,
+    preview: Preview<hydrus_parse::content::SubsidiaryPageParser>,
+    applied: Apply<hydrus_parse::content::SubsidiaryPageParser>,
+) -> Result<DownloaderExchangeWindow, String> {
+    let payload = if importing {
+        None
+    } else {
+        Some((
+            hydrus_downloader_exchange::subsidiaries::encode_text(&parsers)
+                .map_err(|e| e.to_string())?,
+            parsers.len(),
+        ))
+    };
+    let window = open_subsidiaries(slots, importing, parsers, preview, applied)?;
+    if let Some((payload, count)) = payload {
+        let summary = hydrus_gui_model::png_export::object_payload_description(
+            &payload,
+            "Subsidiary Page Parser",
+            count,
+        );
+        attach_png(store, slots, &window, payload, summary);
+    }
+    Ok(window)
+}
+
+fn attach_png(
+    store: &Arc<Store>,
+    slots: &Slots,
+    window: &DownloaderExchangeWindow,
+    payload: String,
+    summary: String,
+) {
+    window.set_png_enabled(true);
+    window.on_export_png({
+        let weak = window.as_weak();
+        let store = store.clone();
+        let png = slots.1.clone();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if !window.get_active() || png.has_open() {
+                return;
+            }
+            let closed = Rc::new({
+                let weak = weak.clone();
+                move || {
+                    if let Some(window) = weak.upgrade()
+                        && window.get_active()
+                    {
+                        window.set_png_child(false);
+                    }
+                }
+            });
+            match crate::png_export_window::open_with_summary(
+                &png,
+                &store,
+                payload.clone(),
+                summary.clone(),
+                closed,
+            ) {
+                Ok(_) => window.set_png_child(true),
+                Err(error) => window.set_error(error.into()),
+            }
+        }
+    });
+}
+
 fn open_objects<T: Clone + 'static>(
     slots: &Slots,
     importing: bool,
@@ -237,6 +344,7 @@ fn open_objects<T: Clone + 'static>(
     }
     let w = DownloaderExchangeWindow::new().map_err(|e| e.to_string())?;
     w.set_importing(importing);
+    w.set_active(true);
     if codec.processing {
         w.set_window_title(
             if importing {
@@ -261,13 +369,17 @@ fn open_objects<T: Clone + 'static>(
         let active = active.clone();
         let slot = Rc::downgrade(&slots.0);
         let weak = w.as_weak();
+        let png = slots.1.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
             if let Some(w) = weak.upgrade() {
+                w.set_active(false);
+                w.set_png_child(false);
                 let _ = w.hide();
             }
+            png.cancel();
             if let Some(slot) = slot.upgrade() {
                 slot.borrow_mut().take();
             }
@@ -287,6 +399,9 @@ fn open_objects<T: Clone + 'static>(
             let Some(w) = weak.upgrade() else {
                 return;
             };
+            if w.get_png_child() && action != "cancel" {
+                return;
+            }
             let result = (|| -> Result<(), String> {
                 match action.as_str() {
                     "cancel" => close(),

@@ -25,6 +25,7 @@ mod force_filetype;
 mod formula_editors;
 mod import_files;
 mod import_options;
+mod import_options_panel;
 mod importer_list_menu;
 mod info_lines;
 mod list_drag;
@@ -45,6 +46,8 @@ mod notebook_new_page;
 mod notebook_refresh;
 mod notebook_sessions;
 mod options_window;
+mod page_chooser_options;
+mod page_navigation_options;
 mod page_scroll;
 mod popups;
 mod predicate_editors;
@@ -110,3 +113,5 @@ mod unselected_tag_cap;
 mod write_autocomplete;
 
 mod network_job_control;
+
+mod gallery_source;

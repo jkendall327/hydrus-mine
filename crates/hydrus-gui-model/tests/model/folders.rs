@@ -357,3 +357,51 @@ fn the_lists_name_what_they_add_and_edit_uniquely() {
     assert_eq!(deleted[0].name, "import folder");
     assert_eq!(list.into_items().len(), 2);
 }
+
+#[test]
+fn export_folder_examples_use_recorded_queries_limits_and_media_contexts() {
+    use hydrus_gui_model::{folders::export_test_examples, sidecar_editors};
+    use hydrus_parse::sidecar::{Importer, Source};
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let directory = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &directory.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = hydrus_store::Store::open(directory.path()).unwrap();
+    let reference = hydrus_testkit::fixture_json("export_folder_examples.json");
+    let importer = Importer {
+        source: Source::MediaUrls,
+        processor: hydrus_core::url::strings::StringProcessor::default(),
+    };
+    for case in reference["cases"].as_array().unwrap() {
+        let search = FileSearchContext {
+            predicates: parse_api_search(&case["tags"]).unwrap(),
+            ..FileSearchContext::default()
+        };
+        let ids = export_test_examples(&store, &search).unwrap();
+        assert_eq!(
+            ids.iter().map(|id| u64::from(id.0)).collect::<Vec<_>>(),
+            case["finished"]["media"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|media| media["id"].as_u64().unwrap())
+                .collect::<Vec<_>>()
+        );
+        assert!(ids.len() <= 25);
+        let strings = ids.first().map_or_else(Vec::new, |id| {
+            sidecar_editors::test_importer_strings(
+                &store,
+                &importer,
+                &sidecar_editors::TestObject::Media(*id),
+                false,
+            )
+        });
+        assert_eq!(
+            serde_json::to_value(strings).unwrap(),
+            case["finished"]["source_strings"]
+        );
+    }
+}

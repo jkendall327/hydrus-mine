@@ -125,6 +125,29 @@ impl Setting for Pauses {
     const KEY: &'static str = "pauses";
 }
 
+/// The reference's saved `boot_with_network_traffic_paused` preference.
+/// Separate from the live pause: resuming traffic does not change the next boot.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct NetworkBootPause(pub bool);
+
+impl Setting for NetworkBootPause {
+    const KEY: &'static str = "boot_with_network_traffic_paused";
+}
+
+/// Apply once at client startup, before network workers are constructed.
+/// A false preference preserves the live pause, as the reference boot does.
+pub fn apply_network_boot_pause(store: &crate::Store) -> Result<()> {
+    store.write(|ctx| {
+        let conn = ctx.conn();
+        if get::<NetworkBootPause>(conn)?.0 {
+            let mut pauses: Pauses = get(conn)?;
+            pauses.network_traffic = true;
+            set(conn, &pauses)?;
+        }
+        Ok(())
+    })
+}
+
 /// Main-window identity and the optional client-exit confirmation.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
@@ -216,6 +239,67 @@ impl PageInsertion {
 
 impl Setting for PageInsertion {
     const KEY: &'static str = "gui_page_insertion";
+}
+
+/// File domains offered by the reference's new-page chooser.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct PageChooserSettings {
+    pub show_combined: bool,
+    pub combined_at_top: bool,
+    pub show_storage: bool,
+    pub storage_at_top: bool,
+}
+
+impl Default for PageChooserSettings {
+    fn default() -> Self {
+        Self {
+            show_combined: true,
+            combined_at_top: false,
+            show_storage: false,
+            storage_at_top: false,
+        }
+    }
+}
+
+impl Setting for PageChooserSettings {
+    const KEY: &'static str = "gui_page_chooser";
+}
+
+/// Confirmation and navigation preferences from GUI Pages.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct PageNavigationSettings {
+    pub confirm_all_closes: bool,
+    pub focus_search_on_change: bool,
+    pub history_entries: u16,
+}
+impl Default for PageNavigationSettings {
+    fn default() -> Self {
+        Self {
+            confirm_all_closes: false,
+            focus_search_on_change: false,
+            history_entries: 100,
+        }
+    }
+}
+impl Setting for PageNavigationSettings {
+    const KEY: &'static str = "gui_page_navigation";
+}
+
+/// Whether import-options editors hide inappropriate options for each caller.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ImportOptionsUiSettings {
+    pub simple: bool,
+}
+impl Default for ImportOptionsUiSettings {
+    fn default() -> Self {
+        Self { simple: true }
+    }
+}
+impl Setting for ImportOptionsUiSettings {
+    const KEY: &'static str = "import_options_ui";
 }
 
 /// Startup and periodic last-session saving, as GUI Sessions edits it.
@@ -367,6 +451,46 @@ impl Setting for FileHandlingSettings {
 
 impl Setting for hydrus_core::pages::SortSettings {
     const KEY: &'static str = "sorts";
+}
+
+/// Native media viewer cursor inactivity timeout, or never hide.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerCursorSettings {
+    pub autohide_ms: Option<u32>,
+}
+impl Default for ViewerCursorSettings {
+    fn default() -> Self {
+        Self {
+            autohide_ms: Some(700),
+        }
+    }
+}
+impl Setting for ViewerCursorSettings {
+    const KEY: &'static str = "viewer_cursor";
+}
+
+/// Passive copies of hover content, painted behind media independently of popups.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerBackgroundSettings {
+    pub tags: bool,
+    pub information: bool,
+    pub ratings: bool,
+    pub notes: bool,
+}
+impl Default for ViewerBackgroundSettings {
+    fn default() -> Self {
+        Self {
+            tags: true,
+            information: true,
+            ratings: true,
+            notes: true,
+        }
+    }
+}
+impl Setting for ViewerBackgroundSettings {
+    const KEY: &'static str = "viewer_background";
 }
 
 /// How the GUI opens pages.
@@ -530,6 +654,29 @@ impl Default for ViewerCanvasSettings {
 }
 impl Setting for ViewerCanvasSettings {
     const KEY: &'static str = "viewer_canvas";
+}
+
+/// What a surviving original page and main window do when a viewer closes.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerClosingSettings {
+    pub reselect_page: bool,
+    pub select_exit_media: bool,
+    pub activate_focusing: bool,
+    pub activate_always: bool,
+}
+impl Default for ViewerClosingSettings {
+    fn default() -> Self {
+        Self {
+            reselect_page: false,
+            select_exit_media: true,
+            activate_focusing: false,
+            activate_always: false,
+        }
+    }
+}
+impl Setting for ViewerClosingSettings {
+    const KEY: &'static str = "viewer_closing";
 }
 
 /// Whether mouseover panels require the native viewer's active window.

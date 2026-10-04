@@ -1066,3 +1066,214 @@ fn shared_cookie_list_owns_matchers_and_stages_both_script_and_step_consumers() 
     list.invoke_action("cancel".into());
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
 }
+
+fn string_table(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> serde_json::Value {
+    serde_json::json!(
+        (0..rows.row_count())
+            .map(|i| {
+                let cells = rows.row_data(i).unwrap().cells;
+                (0..cells.row_count())
+                    .map(|j| cells.row_data(j).unwrap().to_string())
+                    .collect::<Vec<_>>()
+            })
+            .collect::<Vec<_>>()
+    )
+}
+#[test]
+fn step_shows_three_reference_argument_lists_with_independent_selection_and_pinned_footer() {
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let state = fixture["argument_states"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap();
+    let step = legacy::login_step(
+        &SerialisableObject::from_tuple_str(&state["state"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let (_dir, store, _manager) = store();
+    let rendered = headless::init();
+    let slots = hydrus_gui::login_step_window::Slots::default();
+    let accepted = Rc::new(RefCell::new(None));
+    let window = hydrus_gui::login_step_window::open(
+        &store,
+        &step,
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |step| {
+                *accepted.borrow_mut() = Some(step);
+                Ok(())
+            }
+        }),
+    )
+    .unwrap();
+    assert_eq!(
+        string_table(&window.get_credential_variables()),
+        state["rows"]["credential"]
+    );
+    assert_eq!(
+        string_table(&window.get_static_variables()),
+        state["rows"]["static"]
+    );
+    assert_eq!(
+        string_table(&window.get_temporary_variables()),
+        state["rows"]["temporary"]
+    );
+    window.invoke_argument_clicked(0, 0, false, false);
+    window.invoke_argument_clicked(1, 0, false, false);
+    window.invoke_argument_clicked(1, 1, true, false);
+    window.invoke_argument_clicked(2, 0, false, false);
+    assert!(window.get_credential_one());
+    assert!(window.get_static_any());
+    assert!(!window.get_static_one());
+    assert!(window.get_temporary_one());
+    window.invoke_action("delete-static".into());
+    assert!(window.get_deleting());
+    window.invoke_action("back".into());
+    assert_eq!(window.get_static_variables().row_count(), 2);
+    window.invoke_action("delete-static".into());
+    window.invoke_action("confirm-delete".into());
+    assert_eq!(window.get_static_variables().row_count(), 0);
+    assert!(
+        window
+            .get_credential_variables()
+            .row_data(0)
+            .unwrap()
+            .selected
+    );
+    assert!(
+        window
+            .get_temporary_variables()
+            .row_data(0)
+            .unwrap()
+            .selected
+    );
+    window.invoke_action("add-credential".into());
+    assert_eq!(window.get_variable_kind(), 0);
+    window.invoke_action("cancel-variable".into());
+    let pixels = headless::render(&rendered.get(0).unwrap(), 880, 680);
+    assert!(window.get_footer_y() > 0.0);
+    assert!(window.get_footer_y() + window.get_footer_height() <= 680.0);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("login_step_three_arguments.png"),
+        &pixels,
+        880,
+        680,
+    )
+    .unwrap();
+    window.invoke_action("apply".into());
+    assert!(accepted.borrow().as_ref().unwrap().static_args.is_empty());
+    assert_eq!(
+        accepted.borrow().as_ref().unwrap().credentials,
+        step.credentials
+    );
+    assert_eq!(
+        accepted.borrow().as_ref().unwrap().temp_args,
+        step.temp_args
+    );
+}
+
+#[test]
+fn example_domain_stages_match_reference_final_cancel_and_preserve_parent_transaction() {
+    let (_dir, store, original) = store();
+    let rendered = headless::init();
+    let slots = Slots::default();
+    let list = windows::open_scripts(&store, &slots).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let script = slots.script.borrow().as_ref().unwrap().clone_strong();
+    script.invoke_action("add-example".into());
+    let child = slots.example.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(child.get_domain(), "example.com");
+    assert_eq!(child.get_access(), 1);
+    child.set_domain("login.example".into());
+    child.invoke_action("next".into());
+    assert_eq!(child.get_error(), "That domain already exists!");
+    assert_eq!(child.get_stage(), 0);
+    child.invoke_action("cancel".into());
+    assert!(!script.get_child_open());
+    script.invoke_action("add-example".into());
+    let child = slots.example.borrow().as_ref().unwrap().clone_strong();
+    child.set_domain("another.example".into());
+    child.invoke_action("next".into());
+    assert_eq!(child.get_stage(), 1);
+    child.set_access(2);
+    child.invoke_action("next".into());
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    assert_eq!(
+        child.get_description(),
+        fixture["example_states"][1]["prompts"][2]["options"]["default"]
+            .as_str()
+            .unwrap()
+    );
+    child.set_description("discard this edit".into());
+    child
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(slots.example.borrow().is_none());
+    assert!(!script.get_child_open());
+    assert_eq!(
+        string_table(&script.get_examples()),
+        fixture["example_states"][1]["state"]["rows"]
+    );
+    assert_eq!(script.get_test_domain(), "another.example");
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+    script.invoke_example_clicked(0, false, false);
+    script.invoke_action("edit-example".into());
+    let child = slots.example.borrow().as_ref().unwrap().clone_strong();
+    child.set_domain("renamed.example".into());
+    child.invoke_action("next".into());
+    child.set_access(2);
+    child.invoke_action("next".into());
+    child.set_description("custom access".into());
+    child.invoke_action("save".into());
+    assert_eq!(
+        string_table(&script.get_examples()),
+        fixture["example_states"][3]["state"]["rows"]
+    );
+    script.invoke_example_clicked(1, false, false);
+    script.invoke_action("edit-example".into());
+    let child = slots.example.borrow().as_ref().unwrap().clone_strong();
+    child.invoke_action("next".into());
+    child.invoke_action("next".into());
+    assert_eq!(child.get_description(), "custom access");
+    child.invoke_action("keep-description".into());
+    script.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    let saved = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(saved.scripts[0].examples.len(), 2);
+    assert_eq!(saved.scripts[0].examples[1].description, "custom access");
+    assert_eq!(saved.domains, original.domains);
+    let list = windows::open_scripts(&store, &slots).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let script = slots.script.borrow().as_ref().unwrap().clone_strong();
+    script.invoke_example_clicked(0, false, false);
+    script.invoke_example_clicked(1, true, false);
+    script.invoke_action("delete-example".into());
+    assert!(script.get_deleting());
+    script.invoke_action("back".into());
+    assert_eq!(script.get_examples().row_count(), 2);
+    script.invoke_action("delete-example".into());
+    script.invoke_action("confirm".into());
+    assert_eq!(script.get_examples().row_count(), 0);
+    script.invoke_action("add-example".into());
+    let child = slots.example.borrow().as_ref().unwrap().clone_strong();
+    child.set_domain("cancelled.example".into());
+    child.invoke_action("next".into());
+    child.invoke_action("next".into());
+    let pixels = headless::render(&rendered.get(rendered.count() - 1).unwrap(), 650, 260);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("login_example_domain.png"),
+        &pixels,
+        650,
+        260,
+    )
+    .unwrap();
+    script.invoke_action("cancel".into());
+    assert!(slots.example.borrow().is_none());
+    child.invoke_action("keep-description".into());
+    list.invoke_action("cancel".into());
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
+}

@@ -1417,9 +1417,14 @@ fn raw_content_preview_preserves_clipboard_context_and_detects_fetched_png_bytes
     test.context.insert("post_index".into(), "7".into());
     test.context.insert("custom".into(), "kept".into());
     let mut parser = new_content();
-    parser.formula = hydrus_parse::formula::Formula::new(FormulaKind::ContextVariable {
-        variable: "url".into(),
-    });
+    parser.formula = hydrus_parse::formula::Formula {
+        reference_auxiliary: None,
+        name: String::new(),
+        kind: FormulaKind::ContextVariable {
+            variable: "url".into(),
+        },
+        processor: hydrus_core::url::strings::StringProcessor::default(),
+    };
     let content = windows::open_content(
         &store,
         &parser,
@@ -1565,4 +1570,206 @@ fn raw_content_preview_preserves_clipboard_context_and_detects_fetched_png_bytes
     hydrus_gui::set_clipboard_reader(|| Ok(Some("stale replacement".into())));
     formula.invoke_raw_action("paste".into());
     assert_eq!(formula.get_document(), raw);
+}
+
+#[test]
+fn subsidiary_export_uses_owned_reference_png_parameters_and_discards_stale_export() {
+    let (_dir, store, slots) = setup();
+    headless::init();
+    let reference = hydrus_testkit::fixture_json("parser_png_export.json");
+    let original = definitions(&store);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.invoke_action("import-subsidiary".into());
+    let import = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    let case = reference
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["case"] == "subsidiary_queue")
+        .unwrap();
+    import.set_text(case["payload"].to_string().into());
+    import.invoke_action("review".into());
+    import.invoke_action("accept".into());
+    page.invoke_action("export-subsidiary".into());
+    let exchange = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    assert!(exchange.get_png_enabled());
+    exchange.invoke_export_png();
+    let png = slots.exchange.1.window().unwrap();
+    assert_eq!(png.get_png_title(), case["default_title"].as_str().unwrap());
+    assert_eq!(
+        png.get_payload_description(),
+        case["summary"].as_str().unwrap()
+    );
+    assert_eq!(png.get_png_width(), 512);
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("subsidiaries.png");
+    png.set_path(path.to_string_lossy().into_owned().into());
+    png.set_png_width(300);
+    png.set_png_title("recorded queue 日本".into());
+    png.set_description("synthetic typed export".into());
+    png.invoke_action("export".into());
+    assert!(png.get_done(), "{}", png.get_error());
+    let bytes = std::fs::read(path).unwrap();
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(
+            &hydrus_downloader_exchange::text_png::decode(&bytes).unwrap()
+        )
+        .unwrap(),
+        case["loaded"]
+    );
+    let stale = dir.path().join("stale.png");
+    png.set_path(stale.to_string_lossy().into_owned().into());
+    slots.cancel();
+    assert!(slots.exchange.1.window().is_none());
+    assert!(!exchange.get_active());
+    png.invoke_action("export".into());
+    exchange.invoke_export_png();
+    assert!(!stale.exists());
+    assert_eq!(definitions(&store), original);
+}
+
+#[test]
+fn links_auto_fill_and_api_review_reproduce_reference_and_preserve_installed_consumers() {
+    use hydrus_legacy::{
+        objects::{domain, parsers},
+        serialisable::SerialisableObject,
+    };
+    let _windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("parser_auto_links.json");
+    let classes = fixture["classes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| {
+            domain::url_class(&SerialisableObject::from_tuple_str(&value.to_string()).unwrap())
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let parsers = fixture["parsers"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| {
+            parsers::page_parser(&SerialisableObject::from_tuple_str(&value.to_string()).unwrap())
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    fn rows(model: &slint::ModelRc<hydrus_gui::TableRow>) -> serde_json::Value {
+        serde_json::json!(
+            (0..model.row_count())
+                .map(|i| {
+                    let cells = model.row_data(i).unwrap().cells;
+                    (0..cells.row_count())
+                        .map(|j| cells.row_data(j).unwrap().to_string())
+                        .collect::<Vec<_>>()
+                })
+                .collect::<Vec<_>>()
+        )
+    }
+    for case in fixture["cases"].as_array().unwrap() {
+        let settings = UrlClassSettings {
+            url_classes: classes.clone(),
+            parser_keys: parsers.iter().map(|p| p.key.clone()).collect(),
+            parser_links: case["existing"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|pair| {
+                    (
+                        hex::encode(
+                            &classes
+                                .iter()
+                                .find(|class| class.name == pair[0].as_str().unwrap())
+                                .unwrap()
+                                .key,
+                        ),
+                        Some(
+                            parsers
+                                .iter()
+                                .find(|parser| parser.name == pair[1].as_str().unwrap())
+                                .unwrap()
+                                .key
+                                .clone(),
+                        ),
+                    )
+                })
+                .collect(),
+            ..UrlClassSettings::default()
+        };
+        let definitions = Downloaders {
+            parsers: parsers.clone(),
+            ..Downloaders::default()
+        };
+        let saved = settings.clone();
+        store
+            .write_and_refresh(move |ctx| {
+                settings::set(ctx.conn(), &definitions)?;
+                settings::set(ctx.conn(), &saved)
+            })
+            .unwrap();
+        let slots = Slots::default();
+        let window = windows::open(&store, &slots, true).unwrap();
+        assert_eq!(
+            window.get_gaps_exist(),
+            case["steps"][0]["enabled"].as_bool().unwrap()
+        );
+        assert_eq!(rows(&window.get_rows()), case["steps"][0]["rows"]);
+        window.invoke_action("auto-link".into());
+        assert_eq!(rows(&window.get_rows()), case["steps"][1]["rows"]);
+        assert_eq!(
+            store.read(settings::get::<UrlClassSettings>).unwrap(),
+            settings
+        );
+        window.set_links_tab(1);
+        assert_eq!(rows(&window.get_api_rows()), case["api_pairs"]);
+        assert_eq!(
+            serde_json::json!(
+                (0..window.get_api_columns().row_count())
+                    .map(|i| window
+                        .get_api_columns()
+                        .row_data(i)
+                        .unwrap()
+                        .title
+                        .to_string())
+                    .collect::<Vec<_>>()
+            ),
+            case["api_columns"]
+        );
+        window.invoke_api_sort(1, false);
+        assert_eq!(rows(&window.get_api_rows()), case["api_pairs"]);
+        window.invoke_action("clear".into());
+        assert_eq!(
+            rows(&window.get_rows()),
+            case["steps"][1]["rows"],
+            "API tab has no parser mutation controls"
+        );
+        window.invoke_action("cancel".into());
+        window.invoke_action("auto-link".into());
+        assert_eq!(
+            store.read(settings::get::<UrlClassSettings>).unwrap(),
+            settings
+        );
+        let reopened = windows::open(&store, &slots, true).unwrap();
+        assert_eq!(rows(&reopened.get_api_rows()), case["api_pairs"]);
+        reopened.invoke_action("apply".into());
+        assert_eq!(
+            store.read(settings::get::<UrlClassSettings>).unwrap(),
+            settings
+        );
+        if case["name"] == "installed" {
+            let target = parsers.iter().find(|p| p.name == "API parser").unwrap();
+            let (url, parser) = store
+                .snapshot()
+                .url_classes
+                .url_to_fetch_and_parser("https://links.example/redirect")
+                .unwrap();
+            assert_eq!(url, "https://links.example/api");
+            assert_eq!(parser, target.key);
+        }
+    }
 }

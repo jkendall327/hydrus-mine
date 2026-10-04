@@ -17,6 +17,22 @@ pub fn payload_description(payload: &str) -> String {
     )
 }
 
+/// The reference describes selected serialisable objects by type and count.
+pub fn object_payload_description(payload: &str, object_type: &str, count: usize) -> String {
+    let kind = if count == 1 {
+        object_type.to_owned()
+    } else {
+        format!(
+            "A list of {} {object_type}",
+            hydrus_core::numbers::human_int(count as u64)
+        )
+    };
+    format!(
+        "{kind} - {}",
+        hydrus_core::numbers::human_bytes(payload.chars().count() as u64)
+    )
+}
+
 /// Invalid exports stay open and do not write their chosen path.
 pub fn validate(path: &str, title: &str, width: i32) -> Result<(), String> {
     let mut problems = Vec::new();
@@ -61,16 +77,35 @@ pub fn encode(
     title: &str,
     description: &str,
 ) -> Result<Vec<u8>, String> {
+    encode_with_summary(
+        payload,
+        width,
+        title,
+        &payload_description(payload),
+        description,
+    )
+}
+
+/// Typed editor payloads retain their reference type/count summary in the header.
+pub fn encode_with_summary(
+    payload: &str,
+    width: u32,
+    title: &str,
+    summary: &str,
+    description: &str,
+) -> Result<Vec<u8>, String> {
     if !(100..=4096).contains(&width) {
         return Err("Set width between 100 and 4096.".into());
     }
-    if title.chars().count() > 4096 || description.chars().count() > 4096 {
+    if title.chars().count() > 4096
+        || description.chars().count() > 4096
+        || summary.chars().count() > 4096
+    {
         return Err("PNG title and description must each contain at most 4096 characters.".into());
     }
-    let summary = payload_description(payload);
     let mut y = 12_u32;
     let mut texts = String::new();
-    for (text, size) in [(title, 24_u32), (summary.as_str(), 17), (description, 12)] {
+    for (text, size) in [(title, 24_u32), (summary, 17), (description, 12)] {
         let count = usize::try_from((width - 20) / (size * 3 / 5))
             .map_err(|e| e.to_string())?
             .max(1);

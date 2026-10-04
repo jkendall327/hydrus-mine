@@ -52,11 +52,7 @@ pub fn open_definition(
     }
     let window = LoginCredentialDefinitionWindow::new()?;
     window.set_name(value.name.as_str().into());
-    window.set_kind(if value.kind == CredentialKind::Hidden {
-        1
-    } else {
-        0
-    });
+    window.set_kind(i32::from(value.kind == CredentialKind::Hidden));
     window.set_matcher(value.string_match.describe(false, false).into());
     let state = Rc::new(RefCell::new(value.clone()));
     let active = Rc::new(Cell::new(true));

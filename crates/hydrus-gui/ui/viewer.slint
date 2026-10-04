@@ -57,6 +57,43 @@ export struct RatingRow {
     brush: color,
 }
 
+// Shared passive rating drawing; input belongs only to the hover's own TouchArea.
+component RatingGraphic inherits Rectangle {
+    in property <RatingRow> rating;
+    in property <length> icon-size: 12px;
+    in property <length> incdec-height: 12px;
+    in property <length> outline: 1px;
+    width: root.rating.kind == 2 ? root.incdec-height * 2 : root.rating.shapes.length * (root.icon-size + root.rating.pad) - root.rating.pad;
+    height: root.rating.kind == 2 ? root.incdec-height : root.icon-size;
+    if root.rating.kind == 2: Rectangle {
+        border-width: 1px;
+        border-color: root.rating.pen;
+        background: root.rating.brush;
+        Text {
+            x: 0;
+            width: parent.width - 2px;
+            height: parent.height;
+            horizontal-alignment: right;
+            vertical-alignment: center;
+            text: root.rating.text;
+            color: #000000;
+            font-size: max(root.incdec-height - 1px, 6px);
+        }
+    }
+    for star[k] in root.rating.shapes: Path {
+        x: k * (root.icon-size + root.rating.pad);
+        y: 0;
+        width: root.icon-size;
+        height: root.icon-size;
+        viewbox-width: 12;
+        viewbox-height: 12;
+        commands: root.rating.shape;
+        fill: star.brush;
+        stroke: star.pen;
+        stroke-width: root.outline;
+    }
+}
+
 // a button of the top hover frame: the reference's icon for it
 component HoverButton inherits Rectangle {
     in property <image> icon;
@@ -110,6 +147,13 @@ export component MediaViewerWindow inherits Window {
     in property <bool> hover-tags-enabled: true;
     in property <bool> hover-ratings-enabled: true;
     in property <bool> hover-notes-enabled: true;
+    in property <bool> draw-tags-background: true;
+    in property <bool> draw-information-background: true;
+    in property <bool> draw-ratings-background: true;
+    in property <bool> draw-notes-background: true;
+    in property <[string]> location-strings;
+    out property <length> background-ratings-height: root.draw-ratings-background ? passive-ratings.height : 0px;
+    out property <length> background-notes-y: root.background-ratings-height;
     in property <bool> draw-index-background: true;
     out property <string> index-background-text: !root.draw-index-background || root.caption == "" ? ""
         : (root.zoom-text != "" ? root.zoom-text : "100%")
@@ -203,6 +247,8 @@ export component MediaViewerWindow inherits Window {
     // the right-click menu (`src/viewer_menu.rs`): asked for, then shown,
     // its rows' ids chosen
     in property <ThumbnailMenu> context-menu;
+    callback cursor-menu-starting();
+    callback cursor-menu-returned();
     callback context-menu-requested();
     callback menu-chosen(int);
     // home and end: the first file and the last
@@ -232,6 +278,8 @@ export component MediaViewerWindow inherits Window {
     in property <bool> hide-during-drag;
     in property <bool> media-has-duration;
     out property <bool> drag-accepted;
+    in property <bool> cursor-idle-hidden;
+    out property <bool> cursor-hide-eligible: pointer.has-hover && !root.info-showing && !root.tags-showing && !root.ratings-showing && !root.notes-showing && !root.volume-open;
     out property <bool> drag-cursor-hidden;
     property <length> drag-x;
     property <length> drag-y;
@@ -788,6 +836,56 @@ export component MediaViewerWindow inherits Window {
                 }
             }
         }
+        // Passive copies paint on the canvas before media, without popup input.
+        Rectangle {
+            x: 0; y: 0; width: root.width * 0.2; height: root.height;
+            visible: root.draw-tags-background;
+            clip: true;
+            VerticalLayout {
+                padding: 6px; spacing: 2px; alignment: start;
+                for tag in root.tags: Text { text: tag.text; color: tag.colour; overflow: elide; }
+            }
+        }
+        Text {
+            x: root.width * 0.2; width: root.width * 0.6; y: 3px;
+            visible: root.draw-information-background;
+            text: root.info-line; color: #f0f0f0; font-size: 14px;
+            horizontal-alignment: center; overflow: elide;
+        }
+        passive-ratings := Rectangle {
+            x: root.width * 0.65; y: 0; width: root.width * 0.35;
+            height: passive-ratings-layout.preferred-height;
+            visible: root.draw-ratings-background;
+            passive-ratings-layout := VerticalLayout {
+                padding: 6px; spacing: 4px; alignment: start;
+                for rating in root.ratings: HorizontalLayout {
+                    alignment: end;
+                    RatingGraphic { rating: rating; icon-size: root.rating-size; incdec-height: root.incdec-height; outline: root.rating-outline; }
+                }
+                if root.file-inbox || root.file-trashed: HorizontalLayout {
+                    alignment: end;
+                    if root.file-trashed: Image { width: 16px; height: 16px; source: @image-url("../../../static/trash.png"); }
+                    if root.file-inbox: Image { width: 16px; height: 16px; source: @image-url("../../../static/inbox.png"); }
+                }
+                for location in root.location-strings: Text { text: location; color: #f0f0f0; horizontal-alignment: right; }
+                for link in root.url-links: Text { text: link.label; color: #f0f0f0; horizontal-alignment: right; overflow: elide; }
+            }
+        }
+        Rectangle {
+            x: root.width * 0.8; y: root.background-notes-y;
+            width: root.width * 0.2;
+            height: min(passive-notes-layout.preferred-height, root.height - self.y);
+            visible: root.draw-notes-background;
+            clip: true;
+            passive-notes-layout := VerticalLayout {
+                padding: 6px; spacing: 8px; alignment: start;
+                for note in root.notes: VerticalLayout {
+                    spacing: 2px;
+                    Text { text: note.name; color: #f0f0f0; font-weight: 700; horizontal-alignment: center; wrap: word-wrap; }
+                    Text { text: note.text; color: #e0e0e0; wrap: word-wrap; }
+                }
+            }
+        }
         // Passive canvas details are behind the media and never take input.
         if root.index-background-text != "": Text {
             x: root.width - self.preferred-width - 3px;
@@ -823,7 +921,7 @@ export component MediaViewerWindow inherits Window {
             image-fit: fill;
         }
         pointer := TouchArea {
-            mouse-cursor: root.drag-cursor-hidden ? MouseCursor.none : MouseCursor.default;
+            mouse-cursor: root.drag-cursor-hidden || root.cursor-idle-hidden ? MouseCursor.none : MouseCursor.default;
             changed mouse-x => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
             changed mouse-y => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
             pointer-event(event) => {
@@ -842,7 +940,9 @@ export component MediaViewerWindow inherits Window {
                 // and a right click shows the menu
                 if (event.kind == PointerEventKind.down && event.button == PointerEventButton.right) {
                     root.context-menu-requested();
+                    root.cursor-menu-starting();
                     viewer-menu.show({ x: self.mouse-x, y: self.mouse-y });
+                    root.cursor-menu-returned();
                 }
             }
             // as is a (left) double-click, as the reference's default
@@ -1208,32 +1308,11 @@ export component MediaViewerWindow inherits Window {
                         Rectangle {
                             width: row.kind == 2 ? root.incdec-height * 2 : row.shapes.length * (root.rating-size + row.pad) - row.pad;
                             height: row.kind == 2 ? root.incdec-height : root.rating-size;
-                            if row.kind == 2: Rectangle {
-                                border-width: 1px;
-                                border-color: row.pen;
-                                background: row.brush;
-                                Text {
-                                    x: 0;
-                                    width: parent.width - 2px;
-                                    height: parent.height;
-                                    horizontal-alignment: right;
-                                    vertical-alignment: center;
-                                    text: row.text;
-                                    color: #000000;
-                                    font-size: max(root.incdec-height - 1px, 6px);
-                                }
-                            }
-                            for star[k] in row.shapes: Path {
-                                x: k * (root.rating-size + row.pad);
-                                y: 0;
-                                width: root.rating-size;
-                                height: root.rating-size;
-                                viewbox-width: 12;
-                                viewbox-height: 12;
-                                commands: row.shape;
-                                fill: star.brush;
-                                stroke: star.pen;
-                                stroke-width: root.rating-outline;
+                            RatingGraphic {
+                                rating: row;
+                                icon-size: root.rating-size;
+                                incdec-height: root.incdec-height;
+                                outline: root.rating-outline;
                             }
                             TouchArea {
                                 pointer-event(event) => {

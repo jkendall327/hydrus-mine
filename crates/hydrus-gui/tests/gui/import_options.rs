@@ -664,3 +664,95 @@ fn favourites_popup_replays_real_dialogs_persists_and_invalidates_children() {
     assert!(windows.get(0).is_some());
     assert_ne!(*current.borrow(), ImportOptionsSlice::default());
 }
+
+#[test]
+fn options_profiles_share_the_parent_draft_without_persisting_children() {
+    use hydrus_core::import_options::{CallerType, ImportOptionsManager, ImportOptionsSlice};
+    use hydrus_downloader_exchange::import_options;
+    use hydrus_gui::import_options_favourites_window::Controller;
+    use hydrus_store::settings;
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("subscription_import_options.json");
+    let incoming = import_options::decode_text(&fixture["incoming"].to_string()).unwrap();
+    let persisted: ImportOptionsManager = store.read(settings::get).unwrap();
+    let draft = Rc::new(RefCell::new(persisted.clone()));
+    let applied = Rc::new(RefCell::new(ImportOptionsSlice::default()));
+    let owner = Controller::new_staged(
+        store.clone(),
+        CallerType::Global,
+        draft.clone(),
+        Rc::new({
+            let incoming = incoming.clone();
+            move || Some(incoming.clone())
+        }),
+        Rc::new({
+            let applied = applied.clone();
+            move |options| *applied.borrow_mut() = options
+        }),
+        Rc::new(|error| panic!("profile operation failed: {error}")),
+        Rc::new(|_| {}),
+    );
+    owner.choose(5, "");
+    owner
+        .prompt_window()
+        .unwrap()
+        .invoke_accepted("draft profile".into());
+    assert_eq!(
+        draft.borrow().favourites,
+        vec![("draft profile".into(), incoming.clone())]
+    );
+    assert_eq!(
+        store.read(settings::get::<ImportOptionsManager>).unwrap(),
+        persisted
+    );
+    owner.choose(0, "draft profile");
+    assert_eq!(*applied.borrow(), incoming);
+
+    let text = import_options::encode_text(&incoming).unwrap();
+    hydrus_gui::set_clipboard_reader(move || Ok(Some(text.clone())));
+    owner.choose(4, "");
+    let cancelled = owner.editing_window().unwrap();
+    cancelled.set_favourite_name("cancelled".into());
+    cancelled.invoke_paste_options(2);
+    cancelled.invoke_cancel();
+    cancelled.invoke_apply();
+    assert_eq!(draft.borrow().favourites.len(), 1);
+
+    owner.choose(3, "draft profile");
+    let editor = owner.editing_window().unwrap();
+    editor.set_favourite_name("renamed".into());
+    editor.invoke_apply();
+    assert_eq!(
+        draft.borrow().favourites,
+        vec![("renamed".into(), incoming)]
+    );
+    owner.choose(6, "renamed");
+    owner.prompt_window().unwrap().invoke_cancelled();
+    assert_eq!(draft.borrow().favourites.len(), 1);
+    owner.choose(6, "renamed");
+    owner.prompt_window().unwrap().invoke_accepted("".into());
+    assert!(draft.borrow().favourites.is_empty());
+    assert_eq!(
+        store.read(settings::get::<ImportOptionsManager>).unwrap(),
+        persisted
+    );
+
+    owner.choose(4, "");
+    let stale = owner.editing_window().unwrap();
+    stale.set_favourite_name("after owner closes".into());
+    owner.close();
+    stale.invoke_apply();
+    assert!(draft.borrow().favourites.is_empty());
+    let accepted = draft.borrow().clone();
+    store
+        .write(move |tx| settings::set(tx.conn(), &accepted))
+        .unwrap();
+    assert_eq!(
+        store.read(settings::get::<ImportOptionsManager>).unwrap(),
+        *draft.borrow()
+    );
+}
