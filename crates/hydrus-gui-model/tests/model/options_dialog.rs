@@ -849,7 +849,7 @@ fn tag_service_controls_match_reference_and_remember_interlock() {
     let page = editor
         .page_names()
         .iter()
-        .position(|name| name == "tag editing")
+        .position(|name| *name == "tag editing")
         .unwrap();
     editor.show_page(page);
     let row = |editor: &Editor, label: &str| {
