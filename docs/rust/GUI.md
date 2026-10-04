@@ -2894,3 +2894,6 @@ files still in trash retain their history/reasons, other local deletion records
 are forgotten, and pending physical deletes remain queued. Reopened review counts
 and the import-status consumer reflect the change. The actual Qt decisions and
 status transition from deleted to unknown are in `service_deleted.json`.
+Opening another service review cancels the previous owner's pending question;
+retained callbacks from that retired owner cannot clear records or close the
+replacement review.

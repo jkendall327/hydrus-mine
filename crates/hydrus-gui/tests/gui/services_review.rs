@@ -553,3 +553,119 @@ fn deleted_record_review_needs_both_answers_and_reopens_with_import_consumer_cha
     assert!(reopened.get_question().is_empty());
     reopened.invoke_close_clicked();
 }
+
+#[test]
+fn replacing_review_cancels_pending_deleted_clear_and_retained_owner_cannot_write() {
+    use hydrus_core::{ServiceType, Sha256};
+    let fixture = hydrus_testkit::fixture_json("service_deleted.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    headless::init();
+    let registry = store.snapshot().services.clone();
+    let domain = registry
+        .of_type(ServiceType::CombinedLocalFileDomains)
+        .next()
+        .unwrap()
+        .id;
+    let storage = registry
+        .of_type(ServiceType::HydrusLocalFileStorage)
+        .next()
+        .unwrap()
+        .clone();
+    let ids = fixture["corpus"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|hash| {
+            let hash: Sha256 = hash.as_str().unwrap().parse().unwrap();
+            store
+                .read(|conn| hydrus_store::master::hash_id(conn, &hash))
+                .unwrap()
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::delete_lock::DeleteLock::default(),
+            )
+        })
+        .unwrap();
+    let storage_id = storage.id;
+    store
+        .write_content(move |writer| {
+            writer.delete_files(domain, &ids, None)?;
+            writer.delete_files(storage_id, &ids[..1], None)
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let open_review = || {
+        let index = ui
+            .get_menu_titles()
+            .iter()
+            .position(|title| title.label == "services")
+            .unwrap();
+        ui.invoke_menu_title_pressed(i32::try_from(index).unwrap(), 10.0, 22.0);
+        let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
+        let index = lines
+            .iter()
+            .position(|line| line.label == "review")
+            .unwrap();
+        ui.invoke_menu_line_clicked(0, i32::try_from(index).unwrap(), 0.0, 0.0, 0.0);
+        bound
+            .services_review
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong()
+    };
+    let retired = open_review();
+    choose_service(&retired, &storage.name);
+    retired.invoke_maintenance(5);
+    retired.invoke_answer(true);
+    assert_eq!(
+        retired.get_question(),
+        fixture["events"][2]["asked"][1]["message"]
+            .as_str()
+            .unwrap()
+    );
+    let successor = open_review();
+    assert!(!retired.window().is_visible());
+    assert!(retired.get_question().is_empty());
+    assert!(successor.window().is_visible());
+    choose_service(&successor, &storage.name);
+    successor.invoke_maintenance(5);
+    retired.show().unwrap();
+    retired.invoke_maintenance(5);
+    retired.invoke_answer(true);
+    retired.invoke_answer(true);
+    retired.invoke_close_clicked();
+    assert!(successor.window().is_visible());
+    assert_eq!(
+        successor.get_question(),
+        fixture["events"][2]["asked"][0]["message"]
+            .as_str()
+            .unwrap()
+    );
+    assert_eq!(
+        deleted_record_state(&store, &fixture),
+        fixture["events"][0]["before"]["import_status"]
+    );
+    successor.invoke_answer(true);
+    successor.invoke_answer(true);
+    assert!(successor.get_question().is_empty());
+    assert!(successor.get_error().is_empty());
+    assert_eq!(
+        deleted_record_state(&store, &fixture),
+        fixture["events"][2]["after"]["import_status"]
+    );
+    let reopened = hydrus_store::Store::open(store.dir()).unwrap();
+    assert_eq!(
+        deleted_record_state(&reopened, &fixture),
+        fixture["events"][2]["after"]["import_status"]
+    );
+    successor.invoke_close_clicked();
+    ui.hide().unwrap();
+}

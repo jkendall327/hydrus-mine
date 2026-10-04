@@ -2164,7 +2164,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         pages.borrow().store().clone(),
                         changed.clone(),
                     ) {
-                        Ok(window) => *slot.borrow_mut() = Some(window),
+                        Ok(window) => {
+                            let previous = slot.borrow_mut().take();
+                            if let Some(previous) = previous {
+                                previous.invoke_close_clicked();
+                            }
+                            *slot.borrow_mut() = Some(window);
+                        }
                         Err(e) => eprintln!("could not review services: {e}"),
                     }
                 })
