@@ -2,25 +2,27 @@
   "schema_version": 1,
   "agent": "string-dates",
   "baseline_git_head": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
-  "implementation_git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2",
+  "implementation_git_head": "f017801421aaeafacb95c344ca02d6c88eaa7a04",
   "implementation_commits": [
     "fb4ce6e2",
     "2c946b4f",
     "92fed70c",
     "b2689d91",
-    "83d4d7e4"
+    "83d4d7e4",
+    "53575a98",
+    "f0178014"
   ],
   "dependencies": [
     {
       "git_head": "f1048a26c6ce2a3aee64a84333bce8837f2456dc",
       "agent": "overnight_options",
-      "reason": "Regex favourites options page, parent draft Apply/Cancel route, and route regression; parent page is counted in options packet."
+      "reason": "Regex favourites options page, parent draft Apply/Cancel route, and route regression; this packet claims the page container separately from the editor leaf."
     }
   ],
   "summary": {
     "concrete_existing_reference_controls_completed": 5,
     "concrete_existing_reference_controls_improved_to_partial": 1,
-    "parent_or_alias_completions": 0
+    "parent_or_alias_completions": 1
   },
   "validation": {
     "reference_recordings_executed": [
@@ -31,7 +33,8 @@
     ],
     "cargo_fmt": "passed",
     "rustc_date_harness": "All 46 direct conversion vectors and 5 named-local/DST contexts passed using existing Jiff/regex/serde_json artifacts; no Cargo build or target directory created.",
-    "rust_assertions": "Authored; root asynchronous CI owns execution. Date strict Clippy fixes b2689d91 delivered; no local heavy Cargo or mutation tests."
+    "rust_assertions": "Authored; root asynchronous CI owns execution. Date strict Clippy fixes b2689d91 delivered; no local heavy Cargo or mutation tests.",
+    "rustc_regex_tools_harness": "All29 component/replacement clipboard snippets match the realQt recording, linked to existingserde_json artifact without Cargo build."
   },
   "claims": [
     {
@@ -259,14 +262,76 @@
         }
       ],
       "boundaries": [
-        "Requires the options agent route f1048a26. Native edits phrase/description together; Qt uses sequential dialogs. Options page container is claimed separately by the options agent."
+        "Requires options route f1048a26. Native edits phrase/description together; Qt uses sequential dialogs. Options page container is separately identified in this packet."
+      ]
+    },
+    {
+      "reference_id": "options-regex-favourites",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_kind": "parent_container",
+      "behavior": "Expose the regex favourites options page and its embedded editor route; child Apply updates the options draft, parent Apply persists and parent Cancel discards child drafts and closes stale handles. Counted separately from its concrete editor leaf.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 329,
+          "git_head": "f1048a26c6ce2a3aee64a84333bce8837f2456dc"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 283,
+          "git_head": "f1048a26c6ce2a3aee64a84333bce8837f2456dc"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 701,
+          "git_head": "f1048a26c6ce2a3aee64a84333bce8837f2456dc"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 1092,
+          "git_head": "f1048a26c6ce2a3aee64a84333bce8837f2456dc"
+        }
+      ],
+      "boundaries": [
+        "Options agent route must be integrated; no duplicate options-agent completion claim."
       ]
     }
   ],
   "unclaimed_parent_limitations": {
-    "string-match": "Remains partial until regex help/component menus are implemented; favourites alone do not turn the whole dialog green.",
+    "string-match": "Remains partial until regex help links are implemented; favourites/components do not turn the whole dialog green.",
     "string-converter": "Automatic date grammar and persistent last-used conversion preference remain incomplete.",
-    "string-processor": "Sidecar automatic starting examples remain incomplete.",
-    "options-regex-favourites": "Parent/page completion belongs to the options agent, not this packet."
+    "string-processor": "Sidecar automatic starting examples remain incomplete."
+  },
+  "additional_behavior_without_completion_claim": {
+    "reference_id": "string-match",
+    "proposed_status": "partial",
+    "behavior": "Shared matcher/sorter favourites and25 exact component clipboard snippets; conversion regex fields also expose4 replacement-group snippets. Closed handles cannot copy. Help links remain absent, so the broader matcher remains partial.",
+    "source_anchors": [
+      {
+        "path": "crates/hydrus-gui/ui/regex_tools.slint",
+        "line": 4,
+        "git_head": "f017801421aaeafacb95c344ca02d6c88eaa7a04"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/regex_favourites.rs",
+        "line": 96,
+        "git_head": "f017801421aaeafacb95c344ca02d6c88eaa7a04"
+      }
+    ],
+    "test_anchors": [
+      {
+        "path": "crates/hydrus-gui-model/tests/model/regex_favourites.rs",
+        "line": 100,
+        "git_head": "f017801421aaeafacb95c344ca02d6c88eaa7a04"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/regex_favourites.rs",
+        "line": 100,
+        "git_head": "f017801421aaeafacb95c344ca02d6c88eaa7a04"
+      }
+    ]
   }
 }
