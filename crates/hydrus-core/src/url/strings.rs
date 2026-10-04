@@ -1061,16 +1061,16 @@ mod tests {
         let c = StringConverter {
             conversions: vec![
                 Conversion::RegexSub {
-                    pattern: PyRegex::new(r"https://site\.com/post/(\d+)"),
-                    replacement: r"https://api.site.com/posts/\1.json".into(),
+                    pattern: PyRegex::new(r"https://site\.example/post/(\d+)"),
+                    replacement: r"https://api.site.example/posts/\1.json".into(),
                 },
                 Conversion::Append("?x=1".into()),
             ],
             example: String::new(),
         };
         assert_eq!(
-            c.convert("https://site.com/post/42").unwrap(),
-            "https://api.site.com/posts/42.json?x=1"
+            c.convert("https://site.example/post/42").unwrap(),
+            "https://api.site.example/posts/42.json?x=1"
         );
         let apply1 = |c: Conversion, s: &str| apply(&c, s).unwrap();
         assert_eq!(apply1(Conversion::RemoveFromEnd(0), "abc"), "");

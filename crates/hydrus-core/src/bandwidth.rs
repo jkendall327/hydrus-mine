@@ -761,13 +761,25 @@ mod tests {
     fn gallery_tokens_space_out_each_site() {
         let mut m = Manager::default();
         let k = GalleryTokenKind::Subscription;
-        assert_eq!(m.try_to_consume_gallery_token("a.com", k, 5, 100), Ok(()));
-        assert_eq!(m.try_to_consume_gallery_token("a.com", k, 5, 105), Err(105));
-        assert_eq!(m.try_to_consume_gallery_token("b.com", k, 5, 105), Ok(()));
         assert_eq!(
-            m.try_to_consume_gallery_token("a.com", GalleryTokenKind::Watcher, 5, 105),
+            m.try_to_consume_gallery_token("a.example", k, 5, 100),
             Ok(())
         );
-        assert_eq!(m.try_to_consume_gallery_token("a.com", k, 5, 106), Ok(()));
+        assert_eq!(
+            m.try_to_consume_gallery_token("a.example", k, 5, 105),
+            Err(105)
+        );
+        assert_eq!(
+            m.try_to_consume_gallery_token("b.example", k, 5, 105),
+            Ok(())
+        );
+        assert_eq!(
+            m.try_to_consume_gallery_token("a.example", GalleryTokenKind::Watcher, 5, 105),
+            Ok(())
+        );
+        assert_eq!(
+            m.try_to_consume_gallery_token("a.example", k, 5, 106),
+            Ok(())
+        );
     }
 }

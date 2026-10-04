@@ -35,6 +35,15 @@ list followed by the editor. Definitions come from saved configuration; new
 recordings use synthetic domains. See the area sections in `GUI.md` and
 `DIFFERENCES.md` for coverage and remaining first-pass limitations.
 
+The [GUI migration map](gui-progress.html) expands selected reference features
+and all 66 exported native windows into nested work, including shared editors,
+all 38 reference option tabs and 19 system-predicate groups. It contains 1,812
+reference nodes and 1,277 native nodes, with per-node assessments, concrete
+remaining work and pinned source/evidence links. Native first-pass claims cite
+scoped regression evidence; source-supported but unverified behavior is partial.
+Its counts are not a whole-client completion percentage. Maintenance instructions
+and scope limits are in [gui-coverage/README.md](gui-coverage/README.md).
+
 The next breadth work, in the owner's existing order:
 
 1. **Network management**: remaining usage/history views and scheduling controls,
@@ -52,8 +61,9 @@ The next breadth work, in the owner's existing order:
    text/PNG interchange are implemented. HTML/JSON have full formula editors;
    the remaining formula kinds can be preserved through interchange.
 
-Then the gaps listed under "Later", and the half-done items below. Review
-the third parallel slate before starting another one.
+Then the gaps listed under "Later", and the half-done items below. The third
+parallel slate and its Windows portability follow-up were reviewed and merged.
+Use the GUI map to choose the next slate with the owner.
 
 ## 1. Manage subscriptions (network > subscriptions…)
 

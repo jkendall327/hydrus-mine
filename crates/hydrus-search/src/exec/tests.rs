@@ -440,17 +440,35 @@ const TERMS: &[&str] = &[
     "system:filesize < 5 KB",
     "system:filetype = image/png, apng",
     "system:filetype = image",
-    "system:has domain gelbooru.com",
-    "system:does not have domain gelbooru.com",
+    "system:has domain booru.example",
+    "system:does not have domain booru.example",
     "system:has note with name comment",
     "system:no note with name comment",
     "system:has exif",
     "system:no exif",
 ];
 
+// Include a deterministically selected domain from the imported fixture so URL
+// predicates also exercise positive matches, without hardcoding fixture sites.
+static SEARCH_TERMS: LazyLock<Vec<String>> = LazyLock::new(|| {
+    let domain = MODEL
+        .batch
+        .results
+        .iter()
+        .flat_map(|media| &media.urls)
+        .filter(|url| url.starts_with("http://") || url.starts_with("https://"))
+        .map(|url| hydrus_store::master::url_domain(url))
+        .min()
+        .expect("the basic reference fixture contains HTTP URLs");
+    let mut terms: Vec<String> = TERMS.iter().map(|term| (*term).to_owned()).collect();
+    terms.push(format!("system:has domain {domain}"));
+    terms.push(format!("system:does not have domain {domain}"));
+    terms
+});
+
 fn term() -> impl Strategy<Value = Json> {
-    (0..TERMS.len(), any::<bool>()).prop_map(|(i, negate)| {
-        let term = TERMS[i];
+    (0..SEARCH_TERMS.len(), any::<bool>()).prop_map(|(i, negate)| {
+        let term = &SEARCH_TERMS[i];
         if negate && !term.starts_with("system:") {
             json!(format!("-{term}"))
         } else {
@@ -531,7 +549,7 @@ proptest! {
 #[test]
 fn every_term_is_understood_by_the_model() {
     // the model panics on predicates it does not know; exercise each once
-    for term in TERMS {
+    for term in &*SEARCH_TERMS {
         let predicates = parse_api_search(&json!([term])).unwrap();
         let search = FileSearchContext {
             predicates,

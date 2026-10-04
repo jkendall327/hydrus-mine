@@ -455,8 +455,8 @@ mod tests {
     #[test]
     fn url_domains_match_urlparse_netloc() {
         assert_eq!(
-            url_domain("https://danbooru.donmai.us/posts/1"),
-            "danbooru.donmai.us"
+            url_domain("https://posts.booru.example/posts/1"),
+            "posts.booru.example"
         );
         assert_eq!(
             url_domain("https://user:pw@example.com:8080/x?y#z"),

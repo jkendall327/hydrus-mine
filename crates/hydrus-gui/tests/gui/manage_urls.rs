@@ -139,7 +139,7 @@ fn urls_are_added_removed_and_edited_as_the_reference_does() {
     assert!(rows(&dialog).contains(&"https://example.com/a%20b (2)".to_owned()));
     assert_eq!(dialog.get_input(), "");
     // pasted: what doesn't parse asks first; "no" adds nothing
-    *pasted.borrow_mut() = "not a url\n\nhttps://z.org/x\n".into();
+    *pasted.borrow_mut() = "not a url\n\nhttps://z.example/x\n".into();
     dialog.invoke_paste();
     assert!(dialog.get_asking());
     assert!(
@@ -148,13 +148,13 @@ fn urls_are_added_removed_and_edited_as_the_reference_does() {
             .starts_with("The URLs:\n\nnot a url\n\n--did not parse.")
     );
     dialog.invoke_chosen(1);
-    assert!(!rows(&dialog).iter().any(|r| r.contains("z.org")));
+    assert!(!rows(&dialog).iter().any(|r| r.contains("z.example")));
     // "yes" adds both
     dialog.invoke_paste();
     dialog.invoke_chosen(0);
     let shown = rows(&dialog);
     assert!(
-        shown.contains(&"https://z.org/x (2)".to_owned()),
+        shown.contains(&"https://z.example/x (2)".to_owned()),
         "{shown:?}"
     );
     assert!(shown.contains(&"not a url (2)".to_owned()));
@@ -169,11 +169,11 @@ fn urls_are_added_removed_and_edited_as_the_reference_does() {
     // double-clicked: out of the list, into the box
     let row = rows(&dialog)
         .iter()
-        .position(|r| r == "https://z.org/x (2)")
+        .position(|r| r == "https://z.example/x (2)")
         .unwrap();
     dialog.invoke_row_activated(i32::try_from(row).unwrap());
-    assert_eq!(dialog.get_input(), "https://z.org/x");
-    assert!(!rows(&dialog).iter().any(|r| r.contains("z.org")));
+    assert_eq!(dialog.get_input(), "https://z.example/x");
+    assert!(!rows(&dialog).iter().any(|r| r.contains("z.example")));
     // applying with text in the box asks; "no" keeps the dialog
     dialog.invoke_apply();
     assert_eq!(

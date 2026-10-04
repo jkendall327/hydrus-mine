@@ -474,6 +474,7 @@ mod tests {
     fn sessions_are_per_registrable_domain() {
         let conn = conn();
         let session = |d: &str| session_for(&conn, &NetworkContext::domain(d)).unwrap().data;
+        // Keep the real multi-label public suffix to exercise its session boundary.
         assert_eq!(session("www.example.co.uk"), "example.co.uk");
         assert_eq!(session("example.com"), "example.com");
         // an older, wider session keeps being used
@@ -612,7 +613,7 @@ mod login_tests {
         let logins = LoginDomains(vec!["example.com".into()]);
         assert!(logins.covers("https://example.com/post/1"));
         assert!(logins.covers("https://img.example.com/file.jpg"));
-        assert!(!logins.covers("https://other.com/post/1"));
+        assert!(!logins.covers("https://other.example/post/1"));
         assert!(!logins.covers("not a url"));
     }
 }
