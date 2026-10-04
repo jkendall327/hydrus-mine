@@ -102,7 +102,7 @@ fn show_permissions(window: &EditApiPermissionsWindow, key: &AccessPermissions) 
 fn edit(
     store: Arc<Store>,
     key: AccessPermissions,
-    slots: Slots,
+    slots: &Slots,
     parent_active: Rc<Cell<bool>>,
     done: Rc<dyn Fn(AccessPermissions) -> Result<(), String>>,
     closed: Rc<dyn Fn()>,
@@ -477,14 +477,7 @@ pub fn open(
                     }
                 }
             });
-            match edit(
-                store.clone(),
-                key,
-                slots.clone(),
-                active.clone(),
-                done,
-                closed,
-            ) {
+            match edit(store.clone(), key, &slots, active.clone(), done, closed) {
                 Ok(()) => w.set_editing(true),
                 Err(e) => w.set_error(e.into()),
             }

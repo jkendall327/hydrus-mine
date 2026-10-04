@@ -94,18 +94,15 @@ pub fn open(store: Arc<Store>) -> Result<ServicesReviewWindow, String> {
         let weak = window.as_weak();
         let rows = rows.clone();
         let slots = slots.clone();
-        let store = store.clone();
         move || {
             if let Some(w) = weak.upgrade()
                 && w.get_client_api()
                 && let Ok(i) = usize::try_from(w.get_selected())
                 && let Some(row) = rows.borrow().get(i)
-            {
-                if let Err(e) =
+                && let Err(e) =
                     crate::client_api_admin_window::open(store.clone(), row.key.clone(), &slots)
-                {
-                    w.set_error(e.into());
-                }
+            {
+                w.set_error(e.into());
             }
         }
     });
