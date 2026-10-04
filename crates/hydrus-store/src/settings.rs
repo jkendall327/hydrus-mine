@@ -161,6 +161,44 @@ impl Setting for NotebookCreationSettings {
     const KEY: &'static str = "gui_notebook_creation";
 }
 
+/// `default_new_page_goes`, in the reference choice order.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub enum PageInsertion {
+    FarLeft,
+    LeftOfCurrent,
+    RightOfCurrent,
+    #[default]
+    FarRight,
+}
+
+impl PageInsertion {
+    pub fn from_code(code: i64) -> Option<Self> {
+        match code {
+            0 => Some(Self::FarLeft),
+            1 => Some(Self::LeftOfCurrent),
+            2 => Some(Self::RightOfCurrent),
+            3 => Some(Self::FarRight),
+            _ => None,
+        }
+    }
+
+    pub fn index(self, current: Option<usize>, count: usize) -> usize {
+        let Some(current) = current else {
+            return 0;
+        };
+        match self {
+            Self::FarLeft => 0,
+            Self::LeftOfCurrent => current.min(count),
+            Self::RightOfCurrent => (current + 1).min(count),
+            Self::FarRight => count,
+        }
+    }
+}
+
+impl Setting for PageInsertion {
+    const KEY: &'static str = "gui_page_insertion";
+}
+
 /// Which recognised URL types the desktop watches for in changed clipboard text.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

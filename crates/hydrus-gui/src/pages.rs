@@ -126,6 +126,8 @@ pub struct Pages {
     /// The notebook (by depth) the next new page goes in, when one was
     /// chosen for it (its tab row's empty space double-clicked).
     new_page_depth: Option<usize>,
+    /// Stable popup destination, with an optional sibling insertion anchor.
+    new_page_target: Option<(Option<PageKey>, Option<PageKey>)>,
 }
 
 /// What the store was last told of the pages, so only changes are written.
@@ -193,6 +195,7 @@ impl Pages {
             closed: Vec::new(),
             history: Vec::new(),
             new_page_depth: None,
+            new_page_target: None,
             remembered: HashMap::new(),
             last_moved: HashMap::new(),
             synced: Synced::default(),
@@ -241,6 +244,7 @@ impl Pages {
             closed: Vec::new(),
             history: Vec::new(),
             new_page_depth: None,
+            new_page_target: None,
             remembered: HashMap::new(),
             last_moved: HashMap::new(),
             synced: Synced::default(),
@@ -778,6 +782,56 @@ impl Pages {
     /// `None` for the current notebook.
     pub fn new_page_in(&mut self, depth: Option<usize>) {
         self.new_page_depth = depth;
+        self.new_page_target = None;
+    }
+
+    /// Freeze the popup row and insertion anchor through the modal chooser.
+    pub fn new_page_at(
+        &mut self,
+        parent: Option<PageKey>,
+        before: Option<PageKey>,
+    ) -> Result<(), String> {
+        self.new_page_target = None;
+        self.new_page_depth = None;
+        self.new_page_path(parent, before)?;
+        self.new_page_depth = None;
+        self.new_page_target = Some((parent, before));
+        Ok(())
+    }
+
+    fn new_page_path(
+        &self,
+        parent: Option<PageKey>,
+        before: Option<PageKey>,
+    ) -> Result<(Vec<usize>, Option<usize>), String> {
+        let path = match parent {
+            None => Vec::new(),
+            Some(key) => {
+                let path =
+                    page_path(&self.session.pages, key).ok_or("the notebook is no longer open")?;
+                let page = self
+                    .session
+                    .all_pages()
+                    .into_iter()
+                    .find(|page| page.key == key)
+                    .unwrap();
+                if !matches!(page.content, PageContent::Pages(_)) {
+                    return Err("the destination is not a notebook".into());
+                }
+                path
+            }
+        };
+        let index = if let Some(key) = before {
+            let anchor =
+                page_path(&self.session.pages, key).ok_or("the insertion tab is no longer open")?;
+            if anchor.len() != path.len() + 1 || anchor[..path.len()] != path {
+                return Err("the insertion tab moved to another notebook".into());
+            }
+            anchor.last().copied()
+        } else {
+            None
+        };
+        Ok((path, index))
     }
 
     /// Open a new search page (the reference's page chooser's "file search"
@@ -925,6 +979,12 @@ impl Pages {
     }
 
     fn new_page_selected(&mut self, chosen: &NewPage, select: bool) -> Result<(), String> {
+        if let Some((parent, before)) = self.new_page_target
+            && let Err(error) = self.new_page_path(parent, before)
+        {
+            self.new_page_target = None;
+            return Err(error);
+        }
         let page = match chosen {
             NewPage::Search { domain, .. } => new_search_page_on(
                 &self.store,
@@ -1094,13 +1154,22 @@ impl Pages {
             self.add(page);
         } else {
             let depth = self.current_depth();
+            let previous = self.shown().key;
+            let current = self.path.get(depth).copied();
+            let policy: hydrus_store::settings::PageInsertion = self
+                .store
+                .read(hydrus_store::settings::get)
+                .unwrap_or_default();
             let notebook = self.notebook_mut(depth);
             let was_empty = notebook.is_empty();
-            notebook.push(page);
+            let index = policy.index(current, notebook.len());
+            notebook.insert(index, page);
             if was_empty {
                 // Qt selects the first tab in a formerly empty notebook, even
                 // when an automatic import does not request selecting a page.
                 self.select(depth, 0);
+            } else {
+                self.show(&previous);
             }
         }
         Ok(())
@@ -1364,14 +1433,35 @@ impl Pages {
     /// Add `page` at the far right of the current notebook, and show it
     /// (a notebook of pages, on its first page).
     fn add(&mut self, page: Page) {
-        let depth = self
-            .new_page_depth
-            .take()
-            .filter(|&d| d <= self.current_depth())
-            .unwrap_or_else(|| self.current_depth());
+        let target = self.new_page_target.take();
+        let (depth, insertion, selected) = if let Some((parent, before)) = target {
+            // The chooser validates before creating queue-backed pages. No
+            // event loop runs between that validation and this insertion.
+            let (path, index) = self
+                .new_page_path(parent, before)
+                .expect("validated chooser destination");
+            let selected = if self.path.starts_with(&path) {
+                self.path.get(path.len()).copied()
+            } else {
+                parent.and_then(|key| self.remembered.get(&key).copied())
+            };
+            self.path = path;
+            (self.path.len(), index, selected)
+        } else {
+            let depth = self
+                .new_page_depth
+                .take()
+                .filter(|&d| d <= self.current_depth())
+                .unwrap_or_else(|| self.current_depth());
+            (depth, None, self.path.get(depth).copied())
+        };
+        let policy: hydrus_store::settings::PageInsertion = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
         let pages = self.notebook_mut(depth);
-        pages.push(page);
-        let index = pages.len() - 1;
+        let index = insertion.unwrap_or_else(|| policy.index(selected, pages.len()));
+        pages.insert(index, page);
         self.path.truncate(depth);
         self.select(depth, index);
     }
@@ -1597,6 +1687,17 @@ impl Pages {
             self.notebook_at(depth).map_or(0, <[Page]>::len),
             self.path.get(depth).copied().unwrap_or(0),
         );
+        entries.push(crate::main_menu::Entry::Separator);
+        for (label, before) in [("new page", None), ("new page here", Some(page.key))] {
+            entries.push(crate::main_menu::Entry::Item {
+                label: label.into(),
+                enabled: true,
+                command: Some(crate::main_menu::Command::ChooseNotebookPage {
+                    parent: self.notebook_key(depth),
+                    before,
+                }),
+            });
+        }
         let advanced: hydrus_store::settings::AdvancedMode = self
             .store
             .read(hydrus_store::settings::get)
@@ -1667,6 +1768,21 @@ impl Pages {
             .into_iter()
             .find(|page| page.key == key)
             .map(|page| self.weight_for_pages(vec![page.clone()]))
+    }
+
+    /// Popup on the unused part of a tab row: choose in that row's notebook.
+    pub fn tab_space_menu(&self, depth: usize) -> Vec<crate::main_menu::Entry> {
+        if depth > self.current_depth() {
+            return Vec::new();
+        }
+        vec![crate::main_menu::Entry::Item {
+            label: "new page".into(),
+            enabled: true,
+            command: Some(crate::main_menu::Command::ChooseNotebookPage {
+                parent: self.notebook_key(depth),
+                before: None,
+            }),
+        }]
     }
 
     /// Navigate at a tab row's notebook, descending into its selected

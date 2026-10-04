@@ -1158,6 +1158,13 @@ importer refresh re-sorts media without starting paused transfers. Duplicate
 sidebar counts are read when the active page is rendered rather than dispatching
 an independent background sidebar job.
 
+The tab popup's new-page actions now target their notebook and preserve an
+explicit insertion anchor through the chooser. The four default insertion
+positions import and apply through GUI Pages. A removed destination or insertion
+anchor is rejected before creating importer queues. Unlike the reference's
+retained `_next_new_page_index` after a cancelled chooser, native cancellation
+clears that pending position so it cannot affect a subsequent page creation.
+
 Named GUI session saves now retain selectable immutable snapshots; automatic
 `last session` synchronization still writes the live session without historical
 backups, and startup/autosave lifecycle settings remain deferred. Historical

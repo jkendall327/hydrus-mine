@@ -176,6 +176,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             options.booleans.get("rename_page_of_pages_on_pick_new") == Some(&true)
         }),
     };
+    let insertion = options
+        .as_ref()
+        .and_then(|options| options.integers.get("default_new_page_goes"))
+        .and_then(|&code| crate::settings::PageInsertion::from_code(code))
+        .unwrap_or_default();
+    insert_setting(&mut input, &insertion)?;
     insert_setting(&mut input, &notebook_creation)?;
     let mut backups = crate::session_backups::SessionBackupSettings::default();
     if let Some(options) = &options

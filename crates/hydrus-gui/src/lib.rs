@@ -605,6 +605,32 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             show_chooser();
         }
     });
+    window.on_tab_new_page_requested({
+        let chooser = chooser.clone();
+        let pages = pages.clone();
+        let show_chooser = show_chooser.clone();
+        move |parent, before| {
+            let parse = |text: slint::SharedString| {
+                if text.is_empty() {
+                    Some(None)
+                } else {
+                    hydrus_core::pages::PageKey::from_hex(text.as_str()).map(Some)
+                }
+            };
+            let (Some(parent), Some(before)) = (parse(parent), parse(before)) else {
+                return;
+            };
+            let store = {
+                let mut pages = pages.borrow_mut();
+                if pages.new_page_at(parent, before).is_err() {
+                    return;
+                }
+                pages.store().clone()
+            };
+            *chooser.borrow_mut() = Some(page_chooser::PageChooser::new(&store));
+            show_chooser();
+        }
+    });
     // a double click (left or middle) on a tab row's empty space: the
     // page chooser, for that row's notebook
     window.on_tab_space_pressed({

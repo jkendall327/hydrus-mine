@@ -1904,3 +1904,12 @@ known tags for whitelist suggestions. Typed entry toggles a listed tag, paste
 only adds, and Apply returns the accepted list to the parent options draft.
 Child Cancel/native close preserves the caller's list, unlocks the parent, and
 parent closure cancels the child and invalidates its pending answers.
+
+Tab popups offer “new page” for the clicked row's notebook and “new page here”
+before the clicked tab. The chooser keeps those destination keys when selection
+changes, and cancellation clears the pending insertion. Right-clicking a row's
+unused space also opens its new-page action. GUI Pages exposes “Put new page tabs
+on” with all four reference choices; legacy preferences import and applied changes
+reach new-page creation immediately, while an explicit “here” position overrides
+the preference. The real chooser outputs for all positions and cancellation are
+recorded in `oracle/record_tab_new_page.py`.

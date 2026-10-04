@@ -244,10 +244,16 @@ pub(crate) fn bind(window: &MainWindow, hooks: Hooks) -> Rc<dyn Fn()> {
         let hooks = hooks.clone();
         let show = show.clone();
         move |depth, index, x, y| {
-            let (Ok(depth), Ok(index)) = (usize::try_from(depth), usize::try_from(index)) else {
+            let Ok(depth) = usize::try_from(depth) else {
                 return;
             };
-            let entries = hooks.pages.borrow().tab_menu(depth, index);
+            let entries = if index == -1 {
+                hooks.pages.borrow().tab_space_menu(depth)
+            } else if let Ok(index) = usize::try_from(index) {
+                hooks.pages.borrow().tab_menu(depth, index)
+            } else {
+                return;
+            };
             if !entries.is_empty() {
                 open.borrow_mut().open_popup(entries, x, y);
                 show();
@@ -633,6 +639,12 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
                 pages.refresh_tab_tree(key);
                 Ok(())
             });
+        }
+        Command::ChooseNotebookPage { parent, before } => {
+            window.invoke_tab_new_page_requested(
+                parent.map_or_else(String::new, |key| key.to_hex()).into(),
+                before.map_or_else(String::new, |key| key.to_hex()).into(),
+            );
         }
         Command::SaveSession(name) => (hooks.save_session)(name, crate::session_saving::Scope::All),
         Command::SaveNotebookSession {
