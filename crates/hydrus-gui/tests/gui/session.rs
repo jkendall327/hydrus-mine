@@ -2616,3 +2616,95 @@ fn collapse_empty_nested_notebook_has_no_hash_lock_and_one_replacement() {
     pages.sync(200).unwrap();
     assert_eq!(Pages::open(store).unwrap().shown().key, pages.shown().key);
 }
+
+#[test]
+fn chooser_new_notebook_name_preference_matches_reference_and_persists() {
+    use hydrus_store::settings::NotebookCreationSettings;
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("notebook_creation.json");
+    assert_eq!(
+        NotebookCreationSettings::default().rename_new_notebooks,
+        fixture["default_prompt"].as_bool().unwrap()
+    );
+    for step in fixture["steps"].as_array().unwrap() {
+        let original = page(
+            "original",
+            PageContent::Search {
+                search: FileSearchContext::default(),
+                synchronised: false,
+                sort: None,
+                lock: None,
+                collect: None,
+            },
+        );
+        let key = original.key;
+        let session = Session {
+            name: LAST_SESSION.into(),
+            pages: vec![original],
+        };
+        let settings = NotebookCreationSettings {
+            rename_new_notebooks: step["prompt"].as_bool().unwrap(),
+        };
+        store
+            .write(move |ctx| {
+                sessions::save(ctx.conn(), &session, 100)?;
+                sessions::set_shown(ctx.conn(), LAST_SESSION, Some(&key))?;
+                hydrus_store::settings::set(ctx.conn(), &settings)
+            })
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        ui.invoke_new_page();
+        ui.invoke_chooser_pressed(6); // special
+        ui.invoke_chooser_pressed(8); // page of pages
+        assert_eq!(ui.get_chooser_labels().row_count(), 0);
+        if step["prompt"] == true {
+            let dialog = bound.tab_name_dialog.borrow().as_ref().unwrap().clone();
+            assert_eq!(
+                dialog.get_message(),
+                step["asked"][0]["message"].as_str().unwrap()
+            );
+            assert_eq!(
+                dialog.get_text(),
+                step["asked"][0]["default"].as_str().unwrap()
+            );
+            // Naming remains tied to the created notebook if another page
+            // is selected while the text window is open.
+            ui.invoke_tab_chosen(0, 0);
+            if let Some(name) = step["answer"].as_str() {
+                dialog.invoke_name_entered(name.into());
+            } else {
+                dialog.invoke_cancelled();
+            }
+            assert!(bound.tab_name_dialog.borrow().is_none());
+            ui.invoke_tab_chosen(0, 1);
+        } else {
+            assert!(bound.tab_name_dialog.borrow().is_none());
+        }
+        let created = bound.pages.borrow().session().pages[1].clone();
+        assert_eq!(created.name, step["name"].as_str().unwrap());
+        let PageContent::Pages(children) = &created.content else {
+            panic!("created notebook")
+        };
+        assert_eq!(
+            serde_json::json!(children.iter().map(|p| &p.name).collect::<Vec<_>>()),
+            step["children"]
+        );
+        assert_eq!(
+            bound.pages.borrow().shown().name,
+            step["shown"].as_str().unwrap()
+        );
+        assert_eq!(bound.pages.borrow().session().pages[0].name, "original");
+        bound.pages.borrow_mut().sync(200).unwrap();
+        let reopened = Pages::open(store.clone()).unwrap();
+        assert_eq!(reopened.session().pages[1], created);
+        assert_eq!(reopened.shown().name, "files");
+        assert_eq!(
+            store
+                .read(hydrus_store::settings::get::<NotebookCreationSettings>)
+                .unwrap(),
+            settings
+        );
+    }
+}

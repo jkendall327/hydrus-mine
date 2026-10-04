@@ -910,6 +910,17 @@ impl Pages {
         self.new_page_selected(chosen, true)
     }
 
+    /// The chooser may prompt to rename its newly created notebook, after
+    /// creating its initial blank search page. Freeze that notebook's key.
+    pub fn new_page_from_chooser(&mut self, chosen: &NewPage) -> Result<Option<PageKey>, String> {
+        self.new_page(chosen)?;
+        Ok(if matches!(chosen, NewPage::Pages) {
+            self.notebook_key(self.path.len() - 1)
+        } else {
+            None
+        })
+    }
+
     fn new_page_selected(&mut self, chosen: &NewPage, select: bool) -> Result<(), String> {
         let page = match chosen {
             NewPage::Search { domain, .. } => new_search_page_on(
@@ -935,7 +946,7 @@ impl Pages {
             NewPage::Pages => Page {
                 key: PageKey::random(),
                 name: "pages".into(),
-                content: PageContent::Pages(Vec::new()),
+                content: PageContent::Pages(vec![new_search_page(&self.store)]),
             },
             NewPage::Session(name) => return self.append_session(name),
             NewPage::LocalImport {

@@ -1782,3 +1782,10 @@ caption. The media viewer's top-right hover frame displays clickable URL class
 names, multi-domain class labels and unmatched domains using current preferences,
 including changes made while the viewer remains open. The reference's matched-link
 limit and ordering are replayed by `record_downloader_display.py`.
+
+Creating a page of pages through the chooser now gives it an initial blank
+search page, as the reference does. The distinct new-notebook rename preference
+opens a name prompt after creation; accepting changes that notebook's name,
+cancelling retains it as "pages", and selecting another page while the prompt
+is open keeps naming tied to the created notebook. The actual chooser action is
+recorded by `oracle/record_notebook_creation.py` and replayed in GUI regressions.

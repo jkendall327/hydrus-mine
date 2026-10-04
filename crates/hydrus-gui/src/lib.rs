@@ -561,10 +561,26 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let chooser = chooser.clone();
         let show_chooser = show_chooser.clone();
         let change_pages = change_pages.clone();
+        let pages = pages.clone();
+        let weak = window.as_weak();
         move |choice: Option<page_chooser::NewPage>| {
             if let Some(choice) = choice {
                 chooser.borrow_mut().take();
-                change_pages(&|pages| pages.new_page(&choice));
+                let created = Cell::new(None);
+                change_pages(&|pages| {
+                    created.set(pages.new_page_from_chooser(&choice)?);
+                    Ok(())
+                });
+                let settings: hydrus_store::settings::NotebookCreationSettings = pages
+                    .borrow()
+                    .store()
+                    .read(hydrus_store::settings::get)
+                    .unwrap_or_default();
+                if settings.rename_new_notebooks
+                    && let (Some(key), Some(window)) = (created.get(), weak.upgrade())
+                {
+                    window.invoke_notebook_rename_requested(key.to_hex().into());
+                }
             }
             show_chooser();
         }

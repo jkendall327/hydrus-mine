@@ -1,0 +1,45 @@
+{
+  "default_prompt": false,
+  "steps": [
+    {
+      "prompt": false,
+      "answer": null,
+      "asked": [],
+      "name": "pages",
+      "children": [
+        "files"
+      ],
+      "shown": "files"
+    },
+    {
+      "prompt": true,
+      "answer": null,
+      "asked": [
+        {
+          "message": "Enter the name for the new page of pages.",
+          "default": "pages"
+        }
+      ],
+      "name": "pages",
+      "children": [
+        "files"
+      ],
+      "shown": "files"
+    },
+    {
+      "prompt": true,
+      "answer": "created pages",
+      "asked": [
+        {
+          "message": "Enter the name for the new page of pages.",
+          "default": "pages"
+        }
+      ],
+      "name": "created pages",
+      "children": [
+        "files"
+      ],
+      "shown": "files"
+    }
+  ]
+}

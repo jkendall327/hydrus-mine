@@ -50,7 +50,7 @@ pub enum NewPage {
     Watcher,
     Gallery,
     SimpleDownloader,
-    /// An empty page of pages.
+    /// A page of pages containing one initial blank search page.
     Pages,
     Duplicates,
     /// A saved session's pages, in a page of pages named after it.
