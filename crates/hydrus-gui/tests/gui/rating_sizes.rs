@@ -134,8 +134,11 @@ fn sizes_replay_owned_options_and_reach_dialog_and_service_examples_after_reopen
                 (sizes.dialog_incdec_height.trunc() as f32).to_bits()
             );
             child.invoke_cancel_clicked();
+            assert!(slots.edit.borrow().is_none());
         }
         manage.invoke_cancel_clicked();
+        assert!(slots.manage.borrow().is_none());
+        assert!(bound.options.borrow().is_none());
     }
     let accepted = options(&ui, &bound);
     edit(&accepted, &fixture, &fixture["cancel_before"]);
@@ -209,7 +212,8 @@ fn sizes_replay_owned_options_and_reach_dialog_and_service_examples_after_reopen
     let _ = headless::render(&drawn, 640, 300);
     // Locate the live numerical control after layout, rather than assuming row
     // y coordinates in a stretched window. These presses only edit this draft.
-    let numerical_row = dialog.get_ratings().row_data(numerical).unwrap();
+    let rating_model = dialog.get_ratings();
+    let numerical_row = rating_model.row_data(numerical).unwrap();
     let width = numerical_row.shapes.row_count() as f32
         * (dialog.get_rating_size() + numerical_row.pad)
         - numerical_row.pad;
@@ -251,6 +255,11 @@ fn sizes_replay_owned_options_and_reach_dialog_and_service_examples_after_reopen
             position,
             button: slint::platform::PointerEventButton::Right,
         });
+    assert_eq!(
+        rating_model,
+        dialog.get_ratings(),
+        "pointer press must retain the active rating row model"
+    );
     let after_right = dialog.get_ratings().row_data(numerical).unwrap().shapes;
     dialog
         .window()
@@ -300,6 +309,11 @@ fn sizes_replay_owned_options_and_reach_dialog_and_service_examples_after_reopen
         panic!("numerical service")
     };
     let expected_stars = config.stars(fixture["dragging"][1]["after"]["rating"].as_f64().unwrap());
+    assert_eq!(
+        rating_model,
+        dialog.get_ratings(),
+        "left drag must retain the active TouchArea"
+    );
     let shapes = dialog.get_ratings().row_data(numerical).unwrap().shapes;
     for (index, shape) in shapes.iter().enumerate() {
         let brush = if index < usize::try_from(expected_stars).unwrap() {
@@ -356,5 +370,11 @@ fn sizes_replay_owned_options_and_reach_dialog_and_service_examples_after_reopen
         original_ratings
     );
     assert!(bound.current.borrow().borrow().results().contains(&file));
+    assert!(bound.manage_ratings.borrow().is_none());
     ui.hide().unwrap();
+    drop(dialog);
+    drop(accepted);
+    drop(bound);
+    drop(ui);
+    drop(windows);
 }
