@@ -329,7 +329,13 @@ timestamp type (with its file service, viewer or domain), the forced
 note name, the JSON object names, the .txt separator, and the sidecar
 filename (remove the file's extension, a suffix, and the resulting
 sidecar for a test path). What they show and ask at each step is as
-`oracle/record_sidecar_editors.py` recorded the reference's.
+`oracle/record_sidecar_editors.py` recorded the reference's. Router editors also
+show one example-results table per source: file path or media hash, imported
+texts and router-processed texts. Filename tagging, import folders and manual
+exports supply up to 25 local files or media results; previews read their
+sidecars or metadata without exporting. Source/formula and router processor
+children inherit the reference's first-example strings. `oracle/record_sidecar_testing.py`
+records seven file/media, empty-input, processing and parse-error states.
 
 A router's or source's processing button (its steps, a line each) opens
 the string processor editor (`ui/string_processor.slint`,

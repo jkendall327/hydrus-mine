@@ -3,7 +3,7 @@
 //! hydrus-gui-model's [`sidecar_editors`](crate::sidecar_editors), its
 //! questions asked in its own panel, "apply" handing back what was edited.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -32,6 +32,15 @@ pub struct Slots {
     pub strings: crate::string_processor_window::Slots,
     /// Reusable JSON formula editor for sidecar sources.
     pub formula: crate::formula_window::Slots,
+    /// Owner-supplied file paths or media results for the reusable test panel.
+    pub test_objects: Rc<RefCell<Vec<editors::TestObject>>>,
+}
+impl Slots {
+    /// Supply the same bounded examples to the router and its source children.
+    pub fn set_test_objects(&self, mut objects: Vec<editors::TestObject>) {
+        objects.truncate(editors::TEST_OBJECT_LIMIT);
+        *self.test_objects.borrow_mut() = objects;
+    }
 }
 
 impl std::fmt::Debug for Slots {
@@ -314,6 +323,7 @@ pub fn open_node(
     slots.strings.set_store(store);
     let slot = &slots.node;
     let window = SidecarNodeWindow::new()?;
+    let active = Rc::new(Cell::new(true));
     let snapshot = store.snapshot();
     let services = &snapshot.services;
     let editing = match node {
@@ -367,19 +377,38 @@ pub fn open_node(
         let state = state.clone();
         let refresh = refresh.clone();
         let store = store.clone();
+        let objects = slots.test_objects.clone();
         let slots = slots.formula.clone();
+        let active = active.clone();
         move || {
+            if !active.get() {
+                return;
+            }
             if slots.formula.borrow().is_some() {
                 return;
             }
-            let formula = match &state.borrow().editing {
-                Editing::Source(e) => e.formula.clone(),
+            let (formula, examples) = match &state.borrow().editing {
+                Editing::Source(e) => (
+                    e.formula.clone(),
+                    objects.borrow().first().map_or_else(Vec::new, |object| {
+                        e.value().map_or_else(
+                            |error| vec![error.into()],
+                            |importer| {
+                                editors::test_importer_strings(&store, &importer, object, true)
+                            },
+                        )
+                    }),
+                ),
                 Editing::Destination(_) => return,
             };
             let applied = Rc::new({
                 let state = state.clone();
                 let refresh = refresh.clone();
+                let active = active.clone();
                 move |formula| {
+                    if !active.get() {
+                        return;
+                    }
                     if let Editing::Source(e) = &mut state.borrow_mut().editing {
                         e.formula = formula;
                     }
@@ -391,7 +420,9 @@ pub fn open_node(
                 &formula,
                 crate::formula_window::FormulaTestData {
                     collapse_newlines: false,
-                    ..Default::default()
+                    text: examples.first().cloned().unwrap_or_default(),
+                    examples,
+                    ..crate::formula_window::FormulaTestData::default()
                 },
                 &slots,
                 applied,
@@ -457,7 +488,12 @@ pub fn open_node(
         let refresh = refresh.clone();
         let store = store.clone();
         let strings = slots.strings.clone();
+        let objects = slots.test_objects.clone();
+        let active = active.clone();
         move || {
+            if !active.get() {
+                return;
+            }
             let Editing::Source(e) = &state.borrow().editing else {
                 return;
             };
@@ -467,7 +503,11 @@ pub fn open_node(
             let applied: Rc<dyn Fn(StringProcessor)> = Rc::new({
                 let state = state.clone();
                 let refresh = refresh.clone();
+                let active = active.clone();
                 move |processor| {
+                    if !active.get() {
+                        return;
+                    }
                     if let Editing::Source(e) = &mut state.borrow_mut().editing {
                         e.processor = processor;
                     }
@@ -477,7 +517,12 @@ pub fn open_node(
             match crate::string_processor_window::open(
                 &store,
                 &e.processor,
-                Vec::new(),
+                objects.borrow().first().map_or_else(Vec::new, |object| {
+                    e.value().map_or_else(
+                        |error| vec![error.into()],
+                        |importer| editors::test_importer_strings(&store, &importer, object, true),
+                    )
+                }),
                 &strings,
                 applied,
             ) {
@@ -583,12 +628,21 @@ pub fn open_node(
         let weak = window.as_weak();
         let slot = slot.clone();
         let formula = slots.formula.clone();
+        let strings = slots.strings.clone();
+        let active = active.clone();
         move || {
+            if !active.replace(false) {
+                return;
+            }
             formula.cancel();
+            strings.cancel_all();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
+            if let Some(window) = weak.upgrade() {
+                window.invoke_closed();
+            }
         }
     };
     window.on_apply({
@@ -596,7 +650,11 @@ pub fn open_node(
         let state = state.clone();
         let refresh = refresh.clone();
         let close = close.clone();
+        let active = active.clone();
         move || {
+            if !active.get() {
+                return;
+            }
             let Some(window) = weak.upgrade() else {
                 return;
             };
@@ -644,11 +702,16 @@ enum RouterAsking {
 
 struct RouterState {
     router: Router,
+    test_objects: Vec<editors::TestObject>,
+    test_source: usize,
     selection: ListSelection<usize>,
     asking: Option<(RouterAsking, Question)>,
 }
 
-fn show_router(window: &SidecarRouterWindow, state: &RouterState, store: &Store) {
+fn show_router(window: &SidecarRouterWindow, state: &mut RouterState, store: &Store) {
+    state.test_source = state
+        .test_source
+        .min(state.router.importers.len().saturating_sub(1));
     let namer = namer(store);
     let labels: Vec<String> = state
         .router
@@ -664,6 +727,29 @@ fn show_router(window: &SidecarRouterWindow, state: &RouterState, store: &Store)
     window.set_processing_note(editors::ROUTER_PROCESSING_NOTE.into());
     window.set_processing(state.router.processor.button_label().into());
     window.set_destination(exporter_text(&state.router.exporter, &namer).into());
+    window.set_test_sources(strings(
+        (0..state.router.importers.len()).map(|i| format!("source {}", i + 1)),
+    ));
+    window.set_test_source(index(state.test_source));
+    window.set_test_rows(ModelRc::new(VecModel::from(
+        editors::router_test_rows(store, &state.router, state.test_source, &state.test_objects)
+            .into_iter()
+            .map(|row| TableRow {
+                cells: strings(row),
+                selected: false,
+            })
+            .collect::<Vec<_>>(),
+    )));
+    window.set_test_note(
+        if state.router.importers.is_empty() {
+            "Add a source and this will show test data."
+        } else if state.test_objects.is_empty() {
+            "No example files were supplied by the owner."
+        } else {
+            ""
+        }
+        .into(),
+    );
     show_question!(window, state.asking.as_ref().map(|(_, q)| q));
 }
 
@@ -677,9 +763,12 @@ pub fn open_router(
     done: Rc<dyn Fn(Router)>,
 ) -> Result<SidecarRouterWindow, slint::PlatformError> {
     let window = SidecarRouterWindow::new()?;
+    let active = Rc::new(Cell::new(true));
     window.set_window_title(editors::ROUTER_TITLE.into());
     let state = Rc::new(RefCell::new(RouterState {
         router,
+        test_objects: slots.test_objects.borrow().clone(),
+        test_source: 0,
         selection: ListSelection::default(),
         asking: None,
     }));
@@ -687,24 +776,54 @@ pub fn open_router(
         let weak = window.as_weak();
         let state = state.clone();
         let store = store.clone();
+        let owned = slots.clone();
         Rc::new(move || {
             if let Some(window) = weak.upgrade() {
-                show_router(&window, &state.borrow(), &store);
+                window.set_child_open(
+                    owned.node.borrow().is_some()
+                        || owned.strings.has_open()
+                        || owned.formula.formula.borrow().is_some()
+                        || owned.formula.strings.has_open(),
+                );
+                show_router(&window, &mut state.borrow_mut(), &store);
             }
         })
     };
     refresh();
+    window.on_test_source_chosen({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        move || {
+            if !active.get() {
+                return;
+            }
+            if let Some(window) = weak.upgrade() {
+                state.borrow_mut().test_source = usize_of(window.get_test_source());
+            }
+            refresh();
+        }
+    });
     // a source edited in its own window: `at` replaces one, else it is added
     let edit_source = {
         let state = state.clone();
         let refresh = refresh.clone();
         let store = store.clone();
         let slots = slots.clone();
+        let active = active.clone();
         Rc::new(move |importer: Importer, at: Option<usize>| {
+            if !active.get() {
+                return;
+            }
             let done: Rc<dyn Fn(Node)> = {
                 let state = state.clone();
                 let refresh = refresh.clone();
+                let active = active.clone();
                 Rc::new(move |node| {
+                    if !active.get() {
+                        return;
+                    }
                     if let Node::Source(importer) = node {
                         let mut s = state.borrow_mut();
                         match at {
@@ -718,7 +837,12 @@ pub fn open_router(
                 })
             };
             match open_node(&store, context, &Node::Source(importer), &slots, done) {
-                Ok(w) => *slots.node.borrow_mut() = Some(w),
+                Ok(w) => {
+                    let updated = refresh.clone();
+                    w.on_closed(move || updated());
+                    *slots.node.borrow_mut() = Some(w);
+                    refresh();
+                }
                 Err(e) => eprintln!("could not open the source: {e}"),
             }
         })
@@ -786,12 +910,20 @@ pub fn open_router(
         let refresh = refresh.clone();
         let store = store.clone();
         let slots = slots.clone();
+        let active = active.clone();
         move || {
+            if !active.get() {
+                return;
+            }
             let exporter = state.borrow().router.exporter.clone();
             let done: Rc<dyn Fn(Node)> = {
                 let state = state.clone();
                 let refresh = refresh.clone();
+                let active = active.clone();
                 Rc::new(move |node| {
+                    if !active.get() {
+                        return;
+                    }
                     if let Node::Destination(exporter) = node {
                         state.borrow_mut().router.exporter = exporter;
                     }
@@ -799,7 +931,12 @@ pub fn open_router(
                 })
             };
             match open_node(&store, context, &Node::Destination(exporter), &slots, done) {
-                Ok(w) => *slots.node.borrow_mut() = Some(w),
+                Ok(w) => {
+                    let updated = refresh.clone();
+                    w.on_closed(move || updated());
+                    *slots.node.borrow_mut() = Some(w);
+                    refresh();
+                }
                 Err(e) => eprintln!("could not open the destination: {e}"),
             }
         }
@@ -810,27 +947,37 @@ pub fn open_router(
         let refresh = refresh.clone();
         let store = store.clone();
         let strings = slots.strings.clone();
+        let active = active.clone();
         move || {
-            if strings.processor.borrow().is_some() {
+            if !active.get() || strings.processor.borrow().is_some() {
                 return;
             }
             let processor = state.borrow().router.processor.clone();
             let applied: Rc<dyn Fn(StringProcessor)> = Rc::new({
                 let state = state.clone();
                 let refresh = refresh.clone();
+                let active = active.clone();
                 move |processor| {
+                    if !active.get() {
+                        return;
+                    }
                     state.borrow_mut().router.processor = processor;
                     refresh();
                 }
             });
+            let examples = {
+                let state = state.borrow();
+                editors::router_test_strings(&store, &state.router, &state.test_objects)
+            };
             match crate::string_processor_window::open(
-                &store,
-                &processor,
-                Vec::new(),
-                &strings,
-                applied,
+                &store, &processor, examples, &strings, applied,
             ) {
-                Ok(w) => *strings.processor.borrow_mut() = Some(w),
+                Ok(w) => {
+                    let updated = refresh.clone();
+                    w.on_closed(move || updated());
+                    *strings.processor.borrow_mut() = Some(w);
+                    refresh();
+                }
                 Err(e) => eprintln!("could not open the string processor: {e}"),
             }
         }
@@ -839,10 +986,19 @@ pub fn open_router(
         let weak = window.as_weak();
         let slot = slots.router.clone();
         let node = slots.node.clone();
+        let active = active.clone();
+        let strings = slots.strings.clone();
+        let formula = slots.formula.clone();
         move || {
-            if let Some(w) = node.borrow_mut().take() {
-                let _ = w.hide();
+            if !active.replace(false) {
+                return;
             }
+            let child = node.borrow_mut().take();
+            if let Some(child) = child {
+                child.invoke_cancel();
+            }
+            strings.cancel_all();
+            formula.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -854,7 +1010,11 @@ pub fn open_router(
         let state = state.clone();
         let refresh = refresh.clone();
         let close = close.clone();
+        let active = active.clone();
         Rc::new(move |mut left: Vec<&'static str>| {
+            if !active.get() {
+                return;
+            }
             if left.is_empty() {
                 let router = state.borrow().router.clone();
                 close();
@@ -869,7 +1029,15 @@ pub fn open_router(
     window.on_apply({
         let state = state.clone();
         let ok = ok.clone();
+        let slots = slots.clone();
         move || {
+            if slots.node.borrow().is_some()
+                || slots.strings.has_open()
+                || slots.formula.formula.borrow().is_some()
+                || slots.formula.strings.has_open()
+            {
+                return;
+            }
             let questions = editors::ok_questions(&state.borrow().router);
             ok(questions);
         }
@@ -1105,11 +1273,13 @@ pub fn open_routers(
         let weak = window.as_weak();
         let slots = slots.clone();
         move || {
-            for w in [slots.node.borrow_mut().take()].into_iter().flatten() {
-                let _ = w.hide();
+            let node = slots.node.borrow_mut().take();
+            if let Some(node) = node {
+                node.invoke_cancel();
             }
-            if let Some(w) = slots.router.borrow_mut().take() {
-                let _ = w.hide();
+            let router = slots.router.borrow_mut().take();
+            if let Some(router) = router {
+                router.invoke_cancel();
             }
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();

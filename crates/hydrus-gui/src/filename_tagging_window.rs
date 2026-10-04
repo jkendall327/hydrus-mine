@@ -420,6 +420,15 @@ fn build(
                     }
                 }
             });
+            sidecars.slots.set_test_objects(
+                state
+                    .borrow()
+                    .paths
+                    .iter()
+                    .cloned()
+                    .map(crate::sidecar_editors::TestObject::File)
+                    .collect(),
+            );
             match crate::sidecars_window::open_routers(
                 &sidecars.store,
                 crate::sidecar_editors::Context::Import,
