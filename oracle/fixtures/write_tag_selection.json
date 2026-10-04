@@ -227,5 +227,247 @@
       ],
       "text": ""
     }
+  ],
+  "menus": [
+    {
+      "action": "open",
+      "paths": [
+        [
+          "collapse parent rows"
+        ],
+        [
+          "hide parent decorators"
+        ],
+        [
+          "hide sibling decorators"
+        ],
+        [
+          "copy",
+          "3 selected"
+        ],
+        [
+          "copy",
+          "3 selected subtags"
+        ],
+        [
+          "copy",
+          "3 selected subtags with underscores"
+        ],
+        [
+          "copy",
+          "3 selected with counts"
+        ],
+        [
+          "copy",
+          "3 selected subtags with counts"
+        ],
+        [
+          "copy",
+          "3 selected and 1 parents"
+        ],
+        [
+          "copy",
+          "all tags"
+        ],
+        [
+          "copy",
+          "all subtags"
+        ],
+        [
+          "copy",
+          "all tags with counts"
+        ],
+        [
+          "copy",
+          "all subtags with counts"
+        ],
+        [
+          "siblings",
+          "add siblings to selection"
+        ],
+        [
+          "parents",
+          "add parents to selection"
+        ],
+        [
+          "open",
+          "open a new search page for 3 selected and 1 parents"
+        ],
+        [
+          "open",
+          "open a new OR search page for 3 selected and 1 parents"
+        ],
+        [
+          "open",
+          "open new search pages for each in selection"
+        ],
+        [
+          "open",
+          "open a new duplicate filter page for 3 selected and 1 parents"
+        ],
+        [
+          "maintenance",
+          "regenerate tag display"
+        ]
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "3 selected",
+      "copied": [
+        "parity:multi alpha\nparity:multi beta\nparity:multi gamma"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "3 selected subtags",
+      "copied": [
+        "multi alpha\nmulti beta\nmulti gamma"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "3 selected subtags with underscores",
+      "copied": [
+        "multi_alpha\nmulti_beta\nmulti_gamma"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "3 selected with counts",
+      "copied": [
+        "parity:multi alpha (3)\nparity:multi beta (1)\nparity:multi gamma (1)"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "3 selected subtags with counts",
+      "copied": [
+        "multi alpha (3)\nmulti beta (1)\nmulti gamma (1)"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "3 selected and 1 parents",
+      "copied": [
+        "parity:multi alpha\ncategory:multi parent\nparity:multi beta\nparity:multi gamma"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "all tags",
+      "copied": [
+        "parity:multi\nparity:multi alpha\nparity:multi alpha old\nparity:multi beta\nparity:multi gamma"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "all subtags",
+      "copied": [
+        "multi\nmulti alpha\nmulti alpha old\nmulti beta\nmulti gamma"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "all tags with counts",
+      "copied": [
+        "parity:multi\nparity:multi alpha (3)\nparity:multi alpha old (1)\nparity:multi beta (1)\nparity:multi gamma (1)"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "all subtags with counts",
+      "copied": [
+        "multi\nmulti alpha (3)\nmulti alpha old (1)\nmulti beta (1)\nmulti gamma (1)"
+      ]
+    },
+    {
+      "action": "launch",
+      "label": "open a new search page for 3 selected and 1 parents",
+      "launched": [
+        {
+          "topic": "new_page_query",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:multi gamma",
+            "parity:multi alpha",
+            "parity:multi beta"
+          ]
+        }
+      ]
+    },
+    {
+      "action": "launch",
+      "label": "open a new OR search page for 3 selected and 1 parents",
+      "launched": [
+        {
+          "topic": "new_page_query",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:multi alpha (3) OR parity:multi beta (1) OR parity:multi gamma (1)"
+          ]
+        }
+      ]
+    },
+    {
+      "action": "launch",
+      "label": "open new search pages for each in selection",
+      "launched": [
+        {
+          "topic": "new_page_query",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:multi gamma"
+          ]
+        },
+        {
+          "topic": "new_page_query",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:multi alpha"
+          ]
+        },
+        {
+          "topic": "new_page_query",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:multi beta"
+          ]
+        }
+      ]
+    },
+    {
+      "action": "launch",
+      "label": "open a new duplicate filter page for 3 selected and 1 parents",
+      "launched": [
+        {
+          "topic": "new_page_duplicates",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:multi gamma",
+            "parity:multi alpha",
+            "parity:multi beta"
+          ]
+        }
+      ]
+    }
   ]
 }

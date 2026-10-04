@@ -1279,7 +1279,7 @@ shortcuts before that same multi-domain selector.
 
 Manage Tags' write autocomplete now has storage counts, typed/ideal elevation,
 parent and sibling rows, manual fetch, a scrollable suggestions list, multiline
-paste and all six Tag Editing autocomplete preferences. Favourites and children now use the shared tabs. Logical multi-selection and batch activation work across shared write inputs; maintenance and multiple-selection context actions remain outstanding.
+paste and all six Tag Editing autocomplete preferences. Favourites and children now use the shared tabs. Logical multi-selection, batch activation and multiple-selection copy/search/relationship context actions work across shared write inputs; local maintenance remains outstanding.
 Declining a multiline paste leaves the existing text draft intact; Qt returns
 that event to its line editor's normal paste handling. Import additional-tags and whitelist fields now open a detached shared write-tag editor; their raw multiline fields remain available as well. Expanded
 parent rows enter their originating child, matching Qt's logical-list selection.

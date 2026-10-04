@@ -2547,3 +2547,10 @@ cancelled re-addition. Workers use immutable snapshots and query identities so
 late results cannot revive a closed palette or replace a newer query. Native
 window and launch wiring is still being added; these helpers alone do not yet
 expose a command palette in the client.
+
+A shared write autocomplete selection can now copy tags, subtags, underscore
+variants, counts and deduplicated parents together. Its context menu opens the
+selection as an AND or OR search, one search page per tag, or a duplicate-filter
+page, and seeds sibling/parent editors with the whole selection. All-tag copy
+actions appear when other results remain. Multi-tag menus omit single-tag
+favourite actions and relationship lookups, matching the recorded Qt menu.

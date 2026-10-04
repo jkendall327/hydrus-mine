@@ -130,9 +130,20 @@ pub(crate) fn open(
     window.on_context_menu({
         let tag_menu = tag_menu.clone();
         let model = model.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let pending = pending_paste.clone();
         move |i, x, y| {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+                return;
+            }
             if let Ok(i) = usize::try_from(i) {
-                let entries = model.borrow().write_input().menu(i);
+                let entries = {
+                    let mut model = model.borrow_mut();
+                    model.write_input_mut().click(i, false, false);
+                    model.write_input().menu(i)
+                };
+                refresh();
                 tag_menu.open(&entries, x, y);
             }
         }

@@ -243,12 +243,19 @@ pub(crate) fn open(
         let tag_menu = tag_menu.clone();
         let binding = binding.clone();
         let target = menu_target.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
         move |right, i, x, y| {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
+                return;
+            }
             if let Ok(i) = usize::try_from(i) {
                 let mut binding = binding.borrow_mut();
                 target.set((binding.model.service(), right));
+                binding.input_mut(right).click(i, false, false);
                 let entries = binding.input_mut(right).menu(i);
                 drop(binding);
+                refresh();
                 tag_menu.open(&entries, x, y);
             }
         }

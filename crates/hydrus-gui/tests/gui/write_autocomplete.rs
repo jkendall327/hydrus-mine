@@ -920,3 +920,118 @@ fn selected_batches_stage_in_shared_dialogs_and_closed_owners_ignore_callbacks()
     relation.invoke_apply();
     assert!(bound.tag_relationships.borrow().is_none());
 }
+
+#[test]
+fn batch_context_menu_copies_and_launches_real_and_or_each_and_duplicate_pages() {
+    use hydrus_core::{Tag, pages::PageContent, search::predicate::Predicate};
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
+    let tags: Vec<String> = serde_json::from_value(
+        fixture["steps"].as_array().unwrap().last().unwrap()["entered"][0].clone(),
+    )
+    .unwrap();
+    let saved = tags.clone();
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &settings::FavouriteTags(saved)))
+        .unwrap();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let child = hydrus_gui::write_tag_window::open(
+        &store,
+        key,
+        &[],
+        "batch menus",
+        &slot,
+        Rc::new(|_| {}),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    child.invoke_tab_chosen(1);
+    child.invoke_selection_clicked(2, false, true);
+    let copied = Rc::new(RefCell::new(String::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let hydrus_gui::Clip::Text(text) = clip {
+                text.clone_into(&mut copied.borrow_mut());
+            }
+        }
+    });
+    child.invoke_context_menu(1, 10.0, 10.0);
+    choose_write_tag_menu(&child, &["copy", "3 selected"]);
+    assert_eq!(
+        *copied.borrow(),
+        fixture["menus"][1]["copied"][0].as_str().unwrap()
+    );
+    assert_eq!(child.get_tags().row_count(), 0);
+    let predicates: Vec<_> = tags
+        .iter()
+        .map(|tag| Predicate::Tag {
+            tag: Tag::new(tag).unwrap(),
+            inclusive: true,
+        })
+        .collect();
+    for (label, expected, duplicate) in [
+        (
+            "open a new search page for 3 selected",
+            vec![predicates.clone()],
+            false,
+        ),
+        (
+            "open a new OR search page for 3 selected",
+            vec![vec![Predicate::Or(predicates.clone())]],
+            false,
+        ),
+        (
+            "open new search pages for each in selection",
+            predicates
+                .iter()
+                .cloned()
+                .map(|predicate| vec![predicate])
+                .collect(),
+            false,
+        ),
+        (
+            "open a new duplicate filter page for 3 selected",
+            vec![predicates.clone()],
+            true,
+        ),
+    ] {
+        let before = bound.pages.borrow().session().pages.len();
+        child.invoke_context_menu(1, 10.0, 10.0);
+        choose_write_tag_menu(&child, &["open", label]);
+        let pages = bound.pages.borrow();
+        assert_eq!(pages.session().pages.len(), before + expected.len());
+        for (page, wanted) in pages.session().pages[before..].iter().zip(expected) {
+            match &page.content {
+                PageContent::Search { search, .. } => {
+                    assert!(!duplicate);
+                    assert_eq!(search.predicates, wanted);
+                }
+                PageContent::Duplicates { duplicates, .. } => {
+                    assert!(duplicate);
+                    assert_eq!(duplicates.search.search_1.predicates, wanted);
+                    assert_eq!(duplicates.search.search_1, duplicates.search.search_2);
+                }
+                content => panic!("unexpected launched content {content:?}"),
+            }
+        }
+    }
+    let before = bound.pages.borrow().session().pages.len();
+    child.invoke_context_menu(1, 10.0, 10.0);
+    child.invoke_cancel();
+    child.invoke_tag_menu_clicked(0, 0, 10.0, 10.0, 10.0);
+    child.invoke_context_menu(1, 10.0, 10.0);
+    assert_eq!(child.get_tag_menu_panes().row_count(), 0);
+    assert_eq!(bound.pages.borrow().session().pages.len(), before);
+    hydrus_gui::set_clipper(|_| {});
+}

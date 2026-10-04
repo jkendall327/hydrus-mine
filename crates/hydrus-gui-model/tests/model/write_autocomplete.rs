@@ -122,6 +122,8 @@ fn exact_rows_counts_domains_decorations_and_first_selection_match_reference() {
                 settings::set(ctx.conn(), &widgets)
             })
             .unwrap();
+        // The oracle fetch explicitly clears SetPredicates before each option case.
+        input.clear();
         input.set_text(query["text"].as_str().unwrap());
         let mut actual: Vec<Value> = Vec::new();
         for row in input.rows() {
@@ -1118,6 +1120,7 @@ fn recorded_logical_selection_ranges_parent_hits_and_batch_activation() {
                 );
             }
             "activate" => {
+                check_recorded_batch_menu(&entry.input, &fixture);
                 let mask = entry.input.selection_mask();
                 assert!(mask[1] && mask[2]); // Primary and inherited row share logical selection.
                 entry.input.fetch(); // Repeating a result must preserve the batch.
@@ -1157,4 +1160,142 @@ fn recorded_logical_selection_ranges_parent_hits_and_batch_activation() {
     let before = entry.tags();
     entry.enter(None);
     assert_eq!(entry.tags(), before);
+}
+
+fn check_recorded_batch_menu(input: &WriteAutocomplete, fixture: &Value) {
+    use hydrus_core::search::predicate::Predicate;
+    use hydrus_gui_model::write_tag_menu::{Action, Entry};
+    fn leaves(entries: &[Entry], prefix: &[String], out: &mut Vec<(Vec<String>, Action)>) {
+        for entry in entries {
+            match entry {
+                Entry::Item(label, action) | Entry::Check(label, action, _) => {
+                    let mut path = prefix.to_vec();
+                    path.push(label.clone());
+                    out.push((path, action.clone()));
+                }
+                Entry::Menu(label, entries) => {
+                    let mut path = prefix.to_vec();
+                    path.push(label.clone());
+                    leaves(entries, &path, out);
+                }
+                Entry::Separator => {}
+            }
+        }
+    }
+    let selected = input.selected_tags();
+    let index = input
+        .rows()
+        .iter()
+        .position(|row| row.tag == selected[0])
+        .unwrap();
+    let mut actual = Vec::new();
+    leaves(&input.menu(index), &[], &mut actual);
+    let expected_paths: Vec<Vec<String>> =
+        serde_json::from_value(fixture["menus"][0]["paths"].clone()).unwrap();
+    // Local maintenance is the next implementation slice; this slice closes all batch actions.
+    let expected_paths: Vec<_> = expected_paths
+        .into_iter()
+        .filter(|path| path[0] != "maintenance")
+        .collect();
+    assert_eq!(
+        actual
+            .iter()
+            .map(|(path, _)| path.clone())
+            .collect::<Vec<_>>(),
+        expected_paths
+    );
+    let predicates: Vec<_> = selected
+        .iter()
+        .map(|tag| Predicate::Tag {
+            tag: Tag::new(tag).unwrap(),
+            inclusive: true,
+        })
+        .collect();
+    for event in fixture["menus"].as_array().unwrap().iter().skip(1) {
+        let action = &actual
+            .iter()
+            .find(|(path, _)| path.last().unwrap() == event["label"].as_str().unwrap())
+            .unwrap()
+            .1;
+        match action {
+            Action::Copy(text) => assert_eq!(json!([text]), event["copied"]),
+            Action::Launch {
+                location,
+                predicates: actual,
+                duplicate,
+                ..
+            } => {
+                let expected = if event["label"].as_str().unwrap().contains(" OR ") {
+                    vec![Predicate::Or(predicates.clone())]
+                } else {
+                    predicates.clone()
+                };
+                assert_eq!(*actual, expected);
+                assert_eq!(
+                    *duplicate,
+                    event["launched"][0]["topic"] == "new_page_duplicates"
+                );
+                assert_eq!(
+                    json!(
+                        location
+                            .current()
+                            .iter()
+                            .map(hydrus_core::ServiceKey::to_hex)
+                            .collect::<Vec<_>>()
+                    ),
+                    event["launched"][0]["current"]
+                );
+                assert_eq!(
+                    json!(
+                        location
+                            .deleted()
+                            .iter()
+                            .map(hydrus_core::ServiceKey::to_hex)
+                            .collect::<Vec<_>>()
+                    ),
+                    event["launched"][0]["deleted"]
+                );
+            }
+            Action::LaunchMany { pages, .. } => {
+                assert_eq!(
+                    *pages,
+                    predicates
+                        .iter()
+                        .cloned()
+                        .map(|predicate| vec![predicate])
+                        .collect::<Vec<_>>()
+                );
+                let mut native: Vec<_> = pages
+                    .iter()
+                    .map(|page| match &page[0] {
+                        Predicate::Tag { tag, .. } => tag.as_str().to_owned(),
+                        _ => panic!("tag page"),
+                    })
+                    .collect();
+                let mut recorded: Vec<_> = event["launched"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|page| page["predicates"][0].as_str().unwrap().to_owned())
+                    .collect();
+                // Qt iterates a set for page launch; copy and selection retain list order.
+                native.sort();
+                recorded.sort();
+                assert_eq!(native, recorded);
+            }
+            action => panic!("unexpected batch action {action:?}"),
+        }
+    }
+    for (_, action) in actual {
+        if let Action::Relationship { kind, tags } = action {
+            let model = hydrus_gui_model::tag_relationships::Relationships::new_with_tags(
+                input.store().clone(),
+                kind,
+                &tags,
+            )
+            .unwrap();
+            assert_eq!(model.inputs().0, selected);
+            assert!(model.inputs().1.is_empty());
+        }
+    }
 }

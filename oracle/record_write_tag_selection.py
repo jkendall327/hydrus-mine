@@ -4,7 +4,8 @@
 Actual WriteFetch populates the real Qt predicate list. Plain/Ctrl/Shift and
 Ctrl+Shift hits drive Qt's existing reversible selection algorithm; inherited
 physical rows map to the originating logical tag. Activation calls the real
-list's handler and write-dropdown broadcast, including clearing its input.
+list's handler and write-dropdown broadcast, including clearing its input. The
+real multi-tag menu records copy payloads and AND/OR/each-page/duplicate launches.
 """
 import json,os,sys,tempfile
 HERE=os.path.dirname(os.path.abspath(__file__));sys.path.insert(0,HERE)
@@ -55,8 +56,38 @@ def record(session):
         alpha=box._ordered_terms[tags.index('parity:multi alpha')]
         physical=box._terms_to_positional_indices[alpha]+1;logical,_=box._GetLogicalIndicesFromPositionalIndex(physical)
         box._Hit(False,True,logical);steps.append(snapshot('parent_click',tag='parity:multi alpha',physical=physical,ctrl=True,shift=False))
+        from qtpy import QtCore
+        from hydrus.client.gui import ClientGUICore as CGC,ClientGUIAsync
+        captured_menu={};copied=[];launches=[]
+        old_popup=CGC.core().PopupMenu;old_pub=c.pub;old_start=ClientGUIAsync.AsyncQtJob.start
+        CGC.core().PopupMenu=lambda win,menu:captured_menu.update(menu=menu)
+        ClientGUIAsync.AsyncQtJob.start=lambda job:job._publish_callable(job._work_callable())
+        def publish(topic,*args,**kw):
+            if topic=='clipboard':copied.append(args[1])
+            elif topic in ('new_page_query','new_page_duplicates'):
+                launches.append(dict(topic=topic,current=[key.hex() for key in sorted(args[0].current_service_keys)],deleted=[key.hex() for key in sorted(args[0].deleted_service_keys)],predicates=[p.ToString() for p in kw['initial_predicates']]))
+            else:old_pub(topic,*args,**kw)
+        c.pub=publish
+        def paths(menu,prefix=()):
+            out=[]
+            for action in menu.actions():
+                if action.isSeparator():continue
+                path=prefix+(action.text(),)
+                out.extend(paths(action.menu(),path) if action.menu() is not None else [(path,action)])
+            return out
+        menus=[]
+        try:
+            box.ShowMenuFromSignal(QtCore.QPoint(0,0));actions=paths(captured_menu['menu'])
+            menus.append(dict(action='open',paths=[list(path) for path,_ in actions]))
+            for path,action in actions:
+                if path[0]=='copy':
+                    copied.clear();action.trigger();menus.append(dict(action='copy',label=path[-1],copied=list(copied)))
+                elif path[0]=='open':
+                    launches.clear();action.trigger();menus.append(dict(action='launch',label=path[-1],launched=list(launches)))
+        finally:
+            CGC.core().PopupMenu=old_popup;c.pub=old_pub;ClientGUIAsync.AsyncQtJob.start=old_start
         activated=box._Activate(False,False);steps.append(dict(action='activate',activated=activated,entered=list(entered),text=ac._text_ctrl.text()))
-        return dict(tags=tags,rows=rows,steps=steps)
+        return dict(tags=tags,rows=rows,steps=steps,menus=menus)
     try:out=qt(replay)
     finally:c.CallToThread=old_thread
     return dict(files=[h.hex() for h in hashes],corpus=[dict(tag=t,hashes=[h.hex() for h in fs]) for t,fs in corpus],siblings=siblings,parents=parents,**out)

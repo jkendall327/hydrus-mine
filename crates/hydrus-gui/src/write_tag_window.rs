@@ -186,9 +186,19 @@ fn open_internal(
     window.on_context_menu({
         let tag_menu = tag_menu.clone();
         let model = model.clone();
+        let refresh = refresh.clone();
+        let editable = editable.clone();
         move |i, x, y| {
+            if !editable() || tag_menu.busy() {
+                return;
+            }
             if let Ok(i) = usize::try_from(i) {
-                let entries = model.borrow().input.menu(i);
+                let entries = {
+                    let mut model = model.borrow_mut();
+                    model.input.click(i, false, false);
+                    model.input.menu(i)
+                };
+                refresh();
                 tag_menu.open(&entries, x, y);
             }
         }
