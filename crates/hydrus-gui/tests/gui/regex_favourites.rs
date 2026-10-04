@@ -98,6 +98,7 @@ fn matcher_favourites_manager_saves_global_choices_and_parent_cancel_closes_it()
 
 #[test]
 fn shared_regex_menus_copy_without_changing_text() {
+    use hydrus_core::url::strings::{Conversion, StringConverter};
     let (_dirs, store) = store();
     let _windows = headless::init();
     let slots = hydrus_gui::string_processor_window::Slots::default();
@@ -133,7 +134,6 @@ fn shared_regex_menus_copy_without_changing_text() {
     step.invoke_regex_tool(1, 0);
     assert_eq!(copied.borrow().len(), count);
 
-    use hydrus_core::url::strings::{Conversion, StringConverter};
     let converter = hydrus_gui::string_processor_window::open_converter(
         &StringConverter {
             example: "a".into(),
