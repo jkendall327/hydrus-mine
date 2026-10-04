@@ -185,3 +185,18 @@ Right release with Left still held, continuing/outside/re-entered Left motion,
 Left release, and right-only dragging. It captures the reference's Left-priority
 press routing. Native delivered in-widget chord movement is covered; Slint's
 loss of capture after Right release remains a documented cross-edge limitation.
+
+
+`record_notes_preferences.py` records the real Notes Options checkboxes through
+UpdateOptions, serialization and reopened panels; an abandoned draft preserves
+the saved values. The actual Manage Notes cog is materialized from its own
+menu template and real QAction triggers invert live global preferences. Unicode
+editor cursors, tab retention, future-note creation through actual Paste, keyboard
+insertion, six copy variants (including empty-current JSON/plain text), and actual
+NotePanel middle mouse events capture the consumers. Both real modal DialogEdit
+Cancels close their owners through recorded dirty-note confirmations while keeping
+changed preferences; reopened menus/cursors and serialized flags are captured.
+Executed successfully 2026-10-04 23:31:06–23:31:09 UTC via serialized `with-oracle`,
+on a fresh basic fixture with clean shutdown. `notes_preferences.json` and its
+inspected PNG contain the evidence. Clipboard input/publication and notifications
+are supplied/observed; no note handler or registered file content is replaced.

@@ -1,0 +1,50 @@
+// A multiline native input whose actual byte cursor/anchor can be retained when
+// one note tab replaces another. State belongs to the dialog, not a global.
+import { ScrollView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export component NoteTextEdit inherits Rectangle {
+    in-out property <string> text;
+    in property <bool> enabled: true;
+    out property <int> cursor: editor.cursor-position-byte-offset;
+    out property <int> anchor: editor.anchor-position-byte-offset;
+    callback edited();
+    public function select-text(anchor: int, cursor: int) { editor.set-selection-offsets(anchor, cursor); }
+    public function focus-text() { editor.focus(); }
+    background: Theme.panel;
+    border-width: 1px;
+    border-color: Theme.border;
+    forward-focus: editor;
+    ContextMenuArea {
+        enabled: root.enabled;
+        Menu {
+            MenuItem { title: "Cut"; enabled: root.enabled; activated => { editor.cut(); } }
+            MenuItem { title: "Copy"; enabled: root.enabled; activated => { editor.copy(); } }
+            MenuItem { title: "Paste"; enabled: root.enabled; activated => { editor.paste(); } }
+            MenuItem { title: "Select All"; enabled: root.enabled; activated => { editor.select-all(); } }
+        }
+        scroll := ScrollView {
+            x: 6px; y: 6px;
+            width: parent.width - 12px; height: parent.height - 12px;
+            content-width: self.visible-width;
+            content-height: max(self.visible-height, editor.preferred-height);
+            editor := TextInput {
+                enabled: root.enabled;
+                text <=> root.text;
+                single-line: false;
+                wrap: word-wrap;
+                color: Theme.text;
+                selection-background-color: Theme.highlight;
+                selection-foreground-color: Theme.highlight-text;
+                page-height: scroll.visible-height;
+                edited => { root.edited(); }
+                cursor-position-changed(position) => {
+                    if position.y + scroll.content-y < 0px {
+                        scroll.content-y = min(0px, max(scroll.visible-height - self.height, -position.y));
+                    } else if position.y + scroll.content-y > scroll.visible-height - 20px {
+                        scroll.content-y = min(0px, max(scroll.visible-height - self.height, scroll.visible-height - position.y - 20px));
+                    }
+                }
+            }
+        }
+    }
+}

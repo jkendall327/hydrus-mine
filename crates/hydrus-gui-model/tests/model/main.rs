@@ -32,6 +32,7 @@ mod main_menu;
 mod manage_notes;
 mod merge_options_editor;
 mod merge_summaries;
+mod notes_preferences;
 mod options_dialog;
 mod page_chooser_options;
 mod page_navigation_options;

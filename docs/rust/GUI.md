@@ -1105,12 +1105,20 @@ reference's, `oracle/record_manage_notes.py`): a tab per note by name (a
 lone "notes" tab for a file with none), the note in view edited below.
 "add" asks a name ("Enter the name for the note.", numbered "name (1)"
 if a note has it), "edit current name" (or double-clicking a tab) asks
-a new one, and "delete current note" asks first. "copy" copies every
-note as the reference's JSON, "paste" merges JSON notes in as the
+a new one, and "delete current note" asks first. The cog chooses all/current
+note copying and JSON/human text, starting new editors at the beginning/end,
+and viewer middle-click body-only/title-and-body copying. These four live
+preferences persist immediately, including after note-editor Cancel. "paste"
+merges JSON notes in as the
 reference does (extending a note a pasted one extends, renaming on a
 clash; text it can't read is said so), and "copy URLs" copies the URLs
 in the note in view. "apply" writes the notes (each cleaned, empty ones
 dropped) and deletes the ones gone; "cancel" with changes asks first.
+Options → notes stages the two cursor/hover switches until Apply, preserving
+intervening live cog choices. Imported preferences survive reopening. Existing
+note tabs retain their real cursor/selection when switching or flipping the cog;
+new and pasted tabs use the latest initial-cursor preference. Middle-clicking a
+viewer note copies using the latest saved choice without reopening the viewer.
 
 Manage → "ratings" (there when there are rating services; the selected
 files', in the viewer the file shown's) opens the reference's "manage

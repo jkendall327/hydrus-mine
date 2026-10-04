@@ -604,6 +604,29 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .map(legacy::ClientOptions::thumbnail_rating_settings)
             .unwrap_or_default(),
     )?;
+    let mut note_preferences = crate::settings::NotePreferences::default();
+    if let Some(options) = &options {
+        for (key, field) in [
+            ("copy_notes_dialog_copy_all", &mut note_preferences.copy_all),
+            (
+                "copy_notes_dialog_copy_json",
+                &mut note_preferences.copy_json,
+            ),
+            (
+                "start_note_editing_at_end",
+                &mut note_preferences.start_at_end,
+            ),
+            (
+                "copy_notes_quick_click_only_copies_text",
+                &mut note_preferences.hover_text_only,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+    }
+    insert_setting(&mut input, &note_preferences)?;
     let mut rating_sizes = crate::settings::RatingContextSizes::default();
     if let Some(options) = &options {
         for (key, field) in [
@@ -3011,6 +3034,61 @@ mod tests {
             [dump.into_bytes()],
         )
         .unwrap();
+    }
+
+    #[test]
+    fn four_note_preferences_import_and_survive_reopen() {
+        let fixture = hydrus_testkit::fixture_json("notes_preferences.json");
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let edits = fixture["keys"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .enumerate()
+            .map(|(index, key)| {
+                let key = key.as_str().unwrap();
+                (
+                    format!(r#"[[0, "{key}"], [0, {}]]"#, fixture["initial"][index]),
+                    format!(r#"[[0, "{key}"], [0, {}]]"#, fixture["after_cancel"][index]),
+                )
+            })
+            .collect::<Vec<_>>();
+        let edits = edits
+            .iter()
+            .map(|(from, to)| (from.as_str(), to.as_str()))
+            .collect::<Vec<_>>();
+        edit_client_options(source.path(), &edits);
+        let destination = tempfile::tempdir().unwrap();
+        crate::import::import_legacy(
+            source.path(),
+            &destination.path().join(crate::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = crate::Store::open(destination.path()).unwrap();
+        let preferences: crate::settings::NotePreferences =
+            store.read(crate::settings::get).unwrap();
+        assert_eq!(
+            serde_json::json!([
+                preferences.copy_all,
+                preferences.copy_json,
+                preferences.start_at_end,
+                preferences.hover_text_only
+            ]),
+            fixture["after_cancel"]
+        );
+        drop(store);
+        assert_eq!(
+            crate::Store::open(destination.path())
+                .unwrap()
+                .read(crate::settings::get::<crate::settings::NotePreferences>)
+                .unwrap(),
+            preferences
+        );
+        let partial: crate::settings::NotePreferences =
+            serde_json::from_value(serde_json::json!({"start_at_end":false})).unwrap();
+        assert!(!partial.start_at_end);
+        assert!(partial.copy_all && partial.copy_json);
+        assert!(!partial.hover_text_only);
     }
 
     #[test]

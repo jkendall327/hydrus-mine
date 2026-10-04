@@ -49,6 +49,7 @@ mod mpv;
 mod notebook_new_page;
 mod notebook_refresh;
 mod notebook_sessions;
+mod notes_preferences;
 mod options_window;
 mod page_chooser_options;
 mod page_navigation_options;

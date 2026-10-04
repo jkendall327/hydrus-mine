@@ -373,10 +373,14 @@ search.
   narrow as the reference's, which shows the status columns as single
   characters; their widths are fixed, but for the first, which takes
   the room left.
-- **The "manage notes" dialog** copies every note as JSON, the
-  reference's default; its cog menu's choices (copy just the note in
-  view, copy as plain text, where the text cursor starts) aren't there.
-  Its notices ("Copied 2 encoded notes!") show beside the buttons rather
+- **The "manage notes" dialog** now has the four live cog checks and
+  both Notes Options controls. Current/all copying preserves Qt's JSON or
+  naturally sorted human text, including an empty current note. Existing tabs
+  retain selection; initial cursor preference affects newly created editors.
+  The native multiline input exposes UTF-8 byte offsets while Qt uses UTF-16;
+  regressions compare actual Unicode insertion outcomes and translated offsets.
+  Viewer note middle-copy is implemented; its left-edit and right-hide gestures
+  remain absent. Its notices ("Copied 2 encoded notes!") show beside the buttons rather
   than as a passing note over them, and the reference's shortcut to
   apply it isn't bound. Double-clicking beside the tabs doesn't add a
   note.
