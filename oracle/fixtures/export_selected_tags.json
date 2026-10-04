@@ -1,0 +1,1373 @@
+{
+ "seed_service": "my tags",
+ "seed_hash_id": 1,
+ "files": [
+  1,
+  8,
+  3
+ ],
+ "states": [
+  {
+   "case": "all_files",
+   "files": [],
+   "sort": [
+    0,
+    0,
+    2
+   ],
+   "rows": [
+    {
+     "tag": "creator:anonymous artist",
+     "text": "creator:anonymous artist (1)",
+     "rendered": "creator:anonymous artist (1)",
+     "selected": false
+    },
+    {
+     "tag": "creator:someone else",
+     "text": "creator:someone else (1)",
+     "rendered": "creator:someone else (1)",
+     "selected": false
+    },
+    {
+     "tag": "series:the legend of zelda",
+     "text": "series:the legend of zelda (1)",
+     "rendered": "series:the legend of zelda (1)",
+     "selected": false
+    },
+    {
+     "tag": "character:link",
+     "text": "character:link (1)",
+     "rendered": "character:link (1)",
+     "selected": false
+    },
+    {
+     "tag": "safe",
+     "text": "safe (2)",
+     "rendered": "safe (2)",
+     "selected": false
+    },
+    {
+     "tag": "meta:low resolution",
+     "text": "meta:low resolution (1)",
+     "rendered": "meta:low resolution (1)",
+     "selected": false
+    },
+    {
+     "tag": "filename:apng_animated",
+     "text": "filename:apng_animated (1)",
+     "rendered": "filename:apng_animated (1)",
+     "selected": false
+    },
+    {
+     "tag": "filename:audio",
+     "text": "filename:audio (1)",
+     "rendered": "filename:audio (1)",
+     "selected": false
+    },
+    {
+     "tag": "filename:dupe_jpeg_02",
+     "text": "filename:dupe_jpeg_02 (1)",
+     "rendered": "filename:dupe_jpeg_02 (1)",
+     "selected": false
+    },
+    {
+     "tag": "page:3",
+     "text": "page:3 (1)",
+     "rendered": "page:3 (1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:pending example",
+     "text": "parity:pending example (+1)",
+     "rendered": "parity:pending example (+1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:petitioned example",
+     "text": "parity:petitioned example (1) (-1)",
+     "rendered": "parity:petitioned example (1) (-1)",
+     "selected": false
+    },
+    {
+     "tag": "source:fixture",
+     "text": "source:fixture (3)",
+     "rendered": "source:fixture (3)",
+     "selected": false
+    },
+    {
+     "tag": "studio:nintendo",
+     "text": "studio:nintendo (1)",
+     "rendered": "studio:nintendo (1)",
+     "selected": false
+    }
+   ]
+  },
+  {
+   "case": "one_file",
+   "files": [
+    1
+   ],
+   "sort": [
+    0,
+    0,
+    2
+   ],
+   "rows": [
+    {
+     "tag": "safe",
+     "text": "safe (1)",
+     "rendered": "safe (1)",
+     "selected": false
+    },
+    {
+     "tag": "filename:apng_animated",
+     "text": "filename:apng_animated (1)",
+     "rendered": "filename:apng_animated (1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:pending example",
+     "text": "parity:pending example (+1)",
+     "rendered": "parity:pending example (+1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:petitioned example",
+     "text": "parity:petitioned example (1) (-1)",
+     "rendered": "parity:petitioned example (1) (-1)",
+     "selected": false
+    },
+    {
+     "tag": "source:fixture",
+     "text": "source:fixture (1)",
+     "rendered": "source:fixture (1)",
+     "selected": false
+    }
+   ]
+  },
+  {
+   "case": "two_files",
+   "files": [
+    1,
+    8
+   ],
+   "sort": [
+    0,
+    0,
+    2
+   ],
+   "rows": [
+    {
+     "tag": "creator:someone else",
+     "text": "creator:someone else (1)",
+     "rendered": "creator:someone else (1)",
+     "selected": false
+    },
+    {
+     "tag": "series:the legend of zelda",
+     "text": "series:the legend of zelda (1)",
+     "rendered": "series:the legend of zelda (1)",
+     "selected": false
+    },
+    {
+     "tag": "character:link",
+     "text": "character:link (1)",
+     "rendered": "character:link (1)",
+     "selected": false
+    },
+    {
+     "tag": "safe",
+     "text": "safe (2)",
+     "rendered": "safe (2)",
+     "selected": false
+    },
+    {
+     "tag": "filename:apng_animated",
+     "text": "filename:apng_animated (1)",
+     "rendered": "filename:apng_animated (1)",
+     "selected": false
+    },
+    {
+     "tag": "filename:dupe_jpeg_02",
+     "text": "filename:dupe_jpeg_02 (1)",
+     "rendered": "filename:dupe_jpeg_02 (1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:pending example",
+     "text": "parity:pending example (+1)",
+     "rendered": "parity:pending example (+1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:petitioned example",
+     "text": "parity:petitioned example (1) (-1)",
+     "rendered": "parity:petitioned example (1) (-1)",
+     "selected": false
+    },
+    {
+     "tag": "source:fixture",
+     "text": "source:fixture (2)",
+     "rendered": "source:fixture (2)",
+     "selected": false
+    },
+    {
+     "tag": "studio:nintendo",
+     "text": "studio:nintendo (1)",
+     "rendered": "studio:nintendo (1)",
+     "selected": false
+    }
+   ]
+  },
+  {
+   "case": "tags_selected",
+   "files": [
+    1,
+    8
+   ],
+   "sort": [
+    0,
+    0,
+    2
+   ],
+   "rows": [
+    {
+     "tag": "creator:someone else",
+     "text": "creator:someone else (1)",
+     "rendered": "creator:someone else (1)",
+     "selected": true
+    },
+    {
+     "tag": "series:the legend of zelda",
+     "text": "series:the legend of zelda (1)",
+     "rendered": "series:the legend of zelda (1)",
+     "selected": true
+    },
+    {
+     "tag": "character:link",
+     "text": "character:link (1)",
+     "rendered": "character:link (1)",
+     "selected": false
+    },
+    {
+     "tag": "safe",
+     "text": "safe (2)",
+     "rendered": "safe (2)",
+     "selected": false
+    },
+    {
+     "tag": "filename:apng_animated",
+     "text": "filename:apng_animated (1)",
+     "rendered": "filename:apng_animated (1)",
+     "selected": false
+    },
+    {
+     "tag": "filename:dupe_jpeg_02",
+     "text": "filename:dupe_jpeg_02 (1)",
+     "rendered": "filename:dupe_jpeg_02 (1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:pending example",
+     "text": "parity:pending example (+1)",
+     "rendered": "parity:pending example (+1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:petitioned example",
+     "text": "parity:petitioned example (1) (-1)",
+     "rendered": "parity:petitioned example (1) (-1)",
+     "selected": false
+    },
+    {
+     "tag": "source:fixture",
+     "text": "source:fixture (2)",
+     "rendered": "source:fixture (2)",
+     "selected": false
+    },
+    {
+     "tag": "studio:nintendo",
+     "text": "studio:nintendo (1)",
+     "rendered": "studio:nintendo (1)",
+     "selected": false
+    }
+   ]
+  },
+  {
+   "case": "tag_desc",
+   "files": [
+    1,
+    8
+   ],
+   "sort": [
+    0,
+    1,
+    0
+   ],
+   "rows": [
+    {
+     "tag": "studio:nintendo",
+     "text": "studio:nintendo (1)",
+     "rendered": "studio:nintendo (1)",
+     "selected": false
+    },
+    {
+     "tag": "source:fixture",
+     "text": "source:fixture (2)",
+     "rendered": "source:fixture (2)",
+     "selected": false
+    },
+    {
+     "tag": "series:the legend of zelda",
+     "text": "series:the legend of zelda (1)",
+     "rendered": "series:the legend of zelda (1)",
+     "selected": true
+    },
+    {
+     "tag": "safe",
+     "text": "safe (2)",
+     "rendered": "safe (2)",
+     "selected": false
+    },
+    {
+     "tag": "parity:petitioned example",
+     "text": "parity:petitioned example (1) (-1)",
+     "rendered": "parity:petitioned example (1) (-1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:pending example",
+     "text": "parity:pending example (+1)",
+     "rendered": "parity:pending example (+1)",
+     "selected": false
+    },
+    {
+     "tag": "filename:dupe_jpeg_02",
+     "text": "filename:dupe_jpeg_02 (1)",
+     "rendered": "filename:dupe_jpeg_02 (1)",
+     "selected": false
+    },
+    {
+     "tag": "filename:apng_animated",
+     "text": "filename:apng_animated (1)",
+     "rendered": "filename:apng_animated (1)",
+     "selected": false
+    },
+    {
+     "tag": "creator:someone else",
+     "text": "creator:someone else (1)",
+     "rendered": "creator:someone else (1)",
+     "selected": true
+    },
+    {
+     "tag": "character:link",
+     "text": "character:link (1)",
+     "rendered": "character:link (1)",
+     "selected": false
+    }
+   ]
+  },
+  {
+   "case": "subtag_asc",
+   "files": [
+    1,
+    8
+   ],
+   "sort": [
+    1,
+    0,
+    0
+   ],
+   "rows": [
+    {
+     "tag": "filename:apng_animated",
+     "text": "filename:apng_animated (1)",
+     "rendered": "filename:apng_animated (1)",
+     "selected": false
+    },
+    {
+     "tag": "filename:dupe_jpeg_02",
+     "text": "filename:dupe_jpeg_02 (1)",
+     "rendered": "filename:dupe_jpeg_02 (1)",
+     "selected": false
+    },
+    {
+     "tag": "source:fixture",
+     "text": "source:fixture (2)",
+     "rendered": "source:fixture (2)",
+     "selected": false
+    },
+    {
+     "tag": "character:link",
+     "text": "character:link (1)",
+     "rendered": "character:link (1)",
+     "selected": false
+    },
+    {
+     "tag": "studio:nintendo",
+     "text": "studio:nintendo (1)",
+     "rendered": "studio:nintendo (1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:pending example",
+     "text": "parity:pending example (+1)",
+     "rendered": "parity:pending example (+1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:petitioned example",
+     "text": "parity:petitioned example (1) (-1)",
+     "rendered": "parity:petitioned example (1) (-1)",
+     "selected": false
+    },
+    {
+     "tag": "safe",
+     "text": "safe (2)",
+     "rendered": "safe (2)",
+     "selected": false
+    },
+    {
+     "tag": "creator:someone else",
+     "text": "creator:someone else (1)",
+     "rendered": "creator:someone else (1)",
+     "selected": true
+    },
+    {
+     "tag": "series:the legend of zelda",
+     "text": "series:the legend of zelda (1)",
+     "rendered": "series:the legend of zelda (1)",
+     "selected": true
+    }
+   ]
+  },
+  {
+   "case": "count_desc",
+   "files": [
+    1,
+    8
+   ],
+   "sort": [
+    2,
+    1,
+    0
+   ],
+   "rows": [
+    {
+     "tag": "parity:petitioned example",
+     "text": "parity:petitioned example (1) (-1)",
+     "rendered": "parity:petitioned example (1) (-1)",
+     "selected": false
+    },
+    {
+     "tag": "safe",
+     "text": "safe (2)",
+     "rendered": "safe (2)",
+     "selected": false
+    },
+    {
+     "tag": "source:fixture",
+     "text": "source:fixture (2)",
+     "rendered": "source:fixture (2)",
+     "selected": false
+    },
+    {
+     "tag": "character:link",
+     "text": "character:link (1)",
+     "rendered": "character:link (1)",
+     "selected": false
+    },
+    {
+     "tag": "creator:someone else",
+     "text": "creator:someone else (1)",
+     "rendered": "creator:someone else (1)",
+     "selected": true
+    },
+    {
+     "tag": "filename:apng_animated",
+     "text": "filename:apng_animated (1)",
+     "rendered": "filename:apng_animated (1)",
+     "selected": false
+    },
+    {
+     "tag": "filename:dupe_jpeg_02",
+     "text": "filename:dupe_jpeg_02 (1)",
+     "rendered": "filename:dupe_jpeg_02 (1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:pending example",
+     "text": "parity:pending example (+1)",
+     "rendered": "parity:pending example (+1)",
+     "selected": false
+    },
+    {
+     "tag": "series:the legend of zelda",
+     "text": "series:the legend of zelda (1)",
+     "rendered": "series:the legend of zelda (1)",
+     "selected": true
+    },
+    {
+     "tag": "studio:nintendo",
+     "text": "studio:nintendo (1)",
+     "rendered": "studio:nintendo (1)",
+     "selected": false
+    }
+   ]
+  },
+  {
+   "case": "count_asc_grouped",
+   "files": [
+    1,
+    8
+   ],
+   "sort": [
+    2,
+    0,
+    1
+   ],
+   "rows": [
+    {
+     "tag": "character:link",
+     "text": "character:link (1)",
+     "rendered": "character:link (1)",
+     "selected": false
+    },
+    {
+     "tag": "creator:someone else",
+     "text": "creator:someone else (1)",
+     "rendered": "creator:someone else (1)",
+     "selected": true
+    },
+    {
+     "tag": "filename:dupe_jpeg_02",
+     "text": "filename:dupe_jpeg_02 (1)",
+     "rendered": "filename:dupe_jpeg_02 (1)",
+     "selected": false
+    },
+    {
+     "tag": "filename:apng_animated",
+     "text": "filename:apng_animated (1)",
+     "rendered": "filename:apng_animated (1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:pending example",
+     "text": "parity:pending example (+1)",
+     "rendered": "parity:pending example (+1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:petitioned example",
+     "text": "parity:petitioned example (1) (-1)",
+     "rendered": "parity:petitioned example (1) (-1)",
+     "selected": false
+    },
+    {
+     "tag": "series:the legend of zelda",
+     "text": "series:the legend of zelda (1)",
+     "rendered": "series:the legend of zelda (1)",
+     "selected": true
+    },
+    {
+     "tag": "source:fixture",
+     "text": "source:fixture (2)",
+     "rendered": "source:fixture (2)",
+     "selected": false
+    },
+    {
+     "tag": "studio:nintendo",
+     "text": "studio:nintendo (1)",
+     "rendered": "studio:nintendo (1)",
+     "selected": false
+    },
+    {
+     "tag": "safe",
+     "text": "safe (2)",
+     "rendered": "safe (2)",
+     "selected": false
+    }
+   ]
+  },
+  {
+   "case": "selection_retained_after_media_change",
+   "files": [
+    1
+   ],
+   "sort": [
+    2,
+    0,
+    1
+   ],
+   "rows": [
+    {
+     "tag": "filename:apng_animated",
+     "text": "filename:apng_animated (1)",
+     "rendered": "filename:apng_animated (1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:pending example",
+     "text": "parity:pending example (+1)",
+     "rendered": "parity:pending example (+1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:petitioned example",
+     "text": "parity:petitioned example (1) (-1)",
+     "rendered": "parity:petitioned example (1) (-1)",
+     "selected": false
+    },
+    {
+     "tag": "source:fixture",
+     "text": "source:fixture (1)",
+     "rendered": "source:fixture (1)",
+     "selected": false
+    },
+    {
+     "tag": "safe",
+     "text": "safe (1)",
+     "rendered": "safe (1)",
+     "selected": false
+    }
+   ]
+  },
+  {
+   "case": "remove_selected_file_fallback",
+   "files": [],
+   "sort": [
+    2,
+    0,
+    1
+   ],
+   "rows": [
+    {
+     "tag": "creator:anonymous artist",
+     "text": "creator:anonymous artist (1)",
+     "rendered": "creator:anonymous artist (1)",
+     "selected": false
+    },
+    {
+     "tag": "filename:audio",
+     "text": "filename:audio (1)",
+     "rendered": "filename:audio (1)",
+     "selected": false
+    },
+    {
+     "tag": "filename:apng_animated",
+     "text": "filename:apng_animated (1)",
+     "rendered": "filename:apng_animated (1)",
+     "selected": false
+    },
+    {
+     "tag": "meta:low resolution",
+     "text": "meta:low resolution (1)",
+     "rendered": "meta:low resolution (1)",
+     "selected": false
+    },
+    {
+     "tag": "page:3",
+     "text": "page:3 (1)",
+     "rendered": "page:3 (1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:pending example",
+     "text": "parity:pending example (+1)",
+     "rendered": "parity:pending example (+1)",
+     "selected": false
+    },
+    {
+     "tag": "parity:petitioned example",
+     "text": "parity:petitioned example (1) (-1)",
+     "rendered": "parity:petitioned example (1) (-1)",
+     "selected": false
+    },
+    {
+     "tag": "source:fixture",
+     "text": "source:fixture (2)",
+     "rendered": "source:fixture (2)",
+     "selected": false
+    },
+    {
+     "tag": "safe",
+     "text": "safe (1)",
+     "rendered": "safe (1)",
+     "selected": false
+    }
+   ]
+  }
+ ],
+ "copy": [],
+ "menus": [
+  {
+   "selected": [],
+   "tree": [
+    {
+     "label": "copy",
+     "separator": false,
+     "children": [
+      {
+       "label": "all tags",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "all subtags",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "all tags with counts",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "all subtags with counts",
+       "separator": false,
+       "children": null
+      }
+     ]
+    }
+   ],
+   "copy": [
+    {
+     "label": "all tags",
+     "payload": "character:link\ncreator:someone else\nfilename:dupe_jpeg_02\nfilename:apng_animated\nparity:pending example\nparity:petitioned example\nseries:the legend of zelda\nsource:fixture\nstudio:nintendo\nsafe"
+    },
+    {
+     "label": "all subtags",
+     "payload": "link\nsomeone else\ndupe_jpeg_02\napng_animated\npending example\npetitioned example\nthe legend of zelda\nfixture\nnintendo\nsafe"
+    },
+    {
+     "label": "all tags with counts",
+     "payload": "character:link (1)\ncreator:someone else (1)\nfilename:dupe_jpeg_02 (1)\nfilename:apng_animated (1)\nparity:pending example (+1)\nparity:petitioned example (1) (-1)\nseries:the legend of zelda (1)\nsource:fixture (2)\nstudio:nintendo (1)\nsafe (2)"
+    },
+    {
+     "label": "all subtags with counts",
+     "payload": "link (1)\nsomeone else (1)\ndupe_jpeg_02 (1)\napng_animated (1)\npending example (+1)\npetitioned example (1) (-1)\nthe legend of zelda (1)\nfixture (2)\nnintendo (1)\nsafe (2)"
+    }
+   ]
+  },
+  {
+   "selected": [
+    "creator:someone else"
+   ],
+   "tree": [
+    {
+     "label": "copy",
+     "separator": false,
+     "children": [
+      {
+       "label": "creator:someone else",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "someone else",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "someone_else",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "",
+       "separator": true,
+       "children": null
+      },
+      {
+       "label": "creator:someone else with counts",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "someone else with counts",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "",
+       "separator": true,
+       "children": null
+      },
+      {
+       "label": "all tags",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "all subtags",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "all tags with counts",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "all subtags with counts",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "no siblings",
+     "separator": false,
+     "children": [
+      {
+       "label": "add siblings to creator:someone else",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "no parents",
+     "separator": false,
+     "children": [
+      {
+       "label": "add parents to creator:someone else",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "",
+     "separator": true,
+     "children": null
+    },
+    {
+     "label": "open",
+     "separator": false,
+     "children": [
+      {
+       "label": "open a new search page for creator:someone else",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "",
+       "separator": true,
+       "children": null
+      },
+      {
+       "label": "open a new duplicate filter page for creator:someone else",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "favourites",
+     "separator": false,
+     "children": [
+      {
+       "label": "add \"creator:someone else\" to favourites",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "",
+       "separator": true,
+       "children": null
+      },
+      {
+       "label": "add \"creator:someone else\" to most used for \"downloader tags\"",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "add \"creator:someone else\" to most used for \"my tags\"",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "add \"creator:someone else\" to most used for \"second tags\"",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "",
+     "separator": true,
+     "children": null
+    },
+    {
+     "label": "maintenance",
+     "separator": false,
+     "children": [
+      {
+       "label": "regenerate tag display",
+       "separator": false,
+       "children": null
+      }
+     ]
+    }
+   ],
+   "copy": [
+    {
+     "label": "creator:someone else",
+     "payload": "creator:someone else"
+    },
+    {
+     "label": "someone else",
+     "payload": "someone else"
+    },
+    {
+     "label": "someone_else",
+     "payload": "someone_else"
+    },
+    {
+     "label": "creator:someone else with counts",
+     "payload": "creator:someone else (1)"
+    },
+    {
+     "label": "someone else with counts",
+     "payload": "someone else (1)"
+    },
+    {
+     "label": "all tags",
+     "payload": "character:link\ncreator:someone else\nfilename:dupe_jpeg_02\nfilename:apng_animated\nparity:pending example\nparity:petitioned example\nseries:the legend of zelda\nsource:fixture\nstudio:nintendo\nsafe"
+    },
+    {
+     "label": "all subtags",
+     "payload": "link\nsomeone else\ndupe_jpeg_02\napng_animated\npending example\npetitioned example\nthe legend of zelda\nfixture\nnintendo\nsafe"
+    },
+    {
+     "label": "all tags with counts",
+     "payload": "character:link (1)\ncreator:someone else (1)\nfilename:dupe_jpeg_02 (1)\nfilename:apng_animated (1)\nparity:pending example (+1)\nparity:petitioned example (1) (-1)\nseries:the legend of zelda (1)\nsource:fixture (2)\nstudio:nintendo (1)\nsafe (2)"
+    },
+    {
+     "label": "all subtags with counts",
+     "payload": "link (1)\nsomeone else (1)\ndupe_jpeg_02 (1)\napng_animated (1)\npending example (+1)\npetitioned example (1) (-1)\nthe legend of zelda (1)\nfixture (2)\nnintendo (1)\nsafe (2)"
+    }
+   ]
+  },
+  {
+   "selected": [
+    "creator:someone else",
+    "series:the legend of zelda"
+   ],
+   "tree": [
+    {
+     "label": "copy",
+     "separator": false,
+     "children": [
+      {
+       "label": "2 selected",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "2 selected subtags",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "2 selected subtags with underscores",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "",
+       "separator": true,
+       "children": null
+      },
+      {
+       "label": "2 selected with counts",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "2 selected subtags with counts",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "",
+       "separator": true,
+       "children": null
+      },
+      {
+       "label": "all tags",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "all subtags",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "all tags with counts",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "all subtags with counts",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "siblings",
+     "separator": false,
+     "children": [
+      {
+       "label": "add siblings to selection",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "parents",
+     "separator": false,
+     "children": [
+      {
+       "label": "add parents to selection",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "",
+     "separator": true,
+     "children": null
+    },
+    {
+     "label": "open",
+     "separator": false,
+     "children": [
+      {
+       "label": "open a new search page for 2 selected",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "open a new OR search page for 2 selected",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "open new search pages for each in selection",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "",
+       "separator": true,
+       "children": null
+      },
+      {
+       "label": "open a new duplicate filter page for 2 selected",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "",
+     "separator": true,
+     "children": null
+    },
+    {
+     "label": "maintenance",
+     "separator": false,
+     "children": [
+      {
+       "label": "regenerate tag display",
+       "separator": false,
+       "children": null
+      }
+     ]
+    }
+   ],
+   "copy": [
+    {
+     "label": "2 selected",
+     "payload": "creator:someone else\nseries:the legend of zelda"
+    },
+    {
+     "label": "2 selected subtags",
+     "payload": "someone else\nthe legend of zelda"
+    },
+    {
+     "label": "2 selected subtags with underscores",
+     "payload": "someone_else\nthe_legend_of_zelda"
+    },
+    {
+     "label": "2 selected with counts",
+     "payload": "creator:someone else (1)\nseries:the legend of zelda (1)"
+    },
+    {
+     "label": "2 selected subtags with counts",
+     "payload": "someone else (1)\nthe legend of zelda (1)"
+    },
+    {
+     "label": "all tags",
+     "payload": "character:link\ncreator:someone else\nfilename:dupe_jpeg_02\nfilename:apng_animated\nparity:pending example\nparity:petitioned example\nseries:the legend of zelda\nsource:fixture\nstudio:nintendo\nsafe"
+    },
+    {
+     "label": "all subtags",
+     "payload": "link\nsomeone else\ndupe_jpeg_02\napng_animated\npending example\npetitioned example\nthe legend of zelda\nfixture\nnintendo\nsafe"
+    },
+    {
+     "label": "all tags with counts",
+     "payload": "character:link (1)\ncreator:someone else (1)\nfilename:dupe_jpeg_02 (1)\nfilename:apng_animated (1)\nparity:pending example (+1)\nparity:petitioned example (1) (-1)\nseries:the legend of zelda (1)\nsource:fixture (2)\nstudio:nintendo (1)\nsafe (2)"
+    },
+    {
+     "label": "all subtags with counts",
+     "payload": "link (1)\nsomeone else (1)\ndupe_jpeg_02 (1)\napng_animated (1)\npending example (+1)\npetitioned example (1) (-1)\nthe legend of zelda (1)\nfixture (2)\nnintendo (1)\nsafe (2)"
+    }
+   ]
+  }
+ ],
+ "selected": [
+  "creator:someone else",
+  "series:the legend of zelda"
+ ],
+ "keyboard_copy": "creator:someone else\nseries:the legend of zelda",
+ "double_click_activated": false,
+ "double_click_copied": false,
+ "launches": [
+  {
+   "topic": "new_page_query",
+   "location": [
+    103,
+    1,
+    [
+     [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     []
+    ]
+   ],
+   "predicates": [
+    [
+     14,
+     8,
+     [
+      0,
+      "creator:someone else",
+      true
+     ]
+    ]
+   ],
+   "page_name": "creator:someone else",
+   "activate_window": false
+  },
+  {
+   "topic": "new_page_duplicates",
+   "location": [
+    103,
+    1,
+    [
+     [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     []
+    ]
+   ],
+   "predicates": [
+    [
+     14,
+     8,
+     [
+      0,
+      "creator:someone else",
+      true
+     ]
+    ]
+   ],
+   "page_name": "duplicates: creator:someone else",
+   "activate_window": false
+  },
+  {
+   "topic": "new_page_query",
+   "location": [
+    103,
+    1,
+    [
+     [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     []
+    ]
+   ],
+   "predicates": [
+    [
+     14,
+     8,
+     [
+      0,
+      "series:the legend of zelda",
+      true
+     ]
+    ],
+    [
+     14,
+     8,
+     [
+      0,
+      "creator:someone else",
+      true
+     ]
+    ]
+   ],
+   "page_name": "creator:someone else, series:the legend of zelda",
+   "activate_window": false
+  },
+  {
+   "topic": "new_page_query",
+   "location": [
+    103,
+    1,
+    [
+     [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     []
+    ]
+   ],
+   "predicates": [
+    [
+     14,
+     8,
+     [
+      30,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          14,
+          8,
+          [
+           0,
+           "creator:someone else",
+           true
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          14,
+          8,
+          [
+           0,
+           "series:the legend of zelda",
+           true
+          ]
+         ]
+        ]
+       ]
+      ],
+      true
+     ]
+    ]
+   ],
+   "page_name": "creator:someone else OR series:the legend of zelda",
+   "activate_window": false
+  },
+  {
+   "topic": "new_page_query",
+   "location": [
+    103,
+    1,
+    [
+     [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     []
+    ]
+   ],
+   "predicates": [
+    [
+     14,
+     8,
+     [
+      0,
+      "series:the legend of zelda",
+      true
+     ]
+    ]
+   ],
+   "page_name": "series:the legend of zelda",
+   "activate_window": false
+  },
+  {
+   "topic": "new_page_query",
+   "location": [
+    103,
+    1,
+    [
+     [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     []
+    ]
+   ],
+   "predicates": [
+    [
+     14,
+     8,
+     [
+      0,
+      "creator:someone else",
+      true
+     ]
+    ]
+   ],
+   "page_name": "creator:someone else",
+   "activate_window": false
+  },
+  {
+   "topic": "new_page_duplicates",
+   "location": [
+    103,
+    1,
+    [
+     [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     []
+    ]
+   ],
+   "predicates": [
+    [
+     14,
+     8,
+     [
+      0,
+      "series:the legend of zelda",
+      true
+     ]
+    ],
+    [
+     14,
+     8,
+     [
+      0,
+      "creator:someone else",
+      true
+     ]
+    ]
+   ],
+   "page_name": "duplicates: creator:someone else, series:the legend of zelda",
+   "activate_window": false
+  }
+ ]
+}

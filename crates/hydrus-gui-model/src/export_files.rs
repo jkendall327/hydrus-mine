@@ -10,6 +10,9 @@ use hydrus_parse::folders::parse_export_phrase;
 use hydrus_parse::sidecar::Router;
 use hydrus_store::{Store, settings};
 
+#[path = "export_files_tags.rs"]
+pub mod tags;
+
 /// The reference's destructive export confirmation.
 pub const TRASH_WARNING: &str = "THE FILES WILL BE SENT TO THE TRASH IN THE CLIENT AFTERWARDS";
 /// The reference's remove-from-preview question.

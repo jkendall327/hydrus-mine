@@ -403,3 +403,195 @@ fn shared_pattern_menu_copies_recorded_phrases_including_its_heading() {
     assert_eq!(export_files::pattern_shortcut(8), None);
     assert_eq!(export_files::pattern_shortcut(i32::MAX), None);
 }
+
+fn seed_export_sidebar(store: &Store, recorded: &Value) {
+    use hydrus_core::Tag;
+    use hydrus_store::content::MappingAction;
+    let service = store
+        .snapshot()
+        .services
+        .by_name(recorded["seed_service"].as_str().unwrap())
+        .unwrap()
+        .id;
+    let file = HashId(u32::try_from(recorded["seed_hash_id"].as_u64().unwrap()).unwrap());
+    store
+        .write_content(move |writer| {
+            let pending = hydrus_store::master::intern_tag(
+                writer.conn(),
+                &Tag::new("parity:pending example").unwrap(),
+            )?;
+            let petitioned = hydrus_store::master::intern_tag(
+                writer.conn(),
+                &Tag::new("parity:petitioned example").unwrap(),
+            )?;
+            writer.update_mappings(service, &MappingAction::Pend, pending, &[file])?;
+            writer.update_mappings(service, &MappingAction::Add, petitioned, &[file])?;
+            writer.update_mappings(
+                service,
+                &MappingAction::Petition {
+                    reason: "synthetic export preview".into(),
+                },
+                petitioned,
+                &[file],
+            )?;
+            Ok(())
+        })
+        .unwrap();
+}
+
+#[test]
+fn selected_export_tags_counts_sort_selection_and_copy_match_actual_panel() {
+    use hydrus_core::tag_sort::{TagGroupBy, TagSort, TagSortType};
+    use hydrus_gui_model::write_tag_menu::{Action, Entry};
+    let (_dirs, store, files) = setup();
+    let recorded = hydrus_testkit::fixture_json("export_selected_tags.json");
+    seed_export_sidebar(&store, &recorded);
+    let mut tags = export_files::tags::Tags::new(store.clone()).unwrap();
+    let default_sort = tags.sort;
+    for case in recorded["states"].as_array().unwrap() {
+        let case_name = case["case"].as_str().unwrap();
+        tags.sort = TagSort {
+            sort_type: [TagSortType::Tag, TagSortType::Subtag, TagSortType::Count]
+                [usize::try_from(case["sort"][0].as_u64().unwrap()).unwrap()],
+            ascending: case["sort"][1] == 0,
+            group_by: [
+                TagGroupBy::Nothing,
+                TagGroupBy::NamespaceAz,
+                TagGroupBy::NamespaceUser,
+            ][usize::try_from(case["sort"][2].as_u64().unwrap()).unwrap()],
+        };
+        let mut selected_files: Vec<_> = case["files"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|id| HashId(u32::try_from(id.as_u64().unwrap()).unwrap()))
+            .collect();
+        if selected_files.is_empty() {
+            selected_files = if case_name == "remove_selected_file_fallback" {
+                vec![files[0], files[2]]
+            } else {
+                files.clone()
+            };
+        }
+        tags.refresh(&selected_files).unwrap();
+        let expected: Vec<_> = case["rows"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|row| row["rendered"].as_str().unwrap())
+            .collect();
+        assert_eq!(
+            tags.rows()
+                .iter()
+                .map(|row| row.text.as_str())
+                .collect::<Vec<_>>(),
+            expected,
+            "{case_name}"
+        );
+        let selected: Vec<_> = tags
+            .rows()
+            .iter()
+            .filter(|row| {
+                case["rows"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|r| r["tag"] == row.tag && r["selected"] == true)
+            })
+            .map(|row| row.id)
+            .collect();
+        tags.selection.select_many(&selected);
+    }
+    tags.sort = TagSort {
+        sort_type: TagSortType::Count,
+        ascending: true,
+        group_by: TagGroupBy::NamespaceAz,
+    };
+    tags.refresh(&files[..2]).unwrap();
+    for menu in recorded["menus"].as_array().unwrap() {
+        let selected: Vec<_> = tags
+            .rows()
+            .iter()
+            .filter(|row| {
+                menu["selected"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|s| s == &row.tag)
+            })
+            .map(|row| row.id)
+            .collect();
+        tags.selection.select_many(&selected);
+        let Entry::Menu(label, copies) = tags.menu().remove(0) else {
+            panic!("copy submenu");
+        };
+        assert_eq!(label, "copy");
+        let copies: Vec<_> = copies
+            .iter()
+            .filter_map(|entry| {
+                if let Entry::Item(label, Action::Copy(text)) = entry {
+                    Some((label.as_str(), text.as_str()))
+                } else {
+                    None
+                }
+            })
+            .collect();
+        let expected: Vec<_> = menu["copy"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|copy| {
+                (
+                    copy["label"].as_str().unwrap(),
+                    copy["payload"].as_str().unwrap(),
+                )
+            })
+            .collect();
+        assert_eq!(copies, expected);
+    }
+    assert_eq!(
+        tags.copy(false, false, false, false),
+        recorded["keyboard_copy"]
+    );
+    assert_eq!(recorded["double_click_activated"], false);
+    assert_eq!(recorded["double_click_copied"], false);
+    assert!(
+        matches!(tags.launch(true), Some(Action::Launch { predicates, duplicate: false, .. }) if matches!(predicates.as_slice(), [hydrus_core::search::predicate::Predicate::Or(children)] if children.len() == 2))
+    );
+    // Changing media preserves surviving tag identities and forgets vanished ones.
+    let source = tags
+        .rows()
+        .iter()
+        .find(|row| row.tag == "source:fixture")
+        .unwrap()
+        .id;
+    let link = tags
+        .rows()
+        .iter()
+        .find(|row| row.tag == "character:link")
+        .unwrap()
+        .id;
+    tags.selection.select_many(&[source, link]);
+    tags.refresh(&files[1..2]).unwrap();
+    assert!(tags.selection.is_selected(source));
+    assert!(!tags.selection.is_selected(link));
+    // Each order control remembers its own choice, without changing defaults.
+    tags.sort_chosen(0, 0);
+    tags.sort_chosen(1, 1);
+    tags.sort_chosen(0, 2);
+    tags.sort_chosen(1, 1);
+    tags.sort_chosen(0, 1);
+    assert!(!tags.sort.ascending);
+    tags.sort_chosen(0, 2);
+    assert!(tags.sort.ascending);
+    let sort = tags.sort;
+    tags.sort_chosen(1, 99);
+    assert_eq!(tags.sort, sort);
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<hydrus_core::tag_presentation::TagPresentation>)
+            .unwrap()
+            .search_page_sort,
+        default_sort
+    );
+}
