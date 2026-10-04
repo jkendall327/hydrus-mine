@@ -15,7 +15,8 @@
     "244c9da991fba59587a83e13ab8ffc150eee041f",
     "21f4fa12",
     "519107d6",
-    "0df36e40"
+    "0df36e40",
+    "0124224a"
   ],
   "implementation_leaf_count": 8,
   "partial_improvements": 4,
@@ -27,7 +28,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "Default false checkbox; when enabled skips raw/countless tags and expanded-parent rows to highlight the first counted logical suggestion. Typed/ideal tags preserve actual counts. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
-      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because remote administration is excluded; regeneration job-progress, normal-paste decline fallback, extended keyboard and async presentation remain partial.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Full parent entries remain partial because remote administration is excluded; regeneration job-progress, extended keyboard and async presentation remain partial.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -128,7 +129,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "Default false checkbox; two or more cleaned distinct pasted tags ask the recorded question. Enabled bypasses it; explicit paste button always adds tags without asking. Paste is add-only and staged. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
-      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because remote administration is excluded; regeneration job-progress, normal-paste decline fallback, extended keyboard and async presentation remain partial.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Full parent entries remain partial because remote administration is excluded; regeneration job-progress, extended keyboard and async presentation remain partial.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -229,7 +230,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "Default true checkbox controls the parent-count suffix when parent rows are collapsed; expanding parents shows transitive named rows belonging to the source tag. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
-      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because remote administration is excluded; regeneration job-progress, normal-paste decline fallback, extended keyboard and async presentation remain partial.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Full parent entries remain partial because remote administration is excluded; regeneration job-progress, extended keyboard and async presentation remain partial.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -330,7 +331,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "Default true checkbox controls expanded transitive parent rows versus the collapsed parent-count suffix. Clicking an expanded parent row enters its originating tag. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
-      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because remote administration is excluded; regeneration job-progress, normal-paste decline fallback, extended keyboard and async presentation remain partial.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Full parent entries remain partial because remote administration is excluded; regeneration job-progress, extended keyboard and async presentation remain partial.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -431,7 +432,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "Default true checkbox controls the ideal-sibling arrow decoration using the edited/display service even when counting all known tags. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
-      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because remote administration is excluded; regeneration job-progress, normal-paste decline fallback, extended keyboard and async presentation remain partial.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Full parent entries remain partial because remote administration is excluded; regeneration job-progress, extended keyboard and async presentation remain partial.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -532,7 +533,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "Integer control 1\u2013128, default 11; visible Manage Tags suggestion rows use the setting, scrolling retains every result beyond that height and the old twelve-result cap is removed. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
-      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because remote administration is excluded; regeneration job-progress, normal-paste decline fallback, extended keyboard and async presentation remain partial.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Full parent entries remain partial because remote administration is excluded; regeneration job-progress, extended keyboard and async presentation remain partial.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -1241,7 +1242,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "Real Tag autocomplete tabs / children tags noneable control uses exact label, default 40, range 1..1000000, show all None. Options draft cancellation leaves persisted limit unchanged; Apply saves it and existing shared children consumers immediately requery. Local and combined tag service descendants exclude selected tags, keep zero-count known children, order by actual display counts and present countless rows. Legacy option is decoded and missing setting defaults remain compatible.",
-      "limits": "Native tab dropdown and layout differ from Qt; full write autocomplete parent leaves remain partial while regeneration job-progress, normal-paste decline fallback, extended keyboard and async presentation remain partial.",
+      "limits": "Native tab dropdown and layout differ from Qt; full write autocomplete parent leaves remain partial while regeneration job-progress, extended keyboard and async presentation remain partial.",
       "implementation_commit": "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
       "anchors": [
         {
@@ -1320,7 +1321,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "The Tag autocomplete tabs / favourite tags page opens the shared write-tag editor for all-known tags. It starts from the parent options draft; manual choices and pasted tags only add (repeated additions retain existing tags), explicit removal deletes, and rows/save order use natural text order. Child Apply updates the parent draft without a store write. Child Cancel preserves that draft; parent Cancel and window close discard accepted unsaved lists and invalidate child callbacks. Parent Apply waits for any open favourite editor, writes only changed settings, persists/reopens the list, preserves unrelated concurrent settings and feeds every shared favourites tab, including a real native Manage Tags consumer.",
-      "limits": "The native editor is a detached child rather than the Qt page\u2019s embedded list/input; removal acts on one row at a time. Broader write-autocomplete parents remain partial for regeneration job-progress, normal-paste decline fallback, extended keyboard and async presentation.",
+      "limits": "The native editor is a detached child rather than the Qt page\u2019s embedded list/input; removal acts on one row at a time. Broader write-autocomplete parents remain partial for regeneration job-progress, extended keyboard and async presentation.",
       "implementation_commit": "cc55349e79ed48110ad6be4548b05d2cb77f7a4a",
       "anchors": [
         {
@@ -1471,6 +1472,36 @@
         "oracle/fixtures/write_tag_selection.json"
       ],
       "executed_validation": "Real Qt menus/clipboard/page launch recorder and accepted/declined regeneration question/dispatcher interception rerun successfully via with-oracle lock. Recorder deliberately intercepts database regeneration dispatch; repair behavior checked by authored native store/GUI regressions, awaiting root hosted CI. Cached Slint source compilation/Python syntax/fmt/diff check pass; no local Cargo or mutation tests."
+    },
+    {
+      "baseline": "2388372d",
+      "implementation_commit": "0124224a",
+      "reference_ids": [
+        "audit-media-tags-autocomplete",
+        "siblings-autocomplete",
+        "parents-autocomplete"
+      ],
+      "status": "partial",
+      "exact_behavior": "Accepted clipboard additions preserve caller text drafts and result selection. Declining the multiline question resumes native paste at retained cursor/selection, preserving raw newlines exactly; undo/redo restore recorded drafts. A small TextInput wrapper disables single-line only during paste, retaining native editor engine. Both relationship inputs, ManageTags and detached editors consume it; closed owners ignore pending answers.",
+      "limits": "Native widget appearance differs. Extended result keyboard navigation and async loading/job-progress remain partial; no new completed original-ID claims.",
+      "source_anchors": [
+        "crates/hydrus-gui/ui/write_tag_line_edit.slint::WriteTagLineEdit",
+        "crates/hydrus-gui/ui/write_autocomplete.slint::WriteTagInput::normal-paste",
+        "crates/hydrus-gui/src/manage_tags_window.rs::on_paste_answered",
+        "crates/hydrus-gui/src/tag_relationships_window.rs::declined_paste",
+        "crates/hydrus-gui/src/write_tag_window.rs::on_answered",
+        "crates/hydrus-gui-model/src/manage_tags.rs::stage_tag",
+        "crates/hydrus-gui-model/src/write_autocomplete.rs::TagEntry::paste"
+      ],
+      "test_anchors": [
+        "crates/hydrus-gui-model/tests/model/write_autocomplete.rs::clipboard_additions_keep_existing_text_and_result_selection",
+        "crates/hydrus-gui/tests/gui/write_autocomplete.rs::normal_paste_replays_cursor_selection_and_accepted_tags_preserve_the_draft"
+      ],
+      "reference_recording": [
+        "oracle/record_write_tag_selection.py",
+        "oracle/fixtures/write_tag_selection.json::normal_paste"
+      ],
+      "executed_validation": "Actual Qt Ctrl+V events, cursor/selected text replacement, accepted clipboard tag signal and Undo/Redo recording rerun via with-oracle lock. Cached Slint source compiler, fmt, Python syntax, diff checks passed. Native/model tests authored for root async hosted CI; no local Cargo or mutation tests."
     }
   ]
 }
