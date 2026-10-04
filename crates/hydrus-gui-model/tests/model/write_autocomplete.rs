@@ -1323,3 +1323,61 @@ fn check_recorded_batch_menu(input: &WriteAutocomplete, fixture: &Value) {
         }
     }
 }
+
+#[test]
+fn clipboard_additions_keep_existing_text_and_result_selection() {
+    use hydrus_gui_model::write_autocomplete::TagEntry;
+    let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
+    let (_dir, store) = seeded(&fixture);
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let case = fixture["normal_paste"].as_array().unwrap().last().unwrap();
+    let tags: Vec<String> = serde_json::from_value(case["pasted_tags"][0].clone()).unwrap();
+    let mut entry = TagEntry::new(
+        WriteAutocomplete::new(store.clone(), key, LocationContext::default()),
+        &[],
+    );
+    entry.input.set_text(case["text"].as_str().unwrap());
+    let selected = entry.input.selected_tags();
+    let rows = entry.input.rows().to_vec();
+    entry.paste(&tags);
+    assert_eq!(entry.input.text(), case["after"].as_str().unwrap());
+    assert_eq!(entry.input.selected_tags(), selected);
+    assert_eq!(entry.input.rows(), rows);
+    assert_eq!(entry.tags(), tags);
+    let file = store
+        .read(|conn| {
+            Ok(
+                conn.query_row("SELECT hash_id FROM files LIMIT 1", [], |row| {
+                    row.get::<_, hydrus_core::HashId>(0)
+                })?,
+            )
+        })
+        .unwrap();
+    let mut manage = ManageTags::new(store.clone(), vec![file]).unwrap();
+    manage.set_text(case["text"].as_str().unwrap());
+    manage.paste_tags(&tags).unwrap();
+    assert_eq!(manage.text(), case["after"].as_str().unwrap());
+    manage.paste_tags(&tags).unwrap();
+    for tag in tags {
+        assert!(
+            manage
+                .rows()
+                .iter()
+                .any(|(text, count)| text == &tag && *count == 1)
+        );
+    }
+    drop(manage);
+    let reopened = ManageTags::new(store, vec![file]).unwrap();
+    assert!(
+        !reopened
+            .rows()
+            .iter()
+            .any(|(tag, _)| tag == "parity:paste one")
+    );
+}

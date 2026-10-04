@@ -304,6 +304,12 @@ pub(crate) fn open(
                 return;
             };
             let answers = binding.answers.clone();
+            let declined_paste = match &op {
+                Operation::Paste { right, .. } if answers.first().is_some_and(Option::is_none) => {
+                    Some(*right)
+                }
+                _ => None,
+            };
             let result = match &op {
                 Operation::Paste {
                     right,
@@ -322,7 +328,6 @@ pub(crate) fn open(
                             if let Err(e) = binding.model.paste_tags(*right, tags) {
                                 window.set_error(e.into());
                             }
-                            binding.input_mut(*right).clear();
                         }
                         Ok(())
                     }
@@ -378,6 +383,9 @@ pub(crate) fn open(
                 window.set_question("".into());
             }
             drop(binding);
+            if let Some(right) = declined_paste {
+                window.invoke_normal_paste(right);
+            }
             refresh();
         }
     });
@@ -641,7 +649,6 @@ pub(crate) fn open(
                     {
                         w.set_error(e.into());
                     }
-                    b.input_mut(right).clear();
                     drop(b);
                     refresh();
                     true

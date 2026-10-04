@@ -1,0 +1,79 @@
+// Keep TextInput's cursor, selection, IME and undo engine. Qt's QLineEdit
+// retains raw newlines from normal paste; Slint's standard LineEdit replaces
+// them. Permit them only for the paste operation, then resume one-line input.
+import { Theme } from "theme.slint";
+
+export component WriteTagLineEdit inherits Rectangle {
+    in-out property <string> text;
+    in property <string> placeholder-text;
+    in property <bool> enabled: true;
+    callback edited(string);
+    callback accepted(string);
+    property <bool> pasting;
+    property <length> scroll-x;
+    public function set-selection-offsets(anchor: int, cursor: int) { editor.set-selection-offsets(anchor,cursor); }
+    public function paste() {
+        root.pasting = true;
+        editor.paste();
+        root.pasting = false;
+    }
+    public function undo() { editor.undo(); }
+    public function redo() { editor.redo(); }
+    min-height: 32px;
+    max-height: 32px;
+    horizontal-stretch: 1;
+    border-width: 1px;
+    border-radius: 4px;
+    border-color: Theme.border;
+    background: Theme.panel;
+    clip: true;
+    forward-focus: editor;
+    accessible-role: text-input;
+    accessible-value <=> root.text;
+    accessible-enabled: root.enabled;
+    accessible-placeholder-text: root.placeholder-text;
+    accessible-action-set-value(value) => { root.text=value; root.edited(value); }
+    accessible-action-set-selection-offsets(anchor,cursor) => { editor.set-selection-offsets(anchor,cursor); }
+    if root.text == "": Text {
+        x: 6px;
+        width: parent.width - 12px;
+        height: parent.height;
+        vertical-alignment: center;
+        color: Theme.muted;
+        text: root.placeholder-text;
+        accessible-role: none;
+    }
+    ContextMenuArea {
+        Menu {
+            MenuItem { title: "Undo"; enabled: root.enabled; activated => { editor.undo(); } }
+            MenuItem { title: "Redo"; enabled: root.enabled; activated => { editor.redo(); } }
+            MenuSeparator {}
+            MenuItem { title: "Cut"; enabled: root.enabled; activated => { editor.cut(); } }
+            MenuItem { title: "Copy"; enabled: root.enabled; activated => { editor.copy(); } }
+            MenuItem { title: "Paste"; enabled: root.enabled; activated => { root.paste(); } }
+            MenuSeparator {}
+            MenuItem { title: "Select All"; enabled: root.enabled; activated => { editor.select-all(); } }
+        }
+        editor := TextInput {
+            text <=> root.text;
+            enabled: root.enabled;
+            single-line: !root.pasting;
+            x: 6px + min(0px,max(root.width - 12px - self.width - self.text-cursor-width,root.scroll-x));
+            width: max(root.width - 12px - self.text-cursor-width,self.preferred-width);
+            height: parent.height;
+            vertical-alignment: center;
+            color: Theme.text;
+            selection-background-color: Theme.highlight;
+            selection-foreground-color: Theme.highlight-text;
+            accessible-role: none;
+            cursor-position-changed(position) => {
+                if position.x + root.scroll-x < 0px { root.scroll-x = -position.x; }
+                else if position.x + root.scroll-x > root.width - 12px - self.text-cursor-width {
+                    root.scroll-x = root.width - 12px - position.x - self.text-cursor-width;
+                }
+            }
+            edited => { root.edited(self.text); }
+            accepted => { root.accepted(self.text); }
+        }
+    }
+}

@@ -1147,3 +1147,153 @@ fn regeneration_question_repairs_counts_only_on_yes_and_invalidates_on_cancel() 
     assert_eq!(count(), 99);
     assert!(slot.borrow().is_none());
 }
+
+#[test]
+fn normal_paste_replays_cursor_selection_and_accepted_tags_preserve_the_draft() {
+    use hydrus_core::Tag;
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    for case in fixture["normal_paste"].as_array().unwrap() {
+        let slot = hydrus_gui::write_tag_window::Slot::default();
+        let applied = Rc::new(RefCell::new(Vec::new()));
+        let child = hydrus_gui::write_tag_window::open(
+            &store,
+            key.clone(),
+            &[],
+            "normal paste",
+            &slot,
+            Rc::new({
+                let applied = applied.clone();
+                move |tags| *applied.borrow_mut() = tags
+            }),
+            Rc::new(|| {}),
+        )
+        .unwrap();
+        child.invoke_edited(case["text"].as_str().unwrap().into());
+        let anchor = i32::try_from(case["anchor"].as_i64().unwrap()).unwrap();
+        let cursor = anchor + i32::try_from(case["length"].as_i64().unwrap()).unwrap();
+        child.invoke_select_input(anchor, cursor);
+        let pasted = case["pasted"].as_str().unwrap().to_owned();
+        headless::set_clipboard_text(&pasted);
+        hydrus_gui::set_paster(move || pasted.clone());
+        if child.invoke_paste(false) {
+            assert_eq!(
+                child.get_question(),
+                case["asked"][0]["message"].as_str().unwrap()
+            );
+            child.invoke_answered(case["answer"].as_bool().unwrap());
+        } else {
+            assert!(case["asked"].as_array().unwrap().is_empty());
+            child.invoke_normal_paste(); // The native key handler propagates the unconsumed event.
+        }
+        let recorded = case["after"].as_str().unwrap();
+        // Both the raw draft and its cleaned eventual tag must match Qt.
+        assert_eq!(child.get_text(), recorded);
+        assert_eq!(Tag::new(&child.get_text()), Tag::new(recorded));
+        if case["asked"].as_array().unwrap().is_empty() || !case["answer"].as_bool().unwrap() {
+            child.invoke_undo_input();
+            assert_eq!(child.get_text(), case["undo"].as_str().unwrap());
+            child.invoke_redo_input();
+            assert_eq!(child.get_text(), case["redo"].as_str().unwrap());
+        }
+        let expected: Vec<String> = case["pasted_tags"]
+            .as_array()
+            .unwrap()
+            .first()
+            .map(|tags| serde_json::from_value(tags.clone()).unwrap())
+            .unwrap_or_default();
+        assert_eq!(
+            child
+                .get_tags()
+                .iter()
+                .map(|row| row.text.to_string())
+                .collect::<Vec<_>>(),
+            expected
+        );
+        child.invoke_cancel();
+        child.invoke_answered(true);
+        child.invoke_apply();
+        assert!(applied.borrow().is_empty());
+    }
+    // The real Manage Tags consumer also retains accepted text while staging mappings.
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    manage.invoke_text_edited("caller draft".into());
+    headless::set_clipboard_text("parity:paste one\nparity:paste two");
+    hydrus_gui::set_paster(|| "parity:paste one\nparity:paste two".into());
+    assert!(manage.invoke_paste_requested(false));
+    manage.invoke_paste_answered(true);
+    assert_eq!(manage.get_text(), "caller draft");
+    assert!(
+        manage
+            .get_tags()
+            .iter()
+            .any(|row| row.text.starts_with("parity:paste one"))
+    );
+    manage.invoke_select_input(0, 6);
+    assert!(manage.invoke_paste_requested(false));
+    manage.invoke_paste_answered(false);
+    assert_eq!(manage.get_text(), "parity:paste one\nparity:paste twodraft");
+    manage.invoke_cancel();
+    ui.invoke_manage_tags_selected();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    assert!(
+        !manage
+            .get_tags()
+            .iter()
+            .any(|row| row.text.starts_with("parity:paste one"))
+    );
+    manage.invoke_cancel();
+    let top = ui
+        .get_menu_titles()
+        .iter()
+        .position(|row| row.label == "tags")
+        .unwrap();
+    ui.invoke_menu_title_pressed(i32::try_from(top).unwrap(), 0.0, 22.0);
+    let pane = ui.get_menu_panes().row_data(0).unwrap();
+    let at = pane
+        .lines
+        .iter()
+        .position(|row| row.label.starts_with("parents"))
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(at).unwrap(), 0.0, 0.0, 0.0);
+    let relation = bound
+        .tag_relationships
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    relation.invoke_autocomplete_edited(false, "left draft".into());
+    relation.invoke_select_input(false, 0, 4);
+    assert!(relation.invoke_autocomplete_paste(false, false));
+    relation.invoke_answered(false);
+    assert_eq!(
+        relation.get_left_input(),
+        "parity:paste one\nparity:paste two draft"
+    );
+    assert_eq!(relation.get_left_tags().row_count(), 0);
+    relation.invoke_autocomplete_edited(true, "right draft".into());
+    assert!(relation.invoke_autocomplete_paste(true, false));
+    relation.invoke_answered(true);
+    assert_eq!(relation.get_right_input(), "right draft");
+    assert_eq!(relation.get_right_tags().row_count(), 2);
+    relation.invoke_autocomplete_edited(true, "cancelled draft".into());
+    assert!(relation.invoke_autocomplete_paste(true, false));
+    relation.invoke_cancel();
+    relation.invoke_answered(false);
+    assert_eq!(relation.get_right_input(), "cancelled draft");
+    assert!(bound.tag_relationships.borrow().is_none());
+}

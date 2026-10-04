@@ -399,6 +399,8 @@ fn open_internal(
             }
             if yes {
                 model.borrow_mut().paste(&tags);
+            } else if let Some(w) = weak.upgrade() {
+                w.invoke_normal_paste();
             }
             refresh();
         }

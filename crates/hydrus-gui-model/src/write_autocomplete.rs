@@ -713,7 +713,6 @@ impl TagEntry {
                 .map(|t| t.as_str().to_owned()),
         );
         self.input.set_context_tags(self.tags.iter().cloned());
-        self.input.clear();
     }
     pub fn remove(&mut self, index: usize) {
         if let Some(tag) = self.tags().get(index).cloned() {

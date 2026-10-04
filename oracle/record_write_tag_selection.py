@@ -8,6 +8,8 @@ list's handler and write-dropdown broadcast, including clearing its input. The
 real multi-tag menu records copy payloads and AND/OR/each-page/duplicate launches.
 Maintenance records the actual question and accepted/declined write dispatch;
 the database repair job is intercepted at dispatch, not run by this recorder.
+Ctrl+V events use the real QLineEdit clipboard handler and selection range to
+record normal paste after declining the multiline-tag question.
 """
 import json,os,sys,tempfile
 HERE=os.path.dirname(os.path.abspath(__file__));sys.path.insert(0,HERE)
@@ -31,8 +33,9 @@ def record(session):
         if not c.WriteSynchronous('sync_tag_display_maintenance',service,.5):break
     location=ClientLocation.LocationContext.STATICCreateSimple(CC.LOCAL_FILE_SERVICE_KEY)
     old_thread=c.CallToThread;c.CallToThread=lambda func,*args,**kw:None if func==A.WriteFetch else old_thread(func,*args,**kw)
-    entered=[]
+    entered=[];paste_signals=[]
     ac=qt(lambda:A.AutoCompleteDropdownTagsWrite(c.gui,lambda tags:entered.append(sorted(tags)),location,service,show_paste_button=True))
+    qt(lambda:ac.tagsPasted.connect(lambda tags:paste_signals.append(sorted(tags))))
     def prepare():
         c.new_options.SetBoolean('ac_select_first_with_count',False)
         ac._search_results_list.SetExtraParentRowsAllowed(True);ac._search_results_list.SetParentDecoratorsAllowed(True)
@@ -104,7 +107,23 @@ def record(session):
         finally:
             CGC.core().PopupMenu=old_popup;c.pub=old_pub;ClientGUIAsync.AsyncQtJob.start=old_start
         activated=box._Activate(False,False);steps.append(dict(action='activate',activated=activated,entered=list(entered),text=ac._text_ctrl.text()))
-        return dict(tags=tags,rows=rows,steps=steps,menus=menus)
+        from qtpy import QtGui
+        from hydrus.client.gui import ClientGUIDialogsQuick
+        old_yes_no=ClientGUIDialogsQuick.GetYesNo;paste_events=[]
+        try:
+            for text,anchor,length,pasted,yes in [('draft content',5,0,'parity:paste one\nparity:paste two',False),('draft content',0,5,'parity:paste one\nparity:paste two',False),('draft content',5,0,'parity:single',False),('draft content',0,5,'parity:paste one\nparity:paste two',True)]:
+                asked=[];entered.clear();paste_signals.clear()
+                def question(parent,message,**kw):
+                    asked.append(dict(message=message,**kw));return QtWidgets.QDialog.DialogCode.Accepted if yes else QtWidgets.QDialog.DialogCode.Rejected
+                ClientGUIDialogsQuick.GetYesNo=question
+                ac._text_ctrl.setText(text);ac._text_ctrl.setSelection(anchor,length)
+                QtWidgets.QApplication.clipboard().setText(pasted)
+                event=QtGui.QKeyEvent(QtCore.QEvent.Type.KeyPress,QtCore.Qt.Key.Key_V,QtCore.Qt.KeyboardModifier.ControlModifier,'v')
+                QtWidgets.QApplication.sendEvent(ac._text_ctrl,event)
+                after=ac._text_ctrl.text();ac._text_ctrl.undo();undo=ac._text_ctrl.text();ac._text_ctrl.redo();redo=ac._text_ctrl.text()
+                paste_events.append(dict(text=text,anchor=anchor,length=length,pasted=pasted,answer=yes,asked=asked,after=after,undo=undo,redo=redo,entered=list(entered),pasted_tags=list(paste_signals)))
+        finally:ClientGUIDialogsQuick.GetYesNo=old_yes_no
+        return dict(tags=tags,rows=rows,steps=steps,menus=menus,normal_paste=paste_events)
     try:out=qt(replay)
     finally:c.CallToThread=old_thread
     return dict(files=[h.hex() for h in hashes],corpus=[dict(tag=t,hashes=[h.hex() for h in fs]) for t,fs in corpus],siblings=siblings,parents=parents,**out)

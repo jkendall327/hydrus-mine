@@ -474,6 +474,8 @@ pub(crate) fn open(
                             .unwrap_or_default()
                             .into(),
                     );
+                } else {
+                    w.invoke_normal_paste();
                 }
             }
             refresh();

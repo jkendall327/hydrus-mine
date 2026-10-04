@@ -1,5 +1,6 @@
 // One write-tag input for editors. State, fetching and paste decisions live in Rust.
-import { Button, ComboBox, LineEdit, ScrollView, ListView } from "std-widgets.slint";
+import { Button, ComboBox, ScrollView, ListView } from "std-widgets.slint";
+import { WriteTagLineEdit } from "write_tag_line_edit.slint";
 import { Question } from "favourites.slint";
 import { MenuPane, MenuPanes } from "main_menu.slint";
 import { ListText, Theme } from "theme.slint";
@@ -24,11 +25,16 @@ export component WriteTagInput inherits FocusScope {
     in property <string> file-label;
     in property <string> tag-label;
     callback paste(bool) -> bool;
+    public function normal-paste() { input.paste(); }
+    public function undo-input() { input.undo(); }
+    public function redo-input() { input.redo(); }
+    public function select-input(anchor: int, cursor: int) { input.set-selection-offsets(anchor, cursor); }
     forward-focus: input;
     capture-key-pressed(event) => {
         if event.modifiers.control && event.text == " " { root.fetch(); return accept; }
         if event.modifiers.control && (event.text == "v" || event.text == "V") {
-            if root.paste(false) { return accept; }
+            if !root.paste(false) { root.normal-paste(); }
+            return accept;
         }
         if event.text == Key.UpArrow { root.move-highlight(-1); return accept; }
         if event.text == Key.DownArrow { root.move-highlight(1); return accept; }
@@ -38,7 +44,7 @@ export component WriteTagInput inherits FocusScope {
         spacing: 4px;
         HorizontalLayout {
             spacing: 4px;
-            input := LineEdit {
+            input := WriteTagLineEdit {
                 horizontal-stretch: 1;
                 enabled: root.enabled;
                 text <=> root.text;
@@ -157,6 +163,10 @@ export component WriteTagsWindow inherits Window {
     in property <int> list-height: 11;
     in property <string> question;
     in property <string> error;
+    public function normal-paste() { input.normal-paste(); }
+    public function undo-input() { input.undo-input(); }
+    public function redo-input() { input.redo-input(); }
+    public function select-input(anchor: int, cursor: int) { input.select-input(anchor,cursor); }
     callback tab-chosen(int);
     callback edited(string);
     callback entered();

@@ -392,9 +392,9 @@
           ],
           "deleted": [],
           "predicates": [
-            "parity:multi gamma",
             "parity:multi beta",
-            "parity:multi alpha"
+            "parity:multi alpha",
+            "parity:multi gamma"
           ]
         }
       ]
@@ -426,16 +426,6 @@
           ],
           "deleted": [],
           "predicates": [
-            "parity:multi gamma"
-          ]
-        },
-        {
-          "topic": "new_page_query",
-          "current": [
-            "616c6c206c6f63616c206d65646961"
-          ],
-          "deleted": [],
-          "predicates": [
             "parity:multi beta"
           ]
         },
@@ -447,6 +437,16 @@
           "deleted": [],
           "predicates": [
             "parity:multi alpha"
+          ]
+        },
+        {
+          "topic": "new_page_query",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:multi gamma"
           ]
         }
       ]
@@ -462,9 +462,9 @@
           ],
           "deleted": [],
           "predicates": [
-            "parity:multi gamma",
             "parity:multi beta",
-            "parity:multi alpha"
+            "parity:multi alpha",
+            "parity:multi gamma"
           ]
         }
       ]
@@ -502,6 +502,80 @@
             "parity:multi gamma"
           ]
         }
+      ]
+    }
+  ],
+  "normal_paste": [
+    {
+      "text": "draft content",
+      "anchor": 5,
+      "length": 0,
+      "pasted": "parity:paste one\nparity:paste two",
+      "answer": false,
+      "asked": [
+        {
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste one\nparity:paste two",
+          "title": "Want to paste everything?"
+        }
+      ],
+      "after": "draftparity:paste one\nparity:paste two content",
+      "undo": "draft content",
+      "redo": "draftparity:paste one\nparity:paste two content",
+      "entered": [],
+      "pasted_tags": []
+    },
+    {
+      "text": "draft content",
+      "anchor": 0,
+      "length": 5,
+      "pasted": "parity:paste one\nparity:paste two",
+      "answer": false,
+      "asked": [
+        {
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste one\nparity:paste two",
+          "title": "Want to paste everything?"
+        }
+      ],
+      "after": "parity:paste one\nparity:paste two content",
+      "undo": "draft content",
+      "redo": "parity:paste one\nparity:paste two content",
+      "entered": [],
+      "pasted_tags": []
+    },
+    {
+      "text": "draft content",
+      "anchor": 5,
+      "length": 0,
+      "pasted": "parity:single",
+      "answer": false,
+      "asked": [],
+      "after": "draftparity:single content",
+      "undo": "draft content",
+      "redo": "draftparity:single content",
+      "entered": [],
+      "pasted_tags": []
+    },
+    {
+      "text": "draft content",
+      "anchor": 0,
+      "length": 5,
+      "pasted": "parity:paste one\nparity:paste two",
+      "answer": true,
+      "asked": [
+        {
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste one\nparity:paste two",
+          "title": "Want to paste everything?"
+        }
+      ],
+      "after": "draft content",
+      "undo": "draft content",
+      "redo": "draft content",
+      "entered": [],
+      "pasted_tags": [
+        [
+          "parity:paste one",
+          "parity:paste two"
+        ]
       ]
     }
   ]

@@ -2630,3 +2630,11 @@ services and file domains from primary mappings. Cancel changes nothing. Repair
 retains primary mappings and relations and leaves unrelated counts alone; it
 does not enter tags into the editor's draft. Closing the owner invalidates a
 pending repair answer. Native display graphs and repaired counts publish together.
+
+Accepted clipboard tags now preserve the text already being drafted in shared
+write inputs. Declining the multiline-tag question resumes the native line
+editor's normal paste at its cursor/selection, rather than discarding the
+paste. Both sibling/parent sides, Manage Tags and detached editors share this
+behavior; cancellation invalidates a pending answer. Qt key events, selected
+text replacement and accepted clipboard signals are recorded in
+`write_tag_selection.json`.

@@ -295,6 +295,11 @@ impl ManageTags {
     /// Enter a tag, as typed: added to the files that lack it, or, if
     /// they all have it, removed from them all. Errs on what isn't a tag.
     pub fn enter(&mut self, typed: &str) -> Result<(), String> {
+        self.stage_tag(typed)?;
+        self.input.clear();
+        Ok(())
+    }
+    fn stage_tag(&mut self, typed: &str) -> Result<(), String> {
         let tag = Tag::new(typed).ok_or_else(|| format!("\"{typed}\" is not a valid tag"))?;
         let tag = tag.as_str().to_owned();
         let everyone = self.tags().get(&tag) == Some(&self.files.len());
@@ -313,7 +318,6 @@ impl ManageTags {
             staged.insert(tag, true);
         }
         self.input.set_context_tags(self.tags().into_keys());
-        self.input.clear();
         Ok(())
     }
 
@@ -417,11 +421,10 @@ impl ManageTags {
             .collect::<Result<_, _>>()?;
         for tag in cleaned {
             if self.tags().get(tag.as_str()) != Some(&self.files.len()) {
-                self.enter(tag.as_str())?;
+                self.stage_tag(tag.as_str())?;
             }
         }
         self.input.set_context_tags(self.tags().into_keys());
-        self.input.clear();
         Ok(())
     }
 }

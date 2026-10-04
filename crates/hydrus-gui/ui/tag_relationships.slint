@@ -55,6 +55,8 @@ export component TagRelationshipsWindow inherits Window {
     in property <string> no-label;
     in property <bool> ask-reason;
     in-out property <string> reason;
+    public function normal-paste(right: bool) { if right { right-entry.normal-paste(); } else { left-entry.normal-paste(); } }
+    public function select-input(right: bool, anchor: int, cursor: int) { if right { right-entry.select-input(anchor,cursor); } else { left-entry.select-input(anchor,cursor); } }
     callback service-chosen(int);
     callback enter-tags(bool, string);
     callback autocomplete-edited(bool, string);
@@ -154,7 +156,7 @@ export component TagRelationshipsWindow inherits Window {
                                 }
                             }
                         }
-                        WriteTagInput {
+                        left-entry := WriteTagInput {
                             enabled: root.question == "";
                             text <=> root.left-input;
                             suggestions: root.left-suggestions;
@@ -187,7 +189,7 @@ export component TagRelationshipsWindow inherits Window {
                                 }
                             }
                         }
-                        WriteTagInput {
+                        right-entry := WriteTagInput {
                             enabled: root.question == "";
                             text <=> root.right-input;
                             suggestions: root.right-suggestions;
