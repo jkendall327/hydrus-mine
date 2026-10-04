@@ -139,6 +139,9 @@ fn reference_rows_previews_and_vetoes_are_replayed() {
     );
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
+    store
+        .write(|ctx| settings::set(ctx.conn(), &downloaders))
+        .unwrap();
     actions.save(&store).unwrap();
     let saved: Downloaders = store.read(settings::get).unwrap();
     let expected = fixture["applied_gugs"].as_array().unwrap();
@@ -298,7 +301,11 @@ fn generator_copies_nested_repair_and_delete_are_staged() {
     let mut downloaders = Downloaders::default();
     downloaders.gugs.gugs = vec![gug.clone(), nested.clone()];
     downloaders.gugs.keys_to_display = vec![gug.key().into()];
-    let mut draft = Draft::new(UrlClassSettings::default(), downloaders, Kind::Generators);
+    let mut draft = Draft::new(
+        UrlClassSettings::default(),
+        downloaders.clone(),
+        Kind::Generators,
+    );
     draft.put_gug(gug.clone(), None).unwrap();
     assert_ne!(draft.downloaders.gugs.gugs[2].key(), gug.key());
     assert_eq!(draft.downloaders.gugs.gugs[2].name(), "example search (1)");
@@ -325,6 +332,9 @@ fn generator_copies_nested_repair_and_delete_are_staged() {
     );
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
+    store
+        .write(|ctx| settings::set(ctx.conn(), &downloaders))
+        .unwrap();
     store
         .write(|ctx| {
             let mut current: Downloaders = settings::get(ctx.conn())?;

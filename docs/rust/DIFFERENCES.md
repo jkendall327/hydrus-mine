@@ -1045,6 +1045,9 @@ expiry disables stale controls and saved bandwidth history remains available.
 
 ## Service-to-service tag migration
 
+Migration opens from service review or Manage Tags; the main Tags > migrate
+entry remains a placeholder.
+
 Service-to-service tag migration uses a stable WAL reader snapshot and bounded
 atomic destination batches rather than the reference's temporary source tables.
 This prevents source-equals-destination deletions from skipping rows and fixes the
