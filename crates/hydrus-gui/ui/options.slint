@@ -20,7 +20,8 @@ export struct OptionRow {
     // text that may be none, 8 a time (its fields), 9 a number per a time,
     // 10 a file sort (its type and order), 11 a collect (its choices), 12
     // a tag sort (its type, order and grouping), 13 checker options (a
-    // button, `text`, opening their editor)
+    // button, `text`, opening their editor), 14 regex favourites,
+    // 15 tag service, 16 favourite tags.
     kind: int,
     label: string,
     // how many boxes it is in
@@ -128,6 +129,7 @@ export component OptionsWindow inherits Window {
     callback checker-clicked(int);
     callback regex-favourites-clicked();
     callback local-location-clicked(int);
+    callback favourite-tags-clicked();
     callback apply();
     callback cancel();
 
@@ -283,6 +285,10 @@ export component OptionsWindow inherits Window {
                             if row.kind == 16: Button {
                                 text: row.text;
                                 clicked => { root.local-location-clicked(i); }
+                            }
+                            if row.kind == 17: Button {
+                                text: row.text;
+                                clicked => { root.favourite-tags-clicked(); }
                             }
                             if row.kind == 14: Button {
                                 text: row.text;

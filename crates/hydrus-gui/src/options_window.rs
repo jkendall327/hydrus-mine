@@ -3,7 +3,7 @@
 //! set is said in a popup, as the reference says it), "cancel" forgetting
 //! them.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -203,6 +203,10 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     out.text =
                         crate::domains::location_label(&store.snapshot().services, location).into();
                 }
+                (Kind::FavouriteTags, Value::FavouriteTags(_)) => {
+                    out.kind = 17;
+                    out.text = "edit favourite tags".into();
+                }
                 (Kind::RegexFavourites, Value::RegexFavourites(_)) => {
                     out.kind = 14;
                     out.text = "edit regex favourites".into();
@@ -258,6 +262,8 @@ pub(crate) fn open(
     let editor = Rc::new(RefCell::new(editor));
     let regex_slot: crate::regex_favourites_window::Slot = Rc::default();
     let location_slot: Rc<RefCell<Option<crate::LocationsWindow>>> = Rc::default();
+    let tag_slot: crate::write_tag_window::Slot = Rc::default();
+    let active = Rc::new(Cell::new(true));
     let names: Vec<StandardListViewItem> = editor
         .borrow()
         .page_names()
@@ -307,7 +313,19 @@ pub(crate) fn open(
         let slot = slot.clone();
         let regex_slot = regex_slot.clone();
         let location_slot = location_slot.clone();
+        let tag_slot = tag_slot.clone();
+        let active = active.clone();
         move || {
+            if !active.replace(false) {
+                return;
+            }
+            let child = tag_slot
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(child) = child {
+                child.invoke_cancel();
+            }
             crate::locations_window::cancel(&location_slot);
             crate::regex_favourites_window::cancel(&regex_slot);
             if let Some(window) = weak.upgrade() {
@@ -399,6 +417,35 @@ pub(crate) fn open(
                 chosen,
             ) {
                 eprintln!("could not open default local location: {error}");
+            }
+        }
+    });
+    window.on_favourite_tags_clicked({
+        let editor = editor.clone();
+        let store = store.clone();
+        let tag_slot = tag_slot.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        move || {
+            if !active.get() || tag_slot.borrow().is_some() {
+                return;
+            }
+            let initial = editor.borrow().edited_favourite_tags();
+            let accepted = Rc::new({
+                let editor = editor.clone();
+                let active = active.clone();
+                let show_page = show_page.clone();
+                move |tags: Vec<String>| {
+                    if active.get() {
+                        editor.borrow_mut().set_favourite_tags(&tags);
+                        show_page();
+                    }
+                }
+            });
+            if let Err(error) =
+                crate::write_tag_window::open_favourites(&store, &initial.0, &tag_slot, accepted)
+            {
+                eprintln!("could not open favourite tags: {error}");
             }
         }
     });
@@ -666,10 +713,15 @@ pub(crate) fn open(
         });
     });
     window.on_apply({
+        let active = active.clone();
+        let tag_slot = tag_slot.clone();
         let editor = editor.clone();
         let store = store.clone();
         let close = close.clone();
         move || {
+            if !active.get() || tag_slot.borrow().is_some() {
+                return;
+            }
             let (after, before, problems) = {
                 let editor = editor.borrow();
                 let (after, before, problems) = editor.applied();

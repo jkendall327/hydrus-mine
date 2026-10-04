@@ -1,4 +1,149 @@
 {
+  "favourite_options": {
+    "initial": [
+      "parity:favourite 10",
+      "parity:favourite 2"
+    ],
+    "events": [
+      {
+        "action": "initial",
+        "tags": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ],
+        "rows": [
+          "parity:favourite 2",
+          "parity:favourite 10"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "manual",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 2",
+          "parity:favourite 10"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "repeat_manual",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 2",
+          "parity:favourite 10"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "paste",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 2",
+          "parity:favourite 3",
+          "parity:favourite pasted"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 2",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "repeat_paste",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 2",
+          "parity:favourite 3",
+          "parity:favourite pasted"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 2",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "remove",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 3",
+          "parity:favourite pasted"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "apply",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 3",
+          "parity:favourite pasted"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ],
+        "saved": [
+          "parity:favourite 1",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ]
+      }
+    ],
+    "cancelled_saved": [
+      "parity:favourite 1",
+      "parity:favourite 3",
+      "parity:favourite 10",
+      "parity:favourite pasted"
+    ]
+  },
   "domains": [
     {
       "tags": true,

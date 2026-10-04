@@ -29,10 +29,10 @@ use hydrus_store::regex_favourites::RegexFavourites;
 use hydrus_store::session_backups::SessionBackupSettings;
 use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
-    AdvancedMode, ExportSettings, FileHandlingSettings, FileSearchSettings, FileViewingStatistics,
-    FolderSettings, GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings,
-    SearchDefaults, TagAutocompleteTabs, ThumbnailLayout, ViewerCanvasSettings,
-    ViewerHoverSettings, ViewerPointerSettings,
+    AdvancedMode, ExportSettings, FavouriteTags, FileHandlingSettings, FileSearchSettings,
+    FileViewingStatistics, FolderSettings, GuiSettings, NotebookCreationSettings,
+    OptionsPreferences, PageSettings, SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
+    ViewerCanvasSettings, ViewerHoverSettings, ViewerPointerSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -100,6 +100,7 @@ settings! {
     file_search: FileSearchSettings,
     tag_editing: TagEditingSettings,
     tag_autocomplete_tabs: TagAutocompleteTabs,
+    favourite_tags: FavouriteTags,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
     sorts: SortSettings,
@@ -149,6 +150,8 @@ pub enum Value {
     Checker(CheckerOptions),
     /// The editable regular expression/description pairs.
     RegexFavourites(RegexFavourites),
+    /// Shared favourite tags, staged until the parent options dialog applies.
+    FavouriteTags(FavouriteTags),
     TagService(hydrus_core::ServiceKey),
     Location(hydrus_core::search::context::LocationContext),
 }
@@ -206,6 +209,8 @@ pub enum Kind {
     RegexFavourites,
     /// Importable current file domains, edited in a child selector.
     LocalLocation,
+    /// A detached tag list editor sharing write autocomplete.
+    FavouriteTags,
     /// Real tag services, optionally including all known tags.
     TagService {
         combined: bool,
@@ -2089,15 +2094,32 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "tag autocomplete tabs",
-            vec![boxed(
-                "children tags",
-                vec![noneable(
-                    "How many tags to show in the children tab: ",
-                    none("show all", 40, (1, 1_000_000), None),
-                    |s| s.tag_autocomplete_tabs.children_limit.map(|n| n as i64),
-                    |s, n| s.tag_autocomplete_tabs.children_limit = n.map(|n| n as usize),
-                )],
-            )],
+            vec![
+                boxed(
+                    "children tags",
+                    vec![noneable(
+                        "How many tags to show in the children tab: ",
+                        none("show all", 40, (1, 1_000_000), None),
+                        |s| s.tag_autocomplete_tabs.children_limit.map(|n| n as i64),
+                        |s, n| s.tag_autocomplete_tabs.children_limit = n.map(|n| n as usize),
+                    )],
+                ),
+                boxed(
+                    "favourite tags",
+                    vec![opt(
+                        "Favourite tag list editor",
+                        Kind::FavouriteTags,
+                        Rc::new(|settings| Value::FavouriteTags(settings.favourite_tags.clone())),
+                        Rc::new(|settings, value| match value {
+                            Value::FavouriteTags(tags) => {
+                                settings.favourite_tags = tags.clone();
+                                Ok(())
+                            }
+                            _ => Err(wrong("favourite tags")),
+                        }),
+                    )],
+                ),
+            ],
         ),
         page(
             "tag editing",
@@ -2832,6 +2854,39 @@ impl Editor {
         for value in self.values.iter_mut().flatten() {
             if matches!(value, Value::RegexFavourites(_)) {
                 *value = Value::RegexFavourites(favourites);
+                return;
+            }
+        }
+    }
+
+    /// The shared favourite tags draft, independent of the selected page.
+    pub fn edited_favourite_tags(&self) -> FavouriteTags {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| {
+                if let Value::FavouriteTags(tags) = value {
+                    Some(tags.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| self.before.favourite_tags.clone())
+    }
+
+    /// Accept the child draft; only the parent Apply writes these tags.
+    pub fn set_favourite_tags(&mut self, tags: &[String]) {
+        let mut tags: Vec<String> = tags
+            .iter()
+            .filter_map(hydrus_core::Tag::new)
+            .map(|tag| tag.as_str().to_owned())
+            .collect::<std::collections::BTreeSet<_>>()
+            .into_iter()
+            .collect();
+        hydrus_core::sort::human_sort(&mut tags);
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::FavouriteTags(_)) {
+                *value = Value::FavouriteTags(FavouriteTags(tags));
                 return;
             }
         }

@@ -2531,3 +2531,122 @@ fn pointer_options_change_real_drag_acceptance_and_cursor_transitions() {
     );
     reopened.invoke_close_requested();
 }
+
+#[test]
+fn favourite_tags_child_replays_reference_and_waits_for_parent_apply() {
+    use hydrus_store::settings::{self, FavouriteTags};
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let recorded = &fixture["favourite_options"];
+    let initial: Vec<String> = serde_json::from_value(recorded["initial"].clone()).unwrap();
+    let initial_setting = FavouriteTags(initial);
+    let (_dirs, store) = store();
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &initial_setting))
+        .unwrap();
+    let original = store.read(settings::get::<FavouriteTags>).unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    for apply in [false, true] {
+        open(&ui);
+        let parent = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&parent, "tag autocomplete tabs");
+        assert_eq!(row(&parent, "Favourite tag list editor").1.kind, 16);
+        parent.invoke_favourite_tags_clicked();
+        let child = hydrus_gui::write_tag_window::last_opened().unwrap();
+        assert_eq!(child.get_tag_label(), "all known tags");
+        child.invoke_edited("parity:cancelled".into());
+        child.invoke_entered();
+        child.invoke_cancel();
+        parent.invoke_favourite_tags_clicked();
+        let child = hydrus_gui::write_tag_window::last_opened().unwrap();
+        assert!(
+            !child
+                .get_tags()
+                .iter()
+                .any(|row| row.text == "parity:cancelled")
+        );
+        for event in recorded["events"].as_array().unwrap() {
+            match event["action"].as_str().unwrap() {
+                "initial" => {}
+                "manual" | "repeat_manual" => {
+                    child.invoke_edited("parity:favourite 1".into());
+                    child.invoke_entered();
+                }
+                "paste" | "repeat_paste" => {
+                    hydrus_gui::set_paster(|| {
+                        "parity:favourite 2\nparity:favourite 3\nparity:favourite pasted".into()
+                    });
+                    assert!(child.invoke_paste(true));
+                }
+                "remove" => {
+                    let index = child
+                        .get_tags()
+                        .iter()
+                        .position(|row| row.text == "parity:favourite 2")
+                        .unwrap();
+                    child.invoke_remove(i32::try_from(index).unwrap());
+                }
+                "apply" => {
+                    parent.invoke_apply();
+                    assert!(bound.options.borrow().is_some());
+                    child.invoke_apply();
+                }
+                action => panic!("unexpected recorded action {action}"),
+            }
+            let tags: Vec<String> = child
+                .get_tags()
+                .iter()
+                .map(|row| row.text.to_string())
+                .collect();
+            assert_eq!(serde_json::json!(tags), event["rows"]);
+            assert_eq!(
+                store.read(settings::get::<FavouriteTags>).unwrap(),
+                original
+            );
+        }
+        if apply {
+            parent.invoke_apply();
+        } else {
+            parent.invoke_cancel();
+        }
+        let saved = store.read(settings::get::<FavouriteTags>).unwrap();
+        let expected = if apply {
+            &recorded["cancelled_saved"]
+        } else {
+            &recorded["initial"]
+        };
+        assert_eq!(serde_json::json!(saved.0), *expected);
+    }
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    manage.invoke_tab_chosen(1);
+    let offered: std::collections::BTreeSet<String> = manage
+        .get_suggestions()
+        .iter()
+        .map(|row| row.text.to_string())
+        .collect();
+    let expected: Vec<String> =
+        serde_json::from_value(recorded["cancelled_saved"].clone()).unwrap();
+    assert_eq!(offered, expected.into_iter().collect());
+    manage.invoke_cancel();
+    // Closing the parent closes its child and invalidates retained callbacks.
+    open(&ui);
+    let parent = bound.options.borrow().as_ref().unwrap().clone_strong();
+    parent.invoke_favourite_tags_clicked();
+    let child = hydrus_gui::write_tag_window::last_opened().unwrap();
+    let saved = store.read(settings::get::<FavouriteTags>).unwrap();
+    child.invoke_edited("parity:stale callback".into());
+    child.invoke_entered();
+    parent
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(!child.window().is_visible());
+    child.invoke_apply();
+    parent.invoke_apply();
+    assert!(bound.options.borrow().is_none());
+    assert_eq!(store.read(settings::get::<FavouriteTags>).unwrap(), saved);
+}

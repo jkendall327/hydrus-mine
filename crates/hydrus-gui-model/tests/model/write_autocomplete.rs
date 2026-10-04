@@ -888,3 +888,107 @@ fn write_domain_menus_and_interlocks_replay_reference_without_persisting_options
     ));
     assert!(reopened.rows().iter().all(|row| !row.counted));
 }
+
+#[test]
+fn favourite_options_replay_add_only_choices_and_parent_transaction() {
+    use hydrus_gui_model::{
+        options::{Editor, Kind, Settings},
+        write_autocomplete::{Tab, TagEntry},
+    };
+    use hydrus_store::settings::FavouriteTags;
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let recorded = &fixture["favourite_options"];
+    let initial: Vec<String> = serde_json::from_value(recorded["initial"].clone()).unwrap();
+    let (_directory, store) = seeded(&fixture);
+    let initial_setting = FavouriteTags(initial.clone());
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &initial_setting))
+        .unwrap();
+    let before = store.read(Settings::load).unwrap();
+    let mut editor = Editor::new(before.clone());
+    let pages = hydrus_gui_model::options::pages(&before);
+    let page = pages
+        .iter()
+        .find(|page| page.name == "tag autocomplete tabs")
+        .unwrap();
+    assert!(
+        page.options()
+            .iter()
+            .any(|option| option.kind == Kind::FavouriteTags)
+    );
+    let service = hydrus_core::ServiceKey::new(hydrus_core::service::builtin_keys::COMBINED_TAG);
+    let mut child = TagEntry::new(
+        WriteAutocomplete::new(store.clone(), service.clone(), LocationContext::default()),
+        &initial,
+    )
+    .additions_only();
+    for event in recorded["events"].as_array().unwrap() {
+        match event["action"].as_str().unwrap() {
+            "initial" => {}
+            "manual" | "repeat_manual" => {
+                child.input.set_text("parity:favourite 1");
+                child.enter(None);
+            }
+            "paste" | "repeat_paste" => {
+                child.paste(&[
+                    "parity:favourite 2".into(),
+                    "parity:favourite 3".into(),
+                    "parity:favourite pasted".into(),
+                ]);
+            }
+            "remove" => {
+                let index = child
+                    .tags()
+                    .iter()
+                    .position(|tag| tag == "parity:favourite 2")
+                    .unwrap();
+                child.remove(index);
+            }
+            "apply" => {
+                editor.set_favourite_tags(&child.tags());
+            }
+            action => panic!("unexpected recorded action {action}"),
+        }
+        assert_eq!(serde_json::json!(child.tags()), event["rows"]);
+        assert_eq!(
+            store.read(Settings::load).unwrap().favourite_tags,
+            before.favourite_tags
+        );
+    }
+    let (after, original, problems) = editor.applied();
+    assert!(problems.is_empty());
+    assert_eq!(
+        serde_json::json!(after.favourite_tags.0),
+        recorded["events"][6]["saved"]
+    );
+    let original = original.clone();
+    // A concurrently edited child cap is unrelated to this favourite-list draft.
+    store
+        .write(|ctx| {
+            let mut tabs: settings::TagAutocompleteTabs = settings::get(ctx.conn())?;
+            tabs.children_limit = Some(1);
+            settings::set(ctx.conn(), &tabs)
+        })
+        .unwrap();
+    store
+        .write(move |ctx| after.save(ctx.conn(), &original))
+        .unwrap();
+    let reopened = store.read(Settings::load).unwrap();
+    assert_eq!(
+        serde_json::json!(reopened.favourite_tags.0),
+        recorded["cancelled_saved"]
+    );
+    assert_eq!(reopened.tag_autocomplete_tabs.children_limit, Some(1));
+    let mut consumer = WriteAutocomplete::new(store.clone(), service, LocationContext::default());
+    consumer.set_tab(Tab::Favourites);
+    let offered: std::collections::BTreeSet<_> =
+        consumer.rows().iter().map(|row| row.tag.clone()).collect();
+    assert_eq!(offered, reopened.favourite_tags.0.iter().cloned().collect());
+    let mut cancelled = Editor::new(reopened.clone());
+    cancelled.set_favourite_tags(&["parity:cancelled".into()]);
+    assert_eq!(store.read(Settings::load).unwrap(), reopened);
+    assert_eq!(
+        Editor::new(reopened.clone()).edited_favourite_tags(),
+        reopened.favourite_tags
+    );
+}

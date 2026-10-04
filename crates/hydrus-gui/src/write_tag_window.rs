@@ -12,9 +12,59 @@ use std::{
 
 pub type Slot = Rc<RefCell<Option<WriteTagsWindow>>>;
 
+thread_local! {
+    static LAST: RefCell<Option<slint::Weak<WriteTagsWindow>>> = const { RefCell::new(None) };
+}
+/// Most recently opened visible shared write-tag editor.
+pub fn last_opened() -> Option<WriteTagsWindow> {
+    LAST.with(|last| last.borrow().as_ref().and_then(slint::Weak::upgrade))
+        .filter(|w| w.window().is_visible())
+}
+
 pub fn open(
     store: &Arc<Store>,
     service: ServiceKey,
+    initial: &[String],
+    title: &str,
+    slot: &Slot,
+    applied: Rc<dyn Fn(Vec<String>)>,
+    closed: Rc<dyn Fn()>,
+) -> Result<WriteTagsWindow, slint::PlatformError> {
+    open_internal(
+        store,
+        (service, false),
+        initial,
+        title,
+        slot,
+        applied,
+        closed,
+    )
+}
+
+/// The options favourite list adds manual choices, instead of toggling existing tags.
+pub fn open_favourites(
+    store: &Arc<Store>,
+    initial: &[String],
+    slot: &Slot,
+    applied: Rc<dyn Fn(Vec<String>)>,
+) -> Result<WriteTagsWindow, slint::PlatformError> {
+    open_internal(
+        store,
+        (
+            ServiceKey::new(hydrus_core::service::builtin_keys::COMBINED_TAG),
+            true,
+        ),
+        initial,
+        "edit favourite tags",
+        slot,
+        applied,
+        Rc::new(|| {}),
+    )
+}
+
+fn open_internal(
+    store: &Arc<Store>,
+    (service, add_only): (ServiceKey, bool),
     initial: &[String],
     title: &str,
     slot: &Slot,
@@ -31,10 +81,16 @@ pub fn open(
         .read(hydrus_store::settings::get::<hydrus_store::settings::SearchDefaults>)
         .unwrap_or_default()
         .local_location;
-    let model = Rc::new(RefCell::new(TagEntry::new(
+    let entry = TagEntry::new(
         WriteAutocomplete::new(store.clone(), service, location),
         initial,
-    )));
+    );
+    let entry = if add_only {
+        entry.additions_only()
+    } else {
+        entry
+    };
+    let model = Rc::new(RefCell::new(entry));
     let pending: Rc<RefCell<Option<Vec<String>>>> = Rc::default();
     let active = Rc::new(Cell::new(true));
     let refresh = Rc::new({
@@ -344,6 +400,7 @@ pub fn open(
     });
     refresh();
     window.show()?;
+    LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));
     *slot.borrow_mut() = Some(window.clone_strong());
     Ok(window)
 }
