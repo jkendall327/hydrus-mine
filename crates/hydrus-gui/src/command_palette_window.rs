@@ -462,7 +462,7 @@ pub(crate) fn bind(
                 ) {
                 weak.upgrade().map(|window| {
                     window.invoke_thumbnail_menu_requested(-1);
-                    snapshot.media_menu = media_items.borrow().clone();
+                    snapshot.media_menu.clone_from(&media_items.borrow());
                     let page = current.borrow().clone();
                     let page = page.borrow();
                     (

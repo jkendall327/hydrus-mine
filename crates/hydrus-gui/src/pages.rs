@@ -390,7 +390,7 @@ impl Pages {
     ) {
         if new_page {
             let mut page = new_search_page_on(&self.store, favourite.search.location.clone());
-            page.name = favourite.name.clone();
+            page.name.clone_from(&favourite.name);
             if let PageContent::Search {
                 search,
                 synchronised,
