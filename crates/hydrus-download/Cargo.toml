@@ -26,6 +26,7 @@ rand.workspace = true
 rusqlite.workspace = true
 
 [dev-dependencies]
+hydrus-downloader-exchange = { path = "../hydrus-downloader-exchange" }
 axum.workspace = true
 hydrus-testkit.workspace = true
 

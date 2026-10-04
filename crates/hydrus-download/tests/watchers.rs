@@ -71,6 +71,7 @@ async fn file(Path(name): Path<String>) -> Response {
 
 fn html_formula(tag: &str, attrs: &[(&str, &str)], content: HtmlContent) -> Formula {
     Formula {
+        reference_auxiliary: None,
         name: String::new(),
         kind: FormulaKind::Html {
             rules: vec![HtmlRule {
@@ -92,6 +93,7 @@ fn html_formula(tag: &str, attrs: &[(&str, &str)], content: HtmlContent) -> Form
 
 fn thread_parser() -> PageParser {
     PageParser {
+        reference_auxiliary: None,
         name: "thread".into(),
         key: "ad".into(),
         converter: hydrus_core::url::StringConverter::default(),

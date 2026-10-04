@@ -18,6 +18,7 @@ pub mod collect;
 pub mod datetime_editor;
 pub mod domains;
 pub mod downloader_definitions;
+pub mod downloader_interchange;
 pub mod duplicate_filter;
 pub mod duplicates_page;
 pub mod edit_subscription;

@@ -96,6 +96,7 @@ pub fn formula(object: &SerialisableObject) -> DecodeResult<Formula> {
                 other => return Err(malformed(k, format!("unknown html content {other}"))),
             };
             Ok(Formula {
+                reference_auxiliary: None,
                 name: string(k, name, "name")?,
                 kind: FormulaKind::Html { rules, content },
                 processor: string_processor(&object_at(k, processor, "string processor")?)?,
@@ -131,6 +132,7 @@ pub fn formula(object: &SerialisableObject) -> DecodeResult<Formula> {
                 other => return Err(malformed(k, format!("unknown json content {other}"))),
             };
             Ok(Formula {
+                reference_auxiliary: None,
                 name: string(k, name, "name")?,
                 kind: FormulaKind::Json { rules, content },
                 processor: string_processor(&object_at(k, processor, "string processor")?)?,
@@ -141,6 +143,7 @@ pub fn formula(object: &SerialisableObject) -> DecodeResult<Formula> {
             expect(object, k, &[3])?;
             let [formulae, phrase, name, processor] = tuple::<4>(k, &info, "zipper formula")?;
             Ok(Formula {
+                reference_auxiliary: None,
                 name: string(k, name, "name")?,
                 kind: FormulaKind::Zipper {
                     formulae: nested_list(k, formulae, "formulae")?
@@ -157,6 +160,7 @@ pub fn formula(object: &SerialisableObject) -> DecodeResult<Formula> {
             expect(object, k, &[3])?;
             let [variable, name, processor] = tuple::<3>(k, &info, "context variable formula")?;
             Ok(Formula {
+                reference_auxiliary: None,
                 name: string(k, name, "name")?,
                 kind: FormulaKind::ContextVariable {
                     variable: string(k, variable, "variable")?,
@@ -169,6 +173,7 @@ pub fn formula(object: &SerialisableObject) -> DecodeResult<Formula> {
             expect(object, k, &[2])?;
             let [main, sub, name, processor] = tuple::<4>(k, &info, "nested formula")?;
             Ok(Formula {
+                reference_auxiliary: None,
                 name: string(k, name, "name")?,
                 kind: FormulaKind::Nested {
                     main: Box::new(formula(&object_at(k, main, "main formula")?)?),
@@ -182,6 +187,7 @@ pub fn formula(object: &SerialisableObject) -> DecodeResult<Formula> {
             expect(object, k, &[1])?;
             let [text, num, name, processor] = tuple::<4>(k, &info, "static formula")?;
             Ok(Formula {
+                reference_auxiliary: None,
                 name: string(k, name, "name")?,
                 kind: FormulaKind::Static {
                     text: string(k, text, "static text")?,
@@ -260,6 +266,7 @@ pub fn page_parser(object: &SerialisableObject) -> DecodeResult<PageParser> {
         _context,
     ] = tuple::<7>(k, &info, "page parser")?;
     Ok(PageParser {
+        reference_auxiliary: None,
         name: string(k, name, "name")?,
         key: string(k, key, "parser key")?,
         converter: string_converter(&object_at(k, converter, "string converter")?)?,

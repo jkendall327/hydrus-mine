@@ -37,6 +37,7 @@ pub enum Kind {
 /// A definition's stable draft identity is its position, unaffected by sorting.
 #[derive(Debug, Clone)]
 pub struct Draft {
+    pub auxiliary: crate::downloader_interchange::Auxiliary,
     pub classes: UrlClassSettings,
     pub downloaders: Downloaders,
     /// Global encoding options used by the actual gallery downloader.
@@ -52,14 +53,16 @@ pub struct Draft {
 impl Draft {
     /// Open native settings as an isolated draft.
     pub fn load(store: &Store, kind: Kind) -> hydrus_store::Result<Self> {
-        let (classes, downloaders, network) = store.read(|conn| {
+        let (classes, downloaders, network, auxiliary) = store.read(|conn| {
             Ok((
                 settings::get(conn)?,
                 settings::get(conn)?,
                 settings::get::<hydrus_store::network::NetworkSettings>(conn)?,
+                settings::get::<crate::downloader_interchange::Auxiliary>(conn)?,
             ))
         })?;
         let mut draft = Self::new(classes, downloaders, kind);
+        draft.auxiliary = auxiliary;
         draft.gug_options.percent_twenty_is_space = network.gug_percent_twenty_is_space;
         Ok(draft)
     }
@@ -67,6 +70,7 @@ impl Draft {
     /// Build a draft from settings (also used for fixture replay).
     pub fn new(classes: UrlClassSettings, downloaders: Downloaders, kind: Kind) -> Self {
         Self {
+            auxiliary: crate::downloader_interchange::Auxiliary::default(),
             original_classes: classes.clone(),
             original_downloaders: downloaders.clone(),
             gug_options: GugOptions {
@@ -99,10 +103,14 @@ impl Draft {
             Kind::Classes => {
                 let mut classes = self.classes.url_classes.clone();
                 classes.sort_by(|a, b| a.name.cmp(&b.name));
+                let auxiliary = self.auxiliary.clone();
+                let original = self.original_classes.url_classes.clone();
                 store.write_and_refresh(move |ctx| {
                     let conn = ctx.conn();
                     let mut current: UrlClassSettings = settings::get(conn)?;
+                    if current.url_classes!=original {return Err(hydrus_store::StoreError::Invalid("URL classes changed in another editor. Reopen this dialog before applying.".into()));}
                     current.url_classes = classes;
+                    auxiliary.save(conn)?;
                     settings::set(conn, &current)
                 })
             }
@@ -121,14 +129,65 @@ impl Draft {
                             .collect();
                     }
                 }
+                let auxiliary = self.auxiliary.clone();
+                let original = self.original_downloaders.gugs.clone();
                 store.write(move |ctx| {
                     let conn = ctx.conn();
                     let mut current: Downloaders = settings::get(conn)?;
+                    if current.gugs!=original {return Err(hydrus_store::StoreError::Invalid("Gallery generators changed in another editor. Reopen this dialog before applying.".into()));}
                     current.gugs = gugs;
+                    auxiliary.save(conn)?;
                     settings::set(conn, &current)
                 })
             }
         }
+    }
+
+    /// Import a scoped reference list into a copy before changing this draft.
+    pub fn import(
+        &mut self,
+        definitions: Vec<crate::downloader_interchange::Definition>,
+    ) -> Result<crate::downloader_interchange::Review, String> {
+        use crate::downloader_interchange::{Native, Review};
+        let mut next = self.clone();
+        let mut review = Review::default();
+        for mut definition in definitions {
+            match (next.kind, &mut definition.native) {
+                (Kind::Classes, Native::Class(class)) => {
+                    next.put_class((**class).clone(), None)?;
+                    **class = next.classes.url_classes.last().ok_or("No class imported.")?.clone();
+                }
+                (Kind::Generators, Native::Gug(gug @ AnyGug::Single(_))) | (Kind::Nested, Native::Gug(gug @ AnyGug::Nested(_))) => {
+                    if let AnyGug::Nested(n)=gug {
+                        let missing=n.gugs.iter().filter(|(key,name)| !matches!(next.downloaders.gugs.get(key,name),Some(AnyGug::Single(_)))).map(|(_,name)|name.clone()).collect::<Vec<_>>();
+                        if !missing.is_empty(){return Err(format!("Nested generator references missing single generators: {}. Import those first or use the mixed downloader bundle importer.",missing.join(", ")));}
+                    }
+                    next.put_gug(gug.clone(), None)?;
+                    *gug = next.downloaders.gugs.gugs.last().ok_or("No generator imported.")?.clone();
+                }
+                _ => return Err("The package contains definitions of another kind. Use network > downloaders > import downloaders for a mixed bundle.".into()),
+            }
+            review.added.push(definition.name().to_owned());
+            next.auxiliary.retain(&definition);
+        }
+        *self = next;
+        Ok(review)
+    }
+    /// Export the selected draft objects, including auxiliary editor data.
+    pub fn selected_definitions(&self) -> Vec<crate::downloader_interchange::Definition> {
+        use crate::downloader_interchange::Native;
+        self.selection
+            .in_order(&self.order())
+            .into_iter()
+            .map(|i| {
+                self.auxiliary.definition(match self.kind {
+                    Kind::Classes => Native::Class(Box::new(self.classes.url_classes[i].clone())),
+                    Kind::Generators | Kind::Nested => {
+                        Native::Gug(self.downloaders.gugs.gugs[i].clone())
+                    }
+                })
+            })
+            .collect()
     }
 
     /// The row as the reference displays it.

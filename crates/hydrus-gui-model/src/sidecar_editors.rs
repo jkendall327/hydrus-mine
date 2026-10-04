@@ -146,6 +146,7 @@ pub fn default_router_processor() -> StringProcessor {
 /// A JSON importer's formula: every item, as strings.
 fn every_item() -> Formula {
     Formula {
+        reference_auxiliary: None,
         name: String::new(),
         kind: FormulaKind::Json {
             rules: vec![JsonRule::AllItems],
@@ -159,6 +160,7 @@ fn every_item() -> Formula {
 /// changes to (`ParseFormulaJSON()`: the "posts" key).
 fn posts() -> Formula {
     Formula {
+        reference_auxiliary: None,
         name: String::new(),
         kind: FormulaKind::Json {
             rules: vec![JsonRule::DictKey(StringMatch {
@@ -899,6 +901,7 @@ fn json_at(path: &[&str]) -> Importer {
     let mut importer = new_importer(Kind::Json, StringProcessor::default());
     if let Source::Json { formula, .. } = &mut importer.source {
         **formula = Formula {
+            reference_auxiliary: None,
             name: String::new(),
             kind: FormulaKind::Json {
                 rules,
