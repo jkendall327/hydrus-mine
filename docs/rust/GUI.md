@@ -2342,3 +2342,15 @@ Cancel retains its saved policy, and legacy keys migrate. The fresh real Qt
 `viewer_background_options.json` recording observes actual QPainter calls and
 pixel occupancy for all sixteen combinations with popups enabled and disabled.
 Native rendered regressions also check that opaque media covers these copies.
+
+GUI Pages now exposes the four new-page chooser domain preferences. Combined
+local file domains is offered only when at least two local domains exist; its
+visibility and top position are independent choices. Hydrus local file storage
+has its own visibility and top position, and takes the first position when both
+top choices are enabled. Ordinary domains and repositories use service names in
+name order, with trash between the local-domain group and bottom storage entry.
+Apply changes the next chooser; Cancel leaves its previous settings intact, and
+hidden top choices survive reopening and legacy import. Each chosen domain makes
+a search with that exact current location, including combined, trash and storage.
+`page_chooser_options.json` records all 48 combinations with one, two and ten
+domains, actual Qt number-pad placement and each resulting query context.

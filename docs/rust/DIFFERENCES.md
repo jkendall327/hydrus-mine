@@ -1545,3 +1545,10 @@ content and rating layout remain in use, so the copies follow the native hover
 presentation rather than reproducing Qt glyph metrics. Preview-window passive
 copies and hover menu/dominance rules remain separate gaps. The already-supported
 index background preference is unchanged by these four controls.
+
+The new-page chooser domain checkboxes and their consumers now follow the
+reference's two-domain combined-location rule and independent position choices.
+Both clients show at most nine file-search entries; extra entries are omitted,
+so top placement can keep combined domains or storage available in a large
+service registry. The native chooser remains the existing in-window number pad
+rather than a separate Qt dialog; this slice adds no petitions-menu behavior.

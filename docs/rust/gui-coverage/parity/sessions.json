@@ -1953,6 +1953,286 @@
         },
         "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
       }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-opening-and-closing-in-new-page-chooser-show-combined-local-file-domains-if-appropriate",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "ce96f5eb",
+      "exactBehavior": "Staged checkbox controls whether combined local file domains is offered, only with at least two registered local file domains. Default true; primary and top choice remain independently editable and persisted. Every chosen button creates a search on exactly that current service key.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1599,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/page_chooser.rs",
+          "line": 114,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 230,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 244,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 10,
+          "commit": "ce96f5eb",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 89,
+          "commit": "ce96f5eb",
+          "kind": "legacy_import_and_registry_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_chooser_options.rs",
+          "line": 48,
+          "commit": "ce96f5eb",
+          "kind": "gui_consumer_cancel_apply_reopen_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_page_chooser_options.py",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/page_chooser_options.json",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt Options checkbox defaults/enabled states/labels/UpdateOptions, 48 combinations of four flags and 1/2/10 registered domains, every offered actual page-query current/deleted LocationContext and cancellation result."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-opening-and-closing-put-it-at-the-top",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "ce96f5eb",
+      "exactBehavior": "Staged combined-domain top checkbox defaults false; when eligible, inserts the combined domain before sorted local domains rather than after them. Preference survives while combined visibility is disabled; storage top retains higher priority.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1604,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/page_chooser.rs",
+          "line": 114,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 230,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 244,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 10,
+          "commit": "ce96f5eb",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 89,
+          "commit": "ce96f5eb",
+          "kind": "legacy_import_and_registry_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_chooser_options.rs",
+          "line": 48,
+          "commit": "ce96f5eb",
+          "kind": "gui_consumer_cancel_apply_reopen_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_page_chooser_options.py",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/page_chooser_options.json",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt Options checkbox defaults/enabled states/labels/UpdateOptions, 48 combinations of four flags and 1/2/10 registered domains, every offered actual page-query current/deleted LocationContext and cancellation result."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-opening-and-closing-in-new-page-chooser-show-hydrus-local-file-storage",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "ce96f5eb",
+      "exactBehavior": "Staged storage checkbox defaults false; when enabled, offers hydrus local file storage after trash or at the configured top. Choice creates a search on the storage current service key, with no deleted domains.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1609,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/page_chooser.rs",
+          "line": 127,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 230,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 244,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 10,
+          "commit": "ce96f5eb",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 89,
+          "commit": "ce96f5eb",
+          "kind": "legacy_import_and_registry_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_chooser_options.rs",
+          "line": 48,
+          "commit": "ce96f5eb",
+          "kind": "gui_consumer_cancel_apply_reopen_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_page_chooser_options.py",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/page_chooser_options.json",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt Options checkbox defaults/enabled states/labels/UpdateOptions, 48 combinations of four flags and 1/2/10 registered domains, every offered actual page-query current/deleted LocationContext and cancellation result."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-opening-and-closing-put-it-at-the-top-2",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "ce96f5eb",
+      "exactBehavior": "Staged storage top checkbox defaults false; when enabled with storage visibility, inserts storage before combined and ordinary local domains. Preference survives while storage is disabled. Exact reference number-pad layout and nine-entry truncation are preserved.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1614,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/page_chooser.rs",
+          "line": 127,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 230,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 244,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 10,
+          "commit": "ce96f5eb",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 89,
+          "commit": "ce96f5eb",
+          "kind": "legacy_import_and_registry_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_chooser_options.rs",
+          "line": 48,
+          "commit": "ce96f5eb",
+          "kind": "gui_consumer_cancel_apply_reopen_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_page_chooser_options.py",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/page_chooser_options.json",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt Options checkbox defaults/enabled states/labels/UpdateOptions, 48 combinations of four flags and 1/2/10 registered domains, every offered actual page-query current/deleted LocationContext and cancellation result."
+      }
     }
   ],
   "completedOriginalLeafCount": 12,
