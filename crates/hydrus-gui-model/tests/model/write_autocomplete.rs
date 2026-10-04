@@ -6,7 +6,13 @@ use hydrus_gui_model::{
     manage_tags::ManageTags,
     write_autocomplete::{Paste, WriteAutocomplete, paste},
 };
-use hydrus_store::{Store, settings, tag_editing::TagEditingSettings};
+use hydrus_store::{
+    Store,
+    content::tag_relations::{self, RelationAction, RelationUpdate},
+    display::RelationKind,
+    settings,
+    tag_editing::TagEditingSettings,
+};
 use serde_json::{Value, json};
 
 fn seeded(fixture: &Value) -> (tempfile::TempDir, Arc<Store>) {
@@ -46,10 +52,6 @@ fn seeded(fixture: &Value) -> (tempfile::TempDir, Arc<Store>) {
             Ok(())
         })
         .unwrap();
-    use hydrus_store::{
-        content::tag_relations::{self, RelationAction, RelationUpdate},
-        display::RelationKind,
-    };
     for (kind, pairs) in [
         (
             RelationKind::Siblings,
@@ -352,7 +354,7 @@ fn detached_import_tag_lists_replay_reference_and_never_mutate_caller() {
             match event["action"].as_str().unwrap() {
                 "initial" | "cancel" => {}
                 "paste" | "repeat_paste" => {
-                    model.paste(&["parity:caller initial".into(), "parity:child new".into()])
+                    model.paste(&["parity:caller initial".into(), "parity:child new".into()]);
                 }
                 "typed_toggle" => {
                     model.input.set_text("parity:caller initial");
