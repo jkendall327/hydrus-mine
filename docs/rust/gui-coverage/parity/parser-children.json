@@ -4,7 +4,9 @@
   "implementation_commits": [
     "ae7227ab0557ee277307145e9c862cf6a0306aa0",
     "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
-    "37affafb961b0146f229ff0c706cb8cb5c1a714e"
+    "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+    "2a7ad8aeddcb2752b2779a203636e664ce9df1b9",
+    "24fbb367ec67b29eca8c53b62905adf1ba8acf80"
   ],
   "validation": {
     "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states",
@@ -74,10 +76,10 @@
       "reference_id": "subsidiary",
       "previous_status": "missing",
       "before": "missing",
-      "proposed_status": "partial",
-      "proposedStatus": "partial",
-      "behavior": "Recursive subsidiary add/edit/delete and per-child separation/sort controls are available; parent-page interchange and live parsing retain wrappers and recursive data. Creation/editing is proven against the actual Qt recording and real-store GUI consumers.",
-      "exactBehavior": "Recursive subsidiary add/edit/delete and per-child separation/sort controls are available; parent-page interchange and live parsing retain wrappers and recursive data. Creation/editing is proven against the actual Qt recording and real-store GUI consumers.",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Recursive subsidiary add/edit/delete and extended selected queues support standalone wrapper clipboard/PNG import/export, key-preserving duplication and recorded Remove all selected? confirmation/cancel. Separators, sorting, descendant parsers, inert editor context and converter sample data survive exact reference tuple/PNG roundtrips. Edits stay staged until page/list Apply; saved parser consumers produce the recorded multiline notes, and forced owner close invalidates retained exchange/recursive callbacks.",
+      "exactBehavior": "Recursive subsidiary add/edit/delete and extended selected queues support standalone wrapper clipboard/PNG import/export, key-preserving duplication and recorded Remove all selected? confirmation/cancel. Separators, sorting, descendant parsers, inert editor context and converter sample data survive exact reference tuple/PNG roundtrips. Edits stay staged until page/list Apply; saved parser consumers produce the recorded multiline notes, and forced owner close invalidates retained exchange/recursive callbacks.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
@@ -96,6 +98,24 @@
           "line": 433,
           "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
           "symbol": "open_editor"
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/subsidiaries.rs",
+          "line": 45,
+          "commit": "2a7ad8aeddcb2752b2779a203636e664ce9df1b9",
+          "symbol": "decode_text"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "line": 506,
+          "commit": "24fbb367ec67b29eca8c53b62905adf1ba8acf80",
+          "symbol": "append_subsidiaries"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_interchange_window.rs",
+          "line": 158,
+          "commit": "24fbb367ec67b29eca8c53b62905adf1ba8acf80",
+          "symbol": "open_subsidiaries"
         }
       ],
       "test_anchors": [
@@ -116,19 +136,41 @@
           "line": 1123,
           "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
           "symbol": "subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_prompt"
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/tests/subsidiaries.rs",
+          "line": 6,
+          "commit": "2a7ad8aeddcb2752b2779a203636e664ce9df1b9",
+          "symbol": "real_reference_subsidiary_clipboard_and_png_preserve_recursive_wrappers"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_editors.rs",
+          "line": 288,
+          "commit": "24fbb367ec67b29eca8c53b62905adf1ba8acf80",
+          "symbol": "recorded_subsidiary_queue_import_and_duplicate_preserve_keys_and_select_new_rows"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1271,
+          "commit": "24fbb367ec67b29eca8c53b62905adf1ba8acf80",
+          "symbol": "subsidiary_queue_exchange_is_staged_preserves_wrappers_and_reaches_saved_parser"
         }
       ],
       "reference_evidence": {
         "recorder": "oracle/record_parser_children.py",
         "fixture": "oracle/fixtures/parser_children.json",
         "visual_reference": "oracle/fixtures/parser_child_editor.png",
-        "actual_recording": "passed: 16 real Qt states; synthetic HTML and children.example; defaults/add/nested/edit/cancel/runtime outputs"
+        "actual_recording": "passed: 16 real Qt states; synthetic HTML and children.example; defaults/add/nested/edit/cancel/runtime outputs; standalone real Qt clipboard/queue/duplicate/delete/PNG recordings passed",
+        "exchange_recorder": "oracle/record_subsidiary_exchange.py",
+        "exchange_fixture": "oracle/fixtures/subsidiary_exchange.json",
+        "exchange_png": "oracle/fixtures/subsidiary_exchange.png",
+        "exchange_visual": "oracle/fixtures/subsidiary_exchange_editor.png"
       },
       "limitations": [
-        "Standalone subsidiary wrapper exchange is still unavailable; the shared child editor exports its page parser, while parent-page exchange preserves separation/sort metadata."
+        "Mixed or unsupported packages reject atomically instead of partially accepting valid rows."
       ],
       "limits": [
-        "Standalone subsidiary wrapper exchange is still unavailable; the shared child editor exports its page parser, while parent-page exchange preserves separation/sort metadata."
+        "Mixed or unsupported packages reject atomically instead of partially accepting valid rows."
       ]
     },
     {
