@@ -17,6 +17,21 @@ def record(session):
         from hydrus.client.networking import ClientNetworkingURLClass as U
         from hydrus.core import HydrusConstants as HC
         out={'domain_steps':[],'preview_steps':[]}
+        out['domain_errors']=[]
+        for raw,regex,subdomains in [
+            (['preview.example'],[],False),
+            (['preview.example'],[],True),
+            (['site10.example','site2.example'],[],False),
+            (['preview.example'],['cdn.*'],False),
+            ([],[],False),
+            (['a'*60+'.example'],[],False),
+            (['site10.example','site2.example','site3.example','site4.example'],[],False),
+            (['a'*60+'.example','b'*60+'.example'],[],False),
+        ]:
+            mask=U.URLDomainMask(raw_domains=raw,domain_regexes=regex,match_subdomains=subdomains)
+            try:mask.Test('other.example');error=None
+            except Exception as e:error=str(e)
+            out['domain_errors'].append({'raw':raw,'regex':regex,'subdomains':subdomains,'error':error})
         mask=U.URLDomainMask(raw_domains=['mask.example'])
         panel=C.EditURLDomainMaskWidget(c.gui,mask)
         def snap(action):

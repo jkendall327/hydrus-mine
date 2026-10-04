@@ -201,6 +201,58 @@ impl DomainMask {
         })
     }
 
+    /// Test a domain with the same mask description shown by the reference.
+    pub fn test(&self, domain: &str) -> Result<(), UrlClassError> {
+        if self.matches(domain) {
+            return Ok(());
+        }
+        fn summary(values: &[String], noun: &str) -> String {
+            let mut values = values.to_vec();
+            crate::sort::human_sort(&mut values);
+            let full = values
+                .iter()
+                .map(|value| format!("\"{value}\""))
+                .collect::<Vec<_>>()
+                .join(", ");
+            if full.chars().count() <= 48 {
+                return full;
+            }
+            if values.len() > 1 {
+                let leading = format!(
+                    "\"{}\" & {} other {noun}",
+                    values[0],
+                    crate::numbers::human_int(u64::try_from(values.len() - 1).unwrap_or(u64::MAX))
+                );
+                if leading.chars().count() <= 48 {
+                    return leading;
+                }
+            }
+            format!(
+                "{} {noun}",
+                crate::numbers::human_int(u64::try_from(values.len()).unwrap_or(u64::MAX))
+            )
+        }
+        let mut description = if self.raw_domains.is_empty() {
+            String::new()
+        } else {
+            summary(&self.raw_domains, "domains")
+        };
+        if !self.domain_regexes.is_empty() {
+            description.push_str(&summary(&self.domain_regexes, "domain regexes"));
+        }
+        if self.raw_domains.is_empty() && self.domain_regexes.is_empty() {
+            description = "no domain rules, will not match anything!".into();
+        }
+        let subdomains = if self.match_subdomains {
+            " (potentially excluding subdomains)"
+        } else {
+            ""
+        };
+        fail(format!(
+            "{domain}{subdomains} did not match URL Domain Mask: {description}"
+        ))
+    }
+
     pub fn matches(&self, domain: &str) -> bool {
         self.compiled()
             .matchers
@@ -401,9 +453,7 @@ impl UrlClass {
     pub fn test(&self, url: &str, collapse_leading_slashes: bool) -> Result<(), UrlClassError> {
         let url = ensure_url_is_encoded(url, true, collapse_leading_slashes);
         let parts = parse_url(&url).map_err(|e| UrlClassError(e.to_string()))?;
-        if !self.domain_mask.matches(&parts.netloc) {
-            return fail(format!("{} did not match the domain mask", parts.netloc));
-        }
+        self.domain_mask.test(&parts.netloc)?;
         self.test_path(&parts.path, collapse_leading_slashes)?;
         let query = Query::parse(&parts.query);
         if self.no_more_parameters_than_this

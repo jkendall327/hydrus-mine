@@ -313,7 +313,7 @@
     "preview",
     15,
     [
-     "d74da838aedf4deb3051f7909eb2b3ed3e35dafa1439ba66da63f331a485491f",
+     "d758ccc87534d01ec8b2e1a1a03651d46e192b7dc88dec20acb37d88137536b8",
      3,
      "https",
      [
@@ -450,7 +450,7 @@
     "preview",
     15,
     [
-     "d74da838aedf4deb3051f7909eb2b3ed3e35dafa1439ba66da63f331a485491f",
+     "d758ccc87534d01ec8b2e1a1a03651d46e192b7dc88dec20acb37d88137536b8",
      3,
      "https",
      [
@@ -587,7 +587,7 @@
     "preview",
     15,
     [
-     "d74da838aedf4deb3051f7909eb2b3ed3e35dafa1439ba66da63f331a485491f",
+     "d758ccc87534d01ec8b2e1a1a03651d46e192b7dc88dec20acb37d88137536b8",
      3,
      "https",
      [
@@ -718,6 +718,77 @@
    ]
   }
  ],
+ "domain_errors": [
+  {
+   "raw": [
+    "preview.example"
+   ],
+   "regex": [],
+   "subdomains": false,
+   "error": "other.example did not match URL Domain Mask: \"preview.example\""
+  },
+  {
+   "raw": [
+    "preview.example"
+   ],
+   "regex": [],
+   "subdomains": true,
+   "error": "other.example (potentially excluding subdomains) did not match URL Domain Mask: \"preview.example\""
+  },
+  {
+   "raw": [
+    "site10.example",
+    "site2.example"
+   ],
+   "regex": [],
+   "subdomains": false,
+   "error": "other.example did not match URL Domain Mask: \"site2.example\", \"site10.example\""
+  },
+  {
+   "raw": [
+    "preview.example"
+   ],
+   "regex": [
+    "cdn.*"
+   ],
+   "subdomains": false,
+   "error": "other.example did not match URL Domain Mask: \"preview.example\"\"cdn.*\""
+  },
+  {
+   "raw": [],
+   "regex": [],
+   "subdomains": false,
+   "error": "other.example did not match URL Domain Mask: no domain rules, will not match anything!"
+  },
+  {
+   "raw": [
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.example"
+   ],
+   "regex": [],
+   "subdomains": false,
+   "error": "other.example did not match URL Domain Mask: 1 domains"
+  },
+  {
+   "raw": [
+    "site10.example",
+    "site2.example",
+    "site3.example",
+    "site4.example"
+   ],
+   "regex": [],
+   "subdomains": false,
+   "error": "other.example did not match URL Domain Mask: \"site2.example\" & 3 other domains"
+  },
+  {
+   "raw": [
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.example",
+    "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.example"
+   ],
+   "regex": [],
+   "subdomains": false,
+   "error": "other.example did not match URL Domain Mask: 2 domains"
+  }
+ ],
  "extra_previews": [
   {
    "name": "api",
@@ -726,7 +797,7 @@
     "api",
     15,
     [
-     "624da91b6aa3c62a368940611a496df4c13d9d072380235e31a654b02fe3edb8",
+     "ee853d29da7e97c5df63425e499518511bba651222202df8b1151bc29b942614",
      3,
      "https",
      [
@@ -871,7 +942,7 @@
     "referral",
     15,
     [
-     "cc17ce0568e100f94b358a5ce26ea890424b33264671a6460daa899f2c00c63a",
+     "77d13b7dee2803d90d2cc0845aabdeafa75c401b909dc7c7e99079fefafb6f1e",
      3,
      "https",
      [

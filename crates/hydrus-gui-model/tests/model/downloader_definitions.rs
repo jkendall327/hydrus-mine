@@ -67,20 +67,7 @@ fn reference_rows_previews_and_vetoes_are_replayed() {
     for case in fixture["class_cases"].as_array().unwrap() {
         let class = domain::url_class(&object(&case["definition"])).unwrap();
         let preview = definitions::class_preview(&class, false);
-        if case["veto"].is_null() {
-            assert_eq!(preview.status, case["status"]);
-        } else {
-            assert!(
-                case["status"]
-                    .as_str()
-                    .unwrap()
-                    .starts_with("Example does not match - ")
-            );
-            assert_eq!(
-                preview.status,
-                "Example does not match - wrong.example did not match the domain mask"
-            );
-        }
+        assert_eq!(preview.status, case["status"]);
         assert_eq!(preview.normalised, case["normalised"]);
         assert_eq!(preview.request, case["request"]);
         assert_eq!(preview.api, case["api"]);
@@ -628,6 +615,18 @@ fn domain_mode_and_independent_tester_replay_reference_and_preserve_disabled_val
 #[test]
 fn selectable_preview_values_use_recorded_api_referral_and_gallery_consumers() {
     let fixture = hydrus_testkit::fixture_json("url_domain_preview.json");
+    for case in fixture["domain_errors"].as_array().unwrap() {
+        let mask = hydrus_core::url::DomainMask::new(
+            serde_json::from_value(case["raw"].clone()).unwrap(),
+            serde_json::from_value(case["regex"].clone()).unwrap(),
+            case["subdomains"].as_bool().unwrap(),
+            false,
+        );
+        assert_eq!(
+            mask.test("other.example").unwrap_err().to_string(),
+            case["error"].as_str().unwrap()
+        );
+    }
     for step in fixture["preview_steps"]
         .as_array()
         .unwrap()

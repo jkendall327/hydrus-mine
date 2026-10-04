@@ -337,7 +337,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
-          "line": 349,
+          "line": 375,
           "symbol": "fn source_png_dialogs_cancel_validate_import_export_and_close_with_the_log"
         }
       ],
@@ -398,7 +398,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
-          "line": 435,
+          "line": 461,
           "symbol": "fn advanced_object_export_and_renormalisation_confirm_before_collapsing_later_duplicates"
         },
         {
@@ -924,12 +924,12 @@
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/downloader_definitions.rs",
           "symbol": "fn domain_mode_and_independent_tester_replay_reference_and_preserve_disabled_values()",
-          "line": 554
+          "line": 541
         },
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/downloader_definitions.rs",
           "symbol": "fn domain_mask_queue_replays_staged_crud_and_insertion_order()",
-          "line": 661
+          "line": 660
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/downloader_definitions.rs",
@@ -961,7 +961,7 @@
       "originalID": "url-preview",
       "before": "partial",
       "proposedStatus": "first_pass",
-      "exactBehavior": "Five separately selectable read-only output controls with exact normalised/request/API/referral/next-page labels and actual class-engine outputs. Example text/flags/converters/pagination changes refresh the same outputs. Actual Qt reference recordings cover gallery next-page, API redirect request, referral converter and invalid-example transition (clear normalised/request/API, retain last referral/next). Existing Apply validation/Cancel/reopen remains staged; saved masks and actual class normalization consumers verified.",
+      "exactBehavior": "Five separately selectable read-only output controls with exact normalised/request/API/referral/next-page labels and actual class-engine outputs. Example text/flags/converters/pagination changes refresh the same outputs. Actual Qt reference recordings cover gallery next-page, API redirect request, referral converter and invalid-example transition (clear normalised/request/API, retain last referral/next). Existing Apply validation/Cancel/reopen remains staged; saved masks and actual class normalization consumers verified. Domain mismatch errors use the actual mask summary, subdomain qualifier, natural ordering and reference 48-character truncation instead of a generic native message.",
       "limits": [
         "Native read-only text controls rather than Qt single-line widgets. No extra copy button is invented."
       ],
@@ -980,6 +980,11 @@
           "relativepath": "crates/hydrus-gui/ui/downloader_definitions.slint",
           "symbol": "if root.url-class: VerticalLayout",
           "line": 271
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/url/class.rs",
+          "symbol": "pub fn test(&self, domain: &str)",
+          "line": 205
         }
       ],
       "testAnchors": [
@@ -991,7 +996,7 @@
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/downloader_definitions.rs",
           "symbol": "fn selectable_preview_values_use_recorded_api_referral_and_gallery_consumers()",
-          "line": 629
+          "line": 616
         }
       ],
       "referenceRecording": {
@@ -1180,7 +1185,7 @@
         {
           "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
           "symbol": "fn source_png_dialogs_cancel_validate_import_export_and_close_with_the_log(",
-          "line": 349
+          "line": 375
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/search_log.rs",
