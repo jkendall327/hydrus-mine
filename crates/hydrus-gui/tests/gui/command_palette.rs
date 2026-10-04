@@ -71,7 +71,7 @@ fn ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions() {
     let favourite = FavouriteSearch {
         folder: Some("Palette Folder".into()),
         name: "Favourite Alpha".into(),
-        search: hydrus_core::search::FileSearchContext::default(),
+        search: hydrus_core::search::context::FileSearchContext::default(),
         synchronised: false,
         sort: None,
         collect: None,
@@ -372,7 +372,7 @@ fn saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palet
     let favourite = FavouriteSearch {
         name: "Favourite Beta".into(),
         folder: None,
-        search: hydrus_core::search::FileSearchContext::default(),
+        search: hydrus_core::search::context::FileSearchContext::default(),
         synchronised: false,
         sort: None,
         collect: None,
