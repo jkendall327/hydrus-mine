@@ -24,7 +24,7 @@ impl std::fmt::Debug for Slot {
             .field("window_open", &self.window.borrow().is_some())
             .field("nested_open", &self.child().is_some())
             .field("system_open", &self.system.borrow().is_some())
-            .finish()
+            .finish_non_exhaustive()
     }
 }
 impl std::ops::Deref for Slot {
