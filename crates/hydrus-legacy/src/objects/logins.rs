@@ -48,33 +48,6 @@ pub fn logins(object: &SerialisableObject) -> DecodeResult<Vec<LegacyLogin>> {
     Ok(out)
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn reads_which_domains_log_in() {
-        let stored = r#"[48, 1, [[24, 1, []], {"example.com": [["00ff", "example login"], {"username": "someone", "password": "secret"}, 0, "", true, 1, "", 0, ""], "other.example": [["01", "other"], {}, 0, "", false, 0, "", 0, ""]}]]"#;
-        let object = SerialisableObject::from_tuple_str(stored).unwrap();
-        let logins = logins(&object).unwrap();
-        assert_eq!(
-            logins,
-            [
-                LegacyLogin {
-                    domain: "example.com".into(),
-                    script: "example login".into(),
-                    active: true,
-                },
-                LegacyLogin {
-                    domain: "other.example".into(),
-                    script: "other".into(),
-                    active: false,
-                },
-            ]
-        );
-    }
-}
-
 /// Decode a named credential definition with its presentation and input test.
 pub fn credential_definition(
     object: &SerialisableObject,
@@ -248,4 +221,31 @@ pub fn login_script(object: &SerialisableObject) -> DecodeResult<hydrus_parse::l
             .collect::<DecodeResult<_>>()?,
         examples,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn reads_which_domains_log_in() {
+        let stored = r#"[48, 1, [[24, 1, []], {"example.com": [["00ff", "example login"], {"username": "someone", "password": "secret"}, 0, "", true, 1, "", 0, ""], "other.example": [["01", "other"], {}, 0, "", false, 0, "", 0, ""]}]]"#;
+        let object = SerialisableObject::from_tuple_str(stored).unwrap();
+        let logins = logins(&object).unwrap();
+        assert_eq!(
+            logins,
+            [
+                LegacyLogin {
+                    domain: "example.com".into(),
+                    script: "example login".into(),
+                    active: true,
+                },
+                LegacyLogin {
+                    domain: "other.example".into(),
+                    script: "other".into(),
+                    active: false,
+                },
+            ]
+        );
+    }
 }
