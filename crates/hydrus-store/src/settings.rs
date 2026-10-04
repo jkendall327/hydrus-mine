@@ -339,6 +339,27 @@ impl Setting for SearchDefaults {
     const KEY: &'static str = "search_defaults";
 }
 
+/// Read autocomplete and the initial state of a newly created search page.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct FileSearchSettings {
+    pub search_immediately: bool,
+    pub show_system_everything: bool,
+}
+
+impl Default for FileSearchSettings {
+    fn default() -> Self {
+        Self {
+            search_immediately: true,
+            show_system_everything: true,
+        }
+    }
+}
+
+impl Setting for FileSearchSettings {
+    const KEY: &'static str = "file_search";
+}
+
 /// Export folders.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, serde::Deserialize)]
 pub struct ExportFolders(pub Vec<hydrus_parse::folders::ExportFolder>);

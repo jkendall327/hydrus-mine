@@ -207,12 +207,14 @@ impl SearchPage {
         autocomplete.clear();
         let sorts: hydrus_core::pages::SortSettings =
             store.read(hydrus_store::settings::get).unwrap_or_default();
+        let file_search: hydrus_store::settings::FileSearchSettings =
+            store.read(hydrus_store::settings::get).unwrap_or_default();
         Self {
             autocomplete,
             store,
             context: FileSearchContext::default(),
             predicates: Vec::new(),
-            synchronised: true,
+            synchronised: file_search.search_immediately,
             locked: false,
             lock_syncs: HashLock::default(),
             note: None,

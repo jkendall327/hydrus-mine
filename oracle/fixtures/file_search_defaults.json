@@ -1,0 +1,112 @@
+{
+  "initial": {
+    "search_immediately": true,
+    "show_system_everything": true
+  },
+  "events": [
+    {
+      "enabled": false,
+      "new_page_synchronised": false,
+      "first_page_synchronised": false,
+      "offered": [
+        {
+          "location": "6c6f63616c2066696c6573",
+          "everything": false,
+          "forced_everything": true,
+          "predicates": [
+            "system:inbox (14)",
+            "system:archive (16)",
+            "system:dimensions",
+            "system:duration",
+            "system:file properties",
+            "system:file relationships",
+            "system:file service",
+            "system:file viewing statistics",
+            "system:filesize",
+            "system:filetype",
+            "system:hash",
+            "system:limit",
+            "system:notes",
+            "system:number of tags",
+            "system:number of words",
+            "system:rating",
+            "system:similar files",
+            "system:tag (advanced)",
+            "system:tag as number",
+            "system:time",
+            "system:urls"
+          ]
+        },
+        {
+          "location": "616c6c206b6e6f776e2066696c6573",
+          "everything": false,
+          "forced_everything": true,
+          "predicates": [
+            "system:file relationships",
+            "system:file service",
+            "system:file viewing statistics",
+            "system:hash",
+            "system:limit",
+            "system:number of tags",
+            "system:rating",
+            "system:tag (advanced)",
+            "system:tag as number"
+          ]
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "new_page_synchronised": true,
+      "first_page_synchronised": false,
+      "offered": [
+        {
+          "location": "6c6f63616c2066696c6573",
+          "everything": true,
+          "forced_everything": true,
+          "predicates": [
+            "system:everything (30)",
+            "system:inbox (14)",
+            "system:archive (16)",
+            "system:dimensions",
+            "system:duration",
+            "system:file properties",
+            "system:file relationships",
+            "system:file service",
+            "system:file viewing statistics",
+            "system:filesize",
+            "system:filetype",
+            "system:hash",
+            "system:limit",
+            "system:notes",
+            "system:number of tags",
+            "system:number of words",
+            "system:rating",
+            "system:similar files",
+            "system:tag (advanced)",
+            "system:tag as number",
+            "system:time",
+            "system:urls"
+          ]
+        },
+        {
+          "location": "616c6c206b6e6f776e2066696c6573",
+          "everything": true,
+          "forced_everything": true,
+          "predicates": [
+            "system:everything",
+            "system:file relationships",
+            "system:file service",
+            "system:file viewing statistics",
+            "system:hash",
+            "system:limit",
+            "system:number of tags",
+            "system:rating",
+            "system:tag (advanced)",
+            "system:tag as number"
+          ]
+        }
+      ]
+    }
+  ]
+}

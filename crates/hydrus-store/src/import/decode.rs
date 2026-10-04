@@ -502,6 +502,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             );
         }
         insert_setting(&mut input, &search_defaults)?;
+        let mut file_search = crate::settings::FileSearchSettings::default();
+        file_search.search_immediately =
+            boolean("default_search_synchronised").unwrap_or(file_search.search_immediately);
+        file_search.show_system_everything =
+            boolean("show_system_everything").unwrap_or(file_search.show_system_everything);
+        insert_setting(&mut input, &file_search)?;
         let mut summaries = hydrus_core::tag_summary::TagSummaries::default();
         for (name, field) in [
             ("thumbnail_top", &mut summaries.thumbnail_top),
@@ -2491,6 +2497,38 @@ mod tests {
                     [key(builtin_keys::MY_FILES), key(builtin_keys::TRASH)],
                     []
                 ),
+            }
+        );
+    }
+
+    #[test]
+    fn file_search_defaults_convert_user_values() {
+        use crate::settings::FileSearchSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<FileSearchSettings>(input.settings["file_search"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), FileSearchSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "default_search_synchronised"], [0, true]]"#,
+                    r#"[[0, "default_search_synchronised"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "show_system_everything"], [0, true]]"#,
+                    r#"[[0, "show_system_everything"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            FileSearchSettings {
+                search_immediately: false,
+                show_system_everything: false
             }
         );
     }

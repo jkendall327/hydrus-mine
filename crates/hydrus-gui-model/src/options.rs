@@ -29,9 +29,9 @@ use hydrus_store::regex_favourites::RegexFavourites;
 use hydrus_store::session_backups::SessionBackupSettings;
 use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
-    AdvancedMode, ExportSettings, FileHandlingSettings, FileViewingStatistics, FolderSettings,
-    GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings, SearchDefaults,
-    ThumbnailLayout,
+    AdvancedMode, ExportSettings, FileHandlingSettings, FileSearchSettings, FileViewingStatistics,
+    FolderSettings, GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings,
+    SearchDefaults, ThumbnailLayout,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -94,6 +94,7 @@ settings! {
     regex_favourites: RegexFavourites => hydrus_store::regex_favourites::load,
     session_backups: SessionBackupSettings,
     search_defaults: SearchDefaults,
+    file_search: FileSearchSettings,
     tag_editing: TagEditingSettings,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
@@ -1277,13 +1278,25 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "file search",
             vec![boxed(
                 "file search autocomplete",
-                vec![tag_service(
-                    "Default tag service in search pages:",
-                    true,
-                    |settings| settings.search_defaults.tag_service.clone(),
-                    |settings, service| settings.search_defaults.tag_service = service,
-                    |_| true,
-                )],
+                vec![
+                    tag_service(
+                        "Default tag service in search pages:",
+                        true,
+                        |settings| settings.search_defaults.tag_service.clone(),
+                        |settings, service| settings.search_defaults.tag_service = service,
+                        |_| true,
+                    ),
+                    check(
+                        "Start new search pages in 'searching immediately':",
+                        |settings| settings.file_search.search_immediately,
+                        |settings, value| settings.file_search.search_immediately = value,
+                    ),
+                    check(
+                        "Show system:everything:",
+                        |settings| settings.file_search.show_system_everything,
+                        |settings, value| settings.file_search.show_system_everything = value,
+                    ),
+                ],
             )],
         ),
         page(

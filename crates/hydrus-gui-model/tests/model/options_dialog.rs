@@ -917,3 +917,54 @@ fn removed_service_choices_clamp_drafts_and_service_names_are_searchable() {
             .any(|suggestion| suggestion.text == "my tags (tag editing)")
     );
 }
+
+#[test]
+fn file_search_boolean_controls_replay_reference_defaults_and_staged_edits() {
+    use hydrus_gui_model::options::{Editor, Row};
+    let reference = hydrus_testkit::fixture_json("options_dialog.json");
+    let (_directory, store) = fixture_store(&reference);
+    let settings = store.read(Settings::load).unwrap();
+    let page_list = pages(&settings);
+    let page = page_list
+        .iter()
+        .find(|page| page.name == "file search")
+        .unwrap();
+    let recorded = reference["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "file search")
+        .unwrap();
+    assert!(page_problems(page, &recorded["items"], &settings, &store).is_empty());
+    let fixture = hydrus_testkit::fixture_json("file_search_defaults.json");
+    let mut editor = Editor::new(settings.clone());
+    let index = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "file search")
+        .unwrap();
+    editor.show_page(index);
+    let find = |label: &str| {
+        editor
+            .rows()
+            .iter()
+            .position(|row| matches!(row, Row::Opt { option, .. } if option.label == label))
+            .unwrap()
+    };
+    let sync_row = find("Start new search pages in 'searching immediately':");
+    let everything_row = find("Show system:everything:");
+    for event in fixture["events"].as_array().unwrap() {
+        let enabled = event["enabled"].as_bool().unwrap();
+        editor.check(sync_row, enabled);
+        editor.check(everything_row, enabled);
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty());
+        assert_eq!(applied.file_search.search_immediately, enabled);
+        assert_eq!(applied.file_search.show_system_everything, enabled);
+        assert_eq!(
+            store.read(Settings::load).unwrap(),
+            settings,
+            "editor values stay staged"
+        );
+    }
+}

@@ -187,6 +187,10 @@ impl Autocomplete {
     /// (without a count) and the editors needing no file's metadata.
     fn system_predicates(&self) -> Option<Vec<Suggestion>> {
         let (location, _) = &self.context;
+        let settings: hydrus_store::settings::FileSearchSettings = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
         let presentation = self.presentation();
         let snapshot = self.store.snapshot();
         let registry = &snapshot.services;
@@ -207,11 +211,14 @@ impl Autocomplete {
                 editor: Some(blank),
             });
         if location.is_all_known_files() {
-            let mut out = vec![Suggestion {
-                label: presentation.render("system:everything"),
-                predicate: "system:everything".into(),
-                editor: None,
-            }];
+            let mut out = Vec::new();
+            if settings.show_system_everything {
+                out.push(Suggestion {
+                    label: presentation.render("system:everything"),
+                    predicate: "system:everything".into(),
+                    editor: None,
+                });
+            }
             out.extend(blanks);
             return Some(out);
         }
@@ -279,6 +286,9 @@ impl Autocomplete {
                 ("system:archive", archive),
             ]
             .into_iter()
+            .filter(|(predicate, _)| {
+                settings.show_system_everything || *predicate != "system:everything"
+            })
             .map(|(predicate, count)| {
                 let suffix = count.map(|c| c.suffix()).unwrap_or_default();
                 let shown = presentation.render(predicate);
