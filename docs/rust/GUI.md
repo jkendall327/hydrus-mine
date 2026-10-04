@@ -444,7 +444,7 @@ defaults. Selected formulae edit in sequence; cancelling a child stops the
 remaining edits. Each formula's name is entered before its reusable editor;
 Apply saves the list and refreshes the chooser, while Cancel discards it.
 
-The reusable HTML/JSON formula editor (`formula_window.rs`,
+The reusable formula editor (`formula_window.rs`,
 `ui/formula_editors.slint`) edits ordered rules with add/edit/remove/up/down,
 name, extraction mode and string processor. HTML rules search descendants or
 previous/next siblings, or climb ancestors, with tag names, attributes,
@@ -458,6 +458,13 @@ converters require their child draft to finish before Apply; Cancel or
 closing their window discards all unfinished descendants. JSON sidecar
 sources open this same formula editor from "edit parsing formula", restricted
 to JSON and preserving parsed newlines as the sidecar importer does.
+Context-variable and static formula controls edit names, variable keys, text and
+output counts (1–65,535), with the same parsing context, newline policy and
+string processor preview as HTML/JSON. Type changes create fresh reference
+defaults and reset the old name/processor. Edits remain isolated until Apply.
+`oracle/record_recursive_formula_editors.py` records these scalar controls and
+the recursive formula workflows.
+
 `oracle/record_formula_editors.py` records the real reference controls and
 queue actions, checked by model and headless GUI/store tests.
 

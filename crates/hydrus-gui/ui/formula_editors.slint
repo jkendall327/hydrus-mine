@@ -16,6 +16,9 @@ export component FormulaWindow inherits Window {
     in property <[string]> contents;
     in-out property <int> content;
     in-out property <string> attribute;
+    in-out property <string> variable;
+    in-out property <string> static-text;
+    in-out property <int> output-count: 1;
     in-out property <string> document;
     in-out property <string> context;
     in property <string> newline-note;
@@ -39,11 +42,11 @@ export component FormulaWindow inherits Window {
             VerticalLayout {
                 horizontal-stretch: 1; spacing: 6px;
                 Text { text: "edit"; font-weight: 700; color: Theme.text; }
-                if root.supported: ComboBox { model: ["html", "json"]; current-index <=> root.kind; enabled: root.allow-type-change && !root.deleting && !root.child-open; selected => { root.type-chosen(); } }
+                if root.supported: ComboBox { model: ["html", "json", "nested", "zipper", "context variable", "static"]; current-index <=> root.kind; enabled: root.allow-type-change && !root.deleting && !root.child-open; selected => { root.type-chosen(); } }
                 Text { text: "name/description:"; color: Theme.text; }
                 LineEdit { text <=> root.name; enabled: root.supported && !root.deleting && !root.child-open; edited => { root.changed(); } }
-                ListTable { vertical-stretch: 1; columns: [{title: "parsing rules", width: 430px, stretch: true}]; rows: root.rules; row-clicked(r,c,s) => { if !root.deleting && !root.child-open { root.row-clicked(r,c,s); } } row-activated(r) => { if !root.deleting && !root.child-open { root.row-activated(r); } } }
-                HorizontalLayout {
+                if root.kind < 2: ListTable { vertical-stretch: 1; columns: [{title: "parsing rules", width: 430px, stretch: true}]; rows: root.rules; row-clicked(r,c,s) => { if !root.deleting && !root.child-open { root.row-clicked(r,c,s); } } row-activated(r) => { if !root.deleting && !root.child-open { root.row-activated(r); } } }
+                if root.kind < 2: HorizontalLayout {
                     spacing: 4px;
                     Button { text: "add"; enabled: root.supported && !root.deleting && !root.child-open; clicked => { root.add(); } }
                     Button { text: "edit"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.edit(); } }
@@ -51,11 +54,23 @@ export component FormulaWindow inherits Window {
                     Button { text: "↑"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.shift(false); } }
                     Button { text: "↓"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.shift(true); } }
                 }
-                Text { text: "content to fetch:"; color: Theme.text; }
-                ComboBox { model: root.contents; current-index <=> root.content; enabled: root.supported && !root.deleting && !root.child-open; selected => { root.changed(); } }
+                if root.kind < 2: Text { text: "content to fetch:"; color: Theme.text; }
+                if root.kind < 2: ComboBox { model: root.contents; current-index <=> root.content; enabled: root.supported && !root.deleting && !root.child-open; selected => { root.changed(); } }
                 if root.kind == 0: HorizontalLayout {
                     Text { text: "attribute to fetch:"; color: Theme.text; vertical-alignment: center; }
                     LineEdit { text <=> root.attribute; enabled: root.content == 0 && !root.deleting && !root.child-open; edited => { root.changed(); } }
+                }
+                if root.kind == 4: HorizontalLayout {
+                    Text { text: "variable name:"; color: Theme.text; vertical-alignment: center; }
+                    LineEdit { horizontal-stretch: 1; text <=> root.variable; enabled: !root.child-open; edited => { root.changed(); } }
+                }
+                if root.kind == 5: VerticalLayout {
+                    Text { text: "static text:"; color: Theme.text; }
+                    LineEdit { text <=> root.static-text; enabled: !root.child-open; edited => { root.changed(); } }
+                    HorizontalLayout {
+                        Text { text: "number to output:"; color: Theme.text; vertical-alignment: center; }
+                        SpinBox { value <=> root.output-count; minimum: 1; maximum: 65535; enabled: !root.child-open; edited => { root.changed(); } }
+                    }
                 }
                 HorizontalLayout {
                     Button { text: "import formula"; enabled: !root.child-open && !root.deleting; clicked => { root.exchange(true); } }

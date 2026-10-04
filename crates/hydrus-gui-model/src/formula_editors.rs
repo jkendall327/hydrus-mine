@@ -1,4 +1,4 @@
-//! Reusable HTML/JSON formula editors. Rules stay typed and ordered; parsing
+//! Reusable formula editors. Rules and recursive children stay typed and ordered; parsing
 //! and string processing use the same engine as downloaders and sidecars.
 use crate::list_selection::ListSelection;
 use hydrus_core::url::string_descriptions::index_to_pretty_ordinal;
@@ -120,11 +120,14 @@ impl FormulaEditor {
             selection: ListSelection::default(),
         }
     }
-    /// Whether this formula has an HTML or JSON rule editor.
+    /// Whether the current kind has native editing controls.
     pub fn supported(&self) -> bool {
         matches!(
             self.formula.kind,
-            FormulaKind::Html { .. } | FormulaKind::Json { .. }
+            FormulaKind::Html { .. }
+                | FormulaKind::Json { .. }
+                | FormulaKind::ContextVariable { .. }
+                | FormulaKind::Static { .. }
         )
     }
     /// Ordered rules for the queue and its editors.
@@ -167,10 +170,25 @@ impl FormulaEditor {
         let order = (0..self.rules().len()).collect::<Vec<_>>();
         self.selection.click(&order, row, ctrl, shift);
     }
+    /// Index of the current kind in the editor's type chooser.
+    pub fn kind_index(&self) -> usize {
+        match self.formula.kind {
+            FormulaKind::Html { .. } => 0,
+            FormulaKind::Json { .. } => 1,
+            FormulaKind::Nested { .. } => 2,
+            FormulaKind::Zipper { .. } => 3,
+            FormulaKind::ContextVariable { .. } => 4,
+            FormulaKind::Static { .. } => 5,
+        }
+    }
     /// Change between HTML and JSON, using the reference's fresh defaults.
     /// Separated HTML/JSON content keeps separated extraction on conversion.
     pub fn change_type(&mut self, json: bool) {
-        if !self.supported() || json == matches!(self.formula.kind, FormulaKind::Json { .. }) {
+        self.change_kind(usize::from(json));
+    }
+    /// Replace the formula with fresh defaults for the chosen type.
+    pub fn change_kind(&mut self, kind: usize) {
+        if kind == self.kind_index() || !matches!(kind, 0 | 1 | 4 | 5) {
             return;
         }
         let separated = matches!(
@@ -183,7 +201,7 @@ impl FormulaEditor {
                 ..
             }
         );
-        self.formula = new_formula(json);
+        self.formula = new_formula_kind(kind);
         if separated {
             match &mut self.formula.kind {
                 FormulaKind::Html { content, .. } => *content = HtmlContent::Html,
@@ -300,6 +318,23 @@ pub fn new_formula(json: bool) -> Formula {
         },
         processor: StringProcessor::default(),
     }
+}
+
+/// Fresh defaults for an editor kind, matching the reference type chooser.
+pub fn new_formula_kind(kind: usize) -> Formula {
+    let mut formula = new_formula(false);
+    formula.kind = match kind {
+        1 => new_formula(true).kind,
+        4 => FormulaKind::ContextVariable {
+            variable: "url".into(),
+        },
+        5 => FormulaKind::Static {
+            text: "example text".into(),
+            count: 1,
+        },
+        _ => formula.kind,
+    };
+    formula
 }
 
 /// Rule controls retain inactive values while switching traversal modes.

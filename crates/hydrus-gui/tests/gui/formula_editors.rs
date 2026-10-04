@@ -296,7 +296,7 @@ fn formula_editors_sidecar_json_child_applies_to_source_only_on_acceptance() {
 }
 
 #[test]
-fn formula_editors_cancel_children_and_preserve_unsupported_formulae() {
+fn formula_editors_cancel_children_and_edit_context_formulae() {
     let (_dirs, store) = store();
     let _windows = headless::init();
     let slots = formula_window::Slots::default();
@@ -318,11 +318,12 @@ fn formula_editors_cancel_children_and_preserve_unsupported_formulae() {
     )
     .unwrap();
     *slots.formula.borrow_mut() = Some(w.clone_strong());
-    assert!(!w.get_supported());
+    assert!(w.get_supported());
     w.set_context("url=https://example.com/post".into());
     w.invoke_test();
     assert_eq!(labels(&w.get_results()), ["https://example.com/post"]);
-    w.set_name("must not change".into());
+    w.set_name("edited name".into());
+    original.name = "edited name".into();
     w.invoke_apply();
     assert_eq!(*accepted.borrow(), Some(original));
     let w = formula_window::open(
@@ -699,4 +700,105 @@ fn lifecycle_string_editors_cancel_descendants_and_reopen() {
     assert!(slots.tag_filter.borrow().is_some());
     slots.cancel_all();
     assert!(!slots.has_open());
+}
+
+#[test]
+fn scalar_formula_controls_preview_processing_cancel_and_save() {
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let slots = formula_window::Slots::default();
+    let original = hydrus_gui::formula_editors::new_formula_kind(5);
+    let accepted = Rc::new(RefCell::new(None));
+    let w = formula_window::open(
+        &store,
+        &original,
+        FormulaTestData::default(),
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |f| *accepted.borrow_mut() = Some(f)
+        }),
+    )
+    .unwrap();
+    *slots.formula.borrow_mut() = Some(w.clone_strong());
+    assert_eq!(w.get_kind(), 5);
+    assert_eq!(w.get_static_text(), "example text");
+    w.set_name("three constants".into());
+    w.set_static_text(" first\n second ".into());
+    w.set_output_count(3);
+    w.invoke_changed();
+    w.invoke_test();
+    assert_eq!(
+        labels(&w.get_results()),
+        ["firstsecond", "firstsecond", "firstsecond"]
+    );
+    w.invoke_edit_processing();
+    let processor = slots
+        .strings
+        .processor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        labels(&processor.get_starting()),
+        ["firstsecond", "firstsecond", "firstsecond"]
+    );
+    processor.invoke_cancel();
+    let pixels = headless::render(&windows.get(0).unwrap(), 1040, 660);
+    let shot = std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("formula_static.png");
+    headless::save_png(&shot, &pixels, 1040, 660).unwrap();
+    w.invoke_apply();
+    let f = accepted.borrow_mut().take().unwrap();
+    assert_eq!(f.name, "three constants");
+    assert_eq!(
+        f.kind,
+        FormulaKind::Static {
+            text: " first\n second ".into(),
+            count: 3
+        }
+    );
+    assert_eq!(original, hydrus_gui::formula_editors::new_formula_kind(5));
+    let w = formula_window::open(
+        &store,
+        &f,
+        FormulaTestData::default(),
+        &slots,
+        Rc::new(|_| panic!("cancel applied")),
+    )
+    .unwrap();
+    *slots.formula.borrow_mut() = Some(w.clone_strong());
+    assert_eq!(w.get_output_count(), 3);
+    w.set_static_text("discarded".into());
+    w.invoke_changed();
+    w.invoke_cancel();
+    assert!(slots.formula.borrow().is_none());
+    let w = formula_window::open(
+        &store,
+        &f,
+        FormulaTestData::default(),
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |f| *accepted.borrow_mut() = Some(f)
+        }),
+    )
+    .unwrap();
+    *slots.formula.borrow_mut() = Some(w.clone_strong());
+    w.set_kind(4);
+    w.invoke_type_chosen();
+    assert_eq!(w.get_variable(), "url");
+    assert_eq!(w.get_name(), "");
+    w.set_variable("note".into());
+    w.set_context("note=custom=value".into());
+    w.invoke_changed();
+    w.invoke_test();
+    assert_eq!(labels(&w.get_results()), ["custom=value"]);
+    w.invoke_apply();
+    assert_eq!(
+        accepted.borrow().as_ref().unwrap().kind,
+        FormulaKind::ContextVariable {
+            variable: "note".into()
+        }
+    );
 }

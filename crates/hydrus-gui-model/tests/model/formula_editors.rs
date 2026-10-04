@@ -148,7 +148,7 @@ fn formula_editor_rule_queue_matches_reference_actions() {
     }
 }
 #[test]
-fn formula_editors_preserve_unsupported_and_inactive_rule_settings() {
+fn formula_editors_preserve_other_kinds_and_inactive_rule_settings() {
     let mut f = new_formula(false);
     f.kind = FormulaKind::Static {
         text: "kept".into(),
@@ -156,7 +156,7 @@ fn formula_editors_preserve_unsupported_and_inactive_rule_settings() {
     };
     f.name = "original".into();
     let mut e = FormulaEditor::new(&f, FormulaTestData::default());
-    assert!(!e.supported());
+    assert!(e.supported());
     e.put(None, e.new_rule());
     e.delete();
     e.shift(false);
@@ -336,4 +336,55 @@ fn formula_editor_bulk_name_conflicts_match_reference() {
         values.iter().map(|f| f.name.as_str()).collect::<Vec<_>>(),
         ["kept", "at end", "past end"]
     );
+}
+
+#[test]
+fn scalar_formula_controls_match_reference() {
+    let cases: Vec<Value> = serde_json::from_value(hydrus_testkit::fixture_json(
+        "recursive_formula_editors.json",
+    ))
+    .unwrap();
+    for case in cases {
+        let kind = match case["case"].as_str().unwrap() {
+            "context_formula" => 4,
+            "static_formula" => 5,
+            _ => continue,
+        };
+        let mut e = FormulaEditor::new(
+            &hydrus_gui_model::formula_editors::new_formula_kind(kind),
+            FormulaTestData {
+                context: serde_json::from_value(case["context"].clone()).unwrap_or_default(),
+                collapse_newlines: case["collapse"].as_bool().unwrap(),
+                ..FormulaTestData::default()
+            },
+        );
+        e.formula.name = case["name"].as_str().unwrap().into();
+        e.formula.processor = StringProcessor {
+            steps: vec![ProcessingStep::Convert(StringConverter {
+                conversions: vec![Conversion::Append("!".into())],
+                example: String::new(),
+            })],
+        };
+        match &mut e.formula.kind {
+            FormulaKind::ContextVariable { variable } => {
+                *variable = case["variable"].as_str().unwrap().into()
+            }
+            FormulaKind::Static { text, count } => {
+                *text = case["text"].as_str().unwrap().into();
+                *count = case["count"].as_u64().unwrap().try_into().unwrap();
+                assert_eq!(case["minimum"], 1);
+                assert_eq!(case["maximum"], 65535);
+            }
+            _ => panic!(),
+        }
+        assert_eq!(e.kind_index(), kind);
+        assert_eq!(json!(e.results().unwrap()), case["results"]);
+        if kind == 4 {
+            assert_eq!(json!(e.processor_texts()), case["before"]);
+            e.formula.kind = FormulaKind::ContextVariable {
+                variable: "absent".into(),
+            };
+            assert!(e.results().unwrap().is_empty());
+        }
+    }
 }

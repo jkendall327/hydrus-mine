@@ -102,7 +102,16 @@ fn show(w: &FormulaWindow, e: &FormulaEditor) {
             },
             vec!["string", "json", "dictionary keys"],
         ),
-        _ => (2, 0, vec![]),
+        FormulaKind::ContextVariable { variable } => {
+            w.set_variable(variable.as_str().into());
+            (4, 0, vec![])
+        }
+        FormulaKind::Static { text, count } => {
+            w.set_static_text(text.as_str().into());
+            w.set_output_count(int(*count));
+            (5, 0, vec![])
+        }
+        _ => (int(e.kind_index()), 0, vec![]),
     };
     w.set_kind(kind);
     w.set_content(content);
@@ -132,6 +141,11 @@ fn read(w: &FormulaWindow, e: &mut FormulaEditor) {
                     2 => JsonContent::DictKeys,
                     _ => JsonContent::Strings,
                 }
+            }
+            FormulaKind::ContextVariable { variable } => *variable = w.get_variable().to_string(),
+            FormulaKind::Static { text, count } => {
+                *text = w.get_static_text().to_string();
+                *count = usize::try_from(w.get_output_count().clamp(1, 65535)).unwrap_or(1);
             }
             _ => {}
         }
@@ -269,7 +283,7 @@ pub fn open(
             if let Some(w) = weak.upgrade() {
                 let mut e = state.borrow_mut();
                 if w.get_allow_type_change() {
-                    e.change_type(w.get_kind() == 1);
+                    e.change_kind(usize::try_from(w.get_kind()).unwrap_or(0));
                 }
             }
             refresh();

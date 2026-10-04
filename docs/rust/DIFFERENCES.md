@@ -532,9 +532,9 @@ deletes its files from the client, migrated from the reference's database.
   chooser rather than a cog menu. The saved list supports editing, removal
   and adding defaults, plus reference PNG and clipboard-text import/export.
   Download controls sit under its boxes, not inside them.
-- **Formula editors** support HTML and JSON. Existing nested, zipper,
-  context-variable and static formulae are preserved and can be tested;
-  their editing controls are not yet available. The test panel accepts
+- **Formula editors** support HTML, JSON, context-variable and static kinds.
+  Existing nested and zipper formulae are preserved and can be tested; their
+  recursive editing controls are not yet available. The test panel accepts
   directly editable document text and key=value context lines; it has no
   URL/file fetch controls or multiple-example chooser. Rule attributes use
   named fields and a list (activate a row to remove), rather than the
@@ -963,7 +963,7 @@ database. Concurrent edits to the same area use the last successful Apply.
 
 The native parser editor model supports all nine content kinds and typed test
 context. Native page/content/parser-list and direct URL-class-link windows are available. Subsidiary parser editing,
-formula editing beyond the existing HTML/JSON controls and remote test-data
+nested/zipper formula editing and remote test-data
 fetching remain deferred. All six native formula kinds and subsidiary parsers
 can be imported/exported; their editor-only reference data is preserved.
 
