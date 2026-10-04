@@ -1343,23 +1343,27 @@ mod tests {
                 continue;
             }
             let limit = u32::try_from(case["limit"].as_u64().unwrap()).unwrap();
+            let paused = case["paused"].as_bool().unwrap();
+            let traffic_paused = case["traffic_paused"].as_bool().unwrap();
+            let due = case["due"].as_i64().unwrap();
+            let queues = pairs.iter().map(|(_, queue, _)| *queue).collect::<Vec<_>>();
             store
-                .write(|ctx| {
+                .write(move |ctx| {
                     let mut settings: hydrus_store::network::NetworkSettings =
                         hydrus_store::settings::get(ctx.conn())?;
                     settings.max_simultaneous_subscriptions = limit;
                     settings.process_subs_in_random_order = false;
                     hydrus_store::settings::set(ctx.conn(), &settings)?;
                     let pauses = Pauses {
-                        subscriptions: case["paused"].as_bool().unwrap(),
-                        network_traffic: case["traffic_paused"].as_bool().unwrap(),
+                        subscriptions: paused,
+                        network_traffic: traffic_paused,
                         ..Pauses::default()
                     };
                     hydrus_store::settings::set(ctx.conn(), &pauses)?;
-                    for (_, queue, _) in &pairs {
-                        let mut state = store_subs::query(ctx.conn(), *queue)?.unwrap().state;
-                        state.next_check_time = case["due"].as_i64().unwrap();
-                        store_subs::set_query_state(ctx.conn(), *queue, &state)?;
+                    for queue in queues {
+                        let mut state = store_subs::query(ctx.conn(), queue)?.unwrap().state;
+                        state.next_check_time = due;
+                        store_subs::set_query_state(ctx.conn(), queue, &state)?;
                     }
                     Ok(())
                 })
