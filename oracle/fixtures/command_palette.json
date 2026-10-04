@@ -370,6 +370,11 @@
     "favourite": {
       "name": "Favourite Alpha",
       "new_pages": 1
+    },
+    "favourite_current": {
+      "name": "Favourite Alpha",
+      "new_pages": 0,
+      "same_page": true
     }
   },
   "window_route": {
@@ -1225,7 +1230,7 @@
       "rows": [
         {
           "text": [
-            "0.9395741992533874",
+            "0.3479392500907158",
             "Calculator"
           ],
           "toggled": false,

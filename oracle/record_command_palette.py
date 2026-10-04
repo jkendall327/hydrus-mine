@@ -88,6 +88,13 @@ def record(session):
         p,rows=query(1,'Palette Launch');p.resultSelected(rows[0].id);selected['menu_calls']=calls
         p,rows=query(5,'Favourite Alpha');before=notebook.count();p.resultSelected(rows[0].id)
         selected['favourite']={'name':notebook.GetCurrentMediaPage().GetName(),'new_pages':notebook.count()-before}
+        options.SetBoolean('command_palette_fav_searches_open_new_page',False)
+        before=notebook.count();original_key=notebook.GetCurrentMediaPage().GetPageKey()
+        p,rows=query(5,'Favourite Beta');p.resultSelected(rows[0].id)
+        selected['favourite_current']={'name':notebook.GetCurrentMediaPage().GetName(),
+            'new_pages':notebook.count()-before,
+            'same_page':notebook.GetCurrentMediaPage().GetPageKey()==original_key}
+        options.SetBoolean('command_palette_fav_searches_open_new_page',True)
         from hydrus.client import ClientApplicationCommand as CAC
         widget=gui._locator_widget;widget.updateOptions()
         gui.ProcessApplicationCommand(CAC.ApplicationCommand.STATICCreateSimpleCommand(CAC.SIMPLE_OPEN_COMMAND_PALETTE))

@@ -341,3 +341,83 @@ fn asynchronous_calculator_ignores_page_threshold_and_activation_keeps_owner_ope
     window.invoke_cancel();
     assert!(bound.command_palette.borrow().is_none());
 }
+
+#[test]
+fn saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette() {
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let favourite = FavouriteSearch {
+        name: "Favourite Beta".into(),
+        folder: None,
+        search: Default::default(),
+        synchronised: false,
+        sort: None,
+        collect: None,
+    };
+    let saved = favourite.clone();
+    store
+        .write(move |ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &CommandPaletteSettings {
+                    favourites_new_page: false,
+                    initially_show_favourites: true,
+                    provider_order: vec![Provider::Favourites, Provider::Pages],
+                    page_limit: Some(1),
+                    ..Default::default()
+                },
+            )?;
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::settings::FavouriteSearches(vec![saved]),
+            )
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store).unwrap());
+    bound.pages.borrow_mut().rename_shown("Palette Alpha");
+    bound.pages.borrow_mut().new_search_page();
+    bound.pages.borrow_mut().rename_shown("Palette Beta");
+    let original = bound.pages.borrow().shown().key;
+    let count = bound.pages.borrow().page_count();
+    ui.invoke_command_palette_requested();
+    let window = bound
+        .command_palette
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    wait(&window, "Favourite Beta");
+    wait(&window, "Palette Alpha");
+    let rows = window.get_rows();
+    assert_eq!(rows.row_data(0).unwrap().primary, "Favourite Searches");
+    assert_eq!(names(&window), ["Favourite Beta", "Palette Alpha"]);
+    activate(&window, "Favourite Beta");
+    assert!(bound.command_palette.borrow().is_none());
+    assert_eq!(bound.pages.borrow().shown().key, original);
+    assert_eq!(bound.pages.borrow().shown().name, "Palette Beta");
+    assert_eq!(bound.pages.borrow().page_count(), count);
+    assert_eq!(
+        bound
+            .current
+            .borrow()
+            .borrow()
+            .favourite_to_save()
+            .unwrap()
+            .search,
+        favourite.search
+    );
+    assert!(!bound.current.borrow().borrow().synchronised());
+    ui.invoke_command_palette_requested();
+    let reopened = bound
+        .command_palette
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    wait(&reopened, "Favourite Beta");
+    wait(&reopened, "Palette Alpha");
+    assert_eq!(names(&reopened), ["Favourite Beta", "Palette Alpha"]);
+    reopened.invoke_cancel();
+}
