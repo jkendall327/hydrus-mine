@@ -8,7 +8,9 @@
     "9f2b317f",
     "afd062329395b25562ddde8ee7841a60a76cdfe3",
     "9913c5f3",
-    "933255e2"
+    "933255e2",
+    "96c0b7b0",
+    "2bd97edc"
   ],
   "claims": [
     {
@@ -220,6 +222,101 @@
         "executed_utc": "2026-10-04 17:59 UTC",
         "observed": "24 actual SimplePanel handler states under the real manual-import dialog: all/selected additive entry, repeated existing entry, direct and autocomplete paste, list removal, real path-list selection and union/context, no-selection disabling, filename/directory textEdited/check behavior, unavailable clipboard critical publication and native reference TypeError, exact per-path GetValue output, all-tags/misc folder options reopened with selected panel hidden. Private basic reference client; no imports, exports or remote requests."
       }
+    },
+    {
+      "reference_id": "audit-network-import-folder-log",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": false,
+      "change_kind": "implementation",
+      "implementationCommit": "2bd97edc",
+      "exactBehavior": "Correct the folder-specific file-log ownership mismatch. FileSeedCacheButton under an import-folder dialog edits an independent cache duplicate; native now routes every existing queue mutation to a private in-memory real-schema queue with complete seed records, leaving the live folder cache and worker nudges untouched. Log Apply updates only the manager-owned folder cache draft; log Cancel discards it. Accepted cache edits survive cancelling the existing folder-fields editor, exactly as the Qt setter updates that manager object. Manager Apply atomically writes settings and accepted ordered caches into the actual folder queue, preserving full metadata, comparison values, times, notes, status and referral URLs; manager Cancel, parent closure and retained callbacks cannot commit. New folders can review an empty cache before receiving a live queue. Child questions/errors freeze Apply; both parent Apply callbacks are blocked while their child is active. Importer/search/subscription live logs retain their independent immediate source.",
+      "limits": [
+        "This original node is a shared_reference alias targeting audit-network-file-log and is explicitly excluded from the concrete-leaf completion metric. The actual folder-specific ownership consumer has changed; no shared menu leaf is newly claimed.",
+        "The manager still lacks the Qt application-wide folder pause/wait lease. An independent native folder worker may make live progress while a draft is open; that separate manager workflow remains partial.",
+        "Inherited shared file-log gaps, including every bulk-operation question and ignored-retry regex filtering, remain separately incomplete. Internal SQL seed identities are regenerated on copied-cache acceptance; real folder queue identity and all user-visible cache data are preserved.",
+        "The owned log uses the existing native FileLogWindow with Apply/Cancel. No new exported window or persistent draft queue/table is created.",
+        "Rust store/GUI regressions are authored for root hosted CI; no local Cargo builds/tests were run."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/queues.rs",
+          "line": 1034,
+          "commit": "2bd97edc",
+          "kind": "source",
+          "symbol": "pub struct FileSeedDraft"
+        },
+        {
+          "path": "crates/hydrus-store/src/queues.rs",
+          "line": 1076,
+          "commit": "2bd97edc",
+          "kind": "source",
+          "symbol": "pub fn replace_file_seeds"
+        },
+        {
+          "path": "crates/hydrus-gui/src/file_log_window.rs",
+          "line": 459,
+          "commit": "2bd97edc",
+          "kind": "source",
+          "symbol": "pub(crate) fn open_staged"
+        },
+        {
+          "path": "crates/hydrus-gui/src/folders_window.rs",
+          "line": 256,
+          "commit": "2bd97edc",
+          "kind": "source",
+          "symbol": "fn write_import_folders"
+        },
+        {
+          "path": "crates/hydrus-gui/src/folders_window.rs",
+          "line": 672,
+          "commit": "2bd97edc",
+          "kind": "source",
+          "symbol": "fn open_import_folder"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-store/src/queues.rs",
+          "line": 1617,
+          "commit": "2bd97edc",
+          "kind": "store_consumer_regression",
+          "symbol": "fn file_log_drafts_isolate_mutations_and_restore_complete_metadata_in_order"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_folder_log.rs",
+          "line": 73,
+          "commit": "2bd97edc",
+          "kind": "reference_replay",
+          "symbol": "fn copied_cache_replays_reference_child_apply_cancel_and_folder_cancel_then_manager_commit"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_folder_log.rs",
+          "line": 285,
+          "commit": "2bd97edc",
+          "kind": "boundary_regression",
+          "symbol": "fn unsaved_folder_has_owned_empty_log_and_owner_closure_discards_pending_cache"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_folder_log.py",
+          "line": 18,
+          "commit": "2bd97edc",
+          "kind": "reference_recorder",
+          "symbol": "def record("
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_folder_log.json",
+          "line": 1,
+          "commit": "2bd97edc",
+          "kind": "reference_fixture"
+        },
+        "executed": true,
+        "command": "/workspace/parallel/with-oracle python oracle/record_import_folder_log.py",
+        "executed_utc": "2026-10-04 18:24 UTC",
+        "observed": "Three real EditImportFoldersPanel._Edit/FileSeedCacheButton._ShowFileSeedCacheFrame modal sequences: child Cancel + folder Cancel, child Apply + folder Cancel, child Apply + folder Apply. Actual selected retry and Delete handlers/questions, independent duplicate before child close, accepted manager object, original cache isolation and serialised/reopened full cache. Uses an existing private temporary watched directory for real field validation; no workers, imports, exports or remote requests."
+      }
     }
   ],
   "nativeComponents": [
@@ -285,16 +382,59 @@
         "kind": "source",
         "symbol": "pub fn open_additions"
       }
+    },
+    {
+      "name": "FileLogWindow",
+      "existingNativeId": "dialog.subscription.file-log",
+      "file": "crates/hydrus-gui/ui/file_log.slint",
+      "newExportedWindows": 0,
+      "title": "file log",
+      "controls": [
+        "folder-specific staged cache source, existing table/actions/questions, Apply and Cancel",
+        "closed-owner cancellation, private mutation/error handling and full seed handoff"
+      ],
+      "referenceRoots": [
+        "audit-network-import-folder-log"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui/ui/file_log.slint",
+        "line": 14,
+        "commit": "2bd97edc",
+        "kind": "source",
+        "symbol": "export component FileLogWindow"
+      }
+    },
+    {
+      "name": "ImportFolderWindow",
+      "existingNativeId": "dialog.import-folder",
+      "file": "crates/hydrus-gui/ui/folders.slint",
+      "newExportedWindows": 0,
+      "title": "edit import folder",
+      "controls": [
+        "cached-path log for new and existing folders",
+        "owned child gating and accepted cache status",
+        "cache-only manager callback independent of field-editor cancellation"
+      ],
+      "referenceRoots": [
+        "audit-network-import-folder-log"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui/ui/folders.slint",
+        "line": 225,
+        "commit": "2bd97edc",
+        "kind": "source",
+        "symbol": "export component ImportFolderWindow"
+      }
     }
   ],
   "validation": {
-    "reference_recording": "passed; actual reference executed 2026-10-04 17:43 UTC using shared with-oracle lock",
+    "reference_recording": "passed; actual reference recordings executed 2026-10-04 17:43 UTC (rules), 17:59 UTC (simple tags), 18:24 UTC (folder log), using shared with-oracle lock",
     "slint_source_check": "passed; cached warning-aware Slint compiler, no Cargo build",
     "formatting": "cargo fmt --all and git diff --check passed",
     "rust_tests": "authored; root asynchronous hosted CI pending",
-    "rendered_ui": "native screenshot regression authored in filename_rules.png; root CI rendering pending"
+    "rendered_ui": "native screenshot regressions authored for filename_rules.png, filename_simple.png and import_folder_log.png; root CI rendering pending"
   },
   "remainingBoundaries": [
-    "No parent or shared alias is counted. Remaining import/export folder, manual simple-tagging, sidecar and worker gaps are being inspected next."
+    "No parent/shared alias is counted. Manual/import-folder broader parents, application-wide folder editing pause/wait, sidecars, export worker/examples and scheduled-export workflows remain separately assessed; inherited shared autocomplete and file-log gaps are explicit above."
   ]
 }
