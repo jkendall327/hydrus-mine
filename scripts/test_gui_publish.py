@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch as mock_patch
 
 import gui_publish as publication
 
@@ -43,6 +44,75 @@ class PublicationTests(unittest.TestCase):
             self.assertFalse(publication.countable('leaf', dict(claim, **excluded), classes, baseline))
         self.assertEqual(len(self.baseline['reference']), 1812)
         self.assertEqual(publication.BEFORE, self.prior['before'])
+
+    def test_nonempty_selected_publication_stages_and_enforces_selection_gates(self):
+        # Synthetic unit fixture: remove one genuinely reviewed historical leaf
+        # from an in-memory prior ledger, then republish it. The real historical
+        # inventories, classifier, anchors, replay and HTML renderer exercise the
+        # whole staging path; no synthetic CI is written to canonical files.
+        commit = '2388372db1fc45681e16155ed6ab38c620493052'
+        cv = publication.checkpoint(commit)
+        baseline, frozen, snapshots, prior, claims = publication.inputs(commit)
+        classes = publication.classification(frozen, cv)
+        selected = next(key for key in prior['completed_feature_ids']
+                        if key in claims and publication.countable(key, claims[key]['claim'], classes, baseline))
+        node = copy.deepcopy(next(n for n in snapshots['reference']['nodes'] if n['id'] == selected))
+        for anchor in cv.anchor_objects(node):
+            path = anchor.get('path', anchor.get('relativepath'))
+            line, _ = cv.remap_line(anchor.get('anchor_git_head', snapshots['reference']['git_head']),
+                                    commit, path, anchor['line'])
+            anchor.update(line=line, anchor_git_head=commit,
+                          line_sha256=cv.line_digest(cv.source_lines(commit, path)[line - 1]))
+        fixture = copy.deepcopy((baseline, frozen, snapshots, prior, claims))
+        fixture[3]['completed_feature_ids'].remove(selected)
+        fixture[3]['concrete_implementation_completions'] -= 1
+        fixture[3]['proposals'] = [row for row in fixture[3]['proposals'] if row['id'] != selected]
+        next(n for n in fixture[2]['reference']['nodes'] if n['id'] == selected)['status'] = baseline['reference'][selected]
+        patch = {'baseline_git_head': commit, 'reference': {'updates': [node]}}
+        review = {'source_commit': commit, 'reviewed_by': 'SYNTHETIC UNIT TEST ONLY',
+                  'patch_sha256': publication.digest(patch), 'reviewed_assessment_ids': [selected],
+                  'reviewed_native_ids': [], 'selected_completion_ids': [selected],
+                  'reviewed_source_census_sha256': publication.digest(publication.census(commit, cv, snapshots['native']))}
+        ci = copy.deepcopy(prior['ci_evidence'])
+        ci.update(source_commit=commit, head_sha=commit, synthetic_unit_test=True,
+                  scope='Synthetic unit-test CI attestation; not hosted evidence for this SHA.')
+        canonical_digest = publication.digest(publication.read(commit, f'{publication.DATA}/overnight/progress.json'))
+        with tempfile.TemporaryDirectory(prefix='gui-publication-synthetic-test-') as directory:
+            with mock_patch.object(publication, 'inputs', side_effect=lambda _: copy.deepcopy(fixture)):
+                out = Path(directory) / 'accepted'
+                summary = publication.publish(commit, out, patch, review, ci)
+                progress = json.loads((out / publication.DATA / 'overnight/progress.json').read_text())
+                self.assertEqual(summary['additional_completions'], 1)
+                self.assertEqual(summary['validated_original_leaf_completions'], len(prior['completed_feature_ids']))
+                self.assertEqual(progress['additional_completed_feature_ids'], [selected])
+                self.assertEqual(len(progress['completed_feature_ids']), len(set(progress['completed_feature_ids'])))
+                self.assertEqual(progress['before'], publication.BEFORE)
+                self.assertTrue(progress['ci_evidence']['synthetic_unit_test'])
+                reference = json.loads((out / publication.DATA / 'reference-inventory.json').read_text())
+                self.assertEqual({n['id'] for n in reference['nodes']}, set(baseline['reference']))
+                self.assertEqual(next(n['status'] for n in reference['nodes'] if n['id'] == selected), 'first_pass')
+                self.assertTrue((out / 'docs/rust/gui-progress.html').is_file())
+                messages = {'unselected': 'Unselected concrete first-pass promotion',
+                            'duplicate': 'Duplicate selected completion IDs',
+                            'noncountable': 'Non-countable selected completion',
+                            'wrong_source': 'CI evidence must name the exact source SHA'}
+                for gate in ('unselected', 'duplicate', 'noncountable', 'wrong_source'):
+                    bad_review, bad_ci = copy.deepcopy(review), copy.deepcopy(ci)
+                    if gate == 'unselected':
+                        bad_review['selected_completion_ids'] = []
+                    elif gate == 'duplicate':
+                        bad_review['selected_completion_ids'].append(selected)
+                    elif gate == 'noncountable':
+                        fixture[4][selected]['claim']['countAsCompletedLeaf'] = False
+                    else:
+                        bad_ci['head_sha'] = '0' * 40
+                    rejected = Path(directory) / gate
+                    with self.subTest(gate=gate), self.assertRaisesRegex(ValueError, messages[gate]):
+                        publication.publish(commit, rejected, patch, bad_review, bad_ci)
+                    self.assertFalse(rejected.exists())
+                    fixture[4][selected]['claim'].pop('countAsCompletedLeaf', None)
+        self.assertEqual(canonical_digest, publication.digest(publication.read(commit,
+                         f'{publication.DATA}/overnight/progress.json')))
 
     def test_source_mask_preserves_following_code_after_escaped_newline(self):
         source = 'Text { text: "question \\\n continued { quoted }"; }\ncallback answer();'

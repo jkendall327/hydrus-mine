@@ -129,4 +129,9 @@ generated from source-only proposals.
 Fast regressions use `python scripts/test_gui_publish.py`; they cover wrong
 source/run/step evidence, frozen-leaf counting, source census and shared star/tab
 anchors, failed publication without output, and source-only preparation without
-promotion. No Rust build or mutation testing is required for this helper.
+promotion. A complete nonempty-selection staging regression rolls one historical
+leaf out of an in-memory prior ledger, restores it through publication, verifies
+frozen IDs/cumulative replay/HTML, and rejects unselected, duplicate,
+noncountable and wrong-source inputs. Its CI is explicitly synthetic and outputs
+exist only in a temporary directory; it supplies no hosted validation evidence.
+No Rust build or mutation testing is required for this helper.
