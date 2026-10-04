@@ -576,15 +576,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             else {
                 return;
             };
-            let mut names = predicates
-                .iter()
-                .filter_map(|predicate| match predicate {
+            // OR groups keep their structure in the search. Visit their tags
+            // only to name the new page, just as for top-level AND predicates.
+            let mut pending = predicates.iter().collect::<Vec<_>>();
+            let mut names = Vec::new();
+            while let Some(predicate) = pending.pop() {
+                match predicate {
                     hydrus_core::search::predicate::Predicate::Tag { tag, .. } => {
-                        Some(tag.as_str().to_owned())
+                        names.push(tag.as_str().to_owned());
                     }
-                    _ => None,
-                })
-                .collect::<Vec<_>>();
+                    hydrus_core::search::predicate::Predicate::Or(children) => {
+                        pending.extend(children);
+                    }
+                    _ => (),
+                }
+            }
             if names.is_empty() {
                 return;
             }
