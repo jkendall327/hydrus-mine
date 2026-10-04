@@ -2719,3 +2719,9 @@ enters its predicate in the actual search; removing a predicate updates children
 Typing returns to results, while choosing a tab preserves the draft. Options
 Cancel/Apply and restored-page consumers are covered against
 `oracle/fixtures/read_tag_tabs.json`. Empty tabs retain the tab selector.
+
+The viewing interval model now matches the reference's cap-before-minimum timing
+policy and filter-to-media normalization. Its recorded timing matrix covers480
+actual manager outputs, and an actual displayed Qt canvas confirms same-file
+redraws retain one interval and global tracking disable records nothing. Native
+viewer/filter wiring and timing controls follow in the next slice.

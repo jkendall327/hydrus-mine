@@ -49,9 +49,56 @@ def record(session):
                     menu=QW.QMenu(controller.gui);ClientGUIMediaMenus.AddFileViewingStatsMenu(menu,[media])
                     events.append({'canvases':options.GetIntegerList('file_viewing_stats_interesting_canvas_types'),'style':options.GetInteger('file_viewing_stats_menu_display'),'menu':tree(menu)})
                     menu.deleteLater()
+            # Real manager policy, using the actual imported still and video durations.
+            timed_results=[result,controller.Read('media_results',[next(bytes.fromhex(f['hash']) for f in manifest['files'] if f['name']=='video_with_audio.mp4')])[0]]
+            timing_events=[]
+            for archive,duplicates in itertools.product((False,True),repeat=2):
+                panel._file_viewing_statistics_active_on_archive_delete_filter.setChecked(archive)
+                panel._file_viewing_statistics_active_on_dupe_filter.setChecked(duplicates)
+                for minimum,maximum in ((None,None),(.05,1),(2,1),(2,600)):
+                    panel._file_viewing_statistics_media_min_time.SetValue(minimum)
+                    panel._file_viewing_statistics_media_max_time.SetValue(maximum)
+                    panel.UpdateOptions()
+                    for mr in timed_results:
+                        for canvas_type in (0,2,3):
+                            for elapsed in (0,49,50,2000,600001):
+                                row=controller.file_viewing_stats_manager._GenerateViewsRow(mr,canvas_type,123000,elapsed)
+                                timing_events.append({'archive_delete':archive,'duplicates':duplicates,
+                                    'minimum_ms':options.GetNoneableInteger('file_viewing_statistics_media_min_time_ms'),
+                                    'maximum_ms':options.GetNoneableInteger('file_viewing_statistics_media_max_time_ms'),
+                                    'duration_ms':mr.GetDurationMS(),'canvas':canvas_type,'elapsed_ms':elapsed,'row':row})
+            # Actual displayed canvas starts one interval, ignores same-media SetMedia,
+            # then saves on ClearMedia. Isolate publication, keeping the real manager.
+            from hydrus.client import ClientLocation
+            from hydrus.client.gui.canvas import ClientGUICanvas,ClientGUICanvasFrame
+            manager=controller.file_viewing_stats_manager
+            old_pending=manager._pending_updates;manager._pending_updates={}
+            old_pub=manager._PubSubRow;manager._PubSubRow=lambda *args:None
+            old_ms=HydrusTime.GetNowMS;clock=[123000]
+            HydrusTime.GetNowMS=lambda:clock[0]
+            frame=ClientGUICanvasFrame.CanvasFrame(controller.gui)
+            canvas=ClientGUICanvas.CanvasMediaListBrowser(frame,os.urandom(32),ClientLocation.LocationContext.STATICCreateSimple(CC.LOCAL_FILE_SERVICE_KEY),[controller.Read('media_results',[file_hash])[0]],file_hash)
+            frame.SetCanvas(canvas);frame.showNormal();QW.QApplication.processEvents()
+            canvas_events=[]
+            try:
+                for active in (False,True):
+                    panel._file_viewing_statistics_active.setChecked(active)
+                    panel._file_viewing_statistics_media_min_time.SetValue(None)
+                    panel._file_viewing_statistics_media_max_time.SetValue(1)
+                    panel.UpdateOptions();manager._pending_updates={}
+                    clock[0]=123000;canvas.ClearMedia();manager._pending_updates={}
+                    current=canvas._media_list.GetMediaByHashes({file_hash})[0]
+                    canvas.SetMedia(current)
+                    clock[0]=123050;canvas.SetMedia(current)
+                    clock[0]=125000;canvas.ClearMedia()
+                    canvas_events.append({'active':active,'rows':[[key[1],list(value)] for key,value in manager._pending_updates.items()]})
+            finally:
+                canvas.ClearMedia();frame.close()
+                QW.QApplication.sendPostedEvents(None,QC.QEvent.Type.DeferredDelete);QW.QApplication.processEvents()
+                HydrusTime.GetNowMS=old_ms;manager._PubSubRow=old_pub;manager._pending_updates=old_pending
         finally:
             HydrusTime.GetNow=old_now;panel.deleteLater()
-        return {'initial':initial,'durations':durations,'menu_events':events,'now':now,'file':file_hash.hex()}
+        return {'initial':initial,'durations':durations,'menu_events':events,'timing_events':timing_events,'canvas_events':canvas_events,'now':now,'file':file_hash.hex()}
     return session.controller.CallBlockingToQt(session.controller.gui,qt)
 
 def main():

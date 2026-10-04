@@ -992,6 +992,34 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         if let Some(&active) = options.booleans.get("file_viewing_statistics_active") {
             viewing.active = active;
         }
+        for (key, field) in [
+            (
+                "file_viewing_statistics_active_on_archive_delete_filter",
+                &mut viewing.archive_delete,
+            ),
+            (
+                "file_viewing_statistics_active_on_dupe_filter",
+                &mut viewing.duplicates,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        for (key, field) in [
+            (
+                "file_viewing_statistics_media_min_time_ms",
+                &mut viewing.media_min_ms,
+            ),
+            (
+                "file_viewing_statistics_media_max_time_ms",
+                &mut viewing.media_max_ms,
+            ),
+        ] {
+            if let Some(value) = options.noneable_integers.get(key) {
+                *field = value.and_then(|v| u64::try_from(v).ok());
+            }
+        }
         if let Some(codes) = options
             .integer_lists
             .get("file_viewing_stats_interesting_canvas_types")

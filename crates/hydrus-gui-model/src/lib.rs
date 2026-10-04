@@ -109,3 +109,5 @@ pub mod sort_cog;
 pub mod command_palette;
 
 mod palette_calculator;
+
+pub mod viewing_statistics;

@@ -78,6 +78,10 @@ pub enum ViewingStatsMenuDisplay {
 #[serde(default)]
 pub struct FileViewingStatistics {
     pub active: bool,
+    pub archive_delete: bool,
+    pub duplicates: bool,
+    pub media_min_ms: Option<u64>,
+    pub media_max_ms: Option<u64>,
     pub menu_display: ViewingStatsMenuDisplay,
     pub interesting_canvases: Vec<CanvasType>,
 }
@@ -87,6 +91,10 @@ impl Default for FileViewingStatistics {
     fn default() -> Self {
         Self {
             active: true,
+            archive_delete: true,
+            duplicates: false,
+            media_min_ms: Some(2000),
+            media_max_ms: Some(600000),
             menu_display: ViewingStatsMenuDisplay::Combined,
             interesting_canvases: vec![CanvasType::MediaViewer, CanvasType::ClientApi],
         }
