@@ -699,6 +699,7 @@ export component MainWindow inherits Window {
     // the reference's main window shortcuts: ctrl+t and F9 open a page,
     // ctrl+w closes the page shown
     callback new-page();
+    callback tab-new-page-requested(string, string);
     callback close-page();
     callback unclose-page();
     callback archive-delete-filter();
@@ -899,6 +900,9 @@ export component MainWindow inherits Window {
                     horizontal-stretch: 1;
                     min-width: 24px;
                     pointer-event(event) => {
+                        if (event.kind == PointerEventKind.down && event.button == PointerEventButton.right) {
+                            root.tab-menu-requested(level, -1, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
+                        }
                         if (event.kind == PointerEventKind.down
                             && (event.button == PointerEventButton.left || event.button == PointerEventButton.middle)) {
                             root.tab-space-pressed(level, event.button == PointerEventButton.middle);

@@ -135,6 +135,11 @@ pub enum Command {
     ClearAndLoadSession(String),
     /// Refresh a clicked page or all initialized descendants of a notebook.
     RefreshTab(PageKey),
+    /// Open the chooser in a frozen notebook, optionally before a clicked tab.
+    ChooseNotebookPage {
+        parent: Option<PageKey>,
+        before: Option<PageKey>,
+    },
     /// Append a fresh named session into this notebook's sibling row.
     AppendNotebookSession {
         notebook: Option<PageKey>,

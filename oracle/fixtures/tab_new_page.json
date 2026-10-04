@@ -1,0 +1,242 @@
+{
+  "steps": [
+    {
+      "mode": 3,
+      "initial_selected": 2,
+      "here": false,
+      "cancel": false,
+      "insertion_index": null,
+      "names": [
+        "first",
+        "second",
+        "third",
+        "pages"
+      ],
+      "selected": 3,
+      "children": [
+        [],
+        [],
+        [],
+        [
+          "files"
+        ]
+      ]
+    },
+    {
+      "mode": 3,
+      "initial_selected": 2,
+      "here": true,
+      "cancel": false,
+      "insertion_index": 1,
+      "names": [
+        "first",
+        "pages",
+        "second",
+        "third"
+      ],
+      "selected": 1,
+      "children": [
+        [],
+        [
+          "files"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "mode": 3,
+      "initial_selected": 2,
+      "here": true,
+      "cancel": true,
+      "insertion_index": 1,
+      "names": [
+        "first",
+        "second",
+        "third"
+      ],
+      "selected": 2,
+      "children": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "mode": 0,
+      "initial_selected": 1,
+      "here": false,
+      "cancel": false,
+      "insertion_index": null,
+      "names": [
+        "pages",
+        "third",
+        "second",
+        "first"
+      ],
+      "selected": 0,
+      "children": [
+        [
+          "files"
+        ],
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "mode": 0,
+      "initial_selected": 1,
+      "here": true,
+      "cancel": false,
+      "insertion_index": 1,
+      "names": [
+        "third",
+        "pages",
+        "second",
+        "first"
+      ],
+      "selected": 1,
+      "children": [
+        [],
+        [
+          "files"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "mode": 1,
+      "initial_selected": 1,
+      "here": false,
+      "cancel": false,
+      "insertion_index": null,
+      "names": [
+        "third",
+        "pages",
+        "second",
+        "first"
+      ],
+      "selected": 1,
+      "children": [
+        [],
+        [
+          "files"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "mode": 1,
+      "initial_selected": 1,
+      "here": true,
+      "cancel": false,
+      "insertion_index": 1,
+      "names": [
+        "third",
+        "pages",
+        "second",
+        "first"
+      ],
+      "selected": 1,
+      "children": [
+        [],
+        [
+          "files"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "mode": 2,
+      "initial_selected": 1,
+      "here": false,
+      "cancel": false,
+      "insertion_index": null,
+      "names": [
+        "first",
+        "second",
+        "pages",
+        "third"
+      ],
+      "selected": 2,
+      "children": [
+        [],
+        [],
+        [
+          "files"
+        ],
+        []
+      ]
+    },
+    {
+      "mode": 2,
+      "initial_selected": 1,
+      "here": true,
+      "cancel": false,
+      "insertion_index": 1,
+      "names": [
+        "first",
+        "pages",
+        "second",
+        "third"
+      ],
+      "selected": 1,
+      "children": [
+        [],
+        [
+          "files"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "mode": 3,
+      "initial_selected": 1,
+      "here": false,
+      "cancel": false,
+      "insertion_index": null,
+      "names": [
+        "first",
+        "second",
+        "third",
+        "pages"
+      ],
+      "selected": 3,
+      "children": [
+        [],
+        [],
+        [],
+        [
+          "files"
+        ]
+      ]
+    },
+    {
+      "mode": 3,
+      "initial_selected": 1,
+      "here": true,
+      "cancel": false,
+      "insertion_index": 1,
+      "names": [
+        "first",
+        "pages",
+        "second",
+        "third"
+      ],
+      "selected": 1,
+      "children": [
+        [],
+        [
+          "files"
+        ],
+        [],
+        []
+      ]
+    }
+  ]
+}

@@ -88,6 +88,7 @@ settings! {
     network: NetworkSettings,
     notebooks: NotebookSettings,
     notebook_creation: NotebookCreationSettings,
+    page_insertion: hydrus_store::settings::PageInsertion,
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
@@ -1441,6 +1442,27 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "opening and closing",
                     vec![
+                        choice(
+                            "Put new page tabs on: ",
+                            &[
+                                "the far left",
+                                "left of current page tab",
+                                "right of current page tab",
+                                "the far right",
+                            ],
+                            |s| match s.page_insertion {
+                                hydrus_store::settings::PageInsertion::FarLeft => 0,
+                                hydrus_store::settings::PageInsertion::LeftOfCurrent => 1,
+                                hydrus_store::settings::PageInsertion::RightOfCurrent => 2,
+                                hydrus_store::settings::PageInsertion::FarRight => 3,
+                            },
+                            |s, value| {
+                                s.page_insertion = hydrus_store::settings::PageInsertion::from_code(
+                                    i64::try_from(value).unwrap_or(3),
+                                )
+                                .unwrap_or_default()
+                            },
+                        ),
                         choice(
                             "When closing the current tab, move focus: ",
                             &[
