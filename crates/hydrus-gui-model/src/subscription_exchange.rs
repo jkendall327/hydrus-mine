@@ -13,6 +13,17 @@ impl settings::Setting for Headers {
     const KEY: &'static str = "subscription_reference_headers";
 }
 
+/// The actual missing-history import confirmation; Cancel leaves that object out.
+pub fn missing_history_question(name: &str) -> crate::subscriptions_dialog::Choice {
+    crate::subscriptions_dialog::Choice {
+        title: "missing query log data!".into(),
+        message: format!(
+            "When importing this subscription, \"{name}\", there was missing log data! I will still let you add it, but some of its queries are incomplete. If you are ok with this, ok and then immediately re-open the manage subscriptions dialog to reinitialise the missing data back to zero (and clear any orphaned data that came with this). If you are not ok with this, cancel out now or cancel out of the whole manage subs dialog."
+        ),
+        choices: vec!["import it anyway".into(), "back out now".into()],
+    }
+}
+
 /// Validate that the entire imported history can run in native queues.
 pub fn validate(subscriptions: &[Subscription]) -> Result<(), String> {
     for subscription in subscriptions {

@@ -37,6 +37,10 @@ const MULTIPLE_FAVOURITE_LOAD: &str = "Hey, multiple items in the subscriptions 
 
 /// What a question waits on.
 enum Asking {
+    MissingHistory(
+        Box<hydrus_downloader_exchange::subscriptions::Subscription>,
+        Vec<hydrus_downloader_exchange::subscriptions::Subscription>,
+    ),
     FavouriteLoad(String),
     Delete,
     ClearImportOptions(Vec<u64>, String),
@@ -394,6 +398,26 @@ fn merge_named(
     }
 }
 
+/// Import in reference list order, pausing at each incomplete subscription.
+fn import_next(
+    open: &mut Open,
+    mut incoming: Vec<hydrus_downloader_exchange::subscriptions::Subscription>,
+) {
+    while !incoming.is_empty() {
+        let subscription = incoming.remove(0);
+        if subscription.queries.iter().any(|q| q.log.is_none()) {
+            open.asking = Some(Asking::MissingHistory(Box::new(subscription), incoming));
+            return;
+        }
+        if let Err(error) =
+            hydrus_gui_model::subscription_exchange::stage(&mut open.dialog, vec![subscription])
+        {
+            open.asking = Some(Asking::Message(error));
+            return;
+        }
+    }
+}
+
 /// Show the dialog's list, buttons and question.
 fn show(window: &SubscriptionsWindow, open: &Open) {
     let now = now();
@@ -455,6 +479,10 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             .collect()
     };
     let question = match &open.asking {
+        Some(Asking::MissingHistory(subscription, _)) => Some((
+            hydrus_gui_model::subscription_exchange::missing_history_question(&subscription.name),
+            false,
+        )),
         Some(Asking::Reset) => yes_no(RESET_QUESTION),
         Some(Asking::Lowercase) => yes_no(LOWERCASE_QUESTION),
         Some(Asking::Merge) => yes_no(MERGE_QUESTION),
@@ -1126,6 +1154,18 @@ pub(crate) fn open(
                 .map(|w| w.get_asked_text().to_string())
                 .unwrap_or_default();
             change(&|open| match open.asking.take() {
+                Some(Asking::MissingHistory(subscription, rest)) => {
+                    if index == 0 {
+                        if let Err(error) = hydrus_gui_model::subscription_exchange::stage(
+                            &mut open.dialog,
+                            vec![*subscription],
+                        ) {
+                            open.asking = Some(Asking::Message(error));
+                            return;
+                        }
+                    }
+                    import_next(open, rest);
+                }
                 Some(Asking::ClearImportOptions(keys, _)) => {
                     if index == 0 {
                         open.dialog.clear_import_options(&keys);
@@ -1245,15 +1285,19 @@ pub(crate) fn open(
         let change = change.clone();
         move || {
             change(&|open| {
-                // (a merged subscription's name cancelled keeps its name,
-                // as the reference's)
-                if let Some(Asking::MergeName {
-                    group,
-                    primary,
-                    rest,
-                }) = open.asking.take()
-                {
-                    merge_named(open, &group, primary, rest, None);
+                match open.asking.take() {
+                    // A cancelled rename keeps the primary's original name.
+                    Some(Asking::MergeName {
+                        group,
+                        primary,
+                        rest,
+                    }) => {
+                        merge_named(open, &group, primary, rest, None);
+                    }
+                    Some(Asking::MissingHistory(_, rest)) => {
+                        import_next(open, rest);
+                    }
+                    _ => (),
                 }
             });
         }
@@ -1503,7 +1547,8 @@ pub(crate) fn open(
                         if !active.get() {
                             return Err("The subscription list was closed.".into());
                         }
-                        hydrus_gui_model::subscription_exchange::stage(&mut state.borrow_mut().dialog, incoming)
+                        import_next(&mut state.borrow_mut(), incoming);
+                        Ok(())
                     }
                 });
                 crate::downloader_interchange_window::open_subscriptions(&store, &slots, importing, definitions, preview, applied)
@@ -1545,7 +1590,7 @@ pub(crate) fn open(
             {
                 return;
             }
-            if exchange.has_open() {
+            if exchange.has_open() || state.borrow().asking.is_some() {
                 return;
             }
             let writes = changes(&state.borrow());

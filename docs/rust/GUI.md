@@ -150,7 +150,9 @@ import/export child: clipboard/JSON text or JSON/PNG files are reviewed, importe
 subscriptions remain staged; JSON export asks before overwriting an existing file,
 and multiple JSON or PNG files can be imported as one reviewed selection. Apply
 persists both URL histories and retained
-header examples. Cancel invalidates the child and its callbacks.
+header examples. Missing query histories ask the original named confirmation
+before that object enters the draft; rejecting leaves it out and accepting
+initialises empty histories on Apply. Cancel invalidates the child and its callbacks.
 
 Network > "subscriptions…" opens the manage subscriptions dialog
 (`src/subscriptions_window.rs`, `hydrus-gui-model/src/subscriptions_dialog.rs`),

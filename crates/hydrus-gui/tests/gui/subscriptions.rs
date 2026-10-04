@@ -1115,3 +1115,73 @@ fn subscription_exchange_file_menus_load_selected_packages_and_cancel_invalid_ba
     dialog.invoke_cancel();
     hydrus_gui::set_picker(|_, _| Vec::new());
 }
+
+#[test]
+fn subscription_missing_history_asks_original_question_before_staging_or_persisting() {
+    let reference = hydrus_testkit::fixture_json("subscription_exchange.json");
+    let mut missing = reference["single"].clone();
+    missing[2][1] = serde_json::json!([26, 3, []]);
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    for accepted in [false, true] {
+        let dialog = open_dialog(&ui, &bound);
+        dialog.invoke_exchange(true);
+        let child = bound
+            .subscription_exchange
+            .0
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        child.set_text(missing.to_string().into());
+        child.invoke_action("review".into());
+        child.invoke_action("accept".into());
+        let question = asked(&dialog);
+        let recorded = &reference["questions"][0];
+        assert_eq!(question.0, recorded["title"].as_str().unwrap());
+        assert_eq!(question.1, recorded["message"].as_str().unwrap());
+        assert_eq!(
+            question.2,
+            [
+                recorded["yes"].as_str().unwrap(),
+                recorded["no"].as_str().unwrap()
+            ]
+        );
+        assert!(rows(&dialog).is_empty());
+        dialog.invoke_apply();
+        assert!(bound.subscriptions.borrow().is_some());
+        dialog.invoke_chosen(if accepted { 0 } else { 1 });
+        assert_eq!(rows(&dialog).len(), usize::from(accepted));
+        assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+        if accepted {
+            dialog.invoke_apply();
+        } else {
+            dialog.invoke_cancel();
+        }
+    }
+    let saved = store.read(subscriptions::subscriptions).unwrap();
+    assert_eq!(saved.len(), 1);
+    let id = saved[0].id;
+    let queries = store
+        .read(move |conn| subscriptions::queries(conn, id))
+        .unwrap();
+    assert_eq!(queries.len(), 1);
+    let queue = queries[0].queue_id;
+    assert!(
+        store
+            .read(move |conn| queues::file_seeds(conn, queue))
+            .unwrap()
+            .is_empty()
+    );
+    assert!(
+        store
+            .read(move |conn| queues::gallery_seeds(conn, queue))
+            .unwrap()
+            .is_empty()
+    );
+    let dialog = open_dialog(&ui, &bound);
+    assert_eq!(rows(&dialog).len(), 1);
+    dialog.invoke_cancel();
+}
