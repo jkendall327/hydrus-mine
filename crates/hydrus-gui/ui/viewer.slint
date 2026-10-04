@@ -91,13 +91,20 @@ export component MediaViewerWindow inherits Window {
     in property <length> seek-hidden-height: 5px;
     in property <length> seek-nub-width: 10px;
     callback presentation-settings-changed();
+    in property <bool> hover-tags-enabled: true;
+    in property <bool> hover-ratings-enabled: true;
+    in property <bool> hover-notes-enabled: true;
+    in property <bool> draw-index-background: true;
+    out property <string> index-background-text: !root.draw-index-background || root.caption == "" ? ""
+        : (root.zoom-text != "" ? root.zoom-text : "100%")
+            + (root.caption != "" ? " - " + root.caption : "");
     in property <string> caption;
     // the file's tags, for the hover frame
     in property <[ListText]> tags;
     // the file's notes, for the right hover frame under the ratings, shown
     // while the pointer is over it
     in property <[NoteRow]> notes;
-    out property <bool> notes-showing: root.notes.length > 0 && pointer.has-hover
+    out property <bool> notes-showing: root.hover-notes-enabled && root.notes.length > 0 && pointer.has-hover
         && pointer.mouse-x >= notes-box.x
         && pointer.mouse-y >= notes-box.y && pointer.mouse-y <= notes-box.y + notes-box.height;
     // the file's info line, for the top hover frame, which shows with the
@@ -125,10 +132,10 @@ export component MediaViewerWindow inherits Window {
     in property <length> rating-size: 12px;
     in property <length> incdec-height: 12px;
     in property <length> rating-outline: 1px;
-    out property <bool> ratings-showing: (root.ratings.length > 0 || root.url-links.length > 0) && (ratings-frame.has-hover
+    out property <bool> ratings-showing: root.hover-ratings-enabled && (root.ratings.length > 0 || root.url-links.length > 0) && (ratings-frame.has-hover
         || (pointer.has-hover && pointer.mouse-x >= root.width - ratings-box.preferred-width - 20px
             && pointer.mouse-y <= ratings-box.preferred-height + 20px));
-    out property <bool> tags-showing: pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
+    out property <bool> tags-showing: root.hover-tags-enabled && pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
 
     // a question to answer (a deletion): enter is yes, escape no
     in property <string> question;
@@ -759,6 +766,14 @@ export component MediaViewerWindow inherits Window {
                     }
                 }
             }
+        }
+        // Passive canvas details are behind the media and never take input.
+        if root.index-background-text != "": Text {
+            x: root.width - self.preferred-width - 3px;
+            y: root.height - self.preferred-height - 3px;
+            text: root.index-background-text;
+            color: #f0f0f0;
+            font-size: 14px;
         }
         if root.transparency-mode > 0: TransparencyBackdrop {
             x: root.media-x;

@@ -2069,3 +2069,11 @@ readable image header and compressed UTF-8 payload compatible with the reference
 Cancelling an import picker or closing an export leaves the log unchanged;
 malformed or oversized input displays an error. The export child closes with its
 log and rejects callbacks through a retained old handle.
+
+Media viewer hovers Options now independently enable or disable the tags,
+ratings/locations, and notes pop-in panels. The passive bottom-right index
+preference draws the current zoom and index as “zoom - index”, three pixels from
+the canvas edge, underneath the media. All four checkboxes default enabled, as in
+hydrus; Apply updates the current viewer, while Cancel retains its settings.
+The reference recording `viewer_hover_options.json` covers the actual hover
+layout gates and background draw calls, including independent combinations.

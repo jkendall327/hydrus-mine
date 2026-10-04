@@ -1358,3 +1358,12 @@ native export panel is an owned window rather than a modal Qt panel. Input PNGs
 and payloads are bounded to 16 MiB; title and description are each bounded to 4096
 characters. Successful exports remember the last directory; a failed write does
 not change that preference.
+
+The tags, ratings/locations, and notes hover enable switches and passive
+bottom-right zoom/index background switch now have native consumers. Native
+hover panels retain their existing layout and contents; the reference's separate
+focus requirement and other passive background copies are still unimplemented.
+The passive index uses native text styling and palette rather than Qt font
+metrics. Its text format, bottom-right three-pixel inset, and placement behind
+media follow the reference. Preview and duplicate-filter hover preferences are
+separate unclaimed controls.

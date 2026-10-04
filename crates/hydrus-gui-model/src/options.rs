@@ -31,7 +31,7 @@ use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FileHandlingSettings, FileSearchSettings, FileViewingStatistics,
     FolderSettings, GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings,
-    SearchDefaults, TagAutocompleteTabs, ThumbnailLayout, ViewerCanvasSettings,
+    SearchDefaults, TagAutocompleteTabs, ThumbnailLayout, ViewerCanvasSettings, ViewerHoverSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -110,6 +110,7 @@ settings! {
     url_classes: UrlClassSettings,
     windows: WindowSettings,
     viewer_canvas: ViewerCanvasSettings,
+    viewer_hovers: ViewerHoverSettings,
 }
 
 /// An option's value as its control holds it.
@@ -1903,51 +1904,81 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "media viewer hovers",
-            vec![boxed(
-                "top hover file summary",
-                vec![
-                    check(
-                        "Show archived status: ",
-                        |s| s.info_line.archived_interesting,
-                        |s, v| s.info_line.archived_interesting = v,
-                    ),
-                    check(
-                        "Show archived time: ",
-                        |s| s.info_line.archived_time_interesting,
-                        |s, v| s.info_line.archived_time_interesting = v,
-                    ),
-                    check(
-                        "Show file services: ",
-                        |s| s.info_line.file_services_interesting,
-                        |s, v| s.info_line.file_services_interesting = v,
-                    ),
-                    check(
-                        "Show file service add times: ",
-                        |s| s.info_line.file_services_import_times_interesting,
-                        |s, v| s.info_line.file_services_import_times_interesting = v,
-                    ),
-                    check(
-                        "Show file trash times: ",
-                        |s| s.info_line.trash_time_interesting,
-                        |s, v| s.info_line.trash_time_interesting = v,
-                    ),
-                    check(
-                        "Show file trash reasons: ",
-                        |s| s.info_line.trash_reason_interesting,
-                        |s, v| s.info_line.trash_reason_interesting = v,
-                    ),
-                    check(
-                        "Hide uninteresting modified times: ",
-                        |s| s.info_line.hide_uninteresting_modified_time,
-                        |s, v| s.info_line.hide_uninteresting_modified_time = v,
-                    ),
-                    check(
-                        "Swap in common resolution labels:",
-                        |s| s.info_line.nice_resolutions,
-                        |s, v| s.info_line.nice_resolutions = v,
-                    ),
-                ],
-            )],
+            vec![
+                boxed(
+                    "background",
+                    vec![check(
+                        "Draw index text (bottom-right) in the viewer background:",
+                        |settings| settings.viewer_hovers.index_background,
+                        |settings, value| settings.viewer_hovers.index_background = value,
+                    )],
+                ),
+                boxed(
+                    "hover windows",
+                    vec![
+                        check(
+                            "Pop-in tags (left) hover window on mouseover:",
+                            |settings| settings.viewer_hovers.tags,
+                            |settings, value| settings.viewer_hovers.tags = value,
+                        ),
+                        check(
+                            "Pop-in ratings and locations (top-right) hover window on mouseover:",
+                            |settings| settings.viewer_hovers.ratings,
+                            |settings, value| settings.viewer_hovers.ratings = value,
+                        ),
+                        check(
+                            "Pop-in notes (right) hover window on mouseover:",
+                            |settings| settings.viewer_hovers.notes,
+                            |settings, value| settings.viewer_hovers.notes = value,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "top hover file summary",
+                    vec![
+                        check(
+                            "Show archived status: ",
+                            |s| s.info_line.archived_interesting,
+                            |s, v| s.info_line.archived_interesting = v,
+                        ),
+                        check(
+                            "Show archived time: ",
+                            |s| s.info_line.archived_time_interesting,
+                            |s, v| s.info_line.archived_time_interesting = v,
+                        ),
+                        check(
+                            "Show file services: ",
+                            |s| s.info_line.file_services_interesting,
+                            |s, v| s.info_line.file_services_interesting = v,
+                        ),
+                        check(
+                            "Show file service add times: ",
+                            |s| s.info_line.file_services_import_times_interesting,
+                            |s, v| s.info_line.file_services_import_times_interesting = v,
+                        ),
+                        check(
+                            "Show file trash times: ",
+                            |s| s.info_line.trash_time_interesting,
+                            |s, v| s.info_line.trash_time_interesting = v,
+                        ),
+                        check(
+                            "Show file trash reasons: ",
+                            |s| s.info_line.trash_reason_interesting,
+                            |s, v| s.info_line.trash_reason_interesting = v,
+                        ),
+                        check(
+                            "Hide uninteresting modified times: ",
+                            |s| s.info_line.hide_uninteresting_modified_time,
+                            |s, v| s.info_line.hide_uninteresting_modified_time = v,
+                        ),
+                        check(
+                            "Swap in common resolution labels:",
+                            |s| s.info_line.nice_resolutions,
+                            |s, v| s.info_line.nice_resolutions = v,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "ratings",

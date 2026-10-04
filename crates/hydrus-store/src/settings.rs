@@ -532,6 +532,29 @@ impl Setting for ViewerCanvasSettings {
     const KEY: &'static str = "viewer_canvas";
 }
 
+/// Pop-in hover panels and the passive bottom-right index in the media viewer.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct ViewerHoverSettings {
+    pub tags: bool,
+    pub ratings: bool,
+    pub notes: bool,
+    pub index_background: bool,
+}
+impl Default for ViewerHoverSettings {
+    fn default() -> Self {
+        Self {
+            tags: true,
+            ratings: true,
+            notes: true,
+            index_background: true,
+        }
+    }
+}
+impl Setting for ViewerHoverSettings {
+    const KEY: &'static str = "viewer_hovers";
+}
+
 /// Export folders.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, serde::Deserialize)]
 pub struct ExportFolders(pub Vec<hydrus_parse::folders::ExportFolder>);
