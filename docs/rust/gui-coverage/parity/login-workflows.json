@@ -2,7 +2,7 @@
   "schema_version": 1,
   "agent": "login-workflows",
   "baseline_git_head": "d50df26b",
-  "implementation_git_head": "8102903b",
+  "implementation_git_head": "fc38a5c8",
   "implementation_commits": [
     "44840f22",
     "da3c06f2",
@@ -20,12 +20,13 @@
     "2d14d685",
     "b459569c",
     "45cffe11",
-    "8102903b"
+    "8102903b",
+    "fc38a5c8"
   ],
   "validation": {
-    "referenceRecording": "oracle/record_login_editors.py executed through shared with-oracle lock using the real Qt client; fixture oracle/fixtures/login_editors.json; oracle/record_login_execution.py executed actual reference HTTP jobs and real Qt result reviews on synthetic loopback, fixture oracle/fixtures/login_execution.json; oracle/record_login_sessions.py executed through shared with-oracle lock, real Qt manager rows/actions and real session-manager resets on synthetic domains; oracle/fixtures/login_sessions.json; oracle/record_login_domains.py executed 15 real Qt domain Add/change-script/Delete chains through shared with-oracle lock; oracle/fixtures/login_domains.json",
+    "referenceRecording": "oracle/record_login_editors.py executed through shared with-oracle lock using the real Qt client; fixture oracle/fixtures/login_editors.json; oracle/record_login_execution.py executed actual reference HTTP jobs and real Qt result reviews on synthetic loopback, fixture oracle/fixtures/login_execution.json; oracle/record_login_sessions.py executed through shared with-oracle lock, real Qt manager rows/actions and real session-manager resets on synthetic domains; oracle/fixtures/login_sessions.json; oracle/record_login_domains.py executed 15 real Qt domain Add/change-script/Delete chains through shared with-oracle lock; oracle/fixtures/login_domains.json; login_sessions recording rerun with other.example.net (a genuinely separate registrable session), and explicit reference resolved session contexts; seeded native fixtures use session_for exactly like real consumers.",
     "cargo_fmt": "passed",
-    "rust_tests": "New scoped model/GUI/real HTTP assertions authored; root asynchronous CI pending. No local Cargo builds or tests.",
+    "rust_tests": "Root first CI identified new fixture-seeding errors for unknown-TLD/IP session buckets; repaired seeding through session_for without weakening assertions. Updated scoped tests await root asynchronous CI. No local Cargo builds/tests.",
     "slint_syntax": "Cached source compiler passed login-session rows/reset and new LoginDomainEntryWindow prompt controls; no Cargo builds."
   },
   "claims": [

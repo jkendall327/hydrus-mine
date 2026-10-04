@@ -343,11 +343,19 @@ fn shared_login_session_state_replays_required_cookie_expiry_and_reset() {
     let script = script(&fixture);
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
+    assert_eq!(
+        store
+            .read(|conn| network::session_for(conn, &NetworkContext::domain("login.example")))
+            .unwrap()
+            .data,
+        fixture["resolved_session"].as_str().unwrap()
+    );
     for case in fixture["states"].as_array().unwrap().iter().take(4) {
         let input = case["input"].as_array().unwrap().clone();
         store
             .write_and_refresh(move |ctx| {
-                let session = NetworkContext::domain("login.example");
+                let session =
+                    network::session_for(ctx.conn(), &NetworkContext::domain("login.example"))?;
                 network::clear_session(ctx.conn(), &session)?;
                 for row in input {
                     network::set_cookie(
@@ -381,10 +389,10 @@ async fn confirmed_login_reset_reaches_an_existing_http_engine_and_keeps_other_s
     let site = site().await;
     site.store
         .write_and_refresh(move |ctx| {
-            for domain in ["127.0.0.1", "other.example"] {
+            for domain in ["127.0.0.1", "other.example.net"] {
                 network::set_cookie(
                     ctx.conn(),
-                    &NetworkContext::domain(domain),
+                    &network::session_for(ctx.conn(), &NetworkContext::domain(domain))?,
                     &network::Cookie {
                         name: "session".into(),
                         value: Some("ok".into()),
@@ -402,12 +410,15 @@ async fn confirmed_login_reset_reaches_an_existing_http_engine_and_keeps_other_s
     let request = hydrus_net::Request::get(format!("http://{}/start", site.domain));
     site.engine.fetch(&request, &Job::new()).await.unwrap();
     assert_eq!(site.requests.lock().unwrap()[0]["cookie"], "session=ok");
-    login::clear_sessions(&site.store, &[site.domain.clone()]).unwrap();
+    login::clear_sessions(&site.store, std::slice::from_ref(&site.domain)).unwrap();
     site.engine.fetch(&request, &Job::new()).await.unwrap();
     assert!(site.requests.lock().unwrap()[1]["cookie"].is_null());
     assert_eq!(
         site.store
-            .read(|conn| network::cookies(conn, &NetworkContext::domain("other.example")))
+            .read(|conn| network::cookies(
+                conn,
+                &network::session_for(conn, &NetworkContext::domain("other.example.net"))?
+            ))
             .unwrap()
             .len(),
         1
@@ -415,14 +426,20 @@ async fn confirmed_login_reset_reaches_an_existing_http_engine_and_keeps_other_s
     let reopened = Store::open(site.dir.path()).unwrap();
     assert_eq!(
         reopened
-            .read(|conn| network::cookies(conn, &NetworkContext::domain("other.example")))
+            .read(|conn| network::cookies(
+                conn,
+                &network::session_for(conn, &NetworkContext::domain("other.example.net"))?
+            ))
             .unwrap()
             .len(),
         1
     );
     assert!(
         !reopened
-            .read(|conn| network::cookies(conn, &NetworkContext::domain("127.0.0.1")))
+            .read(|conn| network::cookies(
+                conn,
+                &network::session_for(conn, &NetworkContext::domain("127.0.0.1"))?
+            ))
             .unwrap()
             .iter()
             .any(|cookie| cookie.name == "session")

@@ -25,7 +25,7 @@ def record(session):
         engine = c.network_engine
         domain = 'login.example'
         context = N.NetworkContext(N.CC.NETWORK_CONTEXT_DOMAIN, domain)
-        other = N.NetworkContext(N.CC.NETWORK_CONTEXT_DOMAIN, 'other.example')
+        other = N.NetworkContext(N.CC.NETWORK_CONTEXT_DOMAIN, 'other.example.net')
         info = (script.GetLoginScriptKeyAndName(), {}, 0, 'synthetic fixture', True, L.VALIDITY_UNTESTED, '', now + 3600, 'synthetic delay')
         original_now = T.GetNow
         T.GetNow = lambda: now
@@ -48,13 +48,13 @@ def record(session):
             engine.session_manager.ClearSession(context)
             C.AddCookieToSession(engine.session_manager.GetSession(context), 'session', 'ok', domain, '/', None)
             C.AddCookieToSession(engine.session_manager.GetSession(context), 'token', 'ready', domain, '/', None)
-            C.AddCookieToSession(engine.session_manager.GetSession(other), 'keep', 'untouched', 'other.example', '/', None)
+            C.AddCookieToSession(engine.session_manager.GetSession(other), 'keep', 'untouched', 'other.example.net', '/', None)
             for accepted in [False, True]:
                 answer[0] = accepted
                 questions.clear()
                 panel._ClearSessions()
                 states.append({'action': 'reset', 'accepted': accepted, 'questions': list(questions), 'state': state(), 'other_cookies': [cookie.name for cookie in C.GetRequestsSessionCookieJar(engine.session_manager.GetSession(other))]})
-            return {'now': now, 'script': script.GetSerialisableTuple(), 'domain': domain, 'info': [[info[0][0].hex(), info[0][1]], *info[1:]], 'states': states}
+            return {'now': now, 'script': script.GetSerialisableTuple(), 'domain': domain, 'other_domain': 'other.example.net', 'resolved_session': engine.session_manager._GetSessionNetworkContext(context).context_data, 'other_resolved_session': engine.session_manager._GetSessionNetworkContext(other).context_data, 'info': [[info[0][0].hex(), info[0][1]], *info[1:]], 'states': states}
         finally:
             panel.deleteLater()
             T.GetNow = original_now

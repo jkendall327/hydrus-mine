@@ -1302,12 +1302,15 @@ fn domain_cookie_reset_is_confirmed_immediate_and_survives_parent_cancel() {
             hydrus_store::logins::save(ctx.conn(), &initial)?;
             for (domain, names) in [
                 ("login.example", vec!["session", "token"]),
-                ("other.example", vec!["keep"]),
+                ("other.example.net", vec!["keep"]),
             ] {
                 for name in names {
                     hydrus_store::network::set_cookie(
                         ctx.conn(),
-                        &hydrus_store::network::NetworkContext::domain(domain),
+                        &hydrus_store::network::session_for(
+                            ctx.conn(),
+                            &hydrus_store::network::NetworkContext::domain(domain),
+                        )?,
                         &hydrus_store::network::Cookie {
                             name: name.into(),
                             value: Some(if name == "token" { "ready" } else { "ok" }.into()),
@@ -1369,7 +1372,10 @@ fn domain_cookie_reset_is_confirmed_immediate_and_survives_parent_cancel() {
         reopened
             .read(|conn| hydrus_store::network::cookies(
                 conn,
-                &hydrus_store::network::NetworkContext::domain("other.example")
+                &hydrus_store::network::session_for(
+                    conn,
+                    &hydrus_store::network::NetworkContext::domain("other.example.net")
+                )?
             ))
             .unwrap()
             .len(),
@@ -1391,7 +1397,10 @@ fn domain_cookie_reset_is_confirmed_immediate_and_survives_parent_cancel() {
             for (name, value) in [("session", "ok"), ("token", "ready")] {
                 hydrus_store::network::set_cookie(
                     ctx.conn(),
-                    &hydrus_store::network::NetworkContext::domain("login.example"),
+                    &hydrus_store::network::session_for(
+                        ctx.conn(),
+                        &hydrus_store::network::NetworkContext::domain("login.example"),
+                    )?,
                     &hydrus_store::network::Cookie {
                         name: name.into(),
                         value: Some(value.into()),
