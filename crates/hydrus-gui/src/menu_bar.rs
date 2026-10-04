@@ -627,6 +627,12 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
                 }),
             );
         }
+        Command::RefreshTab(key) => {
+            change_pages(&|pages| {
+                pages.refresh_tab_tree(key);
+                Ok(())
+            });
+        }
         Command::SaveSession(name) => (hooks.save_session)(name, crate::session_saving::Scope::All),
         Command::SaveNotebookSession {
             key,

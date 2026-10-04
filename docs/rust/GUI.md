@@ -1857,3 +1857,12 @@ by default), results height (22 rows), and floating policy when each page is
 created. Both heights accept 1–128 text rows and scroll additional entries. The
 active predicates appear above the search input. Floating results overlay the
 page while the input is focused; embedded results reserve sidebar space.
+
+The tab popup refreshes a leaf or every initialized descendant of a notebook,
+without changing the selected page. Paused searches resume, locked searches stay
+fixed, and importer thumbnails reapply their current sort while retaining
+selection. Empty notebooks omit the refresh action. Advanced mode adds a copyable
+page-weight label for the clicked subtree: each child contributes its file count
+and each importer file or gallery seed contributes twenty, including repeated
+files shown in separate children. `oracle/record_tab_refresh.py` records the real
+recursive dispatch, search states, weights and clipboard text.

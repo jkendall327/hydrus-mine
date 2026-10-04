@@ -1146,6 +1146,12 @@ append/save actions. The remaining page-selector child workflows are deferred. A
 the reference, a page not opened/initialised contributes zero to the size sort;
 kept file counts and persisted importer progress still participate in count sorts.
 
+Tab refresh and advanced page-weight information now follow the reference popup.
+Recursive refresh skips unopened descendants and preserves notebook selection;
+importer refresh re-sorts media without starting paused transfers. Duplicate
+sidebar counts are read when the active page is rendered rather than dispatching
+an independent background sidebar job.
+
 Named GUI session saves now retain selectable immutable snapshots; automatic
 `last session` synchronization still writes the live session without historical
 backups, and startup/autosave lifecycle settings remain deferred. Historical

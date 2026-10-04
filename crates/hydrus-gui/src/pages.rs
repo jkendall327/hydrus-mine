@@ -1597,6 +1597,38 @@ impl Pages {
             self.notebook_at(depth).map_or(0, <[Page]>::len),
             self.path.get(depth).copied().unwrap_or(0),
         );
+        let advanced: hydrus_store::settings::AdvancedMode = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        if advanced.0 {
+            let label = format!(
+                "page weight: {}",
+                hydrus_core::numbers::human_int(self.page_weight(page.key).unwrap_or(0))
+            );
+            entries.insert(0, crate::main_menu::Entry::Separator);
+            entries.insert(
+                0,
+                crate::main_menu::Entry::Item {
+                    label: label.clone(),
+                    enabled: true,
+                    command: Some(crate::main_menu::Command::Copy(label)),
+                },
+            );
+        }
+        let refresh = match &page.content {
+            PageContent::Pages(children) if children.is_empty() => None,
+            PageContent::Pages(_) => Some("refresh all this page's pages"),
+            _ => Some("refresh this page"),
+        };
+        if let Some(label) = refresh {
+            entries.push(crate::main_menu::Entry::Separator);
+            entries.push(crate::main_menu::Entry::Item {
+                label: label.into(),
+                enabled: true,
+                command: Some(crate::main_menu::Command::RefreshTab(page.key)),
+            });
+        }
         let names: Vec<_> = self
             .store
             .read(sessions::names)
@@ -1612,6 +1644,29 @@ impl Pages {
             &names,
         ));
         entries
+    }
+
+    /// Refresh only initialized media descendants, as Qt Page::RefreshQuery
+    /// skips pages whose media panels have not initialized. Preserve selection.
+    pub fn refresh_tab_tree(&mut self, key: PageKey) {
+        if !self.session.all_pages().iter().any(|page| page.key == key) {
+            return;
+        }
+        for leaf in self.pages_under(&key) {
+            if let Some(open) = self.open.get(&leaf) {
+                open.borrow_mut().refresh_tab();
+            }
+        }
+    }
+
+    /// The clicked subtree's file-and-seed weight, including repeated files
+    /// across separate pages, as each reference leaf contributes independently.
+    pub fn page_weight(&self, key: PageKey) -> Option<u64> {
+        self.session
+            .all_pages()
+            .into_iter()
+            .find(|page| page.key == key)
+            .map(|page| self.weight_for_pages(vec![page.clone()]))
     }
 
     /// Navigate at a tab row's notebook, descending into its selected
@@ -2188,6 +2243,10 @@ impl Pages {
     /// (`ConvertNumHashesAndSeedsToWeight`): each page's files, and twenty
     /// for each item and search of its downloads.
     pub fn session_weight(&self) -> u64 {
+        self.weight_for_pages(self.session.pages.clone())
+    }
+
+    fn weight_for_pages(&self, mut pages: Vec<Page>) -> u64 {
         fn walk(me: &Pages, pages: &[Page], files: &mut u64, queues: &mut Vec<i64>) {
             for page in pages {
                 match &page.content {
@@ -2201,7 +2260,6 @@ impl Pages {
                 }
             }
         }
-        let mut pages = self.session.pages.clone();
         refresh_contents(&mut pages, &self.open);
         let (mut files, mut queues) = (0, Vec::new());
         walk(self, &pages, &mut files, &mut queues);

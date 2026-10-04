@@ -2191,6 +2191,17 @@ impl SearchPage {
         }
     }
 
+    /// The tab popup's RefreshQuery: search pages refresh, importer pages
+    /// broadcast their current sort, and duplicate numbers are read by the
+    /// sidebar when shown. Retain the stored optional sort representation.
+    pub fn refresh_tab(&mut self) {
+        if self.note.is_none() {
+            self.refresh();
+        } else if self.duplicates.is_none() {
+            self.resort();
+        }
+    }
+
     /// Whether the page searches as its search changes ("searching
     /// immediately"), or waits ("search paused").
     pub fn synchronised(&self) -> bool {
