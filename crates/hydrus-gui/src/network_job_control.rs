@@ -60,6 +60,13 @@ impl Drop for Worker {
 #[derive(Clone, Default)]
 pub struct Errors(Rc<RefCell<Option<NetworkErrorWindow>>>);
 impl Errors {
+    /// Close an error popup when its owning window is force-closed.
+    pub fn cancel(&self) {
+        let window = self.0.borrow_mut().take();
+        if let Some(window) = window {
+            let _ = window.hide();
+        }
+    }
     pub fn show(&self, text: &str) -> Result<NetworkErrorWindow, String> {
         if let Some(window) = self.0.borrow_mut().take() {
             let _ = window.hide();
