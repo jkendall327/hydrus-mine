@@ -2,7 +2,7 @@
   "schema_version": 1,
   "agent": "login-workflows",
   "baseline_git_head": "d50df26b",
-  "implementation_git_head": "ad113880",
+  "implementation_git_head": "ba3d04b6",
   "implementation_commits": [
     "44840f22",
     "da3c06f2",
@@ -11,12 +11,15 @@
     "fa1760c4",
     "6cd9f261",
     "89ef38d6",
-    "ad113880"
+    "ad113880",
+    "89334ad6",
+    "ba3d04b6"
   ],
   "validation": {
     "referenceRecording": "oracle/record_login_editors.py executed through shared with-oracle lock using the real Qt client; fixture oracle/fixtures/login_editors.json; oracle/record_login_execution.py executed actual reference HTTP jobs and real Qt result reviews on synthetic loopback, fixture oracle/fixtures/login_execution.json",
     "cargo_fmt": "passed",
-    "rust_tests": "Authored model, store, codec, GUI/menu/owner regressions. Root asynchronous CI owns execution; no local Cargo builds."
+    "rust_tests": "Root CI reports all four login HTTP test groups passed. New GUI/queue/type/lint checks remain root asynchronous CI; no local Cargo builds.",
+    "slint_syntax": "Cached source compiler passed twice after domain queue UI changes; no Cargo build."
   },
   "claims": [
     {
@@ -161,17 +164,18 @@
       "id": "logins",
       "before": "missing",
       "proposedStatus": "partial",
-      "exactBehavior": "Real domain menu/list with extended selection, preserved complete preferences, editable credentials/activation, scrub delays/invalidity, optimistic staged domains-only save retaining current scripts.",
+      "exactBehavior": "Real domain menu/list with extended selection, preserved complete preferences, editable credentials/activation, scrub delays/invalidity, optimistic staged domains-only save retaining current scripts. Confirmed selected active/non-invalid/existing-script/not-logged-in domains save the parent and close before sequential actual HTTP attempts; source cookies persist and keyed outcome updates survive reopening, while status/cancel controls are available on reopening the manager.",
       "limits": [
-        "Add domain/change script, logged-in cookie status/reset and live execution absent. Future delay displays a raw timestamp."
+        "Add domain/change script, logged-in expiry display/cookie reset absent. Future delay displays raw timestamp. Automatic downloader-demand login and reference global process monitor are not implemented."
       ],
       "source": [
         "crates/hydrus-gui/src/login_domains_window.rs:61"
       ],
       "testAnchors": [
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:423"
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:423",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:730"
       ],
-      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json domain_states"
+      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json domain_states; domain_login_actions captures real Qt DoLogin decline/accept/ineligible; actual reference HTTP pipeline recorded by oracle/record_login_execution.py."
     },
     {
       "id": "login-test-results",
@@ -187,8 +191,8 @@
         "crates/hydrus-gui/src/login_workflows_window.rs:555"
       ],
       "testAnchors": [
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:450",
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:624",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:468",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:625",
         "crates/hydrus-net/tests/login.rs:190"
       ],
       "referenceRecording": "oracle/record_login_execution.py executed real Qt ReviewTestResultPanel and live reference HTTP engine; oracle/fixtures/login_execution.json reviews + long_review"
