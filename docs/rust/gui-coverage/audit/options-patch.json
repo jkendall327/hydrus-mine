@@ -3923,7 +3923,7 @@
         "parent_id": "audit.options.tab.connection.general",
         "label": "network timeout (seconds):",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 874
@@ -3932,13 +3932,13 @@
           "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
           "line": 143
         },
-        "assessment": "int control reads and sets network.network_timeout; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "int control reads and sets network.network_timeout; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 3..600 seconds; reference advanced mode permits 1..2592000 seconds (30 days). Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -3954,10 +3954,24 @@
             "role": "source_inspection",
             "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
+            "line": 27,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 874,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "remaining_limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 3..600 seconds; reference advanced mode permits 1..2592000 seconds (30 days). Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_wiring_source": {
           "path": "crates/hydrus-gui/src/options_window.rs",
@@ -3969,7 +3983,7 @@
         "parent_id": "audit.options.tab.connection.general",
         "label": "connection error retry wait (seconds):",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 880
@@ -3978,13 +3992,13 @@
           "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
           "line": 144
         },
-        "assessment": "int control reads and sets network.connection_error_wait_time; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "int control reads and sets network.connection_error_wait_time; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 3..1800 seconds; reference advanced mode permits 1..2592000 seconds (30 days). Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -4000,10 +4014,24 @@
             "role": "source_inspection",
             "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
+            "line": 27,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 880,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "remaining_limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 3..1800 seconds; reference advanced mode permits 1..2592000 seconds (30 days). Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_wiring_source": {
           "path": "crates/hydrus-gui/src/options_window.rs",
@@ -4015,7 +4043,7 @@
         "parent_id": "audit.options.tab.connection.general",
         "label": "serverside bandwidth retry wait (seconds):",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 886
@@ -4024,13 +4052,13 @@
           "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
           "line": 145
         },
-        "assessment": "int control reads and sets network.serverside_bandwidth_wait_time; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "int control reads and sets network.serverside_bandwidth_wait_time; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 3..1800 seconds; reference advanced mode permits 1..2592000 seconds (30 days). Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -4046,10 +4074,24 @@
             "role": "source_inspection",
             "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
+            "line": 27,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 886,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "remaining_limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 3..1800 seconds; reference advanced mode permits 1..2592000 seconds (30 days). Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_wiring_source": {
           "path": "crates/hydrus-gui/src/options_window.rs",
@@ -4107,7 +4149,7 @@
         "parent_id": "audit.options.tab.connection.general",
         "label": "max number of simultaneous active network jobs:",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 907
@@ -4116,13 +4158,13 @@
           "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
           "line": 147
         },
-        "assessment": "int control reads and sets network.max_jobs; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "int control reads and sets network.max_jobs; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 1..30 jobs; reference advanced mode permits 1..1000 jobs. Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -4138,10 +4180,24 @@
             "role": "source_inspection",
             "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
+            "line": 27,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 907,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "remaining_limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 1..30 jobs; reference advanced mode permits 1..1000 jobs. Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_wiring_source": {
           "path": "crates/hydrus-gui/src/options_window.rs",
@@ -4153,7 +4209,7 @@
         "parent_id": "audit.options.tab.connection.general",
         "label": "max number of simultaneous active network jobs per domain:",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 913
@@ -4162,13 +4218,13 @@
           "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
           "line": 148
         },
-        "assessment": "int control reads and sets network.max_jobs_per_domain; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "int control reads and sets network.max_jobs_per_domain; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 1..5 jobs per domain; reference advanced mode permits 1..100 jobs per domain. Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -4184,10 +4240,24 @@
             "role": "source_inspection",
             "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
+            "line": 27,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 913,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "remaining_limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 1..5 jobs per domain; reference advanced mode permits 1..100 jobs per domain. Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_wiring_source": {
           "path": "crates/hydrus-gui/src/options_window.rs",
@@ -4493,6 +4563,13 @@
             "role": "source_inspection",
             "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
+            "line": 146,
+            "role": "source_inspection",
+            "description": "Matching reference row in this box uses self._gallery_page_wait_period_pages; this is not the same-labelled control in another box.",
+            "executed_in_inventory": false
           }
         ],
         "remaining_limitations": [
@@ -4673,7 +4750,7 @@
         },
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
-          "line": 146
+          "line": 159
         },
         "assessment": "int control reads and sets bandwidth.gallery_page_wait_subscriptions; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
         "evidence": [
@@ -4696,6 +4773,13 @@
             "line": 506,
             "role": "source_inspection",
             "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
+            "line": 159,
+            "role": "source_inspection",
+            "description": "Matching reference row in this box uses self._gallery_page_wait_period_subscriptions; this is not the same-labelled control in another box.",
             "executed_in_inventory": false
           }
         ],
@@ -5172,7 +5256,7 @@
         "parent_id": "audit.options.tab.downloading.misc",
         "label": "Delay time on a gallery/watcher network error:",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 1052
@@ -5181,13 +5265,13 @@
           "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
           "line": 189
         },
-        "assessment": "duration control reads and sets network.downloader_network_error_delay; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "duration control reads and sets network.downloader_network_error_delay; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 600-second minimum; reference advanced mode permits 1-second minimum. Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -5203,10 +5287,24 @@
             "role": "source_inspection",
             "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
+            "line": 84,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1052,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "remaining_limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 600-second minimum; reference advanced mode permits 1-second minimum. Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_wiring_source": {
           "path": "crates/hydrus-gui/src/options_window.rs",
@@ -5218,7 +5316,7 @@
         "parent_id": "audit.options.tab.downloading.misc",
         "label": "Delay time on a subscription network error:",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 1058
@@ -5227,13 +5325,13 @@
           "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
           "line": 190
         },
-        "assessment": "duration control reads and sets network.subscription_network_error_delay; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "duration control reads and sets network.subscription_network_error_delay; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 600-second minimum; reference advanced mode permits 1-second minimum. Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -5249,10 +5347,24 @@
             "role": "source_inspection",
             "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
+            "line": 84,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1058,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "remaining_limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 600-second minimum; reference advanced mode permits 1-second minimum. Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_wiring_source": {
           "path": "crates/hydrus-gui/src/options_window.rs",
@@ -5264,7 +5376,7 @@
         "parent_id": "audit.options.tab.downloading.misc",
         "label": "Delay time on a subscription other error:",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 1064
@@ -5273,13 +5385,13 @@
           "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
           "line": 191
         },
-        "assessment": "duration control reads and sets network.subscription_other_error_delay; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "duration control reads and sets network.subscription_other_error_delay; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 600-second minimum; reference advanced mode permits 1-second minimum. Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -5295,10 +5407,24 @@
             "role": "source_inspection",
             "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
+            "line": 84,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1064,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "remaining_limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 600-second minimum; reference advanced mode permits 1-second minimum. Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_wiring_source": {
           "path": "crates/hydrus-gui/src/options_window.rs",
@@ -8047,7 +8173,7 @@
         },
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 391
+          "line": 450
         },
         "assessment": "duration control reads and sets auto_resolution.work_time_ms_active; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
         "evidence": [
@@ -8071,6 +8197,13 @@
             "role": "source_inspection",
             "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 450,
+            "role": "source_inspection",
+            "description": "Matching reference row in this box uses self._duplicates_auto_resolution_work_time_active; this is not the same-labelled control in another box.",
+            "executed_in_inventory": false
           }
         ],
         "remaining_limitations": [
@@ -8093,7 +8226,7 @@
         },
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 392
+          "line": 451
         },
         "assessment": "int control reads and sets auto_resolution.rest_percentage_active; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
         "evidence": [
@@ -8116,6 +8249,13 @@
             "line": 506,
             "role": "source_inspection",
             "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 451,
+            "role": "source_inspection",
+            "description": "Matching reference row in this box uses self._duplicates_auto_resolution_rest_percentage_active; this is not the same-labelled control in another box.",
             "executed_in_inventory": false
           }
         ],
@@ -27417,16 +27557,15 @@
       {
         "id": "audit-options-command-palette-command-palette-search-provider-order-ordered-editor-list",
         "parent_id": "audit-options-command-palette-command-palette-search-provider-order",
-        "label": "Ordered editor list",
+        "label": "Ordered command-palette search providers",
         "kind": "dialog",
         "status": "missing",
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/CommandPalettePanel.py",
-          "line": 11,
-          "symbol": "CommandPalettePanel"
+          "line": 53
         },
-        "assessment": "Reference editor/control 'Ordered editor list' is recorded on 'command palette' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "assessment": "QueueListBox preserves provider priority and invokes the add-missing-provider chooser. This reference list editor and its editing callbacks are absent from native options::pages; existing migrated values do not expose the editing workflow.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/src/options.rs",
@@ -27441,10 +27580,17 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/CommandPalettePanel.py",
+            "line": 53,
+            "role": "source_inspection",
+            "description": "QueueListBox preserves provider priority and invokes the add-missing-provider chooser.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Native options registry has no editable 'Ordered editor list' control in this page/box path."
+          "No native options list editor for ordered command-palette search providers."
         ]
       },
       {
@@ -27592,7 +27738,7 @@
         "parent_id": "audit-options-connection-general",
         "label": "network timeout (seconds):",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 874
@@ -27601,13 +27747,13 @@
           "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
           "line": 143
         },
-        "assessment": "int control reads and sets network.network_timeout; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "int control reads and sets network.network_timeout; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 3..600 seconds; reference advanced mode permits 1..2592000 seconds (30 days). Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -27616,10 +27762,31 @@
             "role": "existing_gui_regression",
             "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_window.rs",
+            "line": 506,
+            "role": "source_inspection",
+            "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
+            "line": 27,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 874,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 3..600 seconds; reference advanced mode permits 1..2592000 seconds (30 days). Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_id_candidates": [
           "audit.options.tab.connection.general.network-timeout-seconds"
@@ -27630,7 +27797,7 @@
         "parent_id": "audit-options-connection-general",
         "label": "connection error retry wait (seconds):",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 880
@@ -27639,13 +27806,13 @@
           "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
           "line": 144
         },
-        "assessment": "int control reads and sets network.connection_error_wait_time; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "int control reads and sets network.connection_error_wait_time; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 3..1800 seconds; reference advanced mode permits 1..2592000 seconds (30 days). Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -27654,10 +27821,31 @@
             "role": "existing_gui_regression",
             "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_window.rs",
+            "line": 506,
+            "role": "source_inspection",
+            "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
+            "line": 27,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 880,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 3..1800 seconds; reference advanced mode permits 1..2592000 seconds (30 days). Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_id_candidates": [
           "audit.options.tab.connection.general.connection-error-retry-wait-seconds"
@@ -27668,7 +27856,7 @@
         "parent_id": "audit-options-connection-general",
         "label": "serverside bandwidth retry wait (seconds):",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 886
@@ -27677,13 +27865,13 @@
           "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
           "line": 145
         },
-        "assessment": "int control reads and sets network.serverside_bandwidth_wait_time; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "int control reads and sets network.serverside_bandwidth_wait_time; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 3..1800 seconds; reference advanced mode permits 1..2592000 seconds (30 days). Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -27692,10 +27880,31 @@
             "role": "existing_gui_regression",
             "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_window.rs",
+            "line": 506,
+            "role": "source_inspection",
+            "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
+            "line": 27,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 886,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 3..1800 seconds; reference advanced mode permits 1..2592000 seconds (30 days). Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_id_candidates": [
           "audit.options.tab.connection.general.serverside-bandwidth-retry-wait-seconds"
@@ -27744,7 +27953,7 @@
         "parent_id": "audit-options-connection-general",
         "label": "max number of simultaneous active network jobs:",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 907
@@ -27753,13 +27962,13 @@
           "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
           "line": 147
         },
-        "assessment": "int control reads and sets network.max_jobs; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "int control reads and sets network.max_jobs; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 1..30 jobs; reference advanced mode permits 1..1000 jobs. Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -27768,10 +27977,31 @@
             "role": "existing_gui_regression",
             "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_window.rs",
+            "line": 506,
+            "role": "source_inspection",
+            "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
+            "line": 27,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 907,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 1..30 jobs; reference advanced mode permits 1..1000 jobs. Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_id_candidates": [
           "audit.options.tab.connection.general.max-number-of-simultaneous-active-network-jobs"
@@ -27782,7 +28012,7 @@
         "parent_id": "audit-options-connection-general",
         "label": "max number of simultaneous active network jobs per domain:",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 913
@@ -27791,13 +28021,13 @@
           "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
           "line": 148
         },
-        "assessment": "int control reads and sets network.max_jobs_per_domain; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "int control reads and sets network.max_jobs_per_domain; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 1..5 jobs per domain; reference advanced mode permits 1..100 jobs per domain. Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -27806,10 +28036,31 @@
             "role": "existing_gui_regression",
             "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_window.rs",
+            "line": 506,
+            "role": "source_inspection",
+            "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ConnectionPanel.py",
+            "line": 27,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 913,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 1..5 jobs per domain; reference advanced mode permits 1..100 jobs per domain. Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_id_candidates": [
           "audit.options.tab.connection.general.max-number-of-simultaneous-active-network-jobs-per-domain"
@@ -28156,6 +28407,13 @@
             "role": "existing_gui_regression",
             "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
+            "line": 146,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._gallery_page_wait_period_pages; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -28323,7 +28581,7 @@
         },
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
-          "line": 146
+          "line": 159
         },
         "assessment": "int control reads and sets bandwidth.gallery_page_wait_subscriptions; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
         "evidence": [
@@ -28339,6 +28597,13 @@
             "line": 65,
             "role": "existing_gui_regression",
             "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
+            "line": 159,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._gallery_page_wait_period_subscriptions; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -28824,7 +29089,7 @@
         "parent_id": "audit-options-downloading-misc",
         "label": "Delay time on a gallery/watcher network error:",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 1052
@@ -28833,13 +29098,13 @@
           "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
           "line": 189
         },
-        "assessment": "duration control reads and sets network.downloader_network_error_delay; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "duration control reads and sets network.downloader_network_error_delay; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 600-second minimum; reference advanced mode permits 1-second minimum. Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -28848,10 +29113,31 @@
             "role": "existing_gui_regression",
             "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_window.rs",
+            "line": 506,
+            "role": "source_inspection",
+            "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
+            "line": 84,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1052,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 600-second minimum; reference advanced mode permits 1-second minimum. Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_id_candidates": [
           "audit.options.tab.downloading.misc.delay-time-on-a-gallery-watcher-network-error"
@@ -28862,7 +29148,7 @@
         "parent_id": "audit-options-downloading-misc",
         "label": "Delay time on a subscription network error:",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 1058
@@ -28871,13 +29157,13 @@
           "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
           "line": 190
         },
-        "assessment": "duration control reads and sets network.subscription_network_error_delay; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "duration control reads and sets network.subscription_network_error_delay; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 600-second minimum; reference advanced mode permits 1-second minimum. Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -28886,10 +29172,31 @@
             "role": "existing_gui_regression",
             "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_window.rs",
+            "line": 506,
+            "role": "source_inspection",
+            "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
+            "line": 84,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1058,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 600-second minimum; reference advanced mode permits 1-second minimum. Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_id_candidates": [
           "audit.options.tab.downloading.misc.delay-time-on-a-subscription-network-error"
@@ -28900,7 +29207,7 @@
         "parent_id": "audit-options-downloading-misc",
         "label": "Delay time on a subscription other error:",
         "kind": "control",
-        "status": "first_pass",
+        "status": "partial",
         "native_source": {
           "path": "crates/hydrus-gui-model/src/options.rs",
           "line": 1064
@@ -28909,13 +29216,13 @@
           "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
           "line": 191
         },
-        "assessment": "duration control reads and sets network.subscription_other_error_delay; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
+        "assessment": "duration control reads and sets network.subscription_other_error_delay; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, normal-mode bounds and migrated initial value. Native control always enforces 600-second minimum; reference advanced mode permits 1-second minimum. Native advanced-mode toggling does not rebuild or relax this control.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
             "line": 344,
             "role": "existing_model_regression",
-            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value.",
+            "description": "Checks every exposed control against the recorded Qt page: label, containing boxes, order, kind, bounds and migrated default value. The recorded fixture uses normal-mode bounds; it does not prove advanced-mode range parity.",
             "executed_in_inventory": false
           },
           {
@@ -28924,10 +29231,31 @@
             "role": "existing_gui_regression",
             "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_window.rs",
+            "line": 506,
+            "role": "source_inspection",
+            "description": "Shared Apply invokes validated Editor setters, saves only changed Settings, refreshes the store and closes on successful write.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/DownloadingPanel.py",
+            "line": 84,
+            "role": "source_inspection",
+            "description": "Reference selects different bounds from advanced_mode before constructing these controls.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1064,
+            "role": "source_inspection",
+            "description": "Native options registry hardcodes the normal-mode limits independently of AdvancedMode.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
+          "Native control always enforces 600-second minimum; reference advanced mode permits 1-second minimum. Native advanced-mode toggling does not rebuild or relax this control."
         ],
         "native_id_candidates": [
           "audit.options.tab.downloading.misc.delay-time-on-a-subscription-other-error"
@@ -30234,16 +30562,15 @@
       {
         "id": "audit-options-external-programs-external-calls-editor-list",
         "parent_id": "audit-options-external-programs-external-calls",
-        "label": "Editor list",
+        "label": "Registered external callable list",
         "kind": "dialog",
         "status": "missing",
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
-          "line": 1345,
-          "symbol": "ExternalProgramsPanel"
+          "line": 1395
         },
-        "assessment": "Reference editor/control 'Editor list' is recorded on 'external programs' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "assessment": "Callable table activates _EditCallable and supports Add/Delete/import/export/defaults. This reference list editor and its editing callbacks are absent from native options::pages; existing migrated values do not expose the editing workflow.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/src/options.rs",
@@ -30258,10 +30585,17 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+            "line": 1395,
+            "role": "source_inspection",
+            "description": "Callable table activates _EditCallable and supports Add/Delete/import/export/defaults.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Native options registry has no editable 'Editor list' control in this page/box path."
+          "No native options list editor for registered external callable list."
         ]
       },
       {
@@ -31066,16 +31400,15 @@
       {
         "id": "audit-options-file-sort-collect-file-sort-namespace-file-sorting-ordered-editor-list",
         "parent_id": "audit-options-file-sort-collect-file-sort-namespace-file-sorting",
-        "label": "Ordered editor list",
+        "label": "Ordered namespace sort schemes",
         "kind": "dialog",
         "status": "missing",
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/FileSortCollectPanel.py",
-          "line": 14,
-          "symbol": "FileSortCollectPanel"
+          "line": 54
         },
-        "assessment": "Reference editor/control 'Ordered editor list' is recorded on 'file sort/collect' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "assessment": "Namespace scheme list opens Add/EditNamespaceSort and preserves its order. This reference list editor and its editing callbacks are absent from native options::pages; existing migrated values do not expose the editing workflow.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/src/options.rs",
@@ -31090,10 +31423,17 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/FileSortCollectPanel.py",
+            "line": 54,
+            "role": "source_inspection",
+            "description": "Namespace scheme list opens Add/EditNamespaceSort and preserves its order.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Native options registry has no editable 'Ordered editor list' control in this page/box path."
+          "No native options list editor for ordered namespace sort schemes."
         ]
       },
       {
@@ -32409,16 +32749,15 @@
       {
         "id": "audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-ordered-editor-list",
         "parent_id": "audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons",
-        "label": "Ordered editor list",
+        "label": "Ordered custom file-deletion reasons",
         "kind": "dialog",
         "status": "missing",
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/FilesAndTrashPanel.py",
-          "line": 17,
-          "symbol": "FilesAndTrashPanel"
+          "line": 96
         },
-        "assessment": "Reference editor/control 'Ordered editor list' is recorded on 'files and trash' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "assessment": "Reason list adds/edits custom deletion reason strings through _AddAFDR/_EditAFDR. This reference list editor and its editing callbacks are absent from native options::pages; existing migrated values do not expose the editing workflow.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/src/options.rs",
@@ -32433,10 +32772,17 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/FilesAndTrashPanel.py",
+            "line": 96,
+            "role": "source_inspection",
+            "description": "Reason list adds/edits custom deletion reason strings through _AddAFDR/_EditAFDR.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Native options registry has no editable 'Ordered editor list' control in this page/box path."
+          "No native options list editor for ordered custom file-deletion reasons."
         ]
       },
       {
@@ -33217,16 +33563,15 @@
       {
         "id": "audit-options-gui-frame-locations-editor-list",
         "parent_id": "audit-options-gui-frame-locations",
-        "label": "Editor list",
+        "label": "Remembered/default frame locations table",
         "kind": "dialog",
         "status": "missing",
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/GUIPanel.py",
-          "line": 16,
-          "symbol": "GUIPanel"
+          "line": 104
         },
-        "assessment": "Reference editor/control 'Editor list' is recorded on 'gui' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "assessment": "Table activation calls EditFrameLocations to edit the selected window geometry/default placement. This reference list editor and its editing callbacks are absent from native options::pages; existing migrated values do not expose the editing workflow.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/src/options.rs",
@@ -33241,10 +33586,17 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/GUIPanel.py",
+            "line": 104,
+            "role": "source_inspection",
+            "description": "Table activation calls EditFrameLocations to edit the selected window geometry/default placement.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Native options registry has no editable 'Editor list' control in this page/box path."
+          "No native options list editor for remembered/default frame locations table."
         ]
       },
       {
@@ -33593,6 +33945,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/GUIPagesPanel.py",
+            "line": 190,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._show_all_my_files_on_page_chooser_at_top; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -33640,7 +33999,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/GUIPagesPanel.py",
-          "line": 190
+          "line": 192
         },
         "assessment": "Reference editor/control 'Put it at the top:' is recorded on 'gui pages' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -33656,6 +34015,13 @@
             "line": 1,
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/GUIPagesPanel.py",
+            "line": 192,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._show_local_files_on_page_chooser_at_top; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -33983,6 +34349,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/GUIPagesPanel.py",
+            "line": 210,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._page_drop_chase_with_shift; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -34030,7 +34403,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/GUIPagesPanel.py",
-          "line": 210
+          "line": 212
         },
         "assessment": "Reference editor/control 'With shift held down?:' is recorded on 'gui pages' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -34046,6 +34419,13 @@
             "line": 1,
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/GUIPagesPanel.py",
+            "line": 212,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._page_drag_change_tab_with_shift; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -34791,16 +35171,15 @@
       {
         "id": "audit-options-import-options-default-import-options-editor-list",
         "parent_id": "audit-options-import-options-default-import-options",
-        "label": "Editor list",
+        "label": "Default import options by context",
         "kind": "dialog",
         "status": "missing",
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/ImportOptionsPanel.py",
-          "line": 28,
-          "symbol": "ImportOptionsPanel"
+          "line": 63
         },
-        "assessment": "Reference editor/control 'Editor list' is recorded on 'import options' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "assessment": "Default-context table activates _EditDefault for the selected imported-options object. This reference list editor and its editing callbacks are absent from native options::pages; existing migrated values do not expose the editing workflow.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/src/options.rs",
@@ -34815,10 +35194,17 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ImportOptionsPanel.py",
+            "line": 63,
+            "role": "source_inspection",
+            "description": "Default-context table activates _EditDefault for the selected imported-options object.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Native options registry has no editable 'Editor list' control in this page/box path."
+          "No native options list editor for default import options by context."
         ]
       },
       {
@@ -34984,16 +35370,15 @@
       {
         "id": "audit-options-import-options-url-class-import-options-editor-list",
         "parent_id": "audit-options-import-options-url-class-import-options",
-        "label": "Editor list",
+        "label": "URL-class import option overrides",
         "kind": "dialog",
         "status": "missing",
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/ImportOptionsPanel.py",
-          "line": 28,
-          "symbol": "ImportOptionsPanel"
+          "line": 97
         },
-        "assessment": "Reference editor/control 'Editor list' is recorded on 'import options' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "assessment": "URL-class table activates _EditURLClass for overrides linked to the selected URL class. This reference list editor and its editing callbacks are absent from native options::pages; existing migrated values do not expose the editing workflow.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/src/options.rs",
@@ -35008,10 +35393,17 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ImportOptionsPanel.py",
+            "line": 97,
+            "role": "source_inspection",
+            "description": "URL-class table activates _EditURLClass for overrides linked to the selected URL class.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Native options registry has no editable 'Editor list' control in this page/box path."
+          "No native options list editor for url-class import option overrides."
         ]
       },
       {
@@ -35145,16 +35537,15 @@
       {
         "id": "audit-options-import-options-favourites-profiles-editor-list",
         "parent_id": "audit-options-import-options-favourites-profiles",
-        "label": "Editor list",
+        "label": "Named favourite import profiles",
         "kind": "dialog",
         "status": "missing",
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/ImportOptionsPanel.py",
-          "line": 28,
-          "symbol": "ImportOptionsPanel"
+          "line": 129
         },
-        "assessment": "Reference editor/control 'Editor list' is recorded on 'import options' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "assessment": "Profile table opens _EditFavourite and exposes profile deletion through _DeleteFavourite. This reference list editor and its editing callbacks are absent from native options::pages; existing migrated values do not expose the editing workflow.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/src/options.rs",
@@ -35169,10 +35560,17 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ImportOptionsPanel.py",
+            "line": 129,
+            "role": "source_inspection",
+            "description": "Profile table opens _EditFavourite and exposes profile deletion through _DeleteFavourite.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Native options registry has no editable 'Editor list' control in this page/box path."
+          "No native options list editor for named favourite import profiles."
         ]
       },
       {
@@ -35792,65 +36190,121 @@
       {
         "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-consider-the-system-busy-if-cpu-usage-is-above",
         "parent_id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle",
-        "label": "Consider the system busy if CPU usage is above:",
+        "label": "CPU busy usage threshold (%)",
         "kind": "control",
         "status": "missing",
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 320
+          "line": 303
         },
-        "assessment": "Reference editor/control 'Consider the system busy if CPU usage is above:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "assessment": "Reference percent control accepts 5..99, initializes system_busy_cpu_percent and saves it in UpdateOptions. SystemBusy compares each CPU reading against this percentage, then applies the separate core-count threshold. Native options registry has no corresponding editable CPU-percentage control.",
         "evidence": [
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 36,
+            "role": "source_inspection",
+            "description": "Constructs the separate 5..99 percent threshold field.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 221,
+            "role": "source_inspection",
+            "description": "Initializes percent threshold from system_busy_cpu_percent.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 303,
+            "role": "source_inspection",
+            "description": "Places the actual percent control in the compound CPU-busy row.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 532,
+            "role": "source_inspection",
+            "description": "UpdateOptions writes the CPU-percent setting.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/ClientController.py",
+            "line": 2553,
+            "role": "source_inspection",
+            "description": "Runtime busy decision tests individual CPU readings against this percentage before applying core-count threshold.",
+            "executed_in_inventory": false
+          },
           {
             "path": "crates/hydrus-gui-model/src/options.rs",
             "line": 840,
             "role": "source_inspection",
-            "description": "Inspected complete native options registry: only twenty pages and their explicitly listed getter/setter rows are offered.",
-            "executed_in_inventory": false
-          },
-          {
-            "path": "oracle/record_options_dialog.py",
-            "line": 1,
-            "role": "existing_oracle_recorder",
-            "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "description": "Native options registry has no setter/row for this CPU-percent field.",
             "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Native options registry has no editable 'Consider the system busy if CPU usage is above:' control in this page/box path."
+          "No native options editor for system_busy_cpu_percent."
         ]
       },
       {
         "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-on",
         "parent_id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle",
-        "label": "% on",
+        "label": "Number of CPU cores exceeding busy threshold",
         "kind": "control",
         "status": "missing",
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 304
+          "line": 305
         },
-        "assessment": "Reference editor/control '% on' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "assessment": "Reference nullable core-count control accepts 1..64 cores or None (ignore CPU usage), initializes system_busy_cpu_count and writes it through UpdateOptions. ClientController::SystemBusy compares the number of per-core readings above system_busy_cpu_percent to this count; native options registry has no corresponding editable CPU-count control.",
         "evidence": [
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 37,
+            "role": "source_inspection",
+            "description": "Constructs NoneableSpinCtrl with 1..64 core bounds and ignore-CPU-usage None choice.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 222,
+            "role": "source_inspection",
+            "description": "Initializes the nullable core count from system_busy_cpu_count.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 305,
+            "role": "source_inspection",
+            "description": "Places the actual core-count control after the percent unit label; % on is not this control name.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 533,
+            "role": "source_inspection",
+            "description": "UpdateOptions writes system_busy_cpu_count.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/ClientController.py",
+            "line": 2539,
+            "role": "source_inspection",
+            "description": "SystemBusy counts per-core utilization readings above system_busy_cpu_percent against system_busy_cpu_count.",
+            "executed_in_inventory": false
+          },
           {
             "path": "crates/hydrus-gui-model/src/options.rs",
             "line": 840,
             "role": "source_inspection",
-            "description": "Inspected complete native options registry: only twenty pages and their explicitly listed getter/setter rows are offered.",
-            "executed_in_inventory": false
-          },
-          {
-            "path": "oracle/record_options_dialog.py",
-            "line": 1,
-            "role": "existing_oracle_recorder",
-            "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "description": "Native options registry has no setter/row for this CPU-count field.",
             "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Native options registry has no editable '% on' control in this page/box path."
+          "No native options editor for system_busy_cpu_count; migrated legacy values do not provide this editing workflow."
         ]
       },
       {
@@ -36275,6 +36729,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 389,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._repository_processing_work_time_idle; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -36306,6 +36767,13 @@
             "line": 1,
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 390,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._repository_processing_rest_percentage_idle; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -36339,6 +36807,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 391,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._repository_processing_work_time_normal; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -36370,6 +36845,13 @@
             "line": 1,
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 392,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._repository_processing_rest_percentage_normal; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -36450,7 +36932,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 389
+          "line": 407
         },
         "assessment": "Reference editor/control '\"Idle\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -36467,6 +36949,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 407,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._tag_display_processing_work_time_idle; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -36482,7 +36971,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 390
+          "line": 408
         },
         "assessment": "Reference editor/control '\"Idle\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -36498,6 +36987,13 @@
             "line": 1,
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 408,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._tag_display_processing_rest_percentage_idle; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -36546,7 +37042,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 391
+          "line": 410
         },
         "assessment": "Reference editor/control '\"Normal\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -36563,6 +37059,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 410,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._tag_display_processing_work_time_normal; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -36578,7 +37081,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 392
+          "line": 411
         },
         "assessment": "Reference editor/control '\"Normal\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -36594,6 +37097,13 @@
             "line": 1,
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 411,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._tag_display_processing_rest_percentage_normal; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -36627,6 +37137,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 412,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._tag_display_processing_work_time_work_hard; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -36658,6 +37175,13 @@
             "line": 1,
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 413,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._tag_display_processing_rest_percentage_work_hard; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -36744,7 +37268,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 389
+          "line": 428
         },
         "assessment": "Reference editor/control '\"Idle\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -36761,6 +37285,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 428,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._potential_duplicates_search_work_time_idle; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -36776,7 +37307,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 390
+          "line": 429
         },
         "assessment": "Reference editor/control '\"Idle\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -36792,6 +37323,13 @@
             "line": 1,
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 429,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._potential_duplicates_search_rest_percentage_idle; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -36846,7 +37384,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 391
+          "line": 431
         },
         "assessment": "Reference editor/control '\"Normal\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -36863,6 +37401,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 431,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._potential_duplicates_search_work_time_active; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -36878,7 +37423,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 392
+          "line": 432
         },
         "assessment": "Reference editor/control '\"Normal\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -36894,6 +37439,13 @@
             "line": 1,
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 432,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._potential_duplicates_search_rest_percentage_active; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -36974,7 +37526,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 389
+          "line": 447
         },
         "assessment": "Reference editor/control '\"Idle\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -36991,6 +37543,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 447,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._duplicates_auto_resolution_work_time_idle; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -37006,7 +37565,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 390
+          "line": 448
         },
         "assessment": "Reference editor/control '\"Idle\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -37022,6 +37581,13 @@
             "line": 1,
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 448,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._duplicates_auto_resolution_rest_percentage_idle; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -37079,7 +37645,7 @@
         },
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 391
+          "line": 450
         },
         "assessment": "duration control reads and sets auto_resolution.work_time_ms_active; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
         "evidence": [
@@ -37095,6 +37661,13 @@
             "line": 65,
             "role": "existing_gui_regression",
             "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 450,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._duplicates_auto_resolution_work_time_active; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -37117,7 +37690,7 @@
         },
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 392
+          "line": 451
         },
         "assessment": "int control reads and sets auto_resolution.rest_percentage_active; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
         "evidence": [
@@ -37133,6 +37706,13 @@
             "line": 65,
             "role": "existing_gui_regression",
             "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 451,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._duplicates_auto_resolution_rest_percentage_active; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -37184,7 +37764,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 389
+          "line": 465
         },
         "assessment": "Reference editor/control '\"Idle\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -37201,6 +37781,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 465,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._deferred_table_delete_work_time_idle; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -37216,7 +37803,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 390
+          "line": 466
         },
         "assessment": "Reference editor/control '\"Idle\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -37233,6 +37820,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 466,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._deferred_table_delete_rest_percentage_idle; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -37248,7 +37842,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 391
+          "line": 467
         },
         "assessment": "Reference editor/control '\"Normal\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -37265,6 +37859,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 467,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._deferred_table_delete_work_time_normal; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -37280,7 +37881,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 392
+          "line": 468
         },
         "assessment": "Reference editor/control '\"Normal\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -37297,6 +37898,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 468,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._deferred_table_delete_rest_percentage_normal; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -37312,7 +37920,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 412
+          "line": 469
         },
         "assessment": "Reference editor/control '\"Work hard\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -37329,6 +37937,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 469,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._deferred_table_delete_work_time_work_hard; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -37344,7 +37959,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
-          "line": 413
+          "line": 470
         },
         "assessment": "Reference editor/control '\"Work hard\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -37360,6 +37975,13 @@
             "line": 1,
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+            "line": 470,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._deferred_table_delete_rest_percentage_work_hard; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -37842,16 +38464,15 @@
       {
         "id": "audit-options-media-playback-per-filetype-handling-editor-list",
         "parent_id": "audit-options-media-playback-per-filetype-handling",
-        "label": "Editor list",
+        "label": "Per-filetype media handling table",
         "kind": "dialog",
         "status": "missing",
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
-          "line": 27,
-          "symbol": "MediaPlaybackPanel"
+          "line": 196
         },
-        "assessment": "Reference editor/control 'Editor list' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "assessment": "MIME handling table activates EditMediaViewerOptions and supports deleting custom rows. This reference list editor and its editing callbacks are absent from native options::pages; existing migrated values do not expose the editing workflow.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/src/options.rs",
@@ -37866,10 +38487,17 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+            "line": 196,
+            "role": "source_inspection",
+            "description": "MIME handling table activates EditMediaViewerOptions and supports deleting custom rows.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Native options registry has no editable 'Editor list' control in this page/box path."
+          "No native options list editor for per-filetype media handling table."
         ]
       },
       {
@@ -38059,6 +38687,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+            "line": 285,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._mpv_preferred_audio_device; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -38122,6 +38757,13 @@
             "line": 1,
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+            "line": 287,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._mpv_null_audio_on_silent_media; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -38362,7 +39004,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
-          "line": 285
+          "line": 307
         },
         "assessment": "Reference editor/control 'Preferred audio output device:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -38379,6 +39021,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+            "line": 307,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._qt_media_player_preferred_audio_device; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -38394,7 +39043,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
-          "line": 287
+          "line": 308
         },
         "assessment": "Reference editor/control 'DEBUG: Set null audio device on silent media:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -38410,6 +39059,13 @@
             "line": 1,
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+            "line": 308,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._qt_media_player_null_audio_on_silent_media; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -40552,16 +41208,15 @@
       {
         "id": "audit-options-open-externally-url-calls-ordered-editor-list",
         "parent_id": "audit-options-open-externally-url-calls",
-        "label": "Ordered editor list",
+        "label": "Ordered URL-launch callables",
         "kind": "dialog",
         "status": "missing",
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
-          "line": 101,
-          "symbol": "OpenExternallyPanel"
+          "line": 112
         },
-        "assessment": "Reference editor/control 'Ordered editor list' is recorded on 'open externally' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "assessment": "Ordered callable IDs/names determine URL launch choices and the first/default call. This reference list editor and its editing callbacks are absent from native options::pages; existing migrated values do not expose the editing workflow.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/src/options.rs",
@@ -40576,10 +41231,17 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+            "line": 112,
+            "role": "source_inspection",
+            "description": "Ordered callable IDs/names determine URL launch choices and the first/default call.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Native options registry has no editable 'Ordered editor list' control in this page/box path."
+          "No native options list editor for ordered url-launch callables."
         ]
       },
       {
@@ -40681,16 +41343,15 @@
       {
         "id": "audit-options-open-externally-single-file-calls-editor-list",
         "parent_id": "audit-options-open-externally-single-file-calls",
-        "label": "Editor list",
+        "label": "Per-filetype external-launch callables",
         "kind": "dialog",
         "status": "missing",
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
-          "line": 101,
-          "symbol": "OpenExternallyPanel"
+          "line": 132
         },
-        "assessment": "Reference editor/control 'Editor list' is recorded on 'open externally' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "assessment": "MIME launch table opens _EditMimeLaunch and protects the general-file default from deletion. This reference list editor and its editing callbacks are absent from native options::pages; existing migrated values do not expose the editing workflow.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/src/options.rs",
@@ -40705,10 +41366,17 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+            "line": 132,
+            "role": "source_inspection",
+            "description": "MIME launch table opens _EditMimeLaunch and protects the general-file default from deletion.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Native options registry has no editable 'Editor list' control in this page/box path."
+          "No native options list editor for per-filetype external-launch callables."
         ]
       },
       {
@@ -44705,16 +45373,15 @@
       {
         "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-ordered-editor-list",
         "parent_id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort",
-        "label": "Ordered editor list",
+        "label": "Ordered namespace grouping keys",
         "kind": "dialog",
         "status": "missing",
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/TagSortPanel.py",
-          "line": 14,
-          "symbol": "TagSortPanel"
+          "line": 33
         },
-        "assessment": "Reference editor/control 'Ordered editor list' is recorded on 'tag sort' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "assessment": "Namespace grouping list supports Add/Edit/Paste and preserves group sort priority. This reference list editor and its editing callbacks are absent from native options::pages; existing migrated values do not expose the editing workflow.",
         "evidence": [
           {
             "path": "crates/hydrus-gui-model/src/options.rs",
@@ -44729,10 +45396,17 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/TagSortPanel.py",
+            "line": 33,
+            "role": "source_inspection",
+            "description": "Namespace grouping list supports Add/Edit/Paste and preserves group sort priority.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
-          "Native options registry has no editable 'Ordered editor list' control in this page/box path."
+          "No native options list editor for ordered namespace grouping keys."
         ]
       },
       {
@@ -45419,6 +46093,13 @@
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
             "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+            "line": 161,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._focus_preview_on_ctrl_click_only_static; duplicate label text elsewhere on the page refers to another setting.",
+            "executed_in_inventory": false
           }
         ],
         "limitations": [
@@ -45466,7 +46147,7 @@
         "native_source": null,
         "reference_source": {
           "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
-          "line": 161
+          "line": 163
         },
         "assessment": "Reference editor/control 'Only on files with no duration:' is recorded on 'thumbnails' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
         "evidence": [
@@ -45482,6 +46163,13 @@
             "line": 1,
             "role": "existing_oracle_recorder",
             "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+            "line": 163,
+            "role": "source_inspection",
+            "description": "This exact page/box row uses self._focus_preview_on_shift_click_only_static; duplicate label text elsewhere on the page refers to another setting.",
             "executed_in_inventory": false
           }
         ],
@@ -65155,5 +65843,6 @@
       }
     ],
     "deletions": []
-  }
+  },
+  "assessment_notes": "Independent depth review corrected repeated option-label links by page/box context, scoped eight controls as partial for missing advanced-mode range expansion, and distinguished CPU percent/core-count settings from unit text. Domain-specific list labels replace generic editor-list names."
 }

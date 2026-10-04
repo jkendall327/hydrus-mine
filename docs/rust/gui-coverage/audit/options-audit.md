@@ -67,9 +67,18 @@ remain missing. Its embedded download-control limitations are scoped rather
 than claiming the network control complete.
 
 Validation applied this patch in memory only: IDs, parent existence/cycles,
-shared references, native candidates, owned status coverage and all 1,405 unique
+shared references, native candidates, owned status coverage and all 1,451 unique
 source anchors were checked against the full baseline Git commit. The only
 external reference dependency is `audit-shared-locations`, supplied by the
 integration audit; native checker controls reuse `dialog.subscription.checker`.
 The first-pass badge means this stated source/recording scope, not fresh runtime
 verification or parity for a whole window.
+
+Independent review also checked repeated option labels against their real
+page/box rows. Subscription/gallery wait links and repeated maintenance, player,
+page and thumbnail rows now point to the matching setting. Eight connection
+limits/downloader error delays are partial: native always enforces normal-mode
+bounds, while Qt advanced mode permits larger limits or shorter delays. The
+CPU-busy percentage and nullable core count now have meaningful labels and
+constructor/initialization/setter/consumer anchors. Generic list names were
+replaced with their actual frame, MIME, profile, callable or ordering domain.
