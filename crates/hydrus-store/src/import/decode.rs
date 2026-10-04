@@ -658,6 +658,19 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             viewer_canvas.seek_nub_width = (*value).clamp(1, 63) as u32;
         }
         insert_setting(&mut input, &viewer_canvas)?;
+        let mut viewer_pointer = crate::settings::ViewerPointerSettings::default();
+        for (key, field) in [
+            (
+                "disallow_media_drags_on_duration_media",
+                &mut viewer_pointer.disallow_duration_drag,
+            ),
+            ("hide_canvas_drags", &mut viewer_pointer.hide_during_drag),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        insert_setting(&mut input, &viewer_pointer)?;
         let mut viewer_hovers = crate::settings::ViewerHoverSettings::default();
         for (key, field) in [
             (
@@ -2788,6 +2801,49 @@ mod tests {
                 seek_nub_width: 19
             }
         );
+    }
+
+    #[test]
+    fn viewer_pointer_options_import_both_drag_preferences() {
+        use crate::settings::ViewerPointerSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerPointerSettings>(
+                input.settings["viewer_pointer"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(
+            decoded(),
+            ViewerPointerSettings {
+                disallow_duration_drag: false,
+                hide_during_drag: true
+            }
+        );
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "disallow_media_drags_on_duration_media"], [0, false]]"#,
+                    r#"[[0, "disallow_media_drags_on_duration_media"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "hide_canvas_drags"], [0, true]]"#,
+                    r#"[[0, "hide_canvas_drags"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerPointerSettings {
+                disallow_duration_drag: true,
+                hide_during_drag: false
+            }
+        );
+        let fresh: ViewerPointerSettings = serde_json::from_str("{}").unwrap();
+        assert!(!fresh.disallow_duration_drag);
+        assert_eq!(fresh.hide_during_drag, !cfg!(target_os = "macos"));
     }
 
     #[test]

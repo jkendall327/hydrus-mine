@@ -31,8 +31,7 @@ use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FileHandlingSettings, FileSearchSettings, FileViewingStatistics,
     FolderSettings, GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings,
-    SearchDefaults, TagAutocompleteTabs, ThumbnailLayout, ViewerCanvasSettings,
-    ViewerHoverSettings,
+    SearchDefaults, TagAutocompleteTabs, ThumbnailLayout, ViewerCanvasSettings, ViewerHoverSettings, ViewerPointerSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -112,6 +111,7 @@ settings! {
     windows: WindowSettings,
     viewer_canvas: ViewerCanvasSettings,
     viewer_hovers: ViewerHoverSettings,
+    viewer_pointer: ViewerPointerSettings,
 }
 
 /// An option's value as its control holds it.
@@ -1829,6 +1829,23 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         page(
             "media viewer",
             vec![
+                boxed(
+                    "mouse behaviour",
+                    vec![
+                        check(
+                            "Do not allow mouse media drag-panning when the media has duration:",
+                            |settings| settings.viewer_pointer.disallow_duration_drag,
+                            |settings, value| {
+                                settings.viewer_pointer.disallow_duration_drag = value
+                            },
+                        ),
+                        check(
+                            "Hide mouse cursor during media viewer drags:",
+                            |settings| settings.viewer_pointer.hide_during_drag,
+                            |settings, value| settings.viewer_pointer.hide_during_drag = value,
+                        ),
+                    ],
+                ),
                 boxed(
                     "animation/audio seek bar",
                     vec![

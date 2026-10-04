@@ -2362,3 +2362,172 @@ fn hover_options_apply_to_actual_mouseover_panels_and_passive_index_text() {
     options.invoke_cancel();
     viewer.invoke_close_requested();
 }
+
+#[test]
+#[allow(clippy::float_cmp)] // exact integer pointer deltas in logical pixels
+fn pointer_options_change_real_drag_acceptance_and_cursor_transitions() {
+    use hydrus_store::settings::{self, ViewerPointerSettings};
+    use slint::{
+        LogicalPosition,
+        platform::{PointerEventButton, WindowEvent},
+    };
+    let fixture = hydrus_testkit::fixture_json("viewer_pointer_options.json");
+    let (_dirs, store) = store();
+    let animation =
+        hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new())
+            .import_path(
+                &hydrus_testkit::fixture_path("media/webp_anim.webp"),
+                &hydrus_import::FileImportOptions::default(),
+            )
+            .unwrap()
+            .hash
+            .unwrap();
+    let animation_id = store
+        .read(|conn| hydrus_store::master::hash_id(conn, &animation))
+        .unwrap()
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let basic = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &files))
+        .unwrap();
+    let jpeg = basic
+        .iter()
+        .position(|file| {
+            file.info
+                .as_ref()
+                .is_some_and(|info| info.mime == hydrus_core::Mime::ImageJpeg)
+        })
+        .unwrap();
+    let animation_index = files.iter().position(|id| *id == animation_id).unwrap();
+    let labels = [
+        "Do not allow mouse media drag-panning when the media has duration:",
+        "Hide mouse cursor during media viewer drags:",
+    ];
+    let mut showing_duration = false;
+    ui.invoke_thumbnail_activated(i32::try_from(jpeg).unwrap());
+    let mut drawn = windows.get(windows.count() - 1).unwrap();
+    for (case, event) in fixture["drags"].as_array().unwrap().iter().enumerate() {
+        let duration = event["has_duration"].as_bool().unwrap();
+        if duration != showing_duration {
+            bound
+                .viewer
+                .borrow()
+                .as_ref()
+                .unwrap()
+                .invoke_close_requested();
+            ui.invoke_thumbnail_activated(i32::try_from(animation_index).unwrap());
+            showing_duration = duration;
+            drawn = windows.get(windows.count() - 1).unwrap();
+        }
+        let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+        headless::render(&drawn, 1000, 750);
+        assert_eq!(
+            viewer.get_media_has_duration(),
+            duration,
+            "real file metadata"
+        );
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer");
+        options.invoke_check_toggled(
+            row(&options, labels[0]).0,
+            event["disallow"].as_bool().unwrap(),
+        );
+        options.invoke_check_toggled(row(&options, labels[1]).0, event["hide"].as_bool().unwrap());
+        options.invoke_apply();
+        assert_eq!(
+            viewer.get_disallow_duration_drag(),
+            event["disallow"].as_bool().unwrap()
+        );
+        assert_eq!(
+            viewer.get_hide_during_drag(),
+            event["hide"].as_bool().unwrap()
+        );
+        // Distinct press points avoid synthesising a double click that closes
+        // the actual viewer. The media delta is independent of the origin.
+        let x = 400.0 + case as f32 * 35.0;
+        let at = |dx, dy| LogicalPosition::new(x + dx, 350.0 + dy);
+        let moved = |dx, dy| {
+            viewer.window().dispatch_event(WindowEvent::PointerMoved {
+                position: at(dx, dy),
+            })
+        };
+        moved(0.0, 0.0);
+        let before = (viewer.get_media_x(), viewer.get_media_y());
+        viewer.window().dispatch_event(WindowEvent::PointerPressed {
+            position: at(0.0, 0.0),
+            button: PointerEventButton::Left,
+        });
+        assert_eq!(
+            viewer.get_drag_accepted(),
+            event["accepted"].as_bool().unwrap()
+        );
+        let cursor_hidden =
+            |phase: &str| event["cursor"][phase] == fixture["cursor_values"]["blank"];
+        assert_eq!(viewer.get_drag_cursor_hidden(), cursor_hidden("pressed"));
+        moved(21.0, 7.0);
+        assert_eq!(
+            (
+                viewer.get_media_x() - before.0,
+                viewer.get_media_y() - before.1
+            ),
+            (
+                event["delta"][0].as_i64().unwrap() as f32,
+                event["delta"][1].as_i64().unwrap() as f32
+            )
+        );
+        assert_eq!(viewer.get_drag_cursor_hidden(), cursor_hidden("moved"));
+        viewer
+            .window()
+            .dispatch_event(WindowEvent::PointerReleased {
+                position: at(21.0, 7.0),
+                button: PointerEventButton::Left,
+            });
+        assert!(!viewer.get_drag_accepted());
+        assert_eq!(viewer.get_drag_cursor_hidden(), cursor_hidden("released"));
+        moved(30.0, 19.0);
+        assert_eq!(
+            viewer.get_drag_cursor_hidden(),
+            cursor_hidden("ordinary_move")
+        );
+    }
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let persisted = store.read(settings::get::<ViewerPointerSettings>).unwrap();
+    assert!(persisted.disallow_duration_drag && persisted.hide_during_drag);
+    let before = viewer.get_media_x();
+    viewer.invoke_pan(1, 0);
+    assert_ne!(
+        viewer.get_media_x(),
+        before,
+        "keyboard panning remains available for duration media"
+    );
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer");
+    assert!(row(&options, labels[0]).1.checked && row(&options, labels[1]).1.checked);
+    options.invoke_check_toggled(row(&options, labels[0]).0, false);
+    options.invoke_check_toggled(row(&options, labels[1]).0, false);
+    options.invoke_cancel();
+    assert!(viewer.get_disallow_duration_drag() && viewer.get_hide_during_drag());
+    assert_eq!(
+        store.read(settings::get::<ViewerPointerSettings>).unwrap(),
+        persisted
+    );
+    viewer.invoke_close_requested();
+    ui.invoke_thumbnail_activated(i32::try_from(animation_index).unwrap());
+    let reopened = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert!(
+        reopened.get_media_has_duration()
+            && reopened.get_disallow_duration_drag()
+            && reopened.get_hide_during_drag()
+    );
+    reopened.invoke_close_requested();
+}

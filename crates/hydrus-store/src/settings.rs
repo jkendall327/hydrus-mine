@@ -532,6 +532,25 @@ impl Setting for ViewerCanvasSettings {
     const KEY: &'static str = "viewer_canvas";
 }
 
+/// Pointer panning and cursor visibility during native viewer drags.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerPointerSettings {
+    pub disallow_duration_drag: bool,
+    pub hide_during_drag: bool,
+}
+impl Default for ViewerPointerSettings {
+    fn default() -> Self {
+        Self {
+            disallow_duration_drag: false,
+            hide_during_drag: !cfg!(target_os = "macos"),
+        }
+    }
+}
+impl Setting for ViewerPointerSettings {
+    const KEY: &'static str = "viewer_pointer";
+}
+
 /// Pop-in hover panels and the passive bottom-right index in the media viewer.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

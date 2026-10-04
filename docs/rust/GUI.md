@@ -2117,3 +2117,12 @@ Importing a reference database whose startup preference selects a named session
 keeps that original name as an immutable snapshot as well as the native live
 last session. Startup can therefore load the configured name after conversion;
 its media and importer logs survive replacement of the initially staged pages.
+
+Media viewer mouse behaviour Options can reject mouse drag-panning on files
+with duration, while leaving still images, keyboard panning and seek bars
+available. The cursor-hiding preference blanks the native cursor on accepted
+drag movement; releasing retains the blank cursor until ordinary movement
+restores it. Both settings apply to the open viewer, persist on Apply and
+remain unchanged on Cancel. Duration drag blocking defaults off; cursor hiding
+defaults on except macOS, matching the reference. `viewer_pointer_options.json`
+records real Qt drag acceptance, geometry and cursor transitions.

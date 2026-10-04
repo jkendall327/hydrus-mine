@@ -212,6 +212,11 @@ export component MediaViewerWindow inherits Window {
         && pointer.mouse-x >= root.media-x - 50px && pointer.mouse-x <= root.media-x + root.media-width + 50px
         && pointer.mouse-y >= root.bar-top - 100px && pointer.mouse-y <= root.bar-top + 40px;
     // where a drag last was
+    in property <bool> disallow-duration-drag;
+    in property <bool> hide-during-drag;
+    in property <bool> media-has-duration;
+    out property <bool> drag-accepted;
+    out property <bool> drag-cursor-hidden;
     property <length> drag-x;
     property <length> drag-y;
 
@@ -802,10 +807,17 @@ export component MediaViewerWindow inherits Window {
             image-fit: fill;
         }
         pointer := TouchArea {
+            mouse-cursor: root.drag-cursor-hidden ? MouseCursor.none : MouseCursor.default;
+            changed mouse-x => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
+            changed mouse-y => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
             pointer-event(event) => {
                 if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                    root.drag-accepted = !root.disallow-duration-drag || !root.media-has-duration;
                     root.drag-x = self.mouse-x;
                     root.drag-y = self.mouse-y;
+                }
+                if (event.kind == PointerEventKind.up || event.kind == PointerEventKind.cancel) {
+                    root.drag-accepted = false;
                 }
                 // as the reference's default: a middle click closes it
                 if (event.kind == PointerEventKind.down && event.button == PointerEventButton.middle) {
@@ -820,9 +832,16 @@ export component MediaViewerWindow inherits Window {
             // as is a (left) double-click, as the reference's default
             double-clicked => { root.close-requested(); }
             moved => {
-                root.drag(self.mouse-x - root.drag-x, self.mouse-y - root.drag-y);
-                root.drag-x = self.mouse-x;
-                root.drag-y = self.mouse-y;
+                if (root.drag-accepted) {
+                    if (self.mouse-x != root.drag-x || self.mouse-y != root.drag-y) {
+                        root.drag(self.mouse-x - root.drag-x, self.mouse-y - root.drag-y);
+                        root.drag-cursor-hidden = root.hide-during-drag;
+                    }
+                    root.drag-x = self.mouse-x;
+                    root.drag-y = self.mouse-y;
+                } else {
+                    root.drag-cursor-hidden = false;
+                }
             }
             scroll-event(event) => {
                 if (event.modifiers.control) {

@@ -3,7 +3,7 @@ use hydrus_core::HashId;
 use hydrus_store::{
     Store,
     media::FileFlags,
-    settings::{self, ViewerCanvasSettings, ViewerHoverSettings},
+    settings::{self, ViewerCanvasSettings, ViewerHoverSettings, ViewerPointerSettings},
 };
 
 pub(crate) fn refresh(window: &crate::MediaViewerWindow, store: &Store, file: HashId) {
@@ -13,15 +13,23 @@ pub(crate) fn refresh(window: &crate::MediaViewerWindow, store: &Store, file: Ha
     window.set_hover_ratings_enabled(hovers.ratings);
     window.set_hover_notes_enabled(hovers.notes);
     window.set_draw_index_background(hovers.index_background);
-    let transparent = store
+    let pointer: ViewerPointerSettings = store.read(settings::get).unwrap_or_default();
+    window.set_disallow_duration_drag(pointer.disallow_duration_drag);
+    window.set_hide_during_drag(pointer.hide_during_drag);
+    let (transparent, has_duration) = store
         .read(|conn| {
-            let flags: u32 =
-                conn.query_row("SELECT flags FROM files WHERE hash_id = ?", [file], |row| {
-                    row.get(0)
-                })?;
-            Ok(FileFlags(flags).has(FileFlags::TRANSPARENCY))
+            let (flags, duration): (u32, Option<i64>) = conn.query_row(
+                "SELECT flags, duration_ms FROM files WHERE hash_id = ?",
+                [file],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )?;
+            Ok((
+                FileFlags(flags).has(FileFlags::TRANSPARENCY),
+                duration.is_some(),
+            ))
         })
-        .unwrap_or(false);
+        .unwrap_or((false, false));
+    window.set_media_has_duration(has_duration);
     let mode = if !transparent || !options.transparency_checkerboard {
         0
     } else if options.transparency_greenscreen {

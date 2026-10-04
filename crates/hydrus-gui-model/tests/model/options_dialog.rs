@@ -1323,3 +1323,76 @@ fn viewer_hover_controls_replay_reference_enabled_states() {
     }
     assert_eq!(store.read(Settings::load).unwrap(), settings);
 }
+
+#[test]
+fn viewer_pointer_controls_stage_the_reference_drag_preferences() {
+    use hydrus_gui_model::options::{Editor, Row as EditorRow};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("viewer_pointer_options.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    let registry = pages(&settings);
+    let page = registry
+        .iter()
+        .find(|page| page.name == "media viewer")
+        .unwrap();
+    let reference = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "media viewer")
+        .unwrap();
+    let problems = page_problems(page, &reference["items"], &settings, &store);
+    assert!(problems.is_empty(), "{problems:?}");
+    assert_eq!(
+        settings.viewer_pointer.disallow_duration_drag,
+        fixture["initial"]["disallow_duration_drag"]
+            .as_bool()
+            .unwrap()
+    );
+    // The imported fixture is Linux; a fresh native default is platform-specific.
+    assert_eq!(
+        settings.viewer_pointer.hide_during_drag,
+        fixture["initial"]["hide_drag"].as_bool().unwrap()
+    );
+    let mut editor = Editor::new(settings.clone());
+    let index = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "media viewer")
+        .unwrap();
+    editor.show_page(index);
+    let labels = [
+        "Do not allow mouse media drag-panning when the media has duration:",
+        "Hide mouse cursor during media viewer drags:",
+    ];
+    let rows: Vec<_> = labels
+        .iter()
+        .map(|label| {
+            editor
+                .rows()
+                .iter()
+                .position(|row| matches!(row, EditorRow::Opt {option,..} if option.label == *label))
+                .unwrap()
+        })
+        .collect();
+    for event in fixture["drags"].as_array().unwrap() {
+        editor.check(rows[0], event["disallow"].as_bool().unwrap());
+        editor.check(rows[1], event["hide"].as_bool().unwrap());
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty(), "{problems:?}");
+        assert_eq!(
+            applied.viewer_pointer.disallow_duration_drag,
+            event["disallow"].as_bool().unwrap()
+        );
+        assert_eq!(
+            applied.viewer_pointer.hide_during_drag,
+            event["hide"].as_bool().unwrap()
+        );
+    }
+    assert_eq!(
+        store.read(Settings::load).unwrap(),
+        settings,
+        "drafts do not persist"
+    );
+}

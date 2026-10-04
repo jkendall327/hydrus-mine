@@ -1390,3 +1390,11 @@ live last-session identity. Its named snapshot shares no mutable importer-log
 dependency with subsequent startup copies. Other imported saved sessions still
 use the existing placeholder conversion for downloader pages; historical legacy
 session backups remain deferred.
+The native viewer now consumes the duration drag-blocking and drag cursor-hiding
+preferences. Cursor anchoring/warping, touchscreen unanchoring and idle cursor
+hide delay are separate unclaimed controls. This slice uses ordinary unanchored
+pointer movement and preserves the reference's blank cursor after release until
+another movement. The animation start percentage remains unimplemented: the
+fresh recording also captures v688's cold-start zero frame and warm-start
+previous-frame-count ordering, rather than treating the control's intended
+percentage of the new animation as proven behavior.
