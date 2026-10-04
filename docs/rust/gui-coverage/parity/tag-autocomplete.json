@@ -18,7 +18,8 @@
     "0df36e40",
     "0124224a",
     "ef8edac0",
-    "a6fc4a30"
+    "a6fc4a30",
+    "c9193ab9"
   ],
   "implementation_leaf_count": 8,
   "partial_improvements": 4,
@@ -1566,6 +1567,34 @@
         "oracle/fixtures/write_tag_selection.json::drag"
       ],
       "executed_validation": "Executed actual Qt focused Escape and actual mouse-event handlers with resolved inherited-row origin assertions, via shared with-oracle lock 2026-10-04 18:25 UTC. Warning-free cached Slint source compilation, Python syntax, fmt and diff checks passed. Model/native key+pointer regressions authored for root async CI; no local Cargo/mutation tests."
+    },
+    {
+      "baseline": "2388372d",
+      "implementation_commit": "c9193ab9",
+      "reference_ids": [
+        "audit-options-search-autocomplete"
+      ],
+      "status": "partial",
+      "exact_behavior": "Actual read-search favourites and children tabs in both floating and embedded layouts. Full sorted unfiltered favourite tags; transitive count-ranked descendants with zero-count rows and no visible counts, excluding top-level context tags. Fresh default current/pending flags for children ranking, independent of search flags. Shared finite/0/unlimited cap. Typing switches back to results; selected tabs retain draft, empty tabs retain picker/focus. Chosen favourite/child predicates reach actual page query; removals/restoration/favourite-search loads keep child context synchronized. Shared Options Cancel/Apply, persisted cap/favourites, locked and retired control boundaries authored.",
+      "limits": "Parent remains partial. Read result multi-selection/context menus, interactive OR/advanced OR, asynchronous fetch and multi-file-domain fallback ranking remain outside this slice. Selector is native dropdown rather than Qt notebook header. The typing oracle explicitly records pending switch before final query fetch; no final-result claim from that snapshot. No new validated/completed original reference IDs.",
+      "source_anchors": [
+        "crates/hydrus-gui-model/src/autocomplete.rs::Autocomplete::tab_suggestions",
+        "crates/hydrus-gui-model/src/autocomplete.rs::Autocomplete::set_context_tags",
+        "crates/hydrus-gui/src/page.rs::SearchPage::sync_autocomplete_tags",
+        "crates/hydrus-gui/src/page.rs::SearchPage::set_autocomplete_tab",
+        "crates/hydrus-gui/src/lib.rs::on_autocomplete_tab_chosen",
+        "crates/hydrus-gui/ui/read_autocomplete.slint::ReadAutocomplete",
+        "crates/hydrus-gui/ui/main.slint::suggestions-overlay"
+      ],
+      "test_anchors": [
+        "crates/hydrus-gui-model/tests/model/write_autocomplete.rs::read_favourite_and_children_tabs_replay_real_qt_lists_and_context_changes",
+        "crates/hydrus-gui/tests/gui/read_autocomplete.rs::real_page_tabs_apply_caps_keep_zero_count_descendants_and_restore_context"
+      ],
+      "reference_recording": [
+        "oracle/record_read_tag_tabs.py",
+        "oracle/fixtures/read_tag_tabs.json"
+      ],
+      "executed_validation": "Executed actual Qt read dropdown, favourite async-decoration lookup, children real query work/publish, BroadcastChoices, predicate removal and tag-context flag/service changes via shared with-oracle lock, 2026-10-04 18:43 UTC. Only GetPredicates set output sorted; visible row order exact. Cached Slint warning-free compilation, Python syntax, fmt and diff checks pass. Authored model/native regression awaits root hosted CI; no local Cargo/mutation tests."
     }
   ]
 }
