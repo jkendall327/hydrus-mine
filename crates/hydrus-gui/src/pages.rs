@@ -1151,12 +1151,11 @@ impl Pages {
     /// reference's "append session"). Its pages are copies, with their
     /// files, so the saved session stays as it was.
     pub fn append_session(&mut self, name: &str) -> Result<(), String> {
-        let saved = self
+        let pages = self.fresh_session_pages(name)?;
+        self.kept_counts = self
             .store
-            .read(|conn| sessions::load(conn, name))
-            .map_err(|e| e.to_string())?
-            .ok_or_else(|| format!("there is no saved session \"{name}\""))?;
-        let pages = copied(&self.store, saved.pages).map_err(|e| e.to_string())?;
+            .read(sessions::page_file_counts)
+            .map_err(|e| e.to_string())?;
         self.add(Page {
             key: PageKey::random(),
             name: name.to_owned(),
@@ -1168,37 +1167,18 @@ impl Pages {
     /// Append an immutable historical snapshot as a fresh notebook. Re-key
     /// every descendant and restore media from the snapshot, never live pages.
     pub fn append_session_backup(&mut self, name: &str, timestamp: i64) -> Result<(), String> {
-        let snapshot = self
+        let saved_name = name.to_owned();
+        let pages = self
             .store
-            .read(|conn| hydrus_store::session_backups::load(conn, name, timestamp))
-            .map_err(|e| e.to_string())?
-            .ok_or_else(|| format!("there is no backup of session \"{name}\" at {timestamp}"))?;
-        let mut pages = snapshot.session.pages;
-        fn rekey(
-            pages: &mut [Page],
-            media: &[hydrus_store::session_backups::PageMedia],
-            updates: &mut Vec<(PageKey, Vec<HashId>, Vec<HashId>)>,
-        ) {
-            for page in pages {
-                let old = page.key;
-                page.key = PageKey::random();
-                if let Some(media) = media.iter().find(|media| media.key == old) {
-                    updates.push((page.key, media.files.clone(), media.selected.clone()));
-                }
-                if let PageContent::Pages(children) = &mut page.content {
-                    rekey(children, media, updates);
-                }
-            }
-        }
-        let mut updates = Vec::new();
-        rekey(&mut pages, &snapshot.media, &mut updates);
-        self.store
             .write(move |ctx| {
-                for (key, files, selected) in &updates {
-                    sessions::set_page_files(ctx.conn(), key, files)?;
-                    sessions::set_page_selected(ctx.conn(), key, selected)?;
-                }
-                Ok(())
+                let name = saved_name;
+                let snapshot = hydrus_store::session_backups::load(ctx.conn(), &name, timestamp)?
+                    .ok_or_else(|| {
+                    hydrus_store::StoreError::Corrupt(format!(
+                        "there is no backup of session \"{name}\" at {timestamp}"
+                    ))
+                })?;
+                hydrus_store::session_backups::restore_pages(ctx.conn(), snapshot)
             })
             .map_err(|e| e.to_string())?;
         self.kept_counts = self
@@ -1214,16 +1194,30 @@ impl Pages {
         Ok(())
     }
 
+    fn fresh_session_pages(&self, name: &str) -> Result<Vec<Page>, String> {
+        let name = name.to_owned();
+        self.store
+            .write(move |ctx| {
+                let conn = ctx.conn();
+                let saved = sessions::load(conn, &name)?.ok_or_else(|| {
+                    hydrus_store::StoreError::Corrupt(format!(
+                        "there is no saved session \"{name}\""
+                    ))
+                })?;
+                let snapshot = match hydrus_store::session_backups::latest(conn, &name)? {
+                    Some(snapshot) => snapshot,
+                    None => hydrus_store::session_backups::capture(conn, &saved)?,
+                };
+                hydrus_store::session_backups::restore_pages(conn, snapshot)
+            })
+            .map_err(|e| e.to_string())
+    }
+
     /// Close every page and load the saved session `name` in their place,
     /// its pages at the top (the reference's "clear and load": the pages
     /// closed are gone, not kept to reopen, and their downloads with them).
     pub fn clear_and_load(&mut self, name: &str) -> Result<(), String> {
-        let saved = self
-            .store
-            .read(|conn| sessions::load(conn, name))
-            .map_err(|e| e.to_string())?
-            .ok_or_else(|| format!("there is no saved session \"{name}\""))?;
-        let pages = copied(&self.store, saved.pages).map_err(|e| e.to_string())?;
+        let pages = self.fresh_session_pages(name)?;
         let mut old = std::mem::take(&mut self.session.pages);
         refresh_contents(&mut old, &self.open);
         let queues: Vec<i64> = old.iter().flat_map(closable_queues).collect();
@@ -1234,6 +1228,10 @@ impl Pages {
         } else {
             pages
         };
+        self.kept_counts = self
+            .store
+            .read(sessions::page_file_counts)
+            .map_err(|e| e.to_string())?;
         self.path = vec![0];
         self.select(0, 0);
         Ok(())

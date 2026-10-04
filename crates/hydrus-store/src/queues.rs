@@ -17,7 +17,7 @@ use hydrus_core::import_options::ImportOptionsSlice;
 use crate::error::{Result, StoreError};
 
 /// What kind of importer a queue belongs to.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum QueueKind {
     /// A list of URLs (the reference's "urls downloader" page).
     Urls,
@@ -63,7 +63,7 @@ impl QueueKind {
 }
 
 /// An import queue.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Queue {
     pub id: i64,
     pub kind: QueueKind,
@@ -234,7 +234,7 @@ pub fn search_log_status(counts: &StatusCounts) -> (String, (usize, usize)) {
 }
 
 /// What a file seed is.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum SeedType {
     Path = 0,
     Url = 1,
@@ -309,7 +309,7 @@ impl FileSeedMeta {
 }
 
 /// A file seed.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FileSeed {
     pub id: i64,
     pub queue_id: i64,
@@ -356,7 +356,7 @@ pub struct GallerySeedMeta {
 }
 
 /// A gallery seed: a page of results to read.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GallerySeed {
     pub id: i64,
     pub queue_id: i64,

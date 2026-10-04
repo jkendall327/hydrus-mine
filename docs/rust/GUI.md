@@ -1726,3 +1726,11 @@ and cancelling that name keeps the new "pages" notebook, as the reference does.
 The source pages retain their keys, open search state and queues; grouping creates
 no closed-page undo entries. The real-client tab-actions recording and GUI tests
 replay the accepted/cancelled prompts, tree order, nested selection and reopen.
+
+Session snapshots also freeze each native downloader queue's options, pauses,
+auxiliary state, file seeds and gallery seeds. Backup append and ordinary freshest
+append/load create independent queues, remapping the highlighted queue and all
+page identities. Changes or deletion of the original queues and work in another
+loaded copy cannot change the saved history. Real paused URL-importer copies are
+recorded by `oracle/record_session_importers.py`; store/GUI regressions cover
+source deletion, multiple copies, metadata/state and all native importer kinds.

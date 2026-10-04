@@ -1,0 +1,122 @@
+{
+  "initial": {
+    "paused": true,
+    "files": [
+      {
+        "url": "https://files.example/first.jpg",
+        "status": 4,
+        "note": "recorded failure"
+      },
+      {
+        "url": "https://files.example/second.jpg",
+        "status": 0,
+        "note": ""
+      }
+    ],
+    "gallery": [
+      {
+        "url": "https://gallery.example/page/1",
+        "status": 4,
+        "note": "recorded gallery failure"
+      }
+    ]
+  },
+  "source_changed": {
+    "paused": true,
+    "files": [
+      {
+        "url": "https://files.example/first.jpg",
+        "status": 2,
+        "note": "later state"
+      },
+      {
+        "url": "https://files.example/second.jpg",
+        "status": 0,
+        "note": ""
+      },
+      {
+        "url": "https://files.example/later.jpg",
+        "status": 0,
+        "note": ""
+      }
+    ],
+    "gallery": [
+      {
+        "url": "https://gallery.example/page/1",
+        "status": 4,
+        "note": "recorded gallery failure"
+      }
+    ]
+  },
+  "loaded_backup": {
+    "paused": true,
+    "files": [
+      {
+        "url": "https://files.example/first.jpg",
+        "status": 4,
+        "note": "recorded failure"
+      },
+      {
+        "url": "https://files.example/second.jpg",
+        "status": 0,
+        "note": ""
+      }
+    ],
+    "gallery": [
+      {
+        "url": "https://gallery.example/page/1",
+        "status": 4,
+        "note": "recorded gallery failure"
+      }
+    ]
+  },
+  "first_copy_changed": {
+    "paused": true,
+    "files": [
+      {
+        "url": "https://files.example/first.jpg",
+        "status": 4,
+        "note": "recorded failure"
+      },
+      {
+        "url": "https://files.example/second.jpg",
+        "status": 0,
+        "note": ""
+      },
+      {
+        "url": "https://files.example/copy-only.jpg",
+        "status": 0,
+        "note": ""
+      }
+    ],
+    "gallery": [
+      {
+        "url": "https://gallery.example/page/1",
+        "status": 4,
+        "note": "recorded gallery failure"
+      }
+    ]
+  },
+  "second_copy": {
+    "paused": true,
+    "files": [
+      {
+        "url": "https://files.example/first.jpg",
+        "status": 4,
+        "note": "recorded failure"
+      },
+      {
+        "url": "https://files.example/second.jpg",
+        "status": 0,
+        "note": ""
+      }
+    ],
+    "gallery": [
+      {
+        "url": "https://gallery.example/page/1",
+        "status": 4,
+        "note": "recorded gallery failure"
+      }
+    ]
+  }
+}

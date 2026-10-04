@@ -2270,3 +2270,133 @@ fn send_down_keeps_nested_selection_and_open_search_objects() {
     assert_eq!(reopened.shown().key, selected.key);
     assert_eq!(reopened.session().pages, pages.session().pages);
 }
+
+#[test]
+fn downloader_backup_and_freshest_load_survive_source_queue_deletion() {
+    use hydrus_gui::page_chooser::NewPage;
+    use hydrus_store::queues::{self, NewFileSeed, SeedStatus, SeedType};
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("session_importers.json");
+    let mut pages = Pages::open(store.clone()).unwrap();
+    pages.new_page(&NewPage::Urls).unwrap();
+    let original = match &pages.shown().content {
+        PageContent::Downloader { queues, .. } => queues[0],
+        _ => panic!("URL importer"),
+    };
+    store
+        .write(|ctx| {
+            queues::set_paused(ctx.conn(), original, Some(true), Some(true))?;
+            for recorded in fixture["initial"]["files"].as_array().unwrap() {
+                let url = recorded["url"].as_str().unwrap();
+                queues::add_file_seeds(
+                    ctx.conn(),
+                    original,
+                    &[NewFileSeed {
+                        seed_type: SeedType::Url,
+                        data: url.into(),
+                        data_for_comparison: url.into(),
+                        source_time: None,
+                        referral_url: None,
+                        meta: Default::default(),
+                    }],
+                    100,
+                )?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    pages.save_session("history", 100).unwrap();
+    let later = fixture["source_changed"]["files"][2]["url"]
+        .as_str()
+        .unwrap();
+    store
+        .write(|ctx| {
+            queues::add_file_seeds(
+                ctx.conn(),
+                original,
+                &[NewFileSeed {
+                    seed_type: SeedType::Url,
+                    data: later.into(),
+                    data_for_comparison: later.into(),
+                    source_time: None,
+                    referral_url: None,
+                    meta: Default::default(),
+                }],
+                110,
+            )?;
+            let mut first = queues::file_seeds(ctx.conn(), original)?[0].clone();
+            first.status = SeedStatus::SuccessfulButRedundant;
+            queues::update_file_seed(ctx.conn(), &first)
+        })
+        .unwrap();
+    pages.save_session("history", 200).unwrap();
+    pages.close_shown().unwrap();
+    pages.forget_closed();
+    assert!(
+        store
+            .read(|conn| queues::queue(conn, original))
+            .unwrap()
+            .is_none()
+    );
+    pages.append_session_backup("history", 100_000).unwrap();
+    let backup = match &pages.shown().content {
+        PageContent::Downloader { queues, .. } => queues[0],
+        _ => panic!("restored URL importer"),
+    };
+    assert_eq!(
+        store
+            .read(|conn| queues::file_seeds(conn, backup))
+            .unwrap()
+            .len(),
+        2
+    );
+    pages.append_session("history").unwrap();
+    let freshest = match &pages.shown().content {
+        PageContent::Downloader { queues, .. } => queues[0],
+        _ => panic!("freshest URL importer"),
+    };
+    assert_ne!(backup, freshest);
+    assert_eq!(
+        store
+            .read(|conn| queues::file_seeds(conn, freshest))
+            .unwrap()
+            .len(),
+        3
+    );
+    assert!(
+        store
+            .read(|conn| queues::queue(conn, freshest))
+            .unwrap()
+            .unwrap()
+            .files_paused
+    );
+    pages.clear_and_load("history").unwrap();
+    let loaded = match &pages.shown().content {
+        PageContent::Downloader { queues, .. } => queues[0],
+        _ => panic!("loaded URL importer"),
+    };
+    assert_ne!(loaded, freshest);
+    assert!(
+        store
+            .read(|conn| queues::queue(conn, backup))
+            .unwrap()
+            .is_none()
+    );
+    assert!(
+        store
+            .read(|conn| queues::queue(conn, freshest))
+            .unwrap()
+            .is_none()
+    );
+    assert_eq!(
+        store
+            .read(|conn| queues::file_seeds(conn, loaded))
+            .unwrap()
+            .len(),
+        3
+    );
+    pages.sync(300).unwrap();
+    let mut reopened = Pages::open(store).unwrap();
+    assert_eq!(reopened.shown().key, pages.shown().key);
+    assert_eq!(reopened.current().borrow().import_progress(), (1, 3));
+}

@@ -1138,9 +1138,10 @@ Named GUI session saves now retain selectable immutable snapshots; automatic
 `last session` synchronization still writes the live session without historical
 backups, and startup/autosave lifecycle settings remain deferred. Historical
 backups from imported legacy databases are not migrated; the current imported
-session is retained as the first backup when overwritten. Backup trees preserve
-downloader queue references like ordinary named sessions; independent copies of
-downloader engine state are outside this change.
+session is retained as the first backup when overwritten. Backup loads start fresh transfer/live-job state while retaining saved queue
+settings and file/gallery logs. Early native snapshots without importer-state
+data cannot restore queue-backed pages; snapshots recorded by this implementation
+include that data.
 
 Bulk tab closing groups downloader objections in its confirmation. The reference's
 extra "no, but show me the pages" response on an objection dialog is not exposed;
