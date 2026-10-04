@@ -520,7 +520,9 @@ selected components, and edit the substitution phrase. Every depth supports all
 six formula kinds. Parsed previews update when controls, documents, context,
 children or processors change. Parent edits and Apply wait for open descendants;
 owner cancellation invalidates every descendant callback. Saved page/content
-parsers use these formula edits in the live parser engine. Formula test panels fetch
+parsers use these formula edits in the live parser engine. Reusable content editor
+callers can restrict permitted content types while retaining staged Apply/Cancel
+and arbitrary named parsing context for formula previews. Formula test panels fetch
 URLs with live progress and cancellation. Page parser test panels fetch their page
 URL with an optional referral URL, using the stored network options, approved
 headers and cookies. Response charsets are decoded by the downloader engine;
