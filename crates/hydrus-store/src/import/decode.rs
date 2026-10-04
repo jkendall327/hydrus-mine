@@ -183,6 +183,45 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         .unwrap_or_default();
     insert_setting(&mut input, &insertion)?;
     insert_setting(&mut input, &notebook_creation)?;
+    let mut lifecycle = crate::settings::GuiSessionSettings::default();
+    if let Some(value) = legacy_options.get("default_gui_session") {
+        lifecycle.startup = value
+            .as_str()
+            .filter(|&name| name != "just a blank page")
+            .map(str::to_owned);
+    }
+    if let Some(options) = &options {
+        if let Some(&period) = options.integers.get("last_session_save_period_minutes") {
+            lifecycle.autosave_minutes = u16::try_from(period.clamp(1, 1440)).unwrap_or(5);
+        }
+        if let Some(&only) = options.booleans.get("only_save_last_session_during_idle") {
+            lifecycle.only_during_idle = only;
+        }
+        if let Some(&warn) = options.booleans.get("show_session_size_warnings") {
+            lifecycle.warn_large_session = warn;
+        }
+    }
+    insert_setting(&mut input, &lifecycle)?;
+    let mut idle = crate::settings::GuiIdleSettings {
+        user_seconds: limit("idle_period"),
+        mouse_seconds: limit("idle_mouse_period"),
+        ..crate::settings::GuiIdleSettings::default()
+    };
+    if let Some(enabled) = legacy_options
+        .get("idle_normal")
+        .and_then(hydrus_legacy::objects::YamlValue::as_bool)
+    {
+        idle.enabled = enabled;
+    }
+    if let Some(options) = &options {
+        idle.api_seconds = options
+            .noneable_integers
+            .get("idle_mode_client_api_timeout")
+            .copied()
+            .flatten()
+            .and_then(|seconds| u64::try_from(seconds).ok());
+    }
+    insert_setting(&mut input, &idle)?;
     let mut backups = crate::session_backups::SessionBackupSettings::default();
     if let Some(options) = &options
         && let Some(value) = options.integers.get("number_of_gui_session_backups")
