@@ -642,6 +642,10 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   goes when the download ends rather than ten seconds later.
 - **Subscription changes made from the command line reach a running
   `hydrus serve` within five minutes.**
+- **Full subscription exchange transport** supports modern reference container 90
+  JSON and PNG without dropping query history or cached header metadata. Legacy
+  subscription type 3 and the subscription list controls remain pending; this
+  codec alone does not complete the original subscriptions-exchange GUI leaf.
 - **The manage subscriptions dialog is a first pass.** It lists the
   subscriptions and can delete, pause/resume, scrub delays, check
   queries now and select by query text, add and edit subscriptions,

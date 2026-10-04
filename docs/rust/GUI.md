@@ -142,6 +142,11 @@ as Qt's do; a press anywhere else closes them. What works so far:
 - help: the help, links and changelog in the browser, and advanced mode
   (which adds hydrus's advanced entries).
 
+A standalone subscription exchange codec now reads and writes complete reference
+containers: settings, query headers, cached example/velocity data and both URL
+histories. `oracle/record_subscription_exchange.py` records the actual Qt list
+clipboard flow and reference PNG. Its list buttons are being wired next.
+
 Network > "subscriptions…" opens the manage subscriptions dialog
 (`src/subscriptions_window.rs`, `hydrus-gui-model/src/subscriptions_dialog.rs`),
 the reference's `EditSubscriptionsPanel`. It lists the subscriptions as
