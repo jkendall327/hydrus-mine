@@ -57,6 +57,23 @@ fn formula_fetch_decodes_real_documents_updates_preview_and_discards_closed_owne
     w.invoke_fetch();
     assert!(w.get_fetching());
     w.invoke_apply();
+    // The imported basic client starts with network traffic paused. Fetching
+    // must respect this setting; resume it through the store before expecting HTTP.
+    assert!(
+        store
+            .read(settings::get::<settings::Pauses>)
+            .unwrap()
+            .network_traffic
+    );
+    until_fetch(|| w.get_fetch_status().contains("network traffic is paused"));
+    assert!(server.requests.lock().unwrap().is_empty());
+    store
+        .write_and_refresh(|ctx| {
+            let mut pauses: settings::Pauses = settings::get(ctx.conn())?;
+            pauses.network_traffic = false;
+            settings::set(ctx.conn(), &pauses)
+        })
+        .unwrap();
     until_fetch(|| !w.get_fetching());
     assert_eq!(w.get_document(), "<p>fetched café</p>");
     assert_eq!(labels(&w.get_results()), ["fetched café"]);
@@ -1336,9 +1353,17 @@ fn zipper_components_exchange_appends_only_formulae_and_exports_selection() {
     w.invoke_row_clicked(2, false, false);
     w.invoke_member_exchange(false);
     let export = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    let exported = exchange::decode_text(export.get_text().as_str()).unwrap();
+    assert_eq!(exported.len(), 1);
+    // Decoding attaches the preserved reference tuple and editor auxiliary data.
+    // Compare the actual serializable object, rather than an unimported wrapper.
     assert_eq!(
-        exchange::decode_text(export.get_text().as_str()).unwrap(),
-        vec![definitions[1].clone()]
+        exported[0].tuple().unwrap(),
+        definitions[1].tuple().unwrap()
+    );
+    assert_eq!(
+        exported[0].original.as_ref(),
+        Some(&definitions[1].tuple().unwrap())
     );
     export.invoke_action("cancel".into());
     w.invoke_member_exchange(true);

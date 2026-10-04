@@ -1064,9 +1064,16 @@ async fn independent_engines_add_new_usage_without_replacing_each_other_or_doubl
             move |ctx| bandwidth::save_usage(ctx.conn(), &[(context, old)])
         })
         .unwrap();
-    let first = NetEngine::new(setup.store.clone(), setup.engine.options()).unwrap();
-    let second = NetEngine::new(setup.store.clone(), setup.engine.options()).unwrap();
-    let request = Request::get(format!("{}/echo", setup.base));
+    // setup disables bandwidth accounting for unrelated HTTP tests. This
+    // regression needs counting enabled while explicitly bypassing its limits.
+    let options = NetOptions {
+        obey_bandwidth: true,
+        ..setup.engine.options()
+    };
+    let first = NetEngine::new(setup.store.clone(), options.clone()).unwrap();
+    let second = NetEngine::new(setup.store.clone(), options).unwrap();
+    let mut request = Request::get(format!("{}/echo", setup.base));
+    request.override_bandwidth_after = Some(0);
     let one = first.fetch(&request, &Job::new()).await.unwrap();
     let two = second.fetch(&request, &Job::new()).await.unwrap();
     first.save_bandwidth().unwrap();
