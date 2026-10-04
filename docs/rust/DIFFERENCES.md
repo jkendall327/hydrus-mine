@@ -1200,6 +1200,12 @@ write inputs. Maintenance/admin actions and multiple-tag selection menus remain 
 Per-widget file/tag-domain buttons now work; the multiple/deleted selector
 offers the existing native advanced domain ticks outside advanced mode, so it
 can preserve any chosen combined domain.
+
+The options favourite-tag list uses a detached shared write-tag editor rather
+than the reference page’s embedded list/input. Manual choices and pasted tags
+only add; explicit removal deletes. Its accepted list waits for parent Apply,
+and cancellation preserves both saved favourites and unrelated options drafts.
+
 The native tab selector is a compact dropdown rather than Qt tab buttons.
 Children and favourites use the real service and domain contexts; unknown
 favourites remain selectable and zero-count known children remain in the list. Expanded-row viewport height uses native fixed row

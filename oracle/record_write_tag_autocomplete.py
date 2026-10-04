@@ -4,6 +4,8 @@
 Synthetic parity tags are seeded through real mapping/sibling/parent updates.
 WriteFetch runs the real database query and predicate insertion pipeline; its
 results are installed in the real Qt list and every rendered row is recorded.
+The actual TagsPanel favourite editor records add-only manual/paste entry,
+removal, natural row/save order and its staged settings boundary.
 """
 import json, os, sys, tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -261,8 +263,31 @@ def record(session):
             dialog.reject();snapshot('cancel');dialog.deleteLater()
         return events
     detached_inputs=qt(detached_tag_lists)
+    def favourite_options():
+        from hydrus.client.gui.panels.options.TagsPanel import TagsPanel
+        from hydrus.client.search import ClientSearchPredicate as P
+        initial=['parity:favourite 10','parity:favourite 2']
+        draft=c.new_options.Duplicate();draft.SetStringList('favourite_tags',initial)
+        panel=TagsPanel(c.gui,draft);events=[]
+        def snapshot(action):
+            events.append({'action':action,'tags':sorted(panel._favourites.GetTags()),'rows':[term.GetTag() for term in panel._favourites._ordered_terms],'saved':draft.GetStringList('favourite_tags')})
+        snapshot('initial')
+        for action,tag in [('manual','parity:favourite 1'),('repeat_manual','parity:favourite 1')]:
+            panel._favourites_input.BroadcastChoices([P.Predicate(P.PREDICATE_TYPE_TAG,tag)])
+            snapshot(action)
+        clipboard['text']='parity:favourite 2\nparity:favourite 3\nparity:favourite pasted'
+        panel._favourites_input._Paste();snapshot('paste')
+        panel._favourites_input._Paste();snapshot('repeat_paste')
+        panel._favourites.RemoveTags({'parity:favourite 2'});snapshot('remove')
+        panel.UpdateOptions();snapshot('apply')
+        panel.deleteLater()
+        cancelled=TagsPanel(c.gui,draft)
+        cancelled._favourites.AddTags({'parity:cancelled'})
+        cancelled.deleteLater()
+        return {'initial':initial,'events':events,'cancelled_saved':draft.GetStringList('favourite_tags')}
+    favourite_options_events=qt(favourite_options)
     qt(ac.deleteLater);c.CallToThread=old_thread;c.GetClipboardText=old_clipboard
-    return {'domains':domain_events,'seeded_dialogs':seeded_dialogs,'menus':menu_events,'tabs':tab_events,'children_control':children_control,'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
+    return {'favourite_options':favourite_options_events,'domains':domain_events,'seeded_dialogs':seeded_dialogs,'menus':menu_events,'tabs':tab_events,'children_control':children_control,'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
 def child(out):
     import hydrus_driver,record_api
     result=hydrus_driver.run_client(record_api.unpack_fixture('basic'),record)

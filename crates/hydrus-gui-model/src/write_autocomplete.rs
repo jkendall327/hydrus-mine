@@ -523,12 +523,14 @@ impl WriteAutocomplete {
 pub struct TagEntry {
     pub input: WriteAutocomplete,
     tags: std::collections::BTreeSet<String>,
+    add_only: bool,
 }
 impl TagEntry {
     pub fn new(mut input: WriteAutocomplete, initial: &[String]) -> Self {
         input.set_context_tags(initial.iter().cloned());
         Self {
             input,
+            add_only: false,
             tags: initial
                 .iter()
                 .filter_map(|t| Tag::new(t))
@@ -536,12 +538,22 @@ impl TagEntry {
                 .collect(),
         }
     }
+    /// The options favourite list adds choices and sorts its rows naturally.
+    #[must_use]
+    pub fn additions_only(mut self) -> Self {
+        self.add_only = true;
+        self
+    }
     pub fn tags(&self) -> Vec<String> {
-        self.tags.iter().cloned().collect()
+        let mut tags: Vec<_> = self.tags.iter().cloned().collect();
+        if self.add_only {
+            hydrus_core::sort::human_sort(&mut tags);
+        }
+        tags
     }
     pub fn enter(&mut self, index: Option<usize>) {
         if let Some(tag) = self.input.chosen(index) {
-            if !self.tags.remove(&tag) {
+            if self.add_only || !self.tags.remove(&tag) {
                 self.tags.insert(tag);
             }
             self.input.set_context_tags(self.tags.iter().cloned());
@@ -558,7 +570,7 @@ impl TagEntry {
         self.input.clear();
     }
     pub fn remove(&mut self, index: usize) {
-        if let Some(tag) = self.tags.iter().nth(index).cloned() {
+        if let Some(tag) = self.tags().get(index).cloned() {
             self.tags.remove(&tag);
             self.input.set_context_tags(self.tags.iter().cloned());
         }

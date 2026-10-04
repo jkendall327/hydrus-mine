@@ -1515,6 +1515,13 @@ the reference panels' labels and local/remote action-context transitions;
 model replay, snapshot/count rollback checks, and real-store menu/window tests
 cover the implementation.
 
+
+The tag autocomplete tabs options page now opens a shared favourite-tag list
+editor with suggestions, manual fetch, domain controls and add-only manual/paste
+entry. Removing tags and applying the child updates the parent options draft;
+parent Apply saves the naturally sorted global list for every favourites tab.
+Child Cancel, parent Cancel and owner close discard the corresponding draft.
+
 **Tag display/search** (`tags > display/search`) edits each tag service's single
 file and selection display filters with the native tag-filter editor, plus
 fetch-as-you-type, character threshold, query rules and write autocomplete
