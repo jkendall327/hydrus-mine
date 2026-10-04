@@ -122,9 +122,9 @@ mod tests {
         .unwrap();
         let store = hydrus_store::Store::open(native.path()).unwrap();
         store
-            .write(|conn| {
+            .write(|ctx| {
                 settings::set(
-                    conn,
+                    ctx.conn(),
                     &ViewerClosingSettings {
                         reselect_page: true,
                         select_exit_media: true,
