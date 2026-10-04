@@ -2,10 +2,13 @@
   "agent": "tag-autocomplete",
   "baseline": "d50df26b",
   "commits": [
-    "1b81bd15fce1ab176660460c0d1524e744e82503"
+    "1b81bd15fce1ab176660460c0d1524e744e82503",
+    "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
+    "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
+    "33e9b58f6226f10d8122313c5333c8f0d302df4f"
   ],
   "implementation_leaf_count": 6,
-  "partial_improvements": 1,
+  "partial_improvements": 4,
   "validation": "Real Qt recording and Python syntax, cargo fmt and git diff --check passed. Root GitHub CI pending; no local Cargo build/tests or mutation tests.",
   "claims": [
     {
@@ -13,8 +16,8 @@
       "previous_status": "missing",
       "proposed_status": "first_pass",
       "change_kind": "implementation",
-      "exact_behavior": "Default false checkbox; when enabled skips raw/countless tags and expanded-parent rows to highlight the first counted logical suggestion. Typed/ideal tags preserve actual counts. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings.",
-      "limits": "Runtime consumer currently Manage Tags; shared helper is ready for relationship and import tag inputs, whose full autocomplete parent entries remain partial/missing. Declining multiline paste preserves current text rather than replaying Qt normal line-editor paste. Native layout differs from Qt.",
+      "exact_behavior": "Default false checkbox; when enabled skips raw/countless tags and expanded-parent rows to highlight the first counted logical suggestion. Typed/ideal tags preserve actual counts. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because favourites/children tabs and context menus are not yet implemented.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -58,6 +61,30 @@
           "line": 275,
           "symbol": "window.on_paste_requested",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/write_autocomplete.slint",
+          "line": 5,
+          "symbol": "export component WriteTagInput",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_relationships_window.rs",
+          "line": 444,
+          "symbol": "window.on_autocomplete_paste",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/import_options_window.rs",
+          "line": 694,
+          "symbol": "window.on_edit_whitelist",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 162,
+          "symbol": "fn detached_write_tag_child",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
         }
       ],
       "reference_recording": [
@@ -73,6 +100,11 @@
           "symbol": "\"controls\"",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
         }
+      ],
+      "consumer_commits": [
+        "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
+        "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
+        "33e9b58f6226f10d8122313c5333c8f0d302df4f"
       ]
     },
     {
@@ -80,8 +112,8 @@
       "previous_status": "missing",
       "proposed_status": "first_pass",
       "change_kind": "implementation",
-      "exact_behavior": "Default false checkbox; two or more cleaned distinct pasted tags ask the recorded question. Enabled bypasses it; explicit paste button always adds tags without asking. Paste is add-only and staged. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings.",
-      "limits": "Runtime consumer currently Manage Tags; shared helper is ready for relationship and import tag inputs, whose full autocomplete parent entries remain partial/missing. Declining multiline paste preserves current text rather than replaying Qt normal line-editor paste. Native layout differs from Qt.",
+      "exact_behavior": "Default false checkbox; two or more cleaned distinct pasted tags ask the recorded question. Enabled bypasses it; explicit paste button always adds tags without asking. Paste is add-only and staged. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because favourites/children tabs and context menus are not yet implemented.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -125,6 +157,30 @@
           "line": 275,
           "symbol": "window.on_paste_requested",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/write_autocomplete.slint",
+          "line": 5,
+          "symbol": "export component WriteTagInput",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_relationships_window.rs",
+          "line": 444,
+          "symbol": "window.on_autocomplete_paste",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/import_options_window.rs",
+          "line": 694,
+          "symbol": "window.on_edit_whitelist",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 162,
+          "symbol": "fn detached_write_tag_child",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
         }
       ],
       "reference_recording": [
@@ -140,6 +196,11 @@
           "symbol": "\"controls\"",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
         }
+      ],
+      "consumer_commits": [
+        "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
+        "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
+        "33e9b58f6226f10d8122313c5333c8f0d302df4f"
       ]
     },
     {
@@ -147,8 +208,8 @@
       "previous_status": "missing",
       "proposed_status": "first_pass",
       "change_kind": "implementation",
-      "exact_behavior": "Default true checkbox controls the parent-count suffix when parent rows are collapsed; expanding parents shows transitive named rows belonging to the source tag. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings.",
-      "limits": "Runtime consumer currently Manage Tags; shared helper is ready for relationship and import tag inputs, whose full autocomplete parent entries remain partial/missing. Declining multiline paste preserves current text rather than replaying Qt normal line-editor paste. Native layout differs from Qt.",
+      "exact_behavior": "Default true checkbox controls the parent-count suffix when parent rows are collapsed; expanding parents shows transitive named rows belonging to the source tag. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because favourites/children tabs and context menus are not yet implemented.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -192,6 +253,30 @@
           "line": 275,
           "symbol": "window.on_paste_requested",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/write_autocomplete.slint",
+          "line": 5,
+          "symbol": "export component WriteTagInput",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_relationships_window.rs",
+          "line": 444,
+          "symbol": "window.on_autocomplete_paste",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/import_options_window.rs",
+          "line": 694,
+          "symbol": "window.on_edit_whitelist",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 162,
+          "symbol": "fn detached_write_tag_child",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
         }
       ],
       "reference_recording": [
@@ -207,6 +292,11 @@
           "symbol": "\"controls\"",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
         }
+      ],
+      "consumer_commits": [
+        "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
+        "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
+        "33e9b58f6226f10d8122313c5333c8f0d302df4f"
       ]
     },
     {
@@ -214,8 +304,8 @@
       "previous_status": "missing",
       "proposed_status": "first_pass",
       "change_kind": "implementation",
-      "exact_behavior": "Default true checkbox controls expanded transitive parent rows versus the collapsed parent-count suffix. Clicking an expanded parent row enters its originating tag. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings.",
-      "limits": "Runtime consumer currently Manage Tags; shared helper is ready for relationship and import tag inputs, whose full autocomplete parent entries remain partial/missing. Declining multiline paste preserves current text rather than replaying Qt normal line-editor paste. Native layout differs from Qt.",
+      "exact_behavior": "Default true checkbox controls expanded transitive parent rows versus the collapsed parent-count suffix. Clicking an expanded parent row enters its originating tag. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because favourites/children tabs and context menus are not yet implemented.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -259,6 +349,30 @@
           "line": 275,
           "symbol": "window.on_paste_requested",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/write_autocomplete.slint",
+          "line": 5,
+          "symbol": "export component WriteTagInput",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_relationships_window.rs",
+          "line": 444,
+          "symbol": "window.on_autocomplete_paste",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/import_options_window.rs",
+          "line": 694,
+          "symbol": "window.on_edit_whitelist",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 162,
+          "symbol": "fn detached_write_tag_child",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
         }
       ],
       "reference_recording": [
@@ -274,6 +388,11 @@
           "symbol": "\"controls\"",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
         }
+      ],
+      "consumer_commits": [
+        "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
+        "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
+        "33e9b58f6226f10d8122313c5333c8f0d302df4f"
       ]
     },
     {
@@ -281,8 +400,8 @@
       "previous_status": "missing",
       "proposed_status": "first_pass",
       "change_kind": "implementation",
-      "exact_behavior": "Default true checkbox controls the ideal-sibling arrow decoration using the edited/display service even when counting all known tags. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings.",
-      "limits": "Runtime consumer currently Manage Tags; shared helper is ready for relationship and import tag inputs, whose full autocomplete parent entries remain partial/missing. Declining multiline paste preserves current text rather than replaying Qt normal line-editor paste. Native layout differs from Qt.",
+      "exact_behavior": "Default true checkbox controls the ideal-sibling arrow decoration using the edited/display service even when counting all known tags. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because favourites/children tabs and context menus are not yet implemented.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -326,6 +445,30 @@
           "line": 275,
           "symbol": "window.on_paste_requested",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/write_autocomplete.slint",
+          "line": 5,
+          "symbol": "export component WriteTagInput",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_relationships_window.rs",
+          "line": 444,
+          "symbol": "window.on_autocomplete_paste",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/import_options_window.rs",
+          "line": 694,
+          "symbol": "window.on_edit_whitelist",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 162,
+          "symbol": "fn detached_write_tag_child",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
         }
       ],
       "reference_recording": [
@@ -341,6 +484,11 @@
           "symbol": "\"controls\"",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
         }
+      ],
+      "consumer_commits": [
+        "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
+        "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
+        "33e9b58f6226f10d8122313c5333c8f0d302df4f"
       ]
     },
     {
@@ -348,8 +496,8 @@
       "previous_status": "missing",
       "proposed_status": "first_pass",
       "change_kind": "implementation",
-      "exact_behavior": "Integer control 1\u2013128, default 11; visible Manage Tags suggestion rows use the setting, scrolling retains every result beyond that height and the old twelve-result cap is removed. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings.",
-      "limits": "Runtime consumer currently Manage Tags; shared helper is ready for relationship and import tag inputs, whose full autocomplete parent entries remain partial/missing. Declining multiline paste preserves current text rather than replaying Qt normal line-editor paste. Native layout differs from Qt.",
+      "exact_behavior": "Integer control 1\u2013128, default 11; visible Manage Tags suggestion rows use the setting, scrolling retains every result beyond that height and the old twelve-result cap is removed. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because favourites/children tabs and context menus are not yet implemented.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -393,6 +541,30 @@
           "line": 275,
           "symbol": "window.on_paste_requested",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/write_autocomplete.slint",
+          "line": 5,
+          "symbol": "export component WriteTagInput",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_relationships_window.rs",
+          "line": 444,
+          "symbol": "window.on_autocomplete_paste",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/import_options_window.rs",
+          "line": 694,
+          "symbol": "window.on_edit_whitelist",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 162,
+          "symbol": "fn detached_write_tag_child",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
         }
       ],
       "reference_recording": [
@@ -408,6 +580,11 @@
           "symbol": "\"controls\"",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
         }
+      ],
+      "consumer_commits": [
+        "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
+        "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
+        "33e9b58f6226f10d8122313c5333c8f0d302df4f"
       ]
     },
     {
@@ -444,6 +621,165 @@
           "line": 12,
           "symbol": "def record",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ]
+    },
+    {
+      "reference_id": "siblings-autocomplete",
+      "previous_status": "missing",
+      "proposed_status": "partial",
+      "change_kind": "implementation",
+      "exact_behavior": "Both sides now use real count/domain/service-aware write autocomplete, typed/ideal elevation, parent and sibling decorations, visible-height preference, keyboard highlight/selected/click entry, manual fetch, confirmed or skipped multiline paste. Paste only adds and removes the entered tag from the opposite side; each service preserves independent input drafts. Closing owner invalidates pending paste answers and stale Apply.",
+      "limits": "Full Qt context menus, favourites/children tabs, per-widget domain buttons and service-tab default preference remain absent. This is a substantive missing-to-partial implementation, excluded from completion leaf count.",
+      "implementation_commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_relationships_window.rs",
+          "line": 444,
+          "symbol": "window.on_autocomplete_paste",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/tag_relationships.slint",
+          "line": 41,
+          "symbol": "callback autocomplete-edited",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/tag_relationships.rs",
+          "line": 212,
+          "symbol": "pub fn paste_tags",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 272,
+          "symbol": "fn relationship_inputs",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 89,
+          "symbol": "fn relationship_autocomplete",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 87,
+          "symbol": "def relation_inputs",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "oracle/fixtures/write_tag_autocomplete.json",
+          "line": 2,
+          "symbol": "\"relationship_inputs\"",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        }
+      ]
+    },
+    {
+      "reference_id": "parents-autocomplete",
+      "previous_status": "missing",
+      "proposed_status": "partial",
+      "change_kind": "implementation",
+      "exact_behavior": "Both sides now use real count/domain/service-aware write autocomplete, typed/ideal elevation, parent and sibling decorations, visible-height preference, keyboard highlight/selected/click entry, manual fetch, confirmed or skipped multiline paste. Paste only adds and removes the entered tag from the opposite side; each service preserves independent input drafts. Closing owner invalidates pending paste answers and stale Apply.",
+      "limits": "Full Qt context menus, favourites/children tabs, per-widget domain buttons and service-tab default preference remain absent. This is a substantive missing-to-partial implementation, excluded from completion leaf count.",
+      "implementation_commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_relationships_window.rs",
+          "line": 444,
+          "symbol": "window.on_autocomplete_paste",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/tag_relationships.slint",
+          "line": 41,
+          "symbol": "callback autocomplete-edited",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/tag_relationships.rs",
+          "line": 212,
+          "symbol": "pub fn paste_tags",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 272,
+          "symbol": "fn relationship_inputs",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 89,
+          "symbol": "fn relationship_autocomplete",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 87,
+          "symbol": "def relation_inputs",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "oracle/fixtures/write_tag_autocomplete.json",
+          "line": 2,
+          "symbol": "\"relationship_inputs\"",
+          "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        }
+      ]
+    },
+    {
+      "reference_id": "audit-network-options-additional-tags",
+      "previous_status": "partial",
+      "proposed_status": "partial",
+      "change_kind": "implementation",
+      "exact_behavior": "Per-service import additional tags open a detached write-tag child using that service; whitelist uses all known tags. Typed entry toggles, paste only adds, duplicate pastes retain existing tags. Accepted lists update only the captured parent draft field; cancelling child or owner discards edits, native child close unlocks parent, pending child blocks parent Apply.",
+      "limits": "Native controls retain raw multiline fields and differ from Qt modal layout; full shared context menus/favourites/children tabs are absent. Whitelist is shared adjacent implementation, not counted as an invented standalone leaf.",
+      "implementation_commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/import_options_window.rs",
+          "line": 694,
+          "symbol": "window.on_edit_whitelist",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/write_tag_window.rs",
+          "line": 15,
+          "symbol": "pub fn open",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 321,
+          "symbol": "fn detached_import_tag_lists",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 237,
+          "symbol": "fn import_whitelist_child",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 108,
+          "symbol": "def detached_tag_lists",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
+        },
+        {
+          "relativepath": "oracle/fixtures/write_tag_autocomplete.json",
+          "line": 2,
+          "symbol": "\"detached_inputs\"",
+          "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
         }
       ]
     }
