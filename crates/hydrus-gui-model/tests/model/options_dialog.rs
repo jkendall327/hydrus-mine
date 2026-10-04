@@ -721,3 +721,46 @@ fn regex_favourites_child_edits_wait_for_parent_apply() {
         changed
     );
 }
+
+#[test]
+fn system_sleep_controls_match_reference_and_clamp() {
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let sleep = hydrus_testkit::fixture_json("system_sleep_options.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let mut settings = store.read(Settings::load).unwrap();
+    let pages = pages(&settings);
+    let page = pages.iter().find(|page| page.name == "system").unwrap();
+    let reference = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "system")
+        .unwrap();
+    assert!(page_problems(page, &reference["items"], &settings, &store).is_empty());
+    let options = page.options();
+    assert_eq!(
+        (options[0].get)(&settings),
+        Value::Check(sleep["controls"]["enabled"].as_bool().unwrap())
+    );
+    assert_eq!(
+        (options[1].get)(&settings),
+        Value::Int(sleep["controls"]["delay"].as_i64().unwrap())
+    );
+    for case in sleep["cases"].as_array().unwrap() {
+        let enabled = case["enabled"].as_bool().unwrap();
+        (options[0].set)(&mut settings, &Value::Check(enabled)).unwrap();
+        (options[1].set)(&mut settings, &Value::Int(case["delay"].as_i64().unwrap())).unwrap();
+        assert_eq!(settings.network.detect_sleep, enabled);
+        assert_eq!(
+            settings.network.wake_delay_period,
+            case["delay"].as_u64().unwrap()
+        );
+    }
+    for clamp in sleep["clamps"].as_array().unwrap() {
+        (options[1].set)(&mut settings, &Value::Int(clamp["typed"].as_i64().unwrap())).unwrap();
+        assert_eq!(
+            settings.network.wake_delay_period,
+            clamp["saved"].as_u64().unwrap()
+        );
+    }
+}

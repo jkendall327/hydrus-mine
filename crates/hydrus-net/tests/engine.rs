@@ -995,3 +995,54 @@ async fn deleting_history_discards_stale_flushes_resets_live_limits_and_wakes_wa
         .1;
     assert_eq!(tracker.usage(BandwidthType::Requests, None, now), 1);
 }
+
+#[tokio::test]
+async fn disabling_sleep_detection_reloads_and_releases_pending_requests() {
+    use hydrus_store::network::NetworkSettings;
+    use hydrus_store::settings;
+    let s = setup(|_| Vec::new()).await;
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_millis() as i64;
+    s.engine.sleep_check_at(now - 61_000);
+    s.engine.sleep_check_at(now);
+    let request = Request::get(format!("{}/echo", s.base));
+    let job = Job::new();
+    assert!(
+        tokio::time::timeout(
+            std::time::Duration::from_millis(100),
+            s.engine.fetch(&request, &job)
+        )
+        .await
+        .is_err()
+    );
+    assert_eq!(
+        job.state().status,
+        "looks like computer just woke up, waiting a bit"
+    );
+    s.store
+        .write(|ctx| {
+            let mut options = settings::get::<NetworkSettings>(ctx.conn())?;
+            options.detect_sleep = false;
+            settings::set(ctx.conn(), &options)
+        })
+        .unwrap();
+    assert!(s.engine.reload_settings().unwrap());
+    s.engine.sleep_check_at(now + 1);
+    tokio::time::timeout(
+        std::time::Duration::from_secs(2),
+        s.engine.fetch(&request, &Job::new()),
+    )
+    .await
+    .unwrap()
+    .unwrap();
+    s.engine.sleep_check_at(now + 61_002);
+    tokio::time::timeout(
+        std::time::Duration::from_secs(2),
+        s.engine.fetch(&request, &Job::new()),
+    )
+    .await
+    .unwrap()
+    .unwrap();
+}

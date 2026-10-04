@@ -396,7 +396,7 @@ hydrus lists them (by name, "advanced" last), the page chosen on the
 right, each option its label and then its control, in the page's titled
 boxes, as the reference's dialog lays them out (checked against the
 running reference's dialog, recorded by `oracle/record_options_dialog.py`).
-It has the options hydrus-rs honours, so far on twenty-two pages: audio,
+It has the options hydrus-rs honours, so far on twenty-three pages: audio,
 connection (retries, timeouts, job limits, the halt on a domain's errors,
 HTTPS checks and proxies), downloading (gallery, subscription and watcher
 waits, the default file limit, highlighting, the pause and stop
@@ -418,7 +418,7 @@ viewer's default zoom, and what counts as transparency), media viewer
 (slideshows), media viewer hovers (the top hover's
 file summary), ratings (the media viewer's rating sizes, and the
 thumbnails': their sizes, which go up to the thumbnails' width as the
-dialog opens, their box, and numerical ratings always collapsed), tag presentation, tag sort (the search pages' and
+dialog opens, their box, and numerical ratings always collapsed), system (wake detection and its network grace period), tag presentation, tag sort (the search pages' and
 the media viewer's default tag sorts: a type, its orders, and its
 grouping where the type groups), thumbnails (their size and how
 they fit it, their border and margin, the UI-scale supersampling, how far
@@ -1734,3 +1734,7 @@ page identities. Changes or deletion of the original queues and work in another
 loaded copy cannot change the saved history. Real paused URL-importer copies are
 recorded by `oracle/record_session_importers.py`; store/GUI regressions cover
 source deletion, multiple copies, metadata/state and all native importer kinds.
+
+The system sleep controls enable the network engine’s clock-gap detector and set
+a zero-to-sixty-second grace period. The running downloader daemon reloads these
+settings; disabling detection clears its pending network wait at the next check.

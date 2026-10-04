@@ -95,6 +95,7 @@ fn the_options_window_applies_its_changes() {
             "media viewer hovers",
             "ratings",
             "regex favourites",
+            "system",
             "tag presentation",
             "tag sort",
             "thumbnails",
@@ -1122,4 +1123,52 @@ fn regex_favourites_open_from_options_and_keep_parent_transaction() {
             apply
         );
     }
+}
+
+#[test]
+fn sleep_options_apply_to_the_network_consumer_and_cancel_drafts() {
+    use hydrus_net::NetOptions;
+    use hydrus_store::network::NetworkSettings;
+    use hydrus_store::settings::get;
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("system_sleep_options.json");
+    for case in fixture["cases"].as_array().unwrap() {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "system");
+        let (index, _) = row(&window, "Allow wake-from-system-sleep detection:");
+        window.invoke_check_toggled(index, case["enabled"].as_bool().unwrap());
+        let (index, control) = row(
+            &window,
+            "After a wake from system sleep, wait this many seconds before allowing new network access:",
+        );
+        assert_eq!((control.minimum, control.maximum), (0, 60));
+        window.invoke_number_edited(index, case["delay"].as_i64().unwrap() as i32);
+        window.invoke_apply();
+        let settings = store.read(get::<NetworkSettings>).unwrap();
+        let consumer = NetOptions::from_settings(&settings);
+        assert_eq!(consumer.detect_sleep, case["enabled"].as_bool().unwrap());
+        assert_eq!(consumer.wake_delay, case["delay"].as_u64().unwrap());
+    }
+    let before = store.read(get::<NetworkSettings>).unwrap();
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "system");
+    let (index, _) = row(&window, "Allow wake-from-system-sleep detection:");
+    window.invoke_check_toggled(index, !before.detect_sleep);
+    window.invoke_cancel();
+    assert_eq!(store.read(get::<NetworkSettings>).unwrap(), before);
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "system");
+    assert_eq!(
+        row(&window, "Allow wake-from-system-sleep detection:")
+            .1
+            .checked,
+        before.detect_sleep
+    );
+    window.invoke_cancel();
 }

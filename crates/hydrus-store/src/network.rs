@@ -548,6 +548,8 @@ pub struct NetworkSettings {
     pub max_simultaneous_subscriptions: u32,
     /// `replace_percent_twenty_with_space_in_gug_input`.
     pub gug_percent_twenty_is_space: bool,
+    /// Whether clock gaps detect a wake (`do_sleep_check`).
+    pub detect_sleep: bool,
     /// Seconds requests wait after the computer wakes from sleep.
     pub wake_delay_period: u64,
 }
@@ -574,6 +576,7 @@ impl Default for NetworkSettings {
             process_subs_in_random_order: true,
             max_simultaneous_subscriptions: 1,
             gug_percent_twenty_is_space: false,
+            detect_sleep: true,
             wake_delay_period: 15,
         }
     }

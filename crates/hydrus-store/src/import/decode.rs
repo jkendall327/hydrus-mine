@@ -389,6 +389,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             small("max_simultaneous_subscriptions").unwrap_or(n.max_simultaneous_subscriptions);
         n.gug_percent_twenty_is_space = boolean("replace_percent_twenty_with_space_in_gug_input")
             .unwrap_or(n.gug_percent_twenty_is_space);
+        n.detect_sleep = boolean("do_sleep_check").unwrap_or(n.detect_sleep);
         n.wake_delay_period = unsigned("wake_delay_period").unwrap_or(n.wake_delay_period);
     }
     insert_setting(&mut input, &network)?;

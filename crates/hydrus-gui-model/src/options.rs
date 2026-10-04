@@ -1734,6 +1734,25 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             )],
         ),
         page(
+            "system",
+            vec![boxed(
+                "system sleep",
+                vec![
+                    check(
+                        "Allow wake-from-system-sleep detection:",
+                        |s| s.network.detect_sleep,
+                        |s, v| s.network.detect_sleep = v,
+                    ),
+                    int(
+                        "After a wake from system sleep, wait this many seconds before allowing new network access:",
+                        (0, 60),
+                        |s| s.network.wake_delay_period as i64,
+                        |s, v| s.network.wake_delay_period = v as u64,
+                    ),
+                ],
+            )],
+        ),
+        page(
             "tag presentation",
             vec![
                 boxed(

@@ -56,6 +56,8 @@ pub struct NetOptions {
     pub http_proxy: Option<String>,
     pub https_proxy: Option<String>,
     pub no_proxy: Option<String>,
+    /// Whether clock gaps detect a wake (`do_sleep_check`).
+    pub detect_sleep: bool,
     /// Seconds requests wait after the computer wakes from sleep
     /// (`wake_delay_period`), for its network to come back.
     pub wake_delay: u64,
@@ -78,6 +80,7 @@ impl Default for NetOptions {
             http_proxy: None,
             https_proxy: None,
             no_proxy: None,
+            detect_sleep: true,
             wake_delay: 15,
         }
     }
@@ -101,6 +104,7 @@ impl NetOptions {
             http_proxy: s.http_proxy.clone(),
             https_proxy: s.https_proxy.clone(),
             no_proxy: s.no_proxy.clone(),
+            detect_sleep: s.detect_sleep,
             wake_delay: s.wake_delay_period,
         }
     }
@@ -682,8 +686,13 @@ impl NetEngine {
     pub fn sleep_check_at(&self, now: i64) {
         let mut wake = self.wake.lock();
         let (last, awake_at) = &mut *wake;
+        let options = self.options.read();
+        if !options.detect_sleep {
+            *awake_at = None;
+            return;
+        }
         if last.is_some_and(|t| now - t > 60_000) {
-            let delay = i64::try_from(self.options.read().wake_delay).unwrap_or(i64::MAX);
+            let delay = i64::try_from(options.wake_delay).unwrap_or(i64::MAX);
             *awake_at = Some(now.saturating_add(delay.saturating_mul(1000)));
             tracing::info!("the computer seems to have just woken up; requests wait {delay} s");
         } else if awake_at.is_some_and(|t| now >= t) {
@@ -1754,6 +1763,42 @@ mod reload_tests {
         options.obey_bandwidth = false;
         let engine = NetEngine::new(Arc::clone(&store), options).unwrap();
         (dir, store, engine)
+    }
+
+    #[test]
+    fn sleep_detection_obeys_threshold_delay_and_disabled_pending_wait() {
+        // Controller.SleepCheck cases recorded in system_sleep_options.json.
+        let (_dir, _store, engine) = engine();
+        let now = 1_700_000_000_000;
+        for delay in [0, 15, 60] {
+            let mut options = engine.options();
+            options.wake_delay = delay;
+            engine.set_options(options).unwrap();
+            *engine.wake.lock() = (None, None);
+            engine.sleep_check_at(now - 60_000);
+            engine.sleep_check_at(now);
+            assert_eq!(
+                engine.wake.lock().1,
+                None,
+                "exactly one minute is not sleep"
+            );
+            engine.sleep_check_at(now + 61_000);
+            let deadline = now + 61_000 + (delay * 1000) as i64;
+            assert_eq!(engine.wake.lock().1, Some(deadline));
+            if delay == 60 {
+                engine.sleep_check_at(deadline - 1000);
+            }
+            engine.sleep_check_at(deadline + 1);
+            assert_eq!(engine.wake.lock().1, None);
+        }
+        engine.sleep_check_at(now + 200_000);
+        assert!(engine.wake.lock().1.is_some());
+        let last = engine.wake.lock().0;
+        let mut options = engine.options();
+        options.detect_sleep = false;
+        engine.set_options(options).unwrap();
+        engine.sleep_check_at(now + 200_001);
+        assert_eq!(*engine.wake.lock(), (last, None));
     }
 
     #[test]

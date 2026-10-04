@@ -284,7 +284,7 @@ search.
   aren't there, and the optional libraries tab lists ffmpeg alone. The
   boot time is in UTC, and there is no hydrus icon over the name.
 - **The options window has only the options hydrus-rs honours** (so far
-  those on twenty-two pages; the others, and pages with none, aren't there:
+  those on twenty-three pages; the others, and pages with none, aren't there:
   on the connection page, the CA bundle and curl_cffi test; on the
   downloading page, the default download source, the
   number of subscriptions syncing at once and the failed-imports limit; on
@@ -296,7 +296,8 @@ search.
   for renaming notebooks created from the new-page chooser; on the importing page, dropped URLs and
   the work slots; and on the media playback page, the preview's zoom,
   re-centring, the checkerboard, animations, mpv, Qt's player and the
-  system settings; on the file sort/collect page, the namespace sorts'
+  system settings; the system page omits filesystem wake waiting, and the GUI
+  has no periodic sleep checker of its own (the downloader daemon does); on the file sort/collect page, the namespace sorts'
   list and the default collect's tag service; on the tag sort page, the
   manage tags dialogs' sorts (ours sort as the media viewer's list) and
   the namespace grouping list; on the ratings page, the example
