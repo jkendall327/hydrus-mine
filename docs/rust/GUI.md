@@ -2184,7 +2184,10 @@ and cancel an active request. Script tests use an isolated cookie store while re
 domain runs share persisted sessions. Completed step rows stream into the owning
 script window before the next wait/request and can be reviewed while it is running.
 Cancel retains completed results and stops later work; owner closure invalidates
-queued result callbacks. The runtime-domain prompt remains the next test-control gap.
+queued result callbacks. Run test first asks “Edit the domain.” with the first
+sorted example or remembered domain, followed by remembered credentials. Domain
+Cancel/blank or credential Cancel launches no request and retains existing results;
+only starting an accepted run clears them. Closing the script retires its prompt.
 
 Import-option editors now have the reference favourites/profiles star menu:
 load, custom load, copy, edit/add and confirmed deletion. Favourite editors

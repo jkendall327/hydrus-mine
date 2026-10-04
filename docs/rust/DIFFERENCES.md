@@ -1403,7 +1403,11 @@ opening the page does not explicitly raise the desktop window.
 Login HTTP execution is implemented as a reusable NetEngine consumer with script
 editor test controls and result review. Test runs use fresh cookie sessions while
 copying request preferences and custom headers. Results now stream into the native list as each step finishes, before the next
-wait/request, and can be reviewed while the run is active. Native copy feedback
+wait/request, and can be reviewed while the run is active.
+Script Run test now uses the recorded runtime domain prompt and remembered
+credentials, preserving old results on either cancellation and clearing them only
+at execution start. Test NetworkJobControl cog/error UI, the script-help button
+and the informational completion popup remain absent; final result is inline. Native copy feedback
 stays visible until the review closes. Domain-manager confirmed execution now saves/closes the draft then runs the selected
 eligible queue through the shared persisted cookie store. Its progress/cancel
 controls appear when the manager is reopened; it does not share the reference's

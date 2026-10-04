@@ -18,6 +18,7 @@ export component SessionDialog inherits Window {
     in property <bool> asking-name;
     in-out property <string> text;
     in property <string> warning;
+    in property <string> name-ok-label: "apply";
     in property <string> yes-label: "yes";
     in property <string> no-label: "no";
     in property <string> placeholder;
@@ -72,7 +73,7 @@ export component SessionDialog inherits Window {
             spacing: 6px;
             if root.asking-name: Button {
                 enabled: !root.child-open;
-                text: "apply";
+                text: root.name-ok-label;
                 clicked => { root.name-entered(root.text); }
             }
             if root.asking-name: Button {

@@ -656,6 +656,14 @@ fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() 
     let window = slots.script.borrow().as_ref().unwrap().clone_strong();
     window.set_test_domain(site.domain.clone().into());
     window.invoke_action("run-test".into());
+    let prompt = slots
+        .test_domain
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong);
+    if let Some(prompt) = prompt {
+        prompt.invoke_name_entered(window.get_test_domain());
+    }
     assert!(window.get_child_open());
     let credentials = slots.credentials.borrow().as_ref().unwrap().clone_strong();
     for i in 0..credentials.get_rows().row_count() {
@@ -722,6 +730,14 @@ fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() 
     );
     review.invoke_action("close".into());
     window.invoke_action("run-test".into());
+    let prompt = slots
+        .test_domain
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong);
+    if let Some(prompt) = prompt {
+        prompt.invoke_name_entered(window.get_test_domain());
+    }
     let credentials = slots.credentials.borrow().as_ref().unwrap().clone_strong();
     credentials.invoke_action("apply".into());
     until_login(|| site.requests.lock().unwrap().len() == 3);
@@ -731,6 +747,14 @@ fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() 
     assert!(slots.result.borrow().is_none());
     assert!(!review.window().is_visible());
     window.invoke_action("run-test".into());
+    let prompt = slots
+        .test_domain
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong);
+    if let Some(prompt) = prompt {
+        prompt.invoke_name_entered(window.get_test_domain());
+    }
     review.invoke_action("copy".into());
     assert!(slots.credentials.borrow().is_none());
     for _ in 0..20 {
@@ -1713,5 +1737,108 @@ fn parent_cancel_discards_pending_domain_description_credentials_and_delete() {
             .read(hydrus_store::logins::load)
             .unwrap(),
         original
+    );
+}
+
+#[test]
+fn script_test_domain_prompt_replays_memory_cancel_clear_timing_and_real_http() {
+    let _rendered = headless::init();
+    let first = LoginSite::start();
+    let second = LoginSite::start();
+    let (_dir, store, original) = store();
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::network::NetworkSettings {
+                    detect_sleep: false,
+                    network_timeout: 2,
+                    max_connection_attempts: 1,
+                    max_get_attempts: 1,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
+    let fixture = hydrus_testkit::fixture_json("login_test_prompts.json");
+    let script = legacy::login_script(
+        &SerialisableObject::from_tuple_str(&fixture["script"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let slots = Slots::default();
+    let window = windows::open_script(&store, &script, &slots, Rc::new(|_| Ok(()))).unwrap();
+    let domain = |text: &str| match text {
+        "runtime.example" => first.domain.clone(),
+        "next.example" => second.domain.clone(),
+        _ => text.into(),
+    };
+    for step in fixture["states"].as_array().unwrap() {
+        let previous = string_table(&window.get_results());
+        window.invoke_action("run-test".into());
+        assert!(window.get_child_open());
+        assert!(!slots.run.busy());
+        let prompt = slots.test_domain.borrow().as_ref().unwrap().clone_strong();
+        let recorded = &step["prompts"][0];
+        assert_eq!(prompt.get_message(), recorded["message"].as_str().unwrap());
+        assert_eq!(
+            prompt.get_text().to_string(),
+            domain(recorded["default"].as_str().unwrap())
+        );
+        assert_eq!(prompt.get_name_ok_label(), "ok");
+        if let Some(text) = recorded["answer"].as_str() {
+            prompt.invoke_name_entered(domain(text).into());
+        } else {
+            prompt.invoke_cancelled();
+        }
+        assert!(slots.test_domain.borrow().is_none());
+        if let Some(recorded) = step["prompts"].as_array().unwrap().get(1) {
+            let credentials = slots.credentials.borrow().as_ref().unwrap().clone_strong();
+            assert_eq!(
+                credentials.get_rows().row_data(0).unwrap().value,
+                recorded["initial"]["username"].as_str().unwrap()
+            );
+            if let Some(values) = recorded["answer"].as_object() {
+                credentials.invoke_edited(0, values["username"].as_str().unwrap().into());
+                credentials.invoke_action("apply".into());
+            } else {
+                credentials.invoke_action("cancel".into());
+            }
+        }
+        assert_eq!(
+            window.get_test_domain().to_string(),
+            domain(step["after"]["domain"].as_str().unwrap())
+        );
+        let started = step["after"]["running"].as_bool().unwrap();
+        assert_eq!(window.get_running(), started);
+        if started {
+            assert_eq!(window.get_results().row_count(), 0);
+            until_login(|| !window.get_running());
+            assert_eq!(window.get_results().row_count(), 1);
+        } else {
+            assert_eq!(string_table(&window.get_results()), previous);
+            assert!(!slots.run.busy());
+        }
+        prompt.invoke_name_entered("stale.example".into());
+        assert!(slots.test_domain.borrow().is_none());
+    }
+    assert_eq!(first.requests.lock().unwrap().len(), 1);
+    assert!(first.requests.lock().unwrap()[0].starts_with("GET /?user=alice "));
+    assert_eq!(second.requests.lock().unwrap().len(), 1);
+    assert!(second.requests.lock().unwrap()[0].starts_with("GET /?user=bob "));
+    window.invoke_action("run-test".into());
+    let prompt = slots.test_domain.borrow().as_ref().unwrap().clone_strong();
+    window.invoke_action("cancel".into());
+    prompt.invoke_name_entered(first.domain.clone().into());
+    prompt.invoke_cancelled();
+    assert!(slots.test_domain.borrow().is_none());
+    assert!(slots.credentials.borrow().is_none());
+    assert!(!slots.run.busy());
+    assert_eq!(first.requests.lock().unwrap().len(), 1);
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+    assert!(
+        store
+            .read(hydrus_store::network::sessions)
+            .unwrap()
+            .is_empty()
     );
 }

@@ -290,3 +290,82 @@ impl RunSlot {
         *self.0.borrow_mut() = Some(Running { job, _timer: timer });
     }
 }
+
+/// Parent-owned reference runtime domain text prompt.
+pub type DomainSlot = Rc<RefCell<Option<crate::SessionDialog>>>;
+/// Accepted text or prompt cancellation, delivered only while the prompt is owned.
+pub type DomainAccepted = Rc<dyn Fn(Option<String>)>;
+/// Parent closure discards the prompt without starting the next credential/request stage.
+pub fn cancel_domain(slot: &DomainSlot) {
+    let window = slot
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong);
+    if let Some(window) = window {
+        window.invoke_force_close();
+    }
+}
+/// Ask the remembered test domain; unlike example-description prompts, Cancel aborts.
+pub fn open_domain(
+    initial: &str,
+    slot: &DomainSlot,
+    accepted: DomainAccepted,
+) -> Result<crate::SessionDialog, slint::PlatformError> {
+    if let Some(window) = slot.borrow().as_ref() {
+        return Ok(window.clone_strong());
+    }
+    let window = crate::SessionDialog::new()?;
+    window.set_window_title("Enter Text".into());
+    window.set_message("Edit the domain.".into());
+    window.set_name_ok_label("ok".into());
+    window.set_asking_name(true);
+    window.set_text(initial.into());
+    let active = Rc::new(Cell::new(true));
+    let close: Rc<dyn Fn()> = Rc::new({
+        let weak = window.as_weak();
+        let slot = Rc::downgrade(slot);
+        let active = active.clone();
+        move || {
+            if !active.replace(false) {
+                return;
+            }
+            if let Some(window) = weak.upgrade() {
+                let _ = window.hide();
+            }
+            if let Some(slot) = slot.upgrade() {
+                slot.borrow_mut().take();
+            }
+        }
+    });
+    let finish: DomainAccepted = Rc::new({
+        let active = active.clone();
+        let close = close.clone();
+        move |value| {
+            if !active.get() {
+                return;
+            }
+            close();
+            accepted(value);
+        }
+    });
+    window.on_name_entered({
+        let finish = finish.clone();
+        move |value| {
+            finish((!value.is_empty()).then(|| value.to_string()));
+        }
+    });
+    window.on_cancelled({
+        let finish = finish.clone();
+        move || finish(None)
+    });
+    window.on_force_close(move || {
+        close();
+    });
+    window.window().on_close_requested(move || {
+        finish(None);
+        slint::CloseRequestResponse::HideWindow
+    });
+    window.show()?;
+    *slot.borrow_mut() = Some(window.clone_strong());
+    Ok(window)
+}
