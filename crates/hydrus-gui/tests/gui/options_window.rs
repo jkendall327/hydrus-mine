@@ -3385,3 +3385,90 @@ fn passive_background_options_paint_independent_copies_behind_opaque_media() {
     );
     reopened.invoke_close_requested();
 }
+
+#[test]
+fn subscription_failure_limit_options_replay_qt_values_apply_cancel_and_reopen() {
+    use hydrus_store::network::NetworkSettings;
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("subscription_failure_limit.json");
+    let label = "If a subscription has this many failed file imports, stop and continue later:";
+    let saved = || {
+        store
+            .read(hydrus_store::settings::get::<NetworkSettings>)
+            .unwrap()
+            .subscription_file_error_cancel_threshold
+    };
+    for state in fixture["options"]["states"].as_array().unwrap() {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "downloading");
+        let (at, control) = row(&window, label);
+        assert_eq!(control.kind, 3);
+        assert_eq!(
+            serde_json::json!(control.minimum),
+            fixture["options"]["minimum"]
+        );
+        assert_eq!(
+            serde_json::json!(control.maximum),
+            fixture["options"]["maximum"]
+        );
+        assert_eq!(
+            control.none_phrase.as_str(),
+            fixture["options"]["none_phrase"].as_str().unwrap()
+        );
+        assert_eq!(
+            control.unit.as_str(),
+            fixture["options"]["unit"].as_str().unwrap()
+        );
+        assert_eq!(serde_json::json!(saved()), state["saved_before"]);
+        let value = state["given"].as_i64();
+        window.invoke_none_toggled(at, value.is_none());
+        if let Some(value) = value {
+            window.invoke_number_edited(at, i32::try_from(value).unwrap());
+        }
+        show_page(&window, "downloading");
+        let (_, control) = row(&window, label);
+        assert_eq!(control.is_none, value.is_none());
+        if let Some(value) = value {
+            assert_eq!(i64::from(control.number), value);
+        }
+        assert_eq!(
+            serde_json::json!(saved()),
+            state["saved_before"],
+            "edits are staged"
+        );
+        window.invoke_apply();
+        assert_eq!(serde_json::json!(saved()), state["saved_after"]);
+    }
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "downloading");
+    let (at, control) = row(&window, label);
+    assert_eq!(control.number, 1_000_000);
+    window.invoke_none_toggled(at, true);
+    window.invoke_cancel();
+    window.invoke_number_edited(at, 1);
+    window.invoke_apply();
+    assert_eq!(
+        saved(),
+        Some(1_000_000),
+        "closed owner cannot apply a stale edit"
+    );
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "downloading");
+    assert!(!row(&window, label).1.is_none);
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 820, 650);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("options_subscription_failure_limit.png"),
+        &pixels,
+        820,
+        650,
+    )
+    .unwrap();
+    window.invoke_cancel();
+}

@@ -2371,3 +2371,9 @@ remaining sync, and persists the configured other-error delay with the reference
 reason. Counted failures wait five seconds; typed DataMissing is excluded. HTTP
 errors handled inside ordinary file work, including 500 and 404, keep their seed
 result and continue without spending this outer budget, as the reference does.
+
+Options > downloading > subscriptions exposes “If a subscription has this many
+failed file imports, stop and continue later”. The reference noneable control
+starts at 5 errors, permits 1–1,000,000, and its “no limit” checkbox disables
+abandonment. Edits wait for Apply, Cancel retains the saved threshold, and legacy
+number/None values migrate. New syncs consume the saved network setting.

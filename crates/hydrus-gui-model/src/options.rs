@@ -1125,6 +1125,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| s.bandwidth.gallery_page_wait_subscriptions,
                             |s, v| s.bandwidth.gallery_page_wait_subscriptions = v,
                         ),
+                        noneable(
+                            "If a subscription has this many failed file imports, stop and continue later:",
+                            none("no limit", 5, (1, 1_000_000), Some("errors")),
+                            |s| signed(s.network.subscription_file_error_cancel_threshold),
+                            |s, value| {
+                                s.network.subscription_file_error_cancel_threshold = unsigned(value)
+                            },
+                        ),
                         check(
                             "Sync subscriptions in random order:",
                             |s| s.network.process_subs_in_random_order,

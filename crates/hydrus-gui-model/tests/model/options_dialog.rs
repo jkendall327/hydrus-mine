@@ -377,6 +377,14 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
             continue;
         };
         after = at + 1;
+        // This older whole-dialog fixture did not introspect this private
+        // noneable widget. Its real Qt bounds/value states are recorded and
+        // replayed separately in subscription_failure_limit.json.
+        if option.label
+            == "If a subscription has this many failed file imports, stop and continue later:"
+        {
+            continue;
+        }
         let value = (option.get)(settings);
         if let Some(why) = compare(&option.kind, &value, &row.control, store) {
             problems.push(format!("{}: {:?}: {why}", page.name, option.label));
@@ -1604,4 +1612,65 @@ fn passive_background_controls_match_reference_and_stage_independent_copies() {
         );
     }
     assert_eq!(store.read(Settings::load).unwrap(), settings);
+}
+
+#[test]
+fn subscription_file_failure_limit_replays_qt_noneable_states_in_parent_transaction() {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = hydrus_store::Store::open(native.path()).unwrap();
+    let fixture = hydrus_testkit::fixture_json("subscription_failure_limit.json");
+    for state in fixture["options"]["states"].as_array().unwrap() {
+        let before_settings = store.read(Settings::load).unwrap();
+        let stored_before = before_settings
+            .network
+            .subscription_file_error_cancel_threshold;
+        assert_eq!(serde_json::json!(stored_before), state["saved_before"]);
+        let mut editor = hydrus_gui_model::options::Editor::new(before_settings);
+        let page = editor
+            .page_names()
+            .iter()
+            .position(|name| *name == "downloading")
+            .unwrap();
+        editor.show_page(page);
+        let row = editor.rows().iter().position(|row| matches!(row, hydrus_gui_model::options::Row::Opt {option,..} if option.label == "If a subscription has this many failed file imports, stop and continue later:")).unwrap();
+        let value = state["given"].as_i64();
+        editor.none(row, value.is_none());
+        if let Some(value) = value {
+            editor.number(row, value);
+        }
+        let (after, before, errors) = editor.applied();
+        assert!(errors.is_empty());
+        assert_eq!(
+            serde_json::json!(after.network.subscription_file_error_cancel_threshold),
+            state["value"]
+        );
+        assert_eq!(
+            store
+                .read(Settings::load)
+                .unwrap()
+                .network
+                .subscription_file_error_cancel_threshold,
+            stored_before
+        );
+        let before = before.clone();
+        store
+            .write(move |ctx| after.save(ctx.conn(), &before))
+            .unwrap();
+        assert_eq!(
+            serde_json::json!(
+                store
+                    .read(Settings::load)
+                    .unwrap()
+                    .network
+                    .subscription_file_error_cancel_threshold
+            ),
+            state["saved_after"]
+        );
+    }
 }
