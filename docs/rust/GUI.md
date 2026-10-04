@@ -1545,10 +1545,12 @@ regression proves an existing downloader follows an edited parser and link.
 Network > downloaders > parsers now opens the native named parser list
 (add/edit/duplicate/delete), and url class links opens staged direct parser
 associations. Page editors edit names, example URLs, pre-parsing converters and
-content nodes. Existing subsidiary rows expose separation-formula editing and
-source-time sorting. Their formula editors receive the parent's converted test
-document and preserve parsed newlines. Separation edits remain staged in the page
-draft and preserve each subsidiary's child parser. Content editors support URLs, tags, notes, hashes, timestamps,
+content nodes. Subsidiary rows support add, edit and delete, including recursive child pages,
+separation formulae and source-time sorting. Child content and recursive editors
+receive separated examples with their source URLs and context variables.
+Separation formula editors receive the raw inherited document and preserve
+parsed newlines. All edits stay staged until their page and parser list apply;
+closing an owner cancels every descendant. Content editors support URLs, tags, notes, hashes, timestamps,
 titles, headers, temporary variables and vetoes, reusing the six-kind formula
 and string-match editors. Test panels accept the document, page URL, post
 index and validated key=value context variables, and run the live parser engine.
