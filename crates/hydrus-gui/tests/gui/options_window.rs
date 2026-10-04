@@ -5398,16 +5398,18 @@ fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewe
         .position(|id| {
             store
                 .read(|conn| {
-                    let flags: u32 =
-                        conn.query_row("SELECT flags FROM files WHERE hash_id = ?", [id], |row| {
-                            row.get(0)
-                        })?;
-                    Ok(hydrus_store::media::FileFlags(flags)
-                        .has(hydrus_store::media::FileFlags::TRANSPARENCY))
+                    let (flags, duration): (u32, Option<i64>) = conn.query_row(
+                        "SELECT flags, duration_ms FROM files WHERE hash_id = ?",
+                        [id],
+                        |row| Ok((row.get(0)?, row.get(1)?)),
+                    )?;
+                    Ok(duration.is_none()
+                        && hydrus_store::media::FileFlags(flags)
+                            .has(hydrus_store::media::FileFlags::TRANSPARENCY))
                 })
                 .unwrap()
         })
-        .expect("basic fixture has actual transparent media");
+        .expect("basic fixture has actual transparent still media");
     ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
     let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
     let drawn = windows.get(windows.count() - 1).unwrap();
@@ -5508,10 +5510,23 @@ fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewe
         reopened.invoke_cancel();
     }
     // Both nested and flat routes retain real native/setting consumers.
-    viewer.invoke_eye_menu_chosen(0);
-    assert!(viewer.get_viewer_window_top());
-    viewer.invoke_eye_menu_chosen(2);
-    assert!(viewer.get_viewer_window_frameless());
+    for action in fixture["window_actions"].as_array().unwrap() {
+        let id = match action["label"].as_str().unwrap() {
+            "always on top" => 0,
+            "always on top (while playing)" => 1,
+            "remove titlebar/frame" => 2,
+            label => panic!("Unknown recorded window action {label}"),
+        };
+        viewer.invoke_eye_menu_chosen(id);
+        assert_eq!(
+            json!([
+                viewer.get_viewer_window_top(),
+                viewer.get_viewer_top_while_playing(),
+                viewer.get_viewer_window_frameless()
+            ]),
+            action["state"]
+        );
+    }
     viewer.invoke_eye_menu_chosen(6);
     assert!(!viewer.get_draw_tags_background());
     assert!(
