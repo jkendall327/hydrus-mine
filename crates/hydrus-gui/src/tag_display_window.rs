@@ -327,10 +327,10 @@ pub(crate) fn open(
                 .filter(|s| s.real)
                 .nth(usize::try_from(w.get_source_index()).unwrap_or(usize::MAX))
                 .map(|s| s.key.clone());
-            if let Some(key) = key {
-                if !model.borrow_mut().add_source(parents, key) {
-                    w.set_error("That service is already applied.".into());
-                }
+            if let Some(key) = key
+                && !model.borrow_mut().add_source(parents, key)
+            {
+                w.set_error("That service is already applied.".into());
             }
             refresh();
         }
