@@ -35,6 +35,12 @@ list followed by the editor. Definitions come from saved configuration; new
 recordings use synthetic domains. See the area sections in `GUI.md` and
 `DIFFERENCES.md` for coverage and remaining first-pass limitations.
 
+The [GUI migration map](gui-progress.html) expands selected reference features
+and native menus/windows into nested work, including shared editors. It shows
+scoped first-pass/partial/missing/unassessed status and pinned source evidence;
+its counts are not a whole-client completion percentage. Maintenance instructions
+are in [gui-coverage/README.md](gui-coverage/README.md).
+
 The next breadth work, in the owner's existing order:
 
 1. **Network management**: remaining usage/history views and scheduling controls,
