@@ -77,6 +77,7 @@ pub mod slideshow;
 pub mod still;
 pub mod string_processor_window;
 mod subscriptions_window;
+mod tab_context_window;
 pub(crate) mod tag_display_window;
 pub mod tag_filter_window;
 pub mod tag_migration_window;
@@ -227,6 +228,8 @@ pub struct Bound {
     /// The session saving dialog while it is open (pages > sessions >
     /// save).
     pub session_dialog: Rc<RefCell<Option<SessionDialog>>>,
+    /// The clicked page or newly grouped notebook's text-entry window.
+    pub tab_name_dialog: Rc<RefCell<Option<SessionDialog>>>,
     /// The manage subscriptions dialog while it is open.
     pub subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>>,
     /// The subscriptions gallery chooser, before adding or overwriting.
@@ -1264,6 +1267,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    let tab_name_dialog =
+        tab_context_window::bind(window, pages.clone(), Rc::new(change_pages.clone()));
     // the menu bar, its titles shown again as what they say changes
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
@@ -3159,6 +3164,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         services_editor,
         checker_options,
         session_dialog,
+        tab_name_dialog,
         subscriptions,
         subscription_gallery,
         downloader_definitions,

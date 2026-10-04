@@ -691,6 +691,8 @@ export component MainWindow inherits Window {
     // a notebook's (level's) tab was chosen
     callback tab-chosen(int, int);
     callback tab-menu-requested(int, int, length, length);
+    callback tab-rename-requested(int, int);
+    callback notebook-rename-requested(string);
     // a notebook's tab was middle-clicked
     callback close-tab(int, int);
     // the reference's main window shortcuts: ctrl+t and F9 open a page,

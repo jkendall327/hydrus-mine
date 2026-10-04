@@ -1402,6 +1402,405 @@
       "selected": 3
     }
   ],
+  "send": [
+    {
+      "scope": "this",
+      "index": 1,
+      "accepted": true,
+      "rename": false,
+      "name": null,
+      "asked": [],
+      "text": [],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "pages",
+          "children": [
+            {
+              "name": "page 1"
+            }
+          ]
+        },
+        {
+          "name": "page 2"
+        },
+        {
+          "name": "page 3"
+        }
+      ],
+      "shown": "page 1"
+    },
+    {
+      "scope": "this",
+      "index": 1,
+      "accepted": true,
+      "rename": true,
+      "name": null,
+      "asked": [],
+      "text": [
+        {
+          "message": "Enter the name for the new page of pages.",
+          "default": "pages",
+          "answer": null
+        }
+      ],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "pages",
+          "children": [
+            {
+              "name": "page 1"
+            }
+          ]
+        },
+        {
+          "name": "page 2"
+        },
+        {
+          "name": "page 3"
+        }
+      ],
+      "shown": "page 1"
+    },
+    {
+      "scope": "this",
+      "index": 1,
+      "accepted": true,
+      "rename": true,
+      "name": "named pages",
+      "asked": [],
+      "text": [
+        {
+          "message": "Enter the name for the new page of pages.",
+          "default": "pages",
+          "answer": "named pages"
+        }
+      ],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "named pages",
+          "children": [
+            {
+              "name": "page 1"
+            }
+          ]
+        },
+        {
+          "name": "page 2"
+        },
+        {
+          "name": "page 3"
+        }
+      ],
+      "shown": "page 1"
+    },
+    {
+      "scope": "from_here",
+      "index": 1,
+      "accepted": false,
+      "rename": false,
+      "name": null,
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "page 1"
+        },
+        {
+          "name": "page 2"
+        },
+        {
+          "name": "page 3"
+        }
+      ],
+      "shown": "page 2"
+    },
+    {
+      "scope": "from_here",
+      "index": 1,
+      "accepted": true,
+      "rename": false,
+      "name": null,
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "pages",
+          "children": [
+            {
+              "name": "page 1"
+            },
+            {
+              "name": "page 2"
+            },
+            {
+              "name": "page 3"
+            }
+          ]
+        }
+      ],
+      "shown": "page 3"
+    },
+    {
+      "scope": "from_here",
+      "index": 1,
+      "accepted": true,
+      "rename": true,
+      "name": null,
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [
+        {
+          "message": "Enter the name for the new page of pages.",
+          "default": "pages",
+          "answer": null
+        }
+      ],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "pages",
+          "children": [
+            {
+              "name": "page 1"
+            },
+            {
+              "name": "page 2"
+            },
+            {
+              "name": "page 3"
+            }
+          ]
+        }
+      ],
+      "shown": "page 3"
+    },
+    {
+      "scope": "from_here",
+      "index": 1,
+      "accepted": true,
+      "rename": true,
+      "name": "named pages",
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [
+        {
+          "message": "Enter the name for the new page of pages.",
+          "default": "pages",
+          "answer": "named pages"
+        }
+      ],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "named pages",
+          "children": [
+            {
+              "name": "page 1"
+            },
+            {
+              "name": "page 2"
+            },
+            {
+              "name": "page 3"
+            }
+          ]
+        }
+      ],
+      "shown": "page 3"
+    },
+    {
+      "scope": "right",
+      "index": 2,
+      "accepted": false,
+      "rename": false,
+      "name": null,
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "page 1"
+        },
+        {
+          "name": "page 2"
+        },
+        {
+          "name": "page 3"
+        }
+      ],
+      "shown": "page 2"
+    },
+    {
+      "scope": "right",
+      "index": 2,
+      "accepted": true,
+      "rename": false,
+      "name": null,
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "page 1"
+        },
+        {
+          "name": "pages",
+          "children": [
+            {
+              "name": "page 2"
+            },
+            {
+              "name": "page 3"
+            }
+          ]
+        }
+      ],
+      "shown": "page 3"
+    },
+    {
+      "scope": "right",
+      "index": 2,
+      "accepted": true,
+      "rename": true,
+      "name": null,
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [
+        {
+          "message": "Enter the name for the new page of pages.",
+          "default": "pages",
+          "answer": null
+        }
+      ],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "page 1"
+        },
+        {
+          "name": "pages",
+          "children": [
+            {
+              "name": "page 2"
+            },
+            {
+              "name": "page 3"
+            }
+          ]
+        }
+      ],
+      "shown": "page 3"
+    },
+    {
+      "scope": "right",
+      "index": 2,
+      "accepted": true,
+      "rename": true,
+      "name": "named pages",
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [
+        {
+          "message": "Enter the name for the new page of pages.",
+          "default": "pages",
+          "answer": "named pages"
+        }
+      ],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "page 1"
+        },
+        {
+          "name": "named pages",
+          "children": [
+            {
+              "name": "page 2"
+            },
+            {
+              "name": "page 3"
+            }
+          ]
+        }
+      ],
+      "shown": "page 3"
+    }
+  ],
+  "rename": [
+    {
+      "name": null,
+      "text": [
+        {
+          "message": "Enter the new name.",
+          "default": "page 1",
+          "answer": null
+        }
+      ],
+      "pages": [
+        "page 0",
+        "page 1",
+        "page 2",
+        "page 3"
+      ],
+      "selected": 2
+    },
+    {
+      "name": "renamed page",
+      "text": [
+        {
+          "message": "Enter the new name.",
+          "default": "page 1",
+          "answer": "renamed page"
+        }
+      ],
+      "pages": [
+        "page 0",
+        "renamed page",
+        "page 2",
+        "page 3"
+      ],
+      "selected": 2
+    }
+  ],
   "default_close_focus": 1,
   "default_rename_sent": false
 }

@@ -2035,3 +2035,238 @@ fn tab_popup_bulk_close_cancellation_and_acceptance_are_wired() {
     )
     .unwrap();
 }
+
+#[test]
+fn send_down_and_rename_prompts_match_reference_including_cancellation() {
+    use hydrus_gui::tab_context::NotebookSettings;
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("tab_actions.json");
+    let original: Vec<_> = (0..4)
+        .map(|i| {
+            page(
+                &format!("page {i}"),
+                PageContent::Search {
+                    search: FileSearchContext::default(),
+                    synchronised: false,
+                    sort: None,
+                    lock: None,
+                    collect: None,
+                },
+            )
+        })
+        .collect();
+    fn choose(ui: &MainWindow, pane: i32, label: &str) {
+        let lines = ui.get_menu_panes().row_data(pane as usize).unwrap().lines;
+        let index = (0..lines.row_count())
+            .find(|&i| lines.row_data(i).unwrap().label == label)
+            .unwrap();
+        ui.invoke_menu_line_clicked(pane, index as i32, 200.0, 100.0, 10.0);
+    }
+    fn tree(pages: &[Page]) -> serde_json::Value {
+        serde_json::json!(
+            pages
+                .iter()
+                .map(|page| match &page.content {
+                    PageContent::Pages(children) =>
+                        serde_json::json!({"name": page.name, "children": tree(children)}),
+                    _ => serde_json::json!({"name": page.name}),
+                })
+                .collect::<Vec<_>>()
+        )
+    }
+    for step in fixture["send"].as_array().unwrap() {
+        store
+            .write(|ctx| {
+                sessions::save(
+                    ctx.conn(),
+                    &Session {
+                        name: LAST_SESSION.into(),
+                        pages: original.clone(),
+                    },
+                    100,
+                )?;
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &NotebookSettings {
+                        rename_sent_notebooks: step["rename"].as_bool().unwrap(),
+                        ..Default::default()
+                    },
+                )
+            })
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        ui.invoke_tab_chosen(0, 2);
+        let scope = step["scope"].as_str().unwrap();
+        let clicked = if scope == "right" {
+            1
+        } else {
+            step["index"].as_i64().unwrap() as i32
+        };
+        ui.invoke_tab_menu_requested(0, clicked, 30.0, 55.0);
+        choose(&ui, 0, "send down to a new page of pages");
+        choose(
+            &ui,
+            1,
+            match scope {
+                "this" => "this page",
+                "from_here" => "pages from here to the right",
+                _ => "pages to the right",
+            },
+        );
+        if scope != "this" {
+            assert_eq!(ui.get_question(), step["asked"][0].as_str().unwrap());
+            ui.invoke_answer(step["accepted"].as_bool().unwrap());
+        }
+        if step["rename"].as_bool().unwrap() {
+            let dialog = bound.tab_name_dialog.borrow().as_ref().unwrap().clone();
+            assert_eq!(
+                dialog.get_message(),
+                step["text"][0]["message"].as_str().unwrap()
+            );
+            assert_eq!(
+                dialog.get_text(),
+                step["text"][0]["default"].as_str().unwrap()
+            );
+            if let Some(name) = step["name"].as_str() {
+                dialog.invoke_name_entered(name.into());
+            } else {
+                dialog.invoke_cancelled();
+            }
+            assert!(bound.tab_name_dialog.borrow().is_none());
+        }
+        assert_eq!(tree(&bound.pages.borrow().session().pages), step["tree"]);
+        assert_eq!(
+            bound.pages.borrow().shown().name,
+            step["shown"].as_str().unwrap()
+        );
+        assert!(bound.pages.borrow_mut().closed_names().is_empty());
+        let moved: Vec<_> = bound
+            .pages
+            .borrow()
+            .session()
+            .all_pages()
+            .into_iter()
+            .filter(|p| !matches!(p.content, PageContent::Pages(_)))
+            .map(|p| p.key)
+            .collect();
+        assert_eq!(moved, original.iter().map(|p| p.key).collect::<Vec<_>>());
+    }
+}
+
+#[test]
+fn rename_tab_uses_frozen_key_and_cancellation_preserves_name() {
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let original: Vec<_> = (0..4)
+        .map(|i| {
+            page(
+                &format!("page {i}"),
+                PageContent::Search {
+                    search: FileSearchContext::default(),
+                    synchronised: false,
+                    sort: None,
+                    lock: None,
+                    collect: None,
+                },
+            )
+        })
+        .collect();
+    let fixture = hydrus_testkit::fixture_json("tab_actions.json");
+    for step in fixture["rename"].as_array().unwrap() {
+        store
+            .write(|ctx| {
+                sessions::save(
+                    ctx.conn(),
+                    &Session {
+                        name: LAST_SESSION.into(),
+                        pages: original.clone(),
+                    },
+                    100,
+                )
+            })
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        ui.invoke_tab_chosen(0, 2);
+        ui.invoke_tab_rename_requested(0, 1);
+        let dialog = bound.tab_name_dialog.borrow().as_ref().unwrap().clone();
+        assert_eq!(
+            dialog.get_message(),
+            step["text"][0]["message"].as_str().unwrap()
+        );
+        assert_eq!(
+            dialog.get_text(),
+            step["text"][0]["default"].as_str().unwrap()
+        );
+        ui.invoke_tab_chosen(0, 3); // switching while text entry is open retains target
+        if let Some(name) = step["name"].as_str() {
+            dialog.invoke_name_entered(name.into());
+        } else {
+            dialog.invoke_cancelled();
+        }
+        assert_eq!(
+            serde_json::json!(
+                bound
+                    .pages
+                    .borrow()
+                    .session()
+                    .pages
+                    .iter()
+                    .map(|p| &p.name)
+                    .collect::<Vec<_>>()
+            ),
+            step["pages"]
+        );
+        assert_eq!(bound.pages.borrow().shown().key, original[3].key);
+        bound.pages.borrow_mut().sync(200).unwrap();
+        assert_eq!(
+            Pages::open(store.clone()).unwrap().session().pages[1].name,
+            step["pages"][1].as_str().unwrap()
+        );
+    }
+}
+
+#[test]
+fn send_down_keeps_nested_selection_and_open_search_objects() {
+    use hydrus_gui::tab_context::Send;
+    let (_dirs, store) = store();
+    let search = || PageContent::Search {
+        search: FileSearchContext::default(),
+        synchronised: false,
+        sort: None,
+        lock: None,
+        collect: None,
+    };
+    let first = page("first", search());
+    let selected = page("selected", search());
+    let nested = page("nested", PageContent::Pages(vec![first, selected.clone()]));
+    let other = page("other", search());
+    store
+        .write(|ctx| {
+            sessions::save(
+                ctx.conn(),
+                &Session {
+                    name: LAST_SESSION.into(),
+                    pages: vec![nested.clone(), other.clone()],
+                },
+                100,
+            )
+        })
+        .unwrap();
+    let mut pages = Pages::open(store.clone()).unwrap();
+    pages.select(1, 1);
+    let opened = pages.current();
+    pages.select(0, 1);
+    let targets = pages.send_tab_targets(0, 0, Send::This);
+    let grouped = pages.send_tab_keys(&targets, true).unwrap();
+    assert_eq!(pages.session().pages[0].key, grouped);
+    assert_eq!(pages.shown().key, selected.key);
+    assert!(Rc::ptr_eq(&opened, &pages.current()));
+    assert!(pages.closed_names().is_empty());
+    pages.sync(200).unwrap();
+    let reopened = Pages::open(store).unwrap();
+    assert_eq!(reopened.shown().key, selected.key);
+    assert_eq!(reopened.session().pages, pages.session().pages);
+}

@@ -1693,3 +1693,12 @@ from the selected tab, with the reference's descent and recent-move rules.
 `oracle/record_tab_actions.py` captures actual dynamic menus and questions;
 model and GUI regressions replay quiet confirmation, cancellation, reverse
 closing, nested undo, navigation and left/right focus preferences.
+
+Tab rename asks "Enter the new name." with the current name. Its frozen page key
+keeps the target correct while selecting another tab. Send-down moves this page,
+this page and its right siblings, or only right siblings into a new notebook;
+groups ask first. The rename-on-send preference optionally prompts after moving,
+and cancelling that name keeps the new "pages" notebook, as the reference does.
+The source pages retain their keys, open search state and queues; grouping creates
+no closed-page undo entries. The real-client tab-actions recording and GUI tests
+replay the accepted/cancelled prompts, tree order, nested selection and reopen.

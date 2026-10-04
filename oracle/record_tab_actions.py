@@ -18,7 +18,7 @@ def record(session):
     from hydrus.client import ClientConstants as CC, ClientLocation
     from hydrus.client.gui import ClientGUICore, ClientGUIDialogsQuick
     from hydrus.client.gui.pages import ClientGUIPages
-    from hydrus.core import HydrusTime
+    from hydrus.core import HydrusExceptions
     from record_main_menu import tree
     controller = session.controller
     gui = controller.gui
@@ -27,6 +27,15 @@ def record(session):
     answer = [False]
     core = ClientGUICore.core()
     old_popup, old_yesno = core.PopupMenu, ClientGUIDialogsQuick.GetYesNo
+    old_text = ClientGUIDialogsQuick.EnterText
+    text_answers, text_asked = [], []
+    default_rename = controller.new_options.GetBoolean('rename_page_of_pages_on_send')
+    def text(window, message, default='', **kwargs):
+        value = text_answers.pop(0)
+        text_asked.append({'message': message, 'default': default, 'answer': value})
+        if value is None: raise HydrusExceptions.CancelledException()
+        return value
+    ClientGUIDialogsQuick.EnterText = text
     core.PopupMenu = lambda window, menu: captured.append(tree(menu))
     def yesno(window, message, **kwargs):
         asked.append(message)
@@ -68,12 +77,41 @@ def record(session):
             notebook = build()
             getattr(notebook, method)(delta)
             navigation.append({'movement': movement, 'selected': notebook.currentIndex()})
-        return {'menus': menus, 'close': closes, 'navigation': navigation,
+        def tree_pages(notebook):
+            out = []
+            for page in notebook.GetPages():
+                row = {'name': page.GetName()}
+                if isinstance(page, ClientGUIPages.PagesNotebook): row['children'] = tree_pages(page)
+                out.append(row)
+            return out
+        sent = []
+        for scope, index in [('this', 1), ('from_here', 1), ('right', 2)]:
+            for accept in [False, True] if scope != 'this' else [True]:
+                for rename in [False, True] if accept else [False]:
+                    for name in [None, 'named pages'] if rename else [None]:
+                        notebook = build()
+                        controller.new_options.SetBoolean('rename_page_of_pages_on_send', rename)
+                        answer[0] = accept
+                        asked.clear(); text_asked.clear(); text_answers[:] = [name] if rename else []
+                        if scope == 'this': notebook._SendPageToNewNotebook(index)
+                        else: notebook._SendRightPagesToNewNotebook(index)
+                        shown = notebook.GetCurrentMediaPage()
+                        sent.append({'scope': scope, 'index': index, 'accepted': accept, 'rename': rename,
+                            'name': name, 'asked': list(asked), 'text': list(text_asked),
+                            'tree': tree_pages(notebook), 'shown': shown.GetName() if shown else None})
+        renamed = []
+        for name in [None, 'renamed page']:
+            notebook = build(); text_answers[:] = [name]; text_asked.clear()
+            notebook._RenamePage(1)
+            renamed.append({'name': name, 'text': list(text_asked), 'pages': pages(notebook), 'selected': notebook.currentIndex()})
+        controller.new_options.SetBoolean('rename_page_of_pages_on_send', default_rename)
+        return {'menus': menus, 'close': closes, 'navigation': navigation, 'send': sent, 'rename': renamed,
             'default_close_focus': controller.new_options.GetInteger('close_page_focus_goes'),
-            'default_rename_sent': controller.new_options.GetBoolean('rename_page_of_pages_on_send')}
+            'default_rename_sent': default_rename}
     try:return controller.CallBlockingToQt(gui, drive)
     finally:
         core.PopupMenu, ClientGUIDialogsQuick.GetYesNo = old_popup, old_yesno
+        ClientGUIDialogsQuick.EnterText = old_text
 
 
 def main():

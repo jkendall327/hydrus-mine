@@ -1654,6 +1654,104 @@ impl Pages {
         Ok(())
     }
 
+    /// The clicked page's identity, frozen before opening its text entry.
+    pub fn tab_identity(&self, depth: usize, index: usize) -> Option<(PageKey, String)> {
+        self.notebook_at(depth)?
+            .get(index)
+            .map(|p| (p.key, p.name.clone()))
+    }
+
+    /// Rename an existing page by key without altering its content or selection.
+    pub fn rename_key(&mut self, key: &PageKey, name: &str) {
+        fn rename(pages: &mut [Page], key: &PageKey, name: &str) {
+            for page in pages {
+                if page.key == *key {
+                    name.clone_into(&mut page.name);
+                    return;
+                }
+                if let PageContent::Pages(children) = &mut page.content {
+                    rename(children, key, name);
+                }
+            }
+        }
+        rename(&mut self.session.pages, key, name);
+    }
+
+    /// Freeze the siblings targeted by a send-down menu action.
+    pub fn send_tab_targets(
+        &self,
+        depth: usize,
+        index: usize,
+        scope: crate::tab_context::Send,
+    ) -> Vec<PageKey> {
+        let Some(pages) = self.notebook_at(depth) else {
+            return Vec::new();
+        };
+        crate::tab_context::send_indices(index, pages.len(), scope)
+            .into_iter()
+            .map(|i| pages[i].key)
+            .collect()
+    }
+
+    /// Group siblings into a fresh notebook without closing/reopening them;
+    /// their keys, open search state and downloader queues all survive.
+    pub fn send_tab_keys(&mut self, keys: &[PageKey], single: bool) -> Option<PageKey> {
+        fn locate(pages: &[Page], key: PageKey) -> Option<Vec<usize>> {
+            for (index, page) in pages.iter().enumerate() {
+                if page.key == key {
+                    return Some(vec![index]);
+                }
+                if let PageContent::Pages(children) = &page.content
+                    && let Some(mut path) = locate(children, key)
+                {
+                    path.insert(0, index);
+                    return Some(path);
+                }
+            }
+            None
+        }
+        let first = *keys.first()?;
+        let path = locate(&self.session.pages, first)?;
+        let depth = path.len() - 1;
+        let insertion = path[depth];
+        // Preserve the selected child within every moved notebook before
+        // replacing this row's parent path.
+        self.remember();
+        let previous_path = self.path.clone();
+        self.path = path;
+        let pages = self.notebook_mut(depth);
+        let moving: Vec<_> = keys
+            .iter()
+            .filter_map(|key| pages.iter().find(|p| p.key == *key).cloned())
+            .collect();
+        if moving.len() != keys.len() {
+            self.path = previous_path;
+            return None;
+        }
+        pages.retain(|p| !keys.contains(&p.key));
+        let at = if single {
+            insertion.min(pages.len())
+        } else {
+            pages.len()
+        };
+        let selected = moving.len() - 1;
+        let notebook = PageKey::random();
+        pages.insert(
+            at,
+            Page {
+                key: notebook,
+                name: "pages".into(),
+                content: PageContent::Pages(moving),
+            },
+        );
+        self.path.truncate(depth);
+        self.select(depth, at);
+        // Qt inserts each reversed group member at zero, retaining the first
+        // inserted widget (the rightmost original page) as the selected tab.
+        self.select(depth + 1, selected);
+        Some(notebook)
+    }
+
     /// Sort only the notebook at `depth`, retaining the shown leaf and
     /// descendants' selections. Equal keys keep their original order.
     pub fn sort_tabs(

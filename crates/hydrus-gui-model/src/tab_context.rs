@@ -70,6 +70,26 @@ pub fn destination(index: usize, count: usize, movement: Move) -> Option<usize> 
     (target < count && target != index).then_some(target)
 }
 
+/// Which clicked siblings are moved into a fresh notebook.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Send {
+    This,
+    FromHere,
+    Right,
+}
+
+/// Frozen sibling indices for a send-down action.
+pub fn send_indices(index: usize, count: usize, scope: Send) -> Vec<usize> {
+    if index >= count {
+        return Vec::new();
+    }
+    match scope {
+        Send::This => vec![index],
+        Send::FromHere => (index..count).collect(),
+        Send::Right => (index + 1..count).collect(),
+    }
+}
+
 /// Which siblings a bulk-close action targets.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Close {
@@ -183,6 +203,8 @@ pub fn menu(depth: usize, index: usize, count: usize, selected: usize) -> Vec<En
         });
         entries.push(sort_menu(depth));
     }
+    entries.push(item("rename page", Command::RenameTab { depth, index }));
+    entries.push(send_menu(depth, index, count));
     entries
 }
 
@@ -209,6 +231,28 @@ fn sort_menu(depth: usize) -> Entry {
     Entry::Menu {
         label: "sort pages".into(),
         entries: sorts,
+        enabled: true,
+    }
+}
+
+fn send_menu(depth: usize, index: usize, count: usize) -> Entry {
+    let item = |label: &str, scope| Entry::Item {
+        label: label.into(),
+        enabled: true,
+        command: Some(Command::SendTabs {
+            depth,
+            index,
+            scope,
+        }),
+    };
+    let mut entries = vec![item("this page", Send::This)];
+    if index + 1 < count {
+        entries.push(item("pages from here to the right", Send::FromHere));
+        entries.push(item("pages to the right", Send::Right));
+    }
+    Entry::Menu {
+        label: "send down to a new page of pages".into(),
+        entries,
         enabled: true,
     }
 }

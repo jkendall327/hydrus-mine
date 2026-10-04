@@ -425,6 +425,47 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
     let store = hooks.pages.borrow().store().clone();
     let change_pages = &hooks.change_pages;
     match command {
+        Command::RenameTab { depth, index } => {
+            if let (Ok(depth), Ok(index)) = (i32::try_from(depth), i32::try_from(index)) {
+                window.invoke_tab_rename_requested(depth, index);
+            }
+        }
+        Command::SendTabs {
+            depth,
+            index,
+            scope,
+        } => {
+            let keys = hooks.pages.borrow().send_tab_targets(depth, index, scope);
+            if keys.is_empty() {
+                return;
+            }
+            let change = hooks.change_pages.clone();
+            let weak = window.as_weak();
+            let store = store.clone();
+            let send: Rc<dyn Fn()> = Rc::new(move || {
+                let created = std::cell::Cell::new(None);
+                change(&|pages| {
+                    created
+                        .set(pages.send_tab_keys(&keys, scope == crate::tab_context::Send::This));
+                    Ok(())
+                });
+                let settings: hydrus_store::sessions::NotebookSettings =
+                    store.read(hydrus_store::settings::get).unwrap_or_default();
+                if settings.rename_sent_notebooks
+                    && let (Some(key), Some(window)) = (created.get(), weak.upgrade())
+                {
+                    window.invoke_notebook_rename_requested(key.to_hex().into());
+                }
+            });
+            if scope == crate::tab_context::Send::This {
+                send();
+            } else {
+                (hooks.ask)(
+                    "Send all pages to the right to a new page of pages?".into(),
+                    send,
+                );
+            }
+        }
         Command::CloseTab { depth, index } => {
             if let (Ok(depth), Ok(index)) = (i32::try_from(depth), i32::try_from(index)) {
                 window.invoke_close_tab(depth, index);

@@ -133,6 +133,17 @@ pub enum Command {
     NudgeSubscriptions,
     /// Close every page (asking first) and load the saved session.
     ClearAndLoadSession(String),
+    /// Ask a new name for the clicked page/notebook.
+    RenameTab {
+        depth: usize,
+        index: usize,
+    },
+    /// Move frozen siblings into a new notebook, optionally naming it.
+    SendTabs {
+        depth: usize,
+        index: usize,
+        scope: crate::tab_context::Send,
+    },
     /// Close one clicked tab through the existing confirmation/undo path.
     CloseTab {
         depth: usize,
