@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "agent": "search-options",
+  "baseline_git_head": "d50df26b",
+  "claims": [
+    {
+      "id": "audit-options-media-viewer-hovers-background-draw-tags-left-in-the-viewer-background",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact default-true checkbox stages, persists and imports draw_tags_hover_in_media_viewer_background. The real viewer paints its display/sorted/coloured tag rows at the left of the passive canvas, before media, independently of the tag popup enable or window focus. Opaque media covers those copies and the passive content never takes input.",
+      "limits": [
+        "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ViewerBackgroundSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/src/viewer.rs::shown",
+        "crates/hydrus-gui/src/lib.rs::open_viewer",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow",
+        "crates/hydrus-gui/ui/viewer.slint::RatingGraphic"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::passive_background_controls_match_reference_and_stage_independent_copies",
+        "crates/hydrus-store/src/import/decode.rs::passive_background_options_import_each_draw_key",
+        "crates/hydrus-gui/tests/gui/options_window.rs::passive_background_options_paint_independent_copies_behind_opaque_media"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_background_options.py",
+        "fixture": "oracle/fixtures/viewer_background_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T13:15:07Z",
+        "reference": "Real MediaViewerHoversPanel.UpdateOptions, displayed real synthetic JPEG CanvasMediaListBrowser, actual _DrawBackgroundDetails and _DrawTags/_DrawTopMiddle/_DrawTopRight/_DrawNotes. QPainter observer calls original drawText and paints real pixels;32checkbox-combination\u00d7popupEnable cases, actual ordered draw calls/text, notes input_y0or99, pixel occupancy and opaque cover. Clean client shutdown."
+      },
+      "implementationCommit": "bb2acbf0"
+    },
+    {
+      "id": "audit-options-media-viewer-hovers-background-draw-file-information-top-in-the-viewer-background",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact default-true checkbox stages, persists and imports draw_top_hover_in_media_viewer_background. The real viewer paints its current native file-information line at the top centre of the passive canvas, before media, independently of top popup/focus eligibility. Opaque media covers it; Apply changes an open viewer and Cancel retains saved policy.",
+      "limits": [
+        "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ViewerBackgroundSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/src/viewer.rs::shown",
+        "crates/hydrus-gui/src/lib.rs::open_viewer",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow",
+        "crates/hydrus-gui/ui/viewer.slint::RatingGraphic"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::passive_background_controls_match_reference_and_stage_independent_copies",
+        "crates/hydrus-store/src/import/decode.rs::passive_background_options_import_each_draw_key",
+        "crates/hydrus-gui/tests/gui/options_window.rs::passive_background_options_paint_independent_copies_behind_opaque_media"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_background_options.py",
+        "fixture": "oracle/fixtures/viewer_background_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T13:15:07Z",
+        "reference": "Real MediaViewerHoversPanel.UpdateOptions, displayed real synthetic JPEG CanvasMediaListBrowser, actual _DrawBackgroundDetails and _DrawTags/_DrawTopMiddle/_DrawTopRight/_DrawNotes. QPainter observer calls original drawText and paints real pixels;32checkbox-combination\u00d7popupEnable cases, actual ordered draw calls/text, notes input_y0or99, pixel occupancy and opaque cover. Clean client shutdown."
+      },
+      "implementationCommit": "bb2acbf0"
+    },
+    {
+      "id": "audit-options-media-viewer-hovers-background-draw-ratings-and-locations-top-right-in-the-viewer-background",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact default-true checkbox stages, persists and imports draw_top_right_hover_in_media_viewer_background. The real viewer paints a passive top-right copy of its existing rating glyphs, inbox/trash indicators, sorted current local domains followed by remote domain names with pending/petitioned suffixes, and displayed URL labels. It paints before media and is independent of popup/focus enables. The passive glyph component is shared with the existing interactive hover without adding input to the copy.",
+      "limits": [
+        "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ViewerBackgroundSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/src/viewer.rs::shown",
+        "crates/hydrus-gui/src/lib.rs::open_viewer",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow",
+        "crates/hydrus-gui/ui/viewer.slint::RatingGraphic"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::passive_background_controls_match_reference_and_stage_independent_copies",
+        "crates/hydrus-store/src/import/decode.rs::passive_background_options_import_each_draw_key",
+        "crates/hydrus-gui/tests/gui/options_window.rs::passive_background_options_paint_independent_copies_behind_opaque_media"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_background_options.py",
+        "fixture": "oracle/fixtures/viewer_background_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T13:15:07Z",
+        "reference": "Real MediaViewerHoversPanel.UpdateOptions, displayed real synthetic JPEG CanvasMediaListBrowser, actual _DrawBackgroundDetails and _DrawTags/_DrawTopMiddle/_DrawTopRight/_DrawNotes. QPainter observer calls original drawText and paints real pixels;32checkbox-combination\u00d7popupEnable cases, actual ordered draw calls/text, notes input_y0or99, pixel occupancy and opaque cover. Clean client shutdown."
+      },
+      "implementationCommit": "bb2acbf0"
+    },
+    {
+      "id": "audit-options-media-viewer-hovers-background-draw-notes-right-in-the-viewer-background",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact default-true checkbox stages, persists and imports draw_notes_hover_in_media_viewer_background. The real viewer paints sorted note names/content at the right, before media, independently of notes-popup/focus eligibility. Its origin follows the top-right copy height when that preference is enabled, or resets to0 when disabled, preserving the reference overlap dependency. Text wraps/clips using existing native notes presentation, and opaque media covers it.",
+      "limits": [
+        "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ViewerBackgroundSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/src/viewer.rs::shown",
+        "crates/hydrus-gui/src/lib.rs::open_viewer",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow",
+        "crates/hydrus-gui/ui/viewer.slint::RatingGraphic"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::passive_background_controls_match_reference_and_stage_independent_copies",
+        "crates/hydrus-store/src/import/decode.rs::passive_background_options_import_each_draw_key",
+        "crates/hydrus-gui/tests/gui/options_window.rs::passive_background_options_paint_independent_copies_behind_opaque_media"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_background_options.py",
+        "fixture": "oracle/fixtures/viewer_background_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T13:15:07Z",
+        "reference": "Real MediaViewerHoversPanel.UpdateOptions, displayed real synthetic JPEG CanvasMediaListBrowser, actual _DrawBackgroundDetails and _DrawTags/_DrawTopMiddle/_DrawTopRight/_DrawNotes. QPainter observer calls original drawText and paints real pixels;32checkbox-combination\u00d7popupEnable cases, actual ordered draw calls/text, notes input_y0or99, pixel occupancy and opaque cover. Clean client shutdown."
+      },
+      "implementationCommit": "bb2acbf0"
+    }
+  ],
+  "counts": {
+    "concrete_first_pass": 4,
+    "parent_or_alias": 0
+  }
+}
