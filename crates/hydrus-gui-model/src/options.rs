@@ -1279,59 +1279,87 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "file search",
-            vec![boxed(
-                "file search autocomplete",
-                vec![
-                    int(
-                        "Active Search Predicates list height:",
-                        (1, 128),
-                        |settings| i64::from(settings.file_search.active_predicate_rows),
-                        |settings, value| settings.file_search.active_predicate_rows = value as u32,
-                    ),
-                    opt(
-                        "Default/Fallback local file search location:",
-                        Kind::LocalLocation,
-                        Rc::new(|settings| {
-                            Value::Location(settings.search_defaults.local_location.clone())
-                        }),
-                        Rc::new(|settings, value| match value {
-                            Value::Location(location) => {
-                                settings.search_defaults.local_location = location.clone();
-                                Ok(())
-                            }
-                            _ => Err(wrong("Default/Fallback local file search location:")),
-                        }),
-                    ),
-                    tag_service(
-                        "Default tag service in search pages:",
-                        true,
-                        |settings| settings.search_defaults.tag_service.clone(),
-                        |settings, service| settings.search_defaults.tag_service = service,
-                        |_| true,
-                    ),
-                    check(
-                        "Autocomplete dropdown floats over file search pages:",
-                        |settings| settings.file_search.float_autocomplete,
-                        |settings, value| settings.file_search.float_autocomplete = value,
-                    ),
-                    int(
-                        "Autocomplete list height:",
-                        (1, 128),
-                        |settings| i64::from(settings.file_search.autocomplete_rows),
-                        |settings, value| settings.file_search.autocomplete_rows = value as u32,
-                    ),
-                    check(
-                        "Start new search pages in 'searching immediately':",
-                        |settings| settings.file_search.search_immediately,
-                        |settings, value| settings.file_search.search_immediately = value,
-                    ),
-                    check(
-                        "Show system:everything:",
-                        |settings| settings.file_search.show_system_everything,
-                        |settings, value| settings.file_search.show_system_everything = value,
-                    ),
-                ],
-            )],
+            vec![
+                boxed(
+                    "file search autocomplete",
+                    vec![
+                        int(
+                            "Active Search Predicates list height:",
+                            (1, 128),
+                            |settings| i64::from(settings.file_search.active_predicate_rows),
+                            |settings, value| {
+                                settings.file_search.active_predicate_rows = value as u32
+                            },
+                        ),
+                        opt(
+                            "Default/Fallback local file search location:",
+                            Kind::LocalLocation,
+                            Rc::new(|settings| {
+                                Value::Location(settings.search_defaults.local_location.clone())
+                            }),
+                            Rc::new(|settings, value| match value {
+                                Value::Location(location) => {
+                                    settings.search_defaults.local_location = location.clone();
+                                    Ok(())
+                                }
+                                _ => Err(wrong("Default/Fallback local file search location:")),
+                            }),
+                        ),
+                        tag_service(
+                            "Default tag service in search pages:",
+                            true,
+                            |settings| settings.search_defaults.tag_service.clone(),
+                            |settings, service| settings.search_defaults.tag_service = service,
+                            |_| true,
+                        ),
+                        check(
+                            "Autocomplete dropdown floats over file search pages:",
+                            |settings| settings.file_search.float_autocomplete,
+                            |settings, value| settings.file_search.float_autocomplete = value,
+                        ),
+                        int(
+                            "Autocomplete list height:",
+                            (1, 128),
+                            |settings| i64::from(settings.file_search.autocomplete_rows),
+                            |settings, value| settings.file_search.autocomplete_rows = value as u32,
+                        ),
+                        check(
+                            "Start new search pages in 'searching immediately':",
+                            |settings| settings.file_search.search_immediately,
+                            |settings, value| settings.file_search.search_immediately = value,
+                        ),
+                        check(
+                            "Show system:everything:",
+                            |settings| settings.file_search.show_system_everything,
+                            |settings, value| settings.file_search.show_system_everything = value,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "file search",
+                    vec![
+                        noneable(
+                            "Implicit system:limit for all searches: ",
+                            none("no limit", 10_000, (1, 100_000_000), None),
+                            |settings| {
+                                settings
+                                    .file_search
+                                    .implicit_limit
+                                    .map(|value| value as i64)
+                            },
+                            |settings, value| {
+                                settings.file_search.implicit_limit =
+                                    value.map(|value| value as u64)
+                            },
+                        ),
+                        check(
+                            "If explicit system:limit, then refresh search when file sort changes: ",
+                            |settings| settings.file_search.refresh_limited_sort,
+                            |settings, value| settings.file_search.refresh_limited_sort = value,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "file sort/collect",

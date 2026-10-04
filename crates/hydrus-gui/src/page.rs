@@ -1918,13 +1918,39 @@ impl SearchPage {
             .is_none_or(|c| c.default_ascending);
         self.sort = PageSort { by, ascending };
         self.sort_changed = true;
-        self.resort();
+        self.sort_changed_search_or_resort();
     }
 
     pub fn set_sort_order(&mut self, order: SortOrder) {
         self.sort.ascending = order == SortOrder::Ascending;
         self.sort_changed = true;
-        self.resort();
+        self.sort_changed_search_or_resort();
+    }
+
+    fn sort_changed_search_or_resort(&mut self) {
+        let settings: hydrus_store::settings::FileSearchSettings = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let explicit_limit = self.predicates.iter().any(|predicate| {
+            matches!(
+                predicate,
+                Predicate::System(hydrus_search::predicate::SystemPredicate::Limit(_))
+            )
+        });
+        let database_sort = system_sort(&self.sort)
+            .is_some_and(|sort| sort.by.can_sort_at_database_level(&self.context.location));
+        if settings.refresh_limited_sort
+            && self.synchronised
+            && explicit_limit
+            && database_sort
+            && self.note.is_none()
+            && !self.locked
+        {
+            self.search();
+        } else {
+            self.resort();
+        }
     }
 
     /// Sort the files shown again (a new sort doesn't search again), as

@@ -1883,3 +1883,10 @@ merges incoming custom kinds, and replace-paste fills currently inherited kinds.
 The real Qt recording is `oracle/record_subscription_import_options.py`; native
 regressions cover clipboard output, all three modes, invalid input, declined
 clearing, reopening and callbacks retained after the owner closes.
+
+File Search can set an implicit search limit (none by default; 1–100,000,000).
+The shared query engine applies it only without an explicit `system:limit`, so an
+explicit larger limit overrides it. The sort-refresh preference defaults on:
+changing a supported database sort reruns a synchronized, explicitly limited
+local search to choose its new sorted subset. Paused searches, implicit-only
+limits, all-known-file locations, and unsupported sorts keep the current subset.

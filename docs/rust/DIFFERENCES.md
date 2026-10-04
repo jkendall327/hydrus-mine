@@ -1237,3 +1237,9 @@ and preserves stored external-program definitions. It rejects deleted-domain
 location contexts atomically because the native importer does not yet represent
 them. PNG exchange is available in the typed codec; its subscription UI entry is
 assessed separately. These remaining limits keep the broad exchange items partial.
+
+The implicit search limit and explicit-limit sort-refresh controls now reach the
+shared search engine and native search pages. Sort-refresh eligibility matches
+the reference's supported system sorts and excludes all-known-file searches;
+namespace/rating sorts and the other unsupported system sorts only reorder the
+current subset. The executor's existing explicit-limit semantics are preserved.

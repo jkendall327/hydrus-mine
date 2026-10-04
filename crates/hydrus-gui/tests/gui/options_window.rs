@@ -1733,3 +1733,93 @@ fn read_list_sizes_and_float_policy_reach_rendered_new_pages() {
         );
     }
 }
+
+#[test]
+fn implicit_limit_options_reach_queries_and_limited_sort_refresh() {
+    use hydrus_search::{SortBy, SortOrder};
+    use hydrus_store::settings::{FileSearchSettings, get};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("file_search_limits.json");
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "file search");
+    let (limit_row, limit) = row(&window, "Implicit system:limit for all searches: ");
+    assert_eq!((limit.minimum, limit.maximum), (1, 100_000_000));
+    assert_eq!(limit.none_phrase, "no limit");
+    assert_eq!(limit.is_none, fixture["initial"]["limit"].is_null());
+    window.invoke_none_toggled(limit_row, false);
+    window.invoke_number_edited(limit_row, 3);
+    window.invoke_cancel();
+    assert!(
+        store
+            .read(get::<FileSearchSettings>)
+            .unwrap()
+            .implicit_limit
+            .is_none()
+    );
+    for case in fixture["refreshes"].as_array().unwrap() {
+        let enabled = case["enabled"].as_bool().unwrap();
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "file search");
+        let (limit_row, _) = row(&window, "Implicit system:limit for all searches: ");
+        let (refresh_row, _) = row(
+            &window,
+            "If explicit system:limit, then refresh search when file sort changes: ",
+        );
+        window.invoke_none_toggled(limit_row, false);
+        window.invoke_number_edited(limit_row, 3);
+        window.invoke_check_toggled(refresh_row, enabled);
+        window.invoke_apply();
+        let saved = store.read(get::<FileSearchSettings>).unwrap();
+        assert_eq!(saved.implicit_limit, Some(3));
+        assert_eq!(saved.refresh_limited_sort, enabled);
+        let mut page = hydrus_gui::SearchPage::new(store.clone());
+        page.set_sort_by(SortBy::Hash);
+        page.set_sort_order(SortOrder::Ascending);
+        assert!(page.add_predicate("system:everything"));
+        assert_eq!(
+            page.results().len(),
+            3,
+            "implicit limit reaches the search engine"
+        );
+        if case["explicit"].as_bool().unwrap() {
+            assert!(page.add_predicate("system:limit is 3"));
+        }
+        let original = page
+            .results()
+            .iter()
+            .copied()
+            .collect::<std::collections::BTreeSet<_>>();
+        page.set_synchronised(case["sync"].as_bool().unwrap());
+        page.set_sort_by(SortBy::from_code(case["code"].as_i64().unwrap()).unwrap());
+        page.set_sort_order(SortOrder::Descending);
+        let after = page
+            .results()
+            .iter()
+            .copied()
+            .collect::<std::collections::BTreeSet<_>>();
+        if case["refresh_count"].as_u64().unwrap() > 0 {
+            assert_ne!(
+                after, original,
+                "rerun must choose the other end of the hash-sorted search"
+            );
+        } else {
+            assert_eq!(
+                after, original,
+                "guarded sort changes only reorder the current subset"
+            );
+        }
+    }
+    let mut page = hydrus_gui::SearchPage::new(store.clone());
+    assert!(page.add_predicate("system:everything"));
+    assert!(page.add_predicate("system:limit is 8"));
+    assert_eq!(
+        page.results().len(),
+        8,
+        "larger explicit limit overrides the implicit limit"
+    );
+}

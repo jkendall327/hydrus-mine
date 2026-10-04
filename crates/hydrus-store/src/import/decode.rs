@@ -557,6 +557,14 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         if let Some(rows) = options.integers.get("ac_read_list_height_num_chars") {
             file_search.autocomplete_rows = (*rows).clamp(1, 128) as u32;
         }
+        if let Some(limit) = options.noneable_integers.get("forced_search_limit") {
+            file_search.implicit_limit = limit.map(|value| value.clamp(1, 100_000_000) as u64);
+        }
+        file_search.refresh_limited_sort = options
+            .booleans
+            .get("refresh_search_page_on_system_limited_sort_changed")
+            .copied()
+            .unwrap_or(file_search.refresh_limited_sort);
         insert_setting(&mut input, &file_search)?;
         let mut summaries = hydrus_core::tag_summary::TagSummaries::default();
         for (name, field) in [
@@ -2584,6 +2592,14 @@ mod tests {
                     r#"[[0, "ac_read_list_height_num_chars"], [0, 22]]"#,
                     r#"[[0, "ac_read_list_height_num_chars"], [0, 24]]"#,
                 ),
+                (
+                    r#"[[0, "forced_search_limit"], [0, null]]"#,
+                    r#"[[0, "forced_search_limit"], [0, 3]]"#,
+                ),
+                (
+                    r#"[[0, "refresh_search_page_on_system_limited_sort_changed"], [0, true]]"#,
+                    r#"[[0, "refresh_search_page_on_system_limited_sort_changed"], [0, false]]"#,
+                ),
             ],
         );
         assert_eq!(
@@ -2594,6 +2610,8 @@ mod tests {
                 float_autocomplete: false,
                 active_predicate_rows: 9,
                 autocomplete_rows: 24,
+                implicit_limit: Some(3),
+                refresh_limited_sort: false,
             }
         );
     }

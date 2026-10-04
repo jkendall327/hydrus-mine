@@ -1076,3 +1076,54 @@ fn read_presentation_controls_match_reference_ranges_and_staged_values() {
     assert_eq!(applied.file_search.active_predicate_rows, 1);
     assert_eq!(applied.file_search.autocomplete_rows, 128);
 }
+
+#[test]
+fn file_search_limit_controls_stage_and_clamp_reference_values() {
+    use hydrus_gui_model::options::{Editor, Row};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    let pages = pages(&settings);
+    let page = pages
+        .iter()
+        .find(|page| page.name == "file search")
+        .unwrap();
+    let reference = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "file search")
+        .unwrap();
+    assert!(page_problems(page, &reference["items"], &settings, &store).is_empty());
+    let mut editor = Editor::new(settings.clone());
+    let index = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "file search")
+        .unwrap();
+    editor.show_page(index);
+    let find = |label: &str| {
+        editor
+            .rows()
+            .iter()
+            .position(|row| matches!(row, Row::Opt { option, .. } if option.label == label))
+            .unwrap()
+    };
+    let limit = find("Implicit system:limit for all searches: ");
+    let refresh = find("If explicit system:limit, then refresh search when file sort changes: ");
+    editor.none(limit, false);
+    editor.number(limit, 0);
+    editor.check(refresh, false);
+    let (applied, _, problems) = editor.applied();
+    assert!(problems.is_empty());
+    assert_eq!(applied.file_search.implicit_limit, Some(1));
+    assert!(!applied.file_search.refresh_limited_sort);
+    editor.number(limit, 100_000_001);
+    assert_eq!(
+        editor.applied().0.file_search.implicit_limit,
+        Some(100_000_000)
+    );
+    editor.none(limit, true);
+    assert!(editor.applied().0.file_search.implicit_limit.is_none());
+    assert_eq!(store.read(Settings::load).unwrap(), settings);
+}
