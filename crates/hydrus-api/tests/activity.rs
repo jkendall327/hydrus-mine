@@ -33,7 +33,7 @@ async fn rejected_and_read_requests_publish_activity_while_locked_without_waitin
     let directory = tempfile::tempdir().unwrap();
     let store = hydrus_store::Store::open(directory.path()).unwrap();
     let permissions = AccessPermissions {
-        access_key: [77; 32],
+        access_key: vec![77; 32],
         name: "activity admin".into(),
         permits_everything: true,
         basic: std::collections::BTreeSet::default(),
