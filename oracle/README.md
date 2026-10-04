@@ -137,3 +137,8 @@ including declined/accepted exact questions, enabled controls and reopened
 counts. Reference cached rating values intentionally remain recorded separately
 from database-backed service counts because bulk rating writes suppress media
 content publication. No remote service is exercised.
+
+`record_service_deleted.py` captures physical-storage review's exact two-stage
+record-clear decisions, accepted store updates, local domain counts and import
+status of a permanent deletion versus a trash file (executed 2026-10-04 21:43:09
+UTC on a freshly unpacked basic fixture). The review panel PNG is recorded too.

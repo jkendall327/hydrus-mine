@@ -21,6 +21,9 @@ export component ServicesReviewWindow inherits Window {
     in property <bool> tag-service;
     callback migrate-tags();
     callback close-clicked();
+    in property <bool> physical-storage;
+    in property <string> yes-label: "do it";
+    in property <string> no-label: "forget it";
     in property <bool> trash-service;
     in property <bool> trash-nonempty;
     in property <bool> rating-service;
@@ -46,6 +49,7 @@ export component ServicesReviewWindow inherits Window {
         Text { text: root.statistics; color: Theme.text; wrap: word-wrap; }
         Text { text: root.unavailable; color: Theme.text; wrap: word-wrap; }
         HorizontalBox {
+            if root.physical-storage: Button { text: "clear deleted files record"; enabled: root.question == ""; clicked => { root.maintenance(5); } }
             if root.trash-service: Button { text: "undelete all"; enabled: root.trash-nonempty && root.question == ""; clicked => { root.maintenance(1); } }
             if root.trash-service: Button { text: "clear trash"; enabled: root.trash-nonempty && root.question == ""; clicked => { root.maintenance(0); } }
             if root.rating-service: Button { enabled: root.question == ""; text: "clear ratings"; clicked => { root.rating-menu-open(); } }
@@ -77,8 +81,8 @@ export component ServicesReviewWindow inherits Window {
             padding: 20px;
             Text { text: root.question; color: Theme.text; wrap: word-wrap; }
             HorizontalBox {
-                Button { text: "do it"; clicked => { root.answer(true); } }
-                Button { text: "forget it"; clicked => { root.answer(false); } }
+                Button { text: root.yes-label; clicked => { root.answer(true); } }
+                Button { text: root.no-label; clicked => { root.answer(false); } }
             }
         }
     }

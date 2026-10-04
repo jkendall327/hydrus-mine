@@ -61,12 +61,35 @@ fn local_bulk_actions_match_recorded_confirmations_and_reject_wrong_service() {
         .unwrap()
         .key
         .clone();
-    for index in 0..=4 {
+    for index in 0..=5 {
         assert!(
             services_review::apply(&store, tags.clone(), Action::from_index(index).unwrap())
                 .is_err()
         );
     }
     assert_eq!(services_review::rows(&store).unwrap(), before);
-    assert!(Action::from_index(5).is_none());
+    assert!(Action::from_index(6).is_none());
+}
+
+#[test]
+fn deleted_record_double_confirmation_matches_reference() {
+    use hydrus_gui_model::services_review::Action;
+    let fixture = hydrus_testkit::fixture_json("service_deleted.json");
+    for event in fixture["events"].as_array().unwrap() {
+        assert_eq!(
+            Action::ClearDeletedRecords.question(),
+            event["asked"][0]["message"]
+        );
+        assert_eq!(event["asked"][0]["yes_label"], "do it");
+        assert_eq!(event["asked"][0]["no_label"], "forget it");
+        if event["asked"].as_array().unwrap().len() == 2 {
+            assert_eq!(
+                Action::ClearDeletedRecords.second_question().unwrap(),
+                event["asked"][1]["message"]
+            );
+            assert_eq!(event["asked"][1]["yes_label"], "yes, I am");
+            assert_eq!(event["asked"][1]["no_label"], "no, I am not sure");
+        }
+    }
+    assert!(Action::ClearTrash.second_question().is_none());
 }

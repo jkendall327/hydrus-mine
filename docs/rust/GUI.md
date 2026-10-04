@@ -2885,3 +2885,12 @@ The banner editor child is held explicitly by the main window's Options owner.
 Its slot clears on child or parent close; retained stale callbacks cannot clear
 a replacement slot or commit an old draft. No test-only global window registry
 is used for banner editing.
+
+Physical-storage service review offers “clear deleted files record” with both
+reference confirmations and their distinct yes/no labels. The first acceptance
+only opens the second question; either decline or owner close leaves the store
+unchanged. Final acceptance uses the existing transactional record-clear path:
+files still in trash retain their history/reasons, other local deletion records
+are forgotten, and pending physical deletes remain queued. Reopened review counts
+and the import-status consumer reflect the change. The actual Qt decisions and
+status transition from deleted to unknown are in `service_deleted.json`.

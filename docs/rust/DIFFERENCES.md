@@ -989,7 +989,7 @@ Checked by the `popups` conformance scenario.
   `false` for a numerical or inc/dec rating service (Python counts a bool as
   an int, so the reference stores `true` as one star).
 
-- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, repository/IPFS account administration and clearing deleted-file records remain unavailable. Local trash clear/undelete and all three local rating-clear populations are implemented; bulk rating choices and confirmations use native inline controls rather than Qt popup menus/dialogs.
+- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions and repository/IPFS account administration remain unavailable. Local trash clear/undelete, double-confirmed deleted-file-record clearing and all three local rating-clear populations are implemented; bulk rating choices and confirmations use native inline controls rather than Qt popup menus/dialogs.
 
 - **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields and there is no live rating preview; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available; HTTPS, normie Eris and external URL overrides are preserved imported values, with an explicit control to disable unsupported HTTPS. A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
 
@@ -1936,3 +1936,9 @@ normal information text colour. Repeated namespace rows retain their existing
 summary semantics; Unicode decimal numeric collapse is now supported. Authored
 native owner/consumer regressions and rendered PNGs await hosted CI.
 
+
+Deleted-file-record review uses an owned two-stage inline confirmation in place
+of Qt's two modal questions. It retains exact messages/labels and the reference
+trash-history exception. Clearing records does not unlink bytes or cancel the
+physical-delete queue; it changes future import recognition through the existing
+content lifecycle. No broad service-review parent completion is claimed.
