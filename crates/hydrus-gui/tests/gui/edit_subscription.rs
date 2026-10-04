@@ -257,7 +257,7 @@ fn the_dialog_edits_a_subscription_and_the_list_writes_it() {
             .get_message()
             .starts_with("Hey, you do not have any downloaders set up in this client")
     );
-    warning.invoke_accept();
+    warning.invoke_accept_clicked();
     assert!(!list.get_gallery_open());
     assert!(bound.edit_subscription.borrow().is_none());
 }
