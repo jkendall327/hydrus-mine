@@ -1371,16 +1371,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let Some(mut model) = manage_tags::ManageTags::new(store, files) else {
                 return;
             };
-            let title = format!(
-                "manage tags for {} files",
-                hydrus_core::numbers::human_int(model.files().len() as u64)
-            );
             model.set_location(page().borrow().location().clone());
             match manage_tags_window::open(model, &manage_tags, &incremental_tags, applied) {
-                Ok(window) => {
-                    window.set_window_title(title.into());
-                    *manage_tags.borrow_mut() = Some(window);
-                }
+                Ok(window) => *manage_tags.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage tags: {e}"),
             }
         }
@@ -1484,16 +1477,28 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     window.on_manage_tags_selected({
         let page = page.clone();
+        let manage_tags = manage_tags.clone();
         let open_manage_tags = open_manage_tags.clone();
         let tags_changed = tags_changed.clone();
         move || {
+            if let Some(window) = manage_tags.borrow().as_ref() {
+                let _ = window.show();
+                return;
+            }
             let page = page();
             let page = page.borrow();
             let files = page.selected_files();
             if files.is_empty() {
                 return;
             }
+            let title = format!(
+                "manage tags for {} files",
+                hydrus_core::numbers::human_int(files.len() as u64)
+            );
             open_manage_tags(page.store().clone(), files, tags_changed.clone());
+            if let Some(window) = manage_tags.borrow().as_ref() {
+                window.set_window_title(title.into());
+            }
         }
     });
     // the selected files' shortcuts: F7, shift+F7, delete, shift+delete;
