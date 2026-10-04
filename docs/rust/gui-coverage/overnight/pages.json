@@ -5,9 +5,10 @@
   "commits": {
     "tabs": "01f9a039",
     "backups": "efc8b4fc",
-    "size_test": "26c435f7"
+    "size_test": "26c435f7",
+    "close_navigation": "1807f758"
   },
-  "completed_existing_leaf_count": 10,
+  "completed_existing_leaf_count": 19,
   "validation": {
     "local": [
       "cargo fmt --all",
@@ -49,6 +50,12 @@
           "line": 1,
           "commit": "01f9a039",
           "kind": "reference_fixture"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "dynamic_menu_regression"
         }
       ],
       "limitations": []
@@ -84,6 +91,12 @@
           "line": 1,
           "commit": "01f9a039",
           "kind": "reference_fixture"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "dynamic_menu_regression"
         }
       ],
       "limitations": []
@@ -125,6 +138,12 @@
           "line": 1757,
           "commit": "26c435f7",
           "kind": "integration_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "dynamic_menu_regression"
         }
       ],
       "limitations": []
@@ -166,6 +185,12 @@
           "line": 1757,
           "commit": "26c435f7",
           "kind": "integration_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "dynamic_menu_regression"
         }
       ],
       "limitations": []
@@ -201,6 +226,12 @@
           "line": 1,
           "commit": "01f9a039",
           "kind": "reference_fixture"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "dynamic_menu_regression"
         }
       ],
       "limitations": []
@@ -236,6 +267,12 @@
           "line": 1,
           "commit": "01f9a039",
           "kind": "reference_fixture"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "dynamic_menu_regression"
         }
       ],
       "limitations": []
@@ -271,6 +308,12 @@
           "line": 1,
           "commit": "01f9a039",
           "kind": "reference_recorder"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "dynamic_menu_regression"
         }
       ],
       "limitations": []
@@ -306,6 +349,12 @@
           "line": 1,
           "commit": "01f9a039",
           "kind": "reference_recorder"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "dynamic_menu_regression"
         }
       ],
       "limitations": []
@@ -341,6 +390,12 @@
           "line": 1,
           "commit": "01f9a039",
           "kind": "reference_recorder"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "dynamic_menu_regression"
         }
       ],
       "limitations": []
@@ -376,6 +431,12 @@
           "line": 1,
           "commit": "01f9a039",
           "kind": "reference_recorder"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "dynamic_menu_regression"
         }
       ],
       "limitations": []
@@ -532,10 +593,333 @@
         "Legacy historical snapshots are not imported.",
         "Live last-session synchronization and startup/autosave lifecycle settings do not create snapshot history."
       ]
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2057-close-page",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "1807f758",
+      "implemented_behavior": "Close the clicked page through the existing confirmation path; nested downloader objections aggregate and closed pages retain undo. Bulk targets freeze page keys before confirmation; cancellation changes nothing and confirmed close uses the ordinary reverse-order undo stack.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 106,
+          "commit": "1807f758",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "menu_regression"
+        },
+        {
+          "path": "oracle/record_tab_actions.py",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_actions.json",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2074-close-other-page-s",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "1807f758",
+      "implemented_behavior": "Close all other tabs from an endpoint, adapting the singular label for two siblings. Bulk targets freeze page keys before confirmation; cancellation changes nothing and confirmed close uses the ordinary reverse-order undo stack.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 106,
+          "commit": "1807f758",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "menu_regression"
+        },
+        {
+          "path": "oracle/record_tab_actions.py",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_actions.json",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": [
+        "Grouped downloader objections use native yes/no; the extra reference no-but-show-pages response is deferred."
+      ]
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2080-other-pages",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "1807f758",
+      "implemented_behavior": "Close all other siblings from the interior-tab close submenu. Bulk targets freeze page keys before confirmation; cancellation changes nothing and confirmed close uses the ordinary reverse-order undo stack.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 106,
+          "commit": "1807f758",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "menu_regression"
+        },
+        {
+          "path": "oracle/record_tab_actions.py",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_actions.json",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": [
+        "Grouped downloader objections use native yes/no; the extra reference no-but-show-pages response is deferred."
+      ]
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2084-pages-to-the-left",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "1807f758",
+      "implemented_behavior": "Confirm and close only siblings left of the clicked tab. Bulk targets freeze page keys before confirmation; cancellation changes nothing and confirmed close uses the ordinary reverse-order undo stack.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 106,
+          "commit": "1807f758",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "menu_regression"
+        },
+        {
+          "path": "oracle/record_tab_actions.py",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_actions.json",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": [
+        "Grouped downloader objections use native yes/no; the extra reference no-but-show-pages response is deferred."
+      ]
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2089-pages-to-the-right",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "1807f758",
+      "implemented_behavior": "Confirm and close only siblings right of the clicked tab. Bulk targets freeze page keys before confirmation; cancellation changes nothing and confirmed close uses the ordinary reverse-order undo stack.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 106,
+          "commit": "1807f758",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "menu_regression"
+        },
+        {
+          "path": "oracle/record_tab_actions.py",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_actions.json",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": [
+        "Grouped downloader objections use native yes/no; the extra reference no-but-show-pages response is deferred."
+      ]
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2141-first-page",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "1807f758",
+      "implemented_behavior": "Select the first eligible page using reference notebook descent and recent-move handling. Bulk targets freeze page keys before confirmation; cancellation changes nothing and confirmed close uses the ordinary reverse-order undo stack.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 106,
+          "commit": "1807f758",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "menu_regression"
+        },
+        {
+          "path": "oracle/record_tab_actions.py",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_actions.json",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2146-page-to-the-left",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "1807f758",
+      "implemented_behavior": "Move selection left using reference notebook descent and recent-move handling. Bulk targets freeze page keys before confirmation; cancellation changes nothing and confirmed close uses the ordinary reverse-order undo stack.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 106,
+          "commit": "1807f758",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "menu_regression"
+        },
+        {
+          "path": "oracle/record_tab_actions.py",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_actions.json",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2151-page-to-the-right",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "1807f758",
+      "implemented_behavior": "Move selection right using reference notebook descent and recent-move handling. Bulk targets freeze page keys before confirmation; cancellation changes nothing and confirmed close uses the ordinary reverse-order undo stack.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 106,
+          "commit": "1807f758",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "menu_regression"
+        },
+        {
+          "path": "oracle/record_tab_actions.py",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_actions.json",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2156-last-page",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "1807f758",
+      "implemented_behavior": "Select the last eligible page using reference notebook descent and recent-move handling. Bulk targets freeze page keys before confirmation; cancellation changes nothing and confirmed close uses the ordinary reverse-order undo stack.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 106,
+          "commit": "1807f758",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 93,
+          "commit": "1807f758",
+          "kind": "menu_regression"
+        },
+        {
+          "path": "oracle/record_tab_actions.py",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_actions.json",
+          "line": 1,
+          "commit": "1807f758",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": []
     }
   ],
   "overall_limitations": [
-    "Other reference tab-context submenus remain unimplemented; tab-context parent must remain partial.",
+    "Tab-context rename/duplicate/collapse/send/session submenus remain deferred; tab-context parent remains partial.",
     "No lifecycle-settings completion is claimed.",
     "Backup workflow improvements are conservatively partial for downloader state; submenu container is counted separately from the ten completed tab leaves."
   ]
