@@ -1280,7 +1280,23 @@ async fn runtime_cog_connection_override_releases_only_the_current_retry() {
         "http://{}/unavailable",
         listener.local_addr().unwrap()
     ));
-    drop(listener); // a real loopback connection refusal, without external traffic
+    // A closed port may take the platform's entire connect timeout to refuse
+    // each attempt. Accept and read the real request, then close before any
+    // HTTP response: the same connection-error retry branch, without a second
+    // OS refusal timer inside the one-second override assertion.
+    let attempts = Arc::new(AtomicUsize::new(0));
+    let observed = attempts.clone();
+    let peer = tokio::spawn(async move {
+        use tokio::io::AsyncReadExt as _;
+        loop {
+            let (mut socket, _) = listener.accept().await.unwrap();
+            let mut request = [0; 2048];
+            if socket.read(&mut request).await.unwrap_or(0) > 0 {
+                observed.fetch_add(1, Ordering::SeqCst);
+            }
+            drop(socket);
+        }
+    });
     let engine = NetEngine::new(
         s.store.clone(),
         NetOptions {
@@ -1307,11 +1323,17 @@ async fn runtime_cog_connection_override_releases_only_the_current_retry() {
         job: snapshot.jobs[0].id,
         action: JobAction::OverrideConnectionWait
     }));
-    let error = tokio::time::timeout(std::time::Duration::from_secs(1), fetch)
-        .await
-        .unwrap()
+    let result = tokio::time::timeout(std::time::Duration::from_secs(1), fetch).await;
+    peer.abort();
+    let error = result
+        .expect("connection override must release the retry before its 60-second delay")
         .unwrap_err();
     assert!(matches!(error, NetError::Connection(_)));
+    assert_eq!(
+        attempts.load(Ordering::SeqCst),
+        2,
+        "initial request and exactly one retry reached the loopback peer"
+    );
     assert!(engine.runtime_snapshot().jobs.is_empty());
     assert_eq!(engine.runtime_snapshot().errors.len(), 1);
 }
