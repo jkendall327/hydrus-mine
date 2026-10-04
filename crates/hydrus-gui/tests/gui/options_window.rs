@@ -4921,14 +4921,31 @@ fn advanced_deletion_queue_stages_custom_reason_cancel_and_real_consumer() {
         .unwrap();
     let page = bound.current.borrow().clone();
     page.borrow_mut().select_files(&[file]);
+    let original_reason = store
+        .read(|c| hydrus_store::media::load(c, &store.snapshot().services, None, &[file]))
+        .unwrap()
+        .results[0]
+        .deletion_reason
+        .clone()
+        .unwrap();
     ui.invoke_delete_selected();
     let deletion = bound.delete_files.borrow().as_ref().unwrap().clone_strong();
+    let reasons = deletion.get_reasons();
+    let authored = (0..reasons.row_count())
+        .find(|&i| reasons.row_data(i).unwrap() == "synthetic applied reason 日本")
+        .unwrap();
+    let custom = (0..reasons.row_count())
+        .find(|&i| reasons.row_data(i).unwrap() == "custom")
+        .unwrap();
+    assert!(authored < custom);
+    // The reference appends an unlisted existing reason after its custom row.
     assert_eq!(
-        deletion
-            .get_reasons()
-            .row_data(deletion.get_reasons().row_count() - 2)
-            .unwrap(),
-        "synthetic applied reason 日本"
+        reasons.row_data(reasons.row_count() - 1).unwrap().as_str(),
+        format!("keep existing reason: {original_reason}")
+    );
+    assert_eq!(
+        deletion.get_selected_reason(),
+        i32::try_from(reasons.row_count() - 1).unwrap()
     );
     let before = preferences();
     deletion.invoke_cancel();
