@@ -190,16 +190,19 @@ fn actual_main_and_basic_system_acceptance_preserves_shift_and_reaches_consumers
                 .system
                 .borrow()
                 .as_ref()
-                .unwrap()
+                .unwrap_or_else(|| {
+                    panic!("basic OR system editor missing after activation: {case}")
+                })
                 .clone_strong()
         } else {
             bound
                 .predicate_editor
                 .borrow()
                 .as_ref()
-                .unwrap()
+                .unwrap_or_else(|| panic!("main system editor missing after activation: {case}"))
                 .clone_strong()
         };
+        assert!(system.window().is_visible(), "{case}");
         system.invoke_chose(0, 1, 0); // <
         system.invoke_number_edited(0, 2, 7);
         system.invoke_chose(0, 3, 1); // KB
