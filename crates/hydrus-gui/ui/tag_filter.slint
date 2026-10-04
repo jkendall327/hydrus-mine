@@ -213,6 +213,16 @@ export component TagFilterWindow inherits Window {
     in property <string> asking-title;
     in property <string> asking-message;
     in property <[string]> asking-choices;
+    in property <bool> favourite-naming;
+    in-out property <string> favourite-name;
+    in property <bool> favourite-exchange;
+    in property <bool> exchange-importing;
+    in-out property <string> exchange-text;
+    in-out property <string> exchange-path;
+    in property <string> exchange-error;
+    callback favourite(string);
+    callback favourite-named(string);
+    callback exchange-action(string);
     callback tab-chosen(int);
     // a list's events: 0 whitelist, 1 blacklist, 2 exclude these, 3 except
     // for these
@@ -254,6 +264,17 @@ export component TagFilterWindow inherits Window {
                 text: root.message;
                 wrap: word-wrap;
                 color: Theme.text;
+            }
+        }
+        Box {
+            title: "favourites";
+            HorizontalLayout {
+                spacing: 6px;
+                for action in ["import", "export", "load", "save", "delete"] : Button {
+                    text: action;
+                    enabled: !root.asking;
+                    clicked => { root.favourite(action); }
+                }
             }
         }
         Box {
@@ -373,6 +394,26 @@ export component TagFilterWindow inherits Window {
                     edited => { root.test-edited(); }
                 }
             }
+        }
+        if root.favourite-naming: HorizontalLayout {
+            LineEdit {
+                horizontal-stretch: 1;
+                text <=> root.favourite-name;
+                accepted(t) => { root.favourite-named(t); }
+            }
+            Button { text: "save"; clicked => { root.favourite-named(root.favourite-name); } }
+        }
+        if root.favourite-exchange: Box {
+            title: root.exchange-importing ? "import favourite" : "export favourite";
+            TextEdit { height: 80px; text <=> root.exchange-text; read-only: !root.exchange-importing; }
+            HorizontalLayout {
+                Button { text: root.exchange-importing ? "paste" : "copy"; clicked => { root.exchange-action(root.exchange-importing ? "paste" : "copy"); } }
+                if root.exchange-importing: Button { text: "import text"; clicked => { root.exchange-action("import"); } }
+                LineEdit { horizontal-stretch: 1; text <=> root.exchange-path; placeholder-text: "JSON file path"; }
+                Button { text: "browse"; clicked => { root.exchange-action("browse"); } }
+                Button { text: root.exchange-importing ? "open file" : "save JSON"; clicked => { root.exchange-action(root.exchange-importing ? "open" : "save"); } }
+            }
+            if root.exchange-error != "": Text { text: root.exchange-error; color: Theme.error; wrap: word-wrap; }
         }
         if root.asking: Asking {
             title: root.asking-title;

@@ -1,0 +1,392 @@
+{
+  "empty_menu": [
+    "no favourites set!"
+  ],
+  "load_menu": [
+    "zebra"
+  ],
+  "delete_menu": [
+    "zebra",
+    "apple"
+  ],
+  "export_menu": [
+    "this tag filter",
+    "zebra",
+    "apple"
+  ],
+  "reopen_menu": [
+    "zebra"
+  ],
+  "payload": "[44, 1, [[\"creator:\", 1], [\"blue eyes\", 0]]]",
+  "dirty_payload": "[44, 1, [[\"  CREATOR:  \", 1], [\"  BLUE EYES \", 0]]]",
+  "events": [
+    {
+      "action": "save_cancel",
+      "questions": [
+        "Enter a name for the favourite."
+      ],
+      "errors": [],
+      "draft": [
+        [
+          "goblin",
+          1
+        ]
+      ],
+      "favourites": {}
+    },
+    {
+      "action": "save",
+      "questions": [
+        "Enter a name for the favourite."
+      ],
+      "errors": [],
+      "draft": [
+        [
+          "goblin",
+          1
+        ]
+      ],
+      "favourites": {
+        "zebra": [
+          [
+            "goblin",
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "action": "save_no",
+      "questions": [
+        "Enter a name for the favourite.",
+        "\"zebra\" already exists! Overwrite?"
+      ],
+      "errors": [],
+      "draft": [
+        [
+          ":",
+          1
+        ]
+      ],
+      "favourites": {
+        "zebra": [
+          [
+            "goblin",
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "action": "save_yes",
+      "questions": [
+        "Enter a name for the favourite.",
+        "\"zebra\" already exists! Overwrite?"
+      ],
+      "errors": [],
+      "draft": [
+        [
+          ":",
+          1
+        ]
+      ],
+      "favourites": {
+        "zebra": [
+          [
+            ":",
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "action": "load",
+      "questions": [],
+      "errors": [],
+      "draft": [
+        [
+          ":",
+          1
+        ]
+      ],
+      "favourites": {
+        "zebra": [
+          [
+            ":",
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "action": "import_cancel",
+      "questions": [
+        "Enter a name for the favourite."
+      ],
+      "errors": [],
+      "draft": [
+        [
+          ":",
+          1
+        ]
+      ],
+      "favourites": {
+        "zebra": [
+          [
+            ":",
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "action": "import_no",
+      "questions": [
+        "Enter a name for the favourite.",
+        "\"zebra\" already exists! Overwrite?"
+      ],
+      "errors": [],
+      "draft": [
+        [
+          ":",
+          1
+        ]
+      ],
+      "favourites": {
+        "zebra": [
+          [
+            ":",
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "action": "import",
+      "questions": [
+        "Enter a name for the favourite."
+      ],
+      "errors": [],
+      "draft": [
+        [
+          "blue eyes",
+          0
+        ],
+        [
+          "creator:",
+          1
+        ]
+      ],
+      "favourites": {
+        "zebra": [
+          [
+            ":",
+            1
+          ]
+        ],
+        "apple": [
+          [
+            "blue eyes",
+            0
+          ],
+          [
+            "creator:",
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "action": "import_yes",
+      "questions": [
+        "Enter a name for the favourite.",
+        "\"zebra\" already exists! Overwrite?"
+      ],
+      "errors": [],
+      "draft": [
+        [
+          "blue eyes",
+          0
+        ],
+        [
+          "creator:",
+          1
+        ]
+      ],
+      "favourites": {
+        "zebra": [
+          [
+            "blue eyes",
+            0
+          ],
+          [
+            "creator:",
+            1
+          ]
+        ],
+        "apple": [
+          [
+            "blue eyes",
+            0
+          ],
+          [
+            "creator:",
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "action": "import_invalid",
+      "questions": [],
+      "errors": [
+        [
+          "parse",
+          "JSON-serialised Tag Filter object"
+        ]
+      ],
+      "draft": [
+        [
+          "blue eyes",
+          0
+        ],
+        [
+          "creator:",
+          1
+        ]
+      ],
+      "favourites": {
+        "zebra": [
+          [
+            "blue eyes",
+            0
+          ],
+          [
+            "creator:",
+            1
+          ]
+        ],
+        "apple": [
+          [
+            "blue eyes",
+            0
+          ],
+          [
+            "creator:",
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "action": "import_wrong_type",
+      "questions": [],
+      "errors": [
+        [
+          "Error",
+          "That object was not a Tag Filter! It seemed to be a \"<class 'hydrus.core.HydrusSerialisable.SerialisableList'>\"."
+        ]
+      ],
+      "draft": [
+        [
+          "blue eyes",
+          0
+        ],
+        [
+          "creator:",
+          1
+        ]
+      ],
+      "favourites": {
+        "zebra": [
+          [
+            "blue eyes",
+            0
+          ],
+          [
+            "creator:",
+            1
+          ]
+        ],
+        "apple": [
+          [
+            "blue eyes",
+            0
+          ],
+          [
+            "creator:",
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "action": "delete_no",
+      "questions": [
+        "Delete \"apple\"?"
+      ],
+      "errors": [],
+      "draft": [
+        [
+          "blue eyes",
+          0
+        ],
+        [
+          "creator:",
+          1
+        ]
+      ],
+      "favourites": {
+        "zebra": [
+          [
+            "blue eyes",
+            0
+          ],
+          [
+            "creator:",
+            1
+          ]
+        ],
+        "apple": [
+          [
+            "blue eyes",
+            0
+          ],
+          [
+            "creator:",
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "action": "delete_yes",
+      "questions": [
+        "Delete \"apple\"?"
+      ],
+      "errors": [],
+      "draft": [
+        [
+          "blue eyes",
+          0
+        ],
+        [
+          "creator:",
+          1
+        ]
+      ],
+      "favourites": {
+        "zebra": [
+          [
+            "blue eyes",
+            0
+          ],
+          [
+            "creator:",
+            1
+          ]
+        ]
+      }
+    }
+  ]
+}

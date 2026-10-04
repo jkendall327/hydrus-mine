@@ -43,6 +43,7 @@ mod subscriptions_buttons;
 mod subscriptions_dedupe;
 mod subscriptions_list;
 mod tag_filter_editor;
+mod tag_filter_favourites;
 mod thumbnail_ratings;
 mod times_editor;
 mod urls_editor;

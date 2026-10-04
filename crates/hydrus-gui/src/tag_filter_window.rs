@@ -14,8 +14,9 @@ use hydrus_store::Store;
 
 use crate::list_selection::ListSelection;
 use crate::tag_filter_editor::{
-    BLACKLIST_TEST_NOTE, GLOBAL_BOXES, HELP, INSTRUCTIONS, REMOVE_SELECTED, TagFilterEditor,
-    pretty_slice,
+    BLACKLIST_TEST_NOTE, FAVOURITE_NAME, FavouriteTagFilters, GLOBAL_BOXES, HELP, INSTRUCTIONS,
+    NO_FAVOURITES, REMOVE_SELECTED, TagFilterEditor, delete_favourite, export_favourite,
+    import_favourite, overwrite_favourite, pretty_slice,
 };
 use crate::{TableRow, TagFilterWindow, Tick};
 
@@ -40,14 +41,21 @@ const EXCLUDE: usize = 2;
 const EXCEPT: usize = 3;
 
 /// What the window's panel shows.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 enum Asking {
     /// "Remove all selected?" of a list.
     Remove(usize),
     Help,
+    FavouriteMenu(String, Vec<String>),
+    FavouriteName(TagFilter, bool),
+    OverwriteFavourite(String, TagFilter, bool),
+    DeleteFavourite(String),
+    Exchange(bool),
+    Error(String),
 }
 
 struct State {
+    closed: bool,
     editor: TagFilterEditor,
     selections: [ListSelection<usize>; 4],
     asking: Option<Asking>,
@@ -201,16 +209,56 @@ fn show(window: &TagFilterWindow, state: &State, store: &Store) {
         Some(false) => -1,
     });
     window.set_asking(state.asking.is_some());
-    let Some(asking) = state.asking else {
+    window.set_favourite_naming(matches!(state.asking, Some(Asking::FavouriteName(..))));
+    window.set_favourite_exchange(matches!(state.asking, Some(Asking::Exchange(..))));
+    let Some(asking) = state.asking.as_ref() else {
         return;
     };
-    let (title, message, choices) = match asking {
-        Asking::Remove(_) => ("Are you sure?", REMOVE_SELECTED, ["yes", "no"].as_slice()),
-        Asking::Help => ("information", HELP, ["ok"].as_slice()),
+    let (title, message, choices): (&str, String, Vec<String>) = match asking {
+        Asking::Remove(_) => (
+            "Are you sure?",
+            REMOVE_SELECTED.into(),
+            vec!["yes".into(), "no".into()],
+        ),
+        Asking::Help => ("information", HELP.into(), vec!["ok".into()]),
+        Asking::FavouriteMenu(action, names) => (
+            action,
+            String::new(),
+            if names.is_empty() {
+                vec![NO_FAVOURITES.into()]
+            } else {
+                names.clone()
+            },
+        ),
+        Asking::FavouriteName(..) => (
+            "save favourite",
+            FAVOURITE_NAME.into(),
+            vec!["cancel".into()],
+        ),
+        Asking::OverwriteFavourite(name, ..) => (
+            "Are you sure?",
+            overwrite_favourite(name),
+            vec!["yes".into(), "no".into()],
+        ),
+        Asking::DeleteFavourite(name) => (
+            "Are you sure?",
+            delete_favourite(name),
+            vec!["yes".into(), "no".into()],
+        ),
+        Asking::Exchange(importing) => (
+            if *importing {
+                "import favourite"
+            } else {
+                "export favourite"
+            },
+            String::new(),
+            vec!["cancel".into()],
+        ),
+        Asking::Error(message) => ("Problem importing!", message.clone(), vec!["ok".into()]),
     };
     window.set_asking_title(title.into());
     window.set_asking_message(message.into());
-    window.set_asking_choices(strings(choices.iter().map(|&c| c.to_owned())));
+    window.set_asking_choices(strings(choices));
 }
 
 /// Open the editor on `filter`, titled `title` (`message` explaining it,
@@ -243,6 +291,7 @@ pub fn open(
     });
     let state = Rc::new(RefCell::new(State {
         editor,
+        closed: false,
         selections: Default::default(),
         asking: None,
         redundant: String::new(),
@@ -282,7 +331,7 @@ pub fn open(
         move |f: &dyn Fn(&mut State)| {
             {
                 let mut state = state.borrow_mut();
-                if state.asking.is_some() {
+                if state.closed || state.asking.is_some() {
                     return;
                 }
                 f(&mut state);
@@ -410,35 +459,231 @@ pub fn open(
         let change = change.clone();
         move || change(&|state| state.asking = Some(Asking::Help))
     });
-    let answer = {
+    window.on_favourite({
+        let state = state.clone();
+        let store = store.clone();
+        let refresh = refresh.clone();
+        let weak = window.as_weak();
+        move |action| {
+            if state.borrow().closed || state.borrow().asking.is_some() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else {
+                return;
+            };
+            let result = (|| -> Result<Asking, String> {
+                match action.as_str() {
+                    "save" => {
+                        w.set_favourite_name("".into());
+                        Ok(Asking::FavouriteName(state.borrow().editor.value(), false))
+                    }
+                    "import" => {
+                        w.set_exchange_importing(true);
+                        w.set_exchange_error("".into());
+                        w.set_exchange_text(crate::from_clipboard().unwrap_or_default().into());
+                        w.set_exchange_path("".into());
+                        Ok(Asking::Exchange(true))
+                    }
+                    action => {
+                        let saved = FavouriteTagFilters::load(&store).map_err(|e| e.to_string())?;
+                        let mut names: Vec<String> = saved.0.into_iter().map(|(n, _)| n).collect();
+                        if action == "export" {
+                            names.insert(0, "this tag filter".into());
+                        }
+                        Ok(Asking::FavouriteMenu(action.into(), names))
+                    }
+                }
+            })();
+            state.borrow_mut().asking = Some(result.unwrap_or_else(Asking::Error));
+            refresh();
+        }
+    });
+    window.on_favourite_named({
+        let state = state.clone();
+        let store = store.clone();
+        let refresh = refresh.clone();
+        move |name| {
+            let mut s = state.borrow_mut();
+            let Some(Asking::FavouriteName(filter, imported)) = s.asking.clone() else {
+                return;
+            };
+            match FavouriteTagFilters::save(&store, name.to_string(), filter.clone(), false) {
+                Ok(false) => {
+                    s.asking = Some(Asking::OverwriteFavourite(
+                        name.to_string(),
+                        filter,
+                        imported,
+                    ))
+                }
+                Ok(true) => {
+                    if imported {
+                        s.editor.set_value(&filter);
+                        s.changed();
+                    }
+                    s.asking = None;
+                }
+                Err(e) => s.asking = Some(Asking::Error(e.to_string())),
+            }
+            drop(s);
+            refresh();
+        }
+    });
+    window.on_exchange_action({
         let state = state.clone();
         let refresh = refresh.clone();
-        move |yes: bool| {
-            {
-                let mut state = state.borrow_mut();
-                if let (Some(Asking::Remove(list)), true) = (state.asking, yes) {
-                    let slices = state.selected(list);
-                    state.remove(list, &slices);
+        let weak = window.as_weak();
+        move |action| {
+            let Some(w) = weak.upgrade() else {
+                return;
+            };
+            let Some(Asking::Exchange(importing)) = state.borrow().asking.clone() else {
+                return;
+            };
+            let result = (|| -> Result<(), String> {
+                match action.as_str() {
+                    "paste" => w.set_exchange_text(crate::from_clipboard()?.into()),
+                    "copy" => crate::copy_to_clipboard(w.get_exchange_text().as_str()),
+                    "browse" => {
+                        let dialog = rfd::FileDialog::new()
+                            .add_filter("Hydrus tag filter JSON", &["json", "txt"]);
+                        let path = if importing {
+                            dialog.pick_file()
+                        } else {
+                            dialog.set_file_name("tag_filter.json").save_file()
+                        };
+                        if let Some(path) = path {
+                            w.set_exchange_path(path.to_string_lossy().as_ref().into());
+                        }
+                    }
+                    "save" => {
+                        let path = w.get_exchange_path();
+                        if path.is_empty() {
+                            return Err("Choose an export path first.".into());
+                        }
+                        let parent = std::path::Path::new(path.as_str())
+                            .parent()
+                            .filter(|p| !p.as_os_str().is_empty())
+                            .unwrap_or_else(|| std::path::Path::new("."));
+                        let mut file =
+                            tempfile::NamedTempFile::new_in(parent).map_err(|e| e.to_string())?;
+                        std::io::Write::write_all(&mut file, w.get_exchange_text().as_bytes())
+                            .map_err(|e| e.to_string())?;
+                        file.persist(path.as_str()).map_err(|e| e.to_string())?;
+                    }
+                    "open" | "import" => {
+                        let text = if action == "open" {
+                            use std::io::Read as _;
+                            let file = std::fs::File::open(w.get_exchange_path().as_str())
+                                .map_err(|e| e.to_string())?;
+                            let mut text = String::new();
+                            file.take(16 * 1024 * 1024 + 1)
+                                .read_to_string(&mut text)
+                                .map_err(|e| e.to_string())?;
+                            text
+                        } else {
+                            w.get_exchange_text().to_string()
+                        };
+                        let filter = import_favourite(&text)?;
+                        w.set_favourite_name("".into());
+                        state.borrow_mut().asking = Some(Asking::FavouriteName(filter, true));
+                    }
+                    _ => (),
                 }
-                state.asking = None;
+                Ok(())
+            })();
+            w.set_exchange_error(result.err().unwrap_or_default().into());
+            refresh();
+        }
+    });
+    let answer = {
+        let state = state.clone();
+        let store = store.clone();
+        let refresh = refresh.clone();
+        let weak = window.as_weak();
+        move |index: Option<usize>| {
+            let mut s = state.borrow_mut();
+            let Some(asking) = s.asking.take() else {
+                return;
+            };
+            let result = (|| -> Result<(), String> {
+                match (asking, index) {
+                    (Asking::Remove(list), Some(0)) => {
+                        let slices = s.selected(list);
+                        s.remove(list, &slices);
+                    }
+                    (Asking::FavouriteMenu(action, names), Some(i)) => {
+                        let Some(name) = names.get(i) else {
+                            return Ok(());
+                        };
+                        let current = action == "export" && i == 0;
+                        let filter = if current {
+                            Some(s.editor.value())
+                        } else {
+                            FavouriteTagFilters::load(&store)
+                                .map_err(|e| e.to_string())?
+                                .get(name)
+                        };
+                        if let Some(filter) = filter {
+                            match action.as_str() {
+                                "load" => {
+                                    s.editor.set_value(&filter);
+                                    s.changed();
+                                }
+                                "delete" => s.asking = Some(Asking::DeleteFavourite(name.clone())),
+                                "export" => {
+                                    if let Some(w) = weak.upgrade() {
+                                        let text = export_favourite(&filter);
+                                        crate::copy_to_clipboard(&text);
+                                        w.set_exchange_text(text.into());
+                                        w.set_exchange_path("".into());
+                                        w.set_exchange_error("".into());
+                                        w.set_exchange_importing(false);
+                                        s.asking = Some(Asking::Exchange(false));
+                                    }
+                                }
+                                _ => (),
+                            }
+                        }
+                    }
+                    (Asking::OverwriteFavourite(name, filter, imported), Some(0)) => {
+                        FavouriteTagFilters::save(&store, name, filter.clone(), true)
+                            .map_err(|e| e.to_string())?;
+                        if imported {
+                            s.editor.set_value(&filter);
+                            s.changed();
+                        }
+                    }
+                    (Asking::DeleteFavourite(name), Some(0)) => {
+                        FavouriteTagFilters::delete(&store, name).map_err(|e| e.to_string())?
+                    }
+                    _ => (),
+                }
+                Ok(())
+            })();
+            if let Err(e) = result {
+                s.asking = Some(Asking::Error(e));
             }
+            drop(s);
             refresh();
         }
     };
     window.on_chosen({
         let answer = answer.clone();
-        move |i| answer(i == 0)
+        move |i| answer(usize::try_from(i).ok())
     });
-    window.on_cancelled(move || answer(false));
+    window.on_cancelled(move || answer(None));
     let active = Rc::new(Cell::new(true));
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
         let active = active.clone();
+        let state = state.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
+            state.borrow_mut().asking = None;
+            state.borrow_mut().closed = true;
             let window = weak.upgrade();
             if let Some(window) = &window {
                 let _ = window.hide();

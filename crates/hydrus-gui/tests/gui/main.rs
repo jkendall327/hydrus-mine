@@ -89,3 +89,5 @@ mod network_data;
 
 mod downloader_interchange;
 mod tag_migration;
+
+mod tag_filter_favourites;

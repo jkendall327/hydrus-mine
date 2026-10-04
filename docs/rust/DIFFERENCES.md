@@ -731,11 +731,12 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **The merge options editor** asks its select dialogs as a row of
   buttons (no service or action preselected), and edits the note merge
   settings in a box of its own rather than a dialog.
-- **The tag filter editor** has no favourites box (import, export, load,
-  save, delete; the client has no favourite tag filters yet, nor the
-  serialised filter the reference copies), nor advanced mode's "show
-  other panels" for a blacklist. Its buttons have no tooltips. An input
-  takes one entry at a time (the reference's has a paste button for many).
+- **The tag filter editor** imports/exports reference JSON with an additional
+  inline clipboard/file panel before naming an import. It does not yet offer
+  repository serverside tag filters in the load menu (remote repositories are
+  not functional), advanced mode's "show other panels" for a blacklist, or
+  input paste buttons and tooltips. Favourite names/save/delete persist
+  immediately as in the reference; filter changes reach the owner on Apply.
 - **"clear and load" a session**: when pages object to closing, the
   question has "yes" and "no" (the reference's also has "no, but show me
   the pages", and its "yes" is only enabled after a moment).

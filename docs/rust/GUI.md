@@ -267,6 +267,12 @@ when an entry is already blocked or permitted by a broader rule, what the
 filter does, and whether tags typed in the "testing" box pass (a
 blacklist testing each with its siblings). What it shows and does at each
 step is as `oracle/record_tag_filter_editor.py` recorded the reference's.
+The shared favourites box saves named filters immediately, loads detached drafts,
+asks before replacing or deleting a name, and imports/exports reference Tag Filter
+JSON through clipboard text or a JSON file. Cancelling a pending name or import
+leaves the draft and favourites untouched; cancelling the editor leaves the
+caller untouched while keeping favourites already saved. These actions are
+recorded by `oracle/record_tag_filter_favourites.py`.
 
 A gallery or watcher page's list has the reference's right-click menu
 (`src/importer_list_menu.rs`, `hydrus-gui-model/src/importer_menu.rs`):
