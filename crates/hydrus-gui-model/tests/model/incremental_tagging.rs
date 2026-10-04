@@ -199,3 +199,56 @@ fn initial_start_uses_actual_unicode_decimal_sorting_and_ignores_negative_subtag
     assert_eq!(hydrus_core::tag_presentation::decimal_digit('²'), None);
     assert_eq!(hydrus_core::tag_presentation::decimal_digit('-'), None);
 }
+
+#[test]
+fn actual_qt_initial_clamps_and_long_decimal_previews_preserve_safe_native_inference() {
+    let corpus = hydrus_testkit::fixture_json("manage_tag_counts_incremental.json");
+    let recorded = hydrus_testkit::fixture_json("incremental_number_boundaries.json");
+    let (_directory, store, files) = fixture::seed(&corpus);
+    let files = files[..2].to_vec();
+    for case in recorded["cases"].as_array().unwrap() {
+        let input = &case["input"];
+        let digits = input["digits"].as_str().map_or_else(
+            || {
+                format!(
+                    "{}{}",
+                    input["repeat"]
+                        .as_str()
+                        .unwrap()
+                        .repeat(usize::try_from(input["count"].as_u64().unwrap()).unwrap()),
+                    input["tail"].as_str().unwrap()
+                )
+            },
+            str::to_owned,
+        );
+        let current = [(files[0], [format!("page:{digits}")].into_iter().collect())]
+            .into_iter()
+            .collect();
+        let mut editor = IncrementalTagging::new(store.clone(), files.clone(), current);
+        if let Some(start) = case["outcome"]["start"].as_i64() {
+            assert_eq!(i64::from(editor.start), start, "{input}");
+            assert_eq!(
+                editor.summary(),
+                case["outcome"]["summary"].as_str().unwrap(),
+                "{input}"
+            );
+            for edit in case["clamp_edits"].as_array().unwrap() {
+                let start = i32::try_from(edit["actual"][0].as_i64().unwrap()).unwrap();
+                let step = i32::try_from(edit["actual"][1].as_i64().unwrap()).unwrap();
+                editor.set_numbers(start, step, false).unwrap();
+                assert_eq!((editor.start, editor.step), (start, step));
+            }
+        } else {
+            // Qt cannot construct its panel for these literal previews. Native
+            // keeps the usable value rather than copying that reference defect.
+            let expected = match case["outcome"]["error_type"].as_str().unwrap() {
+                "OverflowError" => 10_000_000,
+                "ValueError" => 7,
+                other => panic!("unexpected actual reference failure {other}"),
+            };
+            assert_eq!(editor.start, expected, "{input}");
+            assert_eq!(editor.pairs().len(), files.len());
+            assert_eq!(editor.step, 1);
+        }
+    }
+}

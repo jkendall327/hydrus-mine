@@ -2841,3 +2841,6 @@ retained callbacks. While the child is open, service changes, tag entry and
 parent Apply are blocked. Reopening an existing Manage Tags owner preserves its
 original selection and file-count title. Actual Qt recorded child/parent cancellation, negative
 steps, reverse order, remembered reopening and persisted per-file mappings.
+Additional Qt recordings cover initial-value and numeric-control clamp boundaries,
+long ASCII and Unicode leading-zero inputs, and reference initialization failures.
+Native safely clamps large initial values and accepts long decimal previews.
