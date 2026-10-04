@@ -313,7 +313,7 @@ pub(crate) fn still_of(
 }
 
 /// A file's tags as the tags hover frame lists them, each with its colour.
-fn hover_tags(
+pub(crate) fn hover_tags(
     store: &Store,
     id: HashId,
     display_type: hydrus_core::tag_presentation::TagDisplayType,
