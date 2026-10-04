@@ -1641,3 +1641,13 @@ File-count ties include importer total/completed progress; name ties use file
 count descending and exact lexical names. Equal keys remain stable. Recorded
 against actual reference methods on Qt tabs by `oracle/record_tab_context.py`;
 model replay and session GUI tests cover ordering and reopening.
+
+Pages > sessions > append backup groups rolling snapshots by saved-session name
+and timestamp. Named saves retain ten older snapshots by default (the retention
+setting is read on each save). Each snapshot owns its tree, file order and
+selection; append creates fresh page keys at the top level, and later deleting
+the saved session removes its backups without touching appended copies. Exact
+timestamp collisions and backwards clocks follow recorded reference behavior.
+`oracle/record_session_backups.py` drives the real reference client; store tests
+replay its retention sequence, and GUI session tests cover immutable media,
+nested append and reopening.

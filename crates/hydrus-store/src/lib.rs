@@ -30,6 +30,7 @@ pub mod queues;
 pub mod schema;
 pub mod services;
 pub mod services_management;
+pub mod session_backups;
 pub mod sessions;
 pub mod settings;
 pub mod similar;

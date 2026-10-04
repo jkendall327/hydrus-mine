@@ -66,8 +66,8 @@ pub(crate) fn open(
                     window.set_asking_name(false);
                 }
                 Step::Save(name) => {
-                    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
-                    if let Err(e) = pages.borrow_mut().save_session(&name, now) {
+                    let now = hydrus_core::time::TimestampMs::now().millis();
+                    if let Err(e) = pages.borrow_mut().save_session_at_ms(&name, now) {
                         eprintln!("could not save the session: {e}");
                     }
                     close();

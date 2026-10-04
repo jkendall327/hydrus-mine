@@ -154,3 +154,16 @@ pub fn close_all_question(vetoes: &[(String, String)]) -> Option<String> {
         blocks.join("\n----\n")
     ))
 }
+
+/// A backup timestamp, as the reference's append-backup menu labels it.
+pub fn backup_timestamp(ms: i64, timezone: &jiff::tz::TimeZone) -> String {
+    jiff::Timestamp::from_millisecond(ms).map_or_else(
+        |_| format!("unparseable time {}", ms / 1000),
+        |timestamp| {
+            timestamp
+                .to_zoned(timezone.clone())
+                .strftime("%Y-%m-%d %H:%M:%S")
+                .to_string()
+        },
+    )
+}

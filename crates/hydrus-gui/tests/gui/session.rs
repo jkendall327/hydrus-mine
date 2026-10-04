@@ -1687,3 +1687,68 @@ fn tab_reordering_keeps_nested_notebooks_and_shown_leaf() {
     assert_eq!(reopened.shown().key, right.key);
     assert_eq!(reopened.session().pages, pages.session().pages);
 }
+
+#[test]
+fn historical_session_append_restores_independent_tree_files_and_selection() {
+    let (_dirs, store) = store();
+    let leaf = page(
+        "original",
+        PageContent::Search {
+            search: FileSearchContext::default(),
+            synchronised: false,
+            sort: None,
+            lock: None,
+            collect: None,
+        },
+    );
+    let notebook = page("nested", PageContent::Pages(vec![leaf.clone()]));
+    store
+        .write(|ctx| {
+            sessions::save(
+                ctx.conn(),
+                &Session {
+                    name: LAST_SESSION.into(),
+                    pages: vec![notebook],
+                },
+                1,
+            )?;
+            sessions::set_page_files(ctx.conn(), &leaf.key, &[HashId(1), HashId(2)])?;
+            sessions::set_page_selected(ctx.conn(), &leaf.key, &[HashId(2)])
+        })
+        .unwrap();
+    let mut pages = Pages::open(store.clone()).unwrap();
+    assert_eq!(pages.current().borrow().selected_files(), [HashId(2)]);
+    pages.save_session("work", 100).unwrap();
+    pages.rename_shown("changed");
+    pages.current().borrow_mut().select_none();
+    pages.save_session("work", 200).unwrap();
+    let snapshot = store
+        .read(|conn| hydrus_store::session_backups::load(conn, "work", 100_000))
+        .unwrap()
+        .unwrap();
+    let old = snapshot.session.all_pages().last().unwrap().key;
+    assert!(
+        store
+            .read(|conn| sessions::page_files(conn, &old))
+            .unwrap()
+            .is_empty()
+    );
+    pages.append_session_backup("work", 100_000).unwrap();
+    assert_eq!(pages.session().pages.len(), 2); // append at top, even while nested
+    assert_eq!(pages.session().pages[1].name, "work");
+    assert_eq!(pages.shown().name, "original");
+    let restored = pages.shown().key;
+    assert_ne!(restored, old);
+    assert_ne!(restored, leaf.key);
+    assert_eq!(pages.current().borrow().files(), [HashId(1), HashId(2)]);
+    assert_eq!(pages.current().borrow().selected_files(), [HashId(2)]);
+    store
+        .write(|ctx| sessions::delete(ctx.conn(), "work"))
+        .unwrap();
+    assert_eq!(pages.current().borrow().files(), [HashId(1), HashId(2)]);
+    assert!(pages.append_session_backup("work", 100_000).is_err());
+    pages.sync(300).unwrap();
+    let mut reopened = Pages::open(store).unwrap();
+    assert_eq!(reopened.shown().key, restored);
+    assert_eq!(reopened.current().borrow().selected_files(), [HashId(2)]);
+}

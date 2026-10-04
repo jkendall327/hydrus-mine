@@ -267,8 +267,7 @@ search.
   debug (hydrus's own debugging tools) and "about Qt"; the services menu's
   "administrate", for repository admins; the database menu's backup
   entries as hydrus has them for a database across several locations;
-  sessions > "append backup" (hydrus-rs keeps no session backups, so
-  saving over one keeps no backup of it either); and the
+  and the
   undo menu's undo, redo and search history, which hydrus-rs doesn't keep.
   Hydrus's menu entries describe themselves in the status bar as the
   pointer passes; ours don't yet, and the history's latest page isn't in
@@ -1106,3 +1105,11 @@ reference's other tab-context actions (rename, duplicate, collapse, send down,
 per-notebook session append/save and batch close/select) remain deferred. As in
 the reference, a page not opened/initialised contributes zero to the size sort;
 kept file counts and persisted importer progress still participate in count sorts.
+
+Named GUI session saves now retain selectable immutable snapshots; automatic
+`last session` synchronization still writes the live session without historical
+backups, and startup/autosave lifecycle settings remain deferred. Historical
+backups from imported legacy databases are not migrated; the current imported
+session is retained as the first backup when overwritten. Backup trees preserve
+downloader queue references like ordinary named sessions; independent copies of
+downloader engine state are outside this change.

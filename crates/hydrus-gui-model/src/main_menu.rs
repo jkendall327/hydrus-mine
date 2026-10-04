@@ -170,6 +170,11 @@ pub enum Command {
     Refresh,
     /// Add this session's pages to those open.
     AppendSession(String),
+    /// Append an exact historical session snapshot.
+    AppendSessionBackup {
+        name: String,
+        timestamp: i64,
+    },
     /// Delete this saved session, asking first.
     DeleteSession(String),
     /// Save the open pages as this session (asking first whether to
@@ -243,6 +248,8 @@ pub struct Facts {
     pub history: Option<Vec<(PageKey, String)>>,
     /// The saved sessions' names, a-z.
     pub sessions: Vec<String>,
+    /// Historical snapshots grouped by saved-session name.
+    pub session_backups: Vec<(String, Vec<i64>)>,
     /// File search pages offered: the local file domains, the trash and
     /// the file repositories.
     pub search_domains: Vec<(ServiceKey, String)>,
@@ -307,6 +314,7 @@ impl Facts {
                     .into_iter()
                     .map(|(name, _)| name)
                     .collect(),
+                session_backups: hydrus_store::session_backups::names(conn)?,
                 search_domains,
                 maintenance: settings::get(conn)?,
                 pauses: settings::get(conn)?,
@@ -596,6 +604,35 @@ fn pages_menu(facts: &Facts) -> Entry {
                 .sessions
                 .iter()
                 .map(|name| item(name.clone(), Command::AppendSession(name.clone())))
+                .collect(),
+        ));
+    }
+    if !facts.session_backups.is_empty() {
+        sessions.push(menu(
+            "append backup",
+            facts
+                .session_backups
+                .iter()
+                .map(|(name, timestamps)| {
+                    menu(
+                        name.clone(),
+                        timestamps
+                            .iter()
+                            .map(|&timestamp| {
+                                item(
+                                    crate::session_saving::backup_timestamp(
+                                        timestamp,
+                                        &jiff::tz::TimeZone::system(),
+                                    ),
+                                    Command::AppendSessionBackup {
+                                        name: name.clone(),
+                                        timestamp,
+                                    },
+                                )
+                            })
+                            .collect(),
+                    )
+                })
                 .collect(),
         ));
     }

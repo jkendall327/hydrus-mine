@@ -110,6 +110,7 @@ pub fn delete(conn: &Connection, name: &str) -> Result<()> {
             )?;
         }
     }
+    crate::session_backups::delete(conn, name)?;
     conn.execute("DELETE FROM sessions WHERE name = ?", [name])?;
     Ok(())
 }

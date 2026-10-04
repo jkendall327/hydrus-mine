@@ -52,6 +52,10 @@ fn copied(store: &hydrus_store::Store, mut pages: Vec<Page>) -> hydrus_store::Re
             if !files.is_empty() {
                 sessions::set_page_files(ctx.conn(), new, &files)?;
             }
+            let selected = sessions::page_selected(ctx.conn(), old)?;
+            if !selected.is_empty() {
+                sessions::set_page_selected(ctx.conn(), new, &selected)?;
+            }
         }
         Ok(())
     })?;
@@ -661,6 +665,14 @@ impl Pages {
                 SearchPage::fixed(store, "An empty page of pages.", None, files)
             }
         };
+        let mut opened = opened;
+        if let Ok(selected) = self
+            .store
+            .read(|conn| sessions::page_selected(conn, &page.key))
+            && !selected.is_empty()
+        {
+            opened.select_files(&selected);
+        }
         let opened = Rc::new(RefCell::new(opened));
         self.open.insert(page.key, opened.clone());
         opened
@@ -1153,6 +1165,55 @@ impl Pages {
         Ok(())
     }
 
+    /// Append an immutable historical snapshot as a fresh notebook. Re-key
+    /// every descendant and restore media from the snapshot, never live pages.
+    pub fn append_session_backup(&mut self, name: &str, timestamp: i64) -> Result<(), String> {
+        let snapshot = self
+            .store
+            .read(|conn| hydrus_store::session_backups::load(conn, name, timestamp))
+            .map_err(|e| e.to_string())?
+            .ok_or_else(|| format!("there is no backup of session \"{name}\" at {timestamp}"))?;
+        let mut pages = snapshot.session.pages;
+        fn rekey(
+            pages: &mut [Page],
+            media: &[hydrus_store::session_backups::PageMedia],
+            updates: &mut Vec<(PageKey, Vec<HashId>, Vec<HashId>)>,
+        ) {
+            for page in pages {
+                let old = page.key;
+                page.key = PageKey::random();
+                if let Some(media) = media.iter().find(|media| media.key == old) {
+                    updates.push((page.key, media.files.clone(), media.selected.clone()));
+                }
+                if let PageContent::Pages(children) = &mut page.content {
+                    rekey(children, media, updates);
+                }
+            }
+        }
+        let mut updates = Vec::new();
+        rekey(&mut pages, &snapshot.media, &mut updates);
+        self.store
+            .write(move |ctx| {
+                for (key, files, selected) in &updates {
+                    sessions::set_page_files(ctx.conn(), key, files)?;
+                    sessions::set_page_selected(ctx.conn(), key, selected)?;
+                }
+                Ok(())
+            })
+            .map_err(|e| e.to_string())?;
+        self.kept_counts = self
+            .store
+            .read(sessions::page_file_counts)
+            .map_err(|e| e.to_string())?;
+        self.new_page_depth = Some(0);
+        self.add(Page {
+            key: PageKey::random(),
+            name: name.into(),
+            content: PageContent::Pages(pages),
+        });
+        Ok(())
+    }
+
     /// Close every page and load the saved session `name` in their place,
     /// its pages at the top (the reference's "clear and load": the pages
     /// closed are gone, not kept to reopen, and their downloads with them).
@@ -1207,14 +1268,19 @@ impl Pages {
     /// (replacing one of that name): copies, with their files, so the
     /// saved session stays as it is while the pages change.
     pub fn save_session(&mut self, name: &str, now: i64) -> Result<(), String> {
-        self.sync(now).map_err(|e| e.to_string())?;
+        self.save_session_at_ms(name, now.saturating_mul(1000))
+    }
+
+    /// Save a named session at millisecond precision for backup timestamps.
+    pub fn save_session_at_ms(&mut self, name: &str, now_ms: i64) -> Result<(), String> {
+        self.sync(now_ms / 1000).map_err(|e| e.to_string())?;
         let pages = copied(&self.store, self.session.pages.clone()).map_err(|e| e.to_string())?;
         let session = Session {
             name: name.to_owned(),
             pages,
         };
         self.store
-            .write(move |ctx| sessions::save(ctx.conn(), &session, now))
+            .write(move |ctx| hydrus_store::session_backups::save(ctx.conn(), &session, now_ms))
             .map_err(|e| e.to_string())
     }
 
