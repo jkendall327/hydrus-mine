@@ -2,6 +2,7 @@
 //! `frame_locations`, as `ClientGUITopLevelWindows` applies and saves them).
 
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 
 /// A window's remembered frame: whether it keeps its size and place, the
 /// last it had, and whether it was maximised or fullscreen.
@@ -58,6 +59,8 @@ impl FrameLocation {
 pub struct WindowSettings {
     pub main_gui: FrameLocation,
     pub media_viewer: FrameLocation,
+    /// Remaining reference frame keys, including imported unknown keys.
+    pub other_frames: BTreeMap<String, FrameLocation>,
     pub save_media_viewer_on_close: bool,
 }
 
@@ -66,9 +69,119 @@ impl Default for WindowSettings {
         Self {
             main_gui: FrameLocation::main_gui(),
             media_viewer: FrameLocation::media_viewer(),
+            other_frames: default_other_frames(),
             save_media_viewer_on_close: false,
         }
     }
+}
+
+impl WindowSettings {
+    /// The complete editable reference table, preserving unrecognised frame names.
+    pub fn frames(&self) -> BTreeMap<String, FrameLocation> {
+        let mut frames = self.other_frames.clone();
+        frames.insert("main_gui".into(), self.main_gui.clone());
+        frames.insert("media_viewer".into(), self.media_viewer.clone());
+        frames
+    }
+
+    pub fn set_frame(&mut self, name: &str, frame: FrameLocation) {
+        match name {
+            "main_gui" => {
+                self.main_gui = frame;
+            }
+            "media_viewer" => {
+                self.media_viewer = frame;
+            }
+            _ => {
+                self.other_frames.insert(name.into(), frame);
+            }
+        }
+    }
+
+    pub fn frame(&self, name: &str) -> Option<&FrameLocation> {
+        match name {
+            "main_gui" => Some(&self.main_gui),
+            "media_viewer" => Some(&self.media_viewer),
+            _ => self.other_frames.get(name),
+        }
+    }
+}
+
+fn default_other_frames() -> BTreeMap<String, FrameLocation> {
+    let ordinary = FrameLocation {
+        remember_size: false,
+        remember_position: false,
+        last_size: None,
+        last_position: None,
+        default_gravity: (-1, -1),
+        default_position: "topleft".into(),
+        maximised: false,
+        fullscreen: false,
+    };
+    let mut frames = BTreeMap::new();
+    for name in [
+        "file_import_status",
+        "gallery_import_log",
+        "local_import_filename_tagging",
+        "manage_options_dialog",
+        "manage_subscriptions_dialog",
+        "edit_subscription_dialog",
+        "manage_tags_dialog",
+        "manage_tags_frame",
+        "regular_dialog",
+        "review_services",
+        "deeply_nested_dialog",
+        "file_history_chart",
+        "mr_bones",
+        "manage_urls_dialog",
+        "manage_times_dialog",
+        "manage_notes_dialog",
+        "export_files_frame",
+        "quick_select_dialog",
+        "quick_yesno_dialog",
+        "quick_entry_dialog",
+    ] {
+        let mut frame = ordinary.clone();
+        if matches!(
+            name,
+            "file_import_status"
+                | "gallery_import_log"
+                | "manage_subscriptions_dialog"
+                | "edit_subscription_dialog"
+                | "file_history_chart"
+                | "mr_bones"
+                | "manage_urls_dialog"
+                | "manage_times_dialog"
+                | "manage_notes_dialog"
+                | "export_files_frame"
+        ) {
+            frame.remember_size = true;
+            frame.remember_position = true;
+        }
+        match name {
+            "local_import_filename_tagging" => {
+                frame.remember_size = true;
+            }
+            "review_services" => {
+                frame.remember_position = true;
+            }
+            "manage_subscriptions_dialog" | "edit_subscription_dialog" => {
+                frame.default_gravity = (1, -1);
+            }
+            "manage_tags_dialog" | "manage_tags_frame" => {
+                frame.default_gravity = (-1, 1);
+            }
+            "file_history_chart" => {
+                frame.last_size = Some((960, 720));
+            }
+            "quick_select_dialog" | "quick_yesno_dialog" | "quick_entry_dialog" => {
+                "center".clone_into(&mut frame.default_position);
+            }
+            _ => {}
+        }
+        frames.insert(name.into(), frame);
+    }
+    frames
 }
 
 /// A window's state when it is saved: its size and place, and whether it

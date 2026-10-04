@@ -42,6 +42,25 @@ pub fn place(window: &slint::Window, frame: &FrameLocation) {
     }
 }
 
+/// Place an implemented owner from its editable reference frame key.
+pub fn place_named(window: &slint::Window, store: &Store, name: &str) {
+    if let Some(frame) = settings(store).frame(name) {
+        place(window, frame);
+    }
+}
+
+/// Save only the closing owner's current geometry, preserving other frames.
+pub fn save_named(window: &slint::Window, store: &Store, name: &str) {
+    let mut frames = settings(store);
+    if let Some(frame) = frames.frame(name) {
+        let saved = frame.saved(state(window));
+        if saved != *frame {
+            frames.set_frame(name, saved);
+            keep(store, frames);
+        }
+    }
+}
+
 /// A window's size and place now, and whether it is maximised or
 /// fullscreen.
 pub fn state(window: &slint::Window) -> WindowState {

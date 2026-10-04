@@ -1876,6 +1876,7 @@ Shift and use the same OR construction broadcast as tags. The executed actual
 Qt activation recording covers both consumers, accepted recents after outer
 Cancel, history-free drafts and real query counts. Authored model/native
 regression execution remains pending hosted CI.
+
 Manage Tags deleted-mapping counts and the global show/hide preference now reach
 existing local-service panels, including staged changes and persisted reopening.
 Other open native owners observe a toggle within 200 ms, rather than Qt's queued
@@ -1900,3 +1901,12 @@ The ordinary tag-selection parent remains independently
 assessed; these two features do not complete it. Adding a fresh tag then removing
 it now retains a staged deleted mapping, matching Qt instead of treating that
 sequence as an unchanged draft.
+
+
+Frame locations: the complete imported table and geometry editor persist all
+fields, but placement consumers currently use remembered size/position and
+maximised/fullscreen for the main window, media viewer and Options window. Other
+named dialog owners have not yet been wired to their frame keys. Default gravity,
+parent/cursor positioning, screen fitting and offscreen-rescue preferences still
+lack native consumers; their parent/table/editor coverage remains Partial.
+

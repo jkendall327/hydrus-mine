@@ -2820,6 +2820,7 @@ active search alone. `oracle/fixtures/system_or_activation.json` records 18
 actual Qt cases in the main read input and basic OR child, including accepted
 system recents surviving outer Cancel. Both callers use the original activation intent. Authored model replay and
 the native 18-case consumer replay await hosted CI; no native render is claimed.
+
 Manage Tags now reads deleted mappings separately for each selected local tag
 service. The count measures tag–file mappings, hides at zero, and follows staged
 deletions and re-additions. Show/hide is an immediately saved global preference
@@ -2844,3 +2845,13 @@ steps, reverse order, remembered reopening and persisted per-file mappings.
 Additional Qt recordings cover initial-value and numeric-control clamp boundaries,
 long ASCII and Unicode leading-zero inputs, and reference initialization failures.
 Native safely clamps large initial values and accepts long decimal previews.
+
+
+Options > GUI now shows the reference's complete frame-locations table, including
+imported unknown frame names. Its edit child stages remember-size/position,
+optional size/coordinates, default gravity/position and maximised/fullscreen.
+Batch flip/reset and sorting retain selection. Child Apply changes the Options
+draft; Options Cancel discards it and closes/inactivates the child. Main-window
+and media-viewer remembered geometry/state use their existing placement consumers;
+the Options window also applies and saves its `manage_options_dialog` frame.
+

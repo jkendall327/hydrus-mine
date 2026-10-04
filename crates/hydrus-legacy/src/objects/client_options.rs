@@ -321,15 +321,11 @@ impl ClientOptions {
         out
     }
 
-    /// The main window's and the media viewer's frames, and whether the
-    /// viewer's is saved as it closes.
+    /// All imported frame names and whether the media viewer saves on close.
     pub fn window_settings(&self) -> WindowSettings {
         let mut out = WindowSettings::default();
-        if let Some(frame) = self.frame_locations.get("main_gui") {
-            out.main_gui = frame.clone();
-        }
-        if let Some(frame) = self.frame_locations.get("media_viewer") {
-            out.media_viewer = frame.clone();
+        for (name, frame) in &self.frame_locations {
+            out.set_frame(name, frame.clone());
         }
         if let Some(&save) = self
             .booleans
