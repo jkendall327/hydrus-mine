@@ -47,6 +47,10 @@ def record(session):
         p._test_panel._SetExampleData(text)
         p._name.setText('embedded json')
         out.append({'case': 'nested_formula', 'text': text, 'context': context, 'name': p.GetValue().GetName(), 'results': p.GetValue().Parse(context, text, True), 'sub_texts': p._GetSubTestData().texts})
+        multiple = '<html><script>{"posts":["first"]}</script><script>{"posts":["second"]}</script></html>'
+        p._test_panel._SetExampleData(multiple)
+        out.append({'case': 'nested_multiple', 'text': multiple, 'sub_texts': p._GetSubTestData().texts, 'results': p.GetValue().Parse(context,multiple,True)})
+        p._test_panel._SetExampleData(text)
         # The selector owns staged values. Closing a child without acceptance
         # does not replace it; acceptance replaces exactly the selected child.
         p._main_formula_panel._current_formula = P.ParseFormulaStatic(static_text='{"posts":["changed"]}')

@@ -1,6 +1,6 @@
 //! Reusable typed formula and rule windows for downloaders and sidecars.
 pub use crate::formula_editors::FormulaTestData;
-use crate::formula_editors::{FormulaEditor, Rule, RuleEditor};
+use crate::formula_editors::{FormulaChild, FormulaEditor, Rule, RuleEditor, formula_summary};
 use crate::{FormulaRuleWindow, FormulaWindow, TableRow};
 use hydrus_parse::formula::{Formula, FormulaKind, HtmlContent, JsonContent};
 use hydrus_store::Store;
@@ -15,6 +15,8 @@ pub struct Slots {
     pub exchange: crate::downloader_interchange_window::Slots,
     pub formula: Rc<RefCell<Option<FormulaWindow>>>,
     pub rule: Rc<RefCell<Option<FormulaRuleWindow>>>,
+    /// Separate child slots at each depth retain arbitrary recursive editors.
+    pub child: Rc<RefCell<Option<Box<Slots>>>>,
     pub strings: crate::string_processor_window::Slots,
 }
 impl std::fmt::Debug for Slots {
@@ -40,9 +42,16 @@ impl Slots {
         }
     }
     fn has_children(&self) -> bool {
-        self.rule.borrow().is_some() || self.strings.has_open() || self.exchange.has_open()
+        self.child.borrow().is_some()
+            || self.rule.borrow().is_some()
+            || self.strings.has_open()
+            || self.exchange.has_open()
     }
     fn cancel_children(&self) {
+        let child = self.child.borrow_mut().take();
+        if let Some(child) = child {
+            child.cancel();
+        }
         self.exchange.cancel();
         self.strings.cancel_all();
         let rule = self
@@ -111,17 +120,36 @@ fn show(w: &FormulaWindow, e: &FormulaEditor) {
             w.set_output_count(int(*count));
             (5, 0, vec![])
         }
-        _ => (int(e.kind_index()), 0, vec![]),
+        FormulaKind::Nested { main, sub } => {
+            w.set_main_label(formula_summary(main).into());
+            w.set_sub_label(formula_summary(sub).into());
+            (2, 0, vec![])
+        }
+        FormulaKind::Zipper { phrase, .. } => {
+            w.set_phrase(phrase.as_str().into());
+            (3, 0, vec![])
+        }
     };
     w.set_kind(kind);
     w.set_content(content);
     w.set_contents(strings(choices.into_iter().map(str::to_owned)));
-    w.set_rules(rows(e.rules().iter().map(Rule::description), &e.selected()));
+    w.set_rules(rows(e.queue_descriptions(), &e.selected()));
+    w.set_examples(strings(e.test.examples.iter().enumerate().map(|(i, t)| {
+        format!("example {} ({} characters)", i + 1, t.chars().count())
+    })));
+    w.set_example(int(e.example));
     w.set_selected(!e.selected().is_empty());
     w.set_processing(e.formula.processor.button_label().into());
     w.set_newline_note(if e.test.collapse_newlines { "Newlines are removed from parsed strings right after parsing, before string processing." } else { "Newlines are not collapsed here (probably a note parser)" }.into());
-    if !e.supported() {
-        w.set_status("This formula type is preserved. Its editor is not available yet.".into());
+    match e.results() {
+        Ok(results) => {
+            w.set_status(format!("{} parsed strings", results.len()).into());
+            w.set_results(rows(results, &[]));
+        }
+        Err(error) => {
+            w.set_status(error.into());
+            w.set_results(rows(Vec::new(), &[]));
+        }
     }
 }
 fn read(w: &FormulaWindow, e: &mut FormulaEditor) {
@@ -147,10 +175,14 @@ fn read(w: &FormulaWindow, e: &mut FormulaEditor) {
                 *text = w.get_static_text().to_string();
                 *count = usize::try_from(w.get_output_count().clamp(1, 65535)).unwrap_or(1);
             }
-            _ => {}
+            FormulaKind::Zipper { phrase, .. } => *phrase = w.get_phrase().to_string(),
+            FormulaKind::Nested { .. } => {}
         }
     }
     e.test.text = w.get_document().to_string();
+    if let Some(text) = e.test.examples.get_mut(e.example) {
+        text.clone_from(&e.test.text);
+    }
     e.test.context = w
         .get_context()
         .lines()
@@ -161,7 +193,7 @@ fn read(w: &FormulaWindow, e: &mut FormulaEditor) {
         .collect();
 }
 /// Edit a formula in isolation. Apply returns the typed draft; Cancel leaves
-/// the original unchanged. Existing unsupported kinds remain intact.
+/// the original unchanged. Recursive children use separate slots at each depth.
 pub fn open(
     store: &Arc<Store>,
     formula: &Formula,
@@ -176,7 +208,14 @@ pub fn open(
         let slots = slots.clone();
         move || !active.get() || slots.has_children()
     });
-    w.set_document(test_data.text.as_str().into());
+    w.set_document(
+        test_data
+            .examples
+            .first()
+            .unwrap_or(&test_data.text)
+            .as_str()
+            .into(),
+    );
     w.set_context(
         test_data
             .context
@@ -270,6 +309,25 @@ pub fn open(
             refresh();
         }
     });
+    w.on_example_chosen({
+        let weak = w.as_weak();
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move || {
+            if blocked() {
+                refresh();
+                return;
+            }
+            if let Some(w) = weak.upgrade() {
+                let mut e = state.borrow_mut();
+                read(&w, &mut e);
+                e.choose_example(usize::try_from(w.get_example()).unwrap_or(0));
+                w.set_document(e.test.text.as_str().into());
+            }
+            refresh();
+        }
+    });
     w.on_type_chosen({
         let weak = w.as_weak();
         let state = state.clone();
@@ -303,6 +361,147 @@ pub fn open(
             refresh();
         }
     });
+    let edit_child: Rc<dyn Fn(FormulaChild)> = Rc::new({
+        let weak = w.as_weak();
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let store = store.clone();
+        let slots = slots.clone();
+        let blocked = blocked.clone();
+        let active = active.clone();
+        move |address| {
+            if blocked() {
+                return;
+            }
+            if let Some(w) = weak.upgrade() {
+                read(&w, &mut state.borrow_mut());
+            }
+            let (formula, test) = {
+                let e = state.borrow();
+                let Some(formula) = e.child(address) else {
+                    return;
+                };
+                (formula, e.child_test_data(address))
+            };
+            let child_slots = Slots::default();
+            let applied = Rc::new({
+                let state = state.clone();
+                let refresh = refresh.clone();
+                let active = active.clone();
+                move |formula| {
+                    if !active.get() {
+                        return;
+                    }
+                    state.borrow_mut().put_child(address, formula);
+                    refresh();
+                }
+            });
+            match open(&store, &formula, test, &child_slots, applied) {
+                Ok(child) => {
+                    let parent_slots = slots.clone();
+                    let refresh = refresh.clone();
+                    child.on_closed(move |_| {
+                        parent_slots.child.borrow_mut().take();
+                        refresh();
+                    });
+                    *child_slots.formula.borrow_mut() = Some(child);
+                    *slots.child.borrow_mut() = Some(Box::new(child_slots));
+                }
+                Err(error) => {
+                    if let Some(w) = weak.upgrade() {
+                        w.set_veto(error.to_string().into());
+                    }
+                }
+            }
+            refresh();
+        }
+    });
+    w.on_edit_child({
+        let edit_child = edit_child.clone();
+        move |second| {
+            edit_child(if second {
+                FormulaChild::Sub
+            } else {
+                FormulaChild::Main
+            })
+        }
+    });
+    w.on_member_exchange({
+        let weak = w.as_weak();
+        let state = state.clone();
+        let slots = slots.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        let active = active.clone();
+        move |importing| {
+            use hydrus_gui_model::downloader_interchange::{Definition, Native};
+            if blocked() {
+                return;
+            }
+            let definitions = {
+                let e = state.borrow();
+                let FormulaKind::Zipper { formulae, .. } = &e.formula.kind else {
+                    return;
+                };
+                e.selected()
+                    .iter()
+                    .filter_map(|i| formulae.get(*i))
+                    .cloned()
+                    .map(|f| Definition::new(Native::Formula(f)))
+                    .collect()
+            };
+            let preview = Rc::new(|definitions: Vec<Definition>| {
+                if definitions.is_empty()
+                    || definitions
+                        .iter()
+                        .any(|d| !matches!(d.native, Native::Formula(_)))
+                {
+                    return Err("Import one or more component formulae.".into());
+                }
+                Ok(format!(
+                    "Append {} component formulae to this draft.",
+                    definitions.len()
+                ))
+            });
+            let applied = Rc::new({
+                let state = state.clone();
+                let refresh = refresh.clone();
+                let active = active.clone();
+                move |definitions: Vec<Definition>| {
+                    if !active.get() {
+                        return Ok(());
+                    }
+                    for definition in definitions {
+                        if let Native::Formula(formula) = definition.native {
+                            state
+                                .borrow_mut()
+                                .put_child(FormulaChild::Member(None), formula);
+                        }
+                    }
+                    refresh();
+                    Ok(())
+                }
+            });
+            match crate::downloader_interchange_window::open(
+                &slots.exchange,
+                importing,
+                definitions,
+                preview,
+                applied,
+            ) {
+                Ok(child) => {
+                    let refresh = refresh.clone();
+                    child.on_closed(move || refresh());
+                }
+                Err(error) => {
+                    if let Some(w) = weak.upgrade() {
+                        w.set_veto(error.into());
+                    }
+                }
+            }
+            refresh();
+        }
+    });
     let edit: Rc<dyn Fn(Option<usize>)> = Rc::new({
         let state = state.clone();
         let refresh = refresh.clone();
@@ -310,8 +509,16 @@ pub fn open(
         let slots = slots.clone();
         let blocked = blocked.clone();
         let active = active.clone();
+        let edit_child = edit_child.clone();
         move |at| {
             if blocked() {
+                return;
+            }
+            if matches!(state.borrow().formula.kind, FormulaKind::Zipper { .. }) {
+                edit_child(FormulaChild::Member(at));
+                return;
+            }
+            if state.borrow().kind_index() > 1 {
                 return;
             }
             let rule = {

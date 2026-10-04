@@ -215,6 +215,7 @@ fn test_data(w: &ParserEditWindow, collapse_newlines: bool) -> Result<FormulaTes
         context: context.values(),
         text: w.get_document().to_string(),
         collapse_newlines,
+        ..FormulaTestData::default()
     })
 }
 fn edit_text(value: &mut Value, id: i32, value_text: String) -> Result<(), String> {

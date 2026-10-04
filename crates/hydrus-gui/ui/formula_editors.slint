@@ -19,6 +19,11 @@ export component FormulaWindow inherits Window {
     in-out property <string> variable;
     in-out property <string> static-text;
     in-out property <int> output-count: 1;
+    in-out property <string> phrase;
+    in property <string> main-label;
+    in property <string> sub-label;
+    in property <[string]> examples;
+    in-out property <int> example;
     in-out property <string> document;
     in-out property <string> context;
     in property <string> newline-note;
@@ -34,7 +39,7 @@ export component FormulaWindow inherits Window {
     callback row-activated(int); callback add(); callback edit(); callback delete(); callback shift(bool);
     callback edit-processing(); callback test(); callback apply(); callback cancel();
     callback closed(bool);
-    callback exchange(bool);
+    callback exchange(bool); callback member-exchange(bool); callback edit-child(bool); callback example-chosen();
     VerticalLayout {
         padding: 10px; spacing: 6px;
         HorizontalLayout {
@@ -45,8 +50,8 @@ export component FormulaWindow inherits Window {
                 if root.supported: ComboBox { model: ["html", "json", "nested", "zipper", "context variable", "static"]; current-index <=> root.kind; enabled: root.allow-type-change && !root.deleting && !root.child-open; selected => { root.type-chosen(); } }
                 Text { text: "name/description:"; color: Theme.text; }
                 LineEdit { text <=> root.name; enabled: root.supported && !root.deleting && !root.child-open; edited => { root.changed(); } }
-                if root.kind < 2: ListTable { vertical-stretch: 1; columns: [{title: "parsing rules", width: 430px, stretch: true}]; rows: root.rules; row-clicked(r,c,s) => { if !root.deleting && !root.child-open { root.row-clicked(r,c,s); } } row-activated(r) => { if !root.deleting && !root.child-open { root.row-activated(r); } } }
-                if root.kind < 2: HorizontalLayout {
+                if root.kind < 2 || root.kind == 3: ListTable { vertical-stretch: 1; columns: [{title: root.kind == 3 ? "component formulae" : "parsing rules", width: 430px, stretch: true}]; rows: root.rules; row-clicked(r,c,s) => { if !root.deleting && !root.child-open { root.row-clicked(r,c,s); } } row-activated(r) => { if !root.deleting && !root.child-open { root.row-activated(r); } } }
+                if root.kind < 2 || root.kind == 3: HorizontalLayout {
                     spacing: 4px;
                     Button { text: "add"; enabled: root.supported && !root.deleting && !root.child-open; clicked => { root.add(); } }
                     Button { text: "edit"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.edit(); } }
@@ -59,6 +64,23 @@ export component FormulaWindow inherits Window {
                 if root.kind == 0: HorizontalLayout {
                     Text { text: "attribute to fetch:"; color: Theme.text; vertical-alignment: center; }
                     LineEdit { text <=> root.attribute; enabled: root.content == 0 && !root.deleting && !root.child-open; edited => { root.changed(); } }
+                }
+                if root.kind == 2: VerticalLayout {
+                    Text { text: "Whatever is parsed by the first formula is sent to the second."; wrap: word-wrap; color: Theme.text; }
+                    Text { text: "first formula:"; color: Theme.text; }
+                    Text { text: root.main-label; wrap: word-wrap; color: Theme.text; }
+                    Button { text: "edit first formula"; enabled: !root.child-open; clicked => { root.edit-child(false); } }
+                    Text { text: "second formula:"; color: Theme.text; }
+                    Text { text: root.sub-label; wrap: word-wrap; color: Theme.text; }
+                    Button { text: "edit second formula"; enabled: !root.child-open; clicked => { root.edit-child(true); } }
+                }
+                if root.kind == 3: VerticalLayout {
+                    HorizontalLayout {
+                        Button { text: "import components"; enabled: !root.child-open && !root.deleting; clicked => { root.member-exchange(true); } }
+                        Button { text: "export selected"; enabled: root.selected && !root.child-open && !root.deleting; clicked => { root.member-exchange(false); } }
+                    }
+                    Text { text: "substitution phrase (\\1, \\2, …):"; color: Theme.text; }
+                    LineEdit { text <=> root.phrase; enabled: !root.child-open && !root.deleting; edited => { root.changed(); } }
                 }
                 if root.kind == 4: HorizontalLayout {
                     Text { text: "variable name:"; color: Theme.text; vertical-alignment: center; }
@@ -82,9 +104,10 @@ export component FormulaWindow inherits Window {
             VerticalLayout {
                 horizontal-stretch: 1; spacing: 6px;
                 Text { text: "test — example document"; font-weight: 700; color: Theme.text; }
-                TextEdit { vertical-stretch: 1; text <=> root.document; enabled: !root.child-open; }
+                if root.examples.length > 1: ComboBox { model: root.examples; current-index <=> root.example; enabled: !root.child-open; selected => { root.example-chosen(); } }
+                TextEdit { vertical-stretch: 1; text <=> root.document; enabled: !root.child-open; edited(t) => { root.document = t; root.changed(); } }
                 Text { text: "parsing context (one key=value per line)"; color: Theme.text; }
-                TextEdit { height: 65px; text <=> root.context; enabled: !root.child-open; }
+                TextEdit { height: 65px; text <=> root.context; enabled: !root.child-open; edited(t) => { root.context = t; root.changed(); } }
                 Button { text: "test parse"; enabled: !root.child-open; clicked => { root.test(); } }
                 Text { text: root.status; wrap: word-wrap; color: Theme.text; }
                 ListTable { vertical-stretch: 1; columns: [{title: "parsed strings", width: 430px, stretch: true}]; rows: root.results; }

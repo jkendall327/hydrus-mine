@@ -357,3 +357,104 @@ fn link_apply_rejects_a_class_changed_to_a_file_in_another_editor() {
     assert!(classes.parser_links.is_empty());
     links.invoke_action("cancel".into());
 }
+
+#[test]
+fn recursive_formula_edits_reach_saved_page_parser_and_consumer() {
+    let (dir, store, slots) = setup();
+    let _windows = headless::init();
+    let original = definitions(&store);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.invoke_row_clicked(0, false, false);
+    page.invoke_action("edit-content".into());
+    let content = child(&slots.content);
+    content.invoke_choice_edited(1, 1);
+    content.invoke_text_edited(5, "series".into());
+    content.invoke_action("formula".into());
+    let formula = slots
+        .formula
+        .formula
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    formula.set_kind(2);
+    formula.invoke_type_chosen();
+    formula.invoke_edit_child(false);
+    let first = {
+        let children = slots.formula.child.borrow();
+        let w = children
+            .as_ref()
+            .unwrap()
+            .formula
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        w
+    };
+    first.set_kind(5);
+    first.invoke_type_chosen();
+    first.set_static_text("{\"posts\":[\"edited tag\"]}".into());
+    first.invoke_apply();
+    formula.invoke_edit_child(true);
+    let second = {
+        let children = slots.formula.child.borrow();
+        let w = children
+            .as_ref()
+            .unwrap()
+            .formula
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        w
+    };
+    assert_eq!(second.get_document(), "{\"posts\":[\"edited tag\"]}");
+    second.invoke_add();
+    let rule = {
+        let children = slots.formula.child.borrow();
+        let w = children
+            .as_ref()
+            .unwrap()
+            .rule
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        w
+    };
+    rule.set_rule_type(1);
+    rule.invoke_changed();
+    rule.invoke_apply();
+    second.invoke_apply();
+    formula.invoke_apply();
+    content.invoke_action("test".into());
+    assert!(
+        content.get_preview().contains("tags: edited tag"),
+        "{}",
+        content.get_preview()
+    );
+    assert_eq!(definitions(&store), original);
+    content.invoke_action("apply".into());
+    page.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    let saved = definitions(&store);
+    assert!(matches!(
+        saved.parsers[0].content_parsers[0].formula.kind,
+        FormulaKind::Nested { .. }
+    ));
+    assert_eq!(saved.parsers[0].subsidiary, original.parsers[0].subsidiary);
+    let consumer = &saved.parsers[0].content_parsers[0];
+    let context = Default::default();
+    let parsed = consumer.parse(&context, "unused").unwrap();
+    assert_eq!(
+        parsed.tags().into_iter().collect::<Vec<_>>(),
+        ["series:edited tag"]
+    );
+    drop(store);
+    let reopened = Store::open(dir.path()).unwrap();
+    assert_eq!(definitions(&reopened), saved);
+}

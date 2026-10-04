@@ -490,7 +490,15 @@ output counts (1–65,535), with the same parsing context, newline policy and
 string processor preview as HTML/JSON. Type changes create fresh reference
 defaults and reset the old name/processor. Edits remain isolated until Apply.
 `oracle/record_recursive_formula_editors.py` records these scalar controls and
-the recursive formula workflows.
+the recursive formula workflows. Nested formula editors open a staged first
+formula and a second formula whose examples come from the first formula's parsed
+strings. All transformed examples remain selectable. Zipper editors add/edit
+component formulae recursively, reorder/remove them, import components and export
+selected components, and edit the substitution phrase. Every depth supports all
+six formula kinds. Parsed previews update when controls, documents, context,
+children or processors change. Parent edits and Apply wait for open descendants;
+owner cancellation invalidates every descendant callback. Saved page/content
+parsers use these formula edits in the live parser engine.
 
 `oracle/record_formula_editors.py` records the real reference controls and
 queue actions, checked by model and headless GUI/store tests.
@@ -1495,7 +1503,7 @@ Network > downloaders > parsers now opens the native named parser list
 (add/edit/duplicate/delete), and url class links opens staged direct parser
 associations. Page editors edit names, example URLs, pre-parsing converters and
 content nodes. Content editors support URLs, tags, notes, hashes, timestamps,
-titles, headers, temporary variables and vetoes, reusing the HTML/JSON formula
+titles, headers, temporary variables and vetoes, reusing the six-kind formula
 and string-match editors. Test panels accept the document, page URL, post
 index and validated key=value context variables, and run the live parser engine.
 Child editors block parent changes and Apply; cancellation or owner closure

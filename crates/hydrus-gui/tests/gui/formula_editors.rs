@@ -802,3 +802,455 @@ fn scalar_formula_controls_preview_processing_cancel_and_save() {
         }
     );
 }
+
+fn child_formula(slots: &formula_window::Slots) -> hydrus_gui::FormulaWindow {
+    let child = slots.child.borrow();
+    let w = child
+        .as_ref()
+        .unwrap()
+        .formula
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    w
+}
+fn embedded_formula() -> hydrus_parse::formula::Formula {
+    let mut formula = hydrus_gui::formula_editors::new_formula_kind(2);
+    let FormulaKind::Nested { main, sub } = &mut formula.kind else {
+        panic!()
+    };
+    let FormulaKind::Html { rules, content } = &mut main.kind else {
+        panic!()
+    };
+    rules[0].tag_name = Some("script".into());
+    *content = HtmlContent::Text;
+    let FormulaKind::Json { rules, .. } = &mut sub.kind else {
+        panic!()
+    };
+    rules.push(JsonRule::AllItems);
+    formula
+}
+#[test]
+fn recursive_nested_children_preview_transformed_examples_and_save() {
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let slots = formula_window::Slots::default();
+    let cases: Vec<serde_json::Value> = serde_json::from_value(hydrus_testkit::fixture_json(
+        "recursive_formula_editors.json",
+    ))
+    .unwrap();
+    let case = cases
+        .iter()
+        .find(|c| c["case"] == "nested_formula")
+        .unwrap();
+    let context: hydrus_parse::formula::ParsingContext =
+        serde_json::from_value(case["context"].clone()).unwrap();
+    let mut original = embedded_formula();
+    original.processor = StringProcessor {
+        steps: vec![ProcessingStep::Convert(StringConverter {
+            conversions: vec![Conversion::Append("!".into())],
+            example: String::new(),
+        })],
+    };
+    let accepted = Rc::new(RefCell::new(None));
+    let w = formula_window::open(
+        &store,
+        &original,
+        FormulaTestData {
+            context: context.clone(),
+            text: case["text"].as_str().unwrap().into(),
+            ..FormulaTestData::default()
+        },
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |f| *accepted.borrow_mut() = Some(f)
+        }),
+    )
+    .unwrap();
+    *slots.formula.borrow_mut() = Some(w.clone_strong());
+    w.set_name("embedded json".into());
+    w.invoke_changed();
+    assert_eq!(serde_json::json!(labels(&w.get_results())), case["results"]);
+    w.invoke_edit_child(false);
+    let main = child_formula(&slots);
+    assert_eq!(main.get_document(), case["text"].as_str().unwrap());
+    assert!(w.get_child_open());
+    w.set_kind(5);
+    w.invoke_type_chosen();
+    assert_eq!(w.get_kind(), 2);
+    w.invoke_apply();
+    assert!(accepted.borrow().is_none());
+    main.set_kind(5);
+    main.invoke_type_chosen();
+    main.set_static_text("{\"posts\":[\"discarded\"]}".into());
+    main.invoke_changed();
+    main.invoke_cancel();
+    assert_eq!(serde_json::json!(labels(&w.get_results())), case["results"]);
+    w.invoke_edit_child(false);
+    let main = child_formula(&slots);
+    assert_eq!(main.get_kind(), 0);
+    main.set_kind(5);
+    main.invoke_type_chosen();
+    main.set_static_text("{\"posts\":[\"changed\"]}".into());
+    main.invoke_apply();
+    let case = cases
+        .iter()
+        .find(|c| c["case"] == "nested_main_edit")
+        .unwrap();
+    assert_eq!(serde_json::json!(labels(&w.get_results())), case["results"]);
+    w.invoke_edit_child(true);
+    let sub = child_formula(&slots);
+    assert_eq!(sub.get_document(), case["sub_texts"][0].as_str().unwrap());
+    assert!(
+        sub.get_context()
+            .contains("url=https://formula.example/post")
+    );
+    sub.set_kind(4);
+    sub.invoke_type_chosen();
+    sub.invoke_apply();
+    let case = cases
+        .iter()
+        .find(|c| c["case"] == "nested_sub_edit")
+        .unwrap();
+    assert_eq!(serde_json::json!(labels(&w.get_results())), case["results"]);
+    let pixels = headless::render(&windows.get(0).unwrap(), 1040, 660);
+    let shot = std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("formula_nested.png");
+    headless::save_png(&shot, &pixels, 1040, 660).unwrap();
+    w.invoke_apply();
+    let saved = accepted.borrow_mut().take().unwrap();
+    assert_eq!(saved.name, "embedded json");
+    assert_eq!(
+        serde_json::json!(saved.parse(&context, "", true).unwrap()),
+        case["results"]
+    );
+    assert_eq!(original.name, "");
+    let w = formula_window::open(
+        &store,
+        &saved,
+        FormulaTestData::default(),
+        &slots,
+        Rc::new(|_| panic!("cancel applied")),
+    )
+    .unwrap();
+    *slots.formula.borrow_mut() = Some(w.clone_strong());
+    w.invoke_edit_child(false);
+    assert_eq!(
+        child_formula(&slots).get_static_text(),
+        "{\"posts\":[\"changed\"]}"
+    );
+    w.invoke_cancel();
+    assert!(slots.child.borrow().is_none());
+}
+#[test]
+fn recursive_second_formula_can_select_every_transformed_example() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let slots = formula_window::Slots::default();
+    let cases: Vec<serde_json::Value> = serde_json::from_value(hydrus_testkit::fixture_json(
+        "recursive_formula_editors.json",
+    ))
+    .unwrap();
+    let case = cases
+        .iter()
+        .find(|c| c["case"] == "nested_multiple")
+        .unwrap();
+    let mut formula = embedded_formula();
+    formula.processor = StringProcessor {
+        steps: vec![ProcessingStep::Convert(StringConverter {
+            conversions: vec![Conversion::Append("!".into())],
+            example: String::new(),
+        })],
+    };
+    let w = formula_window::open(
+        &store,
+        &formula,
+        FormulaTestData {
+            text: case["text"].as_str().unwrap().into(),
+            ..FormulaTestData::default()
+        },
+        &slots,
+        Rc::new(|_| panic!("cancel applied")),
+    )
+    .unwrap();
+    *slots.formula.borrow_mut() = Some(w.clone_strong());
+    assert_eq!(serde_json::json!(labels(&w.get_results())), case["results"]);
+    w.invoke_edit_child(true);
+    let sub = child_formula(&slots);
+    assert_eq!(
+        serde_json::json!([sub.get_document().to_string()]),
+        serde_json::json!([case["sub_texts"][0].as_str().unwrap()])
+    );
+    assert_eq!(
+        sub.get_examples().row_count(),
+        case["sub_texts"].as_array().unwrap().len()
+    );
+    assert_eq!(labels(&sub.get_results()), ["first"]);
+    sub.set_example(1);
+    sub.invoke_example_chosen();
+    assert_eq!(sub.get_document(), "{\"posts\":[\"second\"]}");
+    assert_eq!(labels(&sub.get_results()), ["second"]);
+    sub.set_document("{\"posts\":[\"edited example\"]}".into());
+    sub.invoke_changed();
+    sub.set_example(0);
+    sub.invoke_example_chosen();
+    assert_eq!(labels(&sub.get_results()), ["first"]);
+    sub.set_example(1);
+    sub.invoke_example_chosen();
+    assert_eq!(labels(&sub.get_results()), ["edited example"]);
+    sub.invoke_cancel();
+    assert_eq!(serde_json::json!(labels(&w.get_results())), case["results"]);
+    w.invoke_cancel();
+}
+#[test]
+fn recursive_zipper_queue_matches_reference_and_blocks_parent_mutations() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let slots = formula_window::Slots::default();
+    let mut original = hydrus_gui::formula_editors::new_formula_kind(3);
+    let mut first = hydrus_gui::formula_editors::new_formula_kind(5);
+    first.kind = FormulaKind::Static {
+        text: "first".into(),
+        count: 1,
+    };
+    let FormulaKind::Zipper { formulae, .. } = &mut original.kind else {
+        panic!()
+    };
+    *formulae = vec![first];
+    let accepted = Rc::new(RefCell::new(None));
+    let w = formula_window::open(
+        &store,
+        &original,
+        FormulaTestData::default(),
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |f| *accepted.borrow_mut() = Some(f)
+        }),
+    )
+    .unwrap();
+    *slots.formula.borrow_mut() = Some(w.clone_strong());
+    let cases: Vec<serde_json::Value> = serde_json::from_value(hydrus_testkit::fixture_json(
+        "recursive_formula_editors.json",
+    ))
+    .unwrap();
+    for case in cases.iter().filter(|c| c["case"] == "zipper_queue") {
+        match case["action"].as_str().unwrap() {
+            "add" => {
+                w.invoke_add();
+                let child = child_formula(&slots);
+                assert_eq!(child.get_kind(), 0);
+                child.set_kind(5);
+                child.invoke_type_chosen();
+                child.set_static_text("second".into());
+                let before = labels(&w.get_rules());
+                w.invoke_shift(true);
+                w.invoke_delete();
+                w.invoke_chosen(0);
+                w.invoke_apply();
+                assert_eq!(labels(&w.get_rules()), before);
+                assert!(accepted.borrow().is_none());
+                child.invoke_apply();
+            }
+            "edit" => {
+                w.invoke_row_clicked(1, false, false);
+                w.invoke_edit();
+                let child = child_formula(&slots);
+                assert_eq!(child.get_static_text(), "second");
+                child.set_static_text("replacement".into());
+                child.invoke_apply();
+            }
+            "up" => w.invoke_shift(false),
+            "down" => w.invoke_shift(true),
+            "cancel_add" => {
+                w.invoke_add();
+                let child = child_formula(&slots);
+                child.set_kind(4);
+                child.invoke_type_chosen();
+                child.invoke_cancel();
+            }
+            "cancel_edit" => {
+                w.invoke_row_clicked(1, false, false);
+                w.invoke_edit();
+                let child = child_formula(&slots);
+                child.set_static_text("discarded".into());
+                child.invoke_cancel();
+            }
+            "delete" => {
+                w.invoke_delete();
+                w.invoke_chosen(0);
+            }
+            other => panic!("{other}"),
+        }
+        let descriptions = labels(&w.get_rules());
+        let expected = case["texts"].as_array().unwrap();
+        assert_eq!(descriptions.len(), expected.len());
+        for (label, text) in descriptions.iter().zip(expected) {
+            assert!(label.ends_with(text.as_str().unwrap()));
+        }
+        let selection = (0..w.get_rules().row_count())
+            .filter(|i| w.get_rules().row_data(*i).unwrap().selected)
+            .collect::<Vec<_>>();
+        assert_eq!(serde_json::json!(selection), case["selected"]);
+    }
+    // The surviving draft is persisted with its edited phrase, while the input
+    // object and canceled edits stay intact.
+    w.set_phrase("prefix \\1".into());
+    w.invoke_changed();
+    assert_eq!(labels(&w.get_results()), ["prefix first"]);
+    w.invoke_apply();
+    let saved = accepted.borrow_mut().take().unwrap();
+    assert_eq!(
+        saved.parse(&Default::default(), "", true).unwrap(),
+        ["prefix first"]
+    );
+    assert_eq!(
+        original.parse(&Default::default(), "", true).unwrap(),
+        ["first"]
+    );
+    let w = formula_window::open(
+        &store,
+        &saved,
+        FormulaTestData::default(),
+        &slots,
+        Rc::new(|_| panic!("cancel applied")),
+    )
+    .unwrap();
+    *slots.formula.borrow_mut() = Some(w.clone_strong());
+    assert_eq!(w.get_phrase(), "prefix \\1");
+    assert_eq!(w.get_rules().row_count(), 1);
+    w.invoke_cancel();
+}
+#[test]
+fn recursive_owner_cancel_invalidates_every_depth_and_retained_handle() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let slots = formula_window::Slots::default();
+    let accepted = Rc::new(RefCell::new(None));
+    let open = || {
+        let w = formula_window::open(
+            &store,
+            &embedded_formula(),
+            FormulaTestData::default(),
+            &slots,
+            Rc::new({
+                let accepted = accepted.clone();
+                move |f| *accepted.borrow_mut() = Some(f)
+            }),
+        )
+        .unwrap();
+        *slots.formula.borrow_mut() = Some(w.clone_strong());
+        w
+    };
+    let w = open();
+    w.invoke_edit_child(false);
+    let child = child_formula(&slots);
+    child.set_kind(2);
+    child.invoke_type_chosen();
+    child.invoke_edit_child(false);
+    let grandchild = {
+        let child_slots = slots.child.borrow();
+        child_formula(child_slots.as_ref().unwrap())
+    };
+    grandchild.invoke_add();
+    let rule = {
+        let child_slots = slots.child.borrow();
+        let grandchild_slots = child_slots.as_ref().unwrap().child.borrow();
+        let w = grandchild_slots
+            .as_ref()
+            .unwrap()
+            .rule
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        w
+    };
+    rule.set_tag("discarded".into());
+    rule.invoke_changed();
+    slots.cancel();
+    assert!(slots.formula.borrow().is_none());
+    assert!(slots.child.borrow().is_none());
+    assert!(!child.window().is_visible());
+    assert!(!grandchild.window().is_visible());
+    assert!(!rule.window().is_visible());
+    let fresh = open();
+    fresh.invoke_edit_child(false);
+    rule.invoke_apply();
+    grandchild.invoke_apply();
+    child.invoke_apply();
+    w.invoke_apply();
+    assert!(accepted.borrow().is_none());
+    assert!(slots.child.borrow().is_some());
+    child_formula(&slots).invoke_cancel();
+    assert!(!fresh.get_child_open());
+    fresh.invoke_apply();
+    assert_eq!(*accepted.borrow(), Some(embedded_formula()));
+}
+
+#[test]
+fn zipper_components_exchange_appends_only_formulae_and_exports_selection() {
+    use hydrus_gui_model::downloader_interchange::{self as exchange, Definition, Native};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let slots = formula_window::Slots::default();
+    let accepted = Rc::new(RefCell::new(None));
+    let w = formula_window::open(
+        &store,
+        &hydrus_gui::formula_editors::new_formula_kind(3),
+        FormulaTestData::default(),
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |f| *accepted.borrow_mut() = Some(f)
+        }),
+    )
+    .unwrap();
+    *slots.formula.borrow_mut() = Some(w.clone_strong());
+    let definitions = vec![
+        Definition::new(Native::Formula(
+            hydrus_gui::formula_editors::new_formula_kind(4),
+        )),
+        Definition::new(Native::Formula(
+            hydrus_gui::formula_editors::new_formula_kind(5),
+        )),
+    ];
+    w.invoke_member_exchange(true);
+    let import = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    import.set_text(
+        exchange::encode_text(&[Definition::new(Native::Page(
+            hydrus_gui_model::parser_editors::new_page(),
+        ))])
+        .unwrap()
+        .into(),
+    );
+    import.invoke_action("review".into());
+    assert!(!import.get_ready());
+    assert!(import.get_error().contains("component formulae"));
+    assert_eq!(w.get_rules().row_count(), 1);
+    import.set_text(exchange::encode_text(&definitions).unwrap().into());
+    import.invoke_action("review".into());
+    assert!(import.get_ready());
+    assert_eq!(w.get_rules().row_count(), 1);
+    w.invoke_apply();
+    assert!(accepted.borrow().is_none());
+    import.invoke_action("accept".into());
+    assert_eq!(w.get_rules().row_count(), 3);
+    w.invoke_row_clicked(2, false, false);
+    w.invoke_member_exchange(false);
+    let export = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        exchange::decode_text(export.get_text().as_str()).unwrap(),
+        vec![definitions[1].clone()]
+    );
+    export.invoke_action("cancel".into());
+    w.invoke_member_exchange(true);
+    let import = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    import.set_text(exchange::encode_text(&definitions).unwrap().into());
+    import.invoke_action("review".into());
+    w.invoke_cancel();
+    import.invoke_action("accept".into());
+    assert!(accepted.borrow().is_none());
+    assert!(!slots.exchange.has_open());
+}

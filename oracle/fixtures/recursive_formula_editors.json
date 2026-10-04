@@ -84,6 +84,18 @@
     ]
   },
   {
+    "case": "nested_multiple",
+    "text": "<html><script>{\"posts\":[\"first\"]}</script><script>{\"posts\":[\"second\"]}</script></html>",
+    "sub_texts": [
+      "{\"posts\":[\"first\"]}",
+      "{\"posts\":[\"second\"]}"
+    ],
+    "results": [
+      "first!",
+      "second!"
+    ]
+  },
+  {
     "case": "nested_main_edit",
     "sub_texts": [
       "{\"posts\":[\"changed\"]}"
