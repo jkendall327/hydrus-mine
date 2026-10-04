@@ -77,3 +77,4 @@ pub mod client_api_admin;
 pub mod network_sessions;
 
 pub mod network_data;
+pub mod tag_migration;

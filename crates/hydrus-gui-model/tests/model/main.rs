@@ -61,3 +61,4 @@ mod client_api_admin;
 mod network_sessions;
 
 mod network_data;
+mod tag_migration;
