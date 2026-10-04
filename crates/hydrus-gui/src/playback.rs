@@ -252,6 +252,61 @@ mod tests {
     }
 
     #[test]
+    fn finite_gif_loop_metadata_reaches_the_existing_mpv_player() {
+        if !mpv::available() {
+            eprintln!("libmpv is not installed here; skipped");
+            return;
+        }
+        let _windows = crate::headless::init();
+        let directory = tempfile::tempdir().unwrap();
+        let store = hydrus_store::Store::open(directory.path()).unwrap();
+        store
+            .write(|ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_store::settings::ViewerPlaybackSettings {
+                        always_loop: false,
+                        ..Default::default()
+                    },
+                )
+            })
+            .unwrap();
+        let fixture = hydrus_testkit::fixture_json("viewer_zoom_loop_options.json");
+        let gif = fixture["metadata"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|case| case["format"] == "GIF" && case["stored_count"] == 1)
+            .unwrap();
+        let path = directory.path().join("finite.gif");
+        std::fs::write(&path, hex::decode(gif["bytes"].as_str().unwrap()).unwrap()).unwrap();
+        let playback = Playback::for_store(store.clone());
+        playback.play(Some(&path), || Some((20, 16)), |_| {});
+        assert_eq!(playback.times_to_play.get(), 1);
+        assert!(until(|| playback.paused()));
+        assert_eq!(playback.restarts.get(), 1);
+        assert!(until(|| playback
+            .position_ms()
+            .is_some_and(|at| at < RESTARTED_MS)));
+        // MPV captures the count at load, like the reference. Enabling forced
+        // looping affects its next file load, and does not resume this one.
+        store
+            .write(|ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_store::settings::ViewerPlaybackSettings::default(),
+                )
+            })
+            .unwrap();
+        assert!(playback.paused());
+        playback.play(Some(&path), || Some((20, 16)), |_| {});
+        assert_eq!(playback.times_to_play.get(), 0);
+        assert!(until(|| playback.restarts.get() >= 2));
+        assert!(!playback.paused());
+        playback.close();
+    }
+
+    #[test]
     fn a_file_plays_through_and_may_stop_at_its_end() {
         if !mpv::available() {
             eprintln!("libmpv is not installed here; skipped");
