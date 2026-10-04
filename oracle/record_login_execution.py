@@ -66,11 +66,14 @@ def record(session):
             elif name=='network_401':script._login_steps=HydrusSerialisable.SerialisableList([L.LoginStep('denied request','http','GET',None,'/unauthorised')])
             elif name=='missing_variable':script._login_steps[0]._temp_args={'missing':'token'}
             engine.session_manager.ClearSession(context)
-            results=[];requests.clear()
+            results=[];requests.clear();stream=[]
+            def on_result(result):
+                results.append(result)
+                stream.append({'name':result[0],'result_count':len(results),'request_count':len(requests)})
             status=ClientThreading.JobStatus(cancellable=True)
             if name=='cancel_before_start':status.Cancel()
-            outcome=script.Start(engine,context,credentials,test_result_callable=results.append,job_status=status)
-            cases.append({'name':name,'script':script.GetSerialisableTuple(),'credentials':credentials,'results':results,'outcome':outcome,'requests':list(requests),'logged_in':script.IsLoggedIn(engine,context)})
+            outcome=script.Start(engine,context,credentials,test_result_callable=on_result,job_status=status)
+            cases.append({'name':name,'script':script.GetSerialisableTuple(),'credentials':credentials,'results':results,'stream':stream,'outcome':outcome,'requests':list(requests),'logged_in':script.IsLoggedIn(engine,context)})
         copied=[]
         original_pub=controller.pub
         def capture(topic,*args,**kwargs):

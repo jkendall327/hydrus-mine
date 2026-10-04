@@ -365,6 +365,52 @@ pub async fn execute_with_pause(
     control: &Job,
     pause: Duration,
 ) -> Execution {
+    execute_with_observer(
+        engine,
+        store,
+        script,
+        domain,
+        credentials,
+        control,
+        pause,
+        |_| {},
+    )
+    .await
+}
+/// Production login with reference per-step result delivery before its two-second wait.
+pub async fn execute_with_results(
+    engine: &NetEngine,
+    store: &Store,
+    script: &LoginScript,
+    domain: &str,
+    credentials: &BTreeMap<String, String>,
+    control: &Job,
+    result_ready: impl FnMut(&TestResult),
+) -> Execution {
+    execute_with_observer(
+        engine,
+        store,
+        script,
+        domain,
+        credentials,
+        control,
+        Duration::from_secs(2),
+        result_ready,
+    )
+    .await
+}
+// Spacing and observation are orthogonal test/production concerns; retain the existing call shape.
+#[allow(clippy::too_many_arguments)]
+async fn execute_with_observer(
+    engine: &NetEngine,
+    store: &Store,
+    script: &LoginScript,
+    domain: &str,
+    credentials: &BTreeMap<String, String>,
+    control: &Job,
+    pause: Duration,
+    mut result_ready: impl FnMut(&TestResult),
+) -> Execution {
     let mut execution = Execution {
         results: Vec::new(),
         variables: BTreeMap::new(),
@@ -394,6 +440,7 @@ pub async fn execute_with_pause(
             Ok(plan) => plan,
             Err(error) => {
                 result.result.clone_from(&error);
+                result_ready(&result);
                 execution.results.push(result);
                 execution.outcome = Outcome::Verification(error);
                 return execution;
@@ -406,6 +453,7 @@ pub async fn execute_with_pause(
             Ok(cookies) => cookies,
             Err(error) => {
                 result.result.clone_from(&error);
+                result_ready(&result);
                 execution.results.push(result);
                 execution.outcome = Outcome::Unusual(error);
                 return execution;
@@ -418,6 +466,7 @@ pub async fn execute_with_pause(
         match response {
             Err(error) => {
                 result.result = error.to_string();
+                result_ready(&result);
                 execution.results.push(result);
                 execution.outcome = network_outcome(&error);
                 return execution;
@@ -434,6 +483,7 @@ pub async fn execute_with_pause(
                     Some(&step.name),
                 ) {
                     result.result.clone_from(&error);
+                    result_ready(&result);
                     execution.results.push(result);
                     execution.outcome = Outcome::Verification(error);
                     return execution;
@@ -464,6 +514,7 @@ pub async fn execute_with_pause(
                                 ParseFailure::Veto(_) => Outcome::Verification(error.to_string()),
                                 ParseFailure::Error(_) => Outcome::Unusual(error.to_string()),
                             };
+                            result_ready(&result);
                             execution.results.push(result);
                             execution.outcome = outcome;
                             return execution;
@@ -476,6 +527,7 @@ pub async fn execute_with_pause(
                     .collect();
                 execution.variables.extend(variables);
                 result.result = "OK!".into();
+                result_ready(&result);
                 execution.results.push(result);
             }
         }

@@ -116,6 +116,12 @@ impl std::fmt::Debug for RunSlot {
 pub type Completed = Rc<dyn Fn(Execution)>;
 /// Current HTTP job status shown by the native editor.
 pub type Progress = Rc<dyn Fn(String)>;
+/// One completed step delivered while later steps/waits are still running.
+pub type ResultReady = Rc<dyn Fn(TestResult)>;
+enum RunEvent {
+    Result(TestResult),
+    Complete(Execution),
+}
 fn isolated(source: &Store) -> Result<(tempfile::TempDir, Arc<Store>), String> {
     let (options, classes, headers) = source
         .read(|conn| {
@@ -184,6 +190,16 @@ impl RunSlot {
     /// Test runs use a fresh cookie store while retaining request preferences and
     /// custom headers; real domain runs share the existing persisted sessions.
     pub fn start(&self, input: Input, progress: Progress, completed: Completed) {
+        self.start_with_results(input, progress, Rc::new(|_| {}), completed);
+    }
+    /// Stream each finished step on the GUI thread before the final completion.
+    pub fn start_with_results(
+        &self,
+        input: Input,
+        progress: Progress,
+        result_ready: ResultReady,
+        completed: Completed,
+    ) {
         let Input {
             source,
             script,
@@ -193,7 +209,7 @@ impl RunSlot {
         } = input;
         self.stop();
         let job = Job::new();
-        let (send, receive) = crossbeam_channel::bounded(1);
+        let (send, receive) = crossbeam_channel::unbounded();
         std::thread::spawn({
             let job = job.clone();
             move || {
@@ -213,13 +229,16 @@ impl RunSlot {
                         NetEngine::new(store.clone(), NetOptions::from_settings(&options))
                             .map_err(|e| e.to_string())?
                     };
-                    let execution = runtime.block_on(hydrus_net::login::execute(
+                    let execution = runtime.block_on(hydrus_net::login::execute_with_results(
                         &engine,
                         &store,
                         &script,
                         &domain,
                         &credentials,
                         &job,
+                        |result| {
+                            let _ = send.send(RunEvent::Result(result.clone()));
+                        },
                     ));
                     engine.save_bandwidth().map_err(|e| e.to_string())?;
                     Ok(execution)
@@ -229,7 +248,7 @@ impl RunSlot {
                     variables: BTreeMap::new(),
                     outcome: Outcome::Unusual(error),
                 });
-                let _ = send.send(execution);
+                let _ = send.send(RunEvent::Complete(execution));
             }
         });
         let timer = Timer::default();
@@ -240,24 +259,30 @@ impl RunSlot {
                 let Some(slot) = slot.upgrade() else {
                     return;
                 };
-                match receive.try_recv() {
-                    Ok(execution) => {
-                        slot.borrow_mut().take();
-                        completed(execution);
-                    }
-                    Err(crossbeam_channel::TryRecvError::Empty) => {
-                        let state = job.state();
-                        progress(format!("{} — {} bytes", state.status, state.bytes_read));
-                    }
-                    Err(crossbeam_channel::TryRecvError::Disconnected) => {
-                        slot.borrow_mut().take();
-                        completed(Execution {
-                            results: Vec::new(),
-                            variables: BTreeMap::new(),
-                            outcome: Outcome::Unusual(
-                                "Login worker stopped before returning a result.".into(),
-                            ),
-                        });
+                loop {
+                    match receive.try_recv() {
+                        Ok(RunEvent::Result(result)) => result_ready(result),
+                        Ok(RunEvent::Complete(execution)) => {
+                            slot.borrow_mut().take();
+                            completed(execution);
+                            break;
+                        }
+                        Err(crossbeam_channel::TryRecvError::Empty) => {
+                            let state = job.state();
+                            progress(format!("{} — {} bytes", state.status, state.bytes_read));
+                            break;
+                        }
+                        Err(crossbeam_channel::TryRecvError::Disconnected) => {
+                            slot.borrow_mut().take();
+                            completed(Execution {
+                                results: Vec::new(),
+                                variables: BTreeMap::new(),
+                                outcome: Outcome::Unusual(
+                                    "Login worker stopped before returning a result.".into(),
+                                ),
+                            });
+                            break;
+                        }
                     }
                 }
             }

@@ -648,7 +648,7 @@ fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() 
             )
         })
         .unwrap();
-    headless::init();
+    let _rendered = headless::init();
     let slots = Slots::default();
     let list = windows::open_scripts(&store, &slots).unwrap();
     list.invoke_row_clicked(0, false, false);
@@ -675,6 +675,21 @@ fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() 
         window.get_error(),
         "Currently testing! Please cancel it first!"
     );
+    until_login(|| window.get_results().row_count() == 1);
+    assert!(window.get_running());
+    assert!(window.get_final_result().is_empty());
+    assert_eq!(
+        site.requests.lock().unwrap().len(),
+        usize::try_from(fixture[0]["stream"][0]["request_count"].as_u64().unwrap()).unwrap()
+    );
+    window.invoke_result_clicked(0);
+    window.invoke_action("review-result".into());
+    let first_review = slots.result.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        first_review.get_data(),
+        fixture[0]["reviews"][0]["data"].as_str().unwrap()
+    );
+    first_review.invoke_action("close".into());
     until_login(|| !window.get_running());
     assert_eq!(
         window.get_final_result(),

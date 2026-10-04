@@ -445,3 +445,45 @@ async fn confirmed_login_reset_reaches_an_existing_http_engine_and_keeps_other_s
             .any(|cookie| cookie.name == "session")
     );
 }
+
+#[tokio::test]
+async fn completed_step_is_delivered_before_later_http_and_survives_wait_cancellation() {
+    let fixture = hydrus_testkit::fixture_json("login_execution.json");
+    let script = script(&fixture[0]);
+    let credentials = serde_json::from_value(fixture[0]["credentials"].clone()).unwrap();
+    let site = site().await;
+    let control = Job::new();
+    let (send, mut receive) = tokio::sync::mpsc::unbounded_channel();
+    let execution = login::execute_with_results(
+        &site.engine,
+        &site.store,
+        &script,
+        &site.domain,
+        &credentials,
+        &control,
+        |result| {
+            send.send(result.clone()).unwrap();
+        },
+    );
+    let observe = async {
+        let result = tokio::time::timeout(Duration::from_secs(1), receive.recv())
+            .await
+            .unwrap()
+            .unwrap();
+        assert_eq!(
+            result.name,
+            fixture[0]["stream"][0]["name"].as_str().unwrap()
+        );
+        assert_eq!(
+            site.requests.lock().unwrap().len(),
+            usize::try_from(fixture[0]["stream"][0]["request_count"].as_u64().unwrap()).unwrap()
+        );
+        control.cancel();
+        result
+    };
+    let (execution, result) = tokio::join!(execution, observe);
+    assert_eq!(execution.outcome, Outcome::Cancelled);
+    assert_eq!(execution.results, [result]);
+    assert_eq!(site.requests.lock().unwrap().len(), 1);
+    assert!(receive.try_recv().is_err());
+}

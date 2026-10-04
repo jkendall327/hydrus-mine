@@ -1398,8 +1398,8 @@ opening the page does not explicitly raise the desktop window.
 
 Login HTTP execution is implemented as a reusable NetEngine consumer with script
 editor test controls and result review. Test runs use fresh cookie sessions while
-copying request preferences and custom headers. Results populate after the run
-finishes; the reference inserts them as each step finishes. Native copy feedback
+copying request preferences and custom headers. Results now stream into the native list as each step finishes, before the next
+wait/request, and can be reviewed while the run is active. Native copy feedback
 stays visible until the review closes. Domain-manager confirmed execution now saves/closes the draft then runs the selected
 eligible queue through the shared persisted cookie store. Its progress/cancel
 controls appear when the manager is reopened; it does not share the reference's

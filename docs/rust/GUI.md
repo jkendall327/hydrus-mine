@@ -2176,7 +2176,11 @@ new variables/cookies and status. `oracle/record_login_execution.py` actually ru
 the reference HTTP jobs on a loopback-only dummy site and records success, missing
 cookies/variables, veto, final mismatch, HTTP 401 and cancellation. Native scoped
 HTTP regressions replay those results, inspect wire requests, reopen session cookies
-and cancel an active request. The native GUI test/run consumer is being connected.
+and cancel an active request. Script tests use an isolated cookie store while real
+domain runs share persisted sessions. Completed step rows stream into the owning
+script window before the next wait/request and can be reviewed while it is running.
+Cancel retains completed results and stops later work; owner closure invalidates
+queued result callbacks. The runtime-domain prompt remains the next test-control gap.
 
 Import-option editors now have the reference favourites/profiles star menu:
 load, custom load, copy, edit/add and confirmed deletion. Favourite editors

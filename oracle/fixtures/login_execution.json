@@ -297,6 +297,18 @@
     "OK!"
    ]
   ],
+  "stream": [
+   {
+    "name": "establish session",
+    "result_count": 1,
+    "request_count": 1
+   },
+   {
+    "name": "send credentials",
+    "result_count": 2,
+    "request_count": 2
+   }
+  ],
   "outcome": "Login OK!",
   "requests": [
    {
@@ -697,6 +709,18 @@
     "Missing cookie \"session\" on step \"send credentials\"!"
    ]
   ],
+  "stream": [
+   {
+    "name": "establish session",
+    "result_count": 1,
+    "request_count": 1
+   },
+   {
+    "name": "send credentials",
+    "result_count": 2,
+    "request_count": 2
+   }
+  ],
   "outcome": "Verification error: Missing cookie \"session\" on step \"send credentials\"!",
   "requests": [
    {
@@ -1094,6 +1118,13 @@
     "veto: blocked response"
    ]
   ],
+  "stream": [
+   {
+    "name": "establish session",
+    "result_count": 1,
+    "request_count": 1
+   }
+  ],
   "outcome": "Verification error: veto: blocked response",
   "requests": [
    {
@@ -1429,6 +1460,18 @@
     "OK!"
    ]
   ],
+  "stream": [
+   {
+    "name": "establish session",
+    "result_count": 1,
+    "request_count": 1
+   },
+   {
+    "name": "send credentials",
+    "result_count": 2,
+    "request_count": 2
+   }
+  ],
   "outcome": "Final cookie check failed: Cookie \"session\" failed: \"ok\" did not exactly match \"wrong\"!",
   "requests": [
    {
@@ -1646,6 +1689,13 @@
     [],
     "401: credentials denied"
    ]
+  ],
+  "stream": [
+   {
+    "name": "denied request",
+    "result_count": 1,
+    "request_count": 1
+   }
   ],
   "outcome": "Network error: 401 - login script or credentials may be invalid",
   "requests": [
@@ -1969,6 +2019,13 @@
     "The temporary variable 'missing' was not found!"
    ]
   ],
+  "stream": [
+   {
+    "name": "establish session",
+    "result_count": 1,
+    "request_count": 0
+   }
+  ],
   "outcome": "Verification error: The temporary variable 'missing' was not found!",
   "requests": [],
   "logged_in": false,
@@ -2270,6 +2327,7 @@
    "password": "dummy + pass&="
   },
   "results": [],
+  "stream": [],
   "outcome": "User cancelled the login process.",
   "requests": [],
   "logged_in": false,

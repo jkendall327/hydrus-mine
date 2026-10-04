@@ -564,7 +564,21 @@ pub fn open_script(
                     }
                 }
             });
-            run.start(
+            let result_ready: crate::login_test_window::ResultReady = Rc::new({
+                let weak = weak.clone();
+                let state = state.clone();
+                let active = active.clone();
+                move |result| {
+                    if !active.get() {
+                        return;
+                    }
+                    state.borrow_mut().results.push(result);
+                    if let Some(window) = weak.upgrade() {
+                        show_results(&window, &state.borrow());
+                    }
+                }
+            });
+            run.start_with_results(
                 crate::login_test_window::Input {
                     source: store.clone(),
                     script,
@@ -573,6 +587,7 @@ pub fn open_script(
                     test: true,
                 },
                 progress,
+                result_ready,
                 completed,
             );
         }
@@ -608,7 +623,7 @@ pub fn open_script(
                 run.cancel();
                 return;
             }
-            if run.busy() {
+            if run.busy() && action != "review-result" {
                 if action == "apply" {
                     window.set_error("Currently testing! Please cancel it first!".into());
                 } else if action == "run-test" {
