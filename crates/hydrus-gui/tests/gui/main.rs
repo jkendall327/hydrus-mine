@@ -22,6 +22,7 @@ mod favourites;
 mod file_log;
 mod filename_rules;
 mod filename_simple;
+mod folder_manager_lifecycle;
 mod folders;
 mod force_filetype;
 mod formula_editors;

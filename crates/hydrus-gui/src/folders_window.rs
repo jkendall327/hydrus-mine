@@ -304,9 +304,25 @@ fn picked_folder() -> Option<String> {
 }
 
 pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(), String> {
-    if let Some(window) = slots.import_list.borrow().as_ref() {
-        return window.show().map_err(|e| e.to_string());
-    }
+    let owned_store = store.clone();
+    let owned_slots = slots.clone();
+    crate::folders_lifecycle::open(
+        store,
+        &slots.import_list,
+        hydrus_store::folder_activity::Kind::Import,
+        Rc::new(move |window, lease| {
+            open_import_folders_ready(&owned_store, &owned_slots, window, lease)
+        }),
+    )
+}
+
+fn open_import_folders_ready(
+    store: &Arc<Store>,
+    slots: &Slots,
+    window: FoldersWindow,
+    lease: hydrus_store::folder_activity::Edit,
+) -> Result<(), String> {
+    let lease = Rc::new(RefCell::new(Some(lease)));
     let folders = store
         .read(import_folders::import_folders)
         .map_err(|e| e.to_string())?
@@ -331,7 +347,6 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         deleted: Vec::new(),
         asking: None,
     }));
-    let window = FoldersWindow::new().map_err(|e| e.to_string())?;
     window.set_window_title("edit import folders".into());
     window.set_intro(IMPORT_INTRO.into());
     window.set_warning(IMPORT_WARNING.into());
@@ -371,6 +386,7 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
             if let Some(edit) = edit {
                 edit.invoke_cancel();
             }
+            lease.borrow_mut().take();
         }
     };
     // the edit dialog, on the one selected or a new one
@@ -474,7 +490,10 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         }
     });
     show_import_list(&window, &state.borrow());
-    window.show().map_err(|e| e.to_string())?;
+    if let Err(error) = window.show() {
+        window.invoke_cancel();
+        return Err(error.to_string());
+    }
     *slots.import_list.borrow_mut() = Some(window);
     Ok(())
 }
@@ -1193,6 +1212,7 @@ fn open_import_folder(
 
 /// The export folders list's state while it is open.
 struct ExportList {
+    closed: bool,
     list: Named<ExportFolder>,
     asking: Option<Asking>,
 }
@@ -1237,16 +1257,32 @@ fn show_export_list(window: &FoldersWindow, open: &ExportList, text: &TextContex
 
 /// Open the manage export folders dialog on the store's export folders.
 pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(), String> {
-    if let Some(window) = slots.export_list.borrow().as_ref() {
-        return window.show().map_err(|e| e.to_string());
-    }
+    let owned_store = store.clone();
+    let owned_slots = slots.clone();
+    crate::folders_lifecycle::open(
+        store,
+        &slots.export_list,
+        hydrus_store::folder_activity::Kind::Export,
+        Rc::new(move |window, lease| {
+            open_export_folders_ready(&owned_store, &owned_slots, window, lease)
+        }),
+    )
+}
+
+fn open_export_folders_ready(
+    store: &Arc<Store>,
+    slots: &Slots,
+    window: FoldersWindow,
+    lease: hydrus_store::folder_activity::Edit,
+) -> Result<(), String> {
+    let lease = Rc::new(RefCell::new(Some(lease)));
     let ExportFolders(folders) = store.read(settings::get).map_err(|e| e.to_string())?;
     let text = Rc::new(text_context(store));
     let state = Rc::new(RefCell::new(ExportList {
+        closed: false,
         list: Named::new(folders),
         asking: None,
     }));
-    let window = FoldersWindow::new().map_err(|e| e.to_string())?;
     window.set_window_title("edit export folders".into());
     window.set_intro(EXPORT_INTRO.into());
     window.set_columns(columns(&EXPORT_COLUMNS));
@@ -1255,6 +1291,9 @@ pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         let state = state.clone();
         let text = text.clone();
         Rc::new(move |f: &dyn Fn(&mut ExportList)| {
+            if state.borrow().closed {
+                return;
+            }
             f(&mut state.borrow_mut());
             if let Some(window) = weak.upgrade() {
                 show_export_list(&window, &state.borrow(), &text);
@@ -1264,7 +1303,12 @@ pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
     let close = {
         let weak = window.as_weak();
         let slots = slots.clone();
+        let state = state.clone();
         move || {
+            if state.borrow().closed {
+                return;
+            }
+            state.borrow_mut().closed = true;
             slots.sidecars.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
@@ -1278,6 +1322,7 @@ pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
             if let Some(edit) = edit {
                 edit.invoke_cancel();
             }
+            lease.borrow_mut().take();
         }
     };
     let edit: Rc<dyn Fn(Option<u64>)> = {
@@ -1287,7 +1332,7 @@ pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         let store = store.clone();
         let text = text.clone();
         Rc::new(move |key: Option<u64>| {
-            if slots.export_edit.borrow().is_some() {
+            if state.borrow().closed || slots.export_edit.borrow().is_some() {
                 return;
             }
             let folder = if let Some(k) = key {
@@ -1353,7 +1398,11 @@ pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         let state = state.clone();
         let store = store.clone();
         let close = close.clone();
+        let slots = slots.clone();
         move || {
+            if state.borrow().closed || slots.export_edit.borrow().is_some() {
+                return;
+            }
             let list = std::mem::replace(&mut state.borrow_mut().list, Named::new(Vec::new()));
             let folders = ExportFolders(list.into_items());
             if let Err(e) = store.write(move |ctx| settings::set(ctx.conn(), &folders)) {
@@ -1374,7 +1423,10 @@ pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         }
     });
     show_export_list(&window, &state.borrow(), &text);
-    window.show().map_err(|e| e.to_string())?;
+    if let Err(error) = window.show() {
+        window.invoke_cancel();
+        return Err(error.to_string());
+    }
     *slots.export_list.borrow_mut() = Some(window);
     Ok(())
 }

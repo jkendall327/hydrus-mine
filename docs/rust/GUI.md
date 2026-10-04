@@ -210,6 +210,17 @@ writes it, with new queries, deleted queries and the file logs' resets
 and retries. Its workings are as `oracle/record_edit_subscription.py`
 recorded the reference's.
 
+Folder managers temporarily pause their workers before reading a draft. If a
+worker is still finishing, the existing manager window shows “Waiting for import
+folders to finish.” or “Waiting for export folders to finish.”; Cancel or closing
+the window abandons that wait. The draft opens after the worker commits, and its
+lease lasts through Apply/Cancel and all owned children. Workers stop at the next
+seed/query/copy boundary, and daemon schedules wake when management closes.
+User pause preferences stay intact, including changes from another live client.
+The lifecycle is recorded by `oracle/record_folder_manager_lifecycle.py` and
+replayed in `tests/gui/folder_manager_lifecycle.rs`; worker exclusion also runs
+through the real import/export-folder regressions.
+
 A downloader page's "imports" box (a URL downloader's, a local import's,
 and the highlighted search's or watcher's) has a "file log" button, which
 opens the file log window (`src/file_log_window.rs`,

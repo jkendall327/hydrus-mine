@@ -598,15 +598,22 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   the import-folder cached-path child now edits a complete private queue in
   memory and accepts it into the manager draft. Cancelling that child or the
   manager does not mutate the live cache; accepted edits survive cancelling
-  only an existing folder's fields editor. The manager still lacks the Qt
-  application-wide pause/wait lease while editing folders, so an independently
-  running folder worker can make progress during a native manager's draft.
+  only an existing folder's fields editor. Folder managers now acquire a
+  crash-safe transient pause request before waiting for active workers to
+  finish, then read the draft while holding an exclusive activity lease.
+  Both requests and activity leases work across processes sharing the store.
   `oracle/record_folder_manager_lifecycle.py` records the real Qt manager's
   temporary pause, wait message and completion, and restoration of an already
   paused or unpaused state after Apply, Cancel and exceptions. Export management
   also notifies its scheduler in `finally`; import management notifies only on
-  Apply. These 24 recorded cases describe a remaining native boundary, rather
-  than completed manager/worker coordination.
+  Apply. Native coordination uses owned file locks rather than Qt global
+  running flags and temporary Boolean overwrites. It preserves live user pause
+  changes, offers Cancel while waiting in the manager window, and releases
+  requests on failed acquisition or save. Scheduler wakeups poll the inert
+  request-file timestamp at one-second intervals instead of Qt publications.
+  A crash releases the OS leases automatically; leftover unlocked files do
+  not pause workers. Cancellation interrupts work between files, not inside
+  an individual copy/import or database query, as in the recorded reference.
   Shared file-log menu parity (including all bulk-action questions and ignored
   retry regex filtering) remains independently incomplete.
   its simple tag lists use an owned shared autocomplete editor plus direct

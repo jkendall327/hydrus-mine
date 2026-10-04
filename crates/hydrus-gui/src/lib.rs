@@ -45,6 +45,7 @@ mod file_log_window;
 mod filename_regex_menu;
 mod filename_tagging_window;
 mod filter_window;
+mod folders_lifecycle;
 mod folders_window;
 mod force_filetype_window;
 pub mod formula_window;

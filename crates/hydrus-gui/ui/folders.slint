@@ -93,6 +93,7 @@ component PathRow inherits HorizontalLayout {
 
 // the question panel and the dialog's apply/cancel, shared by the windows
 component Footer inherits VerticalLayout {
+    in property <bool> waiting;
     in property <bool> asking;
     in property <string> asking-title;
     in property <string> asking-message;
@@ -114,7 +115,7 @@ component Footer inherits VerticalLayout {
         spacing: 6px;
         Button {
             text: "apply";
-            enabled: !root.asking;
+            enabled: !root.asking && !root.waiting;
             clicked => { root.apply(); }
         }
         Button {
@@ -126,6 +127,8 @@ component Footer inherits VerticalLayout {
 
 // the manage import folders and manage export folders lists
 export component FoldersWindow inherits Window {
+    in property <bool> waiting;
+    in property <string> wait-message;
     in property <string> window-title;
     title: root.window-title;
     preferred-width: 860px;
@@ -168,12 +171,13 @@ export component FoldersWindow inherits Window {
         VerticalLayout {
             padding: 8px;
             spacing: 6px;
-            Label { text: root.intro; }
+            Label { text: root.waiting ? root.wait-message : root.intro; }
             if root.warning != "": Label {
                 text: root.warning;
                 color: Theme.error;
             }
             ListTable {
+                visible: !root.waiting;
                 min-height: 8 * 22px;
                 vertical-stretch: 1;
                 columns: root.columns;
@@ -187,21 +191,22 @@ export component FoldersWindow inherits Window {
                 alignment: end;
                 Button {
                     text: "add";
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.waiting;
                     clicked => { root.add(); }
                 }
                 Button {
                     text: "edit";
-                    enabled: root.one-selected && !root.asking;
+                    enabled: root.one-selected && !root.asking && !root.waiting;
                     clicked => { root.edit(); }
                 }
                 Button {
                     text: "delete";
-                    enabled: root.any-selected && !root.asking;
+                    enabled: root.any-selected && !root.asking && !root.waiting;
                     clicked => { root.delete(); }
                 }
             }
             Footer {
+                waiting: root.waiting;
                 asking: root.asking;
                 asking-title: root.asking-title;
                 asking-message: root.asking-message;
