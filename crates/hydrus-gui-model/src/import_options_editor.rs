@@ -160,6 +160,52 @@ pub fn listed_kinds(caller: CallerType, simple: bool, slice: &ImportOptionsSlice
         .collect()
 }
 
+/// The defaults page hides unusual option kinds, while retaining every custom
+/// kind already present. Importer buttons keep their existing broader lists.
+pub fn default_kinds(caller: CallerType, simple: bool, own: &ImportOptionsSlice) -> Vec<Kind> {
+    use Kind as K;
+    let mut kinds = if !simple {
+        K::ALL.to_vec()
+    } else {
+        match caller {
+            CallerType::LocalImport => vec![
+                K::FileFiltering,
+                K::Locations,
+                K::ExternalPrograms,
+                K::Presentation,
+            ],
+            CallerType::LocalImportFolder => {
+                vec![K::Locations, K::ExternalPrograms, K::Presentation]
+            }
+            CallerType::Subscription => vec![K::Locations, K::Presentation],
+            CallerType::PostUrls | CallerType::WatcherUrls => vec![
+                K::FileFiltering,
+                K::TagFiltering,
+                K::Locations,
+                K::Tags,
+                K::Notes,
+                K::Presentation,
+            ],
+            CallerType::UrlClass => vec![
+                K::Prefetch,
+                K::FileFiltering,
+                K::TagFiltering,
+                K::Locations,
+                K::Tags,
+                K::Notes,
+            ],
+            CallerType::ClientApi => vec![K::FileFiltering, K::Locations],
+            _ => K::ALL.to_vec(),
+        }
+    };
+    for kind in K::ALL {
+        if kind.is_set(own) && !kinds.contains(&kind) {
+            kinds.push(kind);
+        }
+    }
+    kinds
+}
+
 /// Whose default a kind falls back to, for an importer whose defaults are
 /// `caller`'s ("global", "subscription", ...): the most specific defaults
 /// that set it.
@@ -445,6 +491,43 @@ impl Editor {
             shown: 0,
             sources,
         }
+    }
+
+    /// Edit a defaults row using only its less-specific parent as fallback.
+    /// URL classes use their post/watch context to choose that parent; their
+    /// own override is never fed back into the displayed default values.
+    pub fn new_for_defaults(
+        manager: &ImportOptionsManager,
+        caller: CallerType,
+        simple: bool,
+        own: &ImportOptionsSlice,
+        url_classes: &[(String, hydrus_core::import_options::UrlClassKind)],
+    ) -> Self {
+        let stack = hydrus_core::import_options::preference_stack(caller, url_classes);
+        let parent = if matches!(caller, CallerType::Global | CallerType::Favourites) {
+            CallerType::Global
+        } else {
+            stack
+                .iter()
+                .position(|layer| *layer == caller)
+                .and_then(|index| stack.get(index + 1))
+                .copied()
+                .unwrap_or(CallerType::Global)
+        };
+        let mut editor = Self::new(manager, parent, false, own);
+        editor.caller = caller;
+        editor.kinds = default_kinds(caller, simple, own);
+        if own.external_programs.is_none() {
+            editor.values.external_programs =
+                hydrus_core::import_options::preference_stack(parent, &[])
+                    .into_iter()
+                    .filter_map(|layer| manager.caller_default(layer))
+                    .find_map(|slice| slice.external_programs.clone())
+                    .or_else(|| {
+                        Some(hydrus_core::import_options::ExternalProgramsOptions::default())
+                    });
+        }
+        editor
     }
 
     pub fn is_custom(&self, kind: Kind) -> bool {
