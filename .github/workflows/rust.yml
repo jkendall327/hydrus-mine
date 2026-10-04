@@ -44,7 +44,7 @@ jobs:
       - name: clippy
         run: |
           set -o pipefail
-          cargo clippy --workspace --all-targets --locked 2>&1 | tee /tmp/hydrus-clippy.log
+          cargo clippy --workspace --all-targets --locked --keep-going 2>&1 | tee /tmp/hydrus-clippy.log
       - name: save immediate Clippy diagnostics
         if: ${{ !cancelled() }}
         continue-on-error: true
@@ -61,7 +61,7 @@ jobs:
         # Slint's GUI library and test target together exceeded 16 GiB locally.
         env:
           CARGO_BUILD_JOBS: 1
-        run: cargo test --workspace --locked --no-fail-fast
+        run: cargo test --workspace --locked --keep-going --no-fail-fast
       - name: parity ratchet
         run: cargo xtask ratchet --check
       - name: save native GUI renders
@@ -93,7 +93,7 @@ jobs:
       - name: reference and backend tests
         env:
           CARGO_BUILD_JOBS: 2
-        run: cargo test -p hydrus-core -p hydrus-download -p hydrus-downloader-exchange -p hydrus-gui-model -p hydrus-net -p hydrus-search -p hydrus-store --locked --no-fail-fast
+        run: cargo test -p hydrus-core -p hydrus-download -p hydrus-downloader-exchange -p hydrus-gui-model -p hydrus-net -p hydrus-search -p hydrus-store --locked --keep-going --no-fail-fast
 
   # hydrus-rs should build and pass its tests on Windows and macOS too; the
   # Linux job above is the full check (lints and the parity ratchet).
@@ -122,8 +122,8 @@ jobs:
       - name: build
         env:
           CARGO_BUILD_JOBS: 1
-        run: cargo build --workspace --all-targets --locked
+        run: cargo build --workspace --all-targets --locked --keep-going
       - name: test
         env:
           CARGO_BUILD_JOBS: 1
-        run: cargo test --workspace --locked --no-fail-fast
+        run: cargo test --workspace --locked --keep-going --no-fail-fast
