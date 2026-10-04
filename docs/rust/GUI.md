@@ -2853,7 +2853,11 @@ optional size/coordinates, default gravity/position and maximised/fullscreen.
 Batch flip/reset and sorting retain selection. Child Apply changes the Options
 draft; Options Cancel discards it and closes/inactivates the child. Main-window
 and media-viewer remembered geometry/state use their existing placement consumers;
-the Options window also applies and saves its `manage_options_dialog` frame.
+the Options window also places itself from its `manage_options_dialog` frame.
+Its explicit frame-table edits persist on Apply; Cancel/X preserve the previous
+geometry. An accepted reset of its own size/position remains unset, matching the
+actual reference dialog's save-before-frame-table-commit order. Live main/viewer
+geometry saves merge inside a writer transaction, preserving other frame keys.
 
 Local service review bulk maintenance uses the exact questions and “do it” /
 “forget it” decisions from `oracle/fixtures/service_bulk.json`. Trash controls

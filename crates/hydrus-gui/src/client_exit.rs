@@ -19,11 +19,7 @@ pub(crate) fn bind(window: &MainWindow, store: Arc<Store>, timer: &Rc<slint::Tim
         let store = store.clone();
         move || {
             let Some(window) = weak.upgrade() else { return };
-            let mut frames = crate::windows::settings(&store);
-            frames.main_gui = frames
-                .main_gui
-                .saved(crate::windows::state(window.window()));
-            crate::windows::keep(&store, frames);
+            crate::windows::save_named(window.window(), &store, "main_gui");
             let _ = window.hide();
         }
     });

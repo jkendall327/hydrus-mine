@@ -182,3 +182,75 @@ fn settings_keep_unknown_rows_and_merge_unedited_runtime_geometry() {
     );
     assert_eq!(reopened.edited_frame_locations(), saved.frames());
 }
+
+#[test]
+fn named_geometry_transactions_preserve_peer_frames_and_latest_viewer_save_preference() {
+    use hydrus_core::windows::WindowState;
+    use hydrus_gui_model::frame_locations::save_window_state;
+    let directory = tempfile::tempdir().unwrap();
+    let store = hydrus_store::Store::open(directory.path()).unwrap();
+    let peer = hydrus_store::Store::open(directory.path()).unwrap();
+    let mut initial = WindowSettings::default();
+    initial.set_frame("manage_options_dialog", FrameLocation::main_gui());
+    let seeded = initial.clone();
+    store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &seeded))
+        .unwrap();
+    let mut concurrent = initial;
+    concurrent.media_viewer.last_size = Some((811, 577));
+    concurrent.set_frame("unknown_peer_frame", FrameLocation::media_viewer());
+    let expected = concurrent.clone();
+    peer.write(move |ctx| hydrus_store::settings::set(ctx.conn(), &concurrent))
+        .unwrap();
+    let state = WindowState {
+        size: (922, 688),
+        position: (-34, 56),
+        maximised: false,
+        fullscreen: false,
+    };
+    store
+        .write(move |ctx| save_window_state(ctx.conn(), "main_gui", state))
+        .unwrap();
+    let kept: WindowSettings = store.read(hydrus_store::settings::get).unwrap();
+    assert_eq!(kept.media_viewer, expected.media_viewer);
+    assert_eq!(kept.other_frames, expected.other_frames);
+    assert_eq!(kept.main_gui.last_size, Some(state.size));
+    assert_eq!(kept.main_gui.last_position, Some(state.position));
+    store
+        .write(move |ctx| save_window_state(ctx.conn(), "media_viewer", state))
+        .unwrap();
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<WindowSettings>)
+            .unwrap(),
+        kept,
+        "latest disabled viewer preference prevents the close write"
+    );
+    peer.write(|ctx| {
+        let mut settings: WindowSettings = hydrus_store::settings::get(ctx.conn())?;
+        settings.save_media_viewer_on_close = true;
+        hydrus_store::settings::set(ctx.conn(), &settings)
+    })
+    .unwrap();
+    store
+        .write(move |ctx| save_window_state(ctx.conn(), "media_viewer", state))
+        .unwrap();
+    let saved: WindowSettings = store.read(hydrus_store::settings::get).unwrap();
+    assert!(saved.save_media_viewer_on_close);
+    assert_eq!(saved.main_gui, kept.main_gui);
+    assert_eq!(saved.other_frames, kept.other_frames);
+    assert_eq!(saved.media_viewer.last_size, Some(state.size));
+    assert_eq!(saved.media_viewer.last_position, Some(state.position));
+
+    // Records written before the frame table existed acquire its defaults while
+    // retaining their original dedicated main/viewer settings.
+    let old: WindowSettings = serde_json::from_value(json!({
+        "main_gui": saved.main_gui,
+        "media_viewer": saved.media_viewer,
+        "save_media_viewer_on_close": true
+    }))
+    .unwrap();
+    assert_eq!(old.other_frames, WindowSettings::default().other_frames);
+    assert_eq!(old.main_gui, saved.main_gui);
+    assert_eq!(old.media_viewer, saved.media_viewer);
+}

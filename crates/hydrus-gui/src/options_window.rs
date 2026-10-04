@@ -418,7 +418,6 @@ pub(crate) fn open(
         let active = active.clone();
         let cancel_reasons = reason_queue.cancel.clone();
         let cancel_frames = frame_table.cancel.clone();
-        let store = store.clone();
         move || {
             if !active.replace(false) {
                 return;
@@ -439,7 +438,6 @@ pub(crate) fn open(
             crate::regex_favourites_window::cancel(&regex_slot);
             crate::gallery_source_window::cancel(&gallery_slot);
             if let Some(window) = weak.upgrade() {
-                crate::windows::save_named(window.window(), &store, "manage_options_dialog");
                 let _ = window.hide();
             }
             slot.borrow_mut().take();

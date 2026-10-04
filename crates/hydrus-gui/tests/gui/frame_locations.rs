@@ -142,6 +142,10 @@ fn frame_options_table_child_staging_and_saved_viewer_geometry_match_reference()
     window.invoke_frame_clicked(index(&window, "media_viewer"), false, false);
     window.invoke_frame_action("edit".into());
     let geometry = child(&bound);
+    stale.invoke_apply();
+    stale.invoke_cancel();
+    assert!(geometry.window().is_visible());
+    assert!(bound.options_frame_child.borrow().is_some());
     edit_recorded(&geometry);
     geometry.set_size_none(true);
     geometry.set_size_none(false);
@@ -225,4 +229,78 @@ fn frame_options_table_child_staging_and_saved_viewer_geometry_match_reference()
     );
     assert_eq!((geometry.get_last_x(), geometry.get_last_y()), (20, 20));
     window.invoke_cancel();
+
+    let lifecycle = hydrus_testkit::fixture_json("options_geometry_lifecycle.json");
+    for case in lifecycle["cases"].as_array().unwrap() {
+        let before = case["before"].clone();
+        let frame = hydrus_core::windows::FrameLocation {
+            remember_size: before[0].as_bool().unwrap(),
+            remember_position: before[1].as_bool().unwrap(),
+            last_size: serde_json::from_value(before[2].clone()).unwrap(),
+            last_position: serde_json::from_value(before[3].clone()).unwrap(),
+            default_gravity: serde_json::from_value(before[4].clone()).unwrap(),
+            default_position: before[5].as_str().unwrap().into(),
+            maximised: before[6].as_bool().unwrap(),
+            fullscreen: before[7].as_bool().unwrap(),
+        };
+        store
+            .write(move |ctx| {
+                let mut settings: WindowSettings = hydrus_store::settings::get(ctx.conn())?;
+                settings.set_frame("manage_options_dialog", frame);
+                hydrus_store::settings::set(ctx.conn(), &settings)
+            })
+            .unwrap();
+        let window = options(&ui, &bound);
+        window
+            .window()
+            .set_size(slint::LogicalSize::new(748.0, 748.0));
+        assert_ne!(
+            window
+                .window()
+                .size()
+                .to_logical(window.window().scale_factor()),
+            slint::LogicalSize::new(800.0, 600.0),
+            "the real native owner was resized before closing"
+        );
+        if case["action"] == "apply_reset_self" {
+            window.invoke_frame_clicked(index(&window, "manage_options_dialog"), false, false);
+            window.invoke_frame_action("reset-size".into());
+            window.invoke_frame_action("reset-position".into());
+        }
+        match case["action"].as_str().unwrap() {
+            "cancel" => window.invoke_cancel(),
+            "window_close" => window
+                .window()
+                .dispatch_event(slint::platform::WindowEvent::CloseRequested),
+            "apply_unchanged" | "apply_reset_self" => window.invoke_apply(),
+            other => panic!("unrecorded Options action {other}"),
+        }
+        assert!(bound.options.borrow().is_none());
+        assert!(!window.window().is_visible());
+        let saved = kept();
+        let frame = saved.frame("manage_options_dialog").unwrap();
+        assert_eq!(
+            serde_json::json!([
+                frame.remember_size,
+                frame.remember_position,
+                frame.last_size,
+                frame.last_position,
+                frame.default_gravity,
+                frame.default_position,
+                frame.maximised,
+                frame.fullscreen
+            ]),
+            case["after"]
+        );
+        window.invoke_apply();
+        window.invoke_cancel();
+        assert_eq!(kept(), saved);
+        let reopened = hydrus_store::Store::open(native.path()).unwrap();
+        assert_eq!(
+            reopened
+                .read(hydrus_store::settings::get::<WindowSettings>)
+                .unwrap(),
+            saved
+        );
+    }
 }

@@ -1,7 +1,7 @@
 //! GUI options' editable frame table. Stable row identities preserve selection
 //! across sorting, replacement and batch flips/resets; every change is detached.
 use crate::list_selection::ListSelection;
-use hydrus_core::windows::FrameLocation;
+use hydrus_core::windows::{FrameLocation, WindowSettings, WindowState};
 use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -148,4 +148,26 @@ pub fn normalised(mut frame: FrameLocation) -> FrameLocation {
         )
     });
     frame
+}
+
+/// Merge one live owner's geometry with the latest settings inside its writer
+/// transaction. A viewer closes without saving when its preference is disabled.
+pub fn save_window_state(
+    conn: &rusqlite::Connection,
+    name: &str,
+    state: WindowState,
+) -> hydrus_store::Result<()> {
+    let mut settings: WindowSettings = hydrus_store::settings::get(conn)?;
+    if name == "media_viewer" && !settings.save_media_viewer_on_close {
+        return Ok(());
+    }
+    let Some(frame) = settings.frame(name) else {
+        return Ok(());
+    };
+    let saved = frame.saved(state);
+    if saved != *frame {
+        settings.set_frame(name, saved);
+        hydrus_store::settings::set(conn, &settings)?;
+    }
+    Ok(())
 }

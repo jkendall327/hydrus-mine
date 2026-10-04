@@ -51,13 +51,12 @@ pub fn place_named(window: &slint::Window, store: &Store, name: &str) {
 
 /// Save only the closing owner's current geometry, preserving other frames.
 pub fn save_named(window: &slint::Window, store: &Store, name: &str) {
-    let mut frames = settings(store);
-    if let Some(frame) = frames.frame(name) {
-        let saved = frame.saved(state(window));
-        if saved != *frame {
-            frames.set_frame(name, saved);
-            keep(store, frames);
-        }
+    let state = state(window);
+    let name = name.to_owned();
+    if let Err(error) = store.write(move |ctx| {
+        hydrus_gui_model::frame_locations::save_window_state(ctx.conn(), &name, state)
+    }) {
+        eprintln!("could not keep the window's size and place: {error}");
     }
 }
 

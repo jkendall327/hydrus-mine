@@ -5731,12 +5731,7 @@ fn open_viewer(
             animator.stop();
             if let Some(window) = weak.upgrade() {
                 // its size and place, if hydrus's option says to keep them
-                let mut frames = windows::settings(&store);
-                if frames.save_media_viewer_on_close {
-                    frames.media_viewer =
-                        frames.media_viewer.saved(windows::state(window.window()));
-                    windows::keep(&store, frames);
-                }
+                windows::save_named(window.window(), &store, "media_viewer");
                 let _ = window.hide();
             }
             slot.borrow_mut().take();

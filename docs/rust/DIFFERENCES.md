@@ -1909,6 +1909,11 @@ maximised/fullscreen for the main window, media viewer and Options window. Other
 named dialog owners have not yet been wired to their frame keys. Default gravity,
 parent/cursor positioning, screen fitting and offscreen-rescue preferences still
 lack native consumers; their parent/table/editor coverage remains Partial.
+The real Options lifecycle does not retain incidental resize/move geometry on
+Cancel/X or unchanged Apply: the accepted-dialog geometry save occurs before
+the GUI page commits its captured frame table. Native retains the same final
+Options-frame values, including explicit own-frame resets, as recorded in
+`options_geometry_lifecycle.json`.
 
 Service review trash deletion delegates physical unlinking to the existing
 deferred-delete worker and preserves its delete-lock behaviour. The recorded
