@@ -2916,3 +2916,9 @@ fraction label through the same whole-widget control as their star graphics.
 Dragging outside keeps the last valid sample; an outside press clears it. Hover
 motion after release does not change a rating, and each context remains independent.
 The pointer-route Qt recording is `rating_preview_pointer.json`.
+
+
+Numerical rating examples also continue a held Left drag across a Right
+press/release while the pointer remains in the sample; a right-only drag does not
+set a rating. The actual Qt chord sequence extends `rating_preview_pointer.json`.
+The cross-edge chord capture boundary is documented separately in DIFFERENCES.

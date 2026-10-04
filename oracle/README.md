@@ -165,3 +165,10 @@ presses, held left-button motion, outside movement/presses, release, ordinary
 motion and clicks on painted fraction text, for all three opening fraction sides.
 It records whole-widget positions/dimensions, fractions and the unchanged second
 sample, preserves original fixture services, and saves a populated drag-state PNG.
+
+
+The rating pointer recorder additionally dispatches mixed Left+Right presses,
+Right release with Left still held, continuing/outside/re-entered Left motion,
+Left release, and right-only dragging. It captures the reference's Left-priority
+press routing. Native delivered in-widget chord movement is covered; Slint's
+loss of capture after Right release remains a documented cross-edge limitation.

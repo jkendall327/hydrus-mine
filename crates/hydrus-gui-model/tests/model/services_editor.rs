@@ -681,6 +681,25 @@ fn rating_example_whole_widget_pointer_routes_replay_qt() {
             assert_eq!(json!(example.fraction(0, &kind)), event["fraction"]);
             assert_eq!(example.samples()[1], Sample::Numerical(None));
         }
+        for event in case["chord_events"].as_array().unwrap() {
+            let action = event["action"].as_str().unwrap();
+            if action == "press" || (action == "move" && event["left_held"] == true) {
+                let right = event["button"] == 2 && event["left_held"] == false;
+                example.pointer(
+                    0,
+                    right,
+                    event["x"].as_f64().unwrap(),
+                    event["width"].as_f64().unwrap(),
+                    event["icon"].as_f64().unwrap(),
+                    action == "move",
+                );
+            }
+            let Sample::Numerical(value) = example.samples()[0] else {
+                unreachable!()
+            };
+            assert_eq!(json!(value.unwrap_or(0.0)), event["rating"], "{event}");
+            assert_eq!(json!(example.fraction(0, &kind)), event["fraction"]);
+        }
         assert_eq!(case["example_value"], json!({}));
     }
 }

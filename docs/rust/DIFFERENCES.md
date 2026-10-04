@@ -1955,3 +1955,13 @@ is retained, matching Qt; dragging outside preserves the last valid value, while
 an outside press clears it. These pointer routes have a separate actual Qt replay.
 This implements the local example-panel leaf; broader service management and
 rating sizing/preferences remain partial.
+
+
+Numerical rating examples retain a held Left button through an additional Right
+press/release, with Qt's Left-priority press conversion. Delivered in-widget
+movement continues after Right release; right-only dragging and released hover
+remain inert. Slint 1.18 drops its private mouse grab on every button release,
+so leaving the sample after the extra Right release cancels its capture: native
+cannot resume that chord drag upon re-entry while Left remains held. Ordinary
+single-button captured drags retain the previously recorded outside behavior.
+This framework boundary remains explicit; full chord capture parity is not claimed.
