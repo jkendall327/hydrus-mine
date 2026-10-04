@@ -4,7 +4,7 @@ export { NamespaceSortsWindow } from "namespace_sorts.slint";
 
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, ScrollView, VerticalBox } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
-import { ReadSuggestions } from "read_suggestions.slint";
+import { ReadAutocomplete } from "read_autocomplete.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 import { DownloadLine, DownloadControl, JobCogMenu, ImporterBoxes, LocalImportBox } from "importing.slint";
 import { SimpleParsingBox } from "simple_downloader.slint";
@@ -559,6 +559,8 @@ export component MainWindow inherits Window {
     in property <[ListText]> suggestions;
     in property <int> active-predicate-rows: 6;
     in property <int> autocomplete-rows: 22;
+    in property <int> autocomplete-tab;
+    callback autocomplete-tab-chosen(int);
     in property <bool> float-autocomplete: true;
     in-out property <bool> search-focused;
     // Direct bindings include the first layout; floating popup construction
@@ -570,7 +572,7 @@ export component MainWindow inherits Window {
     out property <length> autocomplete-anchor-width: search-sidebar.visible ? search-anchor.width : 0px;
     out property <length> active-predicate-preferred-height: max(1, min(128, root.active-predicate-rows)) * 22px + 6px;
     out property <length> autocomplete-preferred-height: max(1, min(128, root.autocomplete-rows)) * 22px + 4px;
-    out property <bool> autocomplete-overlay-visible: root.float-autocomplete && root.search-focused && root.autocomplete-anchor-width > 0px && !root.search-locked && root.note == "" && root.question == "" && root.suggestions.length > 0 && root.menu-panes.length == 0 && root.chooser-labels.length == 0;
+    out property <bool> autocomplete-overlay-visible: root.float-autocomplete && (root.search-focused || suggestions-overlay.has-focus) && root.autocomplete-anchor-width > 0px && !root.search-locked && root.note == "" && root.question == "" && root.menu-panes.length == 0 && root.chooser-labels.length == 0;
     in property <int> highlighted: -1;
     in property <[ThumbnailRow]> thumbnail-rows;
     // a thumbnail's cell: the thumbnail bounding box and its border; and
@@ -1445,9 +1447,11 @@ export component MainWindow inherits Window {
                             clicked => { root.domain-menu-requested(1, self.absolute-position.x, self.absolute-position.y + self.height); }
                         }
                     }
-                    if root.suggestions.length > 0 && !root.search-locked && !root.float-autocomplete: ReadSuggestions {
-                        preferred-height: root.autocomplete-preferred-height;
-                        max-height: root.autocomplete-preferred-height;
+                    if !root.search-locked && !root.float-autocomplete && root.note == "": ReadAutocomplete {
+                        preferred-height: root.autocomplete-preferred-height + 36px;
+                        max-height: root.autocomplete-preferred-height + 36px;
+                        tab-index: root.autocomplete-tab;
+                        tab-chosen(i) => { root.autocomplete-tab-chosen(i); root.search-focus-requests += 1; }
                         suggestions: root.suggestions;
                         highlighted: root.highlighted;
                         chosen(index) => { root.suggestion-chosen(index); }
@@ -1968,11 +1972,14 @@ export component MainWindow inherits Window {
                 }
             }
         }
-        if root.autocomplete-overlay-visible: ReadSuggestions {
+        suggestions-overlay := ReadAutocomplete {
+            visible: root.autocomplete-overlay-visible;
             x: root.autocomplete-anchor-x;
             y: root.autocomplete-anchor-y;
             width: root.autocomplete-anchor-width;
-            height: max(26px, min(root.autocomplete-preferred-height, root.height - self.y - 4px));
+            height: max(62px, min(root.autocomplete-preferred-height + 36px, root.height - self.y - 4px));
+            tab-index: root.autocomplete-tab;
+            tab-chosen(i) => { root.autocomplete-tab-chosen(i); root.search-focus-requests += 1; }
             suggestions: root.suggestions;
             highlighted: root.highlighted;
             chosen(index) => { root.suggestion-chosen(index); }

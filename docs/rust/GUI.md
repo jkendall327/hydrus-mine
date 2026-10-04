@@ -2707,3 +2707,13 @@ view-count and viewtime searches/sorts and actual thumbnail context-menu lines;
 combined style sums multiple viewed canvases in a submenu, while stacked style
 keeps separate labels. Empty selection removes viewing labels. Changes wait for
 Apply, and Cancel/reopen preserve saved values.
+
+Search-page autocomplete now shares results, favourites and children tabs in
+both its embedded and floating layouts. Favourites show the full saved list;
+children show count-ranked descendants of top-level search tags, exclude tags
+already in that context, retain zero-count descendants, and honor the shared
+finite or unlimited cap without printing counts. Selecting a favourite or child
+enters its predicate in the actual search; removing a predicate updates children.
+Typing returns to results, while choosing a tab preserves the draft. Options
+Cancel/Apply and restored-page consumers are covered against
+`oracle/fixtures/read_tag_tabs.json`. Empty tabs retain the tab selector.

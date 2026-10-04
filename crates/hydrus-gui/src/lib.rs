@@ -875,6 +875,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             });
         }
     });
+    window.on_autocomplete_tab_chosen({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |tab| {
+            page().borrow_mut().set_autocomplete_tab(
+                hydrus_gui_model::write_autocomplete::Tab::from_index(
+                    usize::try_from(tab).unwrap_or(0),
+                ),
+            );
+            shown(false);
+        }
+    });
     window.on_search_fetch({
         let page = page.clone();
         let shown = shown.clone();
@@ -5791,6 +5803,7 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
         .unwrap_or_default();
     let autocomplete = page.autocomplete();
     window.set_search_text(autocomplete.text().into());
+    window.set_autocomplete_tab(i32::try_from(autocomplete.tab().index()).unwrap_or(0));
     let suggestions: Vec<ListText> = autocomplete
         .suggestions()
         .iter()

@@ -316,6 +316,7 @@ impl SearchPage {
         page.autocomplete
             .set_context(&page.context.location, &page.context.tags);
         page.predicates = predicates;
+        page.sync_autocomplete_tags();
         page.synchronised = synchronised;
         page.set_page_sort(sort);
         // (collecting as the session says, `with_collect`: a page that
@@ -372,6 +373,7 @@ impl SearchPage {
             .set_context(&self.context.location, &self.context.tags);
         self.autocomplete.clear();
         self.predicates = predicates;
+        self.sync_autocomplete_tags();
         self.synchronised = favourite.synchronised;
         if favourite.sort.is_some() {
             let before = self.sort.clone();
@@ -1566,6 +1568,7 @@ impl SearchPage {
     fn enter_predicates(&mut self, predicates: &[Predicate]) {
         let context = self.text_context();
         hydrus_search::enter_predicates(&mut self.predicates, predicates, &context);
+        self.sync_autocomplete_tags();
     }
 
     /// Count the tag list's tags again (after they were changed).
@@ -1802,6 +1805,7 @@ impl SearchPage {
             hashes: FileHashes::Sha256(hashes),
             inclusive: true,
         })];
+        self.sync_autocomplete_tags();
     }
 
     fn sha256s(&self, files: &[HashId]) -> std::collections::BTreeSet<hydrus_core::Sha256> {
@@ -2085,6 +2089,22 @@ impl SearchPage {
         &self.autocomplete
     }
 
+    pub fn set_autocomplete_tab(&mut self, tab: hydrus_gui_model::write_autocomplete::Tab) {
+        if !self.locked && self.note.is_none() {
+            self.autocomplete.set_tab(tab);
+        }
+    }
+    fn sync_autocomplete_tags(&mut self) {
+        self.autocomplete
+            .set_context_tags(self.predicates.iter().filter_map(|predicate| {
+                if let Predicate::Tag { tag, .. } = predicate {
+                    Some(tag.as_str().to_owned())
+                } else {
+                    None
+                }
+            }));
+    }
+
     /// The search box's text changed.
     pub fn type_text(&mut self, text: &str) {
         self.autocomplete.set_text(text);
@@ -2182,6 +2202,7 @@ impl SearchPage {
     pub fn remove_predicate(&mut self, index: usize) {
         if !self.locked && index < self.predicates.len() {
             self.predicates.remove(index);
+            self.sync_autocomplete_tags();
             if self.synchronised {
                 self.search();
             }

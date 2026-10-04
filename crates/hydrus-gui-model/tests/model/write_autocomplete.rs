@@ -1461,3 +1461,112 @@ fn check_recorded_keyboard(input: &mut WriteAutocomplete, fixture: &Value) {
     input.clear();
     assert_eq!(input.copy_selection(false), None);
 }
+
+#[test]
+fn read_favourite_and_children_tabs_replay_real_qt_lists_and_context_changes() {
+    use hydrus_gui_model::write_autocomplete::Tab;
+    let fixture = hydrus_testkit::fixture_json("read_tag_tabs.json");
+    let (_dir, store) = seeded(&fixture);
+    let snapshot = store.snapshot();
+    let service = snapshot.services.by_name("my tags").unwrap();
+    for (kind, field) in [
+        (RelationKind::Siblings, "siblings"),
+        (RelationKind::Parents, "parents"),
+    ] {
+        tag_relations::apply(
+            &store,
+            kind,
+            fixture[field]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|pair| RelationUpdate {
+                    service: service.id,
+                    left: Tag::new(pair[0].as_str().unwrap()).unwrap(),
+                    right: Tag::new(pair[1].as_str().unwrap()).unwrap(),
+                    action: RelationAction::Add,
+                })
+                .collect(),
+        )
+        .unwrap();
+    }
+    let favourites: Vec<String> =
+        serde_json::from_value(fixture["events"][0]["favourites"].clone()).unwrap();
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &settings::FavouriteTags(favourites)))
+        .unwrap();
+    let location = LocationContext::single(hydrus_core::ServiceKey::new(
+        hydrus_core::service::builtin_keys::MY_FILES,
+    ));
+    let mut context =
+        hydrus_core::search::context::TagContext::new(service.key.clone(), true, true);
+    let mut input = hydrus_gui_model::autocomplete::Autocomplete::new(store.clone());
+    input.set_context(&location, &context);
+    for event in fixture["events"].as_array().unwrap() {
+        match event["action"].as_str().unwrap() {
+            "favourites" => {
+                input.set_tab(Tab::Favourites);
+            }
+            "favourites_with_text" => {
+                input.set_text("draft content");
+                input.set_tab(Tab::Favourites);
+            }
+            "choose_favourite" => {
+                input.set_context_tags(["parity:tabs root".into()]);
+                input.clear();
+            }
+            "children" => {
+                let limit: Option<usize> = serde_json::from_value(event["limit"].clone()).unwrap();
+                store
+                    .write(move |ctx| {
+                        let mut settings: settings::TagAutocompleteTabs =
+                            settings::get(ctx.conn())?;
+                        settings.children_limit = limit;
+                        settings::set(ctx.conn(), &settings)
+                    })
+                    .unwrap();
+                input.set_tab(Tab::Children);
+            }
+            "choose_child" => {
+                input.set_context_tags(["parity:tabs root".into(), "parity:tabs alpha".into()]);
+                input.clear();
+            }
+            "remove_child" => {
+                input.set_context_tags(["parity:tabs root".into()]);
+            }
+            "type_returns_to_search" => {
+                input.set_text("parity:tabs");
+            }
+            "children_without_search_tag_flags" => {
+                input.clear();
+                input.set_tab(Tab::Children);
+                context.include_current = false;
+                context.include_pending = false;
+                input.set_context(&location, &context);
+            }
+            "all_known_children" => {
+                context.service =
+                    hydrus_core::ServiceKey::new(hydrus_core::service::builtin_keys::COMBINED_TAG);
+                input.set_context(&location, &context);
+            }
+            action => panic!("unrecorded read-tab action {action}"),
+        }
+        assert_eq!(json!(input.tab().index()), event["tab"]);
+        assert_eq!(input.text(), event["text"].as_str().unwrap());
+        if event["action"] != "type_returns_to_search" {
+            let rows: Vec<_> = input
+                .suggestions()
+                .iter()
+                .map(|s| json!({"tag":s.predicate,"rows":[s.label]}))
+                .collect();
+            assert_eq!(json!(rows), event["rows"], "{event}");
+            assert!(input.suggestions().iter().all(|s| s.editor.is_none()));
+        }
+    }
+    input.set_context_tags(Vec::new());
+    assert!(input.suggestions().is_empty());
+    input.set_tab(Tab::Favourites);
+    assert_eq!(input.suggestions().len(), 3);
+    input.set_text("unknown typed draft");
+    assert_eq!(input.tab(), Tab::Tags);
+}

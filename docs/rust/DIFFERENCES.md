@@ -1797,3 +1797,11 @@ controls and real menu/search/sort consumers, backed by
 `oracle/fixtures/viewing_statistics_options.json`. Native media-preview rendering
 and its minimum/maximum tracking controls remain absent. Viewer/filter recording
 and their timing/filter controls are the next part of this scoped slice.
+
+Read-search favourites and children now reach actual page predicates, queries,
+shared settings and restored contexts. Their selector is a native dropdown
+rather than Qt's notebook header. Children fetch synchronously from the native
+snapshot; Qt schedules work/publish with stale-domain checks. This slice records
+the typing/tab-switch pending state separately from final query results. Read
+result multi-selection/context menus, interactive OR construction and advanced
+OR input remain distinct gaps, so the search-autocomplete parent stays partial.

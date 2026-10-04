@@ -1,0 +1,28 @@
+// The same read tabs in embedded and floating search-page autocomplete.
+import { ComboBox } from "std-widgets.slint";
+import { ReadSuggestions } from "read_suggestions.slint";
+import { ListText, Theme } from "theme.slint";
+
+export component ReadAutocomplete inherits Rectangle {
+    in property <[ListText]> suggestions;
+    in property <int> highlighted: -1;
+    in property <int> tab-index;
+    out property <bool> has-focus: tabs.has-focus;
+    callback tab-chosen(int);
+    callback chosen(int);
+    background: Theme.panel;
+    VerticalLayout {
+        spacing: 4px;
+        tabs := ComboBox {
+            model: ["results", "favourites", "children"];
+            current-index: root.tab-index;
+            selected => { root.tab-chosen(self.current-index); }
+        }
+        ReadSuggestions {
+            vertical-stretch: 1;
+            suggestions: root.suggestions;
+            highlighted: root.highlighted;
+            chosen(i) => { root.chosen(i); }
+        }
+    }
+}
