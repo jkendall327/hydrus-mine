@@ -403,6 +403,11 @@ fn advanced_quality_menu_reads_saved_logs_and_current_media_without_applying_dra
     let empty_row = names(&dialog).iter().position(|n| n == "empty").unwrap();
     dialog.invoke_row_clicked(i32::try_from(full_row).unwrap(), false, false);
     dialog.invoke_row_clicked(i32::try_from(empty_row).unwrap(), true, false);
+    let draft_row = names(&dialog)
+        .iter()
+        .position(|n| n == "unsaved query")
+        .unwrap();
+    dialog.invoke_row_clicked(i32::try_from(draft_row).unwrap(), true, false);
     assert!(dialog.get_can_quality());
     quality_menu(&dialog, "show");
     assert!(dialog.get_quality_working());
