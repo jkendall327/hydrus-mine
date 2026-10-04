@@ -869,6 +869,1090 @@
         },
         "observed": "Actual _UpdateMenuPagesCountIfDirty on real Qt menu items with scripted counts: six threshold/disabled/closed-page/seed-weight/repeated/new-boot cases; exact ShowText message and warning latch outputs."
       }
+    },
+    {
+      "reference_id": "audit-options-import-options-help-for-this-panel",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Help opens the recorded tl;dr text and launches the exact import-options documentation page from the help submenu.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-keep-this-panel-simple",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Stage the exact simple-mode checkbox; cancel leaves it unchanged, outer Apply persists it and ordinary local-folder/importer editors consume it. Default row editors replay all caller/simple/URL-context lists and parent fallback sources.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-default-import-options-editor-list",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Display seven canonical caller defaults in the recorded reverse canonical sort order, exact custom summaries, extended selection and stable sorting; own an isolated manager until outer Apply.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-default-import-options-show-stack",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Show the exact recorded precedence explanation for each selected caller, including Global fallback explanation and API/import-folder/subscription differences.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-default-import-options-edit",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Edit a frozen caller default through the shared staged import editor, resolve inherited values from less-specific parent contexts, retain hidden custom kinds and keep Global full; cancellation writes nothing and accepted defaults reach importer consumers.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs.",
+        "Existing shared import-options editor limitations (including program-command editing/execution) remain documented in DIFFERENCES.md."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 214,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-default-import-options-clear",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Prevent clearing Global alone; strip Global from a mixed selection, ask the exact joined-caller question and clear only the frozen accepted targets to empty containers.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-default-import-options-reset-to-defaults",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Present all three exact reset choices/descriptions and follow-up labels/question; No/Cancel change nothing, Yes resets only the selected defaults/URL overrides/profiles category within the draft.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs.",
+        "After resetting profiles, native refreshes the visible list immediately; reference currently leaves it stale until reopening."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-url-class-import-options-editor-list",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "List only installed post/watchable/gallery classes with recorded names/type/custom-summary columns; distinguish absent override from an empty override and keep stable class keys through selection/sort/edit/apply.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-url-class-import-options-show-stack",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Show the exact selected class explanation, using watcher defaults for watchable classes and post/subscription precedence for post/gallery classes.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-url-class-import-options-edit",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Stage overrides for the frozen class key and resolve inherited settings through its post/watch parent, excluding its own override; accepted overrides survive reopen and independent class keys resolve distinct effective settings.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs.",
+        "Existing shared import-options editor limitations remain documented in DIFFERENCES.md."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 214,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-url-class-import-options-clear",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Ask the exact singular/plural class clear question, preserve data on cancellation and set accepted frozen class overrides to empty containers rather than deleting entries.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-favourites-profiles-editor-list",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Show recorded named-container summaries and stable profile identity/selection, including updates from the shared staged star menus; persist/reopen only after the parent Options Apply.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-favourites-profiles-add",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Open the named shared staged editor with the recorded new-profile seed; cancellation creates nothing, accepted containers get exact unique-name suffixes and remain isolated until parent Apply.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 214,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-favourites-profiles-edit",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Open the selected frozen profile and rename/replace it through the shared staged editor; preserve row identity and selection, handle recorded name collisions, cancel safely and retain the accepted profile on reopening.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 214,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-favourites-profiles-delete",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "exactBehavior": "Native safely asks the intended named-profile question and deletes accepted frozen targets; recorded multi-profile questions/cancellation/deletion replay unchanged.",
+      "countAsCompletedLeaf": false,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs.",
+        "Actual reference single-profile deletion raises ValueError before asking because it unpacks the one-row list incorrectly. Native safe single deletion differs, so this original entry remains partial and is not counted."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
     }
   ],
   "completedOriginalLeafCount": 12,
