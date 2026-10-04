@@ -17,6 +17,27 @@ fn strings(value: &Value) -> Vec<String> {
 }
 
 #[test]
+fn native_path_backend_matches_actual_reference_rebasing_and_mixed_separator_tags() {
+    let fixture = hydrus_testkit::fixture_json("filename_simple_paths.json");
+    let options = hydrus_parse::folders::FilenameTagging {
+        directories: serde_json::from_value(fixture["directories"].clone()).unwrap(),
+        ..hydrus_parse::folders::FilenameTagging::default()
+    };
+    let platform = if cfg!(windows) { "windows" } else { "posix" };
+    for case in fixture["cases"].as_array().unwrap() {
+        if case["platform"] == platform {
+            assert_eq!(
+                json!(options.tags(case["path"].as_str().unwrap())),
+                case["tags"],
+                "{} {}",
+                case["name"],
+                case["path"]
+            );
+        }
+    }
+}
+
+#[test]
 fn additive_entry_and_selected_union_replay_real_simple_panel_without_spreading_untouched_tags() {
     let fixture = hydrus_testkit::fixture_json("filename_simple.json");
     let legacy = hydrus_testkit::legacy_fixture("basic");

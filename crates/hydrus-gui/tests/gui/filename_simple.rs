@@ -52,8 +52,16 @@ fn real_simple_actions_replay_selection_paste_and_removal_then_reach_manual_impo
     let files: Vec<_> = paths
         .iter()
         .map(|path| {
-            let tail = path.strip_prefix("/srv/").unwrap();
-            let file = work.path().join(tail);
+            // Preserve the recorded directory suffix: relative directory tags
+            // must see `srv`, never the random temporary-directory basename.
+            // Join each component so Windows uses native separators throughout.
+            let file = path
+                .strip_prefix('/')
+                .unwrap()
+                .split('/')
+                .fold(work.path().to_path_buf(), |directory, component| {
+                    directory.join(component)
+                });
             std::fs::create_dir_all(file.parent().unwrap()).unwrap();
             std::fs::copy(hydrus_testkit::fixture_path("media/bmp_24.bmp"), &file).unwrap();
             file.to_string_lossy().into_owned()
