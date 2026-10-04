@@ -96,7 +96,6 @@ export component ServicesEditorWindow inherits Window {
     callback answered(bool);
     VerticalBox {
         padding: 12px; spacing: 8px;
-        Text { text: "Remote repository, IPFS and account settings are not available here yet."; color: Theme.muted; wrap: word-wrap; }
         ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
             row-clicked(i,c,s) => { if root.question == "" { root.row-clicked(i,c,s); } }
             row-activated(i) => { if root.question == "" { root.row-clicked(i,false,false); root.edit-clicked(); } }
