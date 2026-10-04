@@ -123,3 +123,5 @@ pub mod tag_banner;
 
 pub mod rating_example;
 pub mod tab_presentation;
+
+pub mod archive_repair;

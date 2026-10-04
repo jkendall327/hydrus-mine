@@ -119,3 +119,5 @@ mod incremental_tagging;
 mod tag_banner;
 
 mod tab_presentation;
+
+mod archive_repair;

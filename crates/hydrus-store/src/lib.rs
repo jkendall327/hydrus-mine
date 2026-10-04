@@ -62,3 +62,5 @@ pub use store::{Snapshot, Store};
 
 pub mod api_activity;
 pub mod api_permissions;
+
+pub mod archive_repair;

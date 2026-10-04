@@ -23,6 +23,7 @@ pub use ui::*;
 pub mod about_window;
 mod animation;
 mod archive_delete_window;
+pub mod archive_repair_window;
 mod auto_resolution_preview_window;
 mod auto_resolution_review_window;
 mod auto_resolution_rules_window;
@@ -276,6 +277,8 @@ pub struct Bound {
     pub services_review: Rc<RefCell<Option<ServicesReviewWindow>>>,
     /// Staged local service editors while open.
     pub services_editor: services_editor_window::Slots,
+    /// Owned global archive-time maintenance window.
+    pub archive_repair: archive_repair_window::Slot,
     /// The checker options editor while one is open (from the options
     /// window).
     pub checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>>,
@@ -1772,6 +1775,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
     let services_review: Rc<RefCell<Option<ServicesReviewWindow>>> = Rc::default();
     let services_editor = services_editor_window::Slots::default();
+    let archive_repair = archive_repair_window::Slot::default();
     let network_data = network_data_window::Slots::default();
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
@@ -2122,6 +2126,33 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     match session_dialog::open(&pages, name.as_deref(), scope, &slot) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not save the session: {e}"),
+                    }
+                })
+            },
+            repair_archive_times: {
+                let pages = pages.clone();
+                let slot = archive_repair.clone();
+                let weak = window.as_weak();
+                Rc::new(move || {
+                    if slot.borrow().is_some() {
+                        return;
+                    }
+                    let valid = Rc::new({
+                        let weak = weak.clone();
+                        move || weak.upgrade().is_some_and(|w| w.window().is_visible())
+                    });
+                    let changed = Rc::new({
+                        let weak = weak.clone();
+                        move || {
+                            if let Some(w) = weak.upgrade() {
+                                w.invoke_refresh_page();
+                            }
+                        }
+                    });
+                    if let Err(error) =
+                        archive_repair_window::open(pages.borrow().store(), &slot, changed, valid)
+                    {
+                        eprintln!("could not repair archive times: {error}");
                     }
                 })
             },
@@ -3822,6 +3853,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         network_data,
         network_controls,
         services_editor,
+        archive_repair,
         checker_options,
         session_dialog,
         tab_name_dialog,

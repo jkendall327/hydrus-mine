@@ -250,6 +250,8 @@ pub enum Command {
     ClearWatcherHighlights,
     /// Switch file maintenance during idle (false: normal) time.
     FileMaintenance(bool),
+    /// Scan and optionally fill missing global archive times.
+    RepairArchiveTimes,
     /// Forget a repository's pending content, asking first.
     ForgetPending(ServiceKey),
     OpenUrl(&'static str),
@@ -892,7 +894,10 @@ fn database_menu(facts: &Facts) -> Entry {
                     SEP,
                     todo(dots("clear orphan files")),
                     SEP,
-                    todo(dots("fix missing file archived times")),
+                    item(
+                        dots("fix missing file archived times"),
+                        Command::RepairArchiveTimes,
+                    ),
                 ],
             ),
             menu(
