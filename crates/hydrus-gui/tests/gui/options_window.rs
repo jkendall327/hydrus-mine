@@ -5595,3 +5595,57 @@ fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewe
     assert!(!reopened.get_eye_menu().collapse_window);
     reopened.invoke_close_requested();
 }
+
+#[test]
+fn eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_order() {
+    let fixture = hydrus_testkit::fixture_json("viewer_eye_menu.json");
+    let source = include_str!("../../ui/viewer_eye_menu.slint");
+    for (previous, group, first_label, previous_flag, group_flag) in [
+        (
+            "window",
+            "hovers",
+            "draw tags (left) in the background",
+            0,
+            1,
+        ),
+        (
+            "hovers",
+            "rendering",
+            "apply image ICC Profile colour adjustments",
+            1,
+            2,
+        ),
+    ] {
+        // Inspect the actual consumer declarations: the earlier implementation
+        // put this separator after the submenu, despite correct row models.
+        // This guards that concrete source defect without presenting a separate
+        // test-only layout as the materialized native menu.
+        let boundary = format!(
+            "if !root.menu.collapse-{previous} || !root.menu.collapse-{group}: MenuSeparator"
+        );
+        let before = source.find(&boundary).unwrap();
+        let submenu = source
+            .find(&format!("if root.menu.collapse-{group}: Menu"))
+            .unwrap();
+        let previous_flat = source
+            .find(&format!(
+                "for row in root.menu.collapse-{previous} ? [] : root.menu.{previous}.g2"
+            ))
+            .unwrap();
+        assert!(previous_flat < before && before < submenu);
+        for event in fixture["events"].as_array().unwrap() {
+            let entries = event["menu"].as_array().unwrap();
+            let at = entries
+                .iter()
+                .position(|entry| entry["menu"] == group || entry["check"] == first_label)
+                .unwrap();
+            let separated = entries[at - 1] == "---";
+            assert_eq!(
+                separated,
+                !event["values"][previous_flag].as_bool().unwrap()
+                    || !event["values"][group_flag].as_bool().unwrap(),
+                "{event}"
+            );
+        }
+    }
+}

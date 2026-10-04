@@ -124,16 +124,16 @@ fn menu(window: &MediaViewerWindow, store: &Store) -> ViewerEyeMenu {
     }
 }
 
-fn change<T: settings::Setting + Send + 'static>(
+fn change<T: settings::Setting>(
     store: &Store,
-    edit: impl FnOnce(&mut T),
+    edit: impl FnOnce(&mut T) + Send + 'static,
 ) -> Result<(), String> {
-    let mut value: T = store
-        .read(settings::get)
-        .map_err(|error| error.to_string())?;
-    edit(&mut value);
     store
-        .write(move |ctx| settings::set(ctx.conn(), &value))
+        .write(move |ctx| {
+            let mut value: T = settings::get(ctx.conn())?;
+            edit(&mut value);
+            settings::set(ctx.conn(), &value)
+        })
         .map_err(|error| error.to_string())
 }
 

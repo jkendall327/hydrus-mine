@@ -31,6 +31,7 @@ export component ViewerEyeButton inherits ContextMenuArea {
             title: row.label; checkable: row.checkable; checked: row.checked;
             activated => { root.chosen(row.id); }
         }
+        if !root.menu.collapse-window || !root.menu.collapse-hovers: MenuSeparator { }
         if root.menu.collapse-hovers: Menu {
             title: "hovers";
             for row in root.menu.hovers.g1: MenuItem {
@@ -43,7 +44,6 @@ export component ViewerEyeButton inherits ContextMenuArea {
                 activated => { root.chosen(row.id); }
             }
         }
-        if !root.menu.collapse-window || !root.menu.collapse-hovers: MenuSeparator { }
         for row in root.menu.collapse-hovers ? [] : root.menu.hovers.g1: MenuItem {
             title: row.label; checkable: row.checkable; checked: row.checked;
             activated => { root.chosen(row.id); }
@@ -53,6 +53,7 @@ export component ViewerEyeButton inherits ContextMenuArea {
             title: row.label; checkable: row.checkable; checked: row.checked;
             activated => { root.chosen(row.id); }
         }
+        if !root.menu.collapse-hovers || !root.menu.collapse-rendering: MenuSeparator { }
         if root.menu.collapse-rendering: Menu {
             title: "rendering";
             for row in root.menu.rendering.g1: MenuItem {
@@ -64,7 +65,6 @@ export component ViewerEyeButton inherits ContextMenuArea {
                 activated => { root.chosen(row.id); }
             }
         }
-        if !root.menu.collapse-hovers || !root.menu.collapse-rendering: MenuSeparator { }
         for row in root.menu.collapse-rendering ? [] : root.menu.rendering.g1: MenuItem {
             title: row.label; checkable: row.checkable; checked: row.checked;
             activated => { root.chosen(row.id); }
