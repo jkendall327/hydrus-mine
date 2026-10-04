@@ -3735,3 +3735,210 @@ fn subscription_concurrency_options_replay_bounds_parent_apply_cancel_and_reopen
     .unwrap();
     window.invoke_cancel();
 }
+
+#[test]
+#[allow(clippy::float_cmp)] // recorded whole logical pixels and frame proportions
+fn hover_zoom_and_loop_options_reach_owned_viewers_and_survive_cancel_and_reopen() {
+    use hydrus_store::settings::{self, ViewerPlaybackSettings};
+    use std::time::{Duration, Instant};
+    fn wait_until(done: impl Fn() -> bool) {
+        let started = Instant::now();
+        while !done() && started.elapsed() < Duration::from_secs(10) {
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        assert!(done(), "native playback did not reach the expected frame");
+    }
+    let fixture = hydrus_testkit::fixture_json("viewer_zoom_loop_options.json");
+    let (_dirs, store) = store();
+    let sources = tempfile::tempdir().unwrap();
+    let jpeg_path = sources.path().join("synthetic-large.jpg");
+    let raster = hydrus_media::Raster::new(2000, 1600, 3, vec![31; 2000 * 1600 * 3]).unwrap();
+    std::fs::write(
+        &jpeg_path,
+        hydrus_media::encode::encode_render(&raster, hydrus_media::encode::RenderFormat::Jpeg, 90)
+            .unwrap(),
+    )
+    .unwrap();
+    let mut animation = hex::decode(fixture["animation_bytes"].as_str().unwrap()).unwrap();
+    let offset = animation
+        .windows(4)
+        .position(|bytes| bytes == b"ANIM")
+        .unwrap()
+        + 12;
+    animation[offset..offset + 2].copy_from_slice(&1_u16.to_le_bytes());
+    let animation_path = sources.path().join("one-play.webp");
+    std::fs::write(&animation_path, animation).unwrap();
+    let importer = hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new());
+    let file_id = |path: &std::path::Path| {
+        let hash = importer
+            .import_path(path, &hydrus_import::FileImportOptions::default())
+            .unwrap()
+            .hash
+            .unwrap();
+        store
+            .read(|conn| hydrus_store::master::hash_id(conn, &hash))
+            .unwrap()
+            .unwrap()
+    };
+    let jpeg = file_id(&jpeg_path);
+    let animation = file_id(&animation_path);
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let jpeg_index = i32::try_from(files.iter().position(|id| *id == jpeg).unwrap()).unwrap();
+    let animation_index =
+        i32::try_from(files.iter().position(|id| *id == animation).unwrap()).unwrap();
+    let zoom_label = "Zoom switch button switches between:";
+    let loop_label = "Always Loop Animations:";
+    for choice in 0..4 {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer hovers");
+        let (number, control) = row(&options, zoom_label);
+        assert_eq!(
+            control.items.row_count(),
+            fixture["initial"]["choices"].as_array().unwrap().len()
+        );
+        options.invoke_choice_chosen(number, choice);
+        options.invoke_cancel();
+        let previous = store
+            .read(settings::get::<ViewerPlaybackSettings>)
+            .unwrap()
+            .zoom_switch;
+        assert_eq!(
+            previous,
+            if choice == 0 {
+                0
+            } else {
+                usize::try_from(choice - 1).unwrap()
+            }
+        );
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer hovers");
+        options.invoke_choice_chosen(row(&options, zoom_label).0, choice);
+        options.invoke_apply();
+        assert_eq!(
+            store
+                .read(settings::get::<ViewerPlaybackSettings>)
+                .unwrap()
+                .zoom_switch,
+            choice as usize
+        );
+        ui.invoke_thumbnail_activated(jpeg_index);
+        let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+        let drawn = windows.get(windows.count() - 1).unwrap();
+        headless::render(&drawn, 1000, 600);
+        viewer.invoke_zoom(0, false, 0.0, 0.0); // initial canvas fit -> 100%
+        viewer.invoke_drag(37.0, 19.0);
+        let case = fixture["zoom"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|case| {
+                case["choice"] == choice
+                    && case["centre"] == 2
+                    && case["name"] == "synthetic-large.jpg"
+            })
+            .unwrap();
+        for expected in case["states"].as_array().unwrap() {
+            viewer.invoke_zoom_switch_requested(123.0, 145.0);
+            assert_eq!(
+                serde_json::json!([
+                    viewer.get_media_x() as i32,
+                    viewer.get_media_y() as i32,
+                    viewer.get_media_width() as i32,
+                    viewer.get_media_height() as i32,
+                ]),
+                expected["rect"],
+                "{case:?}"
+            );
+        }
+        // A cancelled change cannot alter the command captured by this owner.
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer hovers");
+        options.invoke_choice_chosen(row(&options, zoom_label).0, (choice + 1) % 4);
+        options.invoke_cancel();
+        viewer.invoke_close_requested();
+    }
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media playback");
+    options.invoke_check_toggled(row(&options, loop_label).0, false);
+    options.invoke_apply();
+    ui.invoke_thumbnail_activated(animation_index);
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 1000, 750);
+    let last_frame = fixture["loops"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|case| case["count"] == 1 && case["always"] == false)
+        .unwrap()["frames"]
+        .as_u64()
+        .unwrap();
+    let prefix = format!("{last_frame}/{last_frame} - ");
+    wait_until(|| viewer.get_scanbar_text().starts_with(&prefix));
+    let last = viewer.get_scanbar_text();
+    // After two whole plays' worth of time, the finite animation remains at
+    // its final frame. The actual viewer's scanbar follows its decoded player.
+    let total_ms = hydrus_media::animation::Frames::open(
+        &animation_path,
+        hydrus_core::Mime::AnimationWebp,
+        &[],
+        None,
+    )
+    .unwrap()
+    .total_ms();
+    let started = Instant::now();
+    while started.elapsed() < Duration::from_millis(total_ms * 2 + 100) {
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(Duration::from_millis(2));
+        assert_eq!(viewer.get_scanbar_text(), last);
+    }
+    assert_eq!(viewer.get_scanbar_progress(), 1.0);
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media playback");
+    assert!(!row(&options, loop_label).1.checked);
+    options.invoke_check_toggled(row(&options, loop_label).0, true);
+    options.invoke_cancel();
+    assert!(
+        !store
+            .read(settings::get::<ViewerPlaybackSettings>)
+            .unwrap()
+            .always_loop
+    );
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media playback");
+    options.invoke_check_toggled(row(&options, loop_label).0, true);
+    options.invoke_apply();
+    viewer.invoke_toggle_pause(); // enabling looping does not resume paused media
+    wait_until(|| viewer.get_scanbar_progress() == 0.0);
+    wait_until(|| viewer.get_scanbar_progress() == 1.0);
+    wait_until(|| viewer.get_scanbar_progress() == 0.0);
+    viewer.invoke_close_requested();
+    // Stale owner callbacks cannot close the freshly opened successor.
+    ui.invoke_thumbnail_activated(animation_index);
+    let successor = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    viewer.invoke_close_requested();
+    assert!(bound.viewer.borrow().is_some());
+    successor.invoke_close_requested();
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer hovers");
+    assert_eq!(row(&options, zoom_label).1.index, 3);
+    show_page(&options, "media playback");
+    assert!(row(&options, loop_label).1.checked);
+    options.invoke_cancel();
+}
