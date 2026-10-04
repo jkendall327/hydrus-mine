@@ -229,10 +229,9 @@ pub(crate) fn act(cx: &Context<'_>, action: &Action) {
                                     &classes,
                                 )?;
                                 hydrus_store::queues::nudge(ctx.conn(), queue)
-                            }) {
-                                if let Some(w) = weak.upgrade() {
-                                    w.set_error(error.to_string().into());
-                                }
+                            }) && let Some(w) = weak.upgrade()
+                            {
+                                w.set_error(error.to_string().into());
                             }
                             shown(false);
                         }),
