@@ -267,6 +267,14 @@ fn files_are_imported_with_the_tags_filename_tagging_gives_them() {
     let shots = std::path::Path::new(env!("CARGO_TARGET_TMPDIR"));
     headless::save_png(&shots.join("filename_tagging.png"), &pixels, 1000, 760).unwrap();
 
+    // The advanced list's accepted rule reaches the actual local-import seeds.
+    dialog.set_regexes("".into());
+    dialog.invoke_changed();
+    dialog.invoke_rule_action("quick_add".into());
+    dialog.set_rule_namespace("extension".into());
+    dialog.set_rule_regex(r"(?<=\.)[^.]+$".into());
+    dialog.invoke_rule_entered();
+    assert!(!dialog.get_rule_child());
     // "apply": imported, each file with its tags for "my tags"
     dialog.invoke_apply();
     assert!(bound.filename_tagging.borrow().is_none());
@@ -294,6 +302,13 @@ fn files_are_imported_with_the_tags_filename_tagging_gives_them() {
         tags_of(0),
         [
             "batch:one".to_owned(),
+            format!(
+                "extension:{}",
+                std::path::Path::new(&order[0])
+                    .extension()
+                    .unwrap()
+                    .to_string_lossy()
+            ),
             format!("filename:{}", stem(&order[0])),
             "imported".to_owned(),
             "n:1".to_owned()

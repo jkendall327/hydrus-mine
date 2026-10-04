@@ -20,6 +20,7 @@ mod edit_subscription;
 mod embedded_metadata;
 mod favourites;
 mod file_log;
+mod filename_rules;
 mod folders;
 mod force_filetype;
 mod formula_editors;

@@ -306,6 +306,96 @@
       }
     },
     {
+      "action": "quick_sort_regex",
+      "selected": null,
+      "attempts": null,
+      "text": null,
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "creator:name",
+            "artist"
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "creator:name",
+            "artist"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "creator:name:artist",
+            "page:3"
+          ],
+          [
+            "creator:name:artist"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_sort_namespace",
+      "selected": null,
+      "attempts": null,
+      "text": null,
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "creator:name",
+            "artist"
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "creator:name",
+            "artist"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "creator:name:artist",
+            "page:3"
+          ],
+          [
+            "creator:name:artist"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
       "action": "quick_edit",
       "selected": [
         0
@@ -861,10 +951,82 @@
           ]
         ]
       }
+    },
+    {
+      "action": "quick_add",
+      "selected": null,
+      "attempts": [
+        [
+          "extension",
+          "(?<=\\.)[^.]+$"
+        ]
+      ],
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "",
+            ""
+          ],
+          "attempts": [
+            [
+              "extension",
+              "(?<=\\.)[^.]+$"
+            ]
+          ]
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "extension",
+            "(?<=\\.)[^.]+$"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [
+          "(\\d{4})",
+          "(?<=page )\\d+",
+          "(\\d{4})"
+        ],
+        "quick_selected": [
+          [
+            "extension",
+            "(?<=\\.)[^.]+$"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "0012",
+            "3",
+            "extension:jpg"
+          ],
+          [
+            "0001",
+            "extension:png"
+          ],
+          [
+            "extension:webm",
+            "version:2"
+          ]
+        ]
+      }
     }
   ],
   "applied": {
     "quick": [
+      [
+        "extension",
+        "(?<=\\.)[^.]+$"
+      ],
       [
         "version",
         "(?<=\\(v)\\d+(?=\\))"
@@ -875,24 +1037,36 @@
       "(?<=page )\\d+",
       "(\\d{4})"
     ],
-    "quick_selected": [],
+    "quick_selected": [
+      [
+        "extension",
+        "(?<=\\.)[^.]+$"
+      ]
+    ],
     "regex_selected": [],
     "input": "",
     "tags": [
       [
         "0012",
-        "3"
+        "3",
+        "extension:jpg"
       ],
       [
-        "0001"
+        "0001",
+        "extension:png"
       ],
       [
+        "extension:webm",
         "version:2"
       ]
     ]
   },
   "reopened": {
     "quick": [
+      [
+        "extension",
+        "(?<=\\.)[^.]+$"
+      ],
       [
         "version",
         "(?<=\\(v)\\d+(?=\\))"
