@@ -19,7 +19,7 @@ impl std::fmt::Debug for Slots {
         f.debug_struct("Slots")
             .field("list", &self.list.borrow().is_some())
             .field("formula", &self.formula)
-            .finish()
+            .finish_non_exhaustive()
     }
 }
 struct State {
@@ -89,13 +89,13 @@ pub fn open(
         let refresh = refresh.clone();
         let weak = w.as_weak();
         move |importing| {
+            use hydrus_gui_model::downloader_interchange::{Definition, Native};
             if state.borrow().child_open
                 || state.borrow().editing.is_some()
                 || state.borrow().deleting
             {
                 return;
             }
-            use hydrus_gui_model::downloader_interchange::{Definition, Native};
             let s = state.borrow();
             let definitions = s
                 .selection

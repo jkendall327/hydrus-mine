@@ -191,10 +191,10 @@ pub fn open(
         let refresh = refresh.clone();
         let blocked = blocked.clone();
         move |importing| {
+            use hydrus_gui_model::downloader_interchange::{Definition, Native};
             if blocked() {
                 return;
             }
-            use hydrus_gui_model::downloader_interchange::{Definition, Native};
             let definitions = vec![Definition::new(Native::Formula(
                 state.borrow().formula.clone(),
             ))];
