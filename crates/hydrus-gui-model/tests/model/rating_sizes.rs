@@ -15,6 +15,10 @@ fn values(sizes: &RatingContextSizes) -> serde_json::Value {
 #[test]
 fn four_sizes_replay_qt_ranges_fractional_values_cancel_and_reopen() {
     let fixture = hydrus_testkit::fixture_json("rating_context_sizes.json");
+    // Qt keeps the exact binary side of 31.755's half, while exact binary
+    // halves (6.125 and 12.125) round away from zero.
+    let boundary = fixture["events"].as_array().unwrap().last().unwrap();
+    assert_eq!(boundary["saved"], json!([31.75, 6.13, 31.75, 12.13]));
     let recorded = hydrus_testkit::fixture_json("options_dialog.json");
     let (_directory, store) = super::options_dialog::fixture_store(&recorded);
     let mut before = store.read(Settings::load).unwrap();

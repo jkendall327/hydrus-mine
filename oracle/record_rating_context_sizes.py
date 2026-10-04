@@ -65,7 +65,8 @@ def record(session):
         events = []
         try:
             for values in (initial, [31.75, 47.5, 26.9, 41.25], [1, 255, 6, 128],
-                           [0, -10, 0, 0], [300, 300, 200, 200]):
+                           [0, -10, 0, 0], [300, 300, 200, 200],
+                           [31.755, 6.125, 31.755, 12.125]):
                 edit(values)
                 before = [controller.new_options.GetFloat(key) for key in KEYS]
                 staged = [w.value() for w in controls]
