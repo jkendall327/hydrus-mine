@@ -654,7 +654,7 @@ fn native_viewtime_milliseconds_survive_accept_recent_reopen_and_cancel() {
     use hydrus_core::search::{predicate::ViewingStat, recent::RecentPredicates};
     let fixture = hydrus_testkit::fixture_json("viewtime_milliseconds.json");
     let (_dirs, store) = store();
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("".into());
@@ -685,6 +685,17 @@ fn native_viewtime_milliseconds_survive_accept_recent_reopen_and_cancel() {
             (7, milliseconds % 1000),
         ] {
             window.invoke_number_edited(1, field, value);
+        }
+        if milliseconds == 345 {
+            let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1040, 400);
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                    .join("viewtime-milliseconds.png"),
+                &pixels,
+                1040,
+                400,
+            )
+            .unwrap();
         }
         window.invoke_ok(1);
         assert!(bound.predicate_editor.borrow().is_none());
