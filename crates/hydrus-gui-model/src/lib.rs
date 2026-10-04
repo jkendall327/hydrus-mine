@@ -33,6 +33,7 @@ pub mod force_filetype;
 pub mod formula_editors;
 pub mod import_options_editor;
 pub mod import_options_overwrite;
+pub mod import_options_panel;
 pub mod importer_menu;
 pub mod info_lines;
 pub mod list_selection;
