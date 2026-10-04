@@ -304,6 +304,18 @@
       ]
     ]
   ],
+  "menus": {
+    "export": [
+      "to clipboard",
+      "to json file",
+      "to png file"
+    ],
+    "import": [
+      "from clipboard",
+      "from json files",
+      "from png files (you can also drag and drop pngs onto this list)"
+    ]
+  },
   "after_import": [
     "Artist",
     "Artist (1)"
