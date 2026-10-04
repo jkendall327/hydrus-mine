@@ -1644,8 +1644,12 @@ impl Pages {
     pub fn close_tab_keys(&mut self, keys: &[PageKey]) -> Result<(), String> {
         let shown = self.shown().key;
         for key in keys.iter().rev() {
-            if self.show(key) {
-                self.close_shown()?;
+            if let Some(path) = page_path(&self.session.pages, *key) {
+                // Showing a notebook descends into its selected child; close
+                // the requested notebook itself, at its frozen key's depth.
+                let depth = path.len() - 1;
+                self.show(key);
+                self.close(depth, path[depth])?;
             }
         }
         self.show(&shown);
@@ -2123,4 +2127,20 @@ fn new_search_page_on(store: &Store, location: hydrus_search::LocationContext) -
             collect: Some(sorts.default_collect),
         },
     }
+}
+
+/// Locate a page or notebook without descending through its selected child.
+fn page_path(pages: &[Page], key: PageKey) -> Option<Vec<usize>> {
+    for (index, page) in pages.iter().enumerate() {
+        if page.key == key {
+            return Some(vec![index]);
+        }
+        if let PageContent::Pages(children) = &page.content
+            && let Some(mut path) = page_path(children, key)
+        {
+            path.insert(0, index);
+            return Some(path);
+        }
+    }
+    None
 }
