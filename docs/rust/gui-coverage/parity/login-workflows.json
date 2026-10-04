@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "agent": "login-workflows",
+  "baseline_git_head": "d50df26b",
+  "implementation_git_head": "b80b50e9cd7e122f83d93dc02fe10d61ff10d948",
+  "implementation_commits": [
+    "44840f22",
+    "da3c06f2",
+    "b80b50e9"
+  ],
+  "validation": {
+    "referenceRecording": "oracle/record_login_editors.py executed through shared with-oracle lock using the real Qt client; fixture oracle/fixtures/login_editors.json",
+    "cargo_fmt": "passed",
+    "rust_tests": "Authored model, store, codec, GUI/menu/owner regressions. Root asynchronous CI owns execution; no local Cargo builds."
+  },
+  "claims": [
+    {
+      "id": "login-credential-definition",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Reachable script credential definition CRUD: name, normal/password presentation and shared permitted-input matcher; child acceptance staged until script/list Apply, cancellation and stale callbacks isolated.",
+      "limits": [
+        "Shared matcher keeps its own existing documented help limitations."
+      ],
+      "source": [
+        "crates/hydrus-gui/src/login_credential_window.rs:42",
+        "crates/hydrus-gui/src/login_workflows_window.rs:182",
+        "crates/hydrus-gui-model/src/login_workflows.rs:20",
+        "crates/hydrus-store/src/logins.rs:14"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:16",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:26",
+        "crates/hydrus-downloader-exchange/tests/logins.rs:1"
+      ],
+      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json"
+    },
+    {
+      "id": "login-credentials",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "exactBehavior": "Live masked credential entry, normal-before-hidden ordering, exact invalid/blank advisory confirmation and local script CheckCanLogin consumer.",
+      "limits": [
+        "Domain manager route and persisted domain credentials editing are not connected yet."
+      ],
+      "source": [
+        "crates/hydrus-gui/src/login_credential_window.rs:42",
+        "crates/hydrus-gui/src/login_workflows_window.rs:182",
+        "crates/hydrus-gui-model/src/login_workflows.rs:20",
+        "crates/hydrus-store/src/logins.rs:14"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:16",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:26",
+        "crates/hydrus-downloader-exchange/tests/logins.rs:1"
+      ],
+      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json"
+    },
+    {
+      "id": "login-scripts",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "exactBehavior": "Real network menu opens sorted list; CRUD/extended selection, unique imported names/new keys, preserved edit keys and staged scripts-only save retaining domain fields.",
+      "limits": [
+        "Nested script step/cookie/example editing and execution incomplete."
+      ],
+      "source": [
+        "crates/hydrus-gui/src/login_credential_window.rs:42",
+        "crates/hydrus-gui/src/login_workflows_window.rs:182",
+        "crates/hydrus-gui-model/src/login_workflows.rs:20",
+        "crates/hydrus-store/src/logins.rs:14"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:16",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:26",
+        "crates/hydrus-downloader-exchange/tests/logins.rs:1"
+      ],
+      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json"
+    },
+    {
+      "id": "login-script",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "exactBehavior": "Script identity and credential definitions editable, invalid-script advisory question; remaining serialized fields shown and retained.",
+      "limits": [
+        "Steps, cookies, example-domain editors and live HTTP test results remain incomplete."
+      ],
+      "source": [
+        "crates/hydrus-gui/src/login_credential_window.rs:42",
+        "crates/hydrus-gui/src/login_workflows_window.rs:182",
+        "crates/hydrus-gui-model/src/login_workflows.rs:20",
+        "crates/hydrus-store/src/logins.rs:14"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:16",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:26",
+        "crates/hydrus-downloader-exchange/tests/logins.rs:1"
+      ],
+      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json"
+    },
+    {
+      "id": "exchange-login",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "exactBehavior": "Dedicated login-list typed JSON/PNG import/export consumer with review before staging and owning-list Apply.",
+      "limits": [
+        "Original mixed downloader export/package consumer still rejects login scripts."
+      ],
+      "source": [
+        "crates/hydrus-gui/src/login_credential_window.rs:42",
+        "crates/hydrus-gui/src/login_workflows_window.rs:182",
+        "crates/hydrus-gui-model/src/login_workflows.rs:20",
+        "crates/hydrus-store/src/logins.rs:14"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:16",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:26",
+        "crates/hydrus-downloader-exchange/tests/logins.rs:1"
+      ],
+      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json"
+    }
+  ]
+}
