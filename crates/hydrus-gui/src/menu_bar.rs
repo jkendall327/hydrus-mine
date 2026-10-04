@@ -38,6 +38,8 @@ pub(crate) struct Hooks {
     /// Open native parser definitions or URL-class links.
     pub manage_parsers: Rc<dyn Fn(bool)>,
     pub manage_network_sessions: Rc<dyn Fn(bool)>,
+    /// Open reference downloader bundle interchange.
+    pub exchange_downloaders: Rc<dyn Fn(bool)>,
     /// Open the manage import folders (`true`) or export folders dialog.
     pub manage_folders: Rc<dyn Fn(bool)>,
     /// Open the "review files to import" window.
@@ -587,6 +589,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
                 eprintln!("could not open network review: {e}");
             }
         }
+        Command::ExchangeDownloaders(importing) => (hooks.exchange_downloaders)(importing),
         Command::ManageSubscriptions => (hooks.manage_subscriptions)(),
         Command::ManageImportFolders => (hooks.manage_folders)(true),
         Command::ManageExportFolders => (hooks.manage_folders)(false),

@@ -90,6 +90,8 @@ export component DownloaderDefinitionsWindow inherits Window {
             Button { text: "edit"; enabled: root.can-edit; clicked => { root.action("edit"); } }
             Button { text: "duplicate"; enabled: root.can-edit; clicked => { root.action("duplicate"); } }
             Button { text: "delete"; enabled: root.can-delete; clicked => { root.action("delete"); } }
+            Button { text: "import"; clicked => { root.action("import"); } }
+            Button { text: "export"; enabled: root.can-delete; clicked => { root.action("export"); } }
         }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         if root.question != "": Question { text: root.question; answered(yes) => { root.answered(yes); } }

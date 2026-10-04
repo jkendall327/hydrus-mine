@@ -36,6 +36,8 @@ export component ParserListWindow inherits Window {
             if !root.links: Button { text: "edit"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("edit"); } }
             if !root.links: Button { text: "duplicate"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("duplicate"); } }
             if !root.links: Button { text: "delete"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("delete"); } }
+            if !root.links: Button { text: "import"; enabled: !root.child-open && root.question == ""; clicked => { root.action("import"); } }
+            if !root.links: Button { text: "export"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("export"); } }
             if root.links: ComboBox { enabled: root.question == ""; model: root.parser-choices; current-index <=> root.chosen-parser; }
             if root.links: Button { text: "link"; enabled: root.selected && root.question == ""; clicked => { root.action("link"); } }
             if root.links: Button { text: "clear"; enabled: root.selected && root.question == ""; clicked => { root.action("clear"); } }
@@ -104,6 +106,8 @@ export component ParserEditWindow inherits Window {
                     if root.page: Button { text: "delete content parser"; enabled: root.selected && !root.child-open; clicked => { root.action("delete-content"); } }
                     if root.page: Button { text: "edit pre-parsing converter"; enabled: !root.child-open; clicked => { root.action("converter"); } }
                     if !root.page: Button { text: "edit parsing formula"; enabled: !root.child-open; clicked => { root.action("formula"); } }
+                    Button { text: "import parser"; enabled: !root.child-open; clicked => { root.action("import"); } }
+                    Button { text: "export parser"; enabled: !root.child-open; clicked => { root.action("export"); } }
                     if !root.page: Button { text: "edit veto string match"; enabled: !root.child-open; clicked => { root.action("match"); } }
                 }
                 if root.subsidiary-note != "": Text { text: root.subsidiary-note; color: Theme.text; wrap: word-wrap; }

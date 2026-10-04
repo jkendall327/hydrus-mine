@@ -12,6 +12,7 @@ use std::sync::Arc;
 /// Child windows owned by a caller, retained while they are open.
 #[derive(Clone, Default)]
 pub struct Slots {
+    pub exchange: crate::downloader_interchange_window::Slots,
     pub formula: Rc<RefCell<Option<FormulaWindow>>>,
     pub rule: Rc<RefCell<Option<FormulaRuleWindow>>>,
     pub strings: crate::string_processor_window::Slots,
@@ -39,9 +40,10 @@ impl Slots {
         }
     }
     fn has_children(&self) -> bool {
-        self.rule.borrow().is_some() || self.strings.has_open()
+        self.rule.borrow().is_some() || self.strings.has_open() || self.exchange.has_open()
     }
     fn cancel_children(&self) {
+        self.exchange.cancel();
         self.strings.cancel_all();
         let rule = self
             .rule
@@ -180,6 +182,62 @@ pub fn open(
                 show(&w, &state.borrow());
                 w.set_child_open(slots.has_children());
             }
+        }
+    });
+    w.on_exchange({
+        let weak = w.as_weak();
+        let slots = slots.clone();
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move |importing| {
+            if blocked() {
+                return;
+            }
+            use hydrus_gui_model::downloader_interchange::{Definition, Native};
+            let definitions = vec![Definition::new(Native::Formula(
+                state.borrow().formula.clone(),
+            ))];
+            let preview = Rc::new(|definitions: Vec<Definition>| {
+                if definitions.len() != 1 || !matches!(definitions[0].native, Native::Formula(_)) {
+                    return Err("Import one parsing formula into this editor.".into());
+                }
+                Ok(format!(
+                    "Replace this draft with formula: {}",
+                    definitions[0].name()
+                ))
+            });
+            let applied = Rc::new({
+                let state = state.clone();
+                let refresh = refresh.clone();
+                move |mut definitions: Vec<Definition>| {
+                    let definition = definitions.pop().ok_or("No formula to import.")?;
+                    let Native::Formula(formula) = definition.native else {
+                        return Err("Import one parsing formula.".into());
+                    };
+                    state.borrow_mut().formula = formula;
+                    refresh();
+                    Ok(())
+                }
+            });
+            match crate::downloader_interchange_window::open(
+                &slots.exchange,
+                importing,
+                definitions,
+                preview,
+                applied,
+            ) {
+                Ok(child) => {
+                    let refresh = refresh.clone();
+                    child.on_closed(move || refresh());
+                }
+                Err(e) => {
+                    if let Some(w) = weak.upgrade() {
+                        w.set_veto(e.into());
+                    }
+                }
+            }
+            refresh();
         }
     });
     w.on_changed({

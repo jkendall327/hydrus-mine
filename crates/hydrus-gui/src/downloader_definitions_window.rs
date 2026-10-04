@@ -20,6 +20,8 @@ use crate::{
 /// Definition list and child editors while open.
 #[derive(Clone, Default)]
 pub struct Slots {
+    pub class_exchange: crate::downloader_interchange_window::Slots,
+    pub gug_exchange: crate::downloader_interchange_window::Slots,
     pub classes: Rc<RefCell<Option<DownloaderDefinitionsWindow>>>,
     pub gugs: Rc<RefCell<Option<DownloaderDefinitionsWindow>>>,
     pub class_edit: Rc<RefCell<Option<DownloaderDefinitionEditWindow>>>,
@@ -132,6 +134,11 @@ pub fn open(
     classes: bool,
 ) -> Result<DownloaderDefinitionsWindow, String> {
     let slot = if classes { &slots.classes } else { &slots.gugs };
+    let exchange = if classes {
+        &slots.class_exchange
+    } else {
+        &slots.gug_exchange
+    };
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
@@ -170,7 +177,9 @@ pub fn open(
         let weak = window.as_weak();
         let slot = slot.clone();
         let slots = slots.clone();
+        let exchange = exchange.clone();
         move || {
+            exchange.cancel();
             if classes {
                 slots.strings.cancel_all();
                 if let Some(rule) = slots.rule.borrow_mut().take() {
@@ -193,9 +202,13 @@ pub fn open(
     });
     let pending_question: Rc<RefCell<Option<Pending>>> = Rc::default();
     window.on_row_clicked({
+        let exchange = exchange.clone();
         let draft = draft.clone();
         let refresh = refresh.clone();
         move |i, c, s| {
+            if exchange.has_open() {
+                return;
+            }
             if let Ok(i) = usize::try_from(i) {
                 let mut d = draft.borrow_mut();
                 let order = d.order();
@@ -205,9 +218,13 @@ pub fn open(
         }
     });
     window.on_sort({
+        let exchange = exchange.clone();
         let draft = draft.clone();
         let refresh = refresh.clone();
         move |i, a| {
+            if exchange.has_open() {
+                return;
+            }
             if let Ok(i) = usize::try_from(i) {
                 let mut d = draft.borrow_mut();
                 d.sort_column = i;
@@ -220,8 +237,9 @@ pub fn open(
         let draft = draft.clone();
         let refresh = refresh.clone();
         let slots = slots.clone();
+        let exchange = exchange.clone();
         move |tab| {
-            if slots.gug_edit.borrow().is_some() {
+            if slots.gug_edit.borrow().is_some() || exchange.has_open() {
                 return;
             }
             let mut d = draft.borrow_mut();
@@ -284,6 +302,7 @@ pub fn open(
         let pending = pending_question.clone();
         let store = store.clone();
         let slots = slots.clone();
+        let exchange = exchange.clone();
         move |action| {
             let Some(w) = weak.upgrade() else { return };
             let edit_slot = if classes {
@@ -291,7 +310,7 @@ pub fn open(
             } else {
                 &slots.gug_edit
             };
-            if edit_slot.borrow().is_some() || pending.borrow().is_some() {
+            if edit_slot.borrow().is_some() || pending.borrow().is_some() || exchange.has_open() {
                 return;
             }
             match action.as_str() {
@@ -317,6 +336,38 @@ pub fn open(
                         w.set_question(draft.delete_question().into());
                     }
                 }
+                "import" | "export" => {
+                    let preview = Rc::new({
+                        let draft = draft.clone();
+                        move |definitions| {
+                            let mut next = draft.borrow().clone();
+                            next.import(definitions).map(|r| r.text())
+                        }
+                    });
+                    let applied = Rc::new({
+                        let draft = draft.clone();
+                        let refresh = refresh.clone();
+                        move |definitions| {
+                            draft.borrow_mut().import(definitions)?;
+                            refresh();
+                            Ok(())
+                        }
+                    });
+                    let definitions = draft.borrow().selected_definitions();
+                    match crate::downloader_interchange_window::open(
+                        &exchange,
+                        action == "import",
+                        definitions,
+                        preview,
+                        applied,
+                    ) {
+                        Ok(child) => {
+                            let refresh = refresh.clone();
+                            child.on_closed(move || refresh());
+                        }
+                        Err(e) => w.set_error(e.into()),
+                    }
+                }
                 "add" | "edit" | "duplicate" => {
                     if let Err(e) =
                         open_definition(&store, &draft, &slots, action.as_str(), refresh.clone())
@@ -330,7 +381,9 @@ pub fn open(
     });
     window.window().on_close_requested({
         let weak = window.as_weak();
+        let exchange = exchange.clone();
         move || {
+            exchange.cancel();
             if let Some(w) = weak.upgrade() {
                 w.invoke_action("cancel".into());
             }
@@ -924,6 +977,7 @@ fn open_editor(
         let close = close.clone();
         let state = state.clone();
         let slots = slots.clone();
+        let exchange = exchange.clone();
         move |action| {
             if editor_blocked(&state.borrow(), &slots) {
                 return;

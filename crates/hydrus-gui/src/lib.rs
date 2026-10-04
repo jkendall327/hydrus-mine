@@ -30,6 +30,7 @@ mod checker_options_window;
 pub mod clipboard_monitor;
 pub mod daemon;
 pub mod downloader_definitions_window;
+pub mod downloader_interchange_window;
 mod drops;
 mod duplicates_sidebar;
 mod edit_subscription_window;
@@ -1422,6 +1423,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let store = pages.borrow().store().clone();
                     if let Err(e) = parser_editors_window::open(&store, &slots, links) {
                         eprintln!("could not open parser definitions: {e}");
+                    }
+                })
+            },
+            exchange_downloaders: {
+                let pages = pages.clone();
+                let slots = downloader_interchange_window::Slots::default();
+                Rc::new(move |importing| {
+                    let store = pages.borrow().store().clone();
+                    if let Err(e) =
+                        downloader_interchange_window::package(&store, &slots, importing)
+                    {
+                        eprintln!("could not open downloader interchange: {e}");
                     }
                 })
             },

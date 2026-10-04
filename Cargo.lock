@@ -2504,6 +2504,7 @@ dependencies = [
  "crossbeam-channel",
  "hex",
  "hydrus-core",
+ "hydrus-downloader-exchange",
  "hydrus-duplicates",
  "hydrus-gui-model",
  "hydrus-import",

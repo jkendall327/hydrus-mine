@@ -31,6 +31,7 @@ export component FormulaWindow inherits Window {
     callback row-activated(int); callback add(); callback edit(); callback delete(); callback shift(bool);
     callback edit-processing(); callback test(); callback apply(); callback cancel();
     callback closed(bool);
+    callback exchange(bool);
     VerticalLayout {
         padding: 10px; spacing: 6px;
         HorizontalLayout {
@@ -55,6 +56,10 @@ export component FormulaWindow inherits Window {
                 if root.kind == 0: HorizontalLayout {
                     Text { text: "attribute to fetch:"; color: Theme.text; vertical-alignment: center; }
                     LineEdit { text <=> root.attribute; enabled: root.content == 0 && !root.deleting && !root.child-open; edited => { root.changed(); } }
+                }
+                HorizontalLayout {
+                    Button { text: "import formula"; enabled: !root.child-open && !root.deleting; clicked => { root.exchange(true); } }
+                    Button { text: "export formula"; enabled: !root.child-open && !root.deleting; clicked => { root.exchange(false); } }
                 }
                 Text { text: root.newline-note; wrap: word-wrap; color: Theme.text; }
                 Button { text: root.processing; enabled: root.supported && !root.deleting && !root.child-open; clicked => { root.edit-processing(); } }

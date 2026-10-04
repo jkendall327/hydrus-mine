@@ -528,8 +528,8 @@ deletes its files from the client, migrated from the reference's database.
 
 - **A simple downloader page** uses an "edit formulae" button beside its
   chooser rather than a cog menu. The saved list supports editing, removal
-  and adding defaults; PNG/clipboard formula import/export is not yet
-  exposed. Download controls sit under its boxes, not inside them.
+  and adding defaults, plus reference PNG and clipboard-text import/export.
+  Download controls sit under its boxes, not inside them.
 - **Formula editors** support HTML and JSON. Existing nested, zipper,
   context-variable and static formulae are preserved and can be tested;
   their editing controls are not yet available. The test panel accepts
@@ -758,8 +758,8 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line, and nested generators
   select members with checkboxes. Page/content parsers and direct URL-class links
-  have native editors. Definition import/export and login editors remain
-  follow-up work.
+  have native editors and reference JSON/PNG import/export. Login editors
+  remain follow-up work.
 - Invalid example details use the native URL rules' error wording. The
   reference retains stale referral/next-page examples after a match failure;
   the native editor clears all derived output. A changed list asks before
@@ -958,13 +958,14 @@ database. Concurrent edits to the same area use the last successful Apply.
 
 The native parser editor model supports all nine content kinds and typed test
 context. Native page/content/parser-list and direct URL-class-link windows are available. Subsidiary parser editing,
-formula kinds beyond the existing HTML/JSON editors, downloader import/export,
-and remote test-data fetching remain deferred; existing subsidiary parsers and
-unsupported formulas are preserved intact.
+formula editing beyond the existing HTML/JSON controls and remote test-data
+fetching remain deferred. All six native formula kinds and subsidiary parsers
+can be imported/exported; their editor-only reference data is preserved.
 
 The URL-class links panel uses a parser chooser and explicit staged link/clear
-actions. Automatic gap filling and the reference API/redirect review tab are
-deferred; API/redirect source classes are excluded because their targets own
+actions. Downloader package import automatically links parser example URLs;
+the reference API/redirect review tab remains deferred. API/redirect source
+classes are excluded because their targets own
 the parser. The temporary-variable content kind is also editable here, while
 the reference page editor normally limits its creation to lookup scripts.
 
@@ -1064,3 +1065,20 @@ including destination entries already in the requested state.
 
 Go freezes the entire migration request. Applying an already-open filter or location
 child after the confirmation appears changes only the next job's settings.
+
+## Downloader definition interchange
+
+Downloader interchange uses text clipboard contents and selected PNG/text files;
+clipboard bitmap and drag/drop ingestion are not exposed. Exported PNGs carry
+the real reference pixel/payload format with a small plain header. A malformed
+or unsupported item rejects the whole package, with an actionable error, rather
+than the reference importer's partial skips. Payloads/pixels are capped at
+16 MiB, bundles at 4096 objects, and recursive formats at bounded depth. Old
+container versions and recent URL/parser/formula versions are upgraded;
+earlier unsupported versions must first be re-exported by the reference client.
+Unknown processing steps/conversions are rejected before staging because their
+native execution forms cannot retain all original data. Native/runtime fields
+take precedence over preserved auxiliary editor fields when exporting edits.
+Mixed downloader package import accepts URL classes, GUGs and page parsers;
+standalone formulas/content nodes belong in their matching native editors.
+Login scripts and domain metadata packages are explicitly unsupported here.

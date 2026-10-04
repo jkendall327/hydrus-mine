@@ -183,6 +183,8 @@ pub enum Command {
     ManageParsers(bool),
     /// Review network sessions (`false`) or edit custom HTTP headers (`true`).
     ManageNetworkSessions(bool),
+    /// Import (`true`) or export a reference downloader bundle.
+    ExchangeDownloaders(bool),
     /// Open the manage import folders dialog.
     ManageImportFolders,
     /// Open the manage export folders dialog.
@@ -846,14 +848,20 @@ fn network_menu(facts: &Facts) -> Entry {
             menu(
                 "downloaders",
                 vec![
-                    todo(dots("import downloaders")),
+                    item(
+                        dots("import downloaders"),
+                        Command::ExchangeDownloaders(true),
+                    ),
                     item(
                         "user-run downloader repository",
                         Command::OpenUrl(
                             "https://github.com/CuddleBear92/Hydrus-Presets-and-Scripts",
                         ),
                     ),
-                    todo(dots("export downloaders")),
+                    item(
+                        dots("export downloaders"),
+                        Command::ExchangeDownloaders(false),
+                    ),
                     SEP,
                     todo(dots("downloader and url display")),
                     menu(

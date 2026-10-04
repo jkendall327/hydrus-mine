@@ -1569,3 +1569,22 @@ running job requests cancellation and waits for its final committed progress.
 Services are resolved by key again on every batch. Graph/count publication occurs atomically per batch; displayed tags and review
 counts refresh after completion or cancellation. Reference controls, questions and actual DB mapping
 and pair destinations are recorded in `oracle/fixtures/tag_migration.json`.
+
+## Downloader definition interchange
+
+Network > downloaders > import/export downloaders exchanges URL classes,
+page parsers and single/nested gallery URL generators with the reference
+client's clipboard JSON and real downloader PNGs. Imports review the concrete
+objects and exact duplicates before saving all definitions, generated keys,
+nested members and parser links atomically. Exact parser duplicates merge
+example URLs; imported parser examples link the appropriate URL classes.
+Concurrent changes reject a stale import without partial writes. Native
+URL/GUG/parser lists, page/content editors, reusable formula editors and the
+simple downloader formula list also expose import/export; their imports remain
+in their owner's draft until Apply. Cancel drops pending imports and invalidates
+closed child callbacks. All six formula kinds and subsidiary parsers retain
+reference editor data through native edits and export. The exchange codec is
+separate from the read-only legacy reader. `record_downloader_interchange.py`
+checks real reference PNG/JSON -> native encoders -> real reference loads;
+codec/model/GUI regressions cover bounds, unsupported data, cancellation,
+duplicates, stale snapshots and live downloader settings reload.

@@ -1,0 +1,38 @@
+import { Button, LineEdit, TextEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export component DownloaderExchangeWindow inherits Window {
+    title: root.importing ? "import downloader definitions" : "export downloader definitions";
+    preferred-width: 880px; preferred-height: 610px;
+    background: Theme.window;
+    in property <bool> importing;
+    in-out property <string> text;
+    out property <bool> text-read-only: !root.importing;
+    in-out property <string> path;
+    in property <string> review;
+    in property <string> error;
+    in property <bool> ready;
+    callback action(string);
+    callback closed();
+    VerticalLayout {
+        padding: 12px; spacing: 8px;
+        Text { text: root.importing ? "Paste reference downloader text or open a hydrus PNG. Review the definitions before importing." : "Copy reference downloader text or save a hydrus PNG to share these definitions."; color: Theme.text; wrap: word-wrap; }
+        TextEdit { vertical-stretch: 1; text <=> root.text; read-only: root.text-read-only; enabled: !root.ready; }
+        HorizontalLayout {
+            Button { text: root.importing ? "paste" : "copy"; enabled: !root.ready; clicked => { root.action(root.importing ? "paste" : "copy"); } }
+            if root.importing: Button { text: "review text"; enabled: !root.ready; clicked => { root.action("review"); } }
+        }
+        HorizontalLayout {
+            LineEdit { horizontal-stretch: 1; text <=> root.path; placeholder-text: "PNG or text file path"; enabled: !root.ready; }
+            Button { text: "browse"; enabled: !root.ready; clicked => { root.action("browse"); } }
+            Button { text: root.importing ? "open file" : "save PNG"; enabled: !root.ready; clicked => { root.action(root.importing ? "open" : "save"); } }
+        }
+        if root.review != "": TextEdit { height: 140px; text: root.review; read-only: true; }
+        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        HorizontalLayout {
+            alignment: end; spacing: 8px;
+            if root.ready: Button { text: "import"; clicked => { root.action("accept"); } }
+            if root.ready: Button { text: "back"; clicked => { root.action("back"); } }
+            Button { text: "cancel"; clicked => { root.action("cancel"); } }
+        }
+    }
+}
