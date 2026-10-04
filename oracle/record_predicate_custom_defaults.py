@@ -65,6 +65,11 @@ def record(session):
                 numbers=[w for w,f in widgets if f['kind']=='number']
                 numbers[-1].setValue(37)
                 return
+            if name=='PredicateSystemRatingNumerical':
+                service=controller.services_manager.GetService(panel._service_key)
+                panel._choice.SetValue('=')
+                panel._rating_control.SetRating(service.ConvertStarsToRating(3))
+                return
             if name=='PanelPredicateSystemKnownURLsURLClass':
                 panel._url_classes.setCurrentIndex(panel._url_classes.count()-1)
                 return
@@ -136,6 +141,17 @@ def record(session):
             from hydrus.core import HydrusSerialisable as H
             values=[H.CreateFromSerialisableTuple(json.loads(json.dumps(c['saved'][0]))) for c in cases]
             comparability=[[a.IsUIEditable(b) for b in values] for a in values]
+            # Persist each family's actual recorded outputs through the real
+            # options setter, including its cross-service rating replacement.
+            options._dictionary['custom_default_predicates']=H.SerialisableList()
+            for value in values:
+                options.SetCustomDefaultSystemPredicates(comparable_predicates=[value])
+            # Keep an interior numerical rating in the actual stored options,
+            # proving import needs the service's five-star scale.
+            numerical=next(value for value,case in zip(values,cases) if case['class']=='PredicateSystemRatingNumerical')
+            options.SetCustomDefaultSystemPredicates(comparable_predicates=[numerical])
+            assert len(options._dictionary['custom_default_predicates'])==38
+            saved_families=options.GetSerialisableTuple()
             # Exercise saving and owner cancellation as a separate lifecycle.
             limit_blank=next(p for p in offered if p.ToString()=='system:limit')
             owner=S.FleshOutPredicatePanel(controller.gui,limit_blank)
@@ -172,7 +188,7 @@ def record(session):
             for service in controller.services_manager.GetServices():
                 d=service.GetSerialisableDictionary()
                 services.append({'name':service.GetName(),'key':service.GetServiceKey().hex(),'type':service.GetServiceType(),'num_stars':d.get('num_stars',5),'allow_zero':d.get('allow_zero',False)})
-            return {'cases':cases,'comparability':comparability,'owner_cancel_saved':kept,'options_roundtrip':durable,'namespace_edge':namespace_edge,'services':services,'url_classes':[c.GetName() for c in manager.GetURLClasses() if c.ShouldAssociateWithFiles()],'today':QC.QDate.currentDate().toString('yyyy-MM-dd')}
+            return {'options_saved_families':saved_families,'cases':cases,'comparability':comparability,'owner_cancel_saved':kept,'options_roundtrip':durable,'namespace_edge':namespace_edge,'services':services,'url_classes':[c.GetName() for c in manager.GetURLClasses() if c.ShouldAssociateWithFiles()],'today':QC.QDate.currentDate().toString('yyyy-MM-dd')}
         finally:
             options._dictionary['custom_default_predicates']=original
             manager.SetURLClasses(classes)

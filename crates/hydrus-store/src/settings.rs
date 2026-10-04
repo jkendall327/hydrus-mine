@@ -29,6 +29,17 @@ impl Setting for FavouriteTags {
     const KEY: &'static str = "favourite_tags";
 }
 
+/// Canonical predicate defaults shared by all input-predicate editors.
+/// Imported reference defaults and immediate native star actions use this same
+/// representation; services and predicate subtypes retain their typed identity.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct CustomPredicateDefaults {
+    pub predicates: Vec<hydrus_core::search::predicate::Predicate>,
+}
+impl Setting for CustomPredicateDefaults {
+    const KEY: &'static str = "custom_default_predicates";
+}
+
 /// Shared tag-autocomplete tabs: the children result cap and service-specific most-used tags.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

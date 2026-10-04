@@ -848,6 +848,8 @@ panels expose save/reset but retain their built-in initial values, while advance
 rating uses saved defaults. A number-of-tags shortcut that emits a namespace is
 saved without becoming a number-of-tags default. All 40 panel families and 1,600
 comparability pairs are recorded by `oracle/record_predicate_custom_defaults.py`.
+Imported defaults use the same typed store setting, including actual numerical
+rating service scales. Reset remains durable when the store is reopened.
 Typing in the search box lists
 the matching tags with their counts (display tags, in the page's file domains
 and tag service; the exact match first, then the most used), up and down move the

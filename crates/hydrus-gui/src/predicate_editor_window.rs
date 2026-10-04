@@ -14,7 +14,10 @@ use hydrus_search::{Predicate, SystemPredicate, TextContext, predicate_text};
 use hydrus_store::Store;
 
 pub use crate::predicate_editors::button_label;
-use crate::predicate_editors::{Context, Editor, Field, Panel, Pressed, defaults::CustomDefaults};
+use crate::predicate_editors::{
+    Context, Editor, Field, Panel, Pressed,
+    defaults::{CustomDefaults, CustomDefaultsExt},
+};
 use crate::{EditorField, EditorPanel, EditorTreeRow, PredicateEditorWindow};
 
 /// A field as the window shows it.

@@ -7,13 +7,13 @@ use super::{Context, Editor, Kind, Panel};
 use hydrus_core::search::predicate::{Predicate, SystemPredicate, UrlRule, ViewingStat};
 use hydrus_core::search::time::TimeTest;
 
-/// Defaults shared by all input-predicate editors, independent of their drafts.
-#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
-pub struct CustomDefaults {
-    pub predicates: Vec<Predicate>,
-}
-impl hydrus_store::settings::Setting for CustomDefaults {
-    const KEY: &'static str = "custom_default_predicates";
+pub use hydrus_store::settings::CustomPredicateDefaults as CustomDefaults;
+
+/// Panel-family behavior layered on the store's canonical predicate records.
+pub trait CustomDefaultsExt {
+    fn save(&mut self, predicates: Vec<Predicate>);
+    fn reset(&mut self, kind: Kind);
+    fn uses(&self, kind: Kind) -> bool;
 }
 /// The actual reference's IsUIEditable relationship for two valued predicates.
 /// Ratings deliberately compare across services; viewtime units share a family.
@@ -45,20 +45,20 @@ pub fn comparable(a: &Predicate, b: &Predicate) -> bool {
         _ => false,
     }
 }
-impl CustomDefaults {
+impl CustomDefaultsExt for CustomDefaults {
     /// Replace each comparable family, preserving unrelated defaults.
     /// An empty panel result, as some rating controls produce, changes nothing.
-    pub fn save(&mut self, predicates: Vec<Predicate>) {
+    fn save(&mut self, predicates: Vec<Predicate>) {
         self.predicates
             .retain(|kept| !predicates.iter().any(|new| comparable(kept, new)));
         self.predicates.extend(predicates);
     }
     /// Forget this panel's family, leaving the current panel fields untouched.
-    pub fn reset(&mut self, kind: Kind) {
+    fn reset(&mut self, kind: Kind) {
         self.predicates.retain(|p| !kind.accepts(p));
     }
     /// Whether the reference star menu offers reset for this panel's family.
-    pub fn uses(&self, kind: Kind) -> bool {
+    fn uses(&self, kind: Kind) -> bool {
         self.predicates.iter().any(|p| kind.accepts(p))
     }
 }

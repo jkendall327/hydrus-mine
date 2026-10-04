@@ -1207,3 +1207,103 @@ fn invalid_default_does_not_replace_saved_family_and_viewtime_keeps_milliseconds
             .any(|p| Predicate::System(p.clone()) == *value)
     );
 }
+
+#[test]
+fn imported_predicate_defaults_reach_panels_and_reset_never_resurrects_legacy_values() {
+    use hydrus_gui::predicate_editors::defaults::CustomDefaults;
+    use slint::ComponentHandle as _;
+    let recording = hydrus_testkit::fixture_json("predicate_custom_defaults.json");
+    let source = hydrus_testkit::legacy_fixture("basic");
+    let destination = tempfile::tempdir().unwrap();
+    let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+    conn.execute(
+        "UPDATE json_dumps SET dump = ?1 WHERE dump_type = 22",
+        [recording["options_saved_families"][2]
+            .to_string()
+            .into_bytes()],
+    )
+    .unwrap();
+    drop(conn);
+    import_legacy(
+        source.path(),
+        &destination.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Arc::new(Store::open(destination.path()).unwrap());
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<CustomDefaults>)
+            .unwrap()
+            .predicates
+            .len(),
+        38
+    );
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let open = || {
+        ui.invoke_search_edited("".into());
+        ui.invoke_suggestion_chosen(suggestion(&ui, "system:limit"));
+        bound
+            .predicate_editor
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong()
+    };
+    let window = open();
+    assert_eq!(
+        window
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(1)
+            .unwrap()
+            .value,
+        259
+    );
+    window.invoke_defaults_menu(0);
+    assert_eq!(window.get_defaults_actions().row_count(), 2);
+    window.invoke_defaults_action(0, "reset to original default".into());
+    assert_eq!(
+        window
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(1)
+            .unwrap()
+            .value,
+        259
+    );
+    window.invoke_cancel();
+    assert!(shown_predicates(&ui).is_empty());
+    let window = open();
+    assert_eq!(
+        window
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(1)
+            .unwrap()
+            .value,
+        256
+    );
+    window.invoke_defaults_menu(0);
+    assert_eq!(window.get_defaults_actions().row_count(), 1);
+    window.invoke_cancel();
+    drop(bound);
+    drop(ui);
+    drop(store);
+    let reopened = Store::open(destination.path()).unwrap();
+    let defaults = reopened
+        .read(hydrus_store::settings::get::<CustomDefaults>)
+        .unwrap();
+    assert_eq!(defaults.predicates.len(), 37);
+    assert!(!defaults.predicates.iter().any(|p| matches!(
+        p,
+        Predicate::System(hydrus_search::SystemPredicate::Limit(_))
+    )));
+}

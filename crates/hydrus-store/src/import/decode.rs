@@ -504,6 +504,17 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     )?;
     insert_setting(
         &mut input,
+        &crate::settings::CustomPredicateDefaults {
+            predicates: options
+                .as_ref()
+                .map(|o| o.custom_default_predicates(&|key| scales.get(key).copied()))
+                .transpose()
+                .map_err(|e| StoreError::Invalid(format!("custom predicate defaults: {e}")))?
+                .unwrap_or_default(),
+        },
+    )?;
+    insert_setting(
+        &mut input,
         &options
             .as_ref()
             .map(|o| o.recent_predicates(&|key| scales.get(key).copied()))
@@ -2821,6 +2832,93 @@ mod tests {
             [dump.into_bytes()],
         )
         .unwrap();
+    }
+
+    #[test]
+    fn recorded_custom_predicate_defaults_import_with_typed_units_and_keys() {
+        use hydrus_core::search::predicate::{Predicate, SystemPredicate, ViewingStat};
+        let recording = hydrus_testkit::fixture_json("predicate_custom_defaults.json");
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+        conn.execute(
+            "UPDATE json_dumps SET dump = ?1 WHERE dump_type = 22",
+            [recording["options_saved_families"][2]
+                .to_string()
+                .into_bytes()],
+        )
+        .unwrap();
+        drop(conn);
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let defaults: crate::settings::CustomPredicateDefaults =
+            serde_json::from_value(input.settings["custom_default_predicates"].clone()).unwrap();
+        assert_eq!(defaults.predicates.len(), 38);
+        assert!(
+            defaults
+                .predicates
+                .contains(&Predicate::System(SystemPredicate::Limit(259)))
+        );
+        assert!(defaults.predicates.iter().any(|p| matches!(
+            p,
+            Predicate::System(SystemPredicate::FileViewingStats {
+                stat: ViewingStat::ViewTimeMilliseconds,
+                value: 600_037,
+                ..
+            })
+        )));
+        assert!(defaults.predicates.iter().any(|p| matches!(
+            p,
+            Predicate::System(SystemPredicate::Rating {
+                test: hydrus_core::search::predicate::RatingTest::Stars {
+                    op: hydrus_core::search::number::RatingOp::Equal,
+                    stars: 3,
+                    out_of: 5,
+                },
+                ..
+            })
+        )));
+        let recorded_service = recording["cases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|c| c["class"] == "PanelPredicateSystemFileService")
+            .unwrap();
+        let object = hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(
+            &recorded_service["saved"][0].to_string(),
+        )
+        .unwrap();
+        let service = hydrus_legacy::objects::predicates::predicate(&object).unwrap();
+        assert!(defaults.predicates.contains(&service));
+        // This is the same canonical key/type consumed by the native star menu.
+        let destination = tempfile::tempdir().unwrap();
+        crate::import::import_legacy(
+            source.path(),
+            &destination.path().join(crate::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = crate::Store::open(destination.path()).unwrap();
+        assert_eq!(
+            store
+                .read(crate::settings::get::<crate::settings::CustomPredicateDefaults>)
+                .unwrap(),
+            defaults
+        );
+        store
+            .write(|writer| {
+                crate::settings::set(
+                    writer.conn(),
+                    &crate::settings::CustomPredicateDefaults::default(),
+                )
+            })
+            .unwrap();
+        drop(store);
+        let store = crate::Store::open(destination.path()).unwrap();
+        assert!(
+            store
+                .read(crate::settings::get::<crate::settings::CustomPredicateDefaults>)
+                .unwrap()
+                .predicates
+                .is_empty()
+        );
     }
 
     #[test]
