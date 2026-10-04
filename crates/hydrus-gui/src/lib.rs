@@ -74,6 +74,7 @@ pub mod regex_favourites_window;
 mod search_log_window;
 pub mod services_editor_window;
 pub mod services_review_window;
+pub mod session_autosave;
 mod session_dialog;
 pub mod sidecars_window;
 pub mod simple_formulae_window;
@@ -292,6 +293,8 @@ pub struct Bound {
     _popups: Rc<slint::Timer>,
     /// Automatic recognised URL imports while this desktop window is bound.
     pub clipboard_monitor: clipboard_monitor::Monitor,
+    /// Historical autosaves, with real input activity and a bounded timer.
+    pub session_autosave: session_autosave::Monitor,
     _header_approval: network_header_approval::Monitor,
 }
 
@@ -368,6 +371,7 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
 pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     about_window::note_boot();
     let pages = Rc::new(RefCell::new(pages));
+    let session_autosave = session_autosave::bind(window, &pages);
     let first = pages.borrow_mut().current();
     let current = Rc::new(RefCell::new(first.clone()));
     let rows = Rc::new(ThumbnailRows::new(first));
@@ -3105,6 +3109,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // what the Client API asked of the pages, done, and the pages and media
     // viewer as they are, kept in the store for it
     let sync: Rc<dyn Fn()> = Rc::new({
+        let session_autosave = session_autosave.clone();
         let pages = pages.clone();
         let current = current.clone();
         let shown = shown.clone();
@@ -3121,6 +3126,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     Vec::new()
                 });
             for (key, command) in asked {
+                session_autosave.api_at(hydrus_core::TimestampMs::now().0);
                 let changed = |page: &Rc<RefCell<SearchPage>>| {
                     if Rc::ptr_eq(page, &current.borrow()) {
                         shown(true);
@@ -3216,6 +3222,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     Bound {
+        session_autosave,
         pages,
         current,
         rows,

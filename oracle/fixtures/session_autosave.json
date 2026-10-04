@@ -121,5 +121,106 @@
     }
   ],
   "default_minutes": 5,
-  "default_only_idle": false
+  "default_only_idle": false,
+  "idle_steps": [
+    {
+      "now": 120000,
+      "times": {
+        "last_user_action": 0,
+        "last_mouse_action": 0,
+        "last_client_api_action": 0
+      },
+      "api_seconds": null,
+      "enabled": true,
+      "eligible": false
+    },
+    {
+      "now": 120001,
+      "times": {
+        "last_user_action": 0,
+        "last_mouse_action": 0,
+        "last_client_api_action": 0
+      },
+      "api_seconds": null,
+      "enabled": true,
+      "eligible": true
+    },
+    {
+      "now": 130001,
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 0,
+        "last_client_api_action": 0
+      },
+      "api_seconds": null,
+      "enabled": true,
+      "eligible": false
+    },
+    {
+      "now": 130002,
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 0,
+        "last_client_api_action": 0
+      },
+      "api_seconds": null,
+      "enabled": true,
+      "eligible": true
+    },
+    {
+      "now": 135002,
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 130002,
+        "last_client_api_action": 0
+      },
+      "api_seconds": null,
+      "enabled": true,
+      "eligible": false
+    },
+    {
+      "now": 135003,
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 130002,
+        "last_client_api_action": 0
+      },
+      "api_seconds": null,
+      "enabled": true,
+      "eligible": true
+    },
+    {
+      "now": 137003,
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 130002,
+        "last_client_api_action": 135003
+      },
+      "api_seconds": 2,
+      "enabled": true,
+      "eligible": false
+    },
+    {
+      "now": 137004,
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 130002,
+        "last_client_api_action": 135003
+      },
+      "api_seconds": 2,
+      "enabled": true,
+      "eligible": true
+    },
+    {
+      "now": 140000,
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 130002,
+        "last_client_api_action": 135003
+      },
+      "api_seconds": 2,
+      "enabled": false,
+      "eligible": false
+    }
+  ]
 }

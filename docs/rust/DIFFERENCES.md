@@ -1152,8 +1152,12 @@ retained `_next_new_page_index` after a cancelled chooser, native cancellation
 clears that pending position so it cannot affect a subsequent page creation.
 
 Named GUI session saves now retain selectable immutable snapshots; automatic
-`last session` synchronization still writes the live session without historical
-backups, and startup/autosave lifecycle settings remain deferred. Historical
+`last session` synchronization writes the live session; a separate historical
+autosave timer now observes the configured period and idle-only preference and
+suppresses unchanged saves. Idle input tracking covers the main window and
+Client API page commands; auxiliary windows and other Client API request kinds
+do not yet reset its activity timestamps. Startup session selection remains
+deferred. Historical
 backups from imported legacy databases are not migrated; the current imported
 session is retained as the first backup when overwritten. Backup loads start fresh transfer/live-job state while retaining saved queue
 settings and file/gallery logs. Early native snapshots without importer-state

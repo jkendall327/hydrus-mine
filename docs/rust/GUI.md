@@ -1833,3 +1833,14 @@ on” with all four reference choices; legacy preferences import and applied cha
 reach new-page creation immediately, while an explicit “here” position overrides
 the preference. The real chooser outputs for all positions and cancellation are
 recorded in `oracle/record_tab_new_page.py`.
+
+GUI Sessions now applies the autosave period and idle-only preference to a
+historical save timer alongside live session synchronization. Active idle-only
+saves retry in sixty seconds; eligible saves use the configured one-to-1440-minute
+period. Unchanged session data, including selection-only changes, creates no new
+backup. Main-window key/pointer activity and page commands from the Client API
+feed the imported user/mouse/API idle timeouts, including the initial two-minute
+boot guard. Switching the startup preference away from last session stops the
+scheduled save chain after its next eligible tick. The real controller's cadence,
+unchanged hash suppression, history and idle boundaries are recorded in
+`oracle/record_session_autosave.py`.

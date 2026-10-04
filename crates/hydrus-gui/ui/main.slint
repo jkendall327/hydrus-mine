@@ -699,6 +699,8 @@ export component MainWindow inherits Window {
     // the reference's main window shortcuts: ctrl+t and F9 open a page,
     // ctrl+w closes the page shown
     callback new-page();
+    callback session-user-activity();
+    callback session-mouse-activity();
     callback tab-new-page-requested(string, string);
     callback close-page();
     callback unclose-page();
@@ -781,11 +783,21 @@ export component MainWindow inherits Window {
     out property <int> grid-columns: grid.columns;
     changed grid-columns => { root.columns-changed(self.grid-columns); }
 
+    // Capture motion before forwarding input to the interactive children.
+    activity := TouchArea {
+        width: 100%;
+        height: 100%;
+        changed mouse-x => { root.session-mouse-activity(); }
+        changed mouse-y => { root.session-mouse-activity(); }
+        pointer-event(event) => {
+            if event.kind == PointerEventKind.down { root.session-user-activity(); }
+        }
     // the main window's shortcuts, whatever has the keyboard
     FocusScope {
         width: 100%;
         height: 100%;
         capture-key-pressed(event) => {
+            root.session-user-activity();
             // an open menu takes every key, and alt and a letter opens one
             if (root.menu-panes.length > 0) {
                 root.menu-key(event.text, event.modifiers.alt);
@@ -1933,6 +1945,7 @@ export component MainWindow inherits Window {
             placed(p, x, y, width) => { root.menu-placed(p, x, y, width); }
             dismiss => { root.menu-dismissed(); }
         }
+    }
     }
 }
 

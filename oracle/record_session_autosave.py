@@ -53,7 +53,22 @@ def record(session):
             gui.AutoSaveLastSession()
             backups=controller.Read('serialisable_names_to_backup_timestamps_ms',HydrusSerialisable.SERIALISABLE_TYPE_GUI_SESSION_CONTAINER)
             rows.append({'startup':startup,'only_idle':only,'idle':is_idle,'minutes':minutes,'add_notebook':rename,'now':now[0],'calls':list(calls),'saves':list(saves),'backups':backups.get(CC.LAST_SESSION_SESSION_NAME,[])})
-        return {'steps':rows,'default_minutes':old_period,'default_only_idle':old_only}
+        old_boot=controller.GetBootTimestampMS;old_get=controller.GetTimestampMS
+        old_idle_options={key:HC.options[key] for key in ['idle_normal','idle_period','idle_mouse_period']}
+        old_api=controller.new_options.GetNoneableInteger('idle_mode_client_api_timeout')
+        times={'last_user_action':0,'last_mouse_action':0,'last_client_api_action':0};idle_rows=[]
+        controller.GetBootTimestampMS=lambda:0;controller.GetTimestampMS=lambda key:times.get(key,old_get(key))
+        try:
+            HC.options.update({'idle_normal':True,'idle_period':10,'idle_mouse_period':5})
+            controller.new_options.SetNoneableInteger('idle_mode_client_api_timeout',None)
+            for timestamp,action,api,enabled in [(120000,None,None,True),(120001,None,None,True),(130001,('last_user_action',120001),None,True),(130002,None,None,True),(135002,('last_mouse_action',130002),None,True),(135003,None,None,True),(137003,('last_client_api_action',135003),2,True),(137004,None,2,True),(140000,None,2,False)]:
+                now[0]=timestamp
+                if action:times[action[0]]=action[1]
+                HC.options['idle_normal']=enabled;controller.new_options.SetNoneableInteger('idle_mode_client_api_timeout',api)
+                idle_rows.append({'now':timestamp,'times':dict(times),'api_seconds':api,'enabled':enabled,'eligible':old_idle()})
+        finally:
+            controller.GetBootTimestampMS=old_boot;controller.GetTimestampMS=old_get;HC.options.update(old_idle_options);controller.new_options.SetNoneableInteger('idle_mode_client_api_timeout',old_api)
+        return {'steps':rows,'default_minutes':old_period,'default_only_idle':old_only,'idle_steps':idle_rows}
     try:return controller.CallBlockingToQt(gui,drive)
     finally:
         controller.CallLaterQtSafe=old_call;controller.CallToThread=old_thread;controller.CurrentlyIdle=old_idle;controller.SaveGUISession=old_save;controller._last_last_session_hash=old_hash

@@ -71,4 +71,23 @@ fn idle_requires_boot_user_mouse_and_api_timeouts_and_enabled_normal_work() {
     assert!(idle.eligible(137004, &settings));
     settings.enabled = false;
     assert!(!idle.eligible(i64::MAX, &settings));
+
+    let fixture = hydrus_testkit::fixture_json("session_autosave.json");
+    let mut idle = Idle::new(0);
+    for step in fixture["idle_steps"].as_array().unwrap() {
+        let times = &step["times"];
+        idle.user(times["last_user_action"].as_i64().unwrap());
+        idle.mouse(times["last_mouse_action"].as_i64().unwrap());
+        idle.api(times["last_client_api_action"].as_i64().unwrap());
+        let config = GuiIdleSettings {
+            enabled: step["enabled"].as_bool().unwrap(),
+            user_seconds: Some(10),
+            mouse_seconds: Some(5),
+            api_seconds: step["api_seconds"].as_u64(),
+        };
+        assert_eq!(
+            idle.eligible(step["now"].as_i64().unwrap(), &config),
+            step["eligible"].as_bool().unwrap()
+        );
+    }
 }
