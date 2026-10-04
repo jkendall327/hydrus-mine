@@ -31,6 +31,7 @@ fn set(store: &Store, remember: bool, name: &str) {
                 &TagEditingSettings {
                     remember_service: remember,
                     default_service,
+                    ..TagEditingSettings::default()
                 },
             )
         })

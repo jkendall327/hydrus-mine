@@ -136,6 +136,36 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         {
             tag_editing.remember_service = value;
         }
+        if let Some(&value) = options.booleans.get("ac_select_first_with_count") {
+            tag_editing.select_first_with_count = value;
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("skip_yesno_on_write_autocomplete_multiline_paste")
+        {
+            tag_editing.skip_multiline_paste_confirmation = value;
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("show_parent_decorators_on_storage_autocomplete_taglists")
+        {
+            tag_editing.autocomplete_show_parents = value;
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("expand_parents_on_storage_autocomplete_taglists")
+        {
+            tag_editing.autocomplete_expand_parents = value;
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("show_sibling_decorators_on_storage_autocomplete_taglists")
+        {
+            tag_editing.autocomplete_show_siblings = value;
+        }
+        if let Some(&value) = options.integers.get("ac_write_list_height_num_chars") {
+            tag_editing.autocomplete_list_height = u32::try_from(value).unwrap_or(11).clamp(1, 128);
+        }
         if let Some(key) = options.keys.get("default_tag_service_tab") {
             tag_editing.default_service = ServiceKey::new(key.clone());
         }

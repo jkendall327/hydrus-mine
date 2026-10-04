@@ -1208,3 +1208,12 @@ The default/fallback local search location is editable and consumed by native
 blank-page creation and tag-domain fallback. Its native button opens the current
 importable-domain tick list directly; the reference offers single-domain menu
 shortcuts before that same multi-domain selector.
+
+Manage Tags' write autocomplete now has storage counts, typed/ideal elevation,
+parent and sibling rows, manual fetch, a scrollable suggestions list, multiline
+paste and all six Tag Editing autocomplete preferences. The reference's
+favourite/children suggestion tabs and tag context menus are still absent.
+Declining a multiline paste leaves the existing text draft intact; Qt returns
+that event to its line editor's normal paste handling. The relationship and
+import-options text inputs have not yet adopted this shared widget. Expanded
+parent rows enter their originating child, matching Qt's logical-list selection.

@@ -83,3 +83,5 @@ pub mod tag_migration;
 
 pub mod downloader_display;
 pub mod regex_favourites;
+
+pub mod write_autocomplete;
