@@ -256,7 +256,7 @@ fn filter(
     entries: Vec<Entry>,
     from: HashKind,
     to: HashKind,
-    gate: Option<&Gate>,
+    gate: Option<(&Gate, &Connection)>,
 ) -> Result<Vec<Entry>> {
     let scope_needed = !matches!(&request.scope,Scope::Location(l) if l.is_all_known_files());
     let mut batch = Vec::new();
@@ -269,8 +269,8 @@ fn filter(
                 if !request.right_filter.tag_ok(right, false) {
                     continue;
                 }
-                if let Some(gate) = gate
-                    && !pair_ok(conn, gate, &entry.left, right)?
+                if let Some((gate, live)) = gate
+                    && !pair_ok(live, gate, &entry.left, right)?
                 {
                     continue;
                 }
@@ -383,11 +383,6 @@ pub fn run(
     let options = std::sync::Arc::new(options.clone());
     store.read(|conn| {
         let (service, _) = endpoints(conn, &request, &options)?;
-        let gate = options
-            .counts
-            .as_ref()
-            .map(|counts| gate(conn, request.content, counts))
-            .transpose()?;
         let sql = service
             .map(|s| super::source_sql(conn, &request, s))
             .transpose()?
@@ -419,7 +414,22 @@ pub fn run(
             if scanned == 0 {
                 break;
             }
-            let batch = filter(conn, &request, &options, entries, from, to, gate.as_ref())?;
+            let batch = if let Some(counts) = &options.counts {
+                store.read(|live| {
+                    let gate = gate(live, request.content, counts)?;
+                    filter(
+                        conn,
+                        &request,
+                        &options,
+                        entries,
+                        from,
+                        to,
+                        Some((&gate, live)),
+                    )
+                })?
+            } else {
+                filter(conn, &request, &options, entries, from, to, None)?
+            };
             if cancel.load(Ordering::Acquire) {
                 done.cancelled = true;
                 break;

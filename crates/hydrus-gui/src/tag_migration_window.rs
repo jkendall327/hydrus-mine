@@ -279,13 +279,11 @@ pub fn open(
             if w.get_running() || !w.get_question().is_empty() {
                 return;
             }
-            let dialog = rfd::FileDialog::new()
-                .set_title(if source {
-                    "Select the Archive to pull data from."
-                } else {
-                    "Select the Archive to push data to."
-                })
-                .add_filter("Hydrus Tag Archive", &["db"]);
+            let dialog = rfd::FileDialog::new().set_title(if source {
+                model::SOURCE_ARCHIVE_PROMPT
+            } else {
+                model::DESTINATION_ARCHIVE_PROMPT
+            });
             let path = if source {
                 dialog.pick_file()
             } else {

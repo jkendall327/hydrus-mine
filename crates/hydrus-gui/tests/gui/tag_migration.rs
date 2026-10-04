@@ -299,6 +299,9 @@ fn archive_controls_inspect_reject_wrong_pair_types_and_freeze_confirmed_paths()
         tag_migration_window::open(&store, &key, vec![], &slot, std::rc::Rc::new(|| {})).unwrap();
     let recording = hydrus_testkit::fixture_json("tag_archives.json");
     for case in recording["qt"].as_array().unwrap() {
+        // Each reference inspector case starts from a fresh content draft.
+        window.set_content(if case["kind"] == "siblings" { 0 } else { 1 });
+        window.invoke_choices_changed();
         window.set_content(match case["kind"].as_str().unwrap() {
             "sha256" | "md5" => 0,
             "siblings" => 1,

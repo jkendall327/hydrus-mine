@@ -1232,6 +1232,90 @@
       "deleted": true
     }
   ],
+  "dynamic_counts": {
+    "batch_size": 1,
+    "added_after_first_batch": "archive:right",
+    "left": true,
+    "right": false,
+    "either": false,
+    "pairs": [
+      [
+        "archive:left",
+        "archive:right"
+      ],
+      [
+        "archive:right",
+        "archive:ideal"
+      ]
+    ]
+  },
+  "picker_requests": [
+    {
+      "message": "Select the Archive to pull data from.",
+      "accept_mode": "AcceptOpen",
+      "accepted": true
+    },
+    {
+      "message": "Select the destination location for the Archive. Existing Archives are also ok, and will be appended to.",
+      "accept_mode": "AcceptSave",
+      "accepted": true
+    },
+    {
+      "message": "Select the Archive to pull data from.",
+      "accept_mode": "AcceptOpen",
+      "accepted": false
+    },
+    {
+      "message": "Select the Archive to pull data from.",
+      "accept_mode": "AcceptOpen",
+      "accepted": true
+    },
+    {
+      "message": "Select the destination location for the Archive. Existing Archives are also ok, and will be appended to.",
+      "accept_mode": "AcceptSave",
+      "accepted": true
+    },
+    {
+      "message": "Select the Archive to pull data from.",
+      "accept_mode": "AcceptOpen",
+      "accepted": false
+    },
+    {
+      "message": "Select the Archive to pull data from.",
+      "accept_mode": "AcceptOpen",
+      "accepted": true
+    },
+    {
+      "message": "Select the destination location for the Archive. Existing Archives are also ok, and will be appended to.",
+      "accept_mode": "AcceptSave",
+      "accepted": true
+    },
+    {
+      "message": "Select the Archive to pull data from.",
+      "accept_mode": "AcceptOpen",
+      "accepted": false
+    },
+    {
+      "message": "Select the Archive to pull data from.",
+      "accept_mode": "AcceptOpen",
+      "accepted": true
+    },
+    {
+      "message": "Select the destination location for the Archive. Existing Archives are also ok, and will be appended to.",
+      "accept_mode": "AcceptSave",
+      "accepted": true
+    },
+    {
+      "message": "Select the Archive to pull data from.",
+      "accept_mode": "AcceptOpen",
+      "accepted": false
+    },
+    {
+      "message": "Select the Archive to pull data from.",
+      "accept_mode": "AcceptOpen",
+      "accepted": true
+    }
+  ],
   "qt_warnings": [
     "This Hydrus Tag Pair Archive is not a tag parents archive!"
   ],

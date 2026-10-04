@@ -358,6 +358,10 @@ impl Migration {
         )
     }
 }
+/// Reference source archive picker prompt.
+pub const SOURCE_ARCHIVE_PROMPT: &str = "Select the Archive to pull data from.";
+/// Reference destination archive picker prompt.
+pub const DESTINATION_ARCHIVE_PROMPT: &str = "Select the destination location for the Archive. Existing Archives are also ok, and will be appended to.";
 /// Exact second confirmation outside advanced mode.
 pub const LAST_CHANCE: &str = "Are you absolutely sure you set up the filters and everything how you wanted? Last chance to turn back.";
 /// Reference choice labels.

@@ -119,6 +119,20 @@ def record(session, executable):
                 while source.StillWorkToDo(): actual.extend(source.GetSomeData())
                 source.CleanUp()
                 result['counts'].append({'content':label,'service':service_name,'left':left,'right':right,'either':either,'pairs':sorted([list(p) for p in actual])})
+    # Bound the actual source pull to the native test's single-row batch,
+    # retaining the reference GetSomeData/filter-count implementation.
+    from hydrus.core import HydrusLists
+    pull=HydrusLists.PullNFromIterator
+    HydrusLists.PullNFromIterator=lambda iterator,n:pull(iterator,1)
+    source=M.MigrationSourceHTPA(controller,str(HERE/'fixtures/tag_archive_parents.db'),HC.CONTENT_TYPE_TAG_PARENTS,HydrusTags.TagFilter(),HydrusTags.TagFilter(),True,False,False,local)
+    source.Prepare();dynamic=[]
+    try:
+        dynamic.extend(source.GetSomeData())
+        controller.WriteSynchronous('content_updates',U.ContentUpdatePackage.STATICCreateFromContentUpdates(local,[U.ContentUpdate(HC.CONTENT_TYPE_MAPPINGS,HC.CONTENT_UPDATE_ADD,('archive:right',{known[0]}))]))
+        while source.StillWorkToDo():dynamic.extend(source.GetSomeData())
+    finally:
+        source.CleanUp();HydrusLists.PullNFromIterator=pull
+    result['dynamic_counts']={'batch_size':1,'added_after_first_batch':'archive:right','left':True,'right':False,'either':False,'pairs':sorted([list(p) for p in dynamic])}
     def qt():
         from qtpy import QtWidgets as QW
         from hydrus.client.gui.metadata.ClientGUIMigrateTags import MigrateTagsPanel
@@ -126,7 +140,9 @@ def record(session, executable):
         chosen=[]
         messages=[]
         class Dialog:
-            def __init__(self,*args,**kwargs): self.path,self.accept=chosen.pop(0)
+            def __init__(self,*args,**kwargs):
+                self.path,self.accept=chosen.pop(0)
+                result.setdefault('picker_requests',[]).append({'message':kwargs.get('message'),'accept_mode':kwargs.get('acceptMode',QW.QFileDialog.AcceptMode.AcceptOpen).name,'accepted':self.accept})
             def __enter__(self): return self
             def __exit__(self,*args): pass
             def exec(self): return QW.QDialog.DialogCode.Accepted if self.accept else QW.QDialog.DialogCode.Rejected

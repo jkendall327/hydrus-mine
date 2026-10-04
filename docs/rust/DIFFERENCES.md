@@ -1188,9 +1188,9 @@ SHA256/MD5/SHA1/SHA512 conversion uses known stored digests; unknown conversions
 are skipped, while same-kind all-known archive copies retain unknown hashes.
 Selected-file/domain filtering converts through SHA256. Pair gates use actual
 current and pending storage mappings and the sibling terminal ideal, rather than
-implied display counts. Gates use the same frozen reader snapshot as the source,
-so concurrent service changes affect the next job rather than changing a running
-job's filter membership. Repository migration retains
+implied display counts. Count gates reload a fresh reader snapshot after each
+source batch, matching the reference's current service counts and ideal chains
+while source pagination remains stable. Repository migration retains
 pending/petitioned content locally; uploading is outside this window's scope.
 The reference's fixed Mass Migration Job reason is offered as an editable petition
 reason in the native window. Progress reports scanned and accepted source entries,

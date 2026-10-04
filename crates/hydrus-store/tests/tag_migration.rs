@@ -1003,3 +1003,67 @@ fn archive_validation_rejects_wrong_types_and_unsupported_hashes_before_import()
     );
     assert!(!options.source.unwrap().exists());
 }
+
+#[test]
+fn pair_count_gates_observe_reference_concurrent_mapping_changes_between_batches() {
+    let recording = hydrus_testkit::fixture_json("tag_archives.json");
+    let case = &recording["dynamic_counts"];
+    let (dir, store, mut request) = setup();
+    request.content = Content::Parents;
+    let service = store
+        .snapshot()
+        .services
+        .by_key(&request.source)
+        .unwrap()
+        .id;
+    store
+        .write_content(move |writer| {
+            let tag = hydrus_store::master::intern_tag(
+                writer.conn(),
+                &Tag::new("archive:left").unwrap(),
+            )?;
+            writer.update_mappings(service, &MappingAction::Add, tag, &[HashId(1)])
+        })
+        .unwrap();
+    let output = dir.path().join("live-counts.db");
+    let options = tag_migration::Options {
+        source: Some(hydrus_testkit::fixture_path("tag_archive_parents.db")),
+        destination: Some(output.clone()),
+        counts: Some(tag_migration::PairCounts {
+            service: request.source.clone(),
+            left: true,
+            right: false,
+            either: false,
+        }),
+        ..Default::default()
+    };
+    let added = case["added_after_first_batch"].as_str().unwrap().to_owned();
+    let observer = store.clone();
+    let done = tag_migration::run_job(
+        &store,
+        &request,
+        &options,
+        &AtomicBool::new(false),
+        &AtomicBool::new(false),
+        usize::try_from(case["batch_size"].as_u64().unwrap()).unwrap(),
+        |p| {
+            if p.scanned == 1 {
+                let text = added.clone();
+                observer
+                    .write_content(move |writer| {
+                        let tag = hydrus_store::master::intern_tag(
+                            writer.conn(),
+                            &Tag::new(&text).unwrap(),
+                        )?;
+                        writer.update_mappings(service, &MappingAction::Add, tag, &[HashId(1)])
+                    })
+                    .unwrap();
+            }
+        },
+    )
+    .unwrap();
+    let conn = rusqlite::Connection::open(output).unwrap();
+    let pairs=conn.prepare("SELECT a.tag,b.tag FROM pairs p JOIN tags a ON p.tag_id_1=a.tag_id JOIN tags b ON p.tag_id_2=b.tag_id ORDER BY a.tag,b.tag").unwrap().query_map([],|r|Ok([r.get::<_,String>(0)?,r.get::<_,String>(1)?])).unwrap().collect::<rusqlite::Result<Vec<_>>>().unwrap();
+    assert_eq!(serde_json::json!(pairs), case["pairs"]);
+    assert_eq!(done.accepted, pairs.len());
+}

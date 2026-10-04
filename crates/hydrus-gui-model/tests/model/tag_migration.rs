@@ -253,6 +253,14 @@ fn reference_database_pair_filters_and_destinations() {
 #[test]
 fn archive_inspection_choices_cancellation_and_count_summaries_match_qt() {
     let recording = hydrus_testkit::fixture_json("tag_archives.json");
+    assert_eq!(
+        recording["picker_requests"][0]["message"],
+        tag_migration::SOURCE_ARCHIVE_PROMPT
+    );
+    assert_eq!(
+        recording["picker_requests"][1]["message"],
+        tag_migration::DESTINATION_ARCHIVE_PROMPT
+    );
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
     let key = store
