@@ -203,9 +203,6 @@ impl DomainMask {
 
     /// Test a domain with the same mask description shown by the reference.
     pub fn test(&self, domain: &str) -> Result<(), UrlClassError> {
-        if self.matches(domain) {
-            return Ok(());
-        }
         fn summary(values: &[String], noun: &str) -> String {
             let mut values = values.to_vec();
             crate::sort::human_sort(&mut values);
@@ -231,6 +228,9 @@ impl DomainMask {
                 "{} {noun}",
                 crate::numbers::human_int(u64::try_from(values.len()).unwrap_or(u64::MAX))
             )
+        }
+        if self.matches(domain) {
+            return Ok(());
         }
         let mut description = if self.raw_domains.is_empty() {
             String::new()
