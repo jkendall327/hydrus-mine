@@ -400,6 +400,33 @@ impl Setting for FileSearchSettings {
     const KEY: &'static str = "file_search";
 }
 
+/// Native media canvas presentation (`media playback` and `media viewer`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerCanvasSettings {
+    pub recenter_on_resize: bool,
+    pub transparency_checkerboard: bool,
+    pub transparency_greenscreen: bool,
+    pub seek_height: u32,
+    pub seek_hidden_height: Option<u32>,
+    pub seek_nub_width: u32,
+}
+impl Default for ViewerCanvasSettings {
+    fn default() -> Self {
+        Self {
+            recenter_on_resize: true,
+            transparency_checkerboard: false,
+            transparency_greenscreen: false,
+            seek_height: 20,
+            seek_hidden_height: Some(5),
+            seek_nub_width: 10,
+        }
+    }
+}
+impl Setting for ViewerCanvasSettings {
+    const KEY: &'static str = "viewer_canvas";
+}
+
 /// Export folders.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, serde::Deserialize)]
 pub struct ExportFolders(pub Vec<hydrus_parse::folders::ExportFolder>);

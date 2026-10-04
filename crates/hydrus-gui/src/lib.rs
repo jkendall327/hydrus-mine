@@ -91,6 +91,7 @@ mod thumbnails;
 mod unlock;
 mod viewer;
 pub mod viewer_menu;
+mod viewer_presentation;
 mod watcher;
 pub mod windows;
 pub mod zoom;
@@ -1455,6 +1456,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let pages = pages.clone();
                 let slot = options.clone();
                 let checker_slot = checker_options.clone();
+                let viewer = viewer.clone();
                 let change_pages = change_pages.clone();
                 let rows = rows.clone();
                 let weak = window.as_weak();
@@ -1465,6 +1467,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let store = pages.borrow().store().clone();
                     let thumbnails_before = store.snapshot().thumbnails;
                     let applied: Rc<dyn Fn()> = Rc::new({
+                        let viewer = viewer.clone();
                         let pages = pages.clone();
                         let change_pages = change_pages.clone();
                         let rows = rows.clone();
@@ -1472,6 +1475,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         let store = store.clone();
                         move || {
                             pages.borrow_mut().reload_settings();
+                            if let Some(window) = viewer.borrow().as_ref() {
+                                window.invoke_presentation_settings_changed();
+                            }
                             // (the cells as the options now have them; and
                             // thumbnails of another size, every one again)
                             if let Some(window) = weak.upgrade() {
@@ -4002,6 +4008,25 @@ fn open_viewer(
         .read(hydrus_store::settings::get)
         .unwrap_or_default();
     let zoomed = zoom_window!(window, settings.clone());
+    zoomed.set_resize_policy({
+        let store = model.borrow().store().clone();
+        move || {
+            store
+                .read(hydrus_store::settings::get::<hydrus_store::settings::ViewerCanvasSettings>)
+                .unwrap_or_default()
+                .recenter_on_resize
+        }
+    });
+    window.on_presentation_settings_changed({
+        let weak = window.as_weak();
+        let model = model.clone();
+        move || {
+            if let Some(window) = weak.upgrade() {
+                let model = model.borrow();
+                viewer_presentation::refresh(&window, model.store(), model.current());
+            }
+        }
+    });
     // the zoom, in the top hover frame
     zoomed.watch({
         let weak = window.as_weak();
@@ -4125,6 +4150,7 @@ fn open_viewer(
                 return;
             };
             let model = model.borrow();
+            viewer_presentation::refresh(&window, model.store(), model.current());
             let shown = viewer::shown(model.store(), model.current());
             window.set_info_line(shown.line.into());
             window.set_file_inbox(shown.inbox);
@@ -4337,13 +4363,19 @@ fn open_viewer(
         let weak = window.as_weak();
         move |x, width| match scanbar.get() {
             Some((bar, false)) => {
-                let to = bar.seek_to(x, width);
+                let nub = weak
+                    .upgrade()
+                    .map_or(scanbar::NUB_WIDTH, |w| w.get_seek_nub_width());
+                let to = bar.seek_to_with_nub(x, width, nub);
                 playback.seek_ms(to);
                 show_scanbar(to);
             }
             Some((bar, true)) => {
                 // (the frame's text follows once it is shown)
-                let index = bar.frame_at(x, width);
+                let nub = weak
+                    .upgrade()
+                    .map_or(scanbar::NUB_WIDTH, |w| w.get_seek_nub_width());
+                let index = bar.frame_at_with_nub(x, width, nub);
                 animator.goto(index);
                 if let Some(window) = weak.upgrade() {
                     window.set_scanbar_progress(bar.at_frame(index, 0).0);

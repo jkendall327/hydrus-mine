@@ -1829,3 +1829,13 @@ explicit larger limit overrides it. The sort-refresh preference defaults on:
 changing a supported database sort reruns a synchronized, explicitly limited
 local search to choose its new sorted subset. Paused searches, implicit-only
 limits, all-known-file locations, and unsupported sorts keep the current subset.
+
+Media playback Options now control whether a resized viewer restores its default
+fit or keeps the current detail zoom and pan. Transparent media can show the
+reference's 16-pixel checkerboard or bright green background; opaque files keep
+the ordinary canvas background. Media viewer Options set the seek bar's full
+height (1–255 pixels), mouse-away height (1–255 pixels or completely hidden),
+and nub width (1–63 pixels). Apply refreshes an open viewer; Cancel discards the
+draft. The configured nub width also determines where clicks and drags seek.
+Legacy preferences migrate with the reference's defaults. These controls and
+native pixels/geometry are recorded in `viewer_canvas_options.json`.

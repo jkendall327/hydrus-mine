@@ -77,6 +77,8 @@ component HoverButton inherits Rectangle {
     }
 }
 
+import { TransparencyBackdrop } from "transparency_backdrop.slint";
+
 export component MediaViewerWindow inherits Window {
     title: root.caption;
     preferred-width: 1000px;
@@ -84,6 +86,11 @@ export component MediaViewerWindow inherits Window {
     background: #202020;
 
     in property <image> media;
+    in property <int> transparency-mode;
+    in property <length> seek-height: 20px;
+    in property <length> seek-hidden-height: 5px;
+    in property <length> seek-nub-width: 10px;
+    callback presentation-settings-changed();
     in property <string> caption;
     // the file's tags, for the hover frame
     in property <[ListText]> tags;
@@ -193,7 +200,7 @@ export component MediaViewerWindow inherits Window {
     }
     // the bar at its full size near the pointer (as the reference's
     // animation bar pops in), else a thin line
-    property <length> bar-top: root.media-y + root.media-height - 20px;
+    property <length> bar-top: root.media-y + root.media-height - root.seek-height;
     out property <bool> bar-near: pointer.has-hover
         && pointer.mouse-x >= root.media-x - 50px && pointer.mouse-x <= root.media-x + root.media-width + 50px
         && pointer.mouse-y >= root.bar-top - 100px && pointer.mouse-y <= root.bar-top + 40px;
@@ -753,6 +760,15 @@ export component MediaViewerWindow inherits Window {
                 }
             }
         }
+        if root.transparency-mode > 0: TransparencyBackdrop {
+            x: root.media-x;
+            y: root.media-y;
+            width: root.media-width;
+            height: root.media-height;
+            canvas-width: root.width;
+            canvas-height: root.height;
+            mode: root.transparency-mode;
+        }
         Image {
             x: root.media-x;
             y: root.media-y;
@@ -814,14 +830,14 @@ export component MediaViewerWindow inherits Window {
             property <bool> full: root.bar-near || scrub.has-hover || scrub.pressed || root.volume-open;
             x: root.media-x;
             width: root.media-width - (root.volume-shown ? 24px : 0px);
-            height: self.full ? 20px : 5px;
+            height: self.full ? root.seek-height : root.seek-hidden-height;
             y: root.media-y + root.media-height - self.height;
             background: #303030;
             border-width: 1px;
             border-color: #606060;
             Rectangle {
-                x: floor((parent.width - 10px) * root.scanbar-progress / 1px) * 1px;
-                width: 10px;
+                x: floor((parent.width - min(root.seek-nub-width, parent.width)) * root.scanbar-progress / 1px) * 1px;
+                width: min(root.seek-nub-width, parent.width);
                 background: #b0b0b0;
             }
             if bar.full: Text {
@@ -860,7 +876,7 @@ export component MediaViewerWindow inherits Window {
             // the volume and the viewer's mute, above the global mute
             property <length> popup: self.track + 2 * self.track-top + self.line;
             width: 24px;
-            height: self.open ? self.popup + self.line : root.bar-near ? self.line : 5px;
+            height: self.open ? self.popup + root.seek-height : root.bar-near ? root.seek-height : root.seek-hidden-height;
             x: root.media-x + root.media-width - self.width;
             y: root.media-y + root.media-height - self.height;
             background: #303030;

@@ -1,0 +1,28 @@
+// The reference's native media transparency brush, clipped to the media box.
+export component TransparencyBackdrop inherits Rectangle {
+    in property <int> mode;
+    in property <length> canvas-width;
+    in property <length> canvas-height;
+    clip: true;
+    background: root.mode == 2 ? #22ff00 : transparent;
+    // Only instantiate tiles that intersect the viewport, even when zoomed.
+    property <length> visible-left: max(0px, -root.x);
+    property <length> visible-top: max(0px, -root.y);
+    property <length> visible-right: min(root.width, root.canvas-width - root.x);
+    property <length> visible-bottom: min(root.height, root.canvas-height - root.y);
+    property <int> first-column: floor(root.visible-left / 16px);
+    property <int> first-row: floor(root.visible-top / 16px);
+    property <int> columns: max(0, ceil(root.visible-right / 16px) - root.first-column);
+    property <int> rows: max(0, ceil(root.visible-bottom / 16px) - root.first-row);
+    if root.mode == 1: Rectangle {
+        for index in root.columns * root.rows: Rectangle {
+            property <int> column: mod(index, max(1, root.columns)) + root.first-column;
+            property <int> row: floor(index / max(1, root.columns)) + root.first-row;
+            x: self.column * 16px;
+            y: self.row * 16px;
+            width: 16px;
+            height: 16px;
+            background: mod(self.column + self.row, 2) == 0 ? #ededed : #dedede;
+        }
+    }
+}

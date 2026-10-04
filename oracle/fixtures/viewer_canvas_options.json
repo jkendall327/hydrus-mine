@@ -1,0 +1,374 @@
+{
+  "media_resolution": [
+    64,
+    48
+  ],
+  "initial": {
+    "media_viewer_recenter_media_on_window_resize": true,
+    "draw_transparency_checkerboard_media_canvas": false,
+    "draw_transparency_checkerboard_as_greenscreen": false,
+    "animated_scanbar_height": 20,
+    "animated_scanbar_nub_width": 10,
+    "animated_scanbar_hide_height": 5,
+    "height_bounds": [
+      1,
+      255
+    ],
+    "nub_bounds": [
+      1,
+      63
+    ]
+  },
+  "backgrounds": [
+    {
+      "checker": false,
+      "green": false,
+      "has_transparency": true,
+      "pixels": {
+        "0,0": [
+          255,
+          255,
+          255
+        ],
+        "16,0": [
+          255,
+          255,
+          255
+        ],
+        "0,16": [
+          255,
+          255,
+          255
+        ],
+        "16,16": [
+          255,
+          255,
+          255
+        ],
+        "32,0": [
+          255,
+          255,
+          255
+        ]
+      }
+    },
+    {
+      "checker": false,
+      "green": true,
+      "has_transparency": true,
+      "pixels": {
+        "0,0": [
+          255,
+          255,
+          255
+        ],
+        "16,0": [
+          255,
+          255,
+          255
+        ],
+        "0,16": [
+          255,
+          255,
+          255
+        ],
+        "16,16": [
+          255,
+          255,
+          255
+        ],
+        "32,0": [
+          255,
+          255,
+          255
+        ]
+      }
+    },
+    {
+      "checker": true,
+      "green": false,
+      "has_transparency": true,
+      "pixels": {
+        "0,0": [
+          237,
+          237,
+          237
+        ],
+        "16,0": [
+          222,
+          222,
+          222
+        ],
+        "0,16": [
+          222,
+          222,
+          222
+        ],
+        "16,16": [
+          237,
+          237,
+          237
+        ],
+        "32,0": [
+          237,
+          237,
+          237
+        ]
+      }
+    },
+    {
+      "checker": true,
+      "green": true,
+      "has_transparency": true,
+      "pixels": {
+        "0,0": [
+          34,
+          255,
+          0
+        ],
+        "16,0": [
+          34,
+          255,
+          0
+        ],
+        "0,16": [
+          34,
+          255,
+          0
+        ],
+        "16,16": [
+          34,
+          255,
+          0
+        ],
+        "32,0": [
+          34,
+          255,
+          0
+        ]
+      }
+    }
+  ],
+  "resizes": [
+    {
+      "recenter": false,
+      "before": {
+        "rect": [
+          473,
+          308,
+          128,
+          96
+        ],
+        "zoom": 2.0,
+        "canvas": [
+          1000,
+          750
+        ]
+      },
+      "after": {
+        "rect": [
+          473,
+          308,
+          128,
+          96
+        ],
+        "zoom": 2.0,
+        "canvas": [
+          800,
+          600
+        ]
+      }
+    },
+    {
+      "recenter": true,
+      "before": {
+        "rect": [
+          473,
+          308,
+          128,
+          96
+        ],
+        "zoom": 2.0,
+        "canvas": [
+          1000,
+          750
+        ]
+      },
+      "after": {
+        "rect": [
+          0,
+          0,
+          800,
+          600
+        ],
+        "zoom": 12.5,
+        "canvas": [
+          800,
+          600
+        ]
+      }
+    }
+  ],
+  "seek": [
+    {
+      "height": 20,
+      "hidden_height": 5,
+      "nub": 10,
+      "full_rect": [
+        0,
+        580,
+        800,
+        20
+      ],
+      "small_rect": [
+        0,
+        595,
+        800,
+        5
+      ],
+      "hidden_visible": true,
+      "click_x": [
+        0,
+        5,
+        32,
+        64,
+        96,
+        128
+      ],
+      "frame_targets": [
+        0,
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "nub_x": [
+        0,
+        29,
+        59,
+        118
+      ]
+    },
+    {
+      "height": 1,
+      "hidden_height": null,
+      "nub": 1,
+      "full_rect": [
+        0,
+        599,
+        800,
+        1
+      ],
+      "small_rect": [
+        0,
+        595,
+        800,
+        5
+      ],
+      "hidden_visible": false,
+      "click_x": [
+        0,
+        0,
+        32,
+        64,
+        96,
+        128
+      ],
+      "frame_targets": [
+        0,
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "nub_x": [
+        0,
+        31,
+        63,
+        127
+      ]
+    },
+    {
+      "height": 255,
+      "hidden_height": 255,
+      "nub": 63,
+      "full_rect": [
+        0,
+        345,
+        800,
+        255
+      ],
+      "small_rect": [
+        0,
+        345,
+        800,
+        255
+      ],
+      "hidden_visible": true,
+      "click_x": [
+        0,
+        31,
+        32,
+        64,
+        96,
+        128
+      ],
+      "frame_targets": [
+        0,
+        0,
+        0,
+        2,
+        4,
+        4
+      ],
+      "nub_x": [
+        0,
+        16,
+        32,
+        65
+      ]
+    },
+    {
+      "height": 37,
+      "hidden_height": 3,
+      "nub": 19,
+      "full_rect": [
+        0,
+        563,
+        800,
+        37
+      ],
+      "small_rect": [
+        0,
+        597,
+        800,
+        3
+      ],
+      "hidden_visible": true,
+      "click_x": [
+        0,
+        9,
+        32,
+        64,
+        96,
+        128
+      ],
+      "frame_targets": [
+        0,
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "nub_x": [
+        0,
+        27,
+        54,
+        109
+      ]
+    }
+  ]
+}

@@ -1203,3 +1203,16 @@ shared search engine and native search pages. Sort-refresh eligibility matches
 the reference's supported system sorts and excludes all-known-file searches;
 namespace/rating sorts and the other unsupported system sorts only reorder the
 current subset. The executor's existing explicit-limit semantics are preserved.
+
+The native viewer's resize-recentering, checkerboard/greenscreen transparency,
+and seek-bar height/hidden-height/nub-width preferences have real canvas
+consumers. The unchecked transparency preference uses the native viewer's
+existing dark canvas colour rather than the reference client's configurable
+palette. Checkerboard tiles and greenscreen RGB values match the reference.
+The recenter setting controls the native viewer's existing default zoom rules;
+the reference's additional per-filetype zoom-lock policies remain separate gaps.
+The seek-bar focus requirement, preview canvas preferences, and MPV-specific
+presentation preferences are outside this slice. A hidden-height value of None
+hides the native bar completely when the pointer is away; Qt internally retains
+a five-pixel ideal rectangle for its hidden widget. The recorder includes both
+that rectangle and the actual Qt visibility decision.

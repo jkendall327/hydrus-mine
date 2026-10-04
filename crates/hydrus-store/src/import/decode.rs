@@ -536,6 +536,38 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .copied()
             .unwrap_or(file_search.refresh_limited_sort);
         insert_setting(&mut input, &file_search)?;
+        let mut viewer_canvas = crate::settings::ViewerCanvasSettings::default();
+        for (key, field) in [
+            (
+                "media_viewer_recenter_media_on_window_resize",
+                &mut viewer_canvas.recenter_on_resize,
+            ),
+            (
+                "draw_transparency_checkerboard_media_canvas",
+                &mut viewer_canvas.transparency_checkerboard,
+            ),
+            (
+                "draw_transparency_checkerboard_as_greenscreen",
+                &mut viewer_canvas.transparency_greenscreen,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        if let Some(value) = options.integers.get("animated_scanbar_height") {
+            viewer_canvas.seek_height = (*value).clamp(1, 255) as u32;
+        }
+        if let Some(value) = options
+            .noneable_integers
+            .get("animated_scanbar_hide_height")
+        {
+            viewer_canvas.seek_hidden_height = value.map(|height| height.clamp(1, 255) as u32);
+        }
+        if let Some(value) = options.integers.get("animated_scanbar_nub_width") {
+            viewer_canvas.seek_nub_width = (*value).clamp(1, 63) as u32;
+        }
+        insert_setting(&mut input, &viewer_canvas)?;
         let mut summaries = hydrus_core::tag_summary::TagSummaries::default();
         for (name, field) in [
             ("thumbnail_top", &mut summaries.thumbnail_top),
@@ -2582,6 +2614,62 @@ mod tests {
                 autocomplete_rows: 24,
                 implicit_limit: Some(3),
                 refresh_limited_sort: false,
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_canvas_options_convert_user_values() {
+        use crate::settings::ViewerCanvasSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerCanvasSettings>(input.settings["viewer_canvas"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), ViewerCanvasSettings::default());
+        assert_eq!(
+            serde_json::from_value::<ViewerCanvasSettings>(serde_json::json!({})).unwrap(),
+            ViewerCanvasSettings::default()
+        );
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "media_viewer_recenter_media_on_window_resize"], [0, true]]"#,
+                    r#"[[0, "media_viewer_recenter_media_on_window_resize"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_transparency_checkerboard_media_canvas"], [0, false]]"#,
+                    r#"[[0, "draw_transparency_checkerboard_media_canvas"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "draw_transparency_checkerboard_as_greenscreen"], [0, false]]"#,
+                    r#"[[0, "draw_transparency_checkerboard_as_greenscreen"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "animated_scanbar_height"], [0, 20]]"#,
+                    r#"[[0, "animated_scanbar_height"], [0, 37]]"#,
+                ),
+                (
+                    r#"[[0, "animated_scanbar_hide_height"], [0, 5]]"#,
+                    r#"[[0, "animated_scanbar_hide_height"], [0, null]]"#,
+                ),
+                (
+                    r#"[[0, "animated_scanbar_nub_width"], [0, 10]]"#,
+                    r#"[[0, "animated_scanbar_nub_width"], [0, 19]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerCanvasSettings {
+                recenter_on_resize: false,
+                transparency_checkerboard: true,
+                transparency_greenscreen: true,
+                seek_height: 37,
+                seek_hidden_height: None,
+                seek_nub_width: 19
             }
         );
     }
