@@ -1963,17 +1963,17 @@ pub fn suggestions(pages: &[Page]) -> Vec<Suggestion> {
 /// Searchable auxiliary labels and current combo values, captured on opening as
 /// the reference captures its widget text when building its completer.
 pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Suggestion> {
+    fn walk<'a>(items: &'a [Item], out: &mut Vec<&'a Item>) {
+        for item in items {
+            out.push(item);
+            if let Item::Box(_, children) = item {
+                walk(children, out);
+            }
+        }
+    }
     let mut out = suggestions(pages);
     for (page_index, page) in pages.iter().enumerate() {
         let mut option_index = 0;
-        fn walk<'a>(items: &'a [Item], out: &mut Vec<&'a Item>) {
-            for item in items {
-                out.push(item);
-                if let Item::Box(_, children) = item {
-                    walk(children, out);
-                }
-            }
-        }
         let mut rows = Vec::new();
         walk(&page.items, &mut rows);
         for (row, item) in rows.into_iter().enumerate() {
