@@ -430,3 +430,68 @@ fn recorded_hide_gate_retains_live_hierarchy_access_and_elision_changes_actual_p
         "actual tab glyph fitting changes paint, preserving the full labels"
     );
 }
+
+#[test]
+fn selected_glyph_measurement_triggers_elision_at_the_actual_near_fit_boundary() {
+    let windows = headless::init();
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let original = Session {
+        name: sessions::LAST_SESSION.into(),
+        pages: vec![
+            search("i"),
+            search(&format!("{} distinct end", "M".repeat(42))),
+        ],
+    };
+    seed(&store, &original);
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    // Stateless layout notifications report the same selected glyph probe that
+    // the actual NotebookStrip uses, with all observations owned by this window.
+    let measurement = std::rc::Rc::new(std::cell::RefCell::new(None));
+    ui.on_tab_measured({
+        let measurement = measurement.clone();
+        move |level, needed, available, cap| {
+            if level == 0 {
+                *measurement.borrow_mut() = Some((needed, available, cap));
+            }
+        }
+    });
+    ui.show().unwrap();
+    settle(&windows.get(0).unwrap());
+    let narrow = *measurement.borrow();
+    let narrow = narrow.unwrap().0;
+    ui.invoke_tab_chosen(0, 1);
+    settle(&windows.get(0).unwrap());
+    let wide = *measurement.borrow();
+    let wide = wide.unwrap().0;
+    assert!(
+        wide > narrow + 2.0,
+        "selected bold glyph advance is included in the actual strip probe: {wide} > {narrow}"
+    );
+    let width = ((narrow + wide) / 2.0).floor() as u32;
+    assert!(width as f32 > narrow && (width as f32) < wide);
+    let native = windows.get(0).unwrap();
+    for _ in 0..20 {
+        headless::render(&native, width, 600);
+        std::thread::sleep(std::time::Duration::from_millis(2));
+    }
+    let pixels = headless::render_snapshot(&native, width, 600);
+    let (needed, available, cap) = measurement.borrow().unwrap();
+    dimension(needed, wide);
+    dimension(available, width as f32);
+    assert!(
+        cap > 0.0,
+        "a viewport that fits unselected text still elides the wider selected glyphs"
+    );
+    assert_eq!(ui.get_tab_rows().row_data(0).unwrap().selected, 1);
+    assert_eq!(bound.pages.borrow().session(), &original);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("notebook_tabs_selected_near_fit.png"),
+        &pixels,
+        width,
+        600,
+    )
+    .unwrap();
+}
