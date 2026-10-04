@@ -52,7 +52,7 @@
           "line": 231,
           "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
-          "symbol": "fn current_tags"
+          "symbol": "ManageTags::current_tags"
         },
         {
           "path": "crates/hydrus-gui-model/src/manage_tags.rs",

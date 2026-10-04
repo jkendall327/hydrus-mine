@@ -533,8 +533,8 @@
       "before": "partial",
       "proposed_status": "partial",
       "proposedStatus": "partial",
-      "behavior": "Adds the complete editable frame table, staged geometry child and four real selected-row flip/reset controls; preserves all legacy/unknown frames and unedited concurrent runtime geometry. Main/media existing remembered placement and Options named-frame open/close consume edited values. Offscreen rescue, fitting/default placement and remaining named owners keep this parent Partial.",
-      "exactBehavior": "Adds the complete editable frame table, staged geometry child and four real selected-row flip/reset controls; preserves all legacy/unknown frames and unedited concurrent runtime geometry. Main/media existing remembered placement and Options named-frame open/close consume edited values. Offscreen rescue, fitting/default placement and remaining named owners keep this parent Partial.",
+      "behavior": "Adds the complete editable frame table, staged geometry child and four real selected-row flip/reset controls; preserves all legacy/unknown frames and unedited concurrent runtime geometry. Main/media placement consumes edited remembered values. Options opens using manage_options_dialog, but Cancel, native close and unchanged Apply preserve its stored tuple; explicit frame edits/resets persist through parent Apply. Offscreen rescue, fitting/default placement and remaining named owners keep this parent Partial.",
+      "exactBehavior": "Adds the complete editable frame table, staged geometry child and four real selected-row flip/reset controls; preserves all legacy/unknown frames and unedited concurrent runtime geometry. Main/media placement consumes edited remembered values. Options opens using manage_options_dialog, but Cancel, native close and unchanged Apply preserve its stored tuple; explicit frame edits/resets persist through parent Apply. Offscreen rescue, fitting/default placement and remaining named owners keep this parent Partial.",
       "reference_source": {
         "relativepath": "hydrus/client/gui/panels/options/GUIPanel.py",
         "line": 83,
@@ -570,6 +570,18 @@
           "line": 203,
           "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
           "symbol": "    pub fn saved("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/frame_locations.rs",
+          "line": 155,
+          "commit": "d92abea9cddfd2fd9df89d614bbdc84989c021e0",
+          "symbol": "pub fn save_window_state("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 53,
+          "commit": "d92abea9cddfd2fd9df89d614bbdc84989c021e0",
+          "symbol": "pub fn save_named("
         }
       ],
       "test_anchors": [
@@ -590,6 +602,12 @@
           "line": 69,
           "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
           "symbol": "fn frame_options_table_child_staging_and_saved_viewer_geometry_match_reference("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 187,
+          "commit": "d92abea9cddfd2fd9df89d614bbdc84989c021e0",
+          "symbol": "fn named_geometry_transactions_preserve_peer_frames_and_latest_viewer_save_preference("
         }
       ],
       "reference_recording": {
@@ -626,5 +644,15 @@
       "title": "set frame location information",
       "scope": "new owned native geometry child; no new reference leaf or duplicate alias counted"
     }
-  ]
+  ],
+  "lifecycle_provenance": {
+    "reviewed_source_commit": "d92abea9cddfd2fd9df89d614bbdc84989c021e0",
+    "reference_recorder": "oracle/record_options_geometry_lifecycle.py",
+    "reference_fixture": "oracle/fixtures/options_geometry_lifecycle.json",
+    "source": "Options placement reads manage_options_dialog. Incidental Options Cancel/X/unchanged Apply do not save current geometry; explicit resets/edits persist. Main/viewer close uses a named transaction retaining peer frames and reading latest save-media-viewer preference.",
+    "native_regression": "crates/hydrus-gui/tests/gui/frame_locations.rs::frame_options_table_child_staging_and_saved_viewer_geometry_match_reference",
+    "model_regression": "crates/hydrus-gui-model/tests/model/frame_locations.rs::named_geometry_transactions_preserve_peer_frames_and_latest_viewer_save_preference",
+    "counting": "Four original flip/reset completion proposals unchanged; table, geometry edit and overall frame parent remain Partial.",
+    "validation": "Existing author reference recording and authored regression scopes; no new execution or green CI attestation supplied by this source-only addendum."
+  }
 }

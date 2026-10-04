@@ -14,15 +14,23 @@
         "Authored native/model regression execution and rendered PNG inspection await hosted CI; source formatting, diff checks and cached warning-aware Slint compilation passed locally."
       ],
       "source": [
-        "crates/hydrus-gui-model/src/options.rs::Settings/pages/Editor::edited_banner/Editor::set_banner",
+        "crates/hydrus-gui-model/src/options.rs::pub struct Settings",
+        "crates/hydrus-gui-model/src/options.rs::pub fn pages(",
+        "crates/hydrus-gui-model/src/options.rs::Editor::edited_banner",
+        "crates/hydrus-gui-model/src/options.rs::Editor::set_banner",
         "crates/hydrus-gui-model/src/tag_banner.rs::Editor",
-        "crates/hydrus-gui/src/options_window.rs::option_row/open",
+        "crates/hydrus-gui/src/options_window.rs::fn option_row(",
+        "crates/hydrus-gui/src/options_window.rs::pub(crate) fn open(",
+        "crates/hydrus-gui/src/options_window.rs::window.on_banner_clicked",
         "crates/hydrus-gui/src/tag_banner_window.rs::open",
         "crates/hydrus-gui/ui/options.slint::OptionsWindow",
         "crates/hydrus-gui/ui/tag_banner.slint::TagBannerWindow",
-        "crates/hydrus-gui/src/lib.rs::lay_out_thumbnails/options applied callback",
+        "crates/hydrus-gui/src/lib.rs::fn lay_out_thumbnails(",
+        "crates/hydrus-gui/src/lib.rs::let banner_slot = options_banner_child.clone();",
         "crates/hydrus-gui/src/grid.rs::ThumbnailRows::set_summaries",
-        "crates/hydrus-gui-model/src/thumbnail_icons.rs::banners/banner_tags"
+        "crates/hydrus-gui-model/src/thumbnail_icons.rs::pub fn banners(",
+        "crates/hydrus-gui-model/src/thumbnail_icons.rs::fn banner_tags(",
+        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
@@ -52,15 +60,21 @@
         "Authored native/model regression execution and rendered PNG inspection await hosted CI; source formatting, diff checks and cached warning-aware Slint compilation passed locally."
       ],
       "source": [
-        "crates/hydrus-gui-model/src/options.rs::Settings/pages/Editor::edited_banner/Editor::set_banner",
+        "crates/hydrus-gui-model/src/options.rs::pub struct Settings",
+        "crates/hydrus-gui-model/src/options.rs::pub fn pages(",
+        "crates/hydrus-gui-model/src/options.rs::Editor::edited_banner",
+        "crates/hydrus-gui-model/src/options.rs::Editor::set_banner",
         "crates/hydrus-gui-model/src/tag_banner.rs::Editor",
-        "crates/hydrus-gui/src/options_window.rs::option_row/open",
+        "crates/hydrus-gui/src/options_window.rs::fn option_row(",
+        "crates/hydrus-gui/src/options_window.rs::pub(crate) fn open(",
+        "crates/hydrus-gui/src/options_window.rs::window.on_banner_clicked",
         "crates/hydrus-gui/src/tag_banner_window.rs::open",
         "crates/hydrus-gui/ui/options.slint::OptionsWindow",
         "crates/hydrus-gui/ui/tag_banner.slint::TagBannerWindow",
         "crates/hydrus-gui/src/lib.rs::lay_out_thumbnails",
         "crates/hydrus-gui/src/grid.rs::ThumbnailRows::set_summaries",
-        "crates/hydrus-gui-model/src/thumbnail_icons.rs::banners"
+        "crates/hydrus-gui-model/src/thumbnail_icons.rs::banners",
+        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
@@ -90,15 +104,24 @@
         "Authored native/model regression execution and rendered PNG inspection await hosted CI; source formatting, diff checks and cached warning-aware Slint compilation passed locally."
       ],
       "source": [
-        "crates/hydrus-gui-model/src/options.rs::Settings/pages/Editor::edited_banner/Editor::set_banner",
+        "crates/hydrus-gui-model/src/options.rs::pub struct Settings",
+        "crates/hydrus-gui-model/src/options.rs::pub fn pages(",
+        "crates/hydrus-gui-model/src/options.rs::Editor::edited_banner",
+        "crates/hydrus-gui-model/src/options.rs::Editor::set_banner",
         "crates/hydrus-gui-model/src/tag_banner.rs::Editor",
-        "crates/hydrus-gui/src/options_window.rs::option_row/open",
+        "crates/hydrus-gui/src/options_window.rs::fn option_row(",
+        "crates/hydrus-gui/src/options_window.rs::pub(crate) fn open(",
+        "crates/hydrus-gui/src/options_window.rs::window.on_banner_clicked",
         "crates/hydrus-gui/src/tag_banner_window.rs::open",
         "crates/hydrus-gui/ui/options.slint::OptionsWindow",
         "crates/hydrus-gui/ui/tag_banner.slint::TagBannerWindow",
-        "crates/hydrus-gui-model/src/thumbnail_icons.rs::viewer_banner/banner_tags",
+        "crates/hydrus-gui-model/src/thumbnail_icons.rs::pub fn viewer_banner(",
+        "crates/hydrus-gui-model/src/thumbnail_icons.rs::fn banner_tags(",
         "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
-        "crates/hydrus-gui/ui/viewer.slint::tag-banner/passive banner-information/top-hover"
+        "crates/hydrus-gui/ui/viewer.slint::in property <string> tag-banner;",
+        "crates/hydrus-gui/ui/viewer.slint::banner-information := VerticalLayout {",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow",
+        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
@@ -128,13 +151,19 @@
         "Authored native/model regression execution and rendered PNG inspection await hosted CI; source formatting, diff checks and cached warning-aware Slint compilation passed locally."
       ],
       "source": [
-        "crates/hydrus-gui-model/src/options.rs::Settings/pages/Editor::edited_banner/Editor::set_banner",
+        "crates/hydrus-gui-model/src/options.rs::pub struct Settings",
+        "crates/hydrus-gui-model/src/options.rs::pub fn pages(",
+        "crates/hydrus-gui-model/src/options.rs::Editor::edited_banner",
+        "crates/hydrus-gui-model/src/options.rs::Editor::set_banner",
         "crates/hydrus-gui-model/src/tag_banner.rs::Editor",
-        "crates/hydrus-gui/src/options_window.rs::option_row/open",
+        "crates/hydrus-gui/src/options_window.rs::fn option_row(",
+        "crates/hydrus-gui/src/options_window.rs::pub(crate) fn open(",
+        "crates/hydrus-gui/src/options_window.rs::window.on_banner_clicked",
         "crates/hydrus-gui/src/tag_banner_window.rs::open",
         "crates/hydrus-gui/ui/options.slint::OptionsWindow",
         "crates/hydrus-gui/ui/tag_banner.slint::TagBannerWindow",
-        "crates/hydrus-core/src/tag_summary.rs::TagSummaryGenerator"
+        "crates/hydrus-core/src/tag_summary.rs::TagSummaryGenerator",
+        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
@@ -164,14 +193,24 @@
         "Authored native/model regression execution and rendered PNG inspection await hosted CI; source formatting, diff checks and cached warning-aware Slint compilation passed locally."
       ],
       "source": [
-        "crates/hydrus-gui-model/src/options.rs::Settings/pages/Editor::edited_banner/Editor::set_banner",
+        "crates/hydrus-gui-model/src/options.rs::pub struct Settings",
+        "crates/hydrus-gui-model/src/options.rs::pub fn pages(",
+        "crates/hydrus-gui-model/src/options.rs::Editor::edited_banner",
+        "crates/hydrus-gui-model/src/options.rs::Editor::set_banner",
         "crates/hydrus-gui-model/src/tag_banner.rs::Editor",
-        "crates/hydrus-gui/src/options_window.rs::option_row/open",
+        "crates/hydrus-gui/src/options_window.rs::fn option_row(",
+        "crates/hydrus-gui/src/options_window.rs::pub(crate) fn open(",
+        "crates/hydrus-gui/src/options_window.rs::window.on_banner_clicked",
         "crates/hydrus-gui/src/tag_banner_window.rs::open",
         "crates/hydrus-gui/ui/options.slint::OptionsWindow",
         "crates/hydrus-gui/ui/tag_banner.slint::TagBannerWindow",
-        "crates/hydrus-gui-model/src/tag_banner.rs::Editor::put/move_selected/delete",
-        "crates/hydrus-gui/src/tag_banner_window.rs::Prompt/prompt/open"
+        "crates/hydrus-gui-model/src/tag_banner.rs::Editor::put",
+        "crates/hydrus-gui-model/src/tag_banner.rs::Editor::move_selected",
+        "crates/hydrus-gui-model/src/tag_banner.rs::Editor::delete",
+        "crates/hydrus-gui/src/tag_banner_window.rs::struct Prompt",
+        "crates/hydrus-gui/src/tag_banner_window.rs::fn prompt(",
+        "crates/hydrus-gui/src/tag_banner_window.rs::pub fn open(",
+        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
@@ -201,14 +240,21 @@
         "Authored native/model regression execution and rendered PNG inspection await hosted CI; source formatting, diff checks and cached warning-aware Slint compilation passed locally."
       ],
       "source": [
-        "crates/hydrus-gui-model/src/options.rs::Settings/pages/Editor::edited_banner/Editor::set_banner",
+        "crates/hydrus-gui-model/src/options.rs::pub struct Settings",
+        "crates/hydrus-gui-model/src/options.rs::pub fn pages(",
+        "crates/hydrus-gui-model/src/options.rs::Editor::edited_banner",
+        "crates/hydrus-gui-model/src/options.rs::Editor::set_banner",
         "crates/hydrus-gui-model/src/tag_banner.rs::Editor",
-        "crates/hydrus-gui/src/options_window.rs::option_row/open",
+        "crates/hydrus-gui/src/options_window.rs::fn option_row(",
+        "crates/hydrus-gui/src/options_window.rs::pub(crate) fn open(",
+        "crates/hydrus-gui/src/options_window.rs::window.on_banner_clicked",
         "crates/hydrus-gui/src/tag_banner_window.rs::open",
         "crates/hydrus-gui/ui/options.slint::OptionsWindow",
         "crates/hydrus-gui/ui/tag_banner.slint::TagBannerWindow",
-        "crates/hydrus-gui-model/src/tag_banner.rs::Editor::value/preview",
-        "crates/hydrus-core/src/tag_summary.rs::TagSummaryGenerator::summary"
+        "crates/hydrus-gui-model/src/tag_banner.rs::Editor::value",
+        "crates/hydrus-gui-model/src/tag_banner.rs::Editor::preview",
+        "crates/hydrus-core/src/tag_summary.rs::TagSummaryGenerator::summary",
+        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
@@ -255,5 +301,13 @@
   "notes": [
     "Existing duplicate namespace summary output was already correct; BTreeMap storage deduplication is an equivalent internal refactor, not a caught behavior bug. Unicode decimal collapse is the supported behavior addition.",
     "No canonical inventory, HTML or ROADMAP edits.6distinct original concrete leaves proposed; parents/aliases are excluded."
-  ]
+  ],
+  "ownership_provenance": {
+    "reviewed_source_commit": "d92abea9cddfd2fd9df89d614bbdc84989c021e0",
+    "owner": "Bound.options_banner_child",
+    "opening": "OptionsWindow on_banner_clicked captures the original typed BannerTarget, refusing a second child while its slot is occupied.",
+    "retirement": "Parent closes its owned child; child active guard rejects retired callbacks and pointer-checked close clears only its own slot.",
+    "native_regression": "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer",
+    "validation": "Source-only independent review; authored regression execution remains pending root exact hosted CI."
+  }
 }
