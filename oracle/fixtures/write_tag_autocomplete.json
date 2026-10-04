@@ -1,4 +1,10 @@
 {
+  "domain_preferences": {
+    "current": [
+      "6c6f63616c2066696c6573"
+    ],
+    "deleted": []
+  },
   "favourite_options": {
     "initial": [
       "parity:favourite 10",

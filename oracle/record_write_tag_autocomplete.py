@@ -192,6 +192,10 @@ def record(session):
         finally:CGC.core().PopupMenu=old_popup
         return events
     domain_events=qt(write_domains)
+    def domain_preferences():
+        context=c.new_options.GetDefaultLocalLocationContext()
+        return {'current':[key.hex() for key in sorted(context.current_service_keys)],'deleted':[key.hex() for key in sorted(context.deleted_service_keys)]}
+    domain_defaults=qt(domain_preferences)
     # Questions belong to one independently recorded interaction sequence.
     asked.clear()
     paste_events=[]
@@ -287,7 +291,7 @@ def record(session):
         return {'initial':initial,'events':events,'cancelled_saved':draft.GetStringList('favourite_tags')}
     favourite_options_events=qt(favourite_options)
     qt(ac.deleteLater);c.CallToThread=old_thread;c.GetClipboardText=old_clipboard
-    return {'favourite_options':favourite_options_events,'domains':domain_events,'seeded_dialogs':seeded_dialogs,'menus':menu_events,'tabs':tab_events,'children_control':children_control,'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
+    return {'domain_preferences':domain_defaults,'favourite_options':favourite_options_events,'domains':domain_events,'seeded_dialogs':seeded_dialogs,'menus':menu_events,'tabs':tab_events,'children_control':children_control,'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
 def child(out):
     import hydrus_driver,record_api
     result=hydrus_driver.run_client(record_api.unpack_fixture('basic'),record)
