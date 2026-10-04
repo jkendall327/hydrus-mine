@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "agent": "follow-folders",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "base_checkout": "2388372d",
+  "implementationCommits": [
+    "2912cca8",
+    "9f2b317f",
+    "afd062329395b25562ddde8ee7841a60a76cdfe3"
+  ],
+  "claims": [
+    {
+      "reference_id": "audit-network-tagging-regex",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+      "exactBehavior": "Replace multiline regex configuration with actual accepted-rule lists shared by manual-import and import-folder tagging. Quick namespace Add/Edit uses separate literal fields, compiler validation, owned stable row identity, cancellation, casefold column sorting and deletion confirmation. Invalid child input cannot replace an accepted rule; duplicates select the existing quick row. Raw regex Enter/add allows duplicates, ignores blank input, retains invalid expressions in the input and leaves accepted rules unchanged. Raw regex selection is single and double-click removes only the selected row, returning its expression to the input. Both regex buttons expose reference help/component/favourites menus; clipboard choices never insert into fields, and immediate shared favourites Apply survives filename owner cancellation. Nested and closed-owner callbacks cannot alter drafts or saved settings. Saved folder rules reopen unchanged and feed filename extraction; manual-import rules reach the actual local-import seed tags.",
+      "limits": [
+        "The quick-namespace child and deletion prompt are embedded in the existing native window rather than separate Qt dialogs. Native popup menus omit Qt bold heading/tooltip styling.",
+        "Quick-list column ordering is remembered within the owner editor; global Qt list-column state is outside this bounded extraction workflow.",
+        "Native Python-compatible regex errors preserve the reference warning prefix and validation boundary; detailed engine diagnostics may differ. The filename clipboard snippet follows the host separator, as the reference does.",
+        "The simple tag autocomplete/paste box, sidecars, broader manual-import/folder parents, shared favourites editor IDs and export workflows remain separately assessed and are not claimed by this change.",
+        "Rust model/GUI regressions are authored for root hosted CI; no local Cargo builds or tests were run."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/filename_rules.rs",
+          "line": 26,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "source",
+          "symbol": "pub struct Editor"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/filename_rules.rs",
+          "line": 301,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "source",
+          "symbol": "pub fn regex_menu"
+        },
+        {
+          "path": "crates/hydrus-gui/src/filename_tagging_window.rs",
+          "line": 208,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "source",
+          "symbol": "fn bind_rules"
+        },
+        {
+          "path": "crates/hydrus-gui/src/filename_regex_menu.rs",
+          "line": 27,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "source",
+          "symbol": "pub(crate) fn bind"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/filename_tagging.slint",
+          "line": 53,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "source",
+          "symbol": "export component FilenameTaggingWindow"
+        },
+        {
+          "path": "crates/hydrus-download/src/folders.rs",
+          "line": 713,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "existing_consumer",
+          "symbol": "for (key, tagging) in &folder.settings.filename_tagging"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/filename_rules.rs",
+          "line": 6,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "reference_replay",
+          "symbol": "fn advanced_lists_children_and_filename_consumers_match_real_reference"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/filename_rules.rs",
+          "line": 132,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "boundary_regression",
+          "symbol": "fn child_identity_is_frozen_and_unrelated_callbacks_preserve_it"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/filename_rules.rs",
+          "line": 169,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "reference_replay",
+          "symbol": "fn both_original_regex_buttons_offer_the_recorded_help_components_and_favourites"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/filename_rules.rs",
+          "line": 24,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_lists_replay_reference_and_save_folder_consumers_without_stale_callbacks"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/filename_rules.rs",
+          "line": 282,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn attached_regex_menus_copy_without_edits_and_favourites_commit_independently"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_files.rs",
+          "line": 198,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "manual_import_consumer_regression",
+          "symbol": "fn files_are_imported_with_the_tags_filename_tagging_gives_them"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_filename_rules.py",
+          "line": 19,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "reference_recorder",
+          "symbol": "def record("
+        },
+        "fixture": {
+          "path": "oracle/fixtures/filename_rules.json",
+          "line": 1,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "reference_fixture"
+        },
+        "executed": true,
+        "command": "/workspace/parallel/with-oracle python oracle/record_filename_rules.py",
+        "executed_utc": "2026-10-04 17:43 UTC",
+        "observed": "21 actual FilenameTaggingOptionsPanel advanced list handler states: owned namespace/regex child defaults and validation, cancel, casefold namespace/regex sorting with retained selection, duplicate namespace de-duplication, literal colons/whitespace and empty compiled patterns, frozen edits/deletion questions, raw regex Enter/add duplicates and single-selection removal-to-input, exact generated tags and reopened rules. Both actual RegexButton menu trees, all help URL/component/favourite clipboard outputs, no replacement group menu and unchanged inputs. Real ManageFavourites/_Add user-facing dialog responses, cancelled/accepted immediate global favourites mutations; filename options remain unchanged. Private basic reference client; no imports, exports or remote requests."
+      }
+    }
+  ],
+  "nativeComponents": [
+    {
+      "name": "FilenameTaggingWindow",
+      "existingNativeId": "catalog.filenametaggingwindow",
+      "file": "crates/hydrus-gui/ui/filename_tagging.slint",
+      "newExportedWindows": 0,
+      "title": "filename tagging / edit filename tagging options",
+      "controls": [
+        "advanced quick-namespace ListTable: namespace / regex columns, header sorting, Add/Edit/Delete and Delete key",
+        "owned embedded namespace/regex editor and frozen deletion question",
+        "raw single-selection regex ListTable and Enter/add/remove-to-input",
+        "two owned RegexButton popup menus: help/components/favourites",
+        "existing shared RegexFavouritesWindow child, immediate Apply, independent Cancel and owner closure"
+      ],
+      "referenceRoots": [
+        "audit-network-tagging-regex"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui/ui/filename_tagging.slint",
+        "line": 53,
+        "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+        "kind": "source",
+        "symbol": "export component FilenameTaggingWindow"
+      },
+      "tests": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/filename_rules.rs",
+          "line": 24,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_lists_replay_reference_and_save_folder_consumers_without_stale_callbacks"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/filename_rules.rs",
+          "line": 282,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn attached_regex_menus_copy_without_edits_and_favourites_commit_independently"
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "reference_recording": "passed; actual reference executed 2026-10-04 17:43 UTC using shared with-oracle lock",
+    "slint_source_check": "passed; cached warning-aware Slint compiler, no Cargo build",
+    "formatting": "cargo fmt --all and git diff --check passed",
+    "rust_tests": "authored; root asynchronous hosted CI pending",
+    "rendered_ui": "native screenshot regression authored in filename_rules.png; root CI rendering pending"
+  },
+  "remainingBoundaries": [
+    "No parent or shared alias is counted. Remaining import/export folder, manual simple-tagging, sidecar and worker gaps are being inspected next."
+  ]
+}
