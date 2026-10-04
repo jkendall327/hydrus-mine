@@ -104,7 +104,7 @@ impl Activity {
 pub struct Edit {
     dir: PathBuf,
     kind: Kind,
-    _request: File,
+    request: File,
     activity: Option<File>,
 }
 
@@ -117,7 +117,7 @@ impl Edit {
         Ok(Some(Self {
             dir: dir.to_owned(),
             kind,
-            _request: request,
+            request,
             activity: None,
         }))
     }
@@ -135,7 +135,7 @@ impl Drop for Edit {
     fn drop(&mut self) {
         // The timestamp wakes schedulers; the OS lock alone controls pausing.
         // Lease release never needs a database transaction, even on unwinding.
-        let _ = self._request.set_modified(SystemTime::now());
+        let _ = self.request.set_modified(SystemTime::now());
     }
 }
 
