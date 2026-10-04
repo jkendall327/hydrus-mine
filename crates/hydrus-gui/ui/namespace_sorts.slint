@@ -1,0 +1,84 @@
+// Staged namespace scheme queue, with the reference's text/tag-view questions.
+import { Button, LineEdit, ScrollView } from "std-widgets.slint";
+import { ListTable, TableRow } from "list_table.slint";
+import { Theme } from "theme.slint";
+export component NamespaceSortsWindow inherits Window {
+    in property <string> window-title: "namespace file sorting";
+    title: root.window-title;
+    preferred-width: 760px;
+    preferred-height: 580px;
+    background: Theme.window;
+    in property <[TableRow]> rows;
+    in property <bool> has-selection;
+    in property <bool> asking-text;
+    in property <bool> choosing-view;
+    in property <bool> confirming;
+    in property <string> message;
+    in property <string> error;
+    in property <[string]> views;
+    in-out property <string> text;
+    callback clicked(int, bool, bool);
+    callback action(string);
+    callback text-entered();
+    callback view-chosen(int);
+    callback answer(bool);
+    callback cancel-prompt();
+    callback apply();
+    callback cancel();
+    forward-focus: keys;
+    keys := FocusScope {
+        capture-key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.asking-text || root.choosing-view { root.cancel-prompt(); }
+                else if root.confirming { root.answer(false); }
+                else { root.cancel(); }
+                return accept;
+            }
+            if event.text == Key.Delete && !root.asking-text && !root.choosing-view && !root.confirming { root.action("delete"); return accept; }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 8px;
+            if !root.asking-text && !root.choosing-view && !root.confirming: VerticalLayout {
+                spacing: 6px;
+                Text { text: "You can manage your namespace sorting schemes here.\nThe client will sort media by comparing their namespaces, moving from left to right until an inequality is found.\nAny namespaces here will also appear in your collect-by dropdowns."; wrap: word-wrap; color: Theme.text; }
+                ListTable {
+                    vertical-stretch: 1;
+                    columns: [{title: "namespace sorting scheme", width: 620px, stretch: true}];
+                    rows: root.rows;
+                    row-clicked(i, ctrl, shift) => { root.clicked(i, ctrl, shift); }
+                    row-activated(i) => { root.clicked(i, false, false); root.action("edit"); }
+                }
+                HorizontalLayout {
+                    spacing: 6px;
+                    Button { text: "add"; clicked => { root.action("add"); } }
+                    Button { text: "edit"; enabled: root.has-selection; clicked => { root.action("edit"); } }
+                    Button { text: "\u{2191}"; enabled: root.has-selection; clicked => { root.action("up"); } }
+                    Button { text: "X"; enabled: root.has-selection; clicked => { root.action("delete"); } }
+                    Button { text: "\u{2193}"; enabled: root.has-selection; clicked => { root.action("down"); } }
+                }
+            }
+            if root.asking-text || root.choosing-view || root.confirming: Text { text: root.message; wrap: word-wrap; color: Theme.text; }
+            if root.asking-text: LineEdit { text <=> root.text; accepted => { if root.text != "" { root.text-entered(); } } }
+            if root.choosing-view: ScrollView {
+                vertical-stretch: 1;
+                VerticalLayout {
+                    alignment: start;
+                    for name[i] in root.views: Button { text: name; clicked => { root.view-chosen(i); } }
+                }
+            }
+            if root.error != "": Text { text: root.error; wrap: word-wrap; color: Theme.error; }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                if root.asking-text: Button { text: "ok"; enabled: root.text != ""; clicked => { root.text-entered(); } }
+                if root.confirming: Button { text: "yes"; clicked => { root.answer(true); } }
+                if root.confirming: Button { text: "no"; clicked => { root.answer(false); } }
+                if root.asking-text || root.choosing-view: Button { text: "cancel"; clicked => { root.cancel-prompt(); } }
+                if !root.asking-text && !root.choosing-view && !root.confirming: Button { text: "apply"; clicked => { root.apply(); } }
+                if !root.asking-text && !root.choosing-view && !root.confirming: Button { text: "cancel"; clicked => { root.cancel(); } }
+            }
+        }
+    }
+}

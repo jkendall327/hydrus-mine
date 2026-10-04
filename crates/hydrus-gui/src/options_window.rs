@@ -217,6 +217,10 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     )
                     .into();
                 }
+                (Kind::NamespaceSorts, Value::NamespaceSorts(_)) => {
+                    out.kind = 20;
+                    out.text = "edit namespace sorting schemes".into();
+                }
                 (Kind::ImportOptions, Value::ImportOptions(_)) => {
                     out.kind = 18;
                     out.text = "edit import options".into();
@@ -286,6 +290,7 @@ pub(crate) fn open(
     let location_slot: Rc<RefCell<Option<crate::LocationsWindow>>> = Rc::default();
     let tag_slot: crate::write_tag_window::Slot = Rc::default();
     let import_slot: crate::import_options_panel_window::Slot = Rc::default();
+    let namespace_slot: crate::namespace_sorts_window::Slot = Rc::default();
     let active = Rc::new(Cell::new(true));
     let names: Vec<StandardListViewItem> = editor
         .borrow()
@@ -335,6 +340,7 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let slot = slot.clone();
         let import_slot = import_slot.clone();
+        let namespace_slot = namespace_slot.clone();
         let regex_slot = regex_slot.clone();
         let gallery_slot = gallery_slot.clone();
         let location_slot = location_slot.clone();
@@ -352,6 +358,7 @@ pub(crate) fn open(
                 child.invoke_cancel();
             }
             crate::import_options_panel_window::cancel(&import_slot);
+            crate::namespace_sorts_window::cancel(&namespace_slot);
             crate::locations_window::cancel(&location_slot);
             crate::regex_favourites_window::cancel(&regex_slot);
             crate::gallery_source_window::cancel(&gallery_slot);
@@ -531,6 +538,37 @@ pub(crate) fn open(
                 crate::regex_favourites_window::open(&favourites, &regex_slot, applied)
             {
                 eprintln!("could not open regex favourites: {error}");
+            }
+        }
+    });
+    window.on_namespace_sorts_clicked({
+        let editor = editor.clone();
+        let slot = namespace_slot.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        move || {
+            if !active.get() || slot.borrow().is_some() {
+                return;
+            }
+            let sorts = editor.borrow().edited_namespace_sorts();
+            let advanced = editor.borrow().applied().0.advanced.0;
+            let applied = Rc::new({
+                let editor = editor.clone();
+                let active = active.clone();
+                let show_page = show_page.clone();
+                move |sorts| {
+                    if !active.get() {
+                        return Err("The options window has closed.".into());
+                    }
+                    editor.borrow_mut().set_namespace_sorts(sorts);
+                    show_page();
+                    Ok(())
+                }
+            });
+            if let Err(error) =
+                crate::namespace_sorts_window::open(&sorts, advanced, &slot, applied)
+            {
+                eprintln!("could not open namespace sorting schemes: {error}");
             }
         }
     });
@@ -809,13 +847,18 @@ pub(crate) fn open(
     });
     window.on_apply({
         let import_slot = import_slot.clone();
+        let namespace_slot = namespace_slot.clone();
         let active = active.clone();
         let tag_slot = tag_slot.clone();
         let editor = editor.clone();
         let store = store.clone();
         let close = close.clone();
         move || {
-            if !active.get() || tag_slot.borrow().is_some() || import_slot.borrow().is_some() {
+            if !active.get()
+                || tag_slot.borrow().is_some()
+                || import_slot.borrow().is_some()
+                || namespace_slot.borrow().is_some()
+            {
                 return;
             }
             let (after, before, problems) = {

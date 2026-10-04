@@ -5791,3 +5791,5 @@ pub mod network_sessions_window;
 pub mod network_data_window;
 
 pub mod network_job_control;
+
+pub mod namespace_sorts_window;

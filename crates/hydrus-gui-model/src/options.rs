@@ -163,6 +163,7 @@ pub enum Value {
     /// Shared favourite tags, staged until the parent options dialog applies.
     FavouriteTags(FavouriteTags),
     ImportOptions(crate::import_options_panel::Value),
+    NamespaceSorts(Vec<PageSort>),
     TagService(hydrus_core::ServiceKey),
     Location(hydrus_core::search::context::LocationContext),
 }
@@ -225,6 +226,7 @@ pub enum Kind {
     FavouriteTags,
     /// The transactional manager page, including simple-mode presentation.
     ImportOptions,
+    NamespaceSorts,
     /// Real tag services, optionally including all known tags.
     TagService {
         combined: bool,
@@ -1463,6 +1465,23 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         "Default collect: ",
                         |s| s.sorts.default_collect.clone(),
                         |s, v| s.sorts.default_collect = v,
+                    ),
+                    boxed(
+                        "namespace file sorting",
+                        vec![opt(
+                            "",
+                            Kind::NamespaceSorts,
+                            Rc::new(|settings| {
+                                Value::NamespaceSorts(settings.sorts.namespace_sorts.clone())
+                            }),
+                            Rc::new(|settings, value| match value {
+                                Value::NamespaceSorts(sorts) => {
+                                    settings.sorts.namespace_sorts = sorts.clone();
+                                    Ok(())
+                                }
+                                _ => Err(wrong("namespace file sorting")),
+                            }),
+                        )],
                     ),
                 ],
             )],
@@ -3116,6 +3135,25 @@ impl Editor {
         for value in self.values.iter_mut().flatten() {
             if matches!(value, Value::ImportOptions(_)) {
                 *value = Value::ImportOptions(draft);
+                return;
+            }
+        }
+    }
+
+    pub fn edited_namespace_sorts(&self) -> Vec<PageSort> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| match value {
+                Value::NamespaceSorts(sorts) => Some(sorts.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.sorts.namespace_sorts.clone())
+    }
+    pub fn set_namespace_sorts(&mut self, sorts: Vec<PageSort>) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::NamespaceSorts(_)) {
+                *value = Value::NamespaceSorts(sorts);
                 return;
             }
         }

@@ -293,8 +293,7 @@ search.
   the work slots; and on the media playback page, the preview's zoom,
   re-centring, the checkerboard, animations, mpv, Qt's player and the
   system settings; the system page omits filesystem wake waiting, and the GUI
-  has no periodic sleep checker of its own (the downloader daemon does); on the file sort/collect page, the namespace sorts'
-  list and the default collect's tag service; on the tag sort page, the
+  has no periodic sleep checker of its own (the downloader daemon does); on the file sort/collect page, the default collect's tag service; on the tag sort page, the
   manage tags dialogs' sorts (ours sort as the media viewer's list) and
   the namespace grouping list; on the ratings page, the example
   rating service's dropdown, the clickable examples, and the preview
@@ -1627,3 +1626,10 @@ favourite controls) remain a layout/workflow difference, so this packet keeps
 `url-domain` partial. The five URL preview values use native read-only text
 controls rather than Qt read-only line edits, with the recorded output values
 and invalid-example retention behavior.
+
+The namespace sorting queue opens as an Options-owned child window rather than
+an embedded Qt queue. Its text, advanced tag-view and delete questions appear
+in that window rather than separate modal dialogs; they retain the reference's
+question strings, answers, escaping, cancellation and ordered output. Options
+Apply is blocked while the editor is open, and closing Options cancels its draft
+and invalidates retained editor callbacks.

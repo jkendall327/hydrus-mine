@@ -453,7 +453,7 @@ comparison score weights, and the duplicates page opened on files),
 exporting, file search (the default tag service for new searches), file sort/collect (the default and secondary sorts, each a
 page's sort types and then the type's orders, whether a sort chosen on
 a page becomes the default, and the default collect, as a page's
-collect control offers it), file viewing statistics (whether they
+collect control offers it, and an ordered namespace sorting scheme editor), file viewing statistics (whether they
 are kept), files and
 trash, gui (keeping the media viewer's size and place), gui pages,
 importing (looking inside .zip files for comics), maintenance and
@@ -2466,3 +2466,13 @@ fixed domain or regex per line. URL previews now provide separately selectable,
 read-only stored, request, API, referral, and next-page outputs. Invalid examples
 clear stored/request/API outputs and retain prior referral/next results, matching
 the recorded Qt owner transition.
+
+The file sort/collect page's “namespace file sorting” button opens an ordered
+scheme editor. Add and Edit use the reference's escaped hyphen syntax and clean
+namespace names; normal mode uses display tags, while advanced mode asks for
+display, multiple-media, or single-media tags. Editing changes the first selected
+scheme, duplicate schemes remain independent, and the arrow/delete controls
+preserve queue selection and order. Cancelling either question changes nothing.
+Child Apply returns an Options draft; only the outer Apply saves it. Reopening
+retains the schemes, and new namespaces reach the page's real sort and collect
+controls. The recorded queue is in `oracle/fixtures/namespace_sorts.json`.
