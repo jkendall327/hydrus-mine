@@ -2,23 +2,42 @@
   "schema_version": 1,
   "agent": "options",
   "baseline_git_head": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
-  "implementation_git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92",
+  "implementation_git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff",
   "implementation_commits": [
     "f146d9d4",
     "5e528865",
     "30e3f915",
     "47d4753c",
-    "9a70a2d5"
+    "9a70a2d5",
+    "151c3001",
+    "f1048a26",
+    "13ccd48e",
+    "3b1f308d"
   ],
   "dependencies": [
     {
       "git_head": "efc8b4fcd60b09bbbf86f746c348c7616340cfe4",
       "agent": "overnight_pages",
       "reason": "SessionBackupSettings and rolling-backup save consumer used by 47d4753c and its GUI test."
+    },
+    {
+      "git_head": "1807f758bb91a22654311d08f467f5f6ac35989f",
+      "agent": "overnight_pages",
+      "reason": "NotebookSettings and close-focus consumer used by 151c3001."
+    },
+    {
+      "git_head": "c6cae8879bc546d3d8942592276070d8cdab5d6a",
+      "agent": "overnight_pages",
+      "reason": "Rename-on-send notebook consumer and real prompt recording used by 151c3001."
+    },
+    {
+      "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2",
+      "agent": "overnight_string_dates",
+      "reason": "Regex favourites owner-draft editor and legacy-aware storage used by f1048a26. Root/date packet owns the options-regex-favourites container and editor claims."
     }
   ],
   "summary": {
-    "concrete_existing_reference_controls_completed": 12,
+    "concrete_existing_reference_controls_completed": 16,
     "concrete_existing_reference_controls_improved_to_partial": 1,
     "parent_or_alias_completions": 0
   },
@@ -26,11 +45,13 @@
     "reference_recordings_executed": [
       "oracle/record_options_ranges.py",
       "oracle/record_options_preferences.py",
-      "oracle/record_gui_settings.py"
+      "oracle/record_gui_settings.py",
+      "oracle/record_system_sleep_options.py"
     ],
     "existing_reference_recordings_reused": [
       "oracle/record_options_dialog.py",
-      "oracle/record_session_backups.py (pages agent)"
+      "oracle/record_session_backups.py (pages agent)",
+      "oracle/record_tab_actions.py (pages agent)"
     ],
     "cargo_fmt": "passed",
     "python_compile": "passed",
@@ -418,6 +439,183 @@
       "boundaries": [
         "Secondary windows still use their existing captions, so this remains partial.",
         "Native title suffix uses the Rust package version rather than the reference 688 version."
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-pages-opening-and-closing-when-closing-the-current-tab-move-focus",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Choose left or right focus after closing the current tab; defaults right, imports close_page_focus_goes, persists on Apply and changes the next tab close.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1369,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1367,
+          "git_head": "1807f758bb91a22654311d08f467f5f6ac35989f"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 668,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 1042,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 1909,
+          "git_head": "1807f758bb91a22654311d08f467f5f6ac35989f"
+        }
+      ],
+      "boundaries": [
+        "Sibling selection and nested close behavior are consumed by the pages agent implementation; pending option drafts are discarded on Cancel."
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-pages-page-tab-names-also-automatically-prompt-when-sending-some-pages-to-one",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Checkbox imports rename_page_of_pages_on_send and persists the notebook preference. Sending tabs into a fresh notebook reads it and optionally prompts for the new notebook name; cancellation retains the newly created notebook, as recorded.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1405,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-gui/src/menu_bar.rs",
+          "line": 452,
+          "git_head": "c6cae8879bc546d3d8942592276070d8cdab5d6a"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 668,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 1042,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 2040,
+          "git_head": "c6cae8879bc546d3d8942592276070d8cdab5d6a"
+        }
+      ],
+      "boundaries": [
+        "The separate automatically-prompt-on-new-page-chooser checkbox remains absent and is not claimed."
+      ]
+    },
+    {
+      "reference_id": "audit-options-system-system-sleep-allow-wake-from-system-sleep-detection",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Checkbox imports do_sleep_check, persists with network settings and reaches the running downloader engine through settings reload. Disabled detection clears a pending wake wait at the next check while preserving the previous check timestamp.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1737,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 392,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-net/src/engine.rs",
+          "line": 660,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-cli/src/main.rs",
+          "line": 926,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 726,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 1129,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-net/src/engine.rs",
+          "line": 1741,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-net/tests/engine.rs",
+          "line": 901,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        }
+      ],
+      "boundaries": [
+        "The daemon owns periodic sleep checks; the GUI has no independent periodic detector. Filesystem wake waiting remains absent. The network engine gates requests by the wake deadline; it does not expose the reference controller\u2019s transient just-woke GUI flag."
+      ]
+    },
+    {
+      "reference_id": "audit-options-system-system-sleep-after-a-wake-from-system-sleep-wait-this-many-seconds-before-allowing-new-network-access",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Integer control uses the recorded 0..60-second range and default 15, imports wake_delay_period, clamps setters/reopened values, persists on Apply and sets the network engine wake grace period.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1747,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-net/src/engine.rs",
+          "line": 670,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-cli/src/main.rs",
+          "line": 926,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 726,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 1129,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-net/src/engine.rs",
+          "line": 1741,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        },
+        {
+          "path": "crates/hydrus-net/tests/engine.rs",
+          "line": 901,
+          "git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff"
+        }
+      ],
+      "boundaries": [
+        "A clock gap strictly greater than 60000 ms starts the wait. Zero seconds permits immediate network access. The daemon owns periodic checking; GUI workflows do not run a separate sleep checker."
       ]
     }
   ]
