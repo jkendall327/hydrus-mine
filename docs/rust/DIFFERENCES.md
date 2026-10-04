@@ -966,8 +966,8 @@ database. Concurrent edits to the same area use the last successful Apply.
 
 
 The native parser editor model supports all nine content kinds and typed test
-context. Native page/content/parser-list and direct URL-class-link windows are available. Subsidiary parser editing,
-remote test-data fetching remains deferred. All six native formula kinds and subsidiary parsers
+context. Native page/content/parser-list and direct URL-class-link windows are available.
+Subsidiary parser editing and remote test-data fetching remain deferred. All six native formula kinds and subsidiary parsers
 can be imported/exported; their editor-only reference data is preserved.
 
 The URL-class links panel uses a parser chooser and explicit staged link/clear
