@@ -30,7 +30,7 @@ use hydrus_store::session_backups::SessionBackupSettings;
 use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FileHandlingSettings, FileViewingStatistics, FolderSettings,
-    GuiSettings, OptionsPreferences, PageSettings, ThumbnailLayout,
+    GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings, ThumbnailLayout,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::trash::TrashSettings;
@@ -85,6 +85,7 @@ settings! {
     media_viewer: MediaViewerSettings,
     network: NetworkSettings,
     notebooks: NotebookSettings,
+    notebook_creation: NotebookCreationSettings,
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
@@ -1405,6 +1406,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "Show import page x/y progress after its name: ",
                             |s| s.page_names.import_progress,
                             |s, v| s.page_names.import_progress = v,
+                        ),
+                        check(
+                            "Automatically prompt to rename new 'page of pages' after creation: ",
+                            |s| s.notebook_creation.rename_new_notebooks,
+                            |s, value| s.notebook_creation.rename_new_notebooks = value,
                         ),
                         check(
                             "  Also automatically prompt when sending some pages to one: ",

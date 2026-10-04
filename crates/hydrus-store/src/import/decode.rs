@@ -128,6 +128,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &notebooks)?;
+    let notebook_creation = crate::settings::NotebookCreationSettings {
+        rename_new_notebooks: options.as_ref().is_some_and(|options| {
+            options.booleans.get("rename_page_of_pages_on_pick_new") == Some(&true)
+        }),
+    };
+    insert_setting(&mut input, &notebook_creation)?;
     let mut backups = crate::session_backups::SessionBackupSettings::default();
     if let Some(options) = &options
         && let Some(value) = options.integers.get("number_of_gui_session_backups")

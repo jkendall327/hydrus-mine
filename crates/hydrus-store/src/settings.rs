@@ -150,6 +150,17 @@ impl Setting for OptionsPreferences {
     const KEY: &'static str = "options_preferences";
 }
 
+/// Prompt after the chooser creates a notebook (`rename_page_of_pages_on_pick_new`).
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct NotebookCreationSettings {
+    pub rename_new_notebooks: bool,
+}
+
+impl Setting for NotebookCreationSettings {
+    const KEY: &'static str = "gui_notebook_creation";
+}
+
 /// Which recognised URL types the desktop watches for in changed clipboard text.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

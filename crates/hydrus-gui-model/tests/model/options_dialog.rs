@@ -687,6 +687,14 @@ fn notebook_navigation_preferences_match_recorded_controls() {
         (focus.set)(&mut settings, &Value::Choice(index)).unwrap();
         assert_eq!(settings.notebooks.close_focus_left, index == 0);
     }
+    let creation = options
+        .iter()
+        .find(|option| {
+            option.label == "Automatically prompt to rename new 'page of pages' after creation: "
+        })
+        .unwrap();
+    (creation.set)(&mut settings, &Value::Check(true)).unwrap();
+    assert!(settings.notebook_creation.rename_new_notebooks);
     let rename = options
         .iter()
         .find(|option| {
