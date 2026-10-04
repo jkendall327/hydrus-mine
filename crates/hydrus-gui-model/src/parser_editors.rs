@@ -501,6 +501,35 @@ impl Draft {
         })
     }
 
+    /// Per-class choices: matching examples first, then the selectable no-op separator.
+    pub fn parser_choices(&self, class_key: &str) -> Result<Vec<(String, Option<String>)>, String> {
+        let class = self
+            .classes
+            .url_classes
+            .iter()
+            .find(|class| hex::encode(&class.key) == class_key)
+            .ok_or("The URL class no longer exists.")?;
+        let mut matching = Vec::new();
+        let mut others = Vec::new();
+        for parser in &self.parsers {
+            let row = (parser.name.clone(), Some(parser.key.clone()));
+            if parser
+                .example_urls
+                .iter()
+                .any(|url| class.matches(url, self.classes.collapse_leading_slashes))
+            {
+                matching.push(row);
+            } else {
+                others.push(row);
+            }
+        }
+        matching.sort_by(|a, b| a.0.cmp(&b.0));
+        others.sort_by(|a, b| a.0.cmp(&b.0));
+        matching.push(("------".into(), None));
+        matching.extend(others);
+        Ok(matching)
+    }
+
     /// Stage an association using keys, validating both endpoints.
     pub fn link(&mut self, class_key: &str, parser_key: Option<&str>) -> Result<(), String> {
         if !self

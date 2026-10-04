@@ -2431,3 +2431,10 @@ and lowering it lets current syncs finish before admitting more. Each active
 subscription has its own ID, status and cancellation; daemon shutdown cancels
 and joins every sync. The existing first-running status/cancel API remains
 available for callers that display one job.
+
+URL-class parser links now open an owned per-class chooser. Matching parser
+examples appear first, followed by the selectable separator and other parsers;
+the installed link is selected. Accepting the separator or cancelling preserves
+the link. Clear asks “Clear all the selected linked parsers?” and only changes
+the draft on Yes. Apply updates the live downloader resolver; closing the owner
+retires its chooser and stale callbacks.

@@ -17,6 +17,8 @@ export component ParserListWindow inherits Window {
     in property <[TableColumn]> columns;
     in property <[TableRow]> rows;
     in property <bool> selected;
+    in property <bool> single-selected;
+    in property <bool> clearable;
     in property <bool> child-open;
     in property <[string]> parser-choices;
     in-out property <int> chosen-parser;
@@ -26,6 +28,7 @@ export component ParserListWindow inherits Window {
     callback sort(int,bool);
     callback action(string);
     callback answered(bool);
+    callback force-close();
     VerticalLayout {
         padding: 10px; spacing: 8px;
         if root.links: HorizontalLayout {
@@ -40,7 +43,7 @@ export component ParserListWindow inherits Window {
         if !root.links || root.links-tab == 0: ListTable {
             columns: root.columns; rows: root.rows;
             row-clicked(i,c,s) => { if root.question == "" { root.row-clicked(i,c,s); } }
-            row-activated(i) => { if root.question == "" { root.row-clicked(i,false,false); root.action(root.links ? "link" : "edit"); } }
+            row-activated(i) => { if root.question == "" { root.row-clicked(i,false,false); root.action(root.links ? "pick-parser" : "edit"); } }
             sort(c,a) => { if root.question == "" { root.sort(c,a); } }
             delete-pressed => { if root.question == "" { root.action(root.links ? "clear" : "delete"); } }
         }
@@ -52,9 +55,8 @@ export component ParserListWindow inherits Window {
             if !root.links: Button { text: "delete"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("delete"); } }
             if !root.links: Button { text: "import"; enabled: !root.child-open && root.question == ""; clicked => { root.action("import"); } }
             if !root.links: Button { text: "export"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("export"); } }
-            if root.links: ComboBox { enabled: root.question == ""; model: root.parser-choices; current-index <=> root.chosen-parser; }
-            if root.links: Button { text: "link"; enabled: root.selected && root.question == ""; clicked => { root.action("link"); } }
-            if root.links: Button { text: "clear"; enabled: root.selected && root.question == ""; clicked => { root.action("clear"); } }
+            if root.links: Button { text: "edit"; enabled: root.single-selected && !root.child-open && root.question == ""; clicked => { root.action("pick-parser"); } }
+            if root.links: Button { text: "clear"; enabled: root.clearable && !root.child-open && root.question == ""; clicked => { root.action("clear"); } }
             if root.links: Button { text: "try to fill in gaps based on example urls"; enabled: root.gaps-exist && !root.child-open && root.question == ""; clicked => { root.action("auto-link"); } }
         }
         if root.links: Text { text: "API/redirect source classes use their target's parser. Associations apply to the live downloader."; color: Theme.text; wrap: word-wrap; }
@@ -234,5 +236,30 @@ export component ParserEditWindow inherits Window {
         alignment: end; spacing: 6px;
         Button { text: "apply"; enabled: !root.child-open; clicked => { root.action("apply"); } }
         Button { text: "cancel"; enabled: !root.child-open || root.fetching; clicked => { root.action("cancel"); } }
+    }
+}
+
+// Owned per-class selector, including the reference's selectable no-op separator.
+export component ParserPickerWindow inherits Window {
+    in property <string> window-title;
+    title: root.window-title;
+    preferred-width: 540px; preferred-height: 380px;
+    background: Theme.window;
+    in property <[TableRow]> rows;
+    in-out property <int> selected-index;
+    callback selected(int);
+    callback answered(bool);
+    VerticalLayout {
+        padding: 10px; spacing: 8px;
+        ListTable {
+            columns: [{title: "parser",width: 500px,stretch: true}]; rows: root.rows;
+            row-clicked(i,c,s) => { root.selected(i); }
+            row-activated(i) => { root.selected(i);root.answered(true); }
+        }
+        HorizontalLayout {
+            alignment: end; spacing: 6px;
+            Button { text: "ok"; clicked => { root.answered(true); } }
+            Button { text: "cancel"; clicked => { root.answered(false); } }
+        }
     }
 }

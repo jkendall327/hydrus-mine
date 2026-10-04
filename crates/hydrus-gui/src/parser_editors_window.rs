@@ -1,5 +1,7 @@
 //! Native page/content parser windows with staged persistence and owned children.
-use crate::{DefinitionField, ParserEditWindow, ParserListWindow, TableColumn, TableRow};
+use crate::{
+    DefinitionField, ParserEditWindow, ParserListWindow, ParserPickerWindow, TableColumn, TableRow,
+};
 use hydrus_gui_model::formula_editors::FormulaTestData;
 use hydrus_gui_model::list_selection::ListSelection;
 use hydrus_gui_model::parser_editors::{self as model, ContentEditor, Draft, TestContext};
@@ -18,6 +20,7 @@ pub struct Slots {
     pub exchange: crate::downloader_interchange_window::Slots,
     pub list: Rc<RefCell<Option<ParserListWindow>>>,
     pub links: Rc<RefCell<Option<ParserListWindow>>>,
+    pub picker: Rc<RefCell<Option<ParserPickerWindow>>>,
     pub page: Rc<RefCell<Option<ParserEditWindow>>>,
     pub content: Rc<RefCell<Option<ParserEditWindow>>>,
     pub formula: crate::formula_window::Slots,
@@ -32,6 +35,20 @@ impl std::fmt::Debug for Slots {
 impl Slots {
     /// Cancel every descendant when a caller closes its parser owner.
     pub fn cancel(&self) {
+        let list = self
+            .links
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+            .or_else(|| {
+                self.list
+                    .borrow()
+                    .as_ref()
+                    .map(slint::ComponentHandle::clone_strong)
+            });
+        if let Some(list) = list {
+            list.invoke_force_close();
+        }
         let window = self
             .page
             .borrow()
@@ -1149,6 +1166,7 @@ struct ListState {
     sort_column: usize,
     ascending: bool,
     pending_delete: Option<Vec<String>>,
+    pending_clear: Option<Vec<String>>,
 }
 fn list_row(s: &ListState, i: usize) -> Vec<String> {
     if s.links {
@@ -1200,8 +1218,25 @@ fn show_list(w: &ParserListWindow, s: &mut ListState, slots: &Slots) {
         rows.into_iter()
             .map(|(i, row)| (row, s.selection.is_selected(i))),
     ));
-    w.set_selected(!s.selection.in_order(&s.order).is_empty());
-    w.set_child_open(slots.page.borrow().is_some() || slots.exchange.has_open());
+    let selected = s.selection.in_order(&s.order);
+    w.set_selected(!selected.is_empty());
+    w.set_single_selected(selected.len() == 1);
+    w.set_clearable(
+        s.links
+            && selected.iter().any(|&i| {
+                let key = hex::encode(&s.draft.classes.url_classes[i].key);
+                s.draft
+                    .classes
+                    .parser_links
+                    .iter()
+                    .any(|(k, p)| *k == key && p.is_some())
+            }),
+    );
+    w.set_child_open(
+        slots.page.borrow().is_some()
+            || slots.picker.borrow().is_some()
+            || slots.exchange.has_open(),
+    );
     w.set_parser_choices(strings(s.draft.parsers.iter().map(|p| p.name.clone())));
     w.set_gaps_exist(s.links && s.draft.gaps_exist());
 }
@@ -1238,6 +1273,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
         sort_column: 0,
         ascending: true,
         pending_delete: None,
+        pending_clear: None,
     }));
     let refresh: Rc<dyn Fn()> = Rc::new({
         let weak = w.as_weak();
@@ -1257,6 +1293,8 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
             !active.get()
                 || slots.page.borrow().is_some()
                 || slots.exchange.has_open()
+                || slots.picker.borrow().is_some()
+                || state.borrow().pending_clear.is_some()
                 || state.borrow().pending_delete.is_some()
         }
     });
@@ -1265,9 +1303,17 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
         let weak = w.as_weak();
         let slot = slot.clone();
         let exchange = slots.exchange.clone();
+        let picker = slots.picker.clone();
         move || {
-            exchange.cancel();
             active.set(false);
+            let child = picker
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(child) = child {
+                child.invoke_answered(false);
+            }
+            exchange.cancel();
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
             }
@@ -1322,12 +1368,19 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                 return;
             }
             let mut s = state.borrow_mut();
-            let Some(keys) = s.pending_delete.take() else {
+            if let Some(keys) = s.pending_clear.take() {
+                if yes {
+                    for key in keys {
+                        let _ = s.draft.link(&key, None);
+                    }
+                }
+            } else if let Some(keys) = s.pending_delete.take() {
+                if yes {
+                    s.draft.remove(&keys);
+                    s.selection = ListSelection::default();
+                }
+            } else {
                 return;
-            };
-            if yes {
-                s.draft.remove(&keys);
-                s.selection = ListSelection::default();
             }
             drop(s);
             if let Some(w) = weak.upgrade() {
@@ -1432,6 +1485,62 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                             s.draft.try_fill_gaps();
                         }
                     }
+                    "pick-parser" => {
+                        let s = state.borrow();
+                        if !s.links || w.get_links_tab() != 0 { return Ok(()); }
+                        if s.draft.parsers.is_empty() {
+                            return Err("Unfortunately, you do not have any parsers, so none can be linked to your url classes. Please create some!".into());
+                        }
+                        let selected = s.selection.in_order(&s.order);
+                        if selected.len() != 1 { return Ok(()); }
+                        let class = &s.draft.classes.url_classes[selected[0]];
+                        let key = hex::encode(&class.key);
+                        let choices = s.draft.parser_choices(&key)?;
+                        let current = s.draft.classes.parser_links.iter().find(|(k, _)| k == &key).and_then(|(_, p)| p.as_ref());
+                        let selected = current.and_then(|key| choices.iter().position(|(_, p)| p.as_ref() == Some(key))).unwrap_or(0);
+                        let title = format!("select parser for {}", class.name);
+                        drop(s);
+                        let child = ParserPickerWindow::new().map_err(|e| e.to_string())?;
+                        child.set_window_title(title.into());
+                        child.set_selected_index(i32::try_from(selected).unwrap_or(0));
+                        let choices = Rc::new(choices);
+                        let update: Rc<dyn Fn()> = Rc::new({
+                            let weak = child.as_weak();
+                            let choices = choices.clone();
+                            move || { if let Some(child) = weak.upgrade() {
+                                child.set_rows(table(choices.iter().enumerate().map(|(i, (label, _))| (vec![label.clone()], i32::try_from(i).ok() == Some(child.get_selected_index())))));
+                            } }
+                        });
+                        let picker_active = Rc::new(Cell::new(true));
+                        child.on_selected({
+                            let weak = child.as_weak(); let update = update.clone();
+                            let picker_active = picker_active.clone(); let choices = choices.clone();
+                            move |i| { if picker_active.get() && usize::try_from(i).is_ok_and(|i| i < choices.len()) && let Some(child) = weak.upgrade() {
+                                child.set_selected_index(i); update();
+                            } }
+                        });
+                        child.on_answered({
+                            let state = state.clone(); let active = active.clone();
+                            let weak = child.as_weak(); let parent = w.as_weak();
+                            let slot = slots.picker.clone(); let refresh = refresh.clone();
+                            move |yes| {
+                                if !picker_active.replace(false) { return; }
+                                if let Some(child) = weak.upgrade() {
+                                    if yes && active.get() && let Some((_, Some(parser))) = usize::try_from(child.get_selected_index()).ok().and_then(|i| choices.get(i)) {
+                                        if let Err(error) = state.borrow_mut().draft.link(&key, Some(parser)) && let Some(parent) = parent.upgrade() { parent.set_error(error.into()); }
+                                    }
+                                    let _ = child.hide();
+                                }
+                                slot.borrow_mut().take(); refresh();
+                            }
+                        });
+                        child.window().on_close_requested({ let weak = child.as_weak(); move || {
+                            if let Some(child) = weak.upgrade() { child.invoke_answered(false); }
+                            slint::CloseRequestResponse::KeepWindowShown
+                        } });
+                        update(); child.show().map_err(|e| e.to_string())?;
+                        *slots.picker.borrow_mut() = Some(child);
+                    }
                     "link" | "clear" => {
                         let mut s = state.borrow_mut();
                         if !s.links || w.get_links_tab() != 0 {
@@ -1443,9 +1552,14 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                             .iter()
                             .map(|&i| hex::encode(&s.draft.classes.url_classes[i].key))
                             .collect::<Vec<_>>();
-                        let parser = if action == "clear" {
-                            None
-                        } else {
+                        if action == "clear" {
+                            if w.get_clearable() {
+                                s.pending_clear = Some(classes);
+                                w.set_question("Clear all the selected linked parsers?".into());
+                            }
+                            return Ok(());
+                        }
+                        let parser = {
                             Some(
                                 usize::try_from(w.get_chosen_parser())
                                     .ok()
@@ -1559,16 +1673,13 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
             refresh();
         }
     });
-    w.window().on_close_requested({
-        let weak = w.as_weak();
-        let exchange = slots.exchange.clone();
-        move || {
-            exchange.cancel();
-            if let Some(w) = weak.upgrade() {
-                w.invoke_action("cancel".into());
-            }
-            slint::CloseRequestResponse::KeepWindowShown
-        }
+    w.on_force_close({
+        let close = close.clone();
+        move || close()
+    });
+    w.window().on_close_requested(move || {
+        close();
+        slint::CloseRequestResponse::KeepWindowShown
     });
     refresh();
     w.show().map_err(|e| e.to_string())?;

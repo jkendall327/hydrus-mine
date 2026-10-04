@@ -616,6 +616,7 @@ fn url_class_links_are_staged_cancel_safe_and_refresh_capability() {
     let links = windows::open(&store, &slots, true).unwrap();
     links.invoke_row_clicked(0, false, false);
     links.invoke_action("clear".into());
+    links.invoke_answered(true);
     links.invoke_action("apply".into());
     assert_eq!(
         store.snapshot().url_classes.settings().parser_links,
@@ -1772,4 +1773,208 @@ fn links_auto_fill_and_api_review_reproduce_reference_and_preserve_installed_con
             assert_eq!(parser, target.key);
         }
     }
+}
+
+#[test]
+fn owned_parser_picker_and_clear_questions_replay_reference_and_reach_live_resolver() {
+    use hydrus_legacy::{
+        objects::{domain, parsers},
+        serialisable::SerialisableObject,
+    };
+    let _windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("parser_link_picker.json");
+    let class = domain::url_class(
+        &SerialisableObject::from_tuple_str(&fixture["classes"][0].to_string()).unwrap(),
+    )
+    .unwrap();
+    let parsers = fixture["parsers"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| {
+            parsers::page_parser(&SerialisableObject::from_tuple_str(&value.to_string()).unwrap())
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let class_key = hex::encode(&class.key);
+    let initial = UrlClassSettings {
+        url_classes: vec![class],
+        parser_keys: parsers.iter().map(|p| p.key.clone()).collect(),
+        parser_links: vec![(class_key.clone(), Some(parsers[0].key.clone()))],
+        ..UrlClassSettings::default()
+    };
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let definitions = Downloaders {
+        parsers: parsers.clone(),
+        ..Downloaders::default()
+    };
+    let saved = initial.clone();
+    store
+        .write_and_refresh(move |ctx| {
+            settings::set(ctx.conn(), &definitions)?;
+            settings::set(ctx.conn(), &saved)
+        })
+        .unwrap();
+    let slots = Slots::default();
+    let owner = windows::open(&store, &slots, true).unwrap();
+    owner.invoke_row_clicked(0, false, false);
+    assert!(owner.get_single_selected());
+    assert!(owner.get_clearable());
+    for (step, index) in fixture["steps"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .zip([0, 2, 0, 3])
+    {
+        owner.invoke_action("pick-parser".into());
+        let child = slots.picker.borrow().as_ref().unwrap().clone_strong();
+        assert!(owner.get_child_open());
+        assert_eq!(child.get_window_title(), step["title"].as_str().unwrap());
+        assert_eq!(
+            child.get_selected_index(),
+            i32::try_from(step["initial"][0].as_i64().unwrap()).unwrap()
+        );
+        assert_eq!(
+            serde_json::json!(
+                (0..child.get_rows().row_count())
+                    .map(|i| child
+                        .get_rows()
+                        .row_data(i)
+                        .unwrap()
+                        .cells
+                        .row_data(0)
+                        .unwrap()
+                        .to_string())
+                    .collect::<Vec<_>>()
+            ),
+            step["choices"]
+        );
+        child.invoke_selected(-1);
+        assert_eq!(
+            child.get_selected_index(),
+            i32::try_from(step["initial"][0].as_i64().unwrap()).unwrap()
+        );
+        owner.invoke_action("apply".into());
+        assert!(slots.links.borrow().is_some(), "owner is blocked by picker");
+        child.invoke_selected(index);
+        child.invoke_answered(step["accepted"].as_bool().unwrap());
+        assert!(slots.picker.borrow().is_none());
+        assert!(!owner.get_child_open());
+        assert_eq!(
+            owner
+                .get_rows()
+                .row_data(0)
+                .unwrap()
+                .cells
+                .row_data(2)
+                .unwrap(),
+            step["value"].as_str().unwrap()
+        );
+        child.invoke_selected(0);
+        child.invoke_answered(true);
+        assert_eq!(
+            owner
+                .get_rows()
+                .row_data(0)
+                .unwrap()
+                .cells
+                .row_data(2)
+                .unwrap(),
+            step["value"].as_str().unwrap(),
+            "retired child cannot rewrite link"
+        );
+        assert_eq!(
+            store.read(settings::get::<UrlClassSettings>).unwrap(),
+            initial
+        );
+    }
+    owner.invoke_action("clear".into());
+    assert_eq!(
+        owner.get_question(),
+        fixture["clear"][0]["question"].as_str().unwrap()
+    );
+    owner.invoke_answered(false);
+    assert!(owner.get_clearable());
+    owner.invoke_action("apply".into());
+    let other = parsers.iter().find(|p| p.name == "a other").unwrap();
+    assert_eq!(
+        store
+            .snapshot()
+            .url_classes
+            .url_to_fetch_and_parser("https://links.example/direct")
+            .unwrap()
+            .1,
+        other.key
+    );
+    let reopened = windows::open(&store, &slots, true).unwrap();
+    reopened.invoke_row_clicked(0, false, false);
+    reopened.invoke_action("pick-parser".into());
+    let stale = slots.picker.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(stale.get_selected_index(), 3);
+    slots.cancel();
+    assert!(slots.links.borrow().is_none());
+    assert!(slots.picker.borrow().is_none());
+    stale.invoke_selected(0);
+    stale.invoke_answered(true);
+    reopened.invoke_action("apply".into());
+    assert_eq!(
+        store
+            .snapshot()
+            .url_classes
+            .url_to_fetch_and_parser("https://links.example/direct")
+            .unwrap()
+            .1,
+        other.key
+    );
+    let reopened = windows::open(&store, &slots, true).unwrap();
+    reopened.invoke_row_clicked(0, false, false);
+    reopened.invoke_action("clear".into());
+    reopened.invoke_answered(true);
+    assert!(!reopened.get_clearable());
+    assert_eq!(
+        reopened
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(2)
+            .unwrap(),
+        ""
+    );
+    reopened.invoke_action("cancel".into());
+    assert_eq!(
+        store
+            .snapshot()
+            .url_classes
+            .url_to_fetch_and_parser("https://links.example/direct")
+            .unwrap()
+            .1,
+        other.key
+    );
+    let reopened = windows::open(&store, &slots, true).unwrap();
+    reopened.invoke_row_clicked(0, false, false);
+    reopened.invoke_action("clear".into());
+    reopened.invoke_answered(true);
+    reopened.invoke_action("apply".into());
+    assert_eq!(
+        store.snapshot().url_classes.settings().parser_links,
+        vec![(class_key, None)]
+    );
+    assert!(
+        store
+            .snapshot()
+            .url_classes
+            .url_to_fetch_and_parser("https://links.example/direct")
+            .is_err()
+    );
+    store
+        .write_and_refresh(|ctx| settings::set(ctx.conn(), &Downloaders::default()))
+        .unwrap();
+    let empty = windows::open(&store, &slots, true).unwrap();
+    empty.invoke_row_clicked(0, false, false);
+    empty.invoke_action("pick-parser".into());
+    assert_eq!(empty.get_error(), fixture["warning"].as_str().unwrap());
+    assert!(slots.picker.borrow().is_none());
+    slots.cancel();
 }

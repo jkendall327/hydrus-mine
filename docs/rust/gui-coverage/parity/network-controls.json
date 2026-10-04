@@ -269,7 +269,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/lib.rs",
-          "line": 1070,
+          "line": 1095,
           "symbol": "                let predicates = crate::file_log::url_search(&urls);"
         }
       ],
@@ -658,7 +658,7 @@
         {
           "relativepath": "crates/hydrus-gui-model/src/main_menu.rs",
           "symbol": "fn network_menu(",
-          "line": 912
+          "line": 916
         },
         {
           "relativepath": "crates/hydrus-gui/src/menu_bar.rs",
@@ -680,7 +680,7 @@
         {
           "relativepath": "crates/hydrus-store/src/import/decode.rs",
           "symbol": "fn network_boot_preference_converts_without_changing_live_pause(",
-          "line": 2584
+          "line": 2691
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/menu_bar.rs",
@@ -786,7 +786,7 @@
         {
           "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
           "symbol": "let mut api_pairs = {",
-          "line": 1339
+          "line": 1392
         },
         {
           "relativepath": "crates/hydrus-gui/ui/parser_editors.slint",
@@ -803,7 +803,7 @@
         {
           "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
           "symbol": "fn links_auto_fill_and_api_review_reproduce_reference_and_preserve_installed_consumers(",
-          "line": 1635
+          "line": 1636
         }
       ],
       "referenceRecording": {
@@ -818,6 +818,56 @@
         "slintCachedCompiler": true,
         "localCargoBuildsOrTests": false,
         "ci": "Parent asynchronous GitHub CI."
+      }
+    },
+    {
+      "originalID": "url-links-parser",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Per-class owned parser chooser opened by Edit/double-click; matching example URLs first and alphabetic within each group, selectable None separator is a no-op, installed parser selected. Cancel/owner-close preserve staged links and retire descendants; invalid indices and stale callbacks inert. Edit enabled for a single class; Clear enabled for a linked selection, exact Yes/No question clears selected links only on Yes. Apply/Cancel/reopen and live URL-to-parser resolver consume the stable saved key; no-parsers exact warning.",
+      "limits": [
+        "Native detached table rather than Qt modal list. Exact no-parsers warning uses owner error area. No additional alias credit for API-review controls."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "symbol": "pub fn parser_choices(",
+          "line": 505
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "symbol": "\"pick-parser\" => {",
+          "line": 1488
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/parser_editors.slint",
+          "symbol": "export component ParserPickerWindow",
+          "line": 243
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_editors.rs",
+          "symbol": "fn per_class_parser_choices_replay_matching_groups_and_validate_stable_keys()",
+          "line": 442
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "symbol": "fn owned_parser_picker_and_clear_questions_replay_reference_and_reach_live_resolver()",
+          "line": 1779
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_parser_link_picker.py",
+        "fixture": "oracle/fixtures/parser_link_picker.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintSourceCompilation": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; new regressions authored, not locally run."
       }
     }
   ],
@@ -1020,6 +1070,74 @@
             "atomic save",
             "done",
             "close"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ParserPickerWindow",
+      "file": "crates/hydrus-gui/ui/parser_editors.slint",
+      "title": "select parser for <url class>",
+      "preferredSize": "540 \u00d7 380",
+      "controls": [
+        "matching parsers / selectable no-op separator / other parsers",
+        "current link selection",
+        "ok / cancel / close"
+      ],
+      "owner": "ParserListWindow links draft; Slots.picker retired on owner close",
+      "ownerParentIDs": [
+        "url-links"
+      ],
+      "referenceIDs": [
+        "url-links-parser"
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "symbol": "pub fn parser_choices(",
+          "line": 505
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "symbol": "\"pick-parser\" => {",
+          "line": 1488
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/parser_editors.slint",
+          "symbol": "export component ParserPickerWindow",
+          "line": 243
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_editors.rs",
+          "symbol": "fn per_class_parser_choices_replay_matching_groups_and_validate_stable_keys()",
+          "line": 442
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "symbol": "fn owned_parser_picker_and_clear_questions_replay_reference_and_reach_live_resolver()",
+          "line": 1779
+        }
+      ],
+      "guiEvidence": "owned_parser_picker_and_clear_questions_replay_reference_and_reach_live_resolver",
+      "actionGroups": [
+        {
+          "label": "parser choice",
+          "actions": [
+            "select matching parser",
+            "select other parser",
+            "accept separator (no-op)",
+            "accept current selection",
+            "cancel"
+          ]
+        },
+        {
+          "label": "owner lifecycle",
+          "actions": [
+            "blocked owner Apply while child open",
+            "owner closes child",
+            "retired callbacks inert"
           ]
         }
       ]

@@ -437,3 +437,47 @@ fn auto_fill_reference_owner_leaves_candidates_unapplied_and_reviews_api_pairs()
         );
     }
 }
+
+#[test]
+fn per_class_parser_choices_replay_matching_groups_and_validate_stable_keys() {
+    use hydrus_legacy::objects::domain;
+    let fixture = hydrus_testkit::fixture_json("parser_link_picker.json");
+    let class = domain::url_class(
+        &SerialisableObject::from_tuple_str(&fixture["classes"][0].to_string()).unwrap(),
+    )
+    .unwrap();
+    let parsers = fixture["parsers"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| {
+            parsers::page_parser(&SerialisableObject::from_tuple_str(&value.to_string()).unwrap())
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let class_key = hex::encode(&class.key);
+    let mut draft = Draft::new(
+        parsers.clone(),
+        UrlClassSettings {
+            url_classes: vec![class],
+            ..UrlClassSettings::default()
+        },
+    );
+    let choices = draft.parser_choices(&class_key).unwrap();
+    assert_eq!(
+        serde_json::json!(choices.iter().map(|(name, _)| name).collect::<Vec<_>>()),
+        fixture["steps"][0]["choices"]
+    );
+    assert!(choices[2].1.is_none());
+    assert!(draft.parser_choices("missing").is_err());
+    assert!(draft.link(&class_key, Some("missing")).is_err());
+    for (_, key) in choices.iter().filter(|(_, key)| key.is_some()) {
+        draft.link(&class_key, key.as_deref()).unwrap();
+        assert_eq!(
+            draft.classes.parser_links,
+            vec![(class_key.clone(), key.clone())]
+        );
+    }
+    draft.link(&class_key, None).unwrap();
+    assert_eq!(draft.classes.parser_links, vec![(class_key, None)]);
+}

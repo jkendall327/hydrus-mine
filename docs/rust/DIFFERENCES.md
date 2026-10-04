@@ -1600,3 +1600,9 @@ and cursor anchoring remain separate gaps.
 existing common item styling. Out-of-range values supplied to the
 native options model are clamped to 1–1000 when applied, matching the reference
 spinbox's clamping and keeping the stored limit inside the visible bounds.
+
+The parser-link chooser follows the recorded Qt order, current selection,
+separator no-op, and clear confirmation. Its native detached window has a
+single-column table rather than Qt’s list widget; the no-parsers warning appears
+in the owner’s error area with the exact reference text. Neither presentation
+changes the persisted association or its live downloader consumer.
