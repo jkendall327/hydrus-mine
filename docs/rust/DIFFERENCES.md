@@ -1199,3 +1199,5 @@ window. Append reports a missing destination/session as an error without creatin
 a notebook; saving a source notebook removed before acceptance reports an error.
 Automatic GUI-session lifecycle history and legacy historical snapshot import
 remain outside the manual notebook session menu implementation.
+
+The network runtime now exposes request-scoped retry, domain scrub, gallery-token and five-second bandwidth override commands. Recent failures remain available after short requests finish (128 entries per daemon epoch, long text follows the reference's displayed prefix). These commands are being connected to the page controls; the existing current-job review remains separately scoped. See `oracle/fixtures/network_job_control.json`.

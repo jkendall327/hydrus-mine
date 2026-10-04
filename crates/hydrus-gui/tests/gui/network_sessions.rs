@@ -617,6 +617,7 @@ fn automatic_header_dialog_approval_denial_later_and_stale_callbacks() {
                         ],
                         obeys_bandwidth: true,
                     }],
+                    ..Snapshot::default()
                 },
             )
         })

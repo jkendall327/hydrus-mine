@@ -1,0 +1,153 @@
+{
+ "now": 1770000000,
+ "menus": {
+  "empty": [
+   {
+    "label": "auto-override bandwidth rules for all jobs here after five seconds",
+    "separator": false,
+    "checked": false,
+    "children": []
+   }
+  ],
+  "waiting": [
+   {
+    "label": "https://example.com/file",
+    "separator": false,
+    "checked": null,
+    "children": []
+   },
+   {
+    "label": "",
+    "separator": true,
+    "checked": null,
+    "children": []
+   },
+   {
+    "label": "edit bandwidth rules",
+    "separator": false,
+    "checked": null,
+    "children": [
+     {
+      "label": "global (1 minute)",
+      "separator": false,
+      "checked": null,
+      "children": []
+     },
+     {
+      "label": "web domain default",
+      "separator": false,
+      "checked": null,
+      "children": []
+     },
+     {
+      "label": "set rules for web domain: example.com",
+      "separator": false,
+      "checked": null,
+      "children": []
+     },
+     {
+      "label": "set rules for web domain: sub.example.com",
+      "separator": false,
+      "checked": null,
+      "children": []
+     },
+     {
+      "label": "downloader page default",
+      "separator": false,
+      "checked": null,
+      "children": []
+     }
+    ]
+   },
+   {
+    "label": "",
+    "separator": true,
+    "checked": null,
+    "children": []
+   },
+   {
+    "label": "reattempt connection now",
+    "separator": false,
+    "checked": null,
+    "children": []
+   },
+   {
+    "label": "scrub domain errors",
+    "separator": false,
+    "checked": null,
+    "children": []
+   },
+   {
+    "label": "reattempt request now (server reports low bandwidth)",
+    "separator": false,
+    "checked": null,
+    "children": []
+   },
+   {
+    "label": "override bandwidth rules for this job",
+    "separator": false,
+    "checked": null,
+    "children": []
+   },
+   {
+    "label": "override forced gallery wait times for this job",
+    "separator": false,
+    "checked": null,
+    "children": []
+   },
+   {
+    "label": "",
+    "separator": true,
+    "checked": null,
+    "children": []
+   },
+   {
+    "label": "auto-override bandwidth rules for all jobs here after five seconds",
+    "separator": false,
+    "checked": false,
+    "children": []
+   }
+  ],
+  "error": [
+   {
+    "label": "show error",
+    "separator": false,
+    "checked": null,
+    "children": []
+   },
+   {
+    "label": "copy error",
+    "separator": false,
+    "checked": null,
+    "children": []
+   }
+  ]
+ },
+ "actions": {
+  "retry": [
+   false,
+   false,
+   true,
+   true
+  ],
+  "obeys_after_override": false,
+  "auto_at_five": true,
+  "auto_after_five": false,
+  "clear_job_keeps_error": "synthetic failure\nserver detail",
+  "owner_clear_error": null,
+  "error_button_hidden": true
+ },
+ "clipboard": [
+  [
+   "clipboard",
+   "text",
+   "synthetic failure\nserver detail"
+  ]
+ ],
+ "messages": [
+  [
+   "Network Error",
+   "synthetic failure\nserver detail"
+  ]
+ ]
+}

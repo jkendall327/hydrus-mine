@@ -190,6 +190,7 @@ fn jobs_live_progress_commands_and_offline_expiry() {
                         ],
                         obeys_bandwidth: true,
                     }],
+                    ..Snapshot::default()
                 },
             )
         })
@@ -303,6 +304,7 @@ fn bandwidth_filters_chart_multiselect_delete_cancel_live_reset_and_saved_age() 
                         at: now,
                         usage,
                         jobs: Vec::new(),
+                        ..Snapshot::default()
                     },
                 )?;
                 let mut settings = settings::get::<BandwidthSettings>(ctx.conn())?;

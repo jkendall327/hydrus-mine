@@ -1829,3 +1829,5 @@ Saving targets the clicked notebook's key, independently of the selected sibling
 its wrapper is omitted from the saved tree. Copies retain independent page media,
 selection and importer snapshots. Appending into a background notebook remembers
 its new child selection while preserving the visible sibling, and survives reopen.
+
+The network engine's local job-control protocol distinguishes connection retries, server bandwidth retries, domain errors and gallery waits. Commands validate the daemon epoch and live request identifier. A recent-error journal lets the owning control display a failure even after its request leaves the live list. The reference recording also establishes that the visible error menu contains only show and copy; clearing belongs to the control's owner.
