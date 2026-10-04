@@ -498,8 +498,8 @@ fn lifecycle_native_fields_disable_typing_until_child_closes() {
     use std::rc::Rc;
 
     use hydrus_gui::DefinitionField;
-    use slint::platform::{Key, PointerEventButton, WindowEvent};
-    use slint::{LogicalPosition, ModelRc, SharedString, VecModel};
+    use slint::platform::{Key, WindowEvent};
+    use slint::{ModelRc, SharedString, VecModel};
 
     let rendered = headless::init();
     let editor = DownloaderDefinitionEditWindow::new().unwrap();
@@ -522,25 +522,22 @@ fn lifecycle_native_fields_disable_typing_until_child_closes() {
         window.dispatch_event(WindowEvent::KeyReleased { text });
     };
     let type_name = |name: &str| {
-        // With no tab row, the first 32px field starts at the 10px padding.
-        let position = LogicalPosition::new(400.0, 26.0);
-        window.dispatch_event(WindowEvent::PointerPressed {
-            position,
-            button: PointerEventButton::Left,
-        });
-        window.dispatch_event(WindowEvent::PointerReleased {
-            position,
-            button: PointerEventButton::Left,
-        });
+        // Native keyboard focus avoids guessing the ScrollView's widget
+        // coordinates. The isolated editor's first enabled control is its
+        // only LineEdit; with a child open every input control is disabled.
+        send_key(Key::Tab.into());
         let control: SharedString = Key::Control.into();
         window.dispatch_event(WindowEvent::KeyPressed {
             text: control.clone(),
         });
         send_key("a".into());
         window.dispatch_event(WindowEvent::KeyReleased { text: control });
-        send_key(name.into());
+        for character in name.chars() {
+            send_key(character.to_string().into());
+        }
     };
     editor.set_child_open(true);
+    window.dispatch_event(WindowEvent::WindowActiveChanged(true));
     headless::render(&window, 950, 740);
     headless::render(&window, 950, 740);
     type_name("blocked name");
@@ -550,7 +547,16 @@ fn lifecycle_native_fields_disable_typing_until_child_closes() {
     );
     editor.set_child_open(false);
     headless::render(&window, 950, 740);
-    headless::render(&window, 950, 740);
+    let pixels = headless::render(&window, 950, 740);
+    if let Ok(directory) = std::env::var("HYDRUS_DEFINITION_SCREENSHOTS") {
+        headless::save_png(
+            &std::path::Path::new(&directory).join("native-definition-field.png"),
+            &pixels,
+            950,
+            740,
+        )
+        .unwrap();
+    }
     type_name("accepted name");
     assert_eq!(
         edits.borrow().last().map(String::as_str),
