@@ -140,3 +140,5 @@ mod frame_locations;
 mod incremental_tagging;
 
 mod tab_presentation;
+
+mod archive_repair;

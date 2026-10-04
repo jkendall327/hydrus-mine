@@ -2971,3 +2971,12 @@ Numerical rating examples also continue a held Left drag across a Right
 press/release while the pointer remains in the sample; a right-only drag does not
 set a rating. The actual Qt chord sequence extends `rating_preview_pointer.json`.
 The cross-edge chord capture boundary is documented separately in DIFFERENCES.
+
+Database > file maintenance > fix missing file archived times runs a global
+scan, with the reference's initial warning and separate legacy/import/both
+choices. The owned window shows scan and repair work, supports cancellation and
+reports completion or no missing times. Current local media, trash and former
+local deletion records use their recorded import/deletion times. Accepted
+repairs go through the content writer and refresh the main page's actual media
+results; an intervening archive/inbox/time edit is preserved. Closing, replacing
+or invalidating the owner prevents a retained confirmation from starting work.

@@ -71,6 +71,7 @@ pub(crate) struct Hooks {
     pub review_services: Rc<dyn Fn()>,
     /// Open staged service management.
     pub manage_services: Rc<dyn Fn()>,
+    pub repair_archive_times: Rc<dyn Fn()>,
     /// Toggle watcher or other recognised clipboard URL imports.
     pub watch_clipboard: Rc<dyn Fn(bool)>,
 }
@@ -740,6 +741,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             hooks.pages.borrow_mut().clear_watcher_highlights();
             (hooks.reshow)();
         }
+        Command::RepairArchiveTimes => (hooks.repair_archive_times)(),
         Command::FileMaintenance(idle) => {
             flip::<hydrus_store::file_maintenance::FileMaintenanceSettings>(&store, move |m| {
                 let field = if idle {

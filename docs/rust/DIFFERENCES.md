@@ -2024,3 +2024,17 @@ so leaving the sample after the extra Right release cancels its capture: native
 cannot resume that chord drag upon re-entry while Left remains held. Ordinary
 single-button captured drags retain the previously recorded outside behavior.
 This framework boundary remains explicit; full chord capture parity is not claimed.
+
+The global missing-archive-time repair uses an owned native window for Qt's
+warning, population-choice dialogs and job popup. Native scan/repair work runs
+in the background and revalidates the captured candidates inside a single
+content transaction. Cancellation before commit rolls back that transaction;
+the reference can keep earlier completed batches. A completed background commit
+cannot be undone by closing the window afterward. Existing timestamps, inbox,
+unknown imports, the exact February 2022 tracking boundary, and legacy deletion
+before import keep the recorded reference behavior (the last is counted but
+cannot be filled). Reference repair writes do not refresh an already cached
+media timestamp immediately; the recorder verifies the committed SQL and actual
+media consumer after restarting. Native refresh reloads its timestamp consumer
+on completion. Database file history remains unavailable pending its independent
+search, four-series chart, date/count axes, refit and cancellation workflow.
