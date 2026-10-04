@@ -41,8 +41,10 @@ pub enum Action {
     /// carry on to next pages.
     TryAgain(bool),
     Skip,
-    /// Not in hydrus-rs yet (png, importing URLs, the advanced entries).
-    NotYet,
+    ExportToPng,
+    ImportFromClipboard,
+    ImportFromPng,
+    ExportObjects,
 }
 
 /// What a log's menus need to know of it.
@@ -96,7 +98,7 @@ pub fn log_menu(log: &LogFacts, any_selected: bool) -> Vec<Entry<Action>> {
             "export all urls".into(),
             vec![
                 item("to clipboard", Action::ExportToClipboard),
-                item("to png", Action::NotYet),
+                item("to png", Action::ExportToPng),
             ],
         ));
     }
@@ -104,8 +106,8 @@ pub fn log_menu(log: &LogFacts, any_selected: bool) -> Vec<Entry<Action>> {
         menu.push(Entry::Menu(
             "ADVANCED: import new urls".into(),
             vec![
-                item("from clipboard", Action::NotYet),
-                item("from png", Action::NotYet),
+                item("from clipboard", Action::ImportFromClipboard),
+                item("from png", Action::ImportFromPng),
             ],
         ));
     }
@@ -114,7 +116,7 @@ pub fn log_menu(log: &LogFacts, any_selected: bool) -> Vec<Entry<Action>> {
             "advanced".into(),
             vec![item(
                 "export selected page objects to clipboard",
-                Action::NotYet,
+                Action::ExportObjects,
             )],
         ));
     }
@@ -203,4 +205,140 @@ pub fn delete_question(status: SeedStatus, log_kind: &str) -> String {
     format!(
         "Are you sure you want to delete all the {what} {log_kind} log entries? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit."
     )
+}
+
+/// The second, cancellable reference question after duplicate filtering.
+pub const CONTINUE_QUESTION: &str = "Would you like these urls to only check for new files, or would you like them to also generate subsequent gallery pages, like a regular search would?";
+pub const CONTINUE_CHOICES: [&str; 2] = [
+    "just check what I am adding",
+    "start a potential new search for every url added",
+];
+pub const DUPLICATE_CHOICES: [&str; 2] = ["only add new urls", "add all urls, even duplicates"];
+
+/// A reference import's pending question or final batch. Raw lines are deduped
+/// first; existing URLs are checked using request normalisation.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ImportStep {
+    Duplicates {
+        new: Vec<String>,
+        total: usize,
+        removed: usize,
+    },
+    Continuation(Vec<String>),
+    Ready {
+        urls: Vec<String>,
+        more: bool,
+    },
+    Cancelled,
+}
+impl ImportStep {
+    pub fn start(
+        text: &str,
+        existing: &[GallerySeed],
+        classes: &hydrus_core::url::UrlClasses,
+        more: bool,
+    ) -> Self {
+        let mut seen = std::collections::BTreeSet::new();
+        let urls: Vec<String> = text
+            .split([
+                '\n', '\r', '\u{000b}', '\u{000c}', '\u{001c}', '\u{001d}', '\u{001e}', '\u{0085}',
+                '\u{2028}', '\u{2029}',
+            ])
+            .map(|s| s.trim_start_matches('\u{feff}').trim())
+            .filter(|s| !s.is_empty() && seen.insert((*s).to_owned()))
+            .map(str::to_owned)
+            .collect();
+        let new: Vec<String> = urls
+            .iter()
+            .filter(|url| {
+                let normal = classes
+                    .normalise(url, true)
+                    .unwrap_or_else(|_| (*url).clone());
+                !existing.iter().any(|seed| seed.url == normal)
+            })
+            .cloned()
+            .collect();
+        if new.len() < urls.len() {
+            Self::Duplicates {
+                removed: urls.len() - new.len(),
+                total: urls.len(),
+                new,
+            }
+        } else {
+            Self::after_duplicates(urls, more)
+        }
+    }
+    fn after_duplicates(urls: Vec<String>, more: bool) -> Self {
+        if more {
+            Self::Continuation(urls)
+        } else {
+            Self::Ready { urls, more: false }
+        }
+    }
+    pub fn question(&self) -> Option<(String, [&'static str; 2])> {
+        match self {
+            Self::Duplicates { total, removed, .. } => Some((
+                format!(
+                    "Of the {} URLs you mean to add, {} are already in the search log. Would you like to only add new URLs or add everything (which will force a re-check of the duplicates)?",
+                    human_int(*total as u64),
+                    human_int(*removed as u64)
+                ),
+                DUPLICATE_CHOICES,
+            )),
+            Self::Continuation(_) => Some((CONTINUE_QUESTION.into(), CONTINUE_CHOICES)),
+            _ => None,
+        }
+    }
+    /// Index 0/1 are the actual Yes/No buttons; cancellation never advances.
+    /// The reference's duplicate No branch returns without importing anything.
+    pub fn answer(self, index: i32, more: bool) -> Self {
+        match (self, index) {
+            (Self::Duplicates { new, .. }, 0) => Self::after_duplicates(new, more),
+            (Self::Continuation(urls), 0 | 1) => Self::Ready {
+                urls,
+                more: index == 1,
+            },
+            _ => Self::Cancelled,
+        }
+    }
+}
+
+/// Complete selected page objects in SerialisableList v3 / GallerySeed v4.
+/// Run tokens and forced-next-page flags are runtime-only in the reference.
+pub fn export_objects(seeds: &[&GallerySeed]) -> Result<String, String> {
+    use serde_json::json;
+    let objects = seeds
+        .iter()
+        .map(|s| {
+            let headers: serde_json::Map<String, serde_json::Value> = s
+                .meta
+                .request_headers
+                .iter()
+                .map(|(k, v)| (k.clone(), json!(v)))
+                .collect();
+            json!([
+                2,
+                [
+                    66,
+                    4,
+                    [
+                        s.url,
+                        s.can_generate_more_pages,
+                        s.meta.external_filterable_tags,
+                        [77, 1, s.meta.external_additional_tags],
+                        s.created,
+                        s.modified,
+                        s.status.code(),
+                        s.note,
+                        s.referral_url,
+                        headers
+                    ]
+                ]
+            ])
+        })
+        .collect::<Vec<_>>();
+    let text = serde_json::to_string(&json!([26, 3, objects])).map_err(|e| e.to_string())?;
+    hydrus_core::pyjson::PyJson::parse(&text)
+        .map(|v| v.to_python_string())
+        .map_err(|e| e.to_string())
 }

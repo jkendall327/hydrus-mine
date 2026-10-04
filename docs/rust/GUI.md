@@ -2220,3 +2220,13 @@ open. The native running marker clears only after saving and stopping owned work
 cancelling the password gate also clears it without opening a session. The real
 recovery questions, outputs and a fifteen-second auto-yes dialog are recorded
 in `oracle/record_session_startup.py`.
+Search logs export all URLs through the reusable PNG panel, import new URL
+lines from the clipboard or PNG, and copy complete selected page objects as
+reference JSON. Imports ask the exact duplicate and continuation questions
+before committing and waking the queue. The current reference's duplicate
+“add all” answer ends the import; “only add new” proceeds to the continuation
+choice. Each imported page gets its own run token and the selected continuation
+flag. The standalone `SearchLogImportWindow` keeps the actual question text and
+button labels, handles invalid PNG/clipboard access errors, and cancels with its
+log owner. These actions also work directly from a downloader's search-log menu
+without opening the log editor.

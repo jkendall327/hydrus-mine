@@ -50,10 +50,11 @@ pub fn last() -> Option<PngExportWindow> {
 
 /// Read only the bounded carrier file; cancelling the native picker is a no-op.
 pub(crate) fn import_text() -> Result<Option<String>, String> {
-    let Some(path) = crate::pick(crate::Pick::Files, "select the png with the sources")
-        .into_iter()
-        .next()
-    else {
+    import_text_with_title("select the png with the sources")
+}
+
+pub(crate) fn import_text_with_title(title: &str) -> Result<Option<String>, String> {
+    let Some(path) = crate::pick(crate::Pick::Files, title).into_iter().next() else {
         return Ok(None);
     };
     let file = std::fs::File::open(path).map_err(|e| e.to_string())?;

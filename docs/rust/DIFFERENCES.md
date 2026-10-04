@@ -1449,3 +1449,14 @@ Startup recovery uses the native session-question window and a native GUI runnin
 marker rather than the reference controller's process marker. Choosing blank
 keeps the configured startup name for the next boot. Native importer workers
 start only after the recovery choice resolves.
+Search-log exchange follows the current Qt duplicate dialog's early return for
+its “add all urls, even duplicates” button, despite that label suggesting an
+import. Invalid URL text remains an unprocessed gallery seed, as in the
+reference; clipboard access and malformed PNG carriers get an acknowledgement
+window. Native duplicate/continuation questions use owned nonmodal windows
+instead of blocking Qt dialogs, and Escape explicitly cancels pending import.
+PNG export uses the shared native title/summary/description/width panel and its
+bounded grayscale carrier. Complete page-object JSON excludes runtime run tokens
+and force-next-page flags, as the reference serialiser does; set ordering is
+stable in the native output. Whole-log exchange dialogs belong to the main
+window, while an open log owns and closes its own children.

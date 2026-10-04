@@ -1,0 +1,25 @@
+// The reference's cancellable duplicate/continuation dialogs for importing URLs.
+import { Asking } from "subscriptions.slint";
+import { Theme } from "theme.slint";
+export component SearchLogImportWindow inherits Window {
+    in property <string> window-title: "Are you sure?";
+    title: root.window-title;
+    preferred-width: 650px;
+    preferred-height: 260px;
+    background: Theme.window;
+    in property <string> message;
+    in property <[string]> choices;
+    callback chosen(int);
+    callback cancelled();
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(e) => { if (e.text == Key.Escape) { root.cancelled(); return accept; } reject }
+        Asking {
+            title: root.window-title;
+            message: root.message;
+            choices: root.choices;
+            chosen(i) => { root.chosen(i); }
+            cancelled => { root.cancelled(); }
+        }
+    }
+}

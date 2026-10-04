@@ -22,8 +22,7 @@ fn node(entry: &Entry<Action>) -> PopupNode<'_, Entry<Action>, Action> {
     match entry {
         Entry::Item(
             label,
-            Action::FileLog(file_log::Action::NotYet | file_log::Action::SearchUrls)
-            | Action::SearchLog(search_log::Action::NotYet),
+            Action::FileLog(file_log::Action::NotYet | file_log::Action::SearchUrls),
         ) => PopupNode::Disabled(label),
         Entry::Item(label, action) => PopupNode::Item(label, action),
         Entry::Label(label) => PopupNode::Label(label),
@@ -252,16 +251,17 @@ pub(crate) fn act(cx: &Context<'_>, action: &Action) {
             };
             if let search_log::Action::DeleteStatus(status) = action {
                 let kind = if watcher { "check" } else { "search" };
+                let exchange = cx.open_files.clone();
                 let action = action.clone();
                 let store = store.clone();
                 (cx.ask)(
                     search_log::delete_question(*status, kind),
                     Rc::new(move || {
-                        crate::search_log_window::act_on_queue(&store, queue, &action);
+                        crate::search_log_window::act_on_queue(&store, queue, &action, &exchange);
                     }),
                 );
             } else {
-                crate::search_log_window::act_on_queue(&store, queue, action);
+                crate::search_log_window::act_on_queue(&store, queue, action, cx.open_files);
                 (cx.shown)(false);
             }
         }

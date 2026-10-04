@@ -259,3 +259,60 @@ fn closed_log_renormalisation_menu_requires_confirmation() {
     assert_eq!(after[0].id, before[0].id);
     assert_eq!(after[0].data, "https://renormalise.example/post/a");
 }
+
+#[test]
+fn closed_search_log_exchange_retains_real_questions_and_png_children() {
+    use hydrus_gui::{png_export_window, search_log_import_window};
+    let (_dirs, store) = store();
+    with_downloader(&store);
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(6);
+    ui.invoke_gallery_queries("synthetic".into());
+    let queue = queries(&bound)[0].0;
+    let before = store.read(|c| queues::gallery_seeds(c, queue)).unwrap();
+    hydrus_gui::set_paster(|| {
+        "https://gallery-exchange.example/b#one\nhttps://gallery-exchange.example/b#two".into()
+    });
+    let import = || {
+        ui.invoke_importer_list_menu(0, 20.0, 20.0);
+        choose(&ui, 0, "search log");
+        choose(&ui, 1, "ADVANCED: import new urls");
+        choose(&ui, 2, "from clipboard");
+    };
+    import();
+    let cancelled = search_log_import_window::last().unwrap();
+    cancelled.invoke_cancelled();
+    cancelled.invoke_chosen(1);
+    assert_eq!(
+        store.read(|c| queues::gallery_seeds(c, queue)).unwrap(),
+        before
+    );
+    import();
+    let question = search_log_import_window::last().unwrap();
+    assert_eq!(
+        question.get_message(),
+        hydrus_gui::search_log::CONTINUE_QUESTION
+    );
+    question.invoke_chosen(0);
+    let after = store.read(|c| queues::gallery_seeds(c, queue)).unwrap();
+    assert_eq!(after.len(), before.len() + 1);
+    let a = after.last().unwrap();
+    assert_eq!(a.url, "https://gallery-exchange.example/b");
+    assert!(!a.meta.run_token.is_empty());
+    assert!(!a.can_generate_more_pages);
+    assert!(
+        bound.file_log.borrow().is_none(),
+        "whole-log actions do not open the log editor"
+    );
+    ui.invoke_importer_list_menu(0, 20.0, 20.0);
+    choose(&ui, 0, "search log");
+    choose(&ui, 1, "export all urls");
+    choose(&ui, 2, "to png");
+    let export = png_export_window::last().unwrap();
+    assert_eq!(export.get_window_title(), "export to png");
+    export.invoke_action("close".into());
+}

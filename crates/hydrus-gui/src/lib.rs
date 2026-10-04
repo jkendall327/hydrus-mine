@@ -80,6 +80,7 @@ mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
 pub mod regex_favourites_window;
+pub mod search_log_import_window;
 mod search_log_window;
 pub mod services_editor_window;
 pub mod services_review_window;
@@ -1045,6 +1046,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             })
         },
         png_export_window::Slots::default(),
+        search_log_import_window::Slots::default(),
     );
     // the page's importer's file log
     let file_log_slot: Rc<RefCell<Option<FileLogWindow>>> = Rc::default();

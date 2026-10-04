@@ -222,7 +222,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
-          "line": 336,
+          "line": 337,
           "symbol": "        Action::ImportFromClipboard => {"
         }
       ],
@@ -264,12 +264,12 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
-          "line": 355,
+          "line": 356,
           "symbol": "        Action::SearchUrls => {"
         },
         {
           "relativepath": "crates/hydrus-gui/src/lib.rs",
-          "line": 920,
+          "line": 921,
           "symbol": "                let predicates = crate::file_log::url_search(&urls);"
         }
       ],
@@ -301,7 +301,7 @@
       "originalID": "audit-network-file-log-png",
       "before": "missing",
       "proposedStatus": "first_pass",
-      "exactBehavior": "Actual from-png importer uses native picker and bounded reference compressed UTF-8 carrier decode, active source normalization/deduplication and durable queue append/nudge. Cancel leaves log unchanged; malformed and empty payloads display Could not import. Actual to-png action opens reusable owned export panel with title, readonly payload description, description, width100\u20134096/path controls, path/title validation, automatic .png suffix, readable header/compressed payload, brief done state and persistent successful last directory. Frozen payload and parent-close/stale-callback guards preserve owner boundaries.",
+      "exactBehavior": "Actual from-png importer uses native picker and bounded reference compressed UTF-8 carrier decode, active source normalization/deduplication and durable queue append/nudge. Cancel leaves log unchanged; malformed and empty payloads display Could not import. Actual to-png action opens reusable owned export panel with title, readonly payload description, description, width100–4096/path controls, path/title validation, automatic .png suffix, readable header/compressed payload, brief done state and persistent successful last directory. Frozen payload and parent-close/stale-callback guards preserve owner boundaries.",
       "limits": [
         "Native SVG fonts/wrapping and decorative header pixels differ from Qt.",
         "Export panel is an owned native window rather than a modal Qt dialog.",
@@ -310,12 +310,12 @@
       "sourceAnchors": [
         {
           "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
-          "line": 317,
+          "line": 318,
           "symbol": "        Action::ImportFromPng =>"
         },
         {
           "relativepath": "crates/hydrus-gui/src/png_export_window.rs",
-          "line": 70,
+          "line": 71,
           "symbol": "pub fn open("
         },
         {
@@ -376,12 +376,12 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
-          "line": 367,
+          "line": 368,
           "symbol": "        Action::Renormalise =>"
         },
         {
           "relativepath": "crates/hydrus-gui/src/importer_list_menu.rs",
-          "line": 216,
+          "line": 215,
           "symbol": "                if *action == file_log::Action::Renormalise"
         }
       ],
@@ -419,6 +419,102 @@
         "localCargoBuildsOrTests": false,
         "ci": "Parent runs asynchronous GitHub CI; scoped model/GUI tests authored and not claimed locally passed."
       }
+    },
+    {
+      "originalID": "audit-network-search-log-exchange",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "All actual gallery/check log exchange entries: all URL strings to shared PNG export; clipboard/PNG new URL import with raw-line deduplication, request-normalised existing URL checks, exact duplicate and continuation questions before any write, cancelled/error no-op, reference duplicate No early return, per-page run tokens and continuation flags; complete selected GallerySeed v4 objects in SerialisableList v3 clipboard format. Both open log and closed-log downloader menu reach persisted queues and nudge scheduling. Read-only log menus keep import unavailable.",
+      "limits": [
+        "Native questions are owned nonmodal windows; Escape explicitly cancels. Whole-log menu children belong to the main window; an open log closes its own children.",
+        "PNG uses the shared native header and bounded 16 MiB carrier; font wrapping and decorative rendering differ from Qt.",
+        "The current reference duplicate No button returns without importing, despite its add-all label; no alternative behavior is invented.",
+        "Unrecognised URL text is retained as a pending seed, as the reference does; runtime tokens and force-next-page flags are not in reference object JSON; native set ordering is stable."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/search_log.rs",
+          "symbol": "pub enum ImportStep",
+          "line": 221
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/search_log.rs",
+          "symbol": "pub fn export_objects(",
+          "line": 308
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_log_import_window.rs",
+          "symbol": "fn commit(",
+          "line": 48
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_log_import_window.rs",
+          "symbol": "fn present(",
+          "line": 130
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_log_window.rs",
+          "symbol": "        Action::ImportFromClipboard | Action::ImportFromPng =>",
+          "line": 248
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/importer_list_menu.rs",
+          "symbol": "        Action::SearchLog(action) =>",
+          "line": 248
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/search_log_import.slint",
+          "symbol": "export component SearchLogImportWindow",
+          "line": 4
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/search_log.rs",
+          "symbol": "fn exchange_questions_replay_actual_reference_answers_and_complete_objects",
+          "line": 116
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/search_log.rs",
+          "symbol": "fn exchange_confirmations_png_objects_and_owner_cancel_reach_the_persisted_queue",
+          "line": 177
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/importer_list_menu.rs",
+          "symbol": "fn closed_search_log_exchange_retains_real_questions_and_png_children",
+          "line": 264
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_search_log_exchange.py",
+        "fixture": "oracle/fixtures/search_log_exchange.json",
+        "binaryFixture": "oracle/fixtures/search_log_urls.png",
+        "executed": true,
+        "cancelBoundary": "Qt titlebar close is simulated through the actual Dialog.SetCancelled(True) API before close; direct reject is the reference No result."
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintCachedCompiler": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; scoped model/GUI tests authored and not claimed locally passed."
+      }
+    }
+  ],
+  "nativeComponents": [
+    {
+      "name": "SearchLogImportWindow",
+      "file": "crates/hydrus-gui/ui/search_log_import.slint",
+      "title": "Are you sure? / Problem importing from clipboard! / Could not import!",
+      "preferredSize": "650 × 260",
+      "controls": [
+        "Exact duplicate question: only add new urls / add all urls, even duplicates",
+        "Exact continuation question: just check what I am adding / start a potential new search for every url added",
+        "Cancel / Escape / close: no writes",
+        "Error acknowledgement: ok"
+      ],
+      "owner": "Per-open-log Slots closed with log; closed-log downloader actions retained in main window OpenFiles slot",
+      "guiEvidence": "exchange_confirmations_png_objects_and_owner_cancel_reach_the_persisted_queue / closed_search_log_exchange_retains_real_questions_and_png_children"
     }
   ]
 }

@@ -5,7 +5,7 @@
 //! the right-click and whole log menus, whose actions change the store at
 //! once and nudge the daemon to work the queue again.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -34,6 +34,9 @@ struct State {
     selection: ListSelection<i64>,
     /// Deleting this status's entries, asked.
     asking: Option<SeedStatus>,
+    exports: crate::png_export_window::Slots,
+    imports: crate::search_log_import_window::Slots,
+    exchange_closed: Rc<dyn Fn()>,
 }
 
 impl State {
@@ -76,7 +79,6 @@ fn now() -> i64 {
 
 fn node(entry: &Entry<Action>) -> PopupNode<'_, Entry<Action>, Action> {
     match entry {
-        Entry::Item(label, Action::NotYet) => PopupNode::Disabled(label),
         Entry::Item(label, action) => PopupNode::Item(label, action),
         Entry::Label(label) => PopupNode::Label(label),
         Entry::Separator => PopupNode::Separator,
@@ -110,6 +112,7 @@ fn show(window: &FileLogWindow, state: &State) {
     window.set_rows(ModelRc::new(VecModel::from(rows)));
     window.set_status(queues::search_log_status(&state.counts()).0.into());
     window.set_asking(state.asking.is_some());
+    window.set_busy(state.exports.has_open() || state.imports.has_open());
     if let Some(status) = state.asking {
         window.set_asking_title("Are you sure?".into());
         window.set_asking_message(delete_question(status, state.kind).into());
@@ -134,8 +137,24 @@ fn restarted(seed: &GallerySeed, can_generate_more_pages: bool) -> NewGallerySee
 
 type StoreChange = Box<dyn FnOnce(&rusqlite::Connection) -> hydrus_store::Result<()> + Send>;
 
+fn blocked(state: &State) -> bool {
+    state.asking.is_some() || state.exports.has_open() || state.imports.has_open()
+}
+
+fn report_error(store: &Arc<Store>, state: &State, title: &str, error: String) {
+    if let Err(error) = crate::search_log_import_window::error(
+        &state.imports,
+        store,
+        title,
+        error,
+        state.exchange_closed.clone(),
+    ) {
+        eprintln!("could not show search log import error: {error}");
+    }
+}
+
 /// Do a menu's action.
-fn act(store: &Store, state: &mut State, action: &Action) {
+fn act(store: &Arc<Store>, state: &mut State, action: &Action) {
     let queue = state.queue;
     let now = now();
     let write = |f: StoreChange| {
@@ -206,14 +225,69 @@ fn act(store: &Store, state: &mut State, action: &Action) {
                 Ok(())
             }));
         }
-        Action::NotYet => {}
+        Action::ExportObjects => match crate::search_log::export_objects(&state.selected()) {
+            Ok(text) => crate::copy_to_clipboard(&text),
+            Err(error) => report_error(store, state, "Could not export!", error),
+        },
+        Action::ExportToPng => {
+            let payload = state
+                .seeds
+                .iter()
+                .map(|s| s.url.as_str())
+                .collect::<Vec<_>>()
+                .join("\n");
+            if let Err(error) = crate::png_export_window::open(
+                &state.exports,
+                store,
+                payload,
+                state.exchange_closed.clone(),
+            ) {
+                report_error(store, state, "Could not export!", error);
+            }
+        }
+        Action::ImportFromClipboard | Action::ImportFromPng => {
+            if state.read_only {
+                return;
+            }
+            let title = if *action == Action::ImportFromPng {
+                "Could not import!"
+            } else {
+                "Problem importing from clipboard!"
+            };
+            let result = if *action == Action::ImportFromPng {
+                crate::png_export_window::import_text_with_title("select the png with the urls")
+            } else {
+                crate::from_clipboard().map(Some)
+            };
+            match result {
+                Ok(Some(text)) => {
+                    if let Err(error) = crate::search_log_import_window::open(
+                        &state.imports,
+                        store,
+                        queue,
+                        &text,
+                        state.can_generate_more_pages,
+                        state.exchange_closed.clone(),
+                    ) {
+                        report_error(store, state, "Could not import!", error);
+                    }
+                }
+                Err(error) => report_error(store, state, title, error),
+                Ok(None) => {}
+            }
+        }
     }
 }
 
 /// Do a whole log menu's action on `queue`'s log, with no window open (a
 /// downloader list's menu's); deleting entries of a status, without
 /// asking (the caller asks).
-pub(crate) fn act_on_queue(store: &Store, queue: i64, action: &Action) {
+pub(crate) fn act_on_queue(
+    store: &Arc<Store>,
+    queue: i64,
+    action: &Action,
+    exchange: &crate::file_log_window::OpenFiles,
+) {
     let mut state = State {
         queue,
         kind: "search",
@@ -222,6 +296,9 @@ pub(crate) fn act_on_queue(store: &Store, queue: i64, action: &Action) {
         seeds: Vec::new(),
         selection: ListSelection::default(),
         asking: None,
+        exports: exchange.2.clone(),
+        imports: exchange.3.clone(),
+        exchange_closed: Rc::new(|| {}),
     };
     read(store, &mut state);
     if let Action::DeleteStatus(status) = action {
@@ -253,6 +330,7 @@ pub(crate) fn open(
         .map(|q| q.kind);
     let watcher = kind == Some(QueueKind::Watcher);
     let window = FileLogWindow::new().map_err(|e| e.to_string())?;
+    let alive = Rc::new(Cell::new(true));
     window.set_window_title(if watcher { "check log" } else { "search log" }.into());
     let state = Rc::new(RefCell::new(State {
         queue,
@@ -262,7 +340,25 @@ pub(crate) fn open(
         seeds: Vec::new(),
         selection: ListSelection::default(),
         asking: None,
+        exports: crate::png_export_window::Slots::default(),
+        imports: crate::search_log_import_window::Slots::default(),
+        exchange_closed: Rc::new(|| {}),
     }));
+    state.borrow_mut().exchange_closed = Rc::new({
+        let weak_state = Rc::downgrade(&state);
+        let weak_window = window.as_weak();
+        let alive = alive.clone();
+        let store = store.clone();
+        move || {
+            if !alive.get() {
+                return;
+            }
+            if let (Some(state), Some(w)) = (weak_state.upgrade(), weak_window.upgrade()) {
+                read(&store, &mut state.borrow_mut());
+                show(&w, &state.borrow());
+            }
+        }
+    });
     read(store, &mut state.borrow_mut());
     // (the reference's widths, in characters)
     window.set_columns(columns(&[
@@ -291,7 +387,14 @@ pub(crate) fn open(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let state = state.clone();
+        let alive = alive.clone();
         move || {
+            if !alive.replace(false) {
+                return;
+            }
+            state.borrow().imports.cancel();
+            state.borrow().exports.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -299,9 +402,13 @@ pub(crate) fn open(
         }
     };
     window.on_row_clicked({
+        let alive = alive.clone();
         let state = state.clone();
         let refresh = refresh.clone();
         move |r, ctrl, shift| {
+            if !alive.get() || blocked(&state.borrow()) {
+                return;
+            }
             if let Ok(r) = usize::try_from(r) {
                 let mut state = state.borrow_mut();
                 let ids = state.ids();
@@ -312,18 +419,26 @@ pub(crate) fn open(
     });
     // (a double-click opens the page in the browser)
     window.on_row_activated({
+        let alive = alive.clone();
         let state = state.clone();
         move |_| {
+            if !alive.get() || blocked(&state.borrow()) {
+                return;
+            }
             for seed in state.borrow().selected() {
                 crate::launch(&seed.url);
             }
         }
     });
     window.on_row_menu({
+        let alive = alive.clone();
         let state = state.clone();
         let popup = popup.clone();
         let refresh = refresh.clone();
         move |r, x, y| {
+            if !alive.get() || blocked(&state.borrow()) {
+                return;
+            }
             {
                 let mut state = state.borrow_mut();
                 let ids = state.ids();
@@ -341,9 +456,13 @@ pub(crate) fn open(
         }
     });
     window.on_log_menu({
+        let alive = alive.clone();
         let state = state.clone();
         let popup = popup.clone();
         move |x, y| {
+            if !alive.get() || blocked(&state.borrow()) {
+                return;
+            }
             let state = state.borrow();
             let entries = log_menu(&state.facts(), !state.selection.is_empty());
             let (entries, actions) = main_menu::popup(&entries, &node);
@@ -363,11 +482,15 @@ pub(crate) fn open(
         move || popup.close()
     });
     window.on_menu_line_clicked({
+        let alive = alive.clone();
         let popup = popup.clone();
         let state = state.clone();
         let store = store.clone();
         let refresh = refresh.clone();
         move |p, l, right, top, left| {
+            if !alive.get() || blocked(&state.borrow()) {
+                return;
+            }
             match popup.click(p, l, right, top, left) {
                 Some(Chosen::Action(action)) => act(&store, &mut state.borrow_mut(), &action),
                 Some(Chosen::Copy(text)) => crate::copy_to_clipboard(&text),
@@ -379,10 +502,14 @@ pub(crate) fn open(
     // (the reference's search log has no delete key)
     window.on_delete_pressed(|| {});
     window.on_chosen({
+        let alive = alive.clone();
         let state = state.clone();
         let store = store.clone();
         let refresh = refresh.clone();
         move |index| {
+            if !alive.get() {
+                return;
+            }
             let (asking, ids) = {
                 let mut state = state.borrow_mut();
                 let asking = state.asking.take();
@@ -405,9 +532,13 @@ pub(crate) fn open(
         }
     });
     window.on_cancelled({
+        let alive = alive.clone();
         let state = state.clone();
         let refresh = refresh.clone();
         move || {
+            if !alive.get() {
+                return;
+            }
             state.borrow_mut().asking = None;
             refresh(false);
         }

@@ -76,6 +76,7 @@ pub struct OpenFiles(
     pub Rc<dyn Fn(Vec<HashId>)>,
     pub Rc<dyn Fn(Vec<String>)>,
     pub crate::png_export_window::Slots,
+    pub crate::search_log_import_window::Slots,
 );
 
 impl std::fmt::Debug for OpenFiles {
