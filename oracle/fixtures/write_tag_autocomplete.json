@@ -199,7 +199,7 @@
       "action": "copy",
       "label": "parity:amber old and 2 parents",
       "copied": [
-        "parity:amber old\nparity:colour\nparity:root"
+        "parity:amber old\nparity:root\nparity:colour"
       ]
     },
     {
@@ -680,8 +680,8 @@
           "tag": "parity:amber old",
           "rows": [
             "parity:amber old → parity:amber",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         },
         {
@@ -1079,8 +1079,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         },
         {
@@ -1088,8 +1088,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         }
       ],
@@ -1117,8 +1117,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         },
         {
@@ -1126,8 +1126,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         }
       ],
@@ -1256,8 +1256,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         },
         {
@@ -1265,8 +1265,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         }
       ],
@@ -1283,10 +1283,6 @@
       "button": false,
       "consumed": false,
       "asked": [
-        {
-          "message": "Remove \"parity:menu new\" from the most used list for \"my tags\"?",
-          "title": null
-        },
         {
           "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:amber\nparity:new",
           "title": "Want to paste everything?"
