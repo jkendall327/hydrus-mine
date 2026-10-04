@@ -1027,6 +1027,58 @@ pub fn restore_file_seeds(conn: &Connection, queue: i64, seeds: &[FileSeed]) -> 
     Ok(added)
 }
 
+/// An owned file-log draft. Its queue lives only in memory, so reviewing an
+/// import folder cannot alter live seeds, nudge a worker or leave orphan queues.
+/// Reuse the real queue operations and full metadata format for every action.
+#[derive(Debug)]
+pub struct FileSeedDraft {
+    conn: Connection,
+    queue: i64,
+}
+
+impl FileSeedDraft {
+    pub fn new(seeds: &[FileSeed]) -> Result<Self> {
+        let mut conn = Connection::open_in_memory()?;
+        rusqlite::vtab::array::load_module(&conn)?;
+        crate::schema::migrate(&mut conn)?;
+        let queue = create_queue(
+            &conn,
+            QueueKind::ImportFolder,
+            "file log draft",
+            None,
+            &ImportOptionsSlice::default(),
+            0,
+        )?;
+        restore_file_seeds(&conn, queue, seeds)?;
+        Ok(Self { conn, queue })
+    }
+
+    pub fn queue(&self) -> i64 {
+        self.queue
+    }
+
+    pub fn seeds(&self) -> Result<Vec<FileSeed>> {
+        file_seeds(&self.conn, self.queue)
+    }
+
+    /// Apply a normal queue mutation atomically to this draft alone.
+    pub fn change<T>(&self, change: impl FnOnce(&Connection) -> Result<T>) -> Result<T> {
+        let transaction = self.conn.unchecked_transaction()?;
+        let result = change(&transaction)?;
+        transaction.commit()?;
+        Ok(result)
+    }
+}
+
+/// Replace an accepted folder cache atomically inside the caller's transaction.
+/// Seed identities are local database keys; every user-visible field and complete
+/// metadata object is restored from the accepted ordered draft.
+pub fn replace_file_seeds(conn: &Connection, queue: i64, seeds: &[FileSeed]) -> Result<()> {
+    conn.execute("DELETE FROM file_seeds WHERE queue_id = ?", [queue])?;
+    restore_file_seeds(conn, queue, seeds)?;
+    Ok(())
+}
+
 /// Insert seeds straight after another (a post's files after the post),
 /// skipping ones the queue already has; how many were added.
 pub fn insert_file_seeds_after(
@@ -1560,5 +1612,92 @@ mod tests {
         );
         delete_queue(&conn, q).unwrap();
         assert!(file_seeds(&conn, q).unwrap().is_empty());
+    }
+    #[test]
+    fn file_log_drafts_isolate_mutations_and_restore_complete_metadata_in_order() {
+        let conn = conn();
+        let queue = create_queue(
+            &conn,
+            QueueKind::ImportFolder,
+            "folder",
+            None,
+            &ImportOptionsSlice::default(),
+            10,
+        )
+        .unwrap();
+        let mut first = seed("/import/first.jpg");
+        first.seed_type = SeedType::Path;
+        add_file_seeds(
+            &conn,
+            queue,
+            &[first, seed("/import/second.jpg")],
+            false,
+            20,
+        )
+        .unwrap();
+        let mut initial = file_seeds(&conn, queue).unwrap();
+        initial[0].seed_type = SeedType::Path;
+        initial[0].status = SeedStatus::Error;
+        initial[0].modified = 31;
+        initial[0].source_time = Some(12);
+        initial[0].note = "failed with detail".into();
+        initial[0].referral_url = Some("https://cache.example/source".into());
+        initial[0].meta = FileSeedMeta {
+            request_headers: vec![("X-Test".into(), "header".into())],
+            external_filterable_tags: BTreeSet::from(["filter:tag".into()]),
+            external_additional_tags: vec![(
+                "6d792074616773".into(),
+                BTreeSet::from(["extra:tag".into()]),
+            )],
+            primary_urls: BTreeSet::from(["https://cache.example/post/1".into()]),
+            source_urls: BTreeSet::from(["https://cache.example/source".into()]),
+            tags: BTreeSet::from(["parsed:tag".into()]),
+            notes: vec![("note".into(), "full note body".into())],
+            hashes: vec![
+                ("sha256".into(), "ab".repeat(32)),
+                ("md5".into(), "12".repeat(16)),
+            ],
+            cloudflare_last_modified: Some(14),
+        };
+        update_file_seed(&conn, &initial[0]).unwrap();
+        let draft = FileSeedDraft::new(&initial).unwrap();
+        let private = draft.queue();
+        draft
+            .change(|c| retry_file_seeds(c, private, &[SeedStatus::Error], 40))
+            .unwrap();
+        draft.change(|c| reverse_file_seeds(c, private)).unwrap();
+        let accepted = draft.seeds().unwrap();
+        assert_eq!(accepted[1].status, SeedStatus::Unknown);
+        assert_eq!(accepted[1].modified, 40);
+        assert_eq!(accepted[1].source_time, initial[0].source_time);
+        assert_eq!(accepted[1].referral_url, initial[0].referral_url);
+        assert_eq!(accepted[1].meta, initial[0].meta);
+        assert_eq!(file_seeds(&conn, queue).unwrap(), initial);
+        assert!(!any_nudged(&conn).unwrap());
+        let rejected: Result<()> = draft.change(|c| {
+            remove_file_seeds_by_id(c, &[accepted[0].id])?;
+            Err(StoreError::Invalid("reject draft action".into()))
+        });
+        assert!(rejected.is_err());
+        assert_eq!(
+            draft.seeds().unwrap(),
+            accepted,
+            "failed multi-operation mutation rolls back"
+        );
+        let tx = conn.unchecked_transaction().unwrap();
+        replace_file_seeds(&tx, queue, &accepted).unwrap();
+        tx.commit().unwrap();
+        let restored = file_seeds(&conn, queue).unwrap();
+        for (saved, draft) in restored.iter().zip(&accepted) {
+            let mut expected = draft.clone();
+            expected.id = saved.id;
+            expected.queue_id = saved.queue_id;
+            assert_eq!(*saved, expected);
+        }
+        assert_eq!(
+            queues(&conn, None).unwrap().len(),
+            1,
+            "draft never registers a live queue"
+        );
     }
 }
