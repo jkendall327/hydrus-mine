@@ -533,12 +533,21 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
         insert_setting(&mut input, &search_defaults)?;
         let mut file_search = crate::settings::FileSearchSettings::default();
-        file_search.search_immediately =
-            boolean("default_search_synchronised").unwrap_or(file_search.search_immediately);
-        file_search.show_system_everything =
-            boolean("show_system_everything").unwrap_or(file_search.show_system_everything);
-        file_search.float_autocomplete =
-            boolean("autocomplete_float_main_gui").unwrap_or(file_search.float_autocomplete);
+        file_search.search_immediately = options
+            .booleans
+            .get("default_search_synchronised")
+            .copied()
+            .unwrap_or(file_search.search_immediately);
+        file_search.show_system_everything = options
+            .booleans
+            .get("show_system_everything")
+            .copied()
+            .unwrap_or(file_search.show_system_everything);
+        file_search.float_autocomplete = options
+            .booleans
+            .get("autocomplete_float_main_gui")
+            .copied()
+            .unwrap_or(file_search.float_autocomplete);
         if let Some(rows) = options
             .integers
             .get("active_search_predicates_height_num_chars")
