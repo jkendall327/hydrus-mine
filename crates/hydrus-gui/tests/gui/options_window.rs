@@ -938,8 +938,8 @@ fn gui_identity_and_exit_confirmation_reach_the_main_window() {
         open(&ui);
         let window = bound.options.borrow().as_ref().unwrap().clone_strong();
         show_page(&window, "gui");
-        let (row, _) = row(&window, "Application display name: ");
-        window.invoke_text_edited(row, name["typed"].as_str().unwrap().into());
+        let (row_index, _) = row(&window, "Application display name: ");
+        window.invoke_text_edited(row_index, name["typed"].as_str().unwrap().into());
         window.invoke_apply();
         assert_eq!(
             ui.get_window_title(),
@@ -954,8 +954,8 @@ fn gui_identity_and_exit_confirmation_reach_the_main_window() {
     open(&ui);
     let window = bound.options.borrow().as_ref().unwrap().clone_strong();
     show_page(&window, "gui");
-    let (row, _) = row(&window, "Confirm client exit: ");
-    window.invoke_check_toggled(row, true);
+    let (row_index, _) = row(&window, "Confirm client exit: ");
+    window.invoke_check_toggled(row_index, true);
     window.invoke_cancel();
     assert!(
         !store
@@ -967,8 +967,8 @@ fn gui_identity_and_exit_confirmation_reach_the_main_window() {
         open(&ui);
         let window = bound.options.borrow().as_ref().unwrap().clone_strong();
         show_page(&window, "gui");
-        let (row, _) = row(&window, "Confirm client exit: ");
-        window.invoke_check_toggled(row, case["confirm"].as_bool().unwrap());
+        let (row_index, _) = row(&window, "Confirm client exit: ");
+        window.invoke_check_toggled(row_index, case["confirm"].as_bool().unwrap());
         window.invoke_apply();
         ui.show().unwrap();
         close();
@@ -1050,7 +1050,9 @@ fn notebook_focus_option_changes_the_next_tab_close() {
     for name in ["left", "middle", "right"] {
         pages
             .new_page(&NewPage::Search {
-                domain: builtin_keys::ALL_LOCAL_FILES.clone(),
+                domain: hydrus_core::ServiceKey::new(
+                    builtin_keys::HYDRUS_LOCAL_FILE_STORAGE.to_vec(),
+                ),
                 name: name.into(),
             })
             .unwrap();
@@ -1332,7 +1334,7 @@ fn default_search_service_option_changes_new_pages_and_missing_keys_fall_back() 
             window.invoke_choice_chosen(service_row, index as i32);
             window.invoke_apply();
         } else {
-            let key = event["saved"].as_str().unwrap().parse().unwrap();
+            let key = hydrus_core::ServiceKey::from_hex(event["saved"].as_str().unwrap()).unwrap();
             store
                 .write(move |ctx| {
                     let mut defaults = get::<SearchDefaults>(ctx.conn())?;
@@ -1349,8 +1351,12 @@ fn default_search_service_option_changes_new_pages_and_missing_keys_fall_back() 
                 name: "option default search".into(),
             })
             .unwrap();
+        let pages = bound.pages.borrow();
+        let hydrus_core::pages::PageContent::Search { search, .. } = &pages.shown().content else {
+            panic!("the new search page must retain its search context");
+        };
         assert_eq!(
-            bound.pages.borrow().shown().tag_context().service.to_hex(),
+            search.tags.service.to_hex(),
             event["page_service"].as_str().unwrap()
         );
     }
