@@ -1,0 +1,257 @@
+{
+  "agent": "cookies",
+  "slice": "downloader_display",
+  "claims": [
+    {
+      "reference_id": "audit-network-display-gugs",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "new_behavior",
+      "implementation_commit": "74af8c7da73c4c50340641e573c00f08a35e8c60",
+      "exact_behavior": "Detached GUG visibility list for all native single/nested generators. Extended selection and stable name/display sorting; edit and activation ask the recorded Show in the first list? question. Yes sets every selected identity visible, No hides them, Cancel leaves rows unchanged. Apply atomically merges edited identities only and Cancel discards the draft. Existing gallery pages reload persisted display keys: only primary choices and the existing selected caption appear initially; show other downloaders exposes the secondary list. Stale closed handles and dropped owners cannot save.",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/ui/downloader_display.slint",
+          "line": 5,
+          "symbol": "DownloaderDisplayWindow",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_display_window.rs",
+          "line": 96,
+          "symbol": "pub fn open",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_display.rs",
+          "line": 124,
+          "symbol": "pub fn save",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/downloader_display.rs",
+          "line": 78,
+          "symbol": "fn questions_cancel_apply_reopen_sort_selection_and_render",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_display.rs",
+          "line": 176,
+          "symbol": "pub fn answer",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_display.rs",
+          "line": 199,
+          "symbol": "pub fn question",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/gallery.rs",
+          "line": 92,
+          "symbol": "pub fn selector_gugs",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/gallery.slint",
+          "line": 192,
+          "symbol": "show other downloaders",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/downloader_display.rs",
+          "line": 189,
+          "symbol": "fn saved_choices_reach_existing_gallery_and_open_viewer",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/downloader_display.json",
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI: hydrus-gui-model model downloader_display; hydrus-gui gui downloader_display"
+      },
+      "limitations": [
+        "Native uses a tab dropdown and inline yes/no/cancel question instead of Qt notebook/modal questions.",
+        "Secondary gallery choices use an explicit checkbox instead of the reference selector popup."
+      ]
+    },
+    {
+      "reference_id": "audit-network-display-url-classes",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "new_behavior",
+      "implementation_commit": "74af8c7da73c4c50340641e573c00f08a35e8c60",
+      "exact_behavior": "Detached URL-class display list with name/type/yes-no columns, extended selection and stable sorting. Edit/activation asks the recorded Show in the media viewer? tri-state batch question. Apply merges only edited display keys, preserving concurrent parser/definition changes; Cancel and stale callbacks cannot persist edits. Actual viewer top-right hyperlinks use displayed URL-class names, multi-domain name (domain) labels, matched-first sorting and the exact ten matched-link scan boundary. Existing viewers reload saved choices within one second.",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/ui/downloader_display.slint",
+          "line": 5,
+          "symbol": "DownloaderDisplayWindow",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_display_window.rs",
+          "line": 96,
+          "symbol": "pub fn open",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_display.rs",
+          "line": 124,
+          "symbol": "pub fn save",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/downloader_display.rs",
+          "line": 78,
+          "symbol": "fn questions_cancel_apply_reopen_sort_selection_and_render",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_display.rs",
+          "line": 251,
+          "symbol": "pub fn viewer_links",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_display_window.rs",
+          "line": 263,
+          "symbol": "pub fn file_links",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/viewer.slint",
+          "line": 1189,
+          "symbol": "for link[i] in root.url-links",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 4024,
+          "symbol": "window.on_url_clicked",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/downloader_display.rs",
+          "line": 80,
+          "symbol": "fn displayed_url_labels_filters_order_and_cap_replay_reference",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/downloader_display.rs",
+          "line": 113,
+          "symbol": "fn save_merges_only_edited_keys_and_preserves_concurrent_definitions",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/downloader_display.json",
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI: hydrus-gui-model model downloader_display; hydrus-gui gui downloader_display"
+      },
+      "limitations": [
+        "Native uses a tab dropdown and inline yes/no/cancel question instead of Qt notebook/modal questions.",
+        "Legacy URL-class visibility keys are not imported; native defaults display all installed classes until explicitly edited.",
+        "Long labels are elided; these hyperlinks do not provide the reference hyperlink context menu (existing viewer URL menu remains available)."
+      ]
+    },
+    {
+      "reference_id": "audit-network-display-unmatched",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "new_behavior",
+      "implementation_commit": "74af8c7da73c4c50340641e573c00f08a35e8c60",
+      "exact_behavior": "The media viewer URLs tab exposes the exact recorded unmatched-URL checkbox label. The choice stays in the owner draft until Apply and survives reopen; Cancel/dropped/stale windows cannot write it. Matching class URLs remain governed by their own display keys. Unmatched URLs use the recorded domain/unknown labels after sorted class links; unchecking removes them from the actual open viewer within one second.",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/ui/downloader_display.slint",
+          "line": 5,
+          "symbol": "DownloaderDisplayWindow",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_display_window.rs",
+          "line": 96,
+          "symbol": "pub fn open",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_display.rs",
+          "line": 124,
+          "symbol": "pub fn save",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/downloader_display.rs",
+          "line": 78,
+          "symbol": "fn questions_cancel_apply_reopen_sort_selection_and_render",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/downloader_display.slint",
+          "line": 38,
+          "symbol": "show urls that do not have a matching url class?",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_display.rs",
+          "line": 251,
+          "symbol": "pub fn viewer_links",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/downloader_display.rs",
+          "line": 189,
+          "symbol": "fn saved_choices_reach_existing_gallery_and_open_viewer",
+          "commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/downloader_display.json",
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI: hydrus-gui-model model downloader_display; hydrus-gui gui downloader_display"
+      },
+      "limitations": [
+        "Native uses a tab dropdown and inline yes/no/cancel question instead of Qt notebook/modal questions.",
+        "An invalid unmatched URL retains the reference unknown label but cannot launch the browser."
+      ]
+    }
+  ],
+  "counting": "Three newly implemented existing concrete leaves. downloader-display parent/container remains unclaimed.",
+  "native_census_addition": {
+    "component": "DownloaderDisplayWindow",
+    "relativepath": "crates/hydrus-gui/ui/downloader_display.slint",
+    "line": 5,
+    "entrypoint": "Network > downloaders > downloader and url display",
+    "scoped_controls": [
+      "tab selector (downloaders selector / media viewer urls)",
+      "ListTable extended row selection and name/type/display sorting",
+      "edit/row activation",
+      "yes/no/cancel batch question",
+      "show urls that do not have a matching url class checkbox",
+      "apply",
+      "cancel"
+    ],
+    "reference_ids": [
+      "audit-network-display-gugs",
+      "audit-network-display-url-classes",
+      "audit-network-display-unmatched"
+    ],
+    "rendered_test": "questions_cancel_apply_reopen_sort_selection_and_render",
+    "rendered_artifact": "downloader-display.png",
+    "implementation_commit": "74af8c7da73c4c50340641e573c00f08a35e8c60"
+  },
+  "followup_commits": [
+    "fb123ff6"
+  ],
+  "notes": "Only native display settings are edited; no site defaults or real URLs added. Model and GUI source assertions are added but execution and rendered artifact inspection await root CI."
+}
