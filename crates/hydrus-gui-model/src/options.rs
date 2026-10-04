@@ -1838,7 +1838,17 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
 pub fn values(pages: &[Page], settings: &Settings) -> Vec<Vec<Value>> {
     pages
         .iter()
-        .map(|page| page.options().iter().map(|o| (o.get)(settings)).collect())
+        .map(|page| {
+            page.options()
+                .iter()
+                .map(|option| match (&option.kind, (option.get)(settings)) {
+                    (Kind::Int { min, max }, Value::Int(number)) => {
+                        Value::Int(number.clamp(*min, *max))
+                    }
+                    (_, value) => value,
+                })
+                .collect()
+        })
         .collect()
 }
 

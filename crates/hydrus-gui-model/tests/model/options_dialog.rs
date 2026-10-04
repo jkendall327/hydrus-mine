@@ -624,3 +624,37 @@ fn session_backup_count_matches_recorded_control_and_clamps() {
         );
     }
 }
+
+#[test]
+fn reopening_numeric_options_clamps_saved_advanced_values() {
+    use hydrus_gui_model::options::{applied, values};
+    let recorded = hydrus_testkit::fixture_json("options_ranges.json");
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let mut settings = store.read(Settings::load).unwrap();
+    settings.network.network_timeout = 4_000_000;
+    settings.network.connection_error_wait_time = 4_000_000;
+    settings.network.serverside_bandwidth_wait_time = 4_000_000;
+    settings.network.max_jobs = 4_000_000;
+    settings.network.max_jobs_per_domain = 4_000_000;
+    for mode in recorded.as_array().unwrap() {
+        settings.advanced.0 = mode["advanced"].as_bool().unwrap();
+        let pages = pages(&settings);
+        let shown = values(&pages, &settings);
+        let connection = pages
+            .iter()
+            .position(|page| page.name == "connection")
+            .unwrap();
+        let options = pages[connection].options();
+        let (after, problems) = applied(&pages, &settings, &shown);
+        assert!(problems.is_empty());
+        for (index, control) in [2, 3, 4, 6, 7]
+            .into_iter()
+            .zip(mode["controls"].as_array().unwrap())
+        {
+            let expected = Value::Int(control["initial_from_4000000"].as_i64().unwrap());
+            assert_eq!(shown[connection][index], expected);
+            assert_eq!((options[index].get)(&after), expected);
+        }
+    }
+}
