@@ -72,13 +72,18 @@
         },
         {
           "relativepath": "crates/hydrus-net/tests/engine.rs",
-          "line": 1211,
+          "line": 1198,
           "symbol": "fn runtime_cog_gallery"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
           "symbol": "fn current_jobs_cog",
           "line": 498
+        },
+        {
+          "relativepath": "crates/hydrus-net/src/engine.rs",
+          "line": 2011,
+          "symbol": "async fn runtime_domain_scrub_wakes_a_registered_domain_gate_and_preserves_unrelated_errors"
         }
       ],
       "referenceRecording": {
@@ -168,7 +173,7 @@
         },
         {
           "relativepath": "crates/hydrus-net/tests/engine.rs",
-          "line": 1211,
+          "line": 1198,
           "symbol": "fn runtime_cog_gallery"
         },
         {
@@ -217,7 +222,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
-          "line": 288,
+          "line": 336,
           "symbol": "        Action::ImportFromClipboard => {"
         }
       ],
@@ -259,12 +264,12 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
-          "line": 307,
+          "line": 355,
           "symbol": "        Action::SearchUrls => {"
         },
         {
           "relativepath": "crates/hydrus-gui/src/lib.rs",
-          "line": 919,
+          "line": 920,
           "symbol": "                let predicates = crate::file_log::url_search(&urls);"
         }
       ],
@@ -305,7 +310,7 @@
       "sourceAnchors": [
         {
           "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
-          "line": 315,
+          "line": 317,
           "symbol": "        Action::ImportFromPng =>"
         },
         {
@@ -347,6 +352,72 @@
         "diffCheck": true,
         "localCargoBuildsOrTests": false,
         "ci": "Parent runs asynchronous GitHub CI; tests authored and not claimed locally passed."
+      }
+    },
+    {
+      "originalID": "audit-network-file-log-advanced",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Actual advanced menu selected import-object export produces reference SerialisableList v3/FileSeed v8 clipboard JSON, retaining progress/status/timestamps/headers/hashes/referral and primary/source URLs/filterable/additional/parsed tags and named notes. Actual re-normalise all URLs shows reference full Yes/No confirmation in open log and closed-log downloader menus. Yes reads current durable URL classes atomically, normalizes request/comparison URLs and removes subsequent duplicate identities, preserving the earliest seed ID/status/metadata/timestamps; No/closed owner changes nothing. Reference has no object-import action.",
+      "limits": [
+        "Set-valued metadata lists use stable native ordering; JSON object metadata and tuple semantics are preserved.",
+        "No new object-import action is invented from the inventory label."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/file_log.rs",
+          "line": 160,
+          "symbol": "pub fn export_objects("
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/queues.rs",
+          "line": 1123,
+          "symbol": "pub fn renormalise_file_seeds("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
+          "line": 367,
+          "symbol": "        Action::Renormalise =>"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/importer_list_menu.rs",
+          "line": 216,
+          "symbol": "                if *action == file_log::Action::Renormalise"
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_log.rs",
+          "line": 275,
+          "symbol": "fn selected_import_objects_match_full_reference_clipboard_bytes"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_log.rs",
+          "line": 288,
+          "symbol": "fn renormalisation_collapses_later_duplicates_and_preserves_first_progress_and_metadata"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
+          "line": 435,
+          "symbol": "fn advanced_object_export_and_renormalisation_confirm_before_collapsing_later_duplicates"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/importer_list_menu.rs",
+          "line": 208,
+          "symbol": "fn closed_log_renormalisation_menu_requires_confirmation"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_file_log_advanced.py",
+        "fixture": "oracle/fixtures/file_log_advanced.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintCachedCompiler": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; scoped model/GUI tests authored and not claimed locally passed."
       }
     }
   ]

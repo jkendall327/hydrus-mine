@@ -430,3 +430,123 @@ fn source_png_dialogs_cancel_validate_import_export_and_close_with_the_log() {
     next.invoke_action("export".into());
     assert!(!stale.exists());
 }
+
+#[test]
+fn advanced_object_export_and_renormalisation_confirm_before_collapsing_later_duplicates() {
+    use hydrus_core::url::strings::{StringMatch, StringProcessor};
+    use hydrus_core::url::{DomainMask, UrlClass, UrlClassSettings, UrlParameter};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(8);
+    let queue = bound.current.borrow().borrow().importer().unwrap().queue;
+    let sources = [
+        "https://renormalise.example/post?id=1&token=a",
+        "https://renormalise.example/post?id=1&token=b",
+        "https://renormalise.example/post?id=2&token=c",
+    ];
+    let seeds: Vec<NewFileSeed> = sources
+        .into_iter()
+        .map(|s| NewFileSeed {
+            seed_type: SeedType::Url,
+            data: s.into(),
+            data_for_comparison: s.into(),
+            source_time: Some(17),
+            referral_url: Some("https://renormalise.example/gallery".into()),
+            meta: FileSeedMeta {
+                request_headers: vec![("X-Synthetic".into(), "header".into())],
+                tags: std::collections::BTreeSet::from(["tag:one".into()]),
+                notes: vec![("note".into(), "metadata note".into())],
+                ..FileSeedMeta::default()
+            },
+        })
+        .collect();
+    store
+        .write(move |ctx| {
+            queues::add_file_seeds(ctx.conn(), queue, &seeds, false, 123)?;
+            let mut first = queues::file_seeds(ctx.conn(), queue)?.remove(0);
+            first.status = SeedStatus::Error;
+            first.note = "first failure 日本".into();
+            queues::update_file_seed(ctx.conn(), &first)
+        })
+        .unwrap();
+    let before = store.read(|c| queues::file_seeds(c, queue)).unwrap();
+    let copied: Rc<RefCell<Vec<Clip>>> = Rc::default();
+    set_clipper({
+        let copied = copied.clone();
+        move |c| copied.borrow_mut().push(c.clone())
+    });
+    ui.invoke_open_file_log();
+    let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+    log.invoke_row_clicked(0, false, false);
+    log.invoke_row_clicked(1, true, false);
+    log.invoke_log_menu(10.0, 10.0);
+    choose(&log, 0, "advanced");
+    choose(&log, 1, "export selected import objects to clipboard");
+    let expected =
+        hydrus_gui::file_log::export_objects(&before[..2].iter().collect::<Vec<_>>()).unwrap();
+    assert_eq!(copied.borrow().last(), Some(&Clip::Text(expected)));
+    log.invoke_log_menu(10.0, 10.0);
+    choose(&log, 0, "advanced");
+    choose(&log, 1, "re-normalise all URLs");
+    assert_eq!(
+        log.get_asking_message(),
+        hydrus_gui::file_log::RENORMALISE_QUESTION
+    );
+    log.invoke_chosen(1);
+    assert_eq!(
+        store.read(|c| queues::file_seeds(c, queue)).unwrap(),
+        before
+    );
+    log.invoke_log_menu(10.0, 10.0);
+    choose(&log, 0, "advanced");
+    choose(&log, 1, "re-normalise all URLs");
+    let classes = UrlClassSettings {
+        url_classes: vec![UrlClass {
+            name: "synthetic changed class".into(),
+            domain_mask: DomainMask::new(vec!["renormalise.example".into()], vec![], false, false),
+            path_components: vec![(StringMatch::fixed("post"), None)],
+            parameters: vec![UrlParameter {
+                name: "id".into(),
+                value: StringMatch::any(),
+                ephemeral: false,
+                default: None,
+                default_processor: StringProcessor::default(),
+            }],
+            keep_extra_parameters_for_server: false,
+            ..UrlClass::default()
+        }],
+        ..UrlClassSettings::default()
+    };
+    store
+        .write_and_refresh(move |ctx| hydrus_store::settings::set(ctx.conn(), &classes))
+        .unwrap();
+    log.invoke_row_clicked(2, false, false);
+    log.invoke_delete_pressed();
+    assert_eq!(
+        log.get_asking_message(),
+        hydrus_gui::file_log::RENORMALISE_QUESTION,
+        "pending confirmation blocks other mutations"
+    );
+    log.invoke_chosen(0);
+    let after = store.read(|c| queues::file_seeds(c, queue)).unwrap();
+    assert_eq!(after.len(), 2);
+    assert_eq!(after[0].id, before[0].id);
+    assert_eq!(after[0].status, SeedStatus::Error);
+    assert_eq!(after[0].meta, before[0].meta);
+    assert_eq!(after[0].created, 123);
+    assert_eq!(after[0].modified, 123);
+    assert_eq!(after[0].data, "https://renormalise.example/post?id=1");
+    assert_eq!(after[1].data, "https://renormalise.example/post?id=2");
+    assert_eq!(cells(&log).len(), 2);
+    log.invoke_close_window();
+    log.invoke_chosen(0);
+    assert_eq!(store.read(|c| queues::file_seeds(c, queue)).unwrap(), after);
+    ui.invoke_open_file_log();
+    let reopened = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(cells(&reopened).len(), 2);
+    reopened.invoke_close_window();
+}

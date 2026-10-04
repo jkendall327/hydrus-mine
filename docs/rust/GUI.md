@@ -2159,3 +2159,14 @@ Cancel preserves the current input domains and owner close discards the child.
 The recorder drives the real Qt domain buttons and interlocks, and model/native
 regressions verify checked menus, labels, counts, no options writes and child
 cancellation.
+The file log’s **advanced** menu exports selected import objects as the reference
+SerialisableList/FileSeed JSON, including progress, headers, hashes, tags, source
+URLs and notes. **re-normalise all URLs** asks the reference’s full confirmation
+question in the log and downloader list menus. Yes reads current URL classes and
+atomically updates request/comparison URLs, discarding later duplicates while
+preserving the first seed’s identifier, status, timestamps and metadata. No or
+closing the log preserves the existing entries. The reference has no advanced
+object-import action.
+
+PNG export headers also render on installations without system fonts using a
+bundled Open Sans fallback with its Apache 2.0 licence and copyright notice.

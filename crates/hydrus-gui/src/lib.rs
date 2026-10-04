@@ -2357,7 +2357,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     log: &log,
                     open_files: &open_files,
                     ask: &ask,
-                    shown: &shown,
+                    shown: Rc::new(shown.clone()),
                 },
                 &action,
             );

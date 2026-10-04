@@ -132,7 +132,7 @@ pub(crate) struct Context<'a> {
     /// Ask a question, then do something.
     pub ask: &'a dyn Fn(String, Rc<dyn Fn()>),
     /// Show the page again (`true`: its files changed).
-    pub shown: &'a dyn Fn(bool),
+    pub shown: Rc<dyn Fn(bool)>,
 }
 
 /// Do a menu's action.
@@ -213,12 +213,38 @@ pub(crate) fn act(cx: &Context<'_>, action: &Action) {
         }
         Action::FileLog(action) => {
             if let [queue] = queues[..] {
-                if let Some(error) =
-                    crate::file_log_window::act_on_queue(&store, queue, action, cx.open_files)
-                {
-                    window.set_error(error.into());
+                if *action == file_log::Action::Renormalise {
+                    let shown = cx.shown.clone();
+                    let weak = window.as_weak();
+                    (cx.ask)(
+                        file_log::RENORMALISE_QUESTION.into(),
+                        Rc::new(move || {
+                            if let Err(error) = store.write(move |ctx| {
+                                let classes = hydrus_core::url::UrlClasses::new(
+                                    hydrus_store::settings::get(ctx.conn())?,
+                                );
+                                hydrus_store::queues::renormalise_file_seeds(
+                                    ctx.conn(),
+                                    queue,
+                                    &classes,
+                                )?;
+                                hydrus_store::queues::nudge(ctx.conn(), queue)
+                            }) {
+                                if let Some(w) = weak.upgrade() {
+                                    w.set_error(error.to_string().into());
+                                }
+                            }
+                            shown(false);
+                        }),
+                    );
+                } else {
+                    if let Some(error) =
+                        crate::file_log_window::act_on_queue(&store, queue, action, cx.open_files)
+                    {
+                        window.set_error(error.into());
+                    }
+                    (cx.shown)(false);
                 }
-                (cx.shown)(false);
             }
         }
         Action::SearchLog(action) => {
