@@ -2945,9 +2945,9 @@ fn closing_preferences_reach_frozen_page_selection_and_native_main_activation() 
         .collect();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
-    let location = hydrus_search::LocationContext::single(
-        hydrus_core::service::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE,
-    );
+    let location = hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+        hydrus_core::service::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE.to_vec(),
+    ));
     let mut pages = Pages::single(hydrus_gui::SearchPage::new(store.clone()));
     pages.open_files(location.clone(), ids[..2].to_vec(), None, None);
     let original_key = pages.shown().key;
@@ -3232,9 +3232,9 @@ fn passive_background_options_paint_independent_copies_behind_opaque_media() {
     let ui = MainWindow::new().unwrap();
     let mut pages = Pages::single(hydrus_gui::SearchPage::new(store.clone()));
     pages.open_files(
-        hydrus_search::LocationContext::single(
-            hydrus_core::service::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE,
-        ),
+        hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+            hydrus_core::service::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE.to_vec(),
+        )),
         vec![id],
         None,
         None,
