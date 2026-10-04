@@ -3385,3 +3385,159 @@ fn passive_background_options_paint_independent_copies_behind_opaque_media() {
     );
     reopened.invoke_close_requested();
 }
+
+#[test]
+fn default_export_directory_browse_apply_cancel_and_manual_open_use_shared_preference() {
+    use hydrus_core::HashId;
+    use hydrus_gui::{Pick, export_files_window, set_picker};
+    use hydrus_gui_model::export_files::{self, Preferences};
+    use hydrus_store::settings::{self, ExportSettings};
+    use std::{cell::RefCell, rc::Rc};
+    let reference = hydrus_testkit::fixture_json("export_default_directory.json");
+    let (_dirs, store) = store();
+    let rendered = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let before: ExportSettings = store.read(settings::get).unwrap();
+    assert!(before.default_directory.is_none());
+    let fallback = export_files::default_directory(&store, &before);
+    assert!(!fallback.is_empty());
+    let old_destination = store
+        .dir()
+        .join("previous manual export")
+        .to_string_lossy()
+        .into_owned();
+    store
+        .write(move |ctx| {
+            settings::set(
+                ctx.conn(),
+                &Preferences {
+                    destination: old_destination,
+                    ..Preferences::default()
+                },
+            )
+        })
+        .unwrap();
+    let fallback_window =
+        export_files_window::open(&store, vec![HashId(1)], &bound.export_files, Rc::new(|| {}))
+            .unwrap();
+    assert_eq!(fallback_window.get_destination(), fallback);
+    assert!(std::path::Path::new(&fallback).is_dir());
+    fallback_window.invoke_dismissed();
+    let selected = store.dir().join("synthetic exports 日本");
+    let picker_calls = Rc::new(RefCell::new(Vec::new()));
+    set_picker({
+        let calls = picker_calls.clone();
+        let selected = selected.clone();
+        move |kind, caption| {
+            calls.borrow_mut().push((kind, caption.to_owned()));
+            vec![selected.clone()]
+        }
+    });
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "exporting");
+    let (index, shown) = row(&window, reference["label"].as_str().unwrap());
+    assert_eq!(shown.kind, 20);
+    assert_eq!(shown.text, "");
+    window.invoke_directory_browse(index);
+    assert_eq!(
+        picker_calls.borrow()[0],
+        (
+            Pick::Folder,
+            reference["browse"][0]["caption"]
+                .as_str()
+                .unwrap()
+                .to_owned()
+        )
+    );
+    assert_eq!(
+        row(&window, reference["label"].as_str().unwrap()).1.text,
+        selected.to_string_lossy()
+    );
+    assert_eq!(store.read(settings::get::<ExportSettings>).unwrap(), before);
+    set_picker(|_, _| Vec::new());
+    window.invoke_directory_browse(index);
+    assert_eq!(
+        row(&window, reference["label"].as_str().unwrap()).1.text,
+        selected.to_string_lossy()
+    );
+    let pixels = headless::render(&rendered.get(rendered.count() - 1).unwrap(), 950, 660);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("export-default-directory.png"),
+        &pixels,
+        950,
+        660,
+    )
+    .unwrap();
+    window.invoke_cancel();
+    assert_eq!(store.read(settings::get::<ExportSettings>).unwrap(), before);
+    let calls_before = picker_calls.borrow().len();
+    window.invoke_directory_browse(index);
+    window.invoke_apply();
+    assert_eq!(picker_calls.borrow().len(), calls_before);
+    assert_eq!(store.read(settings::get::<ExportSettings>).unwrap(), before);
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "exporting");
+    let (index, _) = row(&window, reference["label"].as_str().unwrap());
+    window.invoke_text_edited(index, selected.to_string_lossy().as_ref().into());
+    window.invoke_apply();
+    let saved: ExportSettings = store.read(settings::get).unwrap();
+    assert_eq!(saved.default_directory.as_deref(), selected.to_str());
+    assert_eq!(saved.phrase, before.phrase);
+    let export =
+        export_files_window::open(&store, vec![HashId(1)], &bound.export_files, Rc::new(|| {}))
+            .unwrap();
+    assert_eq!(
+        export.get_destination(),
+        selected.to_string_lossy().as_ref()
+    );
+    assert!(export.get_rows().row_count() > 0);
+    assert!(
+        export
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(2)
+            .unwrap()
+            .starts_with(selected.to_str().unwrap())
+    );
+    export.set_destination(
+        store
+            .dir()
+            .join("one off destination")
+            .to_string_lossy()
+            .as_ref()
+            .into(),
+    );
+    export.invoke_dismissed();
+    let export =
+        export_files_window::open(&store, vec![HashId(1)], &bound.export_files, Rc::new(|| {}))
+            .unwrap();
+    assert_eq!(
+        export.get_destination(),
+        selected.to_string_lossy().as_ref()
+    );
+    export.invoke_dismissed();
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "exporting");
+    let (index, shown) = row(&window, reference["label"].as_str().unwrap());
+    assert_eq!(shown.text, selected.to_string_lossy().as_ref());
+    window.invoke_text_edited(index, " \t ".into());
+    window.invoke_apply();
+    assert!(
+        store
+            .read(settings::get::<ExportSettings>)
+            .unwrap()
+            .default_directory
+            .is_none()
+    );
+    let export =
+        export_files_window::open(&store, vec![HashId(1)], &bound.export_files, Rc::new(|| {}))
+            .unwrap();
+    assert_eq!(export.get_destination(), fallback);
+    export.invoke_dismissed();
+}

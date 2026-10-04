@@ -582,7 +582,22 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }),
     };
     insert_setting(&mut input, &clipboard)?;
-    let mut export = crate::settings::ExportSettings::default();
+    let mut export = crate::settings::ExportSettings {
+        default_directory: legacy_options
+            .get("export_path")
+            .and_then(legacy::YamlValue::as_str)
+            .map(|path| {
+                let path = std::path::Path::new(path);
+                if path.is_absolute() {
+                    path.to_path_buf()
+                } else {
+                    db.db_dir().join(path)
+                }
+                .to_string_lossy()
+                .into_owned()
+            }),
+        ..crate::settings::ExportSettings::default()
+    };
     if let Some(options) = &options {
         if let Some(phrase) = options.strings.get("export_phrase") {
             export.phrase.clone_from(phrase);
@@ -3589,6 +3604,40 @@ mod tests {
             .collect();
         assert_eq!(input.custom_headers, Some(expected));
         assert!(input.warnings.is_empty(), "{:?}", input.warnings);
+    }
+
+    /// The legacy YAML preference is a portable path, independent of the
+    /// filename/character-limit serialisable options.
+    #[test]
+    fn export_default_directory_import_resolves_recorded_portable_paths() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let fixture = hydrus_testkit::fixture_json("export_default_directory.json");
+        let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+        let original: String = conn
+            .query_row("SELECT options FROM options", [], |row| row.get(0))
+            .unwrap();
+        assert!(original.contains("export_path: null\n"));
+        let path = fixture["cases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|case| case["case"] == "portable")
+            .unwrap()["saved"]
+            .as_str()
+            .unwrap();
+        let yaml = original.replace("export_path: null\n", &format!("export_path: '{path}'\n"));
+        conn.execute("UPDATE options SET options = ?1", [&yaml])
+            .unwrap();
+        drop(conn);
+        let db = LegacyDb::open(source.path()).unwrap();
+        let input = decode_input(&db).unwrap();
+        let settings: crate::settings::ExportSettings =
+            serde_json::from_value(input.settings["export"].clone()).unwrap();
+        assert_eq!(
+            settings.default_directory.as_deref(),
+            db.db_dir().join(path).to_str()
+        );
+        assert_eq!(settings.phrase, "{hash}");
     }
 
     /// Custom options as the reference serialised them

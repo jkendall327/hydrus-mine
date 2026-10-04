@@ -126,6 +126,10 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                         .position(|(value, _)| value == name)
                         .map_or(-1, |index| int(index as i64));
                 }
+                (Kind::Directory, Value::Text(text)) => {
+                    out.kind = 20;
+                    out.text = text.as_str().into();
+                }
                 (Kind::Text, Value::Text(text)) => {
                     out.kind = 6;
                     out.text = text.as_str().into();
@@ -604,6 +608,22 @@ pub(crate) fn open(
         let editor = editor.clone();
         move |i, text| editor.borrow_mut().text(at(i), &text)
     });
+    window.on_directory_browse({
+        let editor = editor.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        move |i| {
+            if !active.get() || !matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt { option, .. }) if option.kind == Kind::Directory) {
+                return;
+            }
+            if let Some(path) = crate::pick(crate::Pick::Folder, "Select directory").first()
+                && active.get()
+            {
+                editor.borrow_mut().text(at(i), &path.to_string_lossy());
+                show_page();
+            }
+        }
+    });
     window.on_field_edited({
         let editor = editor.clone();
         move |i, field, n| editor.borrow_mut().field(at(i), at(field), i64::from(n))
@@ -818,11 +838,21 @@ pub(crate) fn open(
             if !active.get() || tag_slot.borrow().is_some() || import_slot.borrow().is_some() {
                 return;
             }
-            let (after, before, problems) = {
+            let (mut after, before, problems) = {
                 let editor = editor.borrow();
                 let (after, before, problems) = editor.applied();
                 (after, before.clone(), problems)
             };
+            if after
+                .export
+                .default_directory
+                .as_deref()
+                .is_some_and(|path| std::path::Path::new(path).is_relative())
+            {
+                after.export.default_directory = Some(
+                    hydrus_gui_model::export_files::default_directory(&store, &after.export),
+                );
+            }
             let saved = store.write_and_refresh(move |ctx| {
                 after.save(ctx.conn(), &before)?;
                 let now = hydrus_core::time::TimestampMs::now().millis() / 1000;

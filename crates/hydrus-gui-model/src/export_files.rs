@@ -55,7 +55,8 @@ pub fn pattern_shortcut(index: i32) -> Option<&'static str> {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(default)]
 pub struct Preferences {
-    /// Destination last used for manual exports.
+    /// Previously remembered destination, retained for settings compatibility.
+    /// New panels use the shared ExportSettings default directory.
     pub destination: String,
     /// Whether to send exported media to the client's trash.
     pub trash: bool,
@@ -74,6 +75,28 @@ impl Default for Preferences {
 }
 impl settings::Setting for Preferences {
     const KEY: &'static str = "manual_export";
+}
+
+/// Resolve the shared default used whenever a manual export panel opens.
+/// Portable relative paths are relative to this client's database directory.
+pub fn default_directory(store: &Store, naming: &settings::ExportSettings) -> String {
+    let path = naming.default_directory.as_ref().map_or_else(
+        || {
+            std::env::var_os("HOME")
+                .or_else(|| std::env::var_os("USERPROFILE"))
+                .map(|home| PathBuf::from(home).join("hydrus_export"))
+        },
+        |path| {
+            let path = Path::new(path);
+            Some(if path.is_absolute() {
+                path.to_path_buf()
+            } else {
+                store.dir().join(path)
+            })
+        },
+    );
+    path.map(|path| normalise(&path).to_string_lossy().into_owned())
+        .unwrap_or_default()
 }
 
 /// A preview row, retaining the original file identity.
