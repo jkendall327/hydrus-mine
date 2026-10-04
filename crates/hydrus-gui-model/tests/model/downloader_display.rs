@@ -5,23 +5,25 @@ use hydrus_parse::Downloaders;
 use hydrus_store::{Store, settings};
 
 fn definitions() -> (Downloaders, UrlClassSettings) {
-    let mut d = Downloaders::default();
-    d.gugs = Gugs {
-        gugs: [("alpha", 17), ("beta", 34)]
-            .into_iter()
-            .map(|(name, key)| {
-                AnyGug::Single(Gug {
-                    name: name.into(),
-                    key: hex::encode([key; 32]),
-                    url_template: "https://example.com/search?q=%tags%".into(),
-                    replacement_phrase: "%tags%".into(),
-                    separator: "+".into(),
-                    initial_search_text: String::new(),
-                    example_search_text: String::new(),
+    let d = Downloaders {
+        gugs: Gugs {
+            gugs: [("alpha", 17), ("beta", 34)]
+                .into_iter()
+                .map(|(name, key)| {
+                    AnyGug::Single(Gug {
+                        name: name.into(),
+                        key: hex::encode([key; 32]),
+                        url_template: "https://example.com/search?q=%tags%".into(),
+                        replacement_phrase: "%tags%".into(),
+                        separator: "+".into(),
+                        initial_search_text: String::new(),
+                        example_search_text: String::new(),
+                    })
                 })
-            })
-            .collect(),
-        keys_to_display: vec![hex::encode([17; 32])],
+                .collect(),
+            keys_to_display: vec![hex::encode([17; 32])],
+        },
+        ..Downloaders::default()
     };
     let classes = UrlClassSettings {
         url_classes: [

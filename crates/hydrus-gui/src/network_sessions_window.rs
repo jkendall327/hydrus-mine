@@ -736,7 +736,7 @@ fn show_cookie_import(
             };
             if w.get_choosing() {
                 if action == "matching" {
-                    *pending.borrow_mut() = matching.clone();
+                    pending.borrow_mut().clone_from(&matching);
                 } else if action != "all" {
                     return;
                 }
