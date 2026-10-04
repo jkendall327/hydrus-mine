@@ -107,6 +107,7 @@ mod thumbnails;
 mod unlock;
 mod viewer;
 pub mod viewer_closing;
+pub mod viewer_cursor;
 pub mod viewer_focus;
 pub mod viewer_menu;
 mod viewer_presentation;
@@ -4292,13 +4293,16 @@ fn open_viewer(
                 .recenter_on_resize
         }
     });
+    let native_cursor = viewer_cursor::NativeCursor::new(&window, model.borrow().store().clone());
     let native_focus = viewer_focus::NativeFocus::new(&window);
     window.on_presentation_settings_changed({
+        let native_cursor = native_cursor.clone();
         let native_focus = native_focus.clone();
         let weak = window.as_weak();
         let model = model.clone();
         move || {
             native_focus.watch_native();
+            native_cursor.refresh();
             if let Some(window) = weak.upgrade() {
                 let model = model.borrow();
                 viewer_presentation::refresh(&window, model.store(), model.current());
@@ -5269,6 +5273,7 @@ fn open_viewer(
     });
     let store = model.borrow().store().clone();
     window.on_close_requested({
+        let native_cursor = native_cursor.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
         let viewing = viewing.clone();
@@ -5282,6 +5287,7 @@ fn open_viewer(
             if !current {
                 return;
             }
+            native_cursor.close();
             let exit = model.borrow().exit_media();
             closing_owner.closed(&store, exit);
             viewing.borrow_mut().take();
@@ -5316,6 +5322,7 @@ fn open_viewer(
     windows::place(window.window(), &settings_frame);
     window.show()?;
     native_focus.watch_native();
+    native_cursor.watch_native();
     Ok(window)
 }
 

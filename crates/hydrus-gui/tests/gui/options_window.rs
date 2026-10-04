@@ -3472,3 +3472,188 @@ fn subscription_failure_limit_options_replay_qt_values_apply_cancel_and_reopen()
     .unwrap();
     window.invoke_cancel();
 }
+
+#[test]
+fn cursor_timeout_reaches_native_motion_timer_focus_and_actual_popup_lifecycle() {
+    use hydrus_gui::{session_autosave, viewer_cursor};
+    use slint::{
+        LogicalPosition,
+        platform::{PointerEventButton, WindowEvent},
+        winit_030::winit::window::WindowId,
+    };
+    let fixture = hydrus_testkit::fixture_json("viewer_cursor_options.json");
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let reference_id = store
+        .read(|conn| {
+            hydrus_store::master::hash_id(conn, &fixture["hash"].as_str().unwrap().parse().unwrap())
+        })
+        .unwrap()
+        .unwrap();
+    let index = files.iter().position(|file| *file == reference_id).unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 1000, 750);
+    let cursor = viewer_cursor::last_opened().unwrap();
+    let id = WindowId::from(73001);
+    let other = WindowId::from(73002);
+    cursor.watch_id(id);
+    let focus = hydrus_gui::viewer_focus::NativeFocus::new(&viewer);
+    focus.watch_id(id);
+    let move_to = |x: f32, y: f32| {
+        session_autosave::observe_native_pointer(id, (f64::from(x), f64::from(y)));
+        viewer.window().dispatch_event(WindowEvent::PointerMoved {
+            position: LogicalPosition::new(x, y),
+        });
+    };
+    let label = "Time until mouse cursor autohides on media viewer:";
+    for (index, event) in fixture["events"].as_array().unwrap().iter().enumerate() {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer");
+        let row_index = row(&options, label).0;
+        options.invoke_none_toggled(row_index, event["value"].is_null());
+        if let Some(value) = event["value"].as_i64() {
+            options.invoke_number_edited(row_index, i32::try_from(value).unwrap());
+        }
+        options.invoke_apply();
+        session_autosave::observe_native_focus(id, true);
+        move_to(400.0 + index as f32 * 20.0, 500.0);
+        assert!(viewer.get_cursor_hide_eligible());
+        let origin = cursor.state().touched_ms;
+        let delay = event["value"].as_u64().unwrap_or(700);
+        cursor.check_at(origin + delay);
+        assert!(
+            !viewer.get_cursor_idle_hidden(),
+            "strict threshold {event:?}"
+        );
+        cursor.check_at(origin + delay + 1);
+        assert_eq!(viewer.get_cursor_idle_hidden(), !event["value"].is_null());
+        let expected_interval = event["trace"][2]["interval_ms"].as_u64().unwrap();
+        assert_eq!(
+            cursor.state().next_check_ms.map(u64::from),
+            Some(expected_interval)
+        );
+        let before_other = cursor.state();
+        session_autosave::observe_native_pointer(other, (999.0, 600.0));
+        assert_eq!(
+            cursor.state(),
+            before_other,
+            "unrelated native windows cannot reset the viewer clock"
+        );
+        session_autosave::observe_native_focus(other, true);
+        cursor.check_at(origin + delay + 2);
+        assert!(!viewer.get_cursor_idle_hidden());
+        session_autosave::observe_native_focus(id, true);
+        move_to(20.0, 100.0);
+        assert!(viewer.get_tags_showing());
+        assert!(!viewer.get_cursor_hide_eligible());
+        cursor.check_at(origin + delay * 2 + 4);
+        assert!(
+            !viewer.get_cursor_idle_hidden(),
+            "popup controls retain an ordinary pointer"
+        );
+    }
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer");
+    options.invoke_number_edited(row(&options, label).0, 700);
+    options.invoke_apply();
+    session_autosave::observe_native_focus(id, true);
+    move_to(530.0, 500.0);
+    let origin = cursor.state().touched_ms;
+    cursor.check_at(origin + 701);
+    assert!(viewer.get_cursor_idle_hidden());
+    viewer.window().dispatch_event(WindowEvent::PointerPressed {
+        position: LogicalPosition::new(530.0, 500.0),
+        button: PointerEventButton::Right,
+    });
+    let inner = slint::private_unstable_api::re_exports::WindowInner::from_pub(viewer.window());
+    assert!(
+        !inner.active_popups().is_empty(),
+        "the actual viewer context menu is open"
+    );
+    cursor.check_at(origin + 800);
+    assert!(
+        !viewer.get_cursor_idle_hidden(),
+        "the actual popup stack suppresses hiding"
+    );
+    assert_eq!(cursor.state().touched_ms, origin + 800);
+    inner.close_all_popups();
+    assert!(inner.active_popups().is_empty());
+    viewer
+        .window()
+        .dispatch_event(WindowEvent::PointerReleased {
+            position: LogicalPosition::new(530.0, 500.0),
+            button: PointerEventButton::Right,
+        });
+    cursor.check_at(origin + 1501);
+    assert!(viewer.get_cursor_idle_hidden());
+    move_to(540.0, 500.0);
+    assert!(!viewer.get_cursor_idle_hidden());
+    assert_eq!(cursor.state().next_check_ms, Some(100));
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer");
+    options.invoke_check_toggled(
+        row(&options, "Hide mouse cursor during media viewer drags:").0,
+        true,
+    );
+    options.invoke_apply();
+    viewer.window().dispatch_event(WindowEvent::PointerPressed {
+        position: LogicalPosition::new(540.0, 500.0),
+        button: PointerEventButton::Left,
+    });
+    move_to(550.0, 505.0);
+    assert!(viewer.get_cursor_idle_hidden());
+    assert_eq!(
+        cursor.state().next_check_ms,
+        None,
+        "accepted hidden drag stops the inactivity timer"
+    );
+    assert!(!cursor.timer_running());
+    viewer
+        .window()
+        .dispatch_event(WindowEvent::PointerReleased {
+            position: LogicalPosition::new(550.0, 505.0),
+            button: PointerEventButton::Left,
+        });
+    move_to(560.0, 510.0);
+    assert!(!viewer.get_cursor_idle_hidden());
+    assert_eq!(cursor.state().next_check_ms, Some(100));
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer");
+    assert_eq!(row(&options, label).1.number, 700);
+    options.invoke_none_toggled(row(&options, label).0, true);
+    options.invoke_cancel();
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<hydrus_store::settings::ViewerCursorSettings>)
+            .unwrap()
+            .autohide_ms,
+        Some(700)
+    );
+    viewer.invoke_close_requested();
+    assert!(
+        !cursor.timer_running(),
+        "close actually stops the native timer"
+    );
+    let stopped = cursor.state();
+    session_autosave::observe_native_pointer(id, (700.0, 600.0));
+    cursor.check_at(u64::MAX);
+    assert_eq!(
+        cursor.state(),
+        stopped,
+        "close stops timers and ignores late native input"
+    );
+}

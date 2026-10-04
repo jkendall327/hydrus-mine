@@ -31,6 +31,8 @@ def record(session):
         panel=MediaViewerPanel.MediaViewerPanel(controller.gui)
         control=panel._media_viewer_cursor_autohide_time_ms
         initial=control.GetValue()
+        bounds=[control._number_value.minimum(),control._number_value.maximum()]
+        none_phrase=control._checkbox.text()
         with open(os.path.join(HERE,'fixtures','legacy_db','basic.manifest.json')) as stream:manifest=json.load(stream)
         file_hash=next(bytes.fromhex(file['hash']) for file in manifest['files'] if file['name']=='jpeg_00.jpg')
         frame=ClientGUICanvasFrame.CanvasFrame(controller.gui)
@@ -120,7 +122,7 @@ def record(session):
             options.SetBoolean('hide_canvas_drags',old_hide)
             CC.CAN_HIDE_MOUSE=old_can
             panel.deleteLater();frame.hide();frame.deleteLater();other.hide();other.deleteLater()
-        return {'hash':file_hash.hex(),'initial':initial,'bounds':[100,100000],'none_phrase':'do not autohide',
+        return {'hash':file_hash.hex(),'initial':initial,'bounds':bounds,'none_phrase':none_phrase,
                 'events':events,'menu':menu_events,'movement':movement}
     return session.controller.CallBlockingToQt(session.controller.gui,qt)
 

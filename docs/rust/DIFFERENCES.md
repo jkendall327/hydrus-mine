@@ -1581,3 +1581,12 @@ history menus additionally bold their newest entry; the native menu keeps its
 existing common item styling. Out-of-range values injected directly into the
 native options model are rejected while retaining the previous valid limit;
 both visible spinboxes constrain user input to 1–1000.
+
+Cursor autohide now acts on native cursor visibility through winit and retains
+the same Slint canvas cursor during redraws. Its owner uses the shared desktop
+input/focus routes and an owned Slint timer. The pinned Slint 1.18 popup stack
+supplies actual open/close/cancel state for viewer menus; synchronous native
+popup execution blocks timer dispatch until the menu returns. Native hover and
+volume controls remain eligible for the ordinary pointer instead of hiding it
+while their popup content is being used. Backend-specific MPV widget dragging
+and cursor anchoring remain separate gaps.

@@ -276,6 +276,8 @@ export component MediaViewerWindow inherits Window {
     in property <bool> hide-during-drag;
     in property <bool> media-has-duration;
     out property <bool> drag-accepted;
+    in property <bool> cursor-idle-hidden;
+    out property <bool> cursor-hide-eligible: pointer.has-hover && !root.info-showing && !root.tags-showing && !root.ratings-showing && !root.notes-showing && !root.volume-open;
     out property <bool> drag-cursor-hidden;
     property <length> drag-x;
     property <length> drag-y;
@@ -917,7 +919,7 @@ export component MediaViewerWindow inherits Window {
             image-fit: fill;
         }
         pointer := TouchArea {
-            mouse-cursor: root.drag-cursor-hidden ? MouseCursor.none : MouseCursor.default;
+            mouse-cursor: root.drag-cursor-hidden || root.cursor-idle-hidden ? MouseCursor.none : MouseCursor.default;
             changed mouse-x => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
             changed mouse-y => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
             pointer-event(event) => {

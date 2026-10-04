@@ -2410,3 +2410,15 @@ controls are staged until Apply and survive reopening and legacy import.
 `page_navigation_options.json` records actual close questions, sidebar focus
 requests and history menu outputs; headless regressions check real text focus,
 confirmation cancellation, nested-tree undo and retained history.
+
+The media-viewer cursor inactivity option now uses the native window input
+observer and an owned timer to hide the actual OS cursor after its timeout.
+It defaults to 700ms, supports 100–100000ms or “do not autohide”, and uses the
+reference's strict elapsed-time boundary and 100–250ms polling cadence.
+Movement restores the cursor and restarts the wait; an accepted hidden drag
+pauses it until ordinary movement resumes. Losing focus, hovering popup controls
+or opening a menu restores the cursor and restarts the wait. Closing the viewer
+stops its timer, and weak native registrations ignore other windows and release
+closed owners. Apply/Cancel and legacy migration reach this consumer. The fresh
+`viewer_cursor_options.json` recording captures actual Qt cursor shapes and
+timer intervals, including an actual QMenu nested execution loop.
