@@ -293,7 +293,7 @@ fn write_autocomplete_uses_override_or_launcher_domain_and_rejects_tag_locations
         .iter()
         .position(|n| n == "my tags")
         .unwrap();
-    manage.choose_service(i);
+    manage.choose_service(i).unwrap();
     manage.set_location(LocationContext::single(empty_key));
     manage.set_text("other service");
     assert!(

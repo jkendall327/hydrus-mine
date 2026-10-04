@@ -1135,7 +1135,12 @@ the file's tags on the service chosen, and an input whose tag, entered,
 is added to the file (or removed, if it has it already), the tag as typed
 offered first and then the service's tags matching it; double-clicking a
 listed tag removes it, and changes wait until enter with nothing typed
-(or "apply") writes them, escape forgetting them. As the reference's
+(or "apply") writes them, escape forgetting them. The dialog opens on the
+configured default tag service, falling back to its first local service if the
+saved service is unavailable. When remembering is enabled, switching service
+updates that preference immediately; it survives cancelling tag drafts and is
+used by the next dialog. `oracle/record_tag_dialog_defaults.py` records these
+option interlocks and real manage-tags tab changes. As the reference's
 default media shortcuts have it, F7 archives the file, shift+F7 returns it
 to the inbox, delete deletes it (from the page's domain, if it searches
 one, else to the trash; in the trash, for good, unless the delete lock

@@ -1,0 +1,118 @@
+{
+  "initial_preferences": {
+    "remember": true,
+    "service": "my tags"
+  },
+  "controls": [
+    {
+      "action": "initial",
+      "remember": true,
+      "service": "my tags",
+      "default_enabled": false,
+      "choices": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ]
+    },
+    {
+      "action": "fixed_my_tags",
+      "remember": false,
+      "service": "my tags",
+      "default_enabled": true,
+      "choices": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ]
+    },
+    {
+      "action": "remember_my_tags",
+      "remember": true,
+      "service": "my tags",
+      "default_enabled": false,
+      "choices": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ]
+    },
+    {
+      "action": "stop_remembering",
+      "remember": false,
+      "service": "downloader tags",
+      "default_enabled": true,
+      "choices": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ]
+    }
+  ],
+  "events": [
+    {
+      "action": "open_fixed",
+      "selected": "my tags",
+      "preferences": {
+        "remember": false,
+        "service": "my tags"
+      }
+    },
+    {
+      "action": "change_fixed",
+      "selected": "downloader tags",
+      "preferences": {
+        "remember": false,
+        "service": "my tags"
+      }
+    },
+    {
+      "action": "reopen_after_fixed_cancel",
+      "selected": "my tags",
+      "preferences": {
+        "remember": false,
+        "service": "my tags"
+      }
+    },
+    {
+      "action": "open_remember",
+      "selected": "my tags",
+      "preferences": {
+        "remember": true,
+        "service": "my tags"
+      }
+    },
+    {
+      "action": "change_remember",
+      "selected": "downloader tags",
+      "preferences": {
+        "remember": true,
+        "service": "downloader tags"
+      }
+    },
+    {
+      "action": "reopen_after_remember_cancel",
+      "selected": "downloader tags",
+      "preferences": {
+        "remember": true,
+        "service": "downloader tags"
+      }
+    },
+    {
+      "action": "change_after_disable",
+      "selected": "my tags",
+      "preferences": {
+        "remember": false,
+        "service": "downloader tags"
+      }
+    },
+    {
+      "action": "missing_service_fallback",
+      "selected": "downloader tags",
+      "preferences": {
+        "remember": false,
+        "service": "missing service"
+      }
+    }
+  ]
+}

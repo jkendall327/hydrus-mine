@@ -50,14 +50,27 @@ impl ManageTags {
             return None;
         }
         let snapshot = store.snapshot();
-        let services: Vec<(ServiceId, String)> = snapshot
+        let mut services: Vec<(ServiceId, String)> = snapshot
             .services
             .of_type(ServiceType::LocalTag)
             .map(|s| (s.id, s.name.clone()))
             .collect();
+        services.sort_by_key(|(_, name)| name.to_lowercase());
         if services.is_empty() {
             return None;
         }
+        let preference = store
+            .read(hydrus_store::settings::get::<hydrus_store::tag_editing::TagEditingSettings>)
+            .unwrap_or_default();
+        let service = services
+            .iter()
+            .position(|(id, _)| {
+                snapshot
+                    .services
+                    .get(*id)
+                    .is_ok_and(|s| s.key == preference.default_service)
+            })
+            .unwrap_or(0);
         let stored = services
             .iter()
             .map(|(service, _)| current_tags(&store, *service, &files))
@@ -68,7 +81,7 @@ impl ManageTags {
             files,
             location: hydrus_core::search::context::LocationContext::default(),
             services,
-            service: 0,
+            service,
             stored,
             text: String::new(),
             suggestions: Vec::new(),
@@ -113,11 +126,23 @@ impl ManageTags {
         self.service
     }
 
-    pub fn choose_service(&mut self, index: usize) {
-        if index < self.services.len() {
+    /// Change the active service and remember that tab immediately when enabled.
+    /// Tag edits remain staged; preference memory also survives tag-dialog Cancel.
+    pub fn choose_service(&mut self, index: usize) -> hydrus_store::Result<()> {
+        if index < self.services.len() && index != self.service {
+            let key = self
+                .store
+                .snapshot()
+                .services
+                .get(self.services[index].0)?
+                .key
+                .clone();
+            self.store
+                .write(|ctx| hydrus_store::tag_editing::remember_service(ctx.conn(), &key))?;
             self.service = index;
             self.set_text(&self.text.clone());
         }
+        Ok(())
     }
 
     /// The files having each tag on the service chosen, its waiting

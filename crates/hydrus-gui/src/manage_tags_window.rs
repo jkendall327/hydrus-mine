@@ -124,10 +124,15 @@ pub(crate) fn open(
     window.on_service_chosen({
         let model = model.clone();
         let refresh = refresh.clone();
+        let weak = window.as_weak();
         move |i| {
-            model
+            if let Err(error) = model
                 .borrow_mut()
-                .choose_service(usize::try_from(i).unwrap_or(0));
+                .choose_service(usize::try_from(i).unwrap_or(usize::MAX))
+                && let Some(window) = weak.upgrade()
+            {
+                window.set_error(format!("could not remember the tag service: {error}").into());
+            }
             refresh();
         }
     });

@@ -1169,3 +1169,7 @@ unmatched URL text retains the reference's "unknown" label but cannot launch the
 system browser. URL links are right-aligned in the ratings hover frame; long labels
 are elided and the native media viewer does not add the reference's hyperlink
 context menu to these links (the existing URLs menu remains available).
+The tag-dialog default service and remembering preference are consumed by native
+manage-tags windows. Their service tabs are limited to local tag services; the
+reference also offers repository tag services. Missing or unsupported saved
+services fall back to the first local service by name.

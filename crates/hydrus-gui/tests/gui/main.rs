@@ -95,3 +95,5 @@ mod tag_filter_favourites;
 
 mod favourite_search_editor;
 mod downloader_display;
+
+mod tag_dialog_defaults;
