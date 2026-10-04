@@ -64,6 +64,7 @@ pub mod simple_downloader;
 pub mod sort;
 pub mod status;
 pub mod string_editors;
+pub mod subscription_exchange;
 pub mod subscription_quality;
 pub mod subscriptions_dedupe;
 pub mod subscriptions_dialog;

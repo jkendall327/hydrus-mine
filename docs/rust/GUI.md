@@ -145,7 +145,10 @@ as Qt's do; a press anywhere else closes them. What works so far:
 A standalone subscription exchange codec now reads and writes complete reference
 containers: settings, query headers, cached example/velocity data and both URL
 histories. `oracle/record_subscription_exchange.py` records the actual Qt list
-clipboard flow and reference PNG. Its list buttons are being wired next.
+clipboard flow and reference PNG. Manage subscriptions now opens an owned
+import/export child: clipboard/JSON text or JSON/PNG files are reviewed, imported
+subscriptions remain staged, and Apply persists both URL histories and retained
+header examples. Cancel invalidates the child and its callbacks.
 
 Network > "subscriptions…" opens the manage subscriptions dialog
 (`src/subscriptions_window.rs`, `hydrus-gui-model/src/subscriptions_dialog.rs`),

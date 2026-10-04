@@ -229,6 +229,7 @@ fn clipboard_text() -> Result<String, String> {
 /// options editor's, and a query's log window's (and where it shows
 /// files).
 pub(crate) struct Slots {
+    pub exchange: crate::downloader_interchange_window::Slots,
     pub edit: Rc<RefCell<Option<EditSubscriptionWindow>>>,
     pub checker: Rc<RefCell<Option<CheckerOptionsWindow>>>,
     pub log: Rc<RefCell<Option<crate::FileLogWindow>>>,
