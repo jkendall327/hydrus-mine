@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "scope": "Two original advanced Tag Presentation opening-default dropdown leaves with real immutable sidebar/viewer modes and raw/display/filter consumers.",
+  "implementation_leaf_count": 2,
+  "claims": [
+    {
+      "reference_id": "audit-options-tag-presentation-default-taglist-display-type-advanced-tag-display-type-for-new-page-sidebar-taglists",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "implementation_commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5",
+      "exact_behavior": "Exact four-choice page sidebar opening-default dropdown under the recorded advanced display-type group, with the recorded caution. Independent typed preferences persist only on Apply, preserve Cancel and old-payload defaults, and import the legacy integer. Actual newly opened page sidebar tag lists capture the saved mode; existing lists retain it after another Options Apply. Multiple-media and single-media modes use separate display filters; display mode applies aliases/parents without those view filters; stored mode counts raw mappings and preserves raw namespace/underscore spelling. Counts deduplicate overlapping aliases/ideals per file. Focused native regressions exercise Options, actual sidebar/viewer rows, reopening, retained modes and independent preferences.",
+      "limits": "The source oracle covers actual all-known-tags opening lists. Their stored mode shows raw rows without sibling/parent decorations, matching native. Richer service-specific storage decorations and runtime tag-list context-menu switching remain separate parent gaps; no broader Tag Presentation promotion is claimed. Rust regressions await hosted CI, with no local Cargo build/test execution.",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-core/src/tag_presentation.rs",
+          "line": 81,
+          "symbol": "pub sidebar_display_type",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2442,
+          "symbol": "Tag display type for new page sidebar taglists: ",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 245,
+          "symbol": "tag_display_type: presentation.sidebar_display_type",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/tag_presentation.rs",
+          "line": 14,
+          "symbol": "pub enum TagDisplayType",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 3452,
+          "symbol": "fn tag_list_opening_modes_import_independently_and_ignore_unknown_codes",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/media.rs",
+          "line": 568,
+          "symbol": "pub fn tag_counts_for_display",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 2543,
+          "symbol": "pub(crate) fn tag_rows",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_list_display_types.rs",
+          "line": 33,
+          "symbol": "fn exact_choices_stage_cancel_apply_reopen_and_preserve_old_payload_defaults",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_list_display_types.rs",
+          "line": 123,
+          "symbol": "fn options_apply_cancel_new_sidebar_and_viewer_replay_raw_display_and_filters",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_list_display_types.rs",
+          "line": 253,
+          "symbol": "fn sidebar_and_viewer_opening_modes_are_independent_after_gui_apply",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        }
+      ],
+      "reference_source": [
+        {
+          "relativepath": "hydrus/client/gui/panels/options/TagPresentationPanel.py",
+          "line": 213,
+          "symbol": "rows.append( ( 'Tag display type for new page sidebar taglists: ",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "hydrus/client/gui/pages/ClientGUISidebarQuery.py",
+          "line": 217,
+          "symbol": "tag_display_type = CG.client_controller.new_options.GetInteger( 'tag_list_tag_display_type_sidebar' )",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_tag_list_display_types.py",
+          "line": 13,
+          "symbol": "def record(session)",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "oracle/fixtures/tag_list_display_types.json",
+          "line": 108,
+          "symbol": "\"cases\":",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        }
+      ]
+    },
+    {
+      "reference_id": "audit-options-tag-presentation-default-taglist-display-type-advanced-tag-display-type-for-new-media-viewer-taglists",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "implementation_commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5",
+      "exact_behavior": "Exact four-choice media viewer opening-default dropdown under the recorded advanced display-type group, with the recorded caution. Independent typed preferences persist only on Apply, preserve Cancel and old-payload defaults, and import the legacy integer. Actual newly opened media viewer tag lists capture the saved mode; existing lists retain it after another Options Apply. Multiple-media and single-media modes use separate display filters; display mode applies aliases/parents without those view filters; stored mode counts raw mappings and preserves raw namespace/underscore spelling. Counts deduplicate overlapping aliases/ideals per file. Focused native regressions exercise Options, actual sidebar/viewer rows, reopening, retained modes and independent preferences.",
+      "limits": "The source oracle covers actual all-known-tags opening lists. Their stored mode shows raw rows without sibling/parent decorations, matching native. Richer service-specific storage decorations and runtime tag-list context-menu switching remain separate parent gaps; no broader Tag Presentation promotion is claimed. Rust regressions await hosted CI, with no local Cargo build/test execution.",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-core/src/tag_presentation.rs",
+          "line": 83,
+          "symbol": "pub viewer_display_type",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2454,
+          "symbol": "Tag display type for new media viewer taglists: ",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/viewer.rs",
+          "line": 42,
+          "symbol": "tag_display_type: presentation.viewer_display_type",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/tag_presentation.rs",
+          "line": 14,
+          "symbol": "pub enum TagDisplayType",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 3452,
+          "symbol": "fn tag_list_opening_modes_import_independently_and_ignore_unknown_codes",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/media.rs",
+          "line": 568,
+          "symbol": "pub fn tag_counts_for_display",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 2543,
+          "symbol": "pub(crate) fn tag_rows",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_list_display_types.rs",
+          "line": 33,
+          "symbol": "fn exact_choices_stage_cancel_apply_reopen_and_preserve_old_payload_defaults",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_list_display_types.rs",
+          "line": 123,
+          "symbol": "fn options_apply_cancel_new_sidebar_and_viewer_replay_raw_display_and_filters",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_list_display_types.rs",
+          "line": 253,
+          "symbol": "fn sidebar_and_viewer_opening_modes_are_independent_after_gui_apply",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        }
+      ],
+      "reference_source": [
+        {
+          "relativepath": "hydrus/client/gui/panels/options/TagPresentationPanel.py",
+          "line": 214,
+          "symbol": "rows.append( ( 'Tag display type for new media viewer taglists: ",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+          "line": 5446,
+          "symbol": "tag_display_type = CG.client_controller.new_options.GetInteger( 'tag_list_tag_display_type_media_viewer_hover' )",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_tag_list_display_types.py",
+          "line": 13,
+          "symbol": "def record(session)",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        },
+        {
+          "relativepath": "oracle/fixtures/tag_list_display_types.json",
+          "line": 108,
+          "symbol": "\"cases\":",
+          "commit": "c4659cee341f64fad4d9ec86c9c6cfb2cefe02d5"
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "realQtRecording": true,
+    "referenceCases": 8,
+    "openingModes": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "nativeModelPreferenceCombinations": 16,
+    "cargoFmt": true,
+    "diffCheck": true,
+    "cachedSlintSourceCompilation": true,
+    "localCargoBuildsOrTests": false,
+    "ci": "Root hosted CI executes authored model/native/import regressions."
+  }
+}
