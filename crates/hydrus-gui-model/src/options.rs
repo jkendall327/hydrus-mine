@@ -20,6 +20,7 @@ use hydrus_core::thumbnail::{ThumbnailRatingSettings, ThumbnailScale, ThumbnailS
 use hydrus_core::url::UrlClassSettings;
 use hydrus_core::windows::WindowSettings;
 use hydrus_store::bandwidth::BandwidthSettings;
+use hydrus_store::command_palette::{CommandPaletteSettings, Provider};
 use hydrus_store::delete_lock::DeleteLock;
 use hydrus_store::duplicates::DuplicateFilterSettings;
 use hydrus_store::duplicates::auto::AutoResolutionSettings;
@@ -75,6 +76,7 @@ settings! {
     auto_resolution: AutoResolutionSettings,
     bandwidth: BandwidthSettings,
     checker_defaults: CheckerDefaults,
+    command_palette: CommandPaletteSettings,
     delete_lock: DeleteLock,
     downloader_pages: DownloaderPageSettings,
     duplicate_filter: DuplicateFilterSettings,
@@ -165,6 +167,7 @@ pub enum Value {
     FavouriteTags(FavouriteTags),
     ImportOptions(crate::import_options_panel::Value),
     NamespaceSorts(Vec<PageSort>),
+    ProviderOrder(Vec<Provider>),
     TagService(hydrus_core::ServiceKey),
     Location(hydrus_core::search::context::LocationContext),
 }
@@ -230,6 +233,8 @@ pub enum Kind {
     /// The transactional manager page, including simple-mode presentation.
     ImportOptions,
     NamespaceSorts,
+    /// Inline staged command-palette provider queue.
+    ProviderOrder,
     /// Real tag services, optionally including all known tags.
     TagService {
         combined: bool,
@@ -832,6 +837,108 @@ fn boxed(title: &'static str, items: Vec<Item>) -> Item {
     Item::Box(title, items)
 }
 
+/// Exact command-palette control order and bounds from the reference options panel.
+fn command_palette_page() -> Page {
+    Page {
+        name: "command palette",
+        items: vec![boxed(
+            "command palette",
+            vec![
+                check(
+                    "Initially show all page results:",
+                    |s| s.command_palette.initially_show_pages,
+                    |s, v| s.command_palette.initially_show_pages = v,
+                ),
+                check(
+                    "Initially show page history results:",
+                    |s| s.command_palette.initially_show_history,
+                    |s, v| s.command_palette.initially_show_history = v,
+                ),
+                check(
+                    "Initially show favourite search results:",
+                    |s| s.command_palette.initially_show_favourites,
+                    |s, v| s.command_palette.initially_show_favourites = v,
+                ),
+                int(
+                    "Start searching when this many characters have been typed:",
+                    (1, 64),
+                    |s| i64::try_from(s.command_palette.threshold).unwrap_or(64),
+                    |s, v| s.command_palette.threshold = usize::try_from(v).unwrap_or(1),
+                ),
+                noneable(
+                    "Max page results to show:",
+                    none("no limit", 10, (1, 1_000_000), None),
+                    |s| {
+                        s.command_palette
+                            .page_limit
+                            .map(|n| i64::try_from(n).unwrap_or(1_000_000))
+                    },
+                    |s, v| s.command_palette.page_limit = v.and_then(|n| usize::try_from(n).ok()),
+                ),
+                noneable(
+                    "Max page history to show:",
+                    none("no limit", 10, (1, 1_000_000), None),
+                    |s| {
+                        s.command_palette
+                            .history_limit
+                            .map(|n| i64::try_from(n).unwrap_or(1_000_000))
+                    },
+                    |s, v| {
+                        s.command_palette.history_limit = v.and_then(|n| usize::try_from(n).ok())
+                    },
+                ),
+                noneable(
+                    "Max favourite searches to show:",
+                    none("no limit", 10, (1, 1_000_000), None),
+                    |s| {
+                        s.command_palette
+                            .favourite_limit
+                            .map(|n| i64::try_from(n).unwrap_or(1_000_000))
+                    },
+                    |s, v| {
+                        s.command_palette.favourite_limit = v.and_then(|n| usize::try_from(n).ok())
+                    },
+                ),
+                check(
+                    "Include \"page of pages\" page results:",
+                    |s| s.command_palette.show_notebooks,
+                    |s, v| s.command_palette.show_notebooks = v,
+                ),
+                check(
+                    "Open favourite searches in a new page:",
+                    |s| s.command_palette.favourites_new_page,
+                    |s, v| s.command_palette.favourites_new_page = v,
+                ),
+                check(
+                    "ADVANCED: Search main menubar:",
+                    |s| s.command_palette.show_main_menu,
+                    |s, v| s.command_palette.show_main_menu = v,
+                ),
+                check(
+                    "ADVANCED: Search media menu:",
+                    |s| s.command_palette.show_media_menu,
+                    |s, v| s.command_palette.show_media_menu = v,
+                ),
+                boxed(
+                    "search provider order",
+                    vec![opt(
+                        "You can re-order or remove search providers from the palette here. Any removed providers can be re-added.",
+                        Kind::ProviderOrder,
+                        Rc::new(|s| Value::ProviderOrder(s.command_palette.provider_order.clone())),
+                        Rc::new(|s, v| match v {
+                            Value::ProviderOrder(order) => {
+                                s.command_palette.provider_order = order.clone();
+                                Ok(())
+                            }
+                            _ => Err(wrong("search provider order")),
+                        }),
+                    )],
+                ),
+            ],
+        )],
+    }
+}
+
 /// The downloaders' waits after an error (`TimeDeltaButton`s of days to
 /// seconds).
 const ERROR_DELAY: &[Unit] = &[Unit::Days, Unit::Hours, Unit::Minutes, Unit::Seconds];
@@ -986,6 +1093,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 },
             )],
         ),
+        command_palette_page(),
         page(
             "connection",
             vec![
@@ -3232,6 +3340,27 @@ impl Editor {
         for value in self.values.iter_mut().flatten() {
             if matches!(value, Value::NamespaceSorts(_)) {
                 *value = Value::NamespaceSorts(sorts);
+                return;
+            }
+        }
+    }
+
+    /// Provider order staged independently of which options page is visible.
+    pub fn edited_provider_order(&self) -> Vec<Provider> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| match value {
+                Value::ProviderOrder(order) => Some(order.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.command_palette.provider_order.clone())
+    }
+    /// Accept queue edits into the parent options draft without writing preferences.
+    pub fn set_provider_order(&mut self, order: Vec<Provider>) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::ProviderOrder(_)) {
+                *value = Value::ProviderOrder(order);
                 return;
             }
         }

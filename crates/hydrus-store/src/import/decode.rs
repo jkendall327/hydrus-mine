@@ -31,6 +31,82 @@ use crate::services::{
 };
 use crate::settings::{FavouriteTags, FileViewingStatistics, Setting};
 
+/// Translate legacy palette controls into the same typed settings used by live providers.
+fn command_palette_preferences(
+    options: Option<&legacy::ClientOptions>,
+) -> crate::command_palette::CommandPaletteSettings {
+    use crate::command_palette::{CommandPaletteSettings, Provider};
+    let mut settings = CommandPaletteSettings::default();
+    let Some(options) = options else {
+        return settings;
+    };
+    for (key, field) in [
+        (
+            "command_palette_show_page_of_pages",
+            &mut settings.show_notebooks,
+        ),
+        (
+            "command_palette_initially_show_all_pages",
+            &mut settings.initially_show_pages,
+        ),
+        (
+            "command_palette_initially_show_history",
+            &mut settings.initially_show_history,
+        ),
+        (
+            "command_palette_initially_show_favourite_searches",
+            &mut settings.initially_show_favourites,
+        ),
+        (
+            "command_palette_fav_searches_open_new_page",
+            &mut settings.favourites_new_page,
+        ),
+        (
+            "command_palette_show_main_menu",
+            &mut settings.show_main_menu,
+        ),
+        (
+            "command_palette_show_media_menu",
+            &mut settings.show_media_menu,
+        ),
+    ] {
+        if let Some(value) = options.booleans.get(key) {
+            *field = *value;
+        }
+    }
+    if let Some(value) = options
+        .integers
+        .get("command_palette_num_chars_for_results_threshold")
+    {
+        settings.threshold = usize::try_from((*value).clamp(1, 64)).unwrap_or(1);
+    }
+    for (key, field) in [
+        (
+            "command_palette_limit_page_results",
+            &mut settings.page_limit,
+        ),
+        (
+            "command_palette_limit_history_results",
+            &mut settings.history_limit,
+        ),
+        (
+            "command_palette_limit_favourite_searches_results",
+            &mut settings.favourite_limit,
+        ),
+    ] {
+        if let Some(value) = options.noneable_integers.get(key) {
+            *field = value.and_then(|n| usize::try_from(n.clamp(1, 1_000_000)).ok());
+        }
+    }
+    if let Some(order) = options.integer_lists.get("command_palette_provider_order") {
+        settings.provider_order = order
+            .iter()
+            .filter_map(|code| usize::try_from(*code).ok().and_then(Provider::from_code))
+            .collect();
+    }
+    settings
+}
+
 /// Decode everything the importer needs from the reference install `db`.
 pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     let mut input = ImportInput::default();
@@ -484,6 +560,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .map(legacy::ClientOptions::window_settings)
             .unwrap_or_default(),
     )?;
+    insert_setting(&mut input, &command_palette_preferences(options.as_ref()))?;
     let mut handling = crate::settings::FileHandlingSettings::default();
     if let Some(options) = &options {
         let boolean = |key: &str| options.booleans.get(key).copied();
@@ -3048,6 +3125,54 @@ mod tests {
                     []
                 ),
             }
+        );
+    }
+
+    #[test]
+    fn command_palette_preferences_migrate_defaults_and_nondefault_provider_policies() {
+        use crate::command_palette::{CommandPaletteSettings, Provider};
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<CommandPaletteSettings>(
+                input.settings["command_palette"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), CommandPaletteSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "command_palette_initially_show_all_pages"], [0, true]]"#,
+                    r#"[[0, "command_palette_initially_show_all_pages"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "command_palette_initially_show_favourite_searches"], [0, false]]"#,
+                    r#"[[0, "command_palette_initially_show_favourite_searches"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "command_palette_num_chars_for_results_threshold"], [0, 1]]"#,
+                    r#"[[0, "command_palette_num_chars_for_results_threshold"], [0, 4]]"#,
+                ),
+                (
+                    r#"[[0, "command_palette_limit_page_results"], [0, null]]"#,
+                    r#"[[0, "command_palette_limit_page_results"], [0, 2]]"#,
+                ),
+                (
+                    r#"[[0, "command_palette_provider_order"], [2, [26, 3, [[0, 0], [0, 1], [0, 2], [0, 4], [0, 3], [0, 5]]]]]"#,
+                    r#"[[0, "command_palette_provider_order"], [2, [26, 3, [[0, 5], [0, 3]]]]]"#,
+                ),
+            ],
+        );
+        let settings = decoded();
+        assert!(!settings.initially_show_pages);
+        assert!(settings.initially_show_favourites);
+        assert_eq!(settings.threshold, 4);
+        assert_eq!(settings.page_limit, Some(2));
+        assert_eq!(
+            settings.provider_order,
+            [Provider::Favourites, Provider::Pages]
         );
     }
 

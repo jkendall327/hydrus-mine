@@ -224,6 +224,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     )
                     .into();
                 }
+                (Kind::ProviderOrder, Value::ProviderOrder(_)) => {
+                    out.kind = 22;
+                }
                 (Kind::NamespaceSorts, Value::NamespaceSorts(_)) => {
                     out.kind = 21;
                     out.text = "edit namespace sorting schemes".into();
@@ -307,6 +310,7 @@ pub(crate) fn open(
         .map(StandardListViewItem::from)
         .collect();
     window.set_pages(ModelRc::new(VecModel::from(names)));
+    let show_providers = crate::options_palette::bind(&window, &editor, &active);
     // (the rows are made anew only as the page changes: an edit leaves its
     // control as the user left it)
     let show_page = {
@@ -330,6 +334,7 @@ pub(crate) fn open(
                 .collect();
             window.set_page(int(editor.page() as i64));
             window.set_rows(ModelRc::new(VecModel::from(rows)));
+            show_providers();
             if let Some(name) = editor.remembered_panel()
                 && let Err(error) = store.write(move |ctx| {
                     let mut preferences: hydrus_store::settings::OptionsPreferences =

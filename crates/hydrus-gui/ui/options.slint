@@ -6,6 +6,8 @@
 
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ScrollView, SpinBox, StandardListView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
+import { TableRow } from "list_table.slint";
+import { PaletteProviderQueue } from "palette_provider_queue.slint";
 
 // a field of a time: its value, largest value, and the unit after it
 export struct DurationField {
@@ -139,6 +141,15 @@ export component OptionsWindow inherits Window {
     callback favourite-tags-clicked();
     callback import-options-clicked();
     callback namespace-sorts-clicked();
+    in property <[TableRow]> provider-rows;
+    in property <[string]> provider-missing;
+    in property <bool> provider-has-selection;
+    in property <int> provider-mode;
+    in property <string> provider-message;
+    callback provider-clicked(int,bool,bool);
+    callback provider-action(string);
+    callback provider-chosen(int);
+    callback provider-answer(bool);
     in property <[string]> sort-cog-groups;
     in property <[SortCogItem]> sort-cog-items;
     in property <int> sort-cog-group: -1;
@@ -445,6 +456,17 @@ export component OptionsWindow inherits Window {
                                 }
                             }
                           }
+                            if row.kind == 22: PaletteProviderQueue {
+                                rows:root.provider-rows;
+                                missing:root.provider-missing;
+                                has-selection:root.provider-has-selection;
+                                mode:root.provider-mode;
+                                message:root.provider-message;
+                                row-clicked(i,ctrl,shift)=>{root.provider-clicked(i,ctrl,shift);}
+                                action(action)=>{root.provider-action(action);}
+                                chosen(i)=>{root.provider-chosen(i);}
+                                answer(yes)=>{root.provider-answer(yes);}
+                            }
                             // (a time or a rate: its fields under its label)
                             if row.kind == 8: HorizontalLayout {
                                 padding-left: 16px;

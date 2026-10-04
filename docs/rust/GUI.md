@@ -2592,9 +2592,12 @@ The command-palette provider model now matches the recorded Qt page-tree,
 newest-first history, favourite name/folder and menu-leaf filtering rules. Its
 provider queue supports extended selection, movement, confirmed removal and
 cancelled re-addition. Workers use immutable snapshots and query identities so
-late results cannot revive a closed palette or replace a newer query. Native
-window and launch wiring is still being added; these helpers alone do not yet
-expose a command palette in the client.
+late results cannot revive a closed palette or replace a newer query. Options
+now exposes the reference boolean controls, typed-query threshold, noneable
+limits and inline provider queue. Queue movement, confirmation, re-addition and
+all other preference edits remain in the parent draft until Apply; Cancel and
+stale callbacks preserve saved preferences. Native palette window and launch
+wiring is still being added.
 
 System viewing-time predicates retain the millisecond field, including when
 importing stored Python predicates or reopening recent entries. The labels and

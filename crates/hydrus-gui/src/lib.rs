@@ -75,6 +75,7 @@ mod menu_bar;
 pub mod merge_options_window;
 pub mod mpv;
 pub mod network_header_approval;
+mod options_palette;
 mod options_window;
 mod page;
 mod pages;

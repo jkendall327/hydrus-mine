@@ -1712,6 +1712,7 @@ They edit each sort independently and preserve its full saved context metadata.
 The page-level sort cog remains a separate, unclaimed workflow.
 
 Command-palette preferences and snapshot-based provider/queue models are now
-present, with fresh Qt recordings. The native Ctrl+P window, calculator provider,
-Options editor and action dispatch remain pending in this first reusable slice;
+present, with fresh Qt recordings. The Options editor now stages and persists these
+settings and migrates legacy preferences. The native Ctrl+P window, calculator
+provider and action dispatch remain pending;
 no command-palette completion is claimed by the model alone.

@@ -78,6 +78,7 @@ fn the_options_window_applies_its_changes() {
         page_names(&window),
         [
             "audio",
+            "command palette",
             "connection",
             "downloading",
             "duplicates",
@@ -4143,4 +4144,163 @@ fn default_export_directory_browse_apply_cancel_and_manual_open_use_shared_prefe
             .unwrap();
     assert_eq!(export.get_destination(), fallback);
     export.invoke_dismissed();
+}
+
+#[test]
+fn command_palette_options_stage_queue_changes_and_persist_only_on_apply() {
+    use hydrus_store::command_palette::{CommandPaletteSettings, Provider};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let saved = || {
+        store
+            .read(hydrus_store::settings::get::<CommandPaletteSettings>)
+            .unwrap()
+    };
+    let oracle = hydrus_testkit::fixture_json("command_palette.json");
+    let before = saved();
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "command palette");
+    let provider_names = |window: &OptionsWindow| {
+        let rows = window.get_provider_rows();
+        (0..rows.row_count())
+            .map(|i| {
+                rows.row_data(i)
+                    .unwrap()
+                    .cells
+                    .row_data(0)
+                    .unwrap()
+                    .to_string()
+            })
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(
+        provider_names(&options),
+        before
+            .provider_order
+            .iter()
+            .map(|p| p.name().to_owned())
+            .collect::<Vec<_>>()
+    );
+    let (threshold, control) = row(
+        &options,
+        "Start searching when this many characters have been typed:",
+    );
+    assert_eq!([control.minimum, control.maximum], [1, 64]);
+    options.invoke_number_edited(threshold, 4);
+    for label in [
+        "Initially show all page results:",
+        "Initially show page history results:",
+        "Initially show favourite search results:",
+        "Include \"page of pages\" page results:",
+        "Open favourite searches in a new page:",
+        "ADVANCED: Search main menubar:",
+        "ADVANCED: Search media menu:",
+    ] {
+        let (index, control) = row(&options, label);
+        options.invoke_check_toggled(index, !control.checked);
+    }
+    for label in [
+        "Max page results to show:",
+        "Max page history to show:",
+        "Max favourite searches to show:",
+    ] {
+        let (index, control) = row(&options, label);
+        assert_eq!([control.minimum, control.maximum], [1, 1_000_000]);
+        options.invoke_none_toggled(index, false);
+        options.invoke_number_edited(index, 2);
+    }
+    options.invoke_provider_clicked(0, false, false);
+    options.invoke_provider_action("down".into());
+    options.invoke_provider_action("delete".into());
+    assert_eq!(
+        options.get_provider_message().as_str(),
+        oracle["questions"][0].as_str().unwrap()
+    );
+    options.invoke_provider_answer(false);
+    assert_eq!(provider_names(&options)[1], "calculator");
+    options.invoke_provider_action("delete".into());
+    options.invoke_provider_answer(true);
+    assert!(!provider_names(&options).contains(&"calculator".to_owned()));
+    options.invoke_provider_action("add".into());
+    assert_eq!(options.get_provider_message(), "Select a provider to add:");
+    assert_eq!(
+        options.get_provider_missing().row_data(0).unwrap(),
+        "calculator"
+    );
+    options.invoke_provider_action("cancel".into());
+    assert_eq!(options.get_provider_mode(), 0);
+    assert_eq!(
+        saved(),
+        before,
+        "all controls and queue edits belong to the parent draft"
+    );
+    options.invoke_provider_action("add".into());
+    options.invoke_provider_chosen(0);
+    assert_eq!(provider_names(&options).last().unwrap(), "calculator");
+    options.invoke_apply();
+    assert!(bound.options.borrow().is_none());
+    let after = saved();
+    assert_eq!(after.threshold, 4);
+    assert_eq!(after.page_limit, Some(2));
+    assert_eq!(after.history_limit, Some(2));
+    assert_eq!(after.favourite_limit, Some(2));
+    assert!(
+        !after.initially_show_pages
+            && !after.initially_show_history
+            && after.initially_show_favourites
+    );
+    assert!(after.show_notebooks && after.show_main_menu && after.show_media_menu);
+    assert!(!after.favourites_new_page);
+    assert_eq!(
+        after.provider_order,
+        [
+            Provider::MainMenu,
+            Provider::MediaMenu,
+            Provider::History,
+            Provider::Pages,
+            Provider::Favourites,
+            Provider::Calculator
+        ]
+    );
+    open(&ui);
+    let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&reopened, "command palette");
+    assert_eq!(
+        row(
+            &reopened,
+            "Start searching when this many characters have been typed:"
+        )
+        .1
+        .number,
+        4
+    );
+    assert_eq!(provider_names(&reopened), provider_names(&options));
+    reopened.invoke_provider_clicked(0, false, false);
+    reopened.invoke_provider_action("delete".into());
+    reopened.invoke_provider_answer(true);
+    reopened.invoke_cancel();
+    assert_eq!(saved(), after);
+    reopened.invoke_provider_action("add".into());
+    reopened.invoke_provider_chosen(0);
+    reopened.invoke_provider_answer(true);
+    assert_eq!(
+        saved(),
+        after,
+        "callbacks from a cancelled owner cannot save preferences"
+    );
+    open(&ui);
+    let successor = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&successor, "command palette");
+    assert_eq!(
+        provider_names(&successor),
+        after
+            .provider_order
+            .iter()
+            .map(|p| p.name().to_owned())
+            .collect::<Vec<_>>()
+    );
+    successor.invoke_cancel();
 }
