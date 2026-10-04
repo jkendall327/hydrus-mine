@@ -2,7 +2,7 @@
   "schema_version": 1,
   "agent": "follow-predicate-undo",
   "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
-  "validation": "Executed actual Qt recorder via shared /workspace/parallel/with-oracle on 2026-10-04 at 19:44:59 UTC against fresh basic fixture: 20 events, actual query sidebars, queued deltas, QAction menu consumers, OR, editor Cancel, page close/restore, clear rejection/acceptance, real lock replacement/hidden-query Undo and empty notebook. Only question answers are scripted. Python syntax, source cargo fmt, diff whitespace and cached warning-aware Slint checks pass. Authored model and native regression replay not run locally; no Cargo builds, tests or native render claimed. Separate actual Qt recorder executed at 19:56:17 UTC on a fresh basic fixture: two real local media files, raw history names with namespaces hidden, real lock confirmation, synchronization enabled, QAction Undo preserves populated badge/media. Auxiliary fixture retained separately; original 20-event fixture unchanged. Additional native regression authored, unrun.",
+  "validation": "Executed actual Qt recorder via shared /workspace/parallel/with-oracle on 2026-10-04 at 19:44:59 UTC against fresh basic fixture: 20 events, actual query sidebars, queued deltas, QAction menu consumers, OR, editor Cancel, page close/restore, clear rejection/acceptance, real lock replacement/hidden-query Undo and empty notebook. Only question answers are scripted. Python syntax, source cargo fmt, diff whitespace and cached warning-aware Slint checks pass. Authored model and native regression replay not run locally; no Cargo builds, tests or native render claimed. Separate actual Qt recorder executed at 19:56:17 UTC on a fresh basic fixture: two real local media files, raw history names with namespaces hidden, real lock confirmation, synchronization enabled, QAction Undo preserves populated badge/media. Auxiliary fixture retained separately; original 20-event fixture unchanged. Additional native regression authored, unrun. Hosted model run exposed the empty-history raw Qt submenu expectation; repaired model checks both disabled Undo availability and exact retained disabled raw rows after clearing. Fixture unchanged; repair execution pending CI.",
   "claims": [
     {
       "reference_id": "audit-options-search-undo",
@@ -69,7 +69,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/predicate_history.rs",
-          "line": 139,
+          "line": 153,
           "symbol": "fn refused_inputs_reordering_and_stale_history_commands_do_not_mutate_recency",
           "kind": "authored_model_regression"
         },
@@ -185,7 +185,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/predicate_history.rs",
-          "line": 139,
+          "line": 153,
           "symbol": "fn refused_inputs_reordering_and_stale_history_commands_do_not_mutate_recency",
           "kind": "authored_model_regression"
         },
@@ -301,7 +301,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/predicate_history.rs",
-          "line": 139,
+          "line": 153,
           "symbol": "fn refused_inputs_reordering_and_stale_history_commands_do_not_mutate_recency",
           "kind": "authored_model_regression"
         },
@@ -417,7 +417,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/predicate_history.rs",
-          "line": 139,
+          "line": 153,
           "symbol": "fn refused_inputs_reordering_and_stale_history_commands_do_not_mutate_recency",
           "kind": "authored_model_regression"
         },

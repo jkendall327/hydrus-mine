@@ -38,6 +38,7 @@ fn actual_histories_replay_toggles_recency_cross_page_or_and_clear() {
     let mut history = History::default();
     let mut pages = HashMap::from([("Undo A".to_owned(), Vec::new())]);
     let mut current = "Undo A".to_owned();
+    let mut last_search_menu = json!([]);
     for event in recording["events"].as_array().unwrap() {
         let op = &event["operation"];
         if let Some(input) = op.get("enter") {
@@ -119,9 +120,19 @@ fn actual_histories_replay_toggles_recency_cross_page_or_and_clear() {
         let menus = menubar(&facts);
         let undo = menus.iter().find(|m| m.label() == "&undo").unwrap();
         if history.added.is_empty() && history.removed.is_empty() {
-            // The actual closed-page submenu remains enabled after closing B.
-            // This model case isolates the search-history subtree.
-            assert!(event["menu"].as_array().unwrap().is_empty());
+            // With no closed pages/content/search undo, Qt disables the bar
+            // entry and retains the last raw submenu object. Async loading
+            // disables its child menus; those retained rows are not a usable
+            // history menu. Keep the actual recorded rows checked separately.
+            assert!(!undo.usable());
+            assert_eq!(event["undo_enabled"], false);
+            let mut retained = last_search_menu.clone();
+            for entry in retained.as_array_mut().unwrap() {
+                if entry.get("menu").is_some() {
+                    entry["disabled"] = json!(true);
+                }
+            }
+            assert_eq!(retained, event["menu"], "{}", event["label"]);
         } else {
             let Entry::Menu { entries, .. } = undo else {
                 panic!()
@@ -131,7 +142,10 @@ fn actual_histories_replay_toggles_recency_cross_page_or_and_clear() {
             else {
                 panic!()
             };
+            assert!(undo.usable());
+            assert_eq!(event["undo_enabled"], true);
             assert_eq!(tree(entries), event["menu"], "{}", event["label"]);
+            last_search_menu = event["menu"].clone();
         }
     }
 }
