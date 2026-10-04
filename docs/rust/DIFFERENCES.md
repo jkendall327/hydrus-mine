@@ -1216,3 +1216,12 @@ presentation preferences are outside this slice. A hidden-height value of None
 hides the native bar completely when the pointer is away; Qt internally retains
 a five-pixel ideal rectangle for its hidden widget. The recorder includes both
 that rectangle and the actual Qt visibility decision.
+
+The tags, ratings/locations, and notes hover enable switches and passive
+bottom-right zoom/index background switch now have native consumers. Native
+hover panels retain their existing layout and contents; the reference's separate
+focus requirement and other passive background copies are still unimplemented.
+The passive index uses native text styling and palette rather than Qt font
+metrics. Its text format, bottom-right three-pixel inset, and placement behind
+media follow the reference. Preview and duplicate-filter hover preferences are
+separate unclaimed controls.

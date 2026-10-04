@@ -568,6 +568,32 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             viewer_canvas.seek_nub_width = (*value).clamp(1, 63) as u32;
         }
         insert_setting(&mut input, &viewer_canvas)?;
+        let mut viewer_hovers = crate::settings::ViewerHoverSettings::default();
+        for (key, field) in [
+            (
+                "disable_tags_hover_in_media_viewer",
+                &mut viewer_hovers.tags,
+            ),
+            (
+                "disable_top_right_hover_in_media_viewer",
+                &mut viewer_hovers.ratings,
+            ),
+            (
+                "disable_notes_hover_in_media_viewer",
+                &mut viewer_hovers.notes,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = !*value;
+            }
+        }
+        if let Some(value) = options
+            .booleans
+            .get("draw_bottom_right_index_in_media_viewer_background")
+        {
+            viewer_hovers.index_background = *value;
+        }
+        insert_setting(&mut input, &viewer_hovers)?;
         let mut summaries = hydrus_core::tag_summary::TagSummaries::default();
         for (name, field) in [
             ("thumbnail_top", &mut summaries.thumbnail_top),
@@ -2670,6 +2696,48 @@ mod tests {
                 seek_height: 37,
                 seek_hidden_height: None,
                 seek_nub_width: 19
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_hover_options_migrate_disable_keys_as_enabled_controls() {
+        use crate::settings::ViewerHoverSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerHoverSettings>(input.settings["viewer_hovers"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), ViewerHoverSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "disable_tags_hover_in_media_viewer"], [0, false]]"#,
+                    r#"[[0, "disable_tags_hover_in_media_viewer"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "disable_top_right_hover_in_media_viewer"], [0, false]]"#,
+                    r#"[[0, "disable_top_right_hover_in_media_viewer"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "disable_notes_hover_in_media_viewer"], [0, false]]"#,
+                    r#"[[0, "disable_notes_hover_in_media_viewer"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "draw_bottom_right_index_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_bottom_right_index_in_media_viewer_background"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerHoverSettings {
+                tags: false,
+                ratings: false,
+                notes: false,
+                index_background: false
             }
         );
     }

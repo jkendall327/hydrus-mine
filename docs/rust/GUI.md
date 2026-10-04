@@ -1839,3 +1839,11 @@ and nub width (1–63 pixels). Apply refreshes an open viewer; Cancel discards t
 draft. The configured nub width also determines where clicks and drags seek.
 Legacy preferences migrate with the reference's defaults. These controls and
 native pixels/geometry are recorded in `viewer_canvas_options.json`.
+
+Media viewer hovers Options now independently enable or disable the tags,
+ratings/locations, and notes pop-in panels. The passive bottom-right index
+preference draws the current zoom and index as “zoom - index”, three pixels from
+the canvas edge, underneath the media. All four checkboxes default enabled, as in
+hydrus; Apply updates the current viewer, while Cancel retains its settings.
+The reference recording `viewer_hover_options.json` covers the actual hover
+layout gates and background draw calls, including independent combinations.

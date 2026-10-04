@@ -2171,3 +2171,194 @@ fn resize_and_seek_options_reach_the_native_viewer_geometry() {
     );
     viewer.invoke_close_requested();
 }
+
+#[test]
+fn hover_options_apply_to_actual_mouseover_panels_and_passive_index_text() {
+    use hydrus_store::settings::{self, ViewerHoverSettings};
+    use slint::{LogicalPosition, platform::WindowEvent};
+    let fixture = hydrus_testkit::fixture_json("viewer_hover_options.json");
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let basic = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &files))
+        .unwrap();
+    let index = basic
+        .iter()
+        .position(|file| {
+            file.info
+                .as_ref()
+                .is_some_and(|info| info.mime == hydrus_core::Mime::ImageJpeg)
+        })
+        .unwrap();
+    let id = files[index];
+    store
+        .write_content(move |writer| writer.set_note(id, "details", "synthetic viewer hover note"))
+        .unwrap();
+    let mut tags = hydrus_gui::manage_tags::ManageTags::new(store.clone(), vec![id]).unwrap();
+    let mine = tags
+        .service_names()
+        .iter()
+        .position(|name| name == "my tags")
+        .unwrap();
+    tags.choose_service(mine).unwrap();
+    tags.enter("synthetic viewer hover").unwrap();
+    tags.apply().unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 1000, 750);
+    // Finish the initial asynchronous image before isolating background pixels.
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
+    while !viewer.get_sharp_shown() && std::time::Instant::now() < deadline {
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+    assert!(viewer.get_sharp_shown(), "initial JPEG image arrived");
+    assert!(viewer.get_tags().row_count() > 0);
+    assert!(viewer.get_ratings().row_count() > 0);
+    assert!(viewer.get_notes().row_count() > 0);
+    let notes_y = (60..740)
+        .step_by(10)
+        .find(|&y| {
+            viewer.window().dispatch_event(WindowEvent::PointerMoved {
+                position: LogicalPosition::new(980.0, y as f32),
+            });
+            viewer.get_notes_showing()
+        })
+        .expect("notes hover has a reachable region below the ratings");
+    let labels = [
+        "Pop-in tags (left) hover window on mouseover:",
+        "Pop-in ratings and locations (top-right) hover window on mouseover:",
+        "Pop-in notes (right) hover window on mouseover:",
+        "Draw index text (bottom-right) in the viewer background:",
+    ];
+    let move_to = |x: f32, y: f32| {
+        viewer.window().dispatch_event(WindowEvent::PointerMoved {
+            position: LogicalPosition::new(x, y),
+        })
+    };
+    for event in fixture["events"].as_array().unwrap() {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer hovers");
+        for (i, label) in labels.iter().enumerate() {
+            options.invoke_check_toggled(
+                row(&options, label).0,
+                event["values"][i].as_bool().unwrap(),
+            );
+        }
+        options.invoke_apply();
+        let settings = store.read(settings::get::<ViewerHoverSettings>).unwrap();
+        assert_eq!(
+            serde_json::json!([
+                settings.tags,
+                settings.ratings,
+                settings.notes,
+                settings.index_background
+            ]),
+            event["values"]
+        );
+        // Reference disabled hover layouts have no hit region; native gates
+        // its existing panels at the same mouseover points.
+        for (i, (x, y)) in [(40.0, 300.0), (980.0, 5.0), (980.0, notes_y as f32)]
+            .into_iter()
+            .enumerate()
+        {
+            move_to(x, y);
+            let showing = [
+                viewer.get_tags_showing(),
+                viewer.get_ratings_showing(),
+                viewer.get_notes_showing(),
+            ][i];
+            assert_eq!(
+                showing,
+                event["ideals"][i]["size"][0].as_u64().unwrap() > 0,
+                "hover {i}: {event:?}"
+            );
+        }
+        // Isolate the passive index region from the real media and hovers.
+        // The current caption/zoom are controlled by recorded viewer values.
+        move_to(500.0, 400.0);
+        viewer.set_caption(event["index"].as_str().unwrap().into());
+        viewer.set_zoom_text(
+            hydrus_gui::viewer_menu::zoom_percentage(event["zoom"].as_f64().unwrap()).into(),
+        );
+        viewer.set_media(slint::Image::default());
+        viewer.set_sharp_shown(false);
+        viewer.set_media_x(350.0);
+        viewer.set_media_y(250.0);
+        viewer.set_media_width(100.0);
+        viewer.set_media_height(100.0);
+        let pixels = headless::render(&drawn, 1000, 750);
+        let expected = event["draws"]
+            .as_array()
+            .unwrap()
+            .first()
+            .and_then(|draw| draw["text"].as_str())
+            .unwrap_or("");
+        assert_eq!(viewer.get_index_background_text(), expected);
+        let ink = (700_usize..747)
+            .flat_map(|y| (700_usize..997).map(move |x| (y * 1000 + x) * 4))
+            .filter(|&at| pixels[at] > 100 && pixels[at + 1] > 100 && pixels[at + 2] > 100)
+            .count();
+        assert_eq!(
+            ink > 0,
+            !expected.is_empty(),
+            "passive index is painted only when enabled"
+        );
+        if !expected.is_empty() {
+            // It is canvas background text: opaque media painted over the
+            // same region covers it, as Qt child media cover their parent.
+            let mut image = slint::SharedPixelBuffer::<slint::Rgba8Pixel>::new(4, 3);
+            for pixel in image.make_mut_bytes().chunks_exact_mut(4) {
+                pixel.copy_from_slice(&[32, 32, 32, 255]);
+            }
+            viewer.set_media(slint::Image::from_rgba8(image));
+            viewer.set_media_x(0.0);
+            viewer.set_media_y(0.0);
+            viewer.set_media_width(1000.0);
+            viewer.set_media_height(750.0);
+            let covered = headless::render(&drawn, 1000, 750);
+            let ink = (700_usize..747)
+                .flat_map(|y| (700_usize..997).map(move |x| (y * 1000 + x) * 4))
+                .filter(|&at| covered[at] > 100 && covered[at + 1] > 100 && covered[at + 2] > 100)
+                .count();
+            assert_eq!(ink, 0, "media covers passive canvas text");
+        }
+    }
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer hovers");
+    for label in labels {
+        options.invoke_check_toggled(row(&options, label).0, true);
+    }
+    options.invoke_cancel();
+    let settings = store.read(settings::get::<ViewerHoverSettings>).unwrap();
+    assert_eq!(
+        settings,
+        ViewerHoverSettings {
+            tags: false,
+            ratings: false,
+            notes: false,
+            index_background: true
+        }
+    );
+    assert!(!viewer.get_hover_tags_enabled());
+    assert!(!viewer.get_hover_ratings_enabled());
+    assert!(!viewer.get_hover_notes_enabled());
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer hovers");
+    assert!(!row(&options, labels[0]).1.checked);
+    assert!(row(&options, labels[3]).1.checked);
+    options.invoke_cancel();
+    viewer.invoke_close_requested();
+}

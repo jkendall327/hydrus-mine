@@ -1227,3 +1227,83 @@ fn viewer_canvas_controls_match_reference_and_stage_bounded_values() {
         "all edits remain drafts"
     );
 }
+
+#[test]
+fn viewer_hover_controls_replay_reference_enabled_states() {
+    use hydrus_gui_model::options::{Editor, Row as EditorRow};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("viewer_hover_options.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    let registry = pages(&settings);
+    let page = registry
+        .iter()
+        .find(|page| page.name == "media viewer hovers")
+        .unwrap();
+    let reference = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "media viewer hovers")
+        .unwrap();
+    let problems = page_problems(page, &reference["items"], &settings, &store);
+    assert!(problems.is_empty(), "{problems:?}");
+    let initial = &settings.viewer_hovers;
+    assert_eq!(
+        serde_json::json!([
+            initial.tags,
+            initial.ratings,
+            initial.notes,
+            initial.index_background
+        ]),
+        fixture["initial"]
+    );
+    let mut editor = Editor::new(settings.clone());
+    let index = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "media viewer hovers")
+        .unwrap();
+    editor.show_page(index);
+    let labels = [
+        "Pop-in tags (left) hover window on mouseover:",
+        "Pop-in ratings and locations (top-right) hover window on mouseover:",
+        "Pop-in notes (right) hover window on mouseover:",
+        "Draw index text (bottom-right) in the viewer background:",
+    ];
+    let rows: Vec<usize> = labels
+        .iter()
+        .map(|label| {
+            editor
+                .rows()
+                .iter()
+                .position(|row| matches!(row,EditorRow::Opt {option,..} if option.label == *label))
+                .unwrap()
+        })
+        .collect();
+    for event in fixture["events"].as_array().unwrap() {
+        for (i, row) in rows.iter().enumerate() {
+            editor.check(*row, event["values"][i].as_bool().unwrap());
+        }
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty(), "{problems:?}");
+        let hovers = applied.viewer_hovers;
+        assert_eq!(
+            serde_json::json!([
+                hovers.tags,
+                hovers.ratings,
+                hovers.notes,
+                hovers.index_background
+            ]),
+            event["values"]
+        );
+        for i in 0..3 {
+            assert_eq!(
+                event["stored"][i].as_bool().unwrap(),
+                !event["values"][i].as_bool().unwrap()
+            );
+        }
+        assert_eq!(event["stored"][3], event["values"][3]);
+    }
+    assert_eq!(store.read(Settings::load).unwrap(), settings);
+}

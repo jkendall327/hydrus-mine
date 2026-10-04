@@ -3,11 +3,16 @@ use hydrus_core::HashId;
 use hydrus_store::{
     Store,
     media::FileFlags,
-    settings::{self, ViewerCanvasSettings},
+    settings::{self, ViewerCanvasSettings, ViewerHoverSettings},
 };
 
 pub(crate) fn refresh(window: &crate::MediaViewerWindow, store: &Store, file: HashId) {
     let options: ViewerCanvasSettings = store.read(settings::get).unwrap_or_default();
+    let hovers: ViewerHoverSettings = store.read(settings::get).unwrap_or_default();
+    window.set_hover_tags_enabled(hovers.tags);
+    window.set_hover_ratings_enabled(hovers.ratings);
+    window.set_hover_notes_enabled(hovers.notes);
+    window.set_draw_index_background(hovers.index_background);
     let transparent = store
         .read(|conn| {
             let flags: u32 =
