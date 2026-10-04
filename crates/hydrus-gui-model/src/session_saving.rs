@@ -167,3 +167,22 @@ pub fn backup_timestamp(ms: i64, timezone: &jiff::tz::TimeZone) -> String {
         },
     )
 }
+
+/// Bulk-close confirmation, including descendants in the count and grouped
+/// downloader objections. A quiet group still asks before closing.
+pub fn close_group_question(
+    count: usize,
+    description: &str,
+    vetoes: &[(String, String)],
+) -> String {
+    let count = hydrus_core::numbers::human_int(count as u64);
+    match close_all_question(vetoes) {
+        None => format!("Close {count} {description}?"),
+        Some(message) => format!(
+            "Are you sure you want to close {count} {description}?\n\n{}",
+            message
+                .strip_prefix("Close \"top page notebook\"?\n\n")
+                .unwrap_or(&message)
+        ),
+    }
+}

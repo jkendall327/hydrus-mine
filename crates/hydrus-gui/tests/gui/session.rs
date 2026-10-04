@@ -1836,3 +1836,202 @@ fn tab_size_sort_sums_open_nested_media_and_keeps_stable_ties() {
     );
     assert_eq!(pages.shown().key, small.key);
 }
+
+#[test]
+fn bulk_tab_close_matches_reference_and_undo_restores_nested_positions() {
+    use hydrus_gui::tab_context::Close;
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("tab_actions.json");
+    let search = || PageContent::Search {
+        search: FileSearchContext::default(),
+        synchronised: false,
+        sort: None,
+        lock: None,
+        collect: None,
+    };
+    let original = vec![
+        page("a", search()),
+        page(
+            "nested",
+            PageContent::Pages(vec![page("child 0", search()), page("child 1", search())]),
+        ),
+        page("c", search()),
+        page("d", search()),
+    ];
+    for step in fixture["close"].as_array().unwrap() {
+        store
+            .write(|ctx| {
+                sessions::save(
+                    ctx.conn(),
+                    &Session {
+                        name: LAST_SESSION.into(),
+                        pages: original.clone(),
+                    },
+                    100,
+                )
+            })
+            .unwrap();
+        let mut pages = Pages::open(store.clone()).unwrap();
+        pages.select(0, 2);
+        let side = match step["side"].as_str().unwrap() {
+            "left" => Close::Left,
+            "right" => Close::Right,
+            _ => Close::Other,
+        };
+        let (keys, question) = pages
+            .close_tabs_question(0, step["index"].as_u64().unwrap() as usize, side)
+            .unwrap();
+        assert_eq!(question, step["asked"][0].as_str().unwrap());
+        if step["accepted"].as_bool().unwrap() {
+            pages.close_tab_keys(&keys).unwrap();
+        }
+        assert_eq!(
+            serde_json::json!(
+                pages
+                    .session()
+                    .pages
+                    .iter()
+                    .map(|p| &p.name)
+                    .collect::<Vec<_>>()
+            ),
+            step["pages"]
+        );
+        assert_eq!(
+            pages.closed_names().len(),
+            step["closed_indices"].as_array().unwrap().len()
+        );
+        while pages.unclose() {}
+        assert_eq!(pages.session().pages, original);
+    }
+}
+
+#[test]
+fn tab_close_focus_settings_and_context_navigation_reach_consumers() {
+    use hydrus_gui::tab_context::{Move, NotebookSettings};
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("tab_actions.json");
+    let search = || PageContent::Search {
+        search: FileSearchContext::default(),
+        synchronised: false,
+        sort: None,
+        lock: None,
+        collect: None,
+    };
+    let original: Vec<_> = (0..4)
+        .map(|i| page(&format!("page {i}"), search()))
+        .collect();
+    for step in fixture["navigation"].as_array().unwrap() {
+        store
+            .write(|ctx| {
+                sessions::save(
+                    ctx.conn(),
+                    &Session {
+                        name: LAST_SESSION.into(),
+                        pages: original.clone(),
+                    },
+                    100,
+                )
+            })
+            .unwrap();
+        let mut pages = Pages::open(store.clone()).unwrap();
+        pages.select(0, 2);
+        let movement = match step["movement"].as_str().unwrap() {
+            "first" => Move::First,
+            "left" => Move::Left,
+            "right" => Move::Right,
+            _ => Move::Last,
+        };
+        pages.navigate_tabs(0, movement, std::time::Instant::now());
+        assert_eq!(
+            pages.tabs()[0].selected,
+            step["selected"].as_u64().unwrap() as usize
+        );
+    }
+    for left in [false, true] {
+        store
+            .write(|ctx| {
+                sessions::save(
+                    ctx.conn(),
+                    &Session {
+                        name: LAST_SESSION.into(),
+                        pages: original.clone(),
+                    },
+                    100,
+                )?;
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &NotebookSettings {
+                        close_focus_left: left,
+                        ..Default::default()
+                    },
+                )
+            })
+            .unwrap();
+        let mut pages = Pages::open(store.clone()).unwrap();
+        pages.select(0, 2);
+        pages.close_shown().unwrap();
+        assert_eq!(pages.shown().name, if left { "page 1" } else { "page 3" });
+    }
+}
+
+#[test]
+fn tab_popup_bulk_close_cancellation_and_acceptance_are_wired() {
+    let windows = headless::init();
+    let (_dirs, store) = store();
+    let original: Vec<_> = (0..3)
+        .map(|i| {
+            page(
+                &format!("page {i}"),
+                PageContent::Search {
+                    search: FileSearchContext::default(),
+                    synchronised: false,
+                    sort: None,
+                    lock: None,
+                    collect: None,
+                },
+            )
+        })
+        .collect();
+    store
+        .write(|ctx| {
+            sessions::save(
+                ctx.conn(),
+                &Session {
+                    name: LAST_SESSION.into(),
+                    pages: original,
+                },
+                100,
+            )
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store).unwrap());
+    fn choose(ui: &MainWindow, pane: i32, label: &str) {
+        let lines = ui.get_menu_panes().row_data(pane as usize).unwrap().lines;
+        let index = (0..lines.row_count())
+            .find(|&i| lines.row_data(i).unwrap().label == label)
+            .unwrap();
+        ui.invoke_menu_line_clicked(pane, index as i32, 200.0, 100.0, 10.0);
+    }
+    ui.invoke_tab_menu_requested(0, 0, 30.0, 55.0);
+    choose(&ui, 0, "close other pages");
+    assert_eq!(ui.get_question(), "Close 2 other pages?");
+    ui.invoke_answer(false);
+    assert_eq!(bound.pages.borrow().session().pages.len(), 3);
+    ui.invoke_tab_menu_requested(0, 0, 30.0, 55.0);
+    choose(&ui, 0, "close other pages");
+    ui.invoke_answer(true);
+    assert_eq!(bound.pages.borrow().session().pages.len(), 1);
+    assert_eq!(bound.pages.borrow_mut().closed_names().len(), 2);
+    assert!(bound.pages.borrow_mut().unclose());
+    assert!(bound.pages.borrow_mut().unclose());
+    ui.invoke_tab_menu_requested(0, 1, 30.0, 55.0);
+    let screenshot = headless::render(&windows.get(0).unwrap(), 900, 650);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("tab-context.png"),
+        &screenshot,
+        900,
+        650,
+    )
+    .unwrap();
+}

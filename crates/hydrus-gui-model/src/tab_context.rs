@@ -2,6 +2,8 @@
 
 use crate::main_menu::{Command, Entry};
 
+pub use hydrus_store::sessions::NotebookSettings;
+
 /// What a notebook's sibling pages are sorted by.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Sort {
@@ -68,30 +70,123 @@ pub fn destination(index: usize, count: usize, movement: Move) -> Option<usize> 
     (target < count && target != index).then_some(target)
 }
 
-/// The working portion of the reference's tab context menu, scoped to the
-/// clicked notebook rather than the deepest selected leaf.
-pub fn menu(depth: usize, index: usize, count: usize) -> Vec<Entry> {
-    if index >= count || count < 2 {
+/// Which siblings a bulk-close action targets.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Close {
+    Other,
+    Left,
+    Right,
+}
+
+/// Sibling indices to close, in tab order; execution closes right to left.
+pub fn close_indices(index: usize, count: usize, side: Close) -> Vec<usize> {
+    if index >= count {
         return Vec::new();
     }
-    let moves = [
-        ("to left end", Move::First),
-        ("left", Move::Left),
-        ("right", Move::Right),
-        ("to right end", Move::Last),
-    ]
-    .into_iter()
-    .filter(|&(_, movement)| destination(index, count, movement).is_some())
-    .map(|(label, movement)| Entry::Item {
+    (0..count)
+        .filter(|&i| match side {
+            Close::Other => i != index,
+            Close::Left => i < index,
+            Close::Right => i > index,
+        })
+        .collect()
+}
+
+/// The reference's description included in each bulk-close question.
+pub fn close_description(side: Close) -> &'static str {
+    match side {
+        Close::Other => "other pages",
+        Close::Left => "pages to the left",
+        Close::Right => "pages to the right",
+    }
+}
+
+/// Tab context commands scoped to the clicked row. Navigation uses the
+/// selected tab's position, while moves and close groups use the clicked tab.
+pub fn menu(depth: usize, index: usize, count: usize, selected: usize) -> Vec<Entry> {
+    if index >= count {
+        return Vec::new();
+    }
+    let item = |label: &str, command| Entry::Item {
         label: label.into(),
         enabled: true,
-        command: Some(Command::MoveTab {
-            depth,
-            index,
-            movement,
-        }),
-    })
-    .collect();
+        command: Some(command),
+    };
+    let mut entries = vec![item("close page", Command::CloseTab { depth, index })];
+    let close = |label: &str, side| item(label, Command::CloseTabs { depth, index, side });
+    if count > 1 {
+        if index == 0 || index == count - 1 {
+            entries.push(close(
+                if count == 2 {
+                    "close other page"
+                } else {
+                    "close other pages"
+                },
+                Close::Other,
+            ));
+        } else {
+            entries.push(Entry::Menu {
+                label: "close".into(),
+                entries: vec![
+                    close("other pages", Close::Other),
+                    close("pages to the left", Close::Left),
+                    close("pages to the right", Close::Right),
+                ],
+                enabled: true,
+            });
+        }
+        entries.push(Entry::Separator);
+        let possible = |at: usize, movement| match movement {
+            Move::First => at > 1,
+            Move::Left => at > 0,
+            Move::Right => at + 1 < count,
+            Move::Last => at + 2 < count,
+        };
+        let navigation = [
+            ("first page", Move::First),
+            ("page to the left", Move::Left),
+            ("page to the right", Move::Right),
+            ("last page", Move::Last),
+        ]
+        .into_iter()
+        .filter(|&(_, movement)| possible(selected, movement))
+        .map(|(label, movement)| item(label, Command::NavigateTabs { depth, movement }))
+        .collect();
+        entries.push(Entry::Menu {
+            label: "select".into(),
+            entries: navigation,
+            enabled: true,
+        });
+        let moves = [
+            ("to left end", Move::First),
+            ("left", Move::Left),
+            ("right", Move::Right),
+            ("to right end", Move::Last),
+        ]
+        .into_iter()
+        .filter(|&(_, movement)| possible(index, movement))
+        .map(|(label, movement)| {
+            item(
+                label,
+                Command::MoveTab {
+                    depth,
+                    index,
+                    movement,
+                },
+            )
+        })
+        .collect();
+        entries.push(Entry::Menu {
+            label: "move page".into(),
+            entries: moves,
+            enabled: true,
+        });
+        entries.push(sort_menu(depth));
+    }
+    entries
+}
+
+fn sort_menu(depth: usize) -> Entry {
     let sorts = [
         ("by most files first", Sort::Files, false),
         ("by fewest files first", Sort::Files, true),
@@ -111,16 +206,9 @@ pub fn menu(depth: usize, index: usize, count: usize) -> Vec<Entry> {
         }),
     })
     .collect();
-    vec![
-        Entry::Menu {
-            label: "move page".into(),
-            entries: moves,
-            enabled: true,
-        },
-        Entry::Menu {
-            label: "sort pages".into(),
-            entries: sorts,
-            enabled: true,
-        },
-    ]
+    Entry::Menu {
+        label: "sort pages".into(),
+        entries: sorts,
+        enabled: true,
+    }
 }

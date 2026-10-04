@@ -1680,3 +1680,11 @@ timestamp collisions and backwards clocks follow recorded reference behavior.
 `oracle/record_session_backups.py` drives the real reference client; store tests
 replay its retention sequence, and GUI session tests cover immutable media,
 nested append and reopening.
+
+The tab popup also closes one page or a group of other/left/right pages. Group
+confirmation counts nested notebooks and children; confirmed closes use the
+ordinary closed-page stack for undo. Tab navigation offers first/left/right/last
+from the selected tab, with the reference's descent and recent-move rules.
+`oracle/record_tab_actions.py` captures actual dynamic menus and questions;
+model and GUI regressions replay quiet confirmation, cancellation, reverse
+closing, nested undo, navigation and left/right focus preferences.

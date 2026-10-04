@@ -1129,3 +1129,7 @@ backups from imported legacy databases are not migrated; the current imported
 session is retained as the first backup when overwritten. Backup trees preserve
 downloader queue references like ordinary named sessions; independent copies of
 downloader engine state are outside this change.
+
+Bulk tab closing groups downloader objections in its confirmation. The reference's
+extra "no, but show me the pages" response on an objection dialog is not exposed;
+the native question offers yes/no. Other context submenus remain deferred.

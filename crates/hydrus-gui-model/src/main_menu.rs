@@ -133,6 +133,22 @@ pub enum Command {
     NudgeSubscriptions,
     /// Close every page (asking first) and load the saved session.
     ClearAndLoadSession(String),
+    /// Close one clicked tab through the existing confirmation/undo path.
+    CloseTab {
+        depth: usize,
+        index: usize,
+    },
+    /// Close a group of sibling tabs after one aggregate confirmation.
+    CloseTabs {
+        depth: usize,
+        index: usize,
+        side: crate::tab_context::Close,
+    },
+    /// Navigate from the selected tab within this notebook row.
+    NavigateTabs {
+        depth: usize,
+        movement: crate::tab_context::Move,
+    },
     /// Reorder the siblings of the clicked tab.
     SortTabs {
         depth: usize,

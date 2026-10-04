@@ -15,6 +15,19 @@ use hydrus_core::pages::{PageKey, Session};
 
 use crate::error::{Result, StoreError};
 
+/// Notebook workflow preferences read by the close/send consumers.
+#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct NotebookSettings {
+    /// Select the tab on the left when closing the selected tab.
+    pub close_focus_left: bool,
+    /// Ask the new notebook's name after sending pages into it.
+    pub rename_sent_notebooks: bool,
+}
+impl crate::settings::Setting for NotebookSettings {
+    const KEY: &'static str = "gui_notebooks";
+}
+
 /// The session the open pages are saved as.
 pub const LAST_SESSION: &str = "last session";
 

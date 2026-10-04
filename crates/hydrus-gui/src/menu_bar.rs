@@ -425,6 +425,28 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
     let store = hooks.pages.borrow().store().clone();
     let change_pages = &hooks.change_pages;
     match command {
+        Command::CloseTab { depth, index } => {
+            if let (Ok(depth), Ok(index)) = (i32::try_from(depth), i32::try_from(index)) {
+                window.invoke_close_tab(depth, index);
+            }
+        }
+        Command::CloseTabs { depth, index, side } => {
+            let prepared = hooks
+                .pages
+                .borrow_mut()
+                .close_tabs_question(depth, index, side);
+            if let Some((keys, question)) = prepared {
+                let change_pages = hooks.change_pages.clone();
+                (hooks.ask)(
+                    question,
+                    Rc::new(move || change_pages(&|pages| pages.close_tab_keys(&keys))),
+                );
+            }
+        }
+        Command::NavigateTabs { depth, movement } => change_pages(&|pages| {
+            pages.navigate_tabs(depth, movement, std::time::Instant::now());
+            Ok(())
+        }),
         Command::SortTabs {
             depth,
             by,

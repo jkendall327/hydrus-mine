@@ -1360,7 +1360,16 @@ impl Pages {
             self.path[depth] -= 1;
         } else if index == shown {
             if remaining > 0 {
-                self.select(depth, index.min(remaining - 1));
+                let settings: crate::tab_context::NotebookSettings = self
+                    .store
+                    .read(hydrus_store::settings::get)
+                    .unwrap_or_default();
+                let at = if settings.close_focus_left {
+                    index.saturating_sub(1)
+                } else {
+                    index
+                };
+                self.select(depth, at.min(remaining - 1));
             } else if depth > 0 {
                 // the notebook it was in is shown, empty
                 self.path.truncate(depth);
@@ -1462,6 +1471,11 @@ impl Pages {
     /// page still importing or holding imports.
     pub fn close_question(&mut self, depth: usize, index: usize) -> Option<String> {
         let page = self.notebook_at(depth)?.get(index)?.clone();
+        if matches!(page.content, PageContent::Pages(_)) {
+            let vetoes = self.close_vetoes(std::slice::from_ref(&page));
+            return crate::session_saving::close_all_question(&vetoes)
+                .map(|question| question.replacen("top page notebook", &page.name, 1));
+        }
         if !matches!(
             page.content,
             PageContent::Downloader {
@@ -1501,7 +1515,143 @@ impl Pages {
             depth,
             index,
             self.notebook_at(depth).map_or(0, <[Page]>::len),
+            self.path.get(depth).copied().unwrap_or(0),
         )
+    }
+
+    /// Navigate at a tab row's notebook, descending into its selected
+    /// notebook unless this row moved recently, just as the reference does.
+    pub fn navigate_tabs(
+        &mut self,
+        depth: usize,
+        movement: crate::tab_context::Move,
+        now: std::time::Instant,
+    ) {
+        match movement {
+            crate::tab_context::Move::Left => {
+                self.move_at(depth, -1, false, now);
+            }
+            crate::tab_context::Move::Right => {
+                self.move_at(depth, 1, false, now);
+            }
+            crate::tab_context::Move::First => {
+                self.move_end_at(depth, false, false, now);
+            }
+            crate::tab_context::Move::Last => {
+                self.move_end_at(depth, true, false, now);
+            }
+        }
+    }
+
+    fn move_end_at(
+        &mut self,
+        depth: usize,
+        last: bool,
+        test: bool,
+        now: std::time::Instant,
+    ) -> bool {
+        let Some(pages) = self.notebook_at(depth) else {
+            return false;
+        };
+        if pages.len() <= 1 {
+            return false;
+        }
+        let Some(&current) = self.path.get(depth) else {
+            return false;
+        };
+        let target = if last { pages.len() - 1 } else { 0 };
+        let nested = matches!(pages[current].content, PageContent::Pages(_));
+        let key = self.notebook_key(depth);
+        let recent = self
+            .last_moved
+            .get(&key)
+            .is_some_and(|&at| now.duration_since(at) < std::time::Duration::from_secs(3));
+        if nested && !recent && self.move_end_at(depth + 1, last, true, now) {
+            return self.move_end_at(depth + 1, last, test, now);
+        }
+        if !test {
+            self.select(depth, target);
+            self.last_moved.insert(key, now);
+        }
+        true
+    }
+
+    /// Freeze a bulk-close's targets and aggregate its confirmation. Keys
+    /// remain valid if the user selects another notebook before answering.
+    pub fn close_tabs_question(
+        &mut self,
+        depth: usize,
+        index: usize,
+        side: crate::tab_context::Close,
+    ) -> Option<(Vec<PageKey>, String)> {
+        let pages = self.notebook_at(depth)?;
+        let indices = crate::tab_context::close_indices(index, pages.len(), side);
+        let targets: Vec<Page> = indices.into_iter().map(|i| pages[i].clone()).collect();
+        if targets.is_empty() {
+            return None;
+        }
+        fn count(page: &Page) -> usize {
+            1 + if let PageContent::Pages(children) = &page.content {
+                children.iter().map(count).sum()
+            } else {
+                0
+            }
+        }
+        let held = targets.iter().map(count).sum();
+        let keys = targets.iter().map(|p| p.key).collect();
+        let vetoes = self.close_vetoes(&targets);
+        Some((
+            keys,
+            crate::session_saving::close_group_question(
+                held,
+                crate::tab_context::close_description(side),
+                &vetoes,
+            ),
+        ))
+    }
+
+    fn close_vetoes(&mut self, pages: &[Page]) -> Vec<(String, String)> {
+        fn leaves(pages: &[Page], out: &mut Vec<PageKey>) {
+            for page in pages {
+                match &page.content {
+                    PageContent::Pages(children) => leaves(children, out),
+                    _ => out.push(page.key),
+                }
+            }
+        }
+        let mut keys = Vec::new();
+        leaves(pages, &mut keys);
+        let mut vetoes = Vec::new();
+        for key in keys {
+            let name = self
+                .session
+                .all_pages()
+                .into_iter()
+                .find(|p| p.key == key)
+                .map(|p| p.name.clone())
+                .unwrap_or_default();
+            if let Some(page) = self.page(&key)
+                && let Some(reason) = page
+                    .borrow()
+                    .close_veto(self.downloader_options.confirm_non_empty_close)
+            {
+                vetoes.push((reason, name));
+            }
+        }
+        vetoes
+    }
+
+    /// Close the frozen sibling targets in reverse order. Each uses the
+    /// normal closed-page stack, so undo restores pages, queues and positions.
+    pub fn close_tab_keys(&mut self, keys: &[PageKey]) -> Result<(), String> {
+        let shown = self.shown().key;
+        for key in keys.iter().rev() {
+            if self.show(key) {
+                self.close_shown()?;
+            }
+        }
+        self.show(&shown);
+        Ok(())
     }
 
     /// Sort only the notebook at `depth`, retaining the shown leaf and
