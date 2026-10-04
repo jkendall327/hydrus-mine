@@ -2,6 +2,13 @@
 use hydrus_gui::{MainWindow, Pages, bind, headless};
 use slint::{ComponentHandle as _, Model as _};
 
+// Quantify both writer lifetimes; the associated method fixes its inner lifetime.
+fn undelete_trash(
+    writer: &mut hydrus_store::content::ContentWriter<'_>,
+) -> hydrus_store::Result<()> {
+    writer.undelete_trash()
+}
+
 #[test]
 fn services_menu_opens_review_and_refreshes() {
     let (_dirs, store) = crate::subscriptions::store();
@@ -148,9 +155,7 @@ fn local_bulk_review_replays_confirmations_store_changes_and_reopens() {
             )
         })
         .unwrap();
-    store
-        .write_content(hydrus_store::content::ContentWriter::undelete_trash)
-        .unwrap();
+    store.write_content(undelete_trash).unwrap();
     let domain = store
         .snapshot()
         .services
