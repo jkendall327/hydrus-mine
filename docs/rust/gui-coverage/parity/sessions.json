@@ -2294,7 +2294,7 @@
       "proposedStatus": "first_pass",
       "countAsCompletedLeaf": true,
       "implementationCommit": "aa5290f5",
-      "exactBehavior": "Staged integer control defaults to 100 with limits 1\u20131000. Apply caps Pages History visible entries, numbered newest-first, retaining all backing history and Clear History. Cancel leaves the stored value unchanged; legacy import/reopening preserve it; out-of-range model input clamps to the same 1–1000 bounds as the recorded Qt spinbox.",
+      "exactBehavior": "Staged integer control defaults to 100 with limits 1\u20131000. Apply caps Pages History visible entries, numbered newest-first, retaining all backing history and Clear History. Cancel leaves the stored value unchanged; legacy import/reopening preserve it; out-of-range model input clamps to the same 1\u20131000 bounds as the recorded Qt spinbox.",
       "limits": [],
       "sourceAnchors": [
         {
@@ -2432,6 +2432,222 @@
           "kind": "reference_fixture"
         },
         "observed": "Actual Qt GUI Pages values/bounds/UpdateOptions; 24 ordinary/nested/session-close AskIfAbleToClose combinations and accepted/denied questions; real sidebar PageShown focus dispatch for search and all four importers; actual Pages History menus over 25 entries for bounds/default/short limits. Empty importer worker starts are suppressed; confirmation and PageShown implementations run unchanged."
+      }
+    },
+    {
+      "reference_id": "audit-options-file-sort-collect-file-sort-namespace-file-sorting-ordered-editor-list",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Expose the ordered namespace scheme queue with stable duplicate identities, first-selected editing, extended selection, reference up/down move order and frozen delete question; child Apply stages an Options draft, outer Apply persists schemes for actual page sort and collect consumers.",
+      "countAsCompletedLeaf": false,
+      "implementationCommit": "963507dc",
+      "limits": [
+        "The native queue is an Options-owned child window; text/tag-view/delete questions appear in that window instead of the reference embedded queue and separate Qt modal dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/namespace_sorts.rs",
+          "line": 1,
+          "commit": "e5ae30e0",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/namespace_sorts_window.rs",
+          "line": 60,
+          "commit": "963507dc",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 544,
+          "commit": "963507dc",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_sorts.rs",
+          "line": 25,
+          "commit": "e5ae30e0",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_sorts.rs",
+          "line": 112,
+          "commit": "e5ae30e0",
+          "kind": "cancel_invalid_identity_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_sorts.rs",
+          "line": 76,
+          "commit": "963507dc",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_sorts.rs",
+          "line": 221,
+          "commit": "963507dc",
+          "kind": "actual_sort_collect_consumer_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_namespace_sorts.py",
+          "line": 1,
+          "commit": "e5ae30e0",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/namespace_sorts.json",
+          "line": 1,
+          "commit": "e5ae30e0",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt queue initial defaults, 13 scripted Add/Edit/Up/Down/Delete actions, exact text defaults/messages and advanced view choices, escaped hyphen cleaning, cancellation/invalid input, first-selected editing, duplicate entries, queue selection/order, isolated draft and UpdateOptions/reopen output."
+      }
+    },
+    {
+      "reference_id": "audit-options-file-sort-collect-file-sort-namespace-file-sorting-add",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Add a namespace scheme with the exact creator-series-page text default, escaped-hyphen parsing and native tag cleaning; reject empty cleaned schemes without mutation, retain duplicate rows, use display tags in normal mode and ask the exact advanced tag-view choices in order display1/multiple3/single2; cancelling either prompt changes nothing. Persist only on outer Options Apply, reopen, sort real media and expose newly added namespaces to the actual collect control.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "963507dc",
+      "limits": [
+        "The native queue is an Options-owned child window; text/tag-view/delete questions appear in that window instead of the reference embedded queue and separate Qt modal dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/namespace_sorts.rs",
+          "line": 1,
+          "commit": "e5ae30e0",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/namespace_sorts_window.rs",
+          "line": 60,
+          "commit": "963507dc",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 544,
+          "commit": "963507dc",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_sorts.rs",
+          "line": 25,
+          "commit": "e5ae30e0",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_sorts.rs",
+          "line": 112,
+          "commit": "e5ae30e0",
+          "kind": "cancel_invalid_identity_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_sorts.rs",
+          "line": 76,
+          "commit": "963507dc",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_sorts.rs",
+          "line": 221,
+          "commit": "963507dc",
+          "kind": "actual_sort_collect_consumer_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_namespace_sorts.py",
+          "line": 1,
+          "commit": "e5ae30e0",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/namespace_sorts.json",
+          "line": 1,
+          "commit": "e5ae30e0",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt queue initial defaults, 13 scripted Add/Edit/Up/Down/Delete actions, exact text defaults/messages and advanced view choices, escaped hyphen cleaning, cancellation/invalid input, first-selected editing, duplicate entries, queue selection/order, isolated draft and UpdateOptions/reopen output."
+      }
+    },
+    {
+      "reference_id": "audit-options-file-sort-collect-file-sort-namespace-file-sorting-edit",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Edit only the first selected namespace scheme through the exact escaped existing text default; clean parsed namespaces, retain row position/selection, use display tags in normal mode and the recorded advanced view chooser otherwise; cancellation at either question or invalid cleaned input preserves the original scheme. Freeze the target identity, preserve independent duplicate schemes, persist through outer Apply and reopen with edited output used by page sort/collect controls.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "963507dc",
+      "limits": [
+        "The native queue is an Options-owned child window; text/tag-view/delete questions appear in that window instead of the reference embedded queue and separate Qt modal dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/namespace_sorts.rs",
+          "line": 1,
+          "commit": "e5ae30e0",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/namespace_sorts_window.rs",
+          "line": 60,
+          "commit": "963507dc",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 544,
+          "commit": "963507dc",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_sorts.rs",
+          "line": 25,
+          "commit": "e5ae30e0",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_sorts.rs",
+          "line": 112,
+          "commit": "e5ae30e0",
+          "kind": "cancel_invalid_identity_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_sorts.rs",
+          "line": 76,
+          "commit": "963507dc",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_sorts.rs",
+          "line": 221,
+          "commit": "963507dc",
+          "kind": "actual_sort_collect_consumer_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_namespace_sorts.py",
+          "line": 1,
+          "commit": "e5ae30e0",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/namespace_sorts.json",
+          "line": 1,
+          "commit": "e5ae30e0",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt queue initial defaults, 13 scripted Add/Edit/Up/Down/Delete actions, exact text defaults/messages and advanced view choices, escaped hyphen cleaning, cancellation/invalid input, first-selected editing, duplicate entries, queue selection/order, isolated draft and UpdateOptions/reopen output."
       }
     }
   ],
@@ -2646,6 +2862,80 @@
         "Single-profile delete differs from the recorded reference crash and remains partial.",
         "Profile reset refreshes the list immediately rather than waiting for reopening.",
         "Shared import-options editor program-command editing/execution and existing limitations remain."
+      ]
+    },
+    {
+      "name": "NamespaceSortsWindow",
+      "file": "crates/hydrus-gui/ui/namespace_sorts.slint",
+      "title": "namespace file sorting / Enter text / select tag view to sort on",
+      "preferredSize": "760 \u00d7 580",
+      "controls": [
+        "Ordered ListTable with extended selection and row activation",
+        "add / edit / \u2191 / X / \u2193",
+        "Exact text question with escaped current/default namespaces",
+        "Advanced display/multiple-media/single-media tag-view choices",
+        "Frozen Remove N selected? Yes/No question",
+        "Child Apply/Cancel and parent Options Apply/Cancel isolation"
+      ],
+      "owner": "Options-owned Slot; closing Options cancels the child and invalidates retained callbacks, and outer Apply is blocked while the editor is open.",
+      "editorRoots": [
+        {
+          "name": "namespace file sorting",
+          "referenceRoot": "audit-options-file-sort-collect-file-sort-namespace-file-sorting-ordered-editor-list",
+          "columns": [
+            "namespace sorting scheme"
+          ],
+          "actions": [
+            "add",
+            "edit",
+            "up",
+            "delete",
+            "down"
+          ],
+          "source": {
+            "path": "crates/hydrus-gui/ui/namespace_sorts.slint",
+            "line": 46,
+            "commit": "963507dc",
+            "kind": "source"
+          },
+          "model": {
+            "path": "crates/hydrus-gui-model/src/namespace_sorts.rs",
+            "line": 36,
+            "commit": "e5ae30e0",
+            "kind": "source"
+          },
+          "tests": [
+            {
+              "path": "crates/hydrus-gui/tests/gui/namespace_sorts.rs",
+              "line": 76,
+              "commit": "963507dc",
+              "kind": "gui_regression"
+            }
+          ]
+        }
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 544,
+          "commit": "963507dc",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/namespace_sorts_window.rs",
+          "line": 60,
+          "commit": "963507dc",
+          "kind": "source"
+        }
+      ],
+      "guiEvidence": "queue_replays_real_questions_selection_cancel_and_parent_apply_isolation / applied_scheme_reopens_and_drives_real_ordered_media_and_new_collect_namespace; hosted GUI replay emits namespace_sorts.png.",
+      "referenceRecording": {
+        "recorder": "oracle/record_namespace_sorts.py",
+        "fixture": "oracle/fixtures/namespace_sorts.json",
+        "commit": "e5ae30e0"
+      },
+      "limits": [
+        "The native queue is an Options-owned child window; text/tag-view/delete questions appear in that window instead of the reference embedded queue and separate Qt modal dialogs."
       ]
     }
   ]
