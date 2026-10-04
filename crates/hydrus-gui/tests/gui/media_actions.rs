@@ -214,3 +214,72 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
     assert_eq!(state(&store, selected).1, ["trash"]);
     assert_eq!(page.borrow().results().len(), before - 1);
 }
+
+#[test]
+fn confirmation_policy_matches_recorded_actionable_domains_and_counts() {
+    use hydrus_store::settings::DeletionPreferences;
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let recording = hydrus_testkit::fixture_json("files_trash.json");
+    let mut page = super::common::all_local_page(store.clone());
+    page.enter();
+    let files = page.results().to_vec();
+    let snapshot = store.snapshot();
+    let roles = hydrus_store::content::DomainRoles::new(&snapshot.services).unwrap();
+    let batch = store
+        .read(|c| hydrus_store::media::load(c, &snapshot.services, None, &files))
+        .unwrap();
+    for case in recording["deletion"].as_array().unwrap() {
+        let count = usize::try_from(case["domains"].as_u64().unwrap()).unwrap();
+        let file = batch
+            .results
+            .iter()
+            .find(|m| {
+                m.current
+                    .iter()
+                    .filter(|c| roles.local.contains(&c.service))
+                    .count()
+                    == count
+            })
+            .unwrap()
+            .hash_id;
+        let preferences = DeletionPreferences {
+            confirm_trash: case["confirm"].as_bool().unwrap(),
+            ..DeletionPreferences::default()
+        };
+        store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &preferences))
+            .unwrap();
+        assert_eq!(
+            !media_actions::confirm_deletion(&store, &[file], &Deletion::ToTrash),
+            case["resolved"].as_bool().unwrap()
+        );
+        assert!(media_actions::confirm_deletion(
+            &store,
+            &[file],
+            &Deletion::Physically
+        ));
+    }
+    for case in recording["archive"].as_array().unwrap() {
+        let preferences = DeletionPreferences {
+            confirm_archive: case["confirm"].as_bool().unwrap(),
+            ..DeletionPreferences::default()
+        };
+        store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &preferences))
+            .unwrap();
+        assert_eq!(
+            media_actions::confirm_archive(
+                &store,
+                usize::try_from(case["count"].as_u64().unwrap()).unwrap()
+            ),
+            !case["questions"].as_array().unwrap().is_empty()
+        );
+    }
+}

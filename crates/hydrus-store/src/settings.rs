@@ -448,6 +448,29 @@ impl Setting for FolderSettings {
     const KEY: &'static str = "folders";
 }
 
+/// Confirmation preferences for local file operations.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct DeletionPreferences {
+    /// Ask before simple deletion from one local domain.
+    pub confirm_trash: bool,
+    /// Ask before archiving or inboxing multiple actionable files.
+    pub confirm_archive: bool,
+}
+
+impl Default for DeletionPreferences {
+    fn default() -> Self {
+        Self {
+            confirm_trash: true,
+            confirm_archive: true,
+        }
+    }
+}
+
+impl Setting for DeletionPreferences {
+    const KEY: &'static str = "deletion_preferences";
+}
+
 /// How files are read and written. As in the reference, these hold for the
 /// whole process, set when an importer is made for the store.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]

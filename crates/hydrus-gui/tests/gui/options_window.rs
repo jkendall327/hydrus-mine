@@ -4665,3 +4665,111 @@ fn viewing_timing_options_reach_real_viewer_and_archive_filter_lifetimes() {
     live.invoke_close_requested();
     assert_eq!(stats(file).views, once + 1);
 }
+
+#[test]
+fn files_trash_confirmations_are_staged_reopened_and_consumed() {
+    use hydrus_gui::media_actions;
+    use hydrus_store::settings::DeletionPreferences;
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    let preferences = || {
+        store
+            .read(hydrus_store::settings::get::<DeletionPreferences>)
+            .unwrap()
+    };
+    let change = |value| {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "files and trash");
+        for label in [
+            "Confirm sending files to trash: ",
+            "Confirm sending more than one file to archive or inbox: ",
+        ] {
+            let (index, _) = row(&window, label);
+            window.invoke_check_toggled(index, value);
+        }
+        window
+    };
+    let before = preferences();
+    let window = change(false);
+    assert_eq!(preferences(), before);
+    window.invoke_cancel();
+    assert_eq!(preferences(), before);
+    let window = change(false);
+    window.invoke_apply();
+    assert!(!preferences().confirm_archive);
+    assert!(!preferences().confirm_trash);
+    open(&ui);
+    let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&reopened, "files and trash");
+    assert!(!row(&reopened, "Confirm sending files to trash: ").1.checked);
+    assert!(
+        !row(
+            &reopened,
+            "Confirm sending more than one file to archive or inbox: "
+        )
+        .1
+        .checked
+    );
+    reopened.invoke_cancel();
+
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let page = bound.current.borrow().clone();
+    let results = page.borrow().results().to_vec();
+    let (inbox, _) = media_actions::by_inbox(&store, &results);
+    let files = &inbox[..2];
+    page.borrow_mut().select_files(files);
+    ui.invoke_archive_selected();
+    assert_eq!(ui.get_question(), "");
+    assert!(media_actions::by_inbox(&store, files).0.is_empty());
+    ui.invoke_inbox_selected();
+    assert_eq!(media_actions::by_inbox(&store, files).0, files);
+    change(true).invoke_apply();
+    ui.invoke_archive_selected();
+    assert_eq!(ui.get_question(), "Archive 2 files?");
+    ui.invoke_answer(false);
+    assert_eq!(media_actions::by_inbox(&store, files).0, files);
+    ui.invoke_archive_selected();
+    ui.invoke_answer(true);
+    assert!(media_actions::by_inbox(&store, files).0.is_empty());
+
+    change(false).invoke_apply();
+    let single_domain = results
+        .iter()
+        .copied()
+        .find(|file| {
+            let snapshot = store.snapshot();
+            let roles = hydrus_store::content::DomainRoles::new(&snapshot.services).unwrap();
+            let batch = store
+                .read(|c| hydrus_store::media::load(c, &snapshot.services, None, &[*file]))
+                .unwrap();
+            batch.results[0]
+                .current
+                .iter()
+                .filter(|current| roles.local.contains(&current.service))
+                .count()
+                == 1
+        })
+        .unwrap();
+    let index = page
+        .borrow()
+        .results()
+        .iter()
+        .position(|file| *file == single_domain)
+        .unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let before = page.borrow().results().len();
+    viewer.invoke_delete();
+    assert_eq!(viewer.get_question(), "");
+    assert_eq!(page.borrow().results().len(), before - 1);
+    assert!(!page.borrow().results().contains(&single_domain));
+    viewer.invoke_close_requested();
+    assert!(windows.get(0).is_some());
+}

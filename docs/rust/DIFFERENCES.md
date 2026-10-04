@@ -1834,3 +1834,9 @@ A triggering downloader cancellation leaves its engine-owned login alive, while
 process cancellation stops later steps and records the reference four-hour delay.
 Invalid ordinary requests wait 60 seconds; subscriptions retain the exact
 reference cancellation note.
+
+Files and Trash confirmation preferences now reach thumbnail and viewer local
+file operations. The native deletion question still presents one action rather
+than the reference's complete service/action picker; advanced deletion reasons,
+remembered actions, custom-reason queue and copy/move-domain confirmation controls
+are not yet connected. Undelete currently restores immediately.

@@ -1386,7 +1386,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let ask = {
         let pending = pending.clone();
         let weak = window.as_weak();
+        let page = page.clone();
+        let removed = removed.clone();
+        let shown = shown.clone();
         move |asked: Asked| {
+            let store = page().borrow().store().clone();
+            if let Asked::Delete(files, deletion, _) = &asked
+                && !media_actions::confirm_deletion(&store, files, deletion)
+            {
+                asked.act(&store, &*removed);
+                shown(false);
+                return;
+            }
             if let Some(window) = weak.upgrade() {
                 window.set_question(asked.question().into());
                 *pending.borrow_mut() = Some(asked);
@@ -1413,13 +1424,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let store = page.borrow().store().clone();
             let (inbox, archived) = media_actions::by_inbox(&store, &selected_files());
             let files = if archive { inbox } else { archived };
-            match files.len() {
-                0 => {}
-                1 => {
+            if !files.is_empty() {
+                if media_actions::confirm_archive(&store, files.len()) {
+                    ask(Asked::archive_or_inbox(archive, files));
+                } else {
                     Asked::archive_or_inbox(archive, files).act(&store, &|_| {});
                     shown(false);
                 }
-                _ => ask(Asked::archive_or_inbox(archive, files)),
             }
         }
     };
@@ -1448,9 +1459,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 return;
             }
             let page = page();
-            let page = page.borrow();
-            if let Some(deletion) = media_actions::deletion(page.store(), page.location(), &files) {
-                ask(Asked::Delete(files, deletion, page.location().clone()));
+            let (deletion, location) = {
+                let page = page.borrow();
+                (
+                    media_actions::deletion(page.store(), page.location(), &files),
+                    page.location().clone(),
+                )
+            };
+            if let Some(deletion) = deletion {
+                ask(Asked::Delete(files, deletion, location));
             }
         }
     });
@@ -3323,10 +3340,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         media_actions::Deletion::Physically,
                     );
                 }
-                Action::DeletePhysically => delete(
-                    page.borrow().selected_files(),
-                    media_actions::Deletion::Physically,
-                ),
+                Action::DeletePhysically => {
+                    let files = page.borrow().selected_files();
+                    delete(files, media_actions::Deletion::Physically);
+                }
                 Action::Undelete => window.invoke_undelete_selected(),
                 Action::ManageTags => window.invoke_manage_tags_selected(),
                 Action::ManageNotes => {
@@ -5040,14 +5057,23 @@ fn open_viewer(
     let ask = {
         let pending = pending.clone();
         let weak = window.as_weak();
+        let model = model.clone();
         move |asked: ViewerAsked| {
             if let Some(window) = weak.upgrade() {
                 let question = match &asked {
                     ViewerAsked::Delete(deletion, _) => deletion.question(1),
                     ViewerAsked::OpenUrls(urls) => Asked::OpenUrls(urls.clone()).question(),
                 };
+                let auto_accept = if let ViewerAsked::Delete(deletion, file) = &asked {
+                    !media_actions::confirm_deletion(model.borrow().store(), &[*file], deletion)
+                } else {
+                    false
+                };
                 window.set_question(question.into());
                 *pending.borrow_mut() = Some(asked);
+                if auto_accept {
+                    window.invoke_answer(true);
+                }
             }
         }
     };
@@ -5322,11 +5348,15 @@ fn open_viewer(
         let model = model.clone();
         let ask = ask.clone();
         move || {
-            let model = model.borrow();
-            let deletion =
-                media_actions::deletion(model.store(), model.location(), &[model.current()]);
+            let (deletion, file) = {
+                let model = model.borrow();
+                (
+                    media_actions::deletion(model.store(), model.location(), &[model.current()]),
+                    model.current(),
+                )
+            };
             if let Some(deletion) = deletion {
-                ask(ViewerAsked::Delete(deletion, model.current()));
+                ask(ViewerAsked::Delete(deletion, file));
             }
         }
     });

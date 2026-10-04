@@ -425,6 +425,19 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &preferences)?;
+    let mut deletion = crate::settings::DeletionPreferences::default();
+    for (key, field) in [
+        ("confirm_trash", &mut deletion.confirm_trash),
+        ("confirm_archive", &mut deletion.confirm_archive),
+    ] {
+        if let Some(value) = legacy_options
+            .get(key)
+            .and_then(hydrus_legacy::objects::YamlValue::as_bool)
+        {
+            *field = value;
+        }
+    }
+    insert_setting(&mut input, &deletion)?;
     let mut delete_lock = crate::delete_lock::DeleteLock::default();
     if let Some(options) = &options {
         for (key, field) in delete_lock.by_option_name() {

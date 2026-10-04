@@ -1,0 +1,222 @@
+{
+  "initial": {
+    "confirm_archive": true,
+    "confirm_trash": true
+  },
+  "options": [
+    {
+      "entered": false,
+      "staged": [
+        true,
+        true
+      ],
+      "reopened": [
+        false,
+        false
+      ]
+    },
+    {
+      "entered": true,
+      "staged": [
+        false,
+        false
+      ],
+      "reopened": [
+        true,
+        true
+      ]
+    }
+  ],
+  "archive": [
+    {
+      "confirm": false,
+      "action": "archive",
+      "count": 1,
+      "accepted": false,
+      "questions": [],
+      "writes": [
+        "content_updates"
+      ]
+    },
+    {
+      "confirm": false,
+      "action": "archive",
+      "count": 1,
+      "accepted": true,
+      "questions": [],
+      "writes": [
+        "content_updates"
+      ]
+    },
+    {
+      "confirm": false,
+      "action": "archive",
+      "count": 2,
+      "accepted": false,
+      "questions": [],
+      "writes": [
+        "content_updates"
+      ]
+    },
+    {
+      "confirm": false,
+      "action": "archive",
+      "count": 2,
+      "accepted": true,
+      "questions": [],
+      "writes": [
+        "content_updates"
+      ]
+    },
+    {
+      "confirm": false,
+      "action": "inbox",
+      "count": 1,
+      "accepted": false,
+      "questions": [],
+      "writes": [
+        "content_updates"
+      ]
+    },
+    {
+      "confirm": false,
+      "action": "inbox",
+      "count": 1,
+      "accepted": true,
+      "questions": [],
+      "writes": [
+        "content_updates"
+      ]
+    },
+    {
+      "confirm": false,
+      "action": "inbox",
+      "count": 2,
+      "accepted": false,
+      "questions": [],
+      "writes": [
+        "content_updates"
+      ]
+    },
+    {
+      "confirm": false,
+      "action": "inbox",
+      "count": 2,
+      "accepted": true,
+      "questions": [],
+      "writes": [
+        "content_updates"
+      ]
+    },
+    {
+      "confirm": true,
+      "action": "archive",
+      "count": 1,
+      "accepted": false,
+      "questions": [],
+      "writes": [
+        "content_updates"
+      ]
+    },
+    {
+      "confirm": true,
+      "action": "archive",
+      "count": 1,
+      "accepted": true,
+      "questions": [],
+      "writes": [
+        "content_updates"
+      ]
+    },
+    {
+      "confirm": true,
+      "action": "archive",
+      "count": 2,
+      "accepted": false,
+      "questions": [
+        "Archive 2 files?"
+      ],
+      "writes": []
+    },
+    {
+      "confirm": true,
+      "action": "archive",
+      "count": 2,
+      "accepted": true,
+      "questions": [
+        "Archive 2 files?"
+      ],
+      "writes": [
+        "content_updates"
+      ]
+    },
+    {
+      "confirm": true,
+      "action": "inbox",
+      "count": 1,
+      "accepted": false,
+      "questions": [],
+      "writes": [
+        "content_updates"
+      ]
+    },
+    {
+      "confirm": true,
+      "action": "inbox",
+      "count": 1,
+      "accepted": true,
+      "questions": [],
+      "writes": [
+        "content_updates"
+      ]
+    },
+    {
+      "confirm": true,
+      "action": "inbox",
+      "count": 2,
+      "accepted": false,
+      "questions": [
+        "Send 2 files to inbox?"
+      ],
+      "writes": []
+    },
+    {
+      "confirm": true,
+      "action": "inbox",
+      "count": 2,
+      "accepted": true,
+      "questions": [
+        "Send 2 files to inbox?"
+      ],
+      "writes": [
+        "content_updates"
+      ]
+    }
+  ],
+  "deletion": [
+    {
+      "confirm": false,
+      "domains": 1,
+      "resolved": true,
+      "description": "Send one file from art to trash?"
+    },
+    {
+      "confirm": false,
+      "domains": 2,
+      "resolved": false,
+      "description": "Remove one file from art?"
+    },
+    {
+      "confirm": true,
+      "domains": 1,
+      "resolved": false,
+      "description": "Send one file from art to trash?"
+    },
+    {
+      "confirm": true,
+      "domains": 2,
+      "resolved": false,
+      "description": "Remove one file from art?"
+    }
+  ]
+}

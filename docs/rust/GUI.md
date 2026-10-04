@@ -2765,3 +2765,10 @@ are persisted per store. Dropped/unpolled processes retire only their owner;
 stale metadata after a crash cannot keep the admission lock or cancel a new
 process. Queued manual cancellation preserves the current global login, and
 forced login still executes with existing session cookies.
+
+Files and Trash now saves the confirmation preferences for trash and multi-file
+archive/inbox operations. Thumbnail shortcuts and menu actions read the applied
+preferences; the viewer also skips a simple local deletion question when trash
+confirmation is disabled. Multiple actionable local domains and physical deletion
+continue to ask. Cancelling Options leaves these preferences unchanged.
+The real Qt inputs and questions are recorded in `files_trash.json`.
