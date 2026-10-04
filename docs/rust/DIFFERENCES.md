@@ -679,6 +679,10 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   Source/destination editor samples, filename conversions, JSON formula data and
   timestamp stubs round-trip. Non-stub timestamps and unsupported processors are
   rejected before staging rather than silently dropping information.
+  Typed router/subsidiary exports now use the reusable title/description/width PNG
+  child and retain the reference type/count/size summary in its header. Selected
+  queues export as one bundle; the reference's separate export-each-object-to-PNGs
+  dialog is still absent.
   Export-folder search results
   are not yet supplied as media examples (manual exports are).
 - **The string processor editor** receives starting strings from the sidecar

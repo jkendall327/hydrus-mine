@@ -1082,3 +1082,105 @@ fn closing_manual_export_discards_its_pending_router_exchange() {
     hydrus_gui_model::sidecar_editors::validate_router_import(Context::Export, &original).unwrap();
     owner.invoke_dismissed();
 }
+
+#[test]
+fn router_png_child_has_recorded_parameters_and_closes_with_its_queue_owner() {
+    use hydrus_gui::sidecars_window;
+    use hydrus_gui_model::{png_export, sidecar_editors::Context};
+    use std::{cell::Cell, rc::Rc};
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let reference = hydrus_testkit::fixture_json("parser_png_export.json");
+    let case = reference
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["case"] == "router_queue")
+        .unwrap();
+    let routers =
+        hydrus_downloader_exchange::routers::decode_text(&case["payload"].to_string()).unwrap();
+    let slots = sidecars_window::Slots::default();
+    let applied = Rc::new(Cell::new(false));
+    let owner = sidecars_window::open_routers(
+        &store,
+        Context::Export,
+        routers,
+        &slots,
+        Rc::new({
+            let applied = applied.clone();
+            move |_| applied.set(true)
+        }),
+    )
+    .unwrap();
+    *slots.routers.borrow_mut() = Some(owner.clone_strong());
+    owner.invoke_row_clicked(0, false, false);
+    owner.invoke_row_clicked(1, true, false);
+    owner.invoke_exchange(false);
+    let exchange = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    assert!(exchange.get_png_enabled());
+    exchange.invoke_export_png();
+    let png = slots.exchange.1.window().unwrap();
+    assert_eq!(png.get_png_title(), case["default_title"].as_str().unwrap());
+    assert_eq!(
+        png.get_payload_description(),
+        case["summary"].as_str().unwrap()
+    );
+    assert_eq!(png.get_description(), "");
+    assert_eq!(png.get_png_width(), 512);
+    assert!(exchange.get_png_child());
+    let files = tempfile::tempdir().unwrap();
+    let path = files.path().join("typed-router");
+    png.set_path(path.to_string_lossy().into_owned().into());
+    png.set_png_title("recorded queue 日本".into());
+    png.set_description("synthetic typed export".into());
+    png.set_png_width(300);
+    png.invoke_action("update".into());
+    assert!(png.get_can_export());
+    owner.invoke_apply();
+    assert!(!applied.get());
+    let blocked = files.path().join("blocked.png");
+    exchange.set_path(blocked.to_string_lossy().into_owned().into());
+    exchange.invoke_action("save".into());
+    assert!(!blocked.exists());
+    png.invoke_action("export".into());
+    assert!(png.get_done(), "{}", png.get_error());
+    let data = std::fs::read(path.with_extension("png")).unwrap();
+    assert_eq!(hydrus_media::decode_image(&data).unwrap().width(), 300);
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(
+            &hydrus_downloader_exchange::text_png::decode(&data).unwrap()
+        )
+        .unwrap(),
+        case["loaded"]
+    );
+    assert_eq!(
+        store
+            .read(settings::get::<png_export::Directory>)
+            .unwrap()
+            .0,
+        Some(files.path().to_string_lossy().into_owned())
+    );
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 720, 380);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("typed_router_png.png"),
+        &pixels,
+        720,
+        380,
+    )
+    .unwrap();
+    png.invoke_action("close".into());
+    assert!(!exchange.get_png_child());
+    exchange.invoke_export_png();
+    let stale = slots.exchange.1.window().unwrap();
+    let stale_path = files.path().join("stale.png");
+    stale.set_path(stale_path.to_string_lossy().into_owned().into());
+    slots.cancel();
+    assert!(slots.routers.borrow().is_none());
+    assert!(slots.exchange.1.window().is_none());
+    stale.invoke_action("export".into());
+    exchange.invoke_export_png();
+    owner.invoke_apply();
+    assert!(!stale_path.exists());
+    assert!(!applied.get());
+    assert!(slots.exchange.1.window().is_none());
+}

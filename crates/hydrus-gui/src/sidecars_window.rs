@@ -1433,8 +1433,8 @@ pub fn open_routers(
                     Ok(())
                 }
             });
-            match crate::downloader_interchange_window::open_routers(
-                &slots.exchange, importing, routers, preview, applied,
+            match crate::downloader_interchange_window::open_routers_with_store(
+                &store, &slots.exchange, importing, routers, preview, applied,
             ) {
                 Ok(child) => {
                     let refresh = refresh.clone();

@@ -1035,7 +1035,7 @@ fn open_editor(
                         e.subsidiary_selection.select_many(&added); e.subsidiary_selected = e.subsidiary_selection.one();
                         drop(e); refresh(); Ok(())
                     }});
-                    let child = crate::downloader_interchange_window::open_subsidiaries(&slots.exchange, action == "import-subsidiary", parsers, preview, applied)?;
+                    let child = crate::downloader_interchange_window::open_subsidiaries_with_store(&store,&slots.exchange, action == "import-subsidiary", parsers, preview, applied)?;
                     let refresh = refresh.clone(); child.on_closed(move || refresh());
                 }
                 "duplicate-subsidiary" => {
