@@ -89,7 +89,10 @@ fn dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer() {
         .unwrap();
     }
     page.borrow_mut().refresh_tags();
+    let search_service = snapshot.services.by_name("my tags").unwrap().key.clone();
+    page.borrow_mut().choose_tag_service(search_service.clone());
     page.borrow_mut().lock_search();
+    assert_eq!(page.borrow().tag_context().service, search_service);
     ui.invoke_thumbnail_activated(0);
     let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
     let w = open(&ui, &bound, false);
@@ -190,8 +193,6 @@ fn dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer() {
             .any(|r| r.text.starts_with("display lane old"))
     );
     manage.invoke_cancel();
-    page.borrow_mut()
-        .choose_tag_service(snapshot.services.by_name("my tags").unwrap().key.clone());
     ui.invoke_search_edited("display lane".into());
     assert_eq!(ui.get_suggestions().row_count(), 0);
     ui.invoke_search_fetch();
