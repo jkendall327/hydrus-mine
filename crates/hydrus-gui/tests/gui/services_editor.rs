@@ -391,3 +391,299 @@ fn staged_rating_config_applies_and_cancel_writes_nothing() {
     edit.invoke_cancel_clicked();
     manage.invoke_cancel_clicked();
 }
+
+#[test]
+fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners() {
+    use hydrus_core::{media_viewer::MediaViewerSettings, thumbnail::ThumbnailRatingSettings};
+    use hydrus_store::{services::ServiceKind, settings};
+
+    let recorded = hydrus_testkit::fixture_json("service_rating_preview.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &ThumbnailRatingSettings {
+                    icon_size: 20.9,
+                    incdec_height: 17.4,
+                    ..ThumbnailRatingSettings::default()
+                },
+            )?;
+            settings::set(
+                ctx.conn(),
+                &MediaViewerSettings {
+                    rating_icon_size: 15.9,
+                    rating_incdec_height: 19.4,
+                    ..MediaViewerSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let before = store
+        .snapshot()
+        .services
+        .all()
+        .map(|s| (**s).clone())
+        .collect::<Vec<_>>();
+    let rating_counts = || {
+        store
+            .read(|conn| {
+                Ok((
+                    conn.query_row("SELECT COUNT(*) FROM ratings", [], |r| r.get::<_, i64>(0))?,
+                    conn.query_row("SELECT COUNT(*) FROM ratings_incdec", [], |r| {
+                        r.get::<_, i64>(0)
+                    })?,
+                ))
+            })
+            .unwrap()
+    };
+    let counts = rating_counts();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    open(&ui);
+    let manage = bound
+        .services_editor
+        .manage
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    for result in recorded["results"].as_array().unwrap() {
+        let index = manage
+            .get_rows()
+            .iter()
+            .position(|r| r.cells.row_data(0).unwrap() == result["name"].as_str().unwrap())
+            .unwrap();
+        manage.invoke_row_clicked(i32::try_from(index).unwrap(), false, false);
+        manage.invoke_edit_clicked();
+        let edit = bound
+            .services_editor
+            .edit
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        assert_eq!(edit.get_examples().row_count(), 4);
+        assert!(edit.get_example_expanded());
+        assert_eq!(
+            serde_json::json!(
+                edit.get_examples()
+                    .iter()
+                    .map(|r| r.label.to_string())
+                    .collect::<Vec<_>>()
+            ),
+            result["labels"]
+        );
+        assert_eq!(edit.get_examples().row_data(0).unwrap().icon_size, 20.0);
+        assert_eq!(edit.get_examples().row_data(1).unwrap().icon_size, 15.0);
+        assert_eq!(edit.get_examples().row_data(2).unwrap().icon_size, 12.0);
+        assert_eq!(edit.get_examples().row_data(3).unwrap().icon_size, 12.0);
+        assert_eq!(edit.get_examples().row_data(0).unwrap().incdec_height, 17.0);
+        edit.invoke_preview_clicked(0, false, 0.5);
+        edit.invoke_preview_clicked(2, false, 0.5);
+        manage.invoke_apply_clicked();
+        assert!(bound.services_editor.manage.borrow().is_some());
+        assert!(bound.services_editor.edit.borrow().is_some());
+        edit.invoke_colour_edited(0, true, "#112233".into());
+        edit.invoke_colour_edited(0, false, "#445566".into());
+        if edit.get_numerical() {
+            edit.set_stars(7);
+            edit.set_icon_padding(3);
+            edit.set_fraction(2);
+            edit.set_appearance(12); // recorded shape code 40: diamond
+            edit.invoke_preview_edited();
+            assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "3/7");
+            assert_eq!(edit.get_examples().row_data(1).unwrap().fraction, "-/7");
+            assert_eq!(
+                edit.get_examples()
+                    .row_data(0)
+                    .unwrap()
+                    .graphic
+                    .shapes
+                    .row_count(),
+                7
+            );
+            assert_eq!(edit.get_examples().row_data(0).unwrap().graphic.pad, 3.0);
+            assert_eq!(
+                edit.get_examples().row_data(0).unwrap().fraction_placement,
+                2
+            );
+        }
+        let example = edit.get_examples().row_data(0).unwrap();
+        if example.graphic.kind == 2 {
+            edit.invoke_counter_edit(3);
+            assert!(edit.get_counter_editing());
+            edit.set_counter_value(12345);
+            edit.invoke_apply_clicked();
+            assert!(bound.services_editor.edit.borrow().is_some());
+            edit.invoke_counter_answered(false);
+            assert_eq!(edit.get_examples().row_data(3).unwrap().graphic.text, "0");
+            edit.invoke_counter_edit(3);
+            edit.set_counter_value(12345);
+            edit.invoke_counter_answered(true);
+            assert_eq!(
+                edit.get_examples().row_data(3).unwrap().graphic.text,
+                "12,345"
+            );
+            assert_eq!(edit.get_examples().row_data(3).unwrap().counter_width, 38.0);
+            assert_eq!(edit.get_examples().row_data(0).unwrap().graphic.text, "1");
+        } else {
+            let pen = example.graphic.shapes.row_data(0).unwrap().pen;
+            let brush = example.graphic.shapes.row_data(0).unwrap().brush;
+            assert_eq!(pen, slint::Color::from_rgb_u8(17, 34, 51));
+            assert_eq!(brush, slint::Color::from_rgb_u8(68, 85, 102));
+            assert_ne!(
+                example.graphic.shapes.row_data(0).unwrap().brush,
+                edit.get_examples()
+                    .row_data(1)
+                    .unwrap()
+                    .graphic
+                    .shapes
+                    .row_data(0)
+                    .unwrap()
+                    .brush
+            );
+        }
+        // Child Cancel discards samples and configuration; a retained child is inert.
+        edit.invoke_cancel_clicked();
+        let old_samples = edit.get_examples().iter().collect::<Vec<_>>();
+        manage.invoke_edit_clicked();
+        let successor = bound
+            .services_editor
+            .edit
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        edit.invoke_preview_clicked(1, false, 0.5);
+        edit.invoke_counter_edit(0);
+        edit.invoke_counter_answered(true);
+        edit.invoke_apply_clicked();
+        edit.invoke_cancel_clicked();
+        assert_eq!(edit.get_examples().iter().collect::<Vec<_>>(), old_samples);
+        assert!(bound.services_editor.edit.borrow().is_some());
+        assert_eq!(
+            successor.get_examples().row_data(0).unwrap().graphic.text,
+            if example.graphic.kind == 2 { "0" } else { "" }
+        );
+        if successor.get_numerical() {
+            assert_eq!(successor.get_stars(), 5);
+        }
+        successor.invoke_cancel_clicked();
+    }
+    manage.invoke_cancel_clicked();
+    assert_eq!(
+        store
+            .snapshot()
+            .services
+            .all()
+            .map(|s| (**s).clone())
+            .collect::<Vec<_>>(),
+        before
+    );
+    assert_eq!(rating_counts(), counts);
+
+    // Accepting an example configuration stages the actual service edit; only
+    // the parent Apply persists it. Sample values never rate existing files.
+    open(&ui);
+    let manage = bound
+        .services_editor
+        .manage
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let index = manage
+        .get_rows()
+        .iter()
+        .position(|r| r.cells.row_data(0).unwrap() == "stars")
+        .unwrap();
+    manage.invoke_row_clicked(i32::try_from(index).unwrap(), false, false);
+    manage.invoke_edit_clicked();
+    let edit = bound
+        .services_editor
+        .edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    edit.set_stars(7);
+    edit.set_icon_padding(3);
+    edit.set_fraction(2);
+    edit.set_appearance(12);
+    edit.invoke_colour_edited(0, true, "#112233".into());
+    edit.invoke_colour_edited(0, false, "#445566".into());
+    edit.invoke_preview_clicked(0, false, 0.5);
+    edit.invoke_preview_edited();
+    let last = (0..100)
+        .take_while(|&n| windows.get(n).is_some())
+        .last()
+        .unwrap();
+    let pixels = headless::render(&windows.get(last).unwrap(), 640, 900);
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel[3] == 255));
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("service-rating-examples.png"),
+        &pixels,
+        640,
+        900,
+    )
+    .unwrap();
+    edit.invoke_apply_clicked();
+    assert_eq!(
+        store
+            .snapshot()
+            .services
+            .all()
+            .map(|s| (**s).clone())
+            .collect::<Vec<_>>(),
+        before
+    );
+    manage.invoke_apply_clicked();
+    let committed = store.snapshot().services.by_name("stars").unwrap().clone();
+    let ServiceKind::RatingNumerical(config) = &committed.kind else {
+        panic!("wrong rating kind")
+    };
+    assert_eq!(config.num_stars, 7);
+    assert_eq!(config.custom_pad, 3);
+    assert_eq!(config.show_fraction_beside_stars, 2);
+    assert_eq!(config.display.colours.like.brush.0, [68, 85, 102]);
+    assert_eq!(rating_counts(), counts);
+    open(&ui);
+    let manage = bound
+        .services_editor
+        .manage
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let index = manage
+        .get_rows()
+        .iter()
+        .position(|r| r.cells.row_data(0).unwrap() == "stars")
+        .unwrap();
+    manage.invoke_row_clicked(i32::try_from(index).unwrap(), false, false);
+    manage.invoke_edit_clicked();
+    let reopened = bound
+        .services_editor
+        .edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(reopened.get_stars(), 7);
+    assert_eq!(reopened.get_examples().row_data(0).unwrap().fraction, "-/7");
+    reopened.invoke_preview_clicked(0, false, 0.5);
+    // Closing the parent while a sample is active invalidates all child callbacks.
+    manage.invoke_cancel_clicked();
+    reopened.invoke_colour_edited(0, false, "#ffffff".into());
+    reopened.invoke_apply_clicked();
+    assert!(bound.services_editor.edit.borrow().is_none());
+    assert_eq!(
+        store.snapshot().services.by_name("stars").unwrap().as_ref(),
+        committed.as_ref()
+    );
+    assert_eq!(rating_counts(), counts);
+}

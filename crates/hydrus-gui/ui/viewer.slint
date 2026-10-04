@@ -58,7 +58,7 @@ export struct RatingRow {
 }
 
 // Shared passive rating drawing; input belongs only to the hover's own TouchArea.
-component RatingGraphic inherits Rectangle {
+export component RatingGraphic inherits Rectangle {
     in property <RatingRow> rating;
     in property <length> icon-size: 12px;
     in property <length> incdec-height: 12px;

@@ -1,5 +1,8 @@
 //! Manage local services with detached edits and transaction-time deletion checks.
-use crate::{EditServiceWindow, ServiceColourRow, ServicesEditorWindow, TableColumn, TableRow};
+use crate::{
+    EditServiceWindow, ServiceColourRow, ServiceRatingExampleRow, ServicesEditorWindow,
+    TableColumn, TableRow,
+};
 use hydrus_core::{ServiceId, ServiceKey};
 use hydrus_gui_model::services_editor::{self, Editor};
 use hydrus_store::{
@@ -157,6 +160,7 @@ fn edit(
     slots: &Slots,
     done: Rc<dyn Fn(String, ServiceKind)>,
     parent_active: Rc<Cell<bool>>,
+    sizes: [(f64, f64); 4],
 ) -> Result<(), String> {
     let window = EditServiceWindow::new().map_err(|e| e.to_string())?;
     window.set_service_name(service.name.as_str().into());
@@ -243,9 +247,90 @@ fn edit(
         window.set_fraction(i32::from(c.show_fraction_beside_stars));
     }
     let colours = Rc::new(RefCell::new(colours));
+    let active = Rc::new(Cell::new(true));
+    let samples = Rc::new(RefCell::new(
+        hydrus_gui_model::rating_example::Example::new(&service.kind),
+    ));
+    let pending_counter = Rc::new(Cell::new(None::<usize>));
+    let refresh = Rc::new({
+        let weak = window.as_weak();
+        let colours = colours.clone();
+        let original = service.kind.clone();
+        let samples = samples.clone();
+        let active = active.clone();
+        let parent_active = parent_active.clone();
+        move || {
+            if !active.get() || !parent_active.get() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else { return };
+            let Some(example) = samples.borrow().as_ref().cloned() else {
+                return;
+            };
+            let mut kind = match edited_kind(&w, &original, &colours.borrow()) {
+                Ok(kind) => kind,
+                Err(error) => {
+                    w.set_error(error.into());
+                    return;
+                }
+            };
+            // This checkbox does not update Qt's example service. It remains a
+            // staged persistence setting, independent of the opening sample conversion.
+            if let (ServiceKind::RatingNumerical(c), ServiceKind::RatingNumerical(initial)) =
+                (&mut kind, &original)
+            {
+                if c.num_stars > 1 {
+                    c.allow_zero = initial.allow_zero;
+                }
+            }
+            let rows = (0..4)
+                .filter_map(|i| {
+                    let control = example.control(i, &kind)?;
+                    let mut graphic = crate::rating_row(&control);
+                    let fraction_placement = if let ServiceKind::RatingNumerical(c) = &kind {
+                        graphic.pad = c.custom_pad as f32;
+                        i32::from(c.show_fraction_beside_stars)
+                    } else {
+                        0
+                    };
+                    let (icon_size, incdec_height) = sizes[i];
+                    let counter_width =
+                        if let hydrus_gui_model::rating_example::Sample::IncDec(value) =
+                            example.samples()[i]
+                        {
+                            hydrus_gui_model::rating_example::counter_width(incdec_height, value)
+                        } else {
+                            0.0
+                        };
+                    Some(ServiceRatingExampleRow {
+                        label: hydrus_gui_model::rating_example::LABELS[i].into(),
+                        graphic,
+                        icon_size: icon_size as f32,
+                        incdec_height: incdec_height as f32,
+                        outline: hydrus_gui_model::ratings::outline_width(icon_size) as f32,
+                        counter_width: counter_width as f32,
+                        fraction: example.fraction(i, &kind).into(),
+                        fraction_placement,
+                    })
+                })
+                .collect::<Vec<_>>();
+            w.set_examples(ModelRc::new(VecModel::from(rows)));
+            w.set_error(SharedString::new());
+        }
+    });
+    window.on_preview_edited({
+        let refresh = refresh.clone();
+        move || refresh()
+    });
     window.on_colour_edited({
         let colours = colours.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let parent_active = parent_active.clone();
         move |i, border, text| {
+            if !active.get() || !parent_active.get() {
+                return;
+            }
             if let Ok(i) = usize::try_from(i)
                 && let Some(c) = colours.borrow_mut().get_mut(i)
             {
@@ -255,9 +340,83 @@ fn edit(
                     c.1 = text.to_string();
                 }
             }
+            refresh();
         }
     });
-    let active = Rc::new(Cell::new(true));
+    window.on_preview_clicked({
+        let weak = window.as_weak();
+        let samples = samples.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let parent_active = parent_active.clone();
+        let pending_counter = pending_counter.clone();
+        move |index, right, proportion| {
+            if !active.get() || !parent_active.get() || pending_counter.get().is_some() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else { return };
+            if !w.window().is_visible() {
+                return;
+            }
+            if let Ok(index) = usize::try_from(index)
+                && let Some(example) = samples.borrow_mut().as_mut()
+            {
+                example.click(index, right, f64::from(proportion));
+            }
+            refresh();
+        }
+    });
+    window.on_counter_edit({
+        let weak = window.as_weak();
+        let samples = samples.clone();
+        let active = active.clone();
+        let parent_active = parent_active.clone();
+        let pending_counter = pending_counter.clone();
+        move |index| {
+            if !active.get() || !parent_active.get() || pending_counter.get().is_some() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else { return };
+            if !w.window().is_visible() {
+                return;
+            }
+            if let Ok(index) = usize::try_from(index)
+                && let Some(example) = samples.borrow().as_ref()
+                && let Some(hydrus_gui_model::rating_example::Sample::IncDec(value)) =
+                    example.samples().get(index)
+            {
+                pending_counter.set(Some(index));
+                w.set_counter_value(i32::try_from(*value).unwrap_or(1_000_000));
+                w.set_counter_editing(true);
+            }
+        }
+    });
+    window.on_counter_answered({
+        let weak = window.as_weak();
+        let samples = samples.clone();
+        let active = active.clone();
+        let parent_active = parent_active.clone();
+        let pending_counter = pending_counter.clone();
+        let refresh = refresh.clone();
+        move |yes| {
+            if !active.get() || !parent_active.get() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else { return };
+            if !w.window().is_visible() {
+                return;
+            }
+            let Some(index) = pending_counter.take() else {
+                return;
+            };
+            if yes && let Some(example) = samples.borrow_mut().as_mut() {
+                example.set_counter(index, u32::try_from(w.get_counter_value()).unwrap_or(0));
+            }
+            w.set_counter_editing(false);
+            refresh();
+        }
+    });
+    refresh();
     let close = Rc::new({
         let active = active.clone();
         let slot = slots.edit.clone();
@@ -276,10 +435,13 @@ fn edit(
         let weak = window.as_weak();
         let close = close.clone();
         move || {
-            if !active.get() || !parent_active.get() {
+            if !active.get() || !parent_active.get() || pending_counter.get().is_some() {
                 return;
             }
             let Some(w) = weak.upgrade() else { return };
+            if !w.window().is_visible() {
+                return;
+            }
             if w.get_service_name().is_empty() {
                 w.set_error("Please enter a name!".into());
                 return;
@@ -315,6 +477,28 @@ pub fn open(
     let window = ServicesEditorWindow::new().map_err(|e| e.to_string())?;
     let active = Rc::new(Cell::new(true));
     let editor = Rc::new(RefCell::new(Editor::new(store).map_err(|e| e.to_string())?));
+    let sizes = store
+        .read(|conn| {
+            let thumbnails = hydrus_store::settings::get::<
+                hydrus_core::thumbnail::ThumbnailRatingSettings,
+            >(conn)?;
+            let viewer = hydrus_store::settings::get::<
+                hydrus_core::media_viewer::MediaViewerSettings,
+            >(conn)?;
+            Ok([
+                (
+                    thumbnails.icon_size.trunc(),
+                    thumbnails.incdec_height.trunc(),
+                ),
+                (
+                    viewer.rating_icon_size.trunc(),
+                    viewer.rating_incdec_height.trunc(),
+                ),
+                (12.0, 12.0),
+                (12.0, 12.0),
+            ])
+        })
+        .map_err(|e| e.to_string())?;
     window.set_columns(ModelRc::new(VecModel::from(
         services_editor::COLUMNS
             .iter()
@@ -415,7 +599,7 @@ pub fn open(
                     }
                 }
             });
-            if let Err(e) = edit(service, &slots, done, active.clone()) {
+            if let Err(e) = edit(service, &slots, done, active.clone(), sizes) {
                 w.set_error(e.into());
             }
         }
@@ -461,7 +645,7 @@ pub fn open(
                     }
                 }
             });
-            if let Err(e) = edit(row.service, &slots, done, active.clone()) {
+            if let Err(e) = edit(row.service, &slots, done, active.clone(), sizes) {
                 w.set_error(e.into());
             }
         }

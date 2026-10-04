@@ -1,6 +1,8 @@
 import { Button, CheckBox, ComboBox, LineEdit, SpinBox, ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { TableColumn, TableRow, ListTable } from "list_table.slint";
+import { RatingRow, RatingGraphic } from "viewer.slint";
 import { Theme } from "theme.slint";
+export struct ServiceRatingExampleRow { label: string, graphic: RatingRow, icon-size: length, incdec-height: length, outline: length, counter-width: length, fraction: string, fraction-placement: int }
 export struct ServiceColourRow { label: string, border: string, fill: string }
 export component ServicesEditorWindow inherits Window {
     in property <string> window-title: "edit services";
@@ -81,6 +83,19 @@ export component EditServiceWindow inherits Window {
     in-out property <int> fraction;
     in property <[ServiceColourRow]> colours;
     in property <string> error;
+    in property <[ServiceRatingExampleRow]> examples;
+    in-out property <bool> example-expanded: true;
+    in property <bool> counter-editing;
+    in-out property <int> counter-value;
+    callback preview-edited();
+    callback preview-clicked(int,bool,float);
+    callback counter-edit(int);
+    callback counter-answered(bool);
+    changed appearance => { root.preview-edited(); }
+    changed svg => { root.preview-edited(); }
+    changed stars => { root.preview-edited(); }
+    changed icon-padding => { root.preview-edited(); }
+    changed fraction => { root.preview-edited(); }
     callback colour-edited(int,bool,string);
     callback apply-clicked();
     callback cancel-clicked();
@@ -90,7 +105,7 @@ export component EditServiceWindow inherits Window {
             VerticalBox { spacing: 8px;
                 Text { text: root.service-type; color: Theme.text; }
                 Text { text: "name"; color: Theme.text; }
-                LineEdit { text <=> root.service-name; }
+                LineEdit { enabled: !root.counter-editing; text <=> root.service-name; }
                 if !root.rating && !root.client-api: Text { text: "There are no additional options for this local service."; color: Theme.muted; wrap: word-wrap; }
                 if root.client-api: VerticalBox {
                     Text { text: "client api options"; color: Theme.text; font-weight: 700; }
@@ -105,33 +120,62 @@ export component EditServiceWindow inherits Window {
                 }
                 if root.rating: VerticalBox {
                     Text { text: "rating display"; color: Theme.text; font-weight: 700; }
-                    CheckBox { text: "show in thumbnails"; checked <=> root.show-thumbnail; }
-                    CheckBox { text: "└ even when file has no rating value"; checked <=> root.show-null; enabled: root.show-thumbnail; }
+                    CheckBox { enabled: !root.counter-editing; text: "show in thumbnails"; checked <=> root.show-thumbnail; }
+                    CheckBox { text: "└ even when file has no rating value"; checked <=> root.show-null; enabled: root.show-thumbnail && !root.counter-editing; }
                     for c[i] in root.colours: HorizontalBox {
                         Text { text: "border/fill for " + c.label + ": "; color: Theme.text; }
-                        LineEdit { text: c.border; edited(t) => { root.colour-edited(i,true,t); } }
-                        LineEdit { text: c.fill; edited(t) => { root.colour-edited(i,false,t); } }
+                        LineEdit { enabled: !root.counter-editing; text: c.border; edited(t) => { root.colour-edited(i,true,t); } }
+                        LineEdit { enabled: !root.counter-editing; text: c.fill; edited(t) => { root.colour-edited(i,false,t); } }
                     }
                 }
                 if root.star-rating: VerticalBox {
                     Text { text: "star ratings"; color: Theme.text; font-weight: 700; }
-                    ComboBox { model: root.appearances; current-index <=> root.appearance; }
-                    if root.appearance == root.appearances.length - 1: LineEdit { text <=> root.svg; placeholder-text: "SVG name"; }
+                    ComboBox { enabled: !root.counter-editing; model: root.appearances; current-index <=> root.appearance; }
+                    if root.appearance == root.appearances.length - 1: LineEdit { enabled: !root.counter-editing; text <=> root.svg; placeholder-text: "SVG name"; }
                 }
                 if root.numerical: VerticalBox {
                     Text { text: "numerical ratings"; color: Theme.text; font-weight: 700; }
-                    HorizontalBox { Text { text: "number of 'stars': "; color: Theme.text; } SpinBox { minimum: 1; maximum: 20; value <=> root.stars; } }
-                    CheckBox { text: "allow a zero rating: "; checked <=> root.allow-zero; }
-                    HorizontalBox { Text { text: "icon padding: "; color: Theme.text; } SpinBox { minimum: -64; maximum: 64; value <=> root.icon-padding; } }
+                    HorizontalBox { Text { text: "number of 'stars': "; color: Theme.text; } SpinBox { enabled: !root.counter-editing; minimum: 1; maximum: 20; value <=> root.stars; } }
+                    CheckBox { enabled: !root.counter-editing; text: "allow a zero rating: "; checked <=> root.allow-zero; }
+                    HorizontalBox { Text { text: "icon padding: "; color: Theme.text; } SpinBox { enabled: !root.counter-editing; minimum: -64; maximum: 64; value <=> root.icon-padding; } }
                     Text { text: "draw fraction beside the rating"; color: Theme.text; }
-                    ComboBox { model: ["do not", "show on left", "show on right"]; current-index <=> root.fraction; }
+                    ComboBox { enabled: !root.counter-editing; model: ["do not", "show on left", "show on right"]; current-index <=> root.fraction; }
+                }
+                if root.rating: VerticalBox {
+                    Button { text: root.example-expanded ? "▼ example display" : "▶ example display"; clicked => { root.example-expanded = !root.example-expanded; } }
+                    if root.example-expanded: VerticalBox {
+                        for e[i] in root.examples: HorizontalBox {
+                            Text { text: e.label; color: Theme.text; min-width: 155px; }
+                            HorizontalBox {
+                                spacing: 1px;
+                                if e.fraction-placement == 1: Text { text: e.fraction; color: Theme.text; font-size: e.icon-size - 1px; }
+                                graphic := RatingGraphic { rating: e.graphic; icon-size: e.icon-size; incdec-height: e.incdec-height; outline: e.outline;
+                                    width: e.graphic.kind == 2 ? e.counter-width : max(1px, e.graphic.shapes.length * (e.icon-size + e.graphic.pad) - e.graphic.pad);
+                                    TouchArea { enabled: !root.counter-editing; pointer-event(ev) => {
+                                        if ev.kind == PointerEventKind.down {
+                                            if ev.button == PointerEventButton.middle && e.graphic.kind == 2 { root.counter-edit(i); }
+                                            else if ev.button == PointerEventButton.left || ev.button == PointerEventButton.right { root.preview-clicked(i, ev.button == PointerEventButton.right, self.mouse-x / max(1px,self.width)); }
+                                        }
+                                    } }
+                                }
+                                if e.fraction-placement == 2: Text { text: e.fraction; color: Theme.text; font-size: e.icon-size - 1px; }
+                                Rectangle { horizontal-stretch: 1; }
+                            }
+                        }
+                    }
+                    if root.counter-editing: HorizontalBox {
+                        Text { text: "edit value"; color: Theme.text; }
+                        SpinBox { minimum: 0; maximum: 1000000; value <=> root.counter-value; }
+                        Button { text: "ok"; clicked => { root.counter-answered(true); } }
+                        Button { text: "cancel"; clicked => { root.counter-answered(false); } }
+                    }
                 }
             }
         }
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         HorizontalBox {
             Rectangle { horizontal-stretch: 1; }
-            Button { text: "apply"; clicked => { root.apply-clicked(); } }
+            Button { text: "apply"; enabled: !root.counter-editing; clicked => { root.apply-clicked(); } }
             Button { text: "cancel"; clicked => { root.cancel-clicked(); } }
         }
     }
