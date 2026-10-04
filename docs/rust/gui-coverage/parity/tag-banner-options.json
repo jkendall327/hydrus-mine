@@ -30,12 +30,15 @@
         "crates/hydrus-gui/src/grid.rs::ThumbnailRows::set_summaries",
         "crates/hydrus-gui-model/src/thumbnail_icons.rs::pub fn banners(",
         "crates/hydrus-gui-model/src/thumbnail_icons.rs::fn banner_tags(",
-        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,"
+        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,",
+        "crates/hydrus-core/src/sort.rs::human_sort_key/finish"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::option_banner_children_stage_by_original_target_and_save_only_with_parent",
-        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer"
+        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer",
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::unicode_decimal_chunk_order_and_live_preview_match_actual_qt",
+        "crates/hydrus-core/src/sort.rs::tests::unicode_decimal_chunks_precede_letters_but_keep_ascii_split_boundaries"
       ],
       "referenceRecording": {
         "recorder": "oracle/record_tag_banner_editors.py",
@@ -48,6 +51,15 @@
         "b31e0bb3",
         "53588a05",
         "278c1912"
+      ],
+      "additionalReferenceRecordings": [
+        {
+          "recorder": "oracle/record_tag_banner_sort_boundaries.py",
+          "fixture": "oracle/fixtures/tag_banner_sort_boundaries.json",
+          "executed": true,
+          "executedAtUtc": "2026-10-04T21:50:22Z",
+          "reference": "Eight actual EditTagSummaryGeneratorPanel live previews and GenerateSummary outputs for ASCII/Unicode decimal chunks, zero, mixed scripts and mixed runs; actual HumanTextSortKey four equality boundaries. Existing40-state banner assertion remains exact and unchanged."
+        }
       ]
     },
     {
@@ -74,12 +86,15 @@
         "crates/hydrus-gui/src/lib.rs::lay_out_thumbnails",
         "crates/hydrus-gui/src/grid.rs::ThumbnailRows::set_summaries",
         "crates/hydrus-gui-model/src/thumbnail_icons.rs::banners",
-        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,"
+        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,",
+        "crates/hydrus-core/src/sort.rs::human_sort_key/finish"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::option_banner_children_stage_by_original_target_and_save_only_with_parent",
-        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer"
+        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer",
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::unicode_decimal_chunk_order_and_live_preview_match_actual_qt",
+        "crates/hydrus-core/src/sort.rs::tests::unicode_decimal_chunks_precede_letters_but_keep_ascii_split_boundaries"
       ],
       "referenceRecording": {
         "recorder": "oracle/record_tag_banner_editors.py",
@@ -92,6 +107,15 @@
         "b31e0bb3",
         "53588a05",
         "278c1912"
+      ],
+      "additionalReferenceRecordings": [
+        {
+          "recorder": "oracle/record_tag_banner_sort_boundaries.py",
+          "fixture": "oracle/fixtures/tag_banner_sort_boundaries.json",
+          "executed": true,
+          "executedAtUtc": "2026-10-04T21:50:22Z",
+          "reference": "Eight actual EditTagSummaryGeneratorPanel live previews and GenerateSummary outputs for ASCII/Unicode decimal chunks, zero, mixed scripts and mixed runs; actual HumanTextSortKey four equality boundaries. Existing40-state banner assertion remains exact and unchanged."
+        }
       ]
     },
     {
@@ -121,12 +145,15 @@
         "crates/hydrus-gui/ui/viewer.slint::in property <string> tag-banner;",
         "crates/hydrus-gui/ui/viewer.slint::banner-information := VerticalLayout {",
         "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow",
-        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,"
+        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,",
+        "crates/hydrus-core/src/sort.rs::human_sort_key/finish"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::option_banner_children_stage_by_original_target_and_save_only_with_parent",
-        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer"
+        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer",
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::unicode_decimal_chunk_order_and_live_preview_match_actual_qt",
+        "crates/hydrus-core/src/sort.rs::tests::unicode_decimal_chunks_precede_letters_but_keep_ascii_split_boundaries"
       ],
       "referenceRecording": {
         "recorder": "oracle/record_tag_banner_editors.py",
@@ -139,6 +166,15 @@
         "b31e0bb3",
         "53588a05",
         "278c1912"
+      ],
+      "additionalReferenceRecordings": [
+        {
+          "recorder": "oracle/record_tag_banner_sort_boundaries.py",
+          "fixture": "oracle/fixtures/tag_banner_sort_boundaries.json",
+          "executed": true,
+          "executedAtUtc": "2026-10-04T21:50:22Z",
+          "reference": "Eight actual EditTagSummaryGeneratorPanel live previews and GenerateSummary outputs for ASCII/Unicode decimal chunks, zero, mixed scripts and mixed runs; actual HumanTextSortKey four equality boundaries. Existing40-state banner assertion remains exact and unchanged."
+        }
       ]
     },
     {
@@ -163,12 +199,15 @@
         "crates/hydrus-gui/ui/options.slint::OptionsWindow",
         "crates/hydrus-gui/ui/tag_banner.slint::TagBannerWindow",
         "crates/hydrus-core/src/tag_summary.rs::TagSummaryGenerator",
-        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,"
+        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,",
+        "crates/hydrus-core/src/sort.rs::human_sort_key/finish"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::option_banner_children_stage_by_original_target_and_save_only_with_parent",
-        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer"
+        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer",
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::unicode_decimal_chunk_order_and_live_preview_match_actual_qt",
+        "crates/hydrus-core/src/sort.rs::tests::unicode_decimal_chunks_precede_letters_but_keep_ascii_split_boundaries"
       ],
       "referenceRecording": {
         "recorder": "oracle/record_tag_banner_editors.py",
@@ -181,6 +220,15 @@
         "b31e0bb3",
         "53588a05",
         "278c1912"
+      ],
+      "additionalReferenceRecordings": [
+        {
+          "recorder": "oracle/record_tag_banner_sort_boundaries.py",
+          "fixture": "oracle/fixtures/tag_banner_sort_boundaries.json",
+          "executed": true,
+          "executedAtUtc": "2026-10-04T21:50:22Z",
+          "reference": "Eight actual EditTagSummaryGeneratorPanel live previews and GenerateSummary outputs for ASCII/Unicode decimal chunks, zero, mixed scripts and mixed runs; actual HumanTextSortKey four equality boundaries. Existing40-state banner assertion remains exact and unchanged."
+        }
       ]
     },
     {
@@ -210,12 +258,15 @@
         "crates/hydrus-gui/src/tag_banner_window.rs::struct Prompt",
         "crates/hydrus-gui/src/tag_banner_window.rs::fn prompt(",
         "crates/hydrus-gui/src/tag_banner_window.rs::pub fn open(",
-        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,"
+        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,",
+        "crates/hydrus-core/src/sort.rs::human_sort_key/finish"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::option_banner_children_stage_by_original_target_and_save_only_with_parent",
-        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer"
+        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer",
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::unicode_decimal_chunk_order_and_live_preview_match_actual_qt",
+        "crates/hydrus-core/src/sort.rs::tests::unicode_decimal_chunks_precede_letters_but_keep_ascii_split_boundaries"
       ],
       "referenceRecording": {
         "recorder": "oracle/record_tag_banner_editors.py",
@@ -228,6 +279,15 @@
         "b31e0bb3",
         "53588a05",
         "278c1912"
+      ],
+      "additionalReferenceRecordings": [
+        {
+          "recorder": "oracle/record_tag_banner_sort_boundaries.py",
+          "fixture": "oracle/fixtures/tag_banner_sort_boundaries.json",
+          "executed": true,
+          "executedAtUtc": "2026-10-04T21:50:22Z",
+          "reference": "Eight actual EditTagSummaryGeneratorPanel live previews and GenerateSummary outputs for ASCII/Unicode decimal chunks, zero, mixed scripts and mixed runs; actual HumanTextSortKey four equality boundaries. Existing40-state banner assertion remains exact and unchanged."
+        }
       ]
     },
     {
@@ -254,12 +314,15 @@
         "crates/hydrus-gui-model/src/tag_banner.rs::Editor::value",
         "crates/hydrus-gui-model/src/tag_banner.rs::Editor::preview",
         "crates/hydrus-core/src/tag_summary.rs::TagSummaryGenerator::summary",
-        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,"
+        "crates/hydrus-gui/src/lib.rs::pub options_banner_child: tag_banner_window::Slot,",
+        "crates/hydrus-core/src/sort.rs::human_sort_key/finish"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
         "crates/hydrus-gui-model/tests/model/tag_banner.rs::option_banner_children_stage_by_original_target_and_save_only_with_parent",
-        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer"
+        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer",
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::unicode_decimal_chunk_order_and_live_preview_match_actual_qt",
+        "crates/hydrus-core/src/sort.rs::tests::unicode_decimal_chunks_precede_letters_but_keep_ascii_split_boundaries"
       ],
       "referenceRecording": {
         "recorder": "oracle/record_tag_banner_editors.py",
@@ -272,6 +335,15 @@
         "b31e0bb3",
         "53588a05",
         "278c1912"
+      ],
+      "additionalReferenceRecordings": [
+        {
+          "recorder": "oracle/record_tag_banner_sort_boundaries.py",
+          "fixture": "oracle/fixtures/tag_banner_sort_boundaries.json",
+          "executed": true,
+          "executedAtUtc": "2026-10-04T21:50:22Z",
+          "reference": "Eight actual EditTagSummaryGeneratorPanel live previews and GenerateSummary outputs for ASCII/Unicode decimal chunks, zero, mixed scripts and mixed runs; actual HumanTextSortKey four equality boundaries. Existing40-state banner assertion remains exact and unchanged."
+        }
       ]
     }
   ],
@@ -300,7 +372,8 @@
   },
   "notes": [
     "Existing duplicate namespace summary output was already correct; BTreeMap storage deduplication is an equivalent internal refactor, not a caught behavior bug. Unicode decimal collapse is the supported behavior addition.",
-    "No canonical inventory, HTML or ROADMAP edits.6distinct original concrete leaves proposed; parents/aliases are excluded."
+    "No canonical inventory, HTML or ROADMAP edits.6distinct original concrete leaves proposed; parents/aliases are excluded.",
+    "Hosted model case3 exposed the old core HumanSortKey treating fullwidth decimal chunks as letters. The production comparator now converts every complete decimal chunk after ASCII splitting, including Unicode decimal scripts; zero/empty canonical tuple equality and stable input ordering preserve the reference semantics. No fixture ordering or original assertions were weakened. Live preview fixtures deliberately use distinct numeric key values; cross-script equal-key behavior is tested as key equality, since reference example CleanTags set iteration has unspecified tie order."
   ],
   "ownership_provenance": {
     "reviewed_source_commit": "d92abea9cddfd2fd9df89d614bbdc84989c021e0",

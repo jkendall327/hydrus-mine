@@ -1942,3 +1942,11 @@ of Qt's two modal questions. It retains exact messages/labels and the reference
 trash-history exception. Clearing records does not unlink bytes or cancel the
 physical-delete queue; it changes future import recognition through the existing
 content lifecycle. No broad service-review parent completion is claimed.
+
+Human text sort keys now mirror Qt's two separate steps: split ASCII digit runs,
+then convert every complete decimal chunk, including Unicode scripts, to an
+integer. Empty chunks and decimal zero share the same tuple. Banner previews
+therefore place fullwidth numeric subtags before alphabetic ones while retaining
+the reference's mixed ASCII/Unicode chunk ordering; the existing40-state exact
+banner replay remains unchanged. A fresh live Qt preview recording covers eight
+Unicode/mixed-script/zero boundaries and four sort-key equalities.

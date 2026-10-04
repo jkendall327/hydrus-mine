@@ -144,3 +144,43 @@ fn option_banner_children_stage_by_original_target_and_save_only_with_parent() {
         draft
     );
 }
+
+#[test]
+fn unicode_decimal_chunk_order_and_live_preview_match_actual_qt() {
+    let fixture = hydrus_testkit::fixture_json("tag_banner_sort_boundaries.json");
+    for case in fixture["cases"].as_array().unwrap() {
+        let subtags: Vec<String> = serde_json::from_value(case["subtags"].clone()).unwrap();
+        let mut sorted = subtags.clone();
+        hydrus_core::sort::human_sort(&mut sorted);
+        assert_eq!(serde_json::json!(sorted), case["sorted"], "{case}");
+        let mut generator = TagSummaryGenerator::thumbnail_top();
+        generator.namespace_info = vec![NamespaceInfo {
+            namespace: "page".into(),
+            prefix: "p=".into(),
+            separator: "..".into(),
+        }];
+        generator.example_tags = subtags.iter().map(|tag| format!("page:{tag}")).collect();
+        let editor = Editor::new(&generator, TagPresentation::default());
+        assert_eq!(
+            editor.preview(),
+            case["preview"].as_str().unwrap(),
+            "{case}"
+        );
+        assert_eq!(
+            generator.summary(
+                generator.example_tags.iter().map(String::as_str),
+                str::to_owned
+            ),
+            case["summary"].as_str().unwrap(),
+            "{case}"
+        );
+    }
+    for case in fixture["key_equalities"].as_array().unwrap() {
+        assert_eq!(
+            hydrus_core::sort::human_sort_key(case["left"].as_str().unwrap())
+                == hydrus_core::sort::human_sort_key(case["right"].as_str().unwrap()),
+            case["equal"].as_bool().unwrap(),
+            "{case}"
+        );
+    }
+}
