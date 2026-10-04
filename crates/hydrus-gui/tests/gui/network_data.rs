@@ -22,9 +22,10 @@ fn until(mut condition: impl FnMut() -> bool) {
 }
 fn capture(windows: &headless::Windows, index: usize, name: &str, width: u32, height: u32) {
     let pixels = headless::render(&windows.get(index).unwrap(), width, height);
-    let directory = std::env::var_os("HYDRUS_NETWORK_SCREENSHOTS")
-        .map(std::path::PathBuf::from)
-        .unwrap_or_else(|| std::path::PathBuf::from(env!("CARGO_TARGET_TMPDIR")));
+    let directory = std::env::var_os("HYDRUS_NETWORK_SCREENSHOTS").map_or_else(
+        || std::path::PathBuf::from(env!("CARGO_TARGET_TMPDIR")),
+        std::path::PathBuf::from,
+    );
     std::fs::create_dir_all(&directory).unwrap();
     headless::save_png(&directory.join(name), &pixels, width, height).unwrap();
 }
