@@ -241,7 +241,7 @@ mod tests {
     use super::*;
     use hydrus_core::Tag;
     use hydrus_store::display::RelationKind;
-    use slint::{ComponentHandle as _, Model as _};
+    use slint::ComponentHandle as _;
     use std::cell::Cell;
 
     #[test]
