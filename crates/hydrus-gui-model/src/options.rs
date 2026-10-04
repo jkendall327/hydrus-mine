@@ -1655,7 +1655,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             (1, 1000),
                             |s| i64::from(s.page_navigation.history_entries),
                             |s, v| {
-                                s.page_navigation.history_entries = u16::try_from(v).unwrap_or(100)
+                                s.page_navigation.history_entries = u16::try_from(v).unwrap_or(100);
                             },
                         ),
                         check(

@@ -44,6 +44,9 @@ export struct GalleryData {
 }
 
 export component GallerySidebar inherits VerticalLayout {
+    in property <int> focus-requests;
+    callback input-focus-changed(bool);
+    changed focus-requests => { input-box.focus(); }
     in property <GalleryData> data;
     in property <[TableRow]> rows;
     in property <int> sort-column: -1;
@@ -173,7 +176,8 @@ export component GallerySidebar inherits VerticalLayout {
             }
             HorizontalLayout {
                 spacing: 4px;
-                LineEdit {
+                input-box := LineEdit {
+                    changed has-focus => { root.input-focus-changed(self.has-focus); }
                     horizontal-stretch: 1;
                     placeholder-text: root.data.initial-search-text;
                     accepted(text) => {

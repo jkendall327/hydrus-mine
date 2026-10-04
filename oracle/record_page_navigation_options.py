@@ -16,13 +16,19 @@ sys.path.insert(0,str(HERE))
 def record(session):
     from qtpy import QtWidgets as QW
     from hydrus.client import ClientConstants as CC, ClientLocation
-    from hydrus.client.gui import ClientGUIDialogsQuick
-    from hydrus.client.gui.pages import ClientGUIPages
+    from hydrus.client.gui import ClientGUIDialogsQuick, ClientGUIFunctions
+    from hydrus.client.gui.pages import ClientGUIPages, ClientGUISidebarImporters
     from hydrus.client.gui.panels.options.GUIPagesPanel import GUIPagesPanel
     controller,gui=session.controller,session.controller.gui
     previous=(controller.new_options.GetBoolean('confirm_all_page_closes'),controller.new_options.GetBoolean('set_search_focus_on_page_change'),controller.new_options.GetInteger('page_nav_history_max_entries'))
     old_yesno=ClientGUIDialogsQuick.GetYesNo
     old_history=gui.page_nav_history.GetHistory
+    importer_classes=[ClientGUISidebarImporters.SidebarImporterMultipleGallery,ClientGUISidebarImporters.SidebarImporterMultipleWatcher,
+                      ClientGUISidebarImporters.SidebarImporterSimpleDownloader,ClientGUISidebarImporters.SidebarImporterURLs]
+    old_starts=[cls.Start for cls in importer_classes]
+    # Empty importer workers are irrelevant to PageShown; suppress queued starts
+    # so teardown cannot race a late job against the stopped client scheduler.
+    for cls in importer_classes: cls.Start=lambda self:None
     def drive():
         options=controller.new_options.Duplicate()
         panel=GUIPagesPanel(gui,options)
@@ -60,8 +66,21 @@ def record(session):
                 controller.new_options.SetBoolean('set_search_focus_on_page_change',enabled)
                 sidebar.SetSearchFocus=lambda:calls.append('tag autocomplete')
                 sidebar.PageShown()
-                focus.append({'enabled':enabled,'calls':calls})
+                focus.append({'enabled':enabled,'calls':list(calls)})
         finally:sidebar.SetSearchFocus=original_focus
+        importer_focus=[]
+        old_focus_later=ClientGUIFunctions.SetFocusLater
+        try:
+            for name,method in [('gallery','NewPageImportGallery'),('watchers','NewPageImportMultipleWatcher'),('simple','NewPageImportSimpleDownloader'),('urls','NewPageImportURLs')]:
+                page=getattr(notebook,method)()
+                sidebar=page._sidebar_management_panel
+                for enabled in [False,True,False]:
+                    calls=[]
+                    controller.new_options.SetBoolean('set_search_focus_on_page_change',enabled)
+                    ClientGUIFunctions.SetFocusLater=lambda widget,*args,**kwargs:calls.append(type(widget).__name__)
+                    sidebar.PageShown()
+                    importer_focus.append({'kind':name,'enabled':enabled,'calls':list(calls)})
+        finally:ClientGUIFunctions.SetFocusLater=old_focus_later
         history=[]
         rows=[(bytes([i])*32,f'page {i:02d}') for i in range(1,26)]
         gui.page_nav_history.GetHistory=lambda:rows
@@ -79,9 +98,10 @@ def record(session):
                             'first_bold':actions[0].font().bold(),'applied_confirm':options.GetBoolean('confirm_all_page_closes'),
                             'applied_focus':options.GetBoolean('set_search_focus_on_page_change')})
         notebook.deleteLater();panel.deleteLater()
-        return {'controls':controls,'close':close,'focus':focus,'history':history}
+        return {'controls':controls,'close':close,'focus':focus,'history':history,'importer_focus':importer_focus}
     try:return controller.CallBlockingToQt(gui,drive)
     finally:
+        for cls,start in zip(importer_classes,old_starts):cls.Start=start
         ClientGUIDialogsQuick.GetYesNo=old_yesno
         gui.page_nav_history.GetHistory=old_history
         controller.new_options.SetBoolean('confirm_all_page_closes',previous[0])

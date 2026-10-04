@@ -507,12 +507,20 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     .unwrap_or_default();
                 if settings.focus_search_on_change
                     && let Some(window) = weak.upgrade()
-                    && window.get_note().is_empty()
-                    && !window.get_search_locked()
                 {
-                    window.set_search_focus_requests(
-                        window.get_search_focus_requests().wrapping_add(1),
-                    );
+                    if window.get_note().is_empty() && !window.get_search_locked() {
+                        window.set_search_focus_requests(
+                            window.get_search_focus_requests().wrapping_add(1),
+                        );
+                    } else if !window.get_local_import()
+                        && (window.get_importing()
+                            || window.get_gallery_page()
+                            || window.get_watcher_page())
+                    {
+                        window.set_page_focus_requests(
+                            window.get_page_focus_requests().wrapping_add(1),
+                        );
+                    }
                 }
             }
             if let Some(file) = viewer_exit_scrolls.borrow_mut().remove(&key) {

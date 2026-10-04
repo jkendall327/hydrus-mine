@@ -10,6 +10,9 @@ import { DownloadLine, DownloadControl, JobCogMenu } from "importing.slint";
 import { ListTable, TableRow } from "list_table.slint";
 
 export component SimpleParsingBox inherits Rectangle {
+    in property <int> focus-requests;
+    callback input-focus-changed(bool);
+    changed focus-requests => { input-box.focus(); }
     in property <string> parser-status;
     in property <bool> queue-paused;
     in property <string> log-status;
@@ -109,7 +112,8 @@ export component SimpleParsingBox inherits Rectangle {
         }
         HorizontalLayout {
             spacing: 4px;
-            url-box := LineEdit {
+            input-box := LineEdit {
+                    changed has-focus => { root.input-focus-changed(self.has-focus); }
                 horizontal-stretch: 1;
                 placeholder-text: "url to be parsed by the selected formula";
                 accepted(text) => {

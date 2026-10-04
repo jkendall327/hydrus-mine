@@ -747,6 +747,8 @@ export component MainWindow inherits Window {
     // ctrl+s: the search box takes the keyboard (counted, for the box to
     // see each ask)
     in-out property <int> search-focus-requests;
+    in-out property <int> page-focus-requests;
+    in-out property <bool> page-input-focused;
     in property <int> viewer-reveal-index;
     in-out property <int> viewer-reveal-request;
     // the selected file's shortcuts, and a question's answer
@@ -950,6 +952,8 @@ export component MainWindow inherits Window {
                     width: 400px;
                     alignment: start;
                     GallerySidebar {
+                        focus-requests: root.page-focus-requests;
+                        input-focus-changed(on) => { root.page-input-focused = on; }
                         data: root.gallery-data;
                         rows: root.gallery-rows;
                         sort-column: root.gallery-sort-column;
@@ -995,6 +999,8 @@ export component MainWindow inherits Window {
                     width: 400px;
                     alignment: start;
                     WatcherSidebar {
+                        focus-requests: root.page-focus-requests;
+                        input-focus-changed(on) => { root.page-input-focused = on; }
                         data: root.watcher-data;
                         rows: root.watcher-rows;
                         sort-column: root.watcher-sort-column;
@@ -1080,6 +1086,8 @@ export component MainWindow inherits Window {
                         cancel => { root.cancel-download(false); }
                     }
                     SimpleParsingBox {
+                        focus-requests: root.page-focus-requests;
+                        input-focus-changed(on) => { root.page-input-focused = on; }
                         parser-status: root.simple-parser-status;
                         queue-paused: root.simple-queue-paused;
                         log-status: root.search-status;
@@ -1139,6 +1147,9 @@ export component MainWindow inherits Window {
                     HorizontalLayout {
                         spacing: 4px;
                         url-box := LineEdit {
+                            property <int> focus-requests: root.page-focus-requests;
+                            changed focus-requests => { self.focus(); }
+                            changed has-focus => { root.page-input-focused = self.has-focus; }
                             horizontal-stretch: 1;
                             placeholder-text: "any url hydrus recognises, or a raw file url";
                             accepted(text) => {

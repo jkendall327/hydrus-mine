@@ -236,3 +236,58 @@ fn applied_controls_reopen_and_drive_history_and_search_focus() {
     ui.invoke_tab_chosen(0, 1);
     assert_eq!(ui.get_search_focus_requests(), before + 2);
 }
+
+#[test]
+fn switching_to_each_importer_focuses_its_actual_query_or_url_text_input() {
+    let windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("page_navigation_options.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.show().unwrap();
+    let main = windows.get(0).unwrap();
+    main.dispatch_event(slint::platform::WindowEvent::WindowActiveChanged(true));
+    for (kind, button) in [("gallery", 6), ("watchers", 4), ("simple", 2), ("urls", 8)] {
+        ui.invoke_tab_space_pressed(0, false);
+        ui.invoke_tab_space_pressed(0, false);
+        ui.invoke_chooser_pressed(4);
+        ui.invoke_chooser_pressed(button);
+        let index = i32::try_from(bound.pages.borrow().session().pages.len() - 1).unwrap();
+        for step in fixture["importer_focus"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|step| step["kind"] == kind)
+        {
+            let enabled = step["enabled"].as_bool().unwrap();
+            store
+                .write(move |ctx| {
+                    settings::set(
+                        ctx.conn(),
+                        &PageNavigationSettings {
+                            focus_search_on_change: enabled,
+                            ..PageNavigationSettings::default()
+                        },
+                    )
+                })
+                .unwrap();
+            ui.invoke_tab_chosen(0, 0);
+            headless::render(&main, 1100, 900);
+            let before = ui.get_page_focus_requests();
+            ui.invoke_tab_chosen(0, index);
+            headless::render(&main, 1100, 900);
+            assert_eq!(
+                ui.get_page_focus_requests() - before,
+                i32::try_from(step["calls"].as_array().unwrap().len()).unwrap(),
+                "{step}"
+            );
+            if enabled {
+                assert!(
+                    ui.get_page_input_focused(),
+                    "{kind} query/url widget has actual text focus"
+                );
+            }
+        }
+    }
+}

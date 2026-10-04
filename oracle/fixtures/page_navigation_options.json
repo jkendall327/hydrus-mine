@@ -367,5 +367,75 @@
       "applied_confirm": true,
       "applied_focus": true
     }
+  ],
+  "importer_focus": [
+    {
+      "kind": "gallery",
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "kind": "gallery",
+      "enabled": true,
+      "calls": [
+        "TextAndPasteCtrl"
+      ]
+    },
+    {
+      "kind": "gallery",
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "kind": "watchers",
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "kind": "watchers",
+      "enabled": true,
+      "calls": [
+        "TextAndPasteCtrl"
+      ]
+    },
+    {
+      "kind": "watchers",
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "kind": "simple",
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "kind": "simple",
+      "enabled": true,
+      "calls": [
+        "TextAndPasteCtrl"
+      ]
+    },
+    {
+      "kind": "simple",
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "kind": "urls",
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "kind": "urls",
+      "enabled": true,
+      "calls": [
+        "TextAndPasteCtrl"
+      ]
+    },
+    {
+      "kind": "urls",
+      "enabled": false,
+      "calls": []
+    }
   ]
 }
