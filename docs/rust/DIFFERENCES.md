@@ -1983,3 +1983,10 @@ The three topology controls are complete within this browser-viewer scope;
 broader hover/button/view-options families remain Partial. No deeper missing
 action is presented as a placeholder. Options edits preserve concurrently changed
 new-viewer defaults, and stale viewer/Options callbacks cannot save changes.
+
+Eye-menu field toggles read and update their setting inside the same writer
+transaction, preserving concurrently changed sibling preferences. Mixed root
+separators precede their destination section, matching all eight Qt combinations.
+Slint's materialized native context-menu tree is internal: authored regressions
+check actual declaration order against recorded roots plus compiled menu data
+and real action consumers; they do not claim direct OS-menu introspection.
