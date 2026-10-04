@@ -74,6 +74,24 @@ fn preview_and_confirmations_match_reference_panel() {
     let recorded: Value = hydrus_testkit::fixture_json("export_files.json");
     for case in recorded["previews"].as_array().unwrap() {
         let phrase = case["phrase"].as_str().unwrap();
+        if phrase == "../escape" && cfg!(windows) {
+            // Windows filename rules sanitize the slash to an underscore;
+            // the Linux oracle instead resolves a parent-directory escape.
+            // Either platform must keep every accepted destination in its root.
+            let root = export_files::directory_path("/tmp/hydrus-manual-export-oracle").unwrap();
+            let rows =
+                export_files::preview(&store, &files, root.to_str().unwrap(), phrase).unwrap();
+            assert_eq!(rows.len(), files.len());
+            for row in rows {
+                assert!(row.destination.starts_with(&root));
+                assert!(
+                    !row.destination
+                        .components()
+                        .any(|component| { component == std::path::Component::ParentDir })
+                );
+            }
+            continue;
+        }
         if phrase == "../escape" || phrase == "{bad" {
             assert!(
                 export_files::preview(&store, &files, "/tmp/hydrus-manual-export-oracle", phrase)
