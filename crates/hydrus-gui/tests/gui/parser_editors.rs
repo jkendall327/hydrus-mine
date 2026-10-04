@@ -258,3 +258,36 @@ fn sorted_parser_rows_and_sparse_link_rows_select_the_visible_definition() {
         vec![("01".into(), Some("first".into()))]
     );
 }
+
+#[test]
+fn namespace_control_is_disabled_without_losing_its_saved_text() {
+    let (_dir, store, slots) = setup();
+    headless::init();
+    let original = definitions(&store);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.invoke_row_clicked(0, false, false);
+    page.invoke_action("edit-content".into());
+    let content = child(&slots.content);
+    content.invoke_choice_edited(1, 1);
+    content.invoke_text_edited(5, "artist".into());
+    content.invoke_toggled(4, true);
+    let field = content.get_fields().row_data(3).unwrap();
+    assert_eq!(field.id, 5);
+    assert!(!field.enabled);
+    assert_eq!(field.text, "artist");
+    content.invoke_text_edited(5, "ignored disabled edit".into());
+    content.invoke_toggled(4, false);
+    let field = content.get_fields().row_data(3).unwrap();
+    assert!(field.enabled);
+    assert_eq!(field.text, "artist");
+    content.invoke_action("cancel".into());
+    assert!(!content.get_question().is_empty());
+    content.invoke_answered(true);
+    assert!(slots.content.borrow().is_none());
+    page.invoke_action("cancel".into());
+    list.invoke_action("cancel".into());
+    assert_eq!(definitions(&store), original);
+}

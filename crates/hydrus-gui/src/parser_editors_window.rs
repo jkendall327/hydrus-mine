@@ -126,11 +126,13 @@ fn fields(value: &Value) -> Vec<DefinitionField> {
                 }
                 ContentKind::Tag { namespace } => {
                     fields.push(check(4, "any namespace", namespace.is_none()));
-                    fields.push(text(
+                    let mut namespace_field = text(
                         5,
                         "namespace (empty forces unnamespaced)",
-                        namespace.as_deref().unwrap_or_default(),
-                    ));
+                        e.namespace_text(),
+                    );
+                    namespace_field.enabled = namespace.is_some();
+                    fields.push(namespace_field);
                 }
                 ContentKind::Note { name } => fields.push(text(5, "note name", name)),
                 ContentKind::Hash {
@@ -409,14 +411,15 @@ fn open_editor(
                 return;
             }
             if let Value::Content(e) = &mut state.borrow_mut().value {
-                match &mut e.parser.kind {
-                    ContentKind::Tag { namespace } if id == 4 => {
-                        *namespace = if v { None } else { Some(String::new()) }
-                    }
-                    ContentKind::Veto {
+                if id == 4 {
+                    e.set_any_namespace(v);
+                }
+                if id == 9
+                    && let ContentKind::Veto {
                         if_matches_found, ..
-                    } if id == 9 => *if_matches_found = v,
-                    _ => (),
+                    } = &mut e.parser.kind
+                {
+                    *if_matches_found = v;
                 }
             }
             refresh();

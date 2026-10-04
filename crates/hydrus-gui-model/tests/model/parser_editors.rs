@@ -125,3 +125,18 @@ fn native_parser_save_preserves_other_settings_and_rejects_stale_edits() {
     assert_eq!(saved.unconverted, before.unconverted);
     assert!(later.put(Some("removed-key"), editors::new_page()).is_err());
 }
+
+#[test]
+fn any_namespace_toggle_retains_the_disabled_namespace() {
+    let mut parser = editors::new_content();
+    parser.kind = ContentKind::Tag {
+        namespace: Some("artist".into()),
+    };
+    let mut editor = ContentEditor::new(&parser, FormulaTestData::default());
+    editor.set_any_namespace(true);
+    assert_eq!(editor.parser.kind, ContentKind::Tag { namespace: None });
+    assert_eq!(editor.namespace_text(), "artist");
+    editor.set_any_namespace(false);
+    assert_eq!(editor.parser, parser);
+    assert!(!editor.changed());
+}

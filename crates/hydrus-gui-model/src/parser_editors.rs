@@ -76,6 +76,7 @@ pub struct ContentEditor {
     pub parser: ContentParser,
     pub test: FormulaTestData,
     original: ContentParser,
+    inactive_namespace: String,
 }
 impl ContentEditor {
     /// Open an isolated copy with the caller's actual test data.
@@ -83,6 +84,10 @@ impl ContentEditor {
         Self {
             parser: parser.clone(),
             original: parser.clone(),
+            inactive_namespace: match &parser.kind {
+                ContentKind::Tag { namespace } => namespace.clone().unwrap_or_default(),
+                _ => String::new(),
+            },
             test,
         }
     }
@@ -97,6 +102,27 @@ impl ContentEditor {
         }
         self.parser.kind = default_kind(index);
         self.test.collapse_newlines = index != 2;
+    }
+    /// Keep a disabled namespace intact while selecting any namespace.
+    pub fn set_any_namespace(&mut self, any: bool) {
+        if let ContentKind::Tag { namespace } = &mut self.parser.kind {
+            if any {
+                if let Some(value) = namespace.take() {
+                    self.inactive_namespace = value;
+                }
+            } else if namespace.is_none() {
+                *namespace = Some(self.inactive_namespace.clone());
+            }
+        }
+    }
+    /// Namespace shown by its field even while the control is disabled.
+    pub fn namespace_text(&self) -> &str {
+        match &self.parser.kind {
+            ContentKind::Tag {
+                namespace: Some(value),
+            } => value,
+            _ => &self.inactive_namespace,
+        }
     }
     /// Apply reference normalization for an empty note name.
     pub fn value(&self) -> ContentParser {
