@@ -125,6 +125,29 @@ impl Setting for Pauses {
     const KEY: &'static str = "pauses";
 }
 
+/// The reference's saved `boot_with_network_traffic_paused` preference.
+/// Separate from the live pause: resuming traffic does not change the next boot.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct NetworkBootPause(pub bool);
+
+impl Setting for NetworkBootPause {
+    const KEY: &'static str = "boot_with_network_traffic_paused";
+}
+
+/// Apply once at client startup, before network workers are constructed.
+/// A false preference preserves the live pause, as the reference boot does.
+pub fn apply_network_boot_pause(store: &crate::Store) -> Result<()> {
+    store.write(|ctx| {
+        let conn = ctx.conn();
+        if get::<NetworkBootPause>(conn)?.0 {
+            let mut pauses: Pauses = get(conn)?;
+            pauses.network_traffic = true;
+            set(conn, &pauses)?;
+        }
+        Ok(())
+    })
+}
+
 /// Main-window identity and the optional client-exit confirmation.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

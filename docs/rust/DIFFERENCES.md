@@ -1488,3 +1488,5 @@ Qt information/global exception dialog. A disappeared saved queue is reported
 as unavailable; the reference DB layer wraps that missing-object error as a
 DBException. Closing the native editor stops polling and prevents a late
 clipboard publication; cancellation is checked between queue reads.
+
+The network boot pause preference follows the reference’s direct menu toggle rather than introducing an Options control. Its startup helper only sets the live pause when enabled; a disabled preference preserves any existing live pause. GUI startup applies it before daemon startup, and standalone `hydrus serve` applies it before constructing API/download workers. An attached daemon belongs to an already-booted GUI, so restarting it preserves live Resume. The oracle records actual Qt menu triggers and option serialization, then executes the actual ClientController boot conditional in isolation; native tests exercise durable reopen and real loopback network requests.

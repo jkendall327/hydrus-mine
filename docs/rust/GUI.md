@@ -2278,3 +2278,5 @@ count once; trash and nonlocal hashes count as deleted. The good ratio excludes
 inbox files. Unsaved queries do not enable the menu, and reports never apply the
 subscription draft. Closing the editor cancels publication; missing saved logs
 produce an acknowledgement and restore the editor.
+
+The network > pause menu saves “always boot the client with paused network traffic” separately from the live traffic pause. The checked preference is available in basic and advanced mode, survives reopening, and is imported from legacy client options. Startup applies it before GUI daemon or standalone server workers start. Resuming live traffic keeps the next-boot preference; creating parser/login engines or restarting an attached daemon does not apply it again. The reference has no corresponding Options checkbox or Apply/Cancel draft.

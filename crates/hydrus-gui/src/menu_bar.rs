@@ -537,6 +537,18 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             Ok(())
         }),
         Command::Copy(text) => crate::copy_to_clipboard(&text),
+        Command::NetworkBootPause => {
+            let done = store.write(|ctx| {
+                let conn = ctx.conn();
+                let mut boot: hydrus_store::settings::NetworkBootPause =
+                    hydrus_store::settings::get(conn)?;
+                boot.0 = !boot.0;
+                hydrus_store::settings::set(conn, &boot)
+            });
+            if let Err(error) = done {
+                eprintln!("could not save the network boot preference: {error}");
+            }
+        }
         Command::Pause(pause) => {
             let done = store.write(move |ctx| {
                 let conn = ctx.conn();

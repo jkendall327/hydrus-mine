@@ -1313,3 +1313,61 @@ async fn runtime_cog_connection_override_releases_only_the_current_retry() {
     assert!(engine.runtime_snapshot().jobs.is_empty());
     assert_eq!(engine.runtime_snapshot().errors.len(), 1);
 }
+
+#[tokio::test]
+async fn boot_pause_blocks_real_requests_and_resume_does_not_reset_the_preference() {
+    use hydrus_store::{network_runtime::WaitReason, settings};
+    let s = setup(|_| Vec::new()).await;
+    s.store
+        .write(|ctx| {
+            settings::set(ctx.conn(), &settings::NetworkBootPause(true))?;
+            settings::set(ctx.conn(), &settings::Pauses::default())
+        })
+        .unwrap();
+    settings::apply_network_boot_pause(&s.store).unwrap();
+    let engine = NetEngine::new(s.store.clone(), s.engine.options()).unwrap();
+    let request = Request::get(format!("{}/echo", s.base));
+    let job = Job::new();
+    let mut fetch = Box::pin(engine.fetch(&request, &job));
+    tokio::select! {
+        _ = &mut fetch => panic!("boot-paused request reached the server"),
+        () = tokio::time::sleep(std::time::Duration::from_millis(30)) => {}
+    }
+    assert_eq!(engine.runtime_snapshot().jobs[0].wait, WaitReason::Paused);
+    s.store
+        .write(|ctx| settings::set(ctx.conn(), &settings::Pauses::default()))
+        .unwrap();
+    tokio::time::timeout(std::time::Duration::from_secs(3), fetch)
+        .await
+        .unwrap()
+        .unwrap();
+    assert!(
+        s.store
+            .read(settings::get::<settings::NetworkBootPause>)
+            .unwrap()
+            .0
+    );
+    // Parser/login consumers create additional engines inside this boot.
+    // They must honor live Resume rather than applying the preference again.
+    let next = NetEngine::new(s.store.clone(), s.engine.options()).unwrap();
+    tokio::time::timeout(
+        std::time::Duration::from_secs(1),
+        next.fetch(&request, &Job::new()),
+    )
+    .await
+    .unwrap()
+    .unwrap();
+    assert!(
+        s.store
+            .read(settings::get::<settings::NetworkBootPause>)
+            .unwrap()
+            .0
+    );
+    settings::apply_network_boot_pause(&s.store).unwrap();
+    assert!(
+        s.store
+            .read(settings::get::<settings::Pauses>)
+            .unwrap()
+            .network_traffic
+    );
+}

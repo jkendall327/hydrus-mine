@@ -116,6 +116,8 @@ struct Client {
 
 impl Client {
     fn open(store: Arc<Store>, pages: Pages) -> Result<Self> {
+        hydrus_store::settings::apply_network_boot_pause(&store)
+            .context("applying the network boot pause")?;
         let window = MainWindow::new()?;
         // the daemon, run while none does (and, as the reference's work
         // does, only once the client is unlocked)

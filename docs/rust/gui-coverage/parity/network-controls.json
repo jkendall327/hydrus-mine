@@ -20,7 +20,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/network_job_control.rs",
-          "line": 351,
+          "line": 358,
           "symbol": "fn action(&self"
         },
         {
@@ -115,7 +115,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/network_job_control.rs",
-          "line": 351,
+          "line": 358,
           "symbol": "fn action(&self"
         },
         {
@@ -301,7 +301,7 @@
       "originalID": "audit-network-file-log-png",
       "before": "missing",
       "proposedStatus": "first_pass",
-      "exactBehavior": "Actual from-png importer uses native picker and bounded reference compressed UTF-8 carrier decode, active source normalization/deduplication and durable queue append/nudge. Cancel leaves log unchanged; malformed and empty payloads display Could not import. Actual to-png action opens reusable owned export panel with title, readonly payload description, description, width100–4096/path controls, path/title validation, automatic .png suffix, readable header/compressed payload, brief done state and persistent successful last directory. Frozen payload and parent-close/stale-callback guards preserve owner boundaries.",
+      "exactBehavior": "Actual from-png importer uses native picker and bounded reference compressed UTF-8 carrier decode, active source normalization/deduplication and durable queue append/nudge. Cancel leaves log unchanged; malformed and empty payloads display Could not import. Actual to-png action opens reusable owned export panel with title, readonly payload description, description, width100\u20134096/path controls, path/title validation, automatic .png suffix, readable header/compressed payload, brief done state and persistent successful last directory. Frozen payload and parent-close/stale-callback guards preserve owner boundaries.",
       "limits": [
         "Native SVG fonts/wrapping and decorative header pixels differ from Qt.",
         "Export panel is an owned native window rather than a modal Qt dialog.",
@@ -504,7 +504,7 @@
       "originalID": "audit-network-quality-review",
       "before": "missing",
       "proposedStatus": "first_pass",
-      "exactBehavior": "Advanced-mode-only quality info→show on selected originally saved query queues. A retained background worker reads durable file logs and current inbox/local-storage/trash membership; unique sha256 hashes count once regardless of seed status. Native information reproduces exact name/count/good-ratio formatting, omits the ratio when archive+deleted is zero, freezes draft mutations while working, restores the editor after completion/error, and suppresses publication after owner close. Unsaved queries do not qualify and no draft or queue writes are performed.",
+      "exactBehavior": "Advanced-mode-only quality info\u2192show on selected originally saved query queues. A retained background worker reads durable file logs and current inbox/local-storage/trash membership; unique sha256 hashes count once regardless of seed status. Native information reproduces exact name/count/good-ratio formatting, omits the ratio when archive+deleted is zero, freezes draft mutations while working, restores the editor after completion/error, and suppresses publication after owner close. Unsaved queries do not qualify and no draft or queue writes are performed.",
       "limits": [
         "Native information and worker-error acknowledgement are embedded in the existing editor, replacing Qt information/global exception dialogs.",
         "A disappeared saved log reports an unavailable error (the actual Qt DB facade wraps its missing-object error as DBException). Cancellation stops publication immediately and is checked between query reads."
@@ -571,7 +571,7 @@
       "originalID": "audit-network-quality-csv",
       "before": "missing",
       "proposedStatus": "first_pass",
-      "exactBehavior": "Advanced-mode-only quality info→copy csv data to clipboard uses the same live background quality reader, saved-query selection and current media counts. Exact raw comma-joined rows with no header/quoting; archive/(archive+deleted) good ratio excludes inbox and an empty denominator prints 0.0%. Pending work never applies draft queries; editor close prevents stale clipboard publication.",
+      "exactBehavior": "Advanced-mode-only quality info\u2192copy csv data to clipboard uses the same live background quality reader, saved-query selection and current media counts. Exact raw comma-joined rows with no header/quoting; archive/(archive+deleted) good ratio excludes inbox and an empty denominator prints 0.0%. Pending work never applies draft queries; editor close prevents stale clipboard publication.",
       "limits": [
         "Native information and worker-error acknowledgement are embedded in the existing editor, replacing Qt information/global exception dialogs.",
         "A disappeared saved log reports an unavailable error (the actual Qt DB facade wraps its missing-object error as DBException). Cancellation stops publication immediately and is checked between query reads."
@@ -633,6 +633,76 @@
         "localCargoBuildsOrTests": false,
         "ci": "Parent runs asynchronous GitHub CI; scoped model/GUI tests authored and not claimed locally passed."
       }
+    },
+    {
+      "originalID": "audit-network-pause-boot",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Exact always-visible basic/advanced checked network > pause boot preference; immediate persisted toggle does not pause running traffic. Legacy ClientOptions import and durable reopen preserve the preference. GUI client startup and standalone serve apply it before constructing workers; true only sets live pause true, false preserves live state. Live Resume, later parser/login engine creation and attached daemon restart retain the preference without reapplying it.",
+      "limits": [
+        "The reference has no distinct Options checkbox or Apply/Cancel draft for this preference; menu dismissal is inert.",
+        "Reference recording executes the actual ClientController boot conditional in isolation after actual Qt menu triggers rather than rebooting the running recorder client.",
+        "Native GUI-owned and standalone daemon startup are separate explicit hooks; NetEngine construction intentionally never reapplies the boot preference."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "symbol": "pub fn apply_network_boot_pause(",
+          "line": 139
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "symbol": "let boot = options",
+          "line": 115
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/main_menu.rs",
+          "symbol": "fn network_menu(",
+          "line": 912
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/menu_bar.rs",
+          "symbol": "Command::NetworkBootPause =>",
+          "line": 540
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/main.rs",
+          "symbol": "applying the network boot pause",
+          "line": 120
+        },
+        {
+          "relativepath": "crates/hydrus-cli/src/main.rs",
+          "symbol": "if !attached {",
+          "line": 509
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "symbol": "fn network_boot_preference_converts_without_changing_live_pause(",
+          "line": 2530
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/menu_bar.rs",
+          "symbol": "fn boot_pause_menu_saves_preference_and_preserves_live_resume(",
+          "line": 540
+        },
+        {
+          "relativepath": "crates/hydrus-net/tests/engine.rs",
+          "symbol": "async fn boot_pause_blocks_real_requests_and_resume_does_not_reset_the_preference(",
+          "line": 1318
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_network_boot_pause.py",
+        "fixture": "oracle/fixtures/network_boot_pause.json"
+      },
+      "validation": {
+        "actualReferenceRecorder": "passed",
+        "formatAndDiff": "passed",
+        "cachedSlintSourceCompilation": "passed",
+        "scopedCargoTests": "Not run locally; parent asynchronous CI."
+      }
     }
   ],
   "nativeComponents": [
@@ -640,7 +710,7 @@
       "name": "SearchLogImportWindow",
       "file": "crates/hydrus-gui/ui/search_log_import.slint",
       "title": "Are you sure? / Problem importing from clipboard! / Could not import!",
-      "preferredSize": "650 × 260",
+      "preferredSize": "650 \u00d7 260",
       "controls": [
         "Exact duplicate question: only add new urls / add all urls, even duplicates",
         "Exact continuation question: just check what I am adding / start a potential new search for every url added",

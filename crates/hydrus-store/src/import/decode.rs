@@ -112,6 +112,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &pauses)?;
+    let boot = options
+        .as_ref()
+        .and_then(|o| o.booleans.get("boot_with_network_traffic_paused"))
+        .copied()
+        .unwrap_or(false);
+    insert_setting(&mut input, &crate::settings::NetworkBootPause(boot))?;
     if let Some(&advanced) = options
         .as_ref()
         .and_then(|o| o.booleans.get("advanced_mode"))
@@ -2550,6 +2556,38 @@ mod tests {
             [dump.into_bytes()],
         )
         .unwrap();
+    }
+
+    #[test]
+    fn network_boot_preference_converts_without_changing_live_pause() {
+        use crate::settings::{NetworkBootPause, Pauses};
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        assert_eq!(
+            decoded().settings["boot_with_network_traffic_paused"],
+            false
+        );
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "boot_with_network_traffic_paused"], [0, false]]"#,
+                r#"[[0, "boot_with_network_traffic_paused"], [0, true]]"#,
+            )],
+        );
+        let input = decoded();
+        let boot: NetworkBootPause =
+            serde_json::from_value(input.settings["boot_with_network_traffic_paused"].clone())
+                .unwrap();
+        assert!(boot.0);
+        let pauses: Pauses = serde_json::from_value(input.settings["pauses"].clone()).unwrap();
+        let before: Pauses = serde_json::from_value(
+            decode_input(&LegacyDb::open(hydrus_testkit::legacy_fixture("basic").path()).unwrap())
+                .unwrap()
+                .settings["pauses"]
+                .clone(),
+        )
+        .unwrap();
+        assert_eq!(pauses, before, "import does not apply a boot action");
     }
 
     #[test]
