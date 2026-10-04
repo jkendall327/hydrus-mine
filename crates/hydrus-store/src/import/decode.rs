@@ -1049,6 +1049,29 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             viewer_hovers.index_background = *value;
         }
         insert_setting(&mut input, &viewer_hovers)?;
+        let mut eye = crate::settings::ViewerEyeMenuSettings::default();
+        for (key, field) in [
+            ("collapse_eye_menu_window", &mut eye.collapse_window),
+            ("collapse_eye_menu_hovers", &mut eye.collapse_hovers),
+            ("collapse_eye_menu_rendering", &mut eye.collapse_rendering),
+            (
+                "always_start_media_viewers_always_on_top",
+                &mut eye.start_on_top,
+            ),
+            (
+                "always_start_media_windows_tied_to_pauseplay_state",
+                &mut eye.start_on_top_while_playing,
+            ),
+            (
+                "always_start_media_viewers_frameless",
+                &mut eye.start_frameless,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        insert_setting(&mut input, &eye)?;
         let mut summaries = hydrus_core::tag_summary::TagSummaries::default();
         for (name, field) in [
             ("thumbnail_top", &mut summaries.thumbnail_top),
@@ -3837,6 +3860,60 @@ mod tests {
                 ratings: false,
                 notes: false,
                 index_background: false
+            }
+        );
+    }
+
+    #[test]
+    fn browser_eye_menu_preferences_migrate_independently() {
+        use crate::settings::ViewerEyeMenuSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerEyeMenuSettings>(
+                input.settings["viewer_eye_menu"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), ViewerEyeMenuSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "collapse_eye_menu_window"], [0, true]]"#,
+                    r#"[[0, "collapse_eye_menu_window"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "collapse_eye_menu_hovers"], [0, true]]"#,
+                    r#"[[0, "collapse_eye_menu_hovers"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "collapse_eye_menu_rendering"], [0, true]]"#,
+                    r#"[[0, "collapse_eye_menu_rendering"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "always_start_media_viewers_always_on_top"], [0, false]]"#,
+                    r#"[[0, "always_start_media_viewers_always_on_top"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "always_start_media_windows_tied_to_pauseplay_state"], [0, false]]"#,
+                    r#"[[0, "always_start_media_windows_tied_to_pauseplay_state"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "always_start_media_viewers_frameless"], [0, false]]"#,
+                    r#"[[0, "always_start_media_viewers_frameless"], [0, true]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerEyeMenuSettings {
+                collapse_window: false,
+                collapse_hovers: false,
+                collapse_rendering: false,
+                start_on_top: true,
+                start_on_top_while_playing: true,
+                start_frameless: true,
             }
         );
     }

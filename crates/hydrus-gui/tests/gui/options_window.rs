@@ -5362,3 +5362,221 @@ fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer(
     assert!(thumbnail().top.is_empty());
     assert!(viewer.get_tag_banner().is_empty());
 }
+
+#[test]
+fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer() {
+    use hydrus_store::settings::{
+        self, ViewerBackgroundSettings, ViewerCanvasSettings, ViewerEyeMenuSettings,
+        ViewerHoverSettings,
+    };
+    use serde_json::json;
+
+    fn flags(menu: &hydrus_gui::ViewerEyeMenu) -> serde_json::Value {
+        json!([
+            menu.collapse_window,
+            menu.collapse_hovers,
+            menu.collapse_rendering
+        ])
+    }
+    fn labels(rows: &slint::ModelRc<hydrus_gui::MenuRow>) -> Vec<String> {
+        rows.iter().map(|row| row.label.to_string()).collect()
+    }
+
+    let fixture = hydrus_testkit::fixture_json("viewer_eye_menu.json");
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let index = files
+        .iter()
+        .position(|id| {
+            store
+                .read(|conn| {
+                    let flags: u32 =
+                        conn.query_row("SELECT flags FROM files WHERE hash_id = ?", [id], |row| {
+                            row.get(0)
+                        })?;
+                    Ok(hydrus_store::media::FileFlags(flags)
+                        .has(hydrus_store::media::FileFlags::TRANSPARENCY))
+                })
+                .unwrap()
+        })
+        .expect("basic fixture has actual transparent media");
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    viewer.invoke_eye_menu_requested();
+    assert_eq!(flags(&viewer.get_eye_menu()), fixture["initial"]);
+    for event in fixture["events"].as_array().unwrap() {
+        let before: ViewerEyeMenuSettings = store.read(settings::get).unwrap();
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer hovers");
+        for (label, value) in fixture["labels"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(event["values"].as_array().unwrap())
+        {
+            options.invoke_check_toggled(
+                row(&options, label.as_str().unwrap()).0,
+                value.as_bool().unwrap(),
+            );
+        }
+        // A detached edit cannot affect the already-open viewer or the store.
+        viewer.invoke_eye_menu_requested();
+        assert_eq!(
+            flags(&viewer.get_eye_menu()),
+            json!([
+                before.collapse_window,
+                before.collapse_hovers,
+                before.collapse_rendering
+            ])
+        );
+        assert_eq!(
+            store.read(settings::get::<ViewerEyeMenuSettings>).unwrap(),
+            before
+        );
+        options.invoke_cancel();
+        options.invoke_apply(); // Retired owner must not save its staged values.
+        assert_eq!(
+            store.read(settings::get::<ViewerEyeMenuSettings>).unwrap(),
+            before
+        );
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer hovers");
+        for (label, value) in fixture["labels"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(event["values"].as_array().unwrap())
+        {
+            options.invoke_check_toggled(
+                row(&options, label.as_str().unwrap()).0,
+                value.as_bool().unwrap(),
+            );
+        }
+        options.invoke_apply();
+        viewer.invoke_eye_menu_requested();
+        let menu = viewer.get_eye_menu();
+        assert_eq!(flags(&menu), event["stored"]);
+        // All supported rows keep their original group and ordering in every
+        // topology. The real Slint menu switches these same rows between root
+        // and submenus; it does not substitute a separate menu for the viewer.
+        for (name, groups) in [
+            ("window", menu.window),
+            ("hovers", menu.hovers),
+            ("rendering", menu.rendering),
+        ] {
+            let native = labels(&groups.g1)
+                .into_iter()
+                .chain(labels(&groups.g2))
+                .collect::<Vec<_>>();
+            let reference = event["menu"].as_array().unwrap();
+            let entries = reference
+                .iter()
+                .find(|entry| entry["menu"] == name)
+                .map_or(reference, |entry| entry["entries"].as_array().unwrap());
+            let expected: Vec<_> = entries
+                .iter()
+                .filter_map(|entry| entry["check"].as_str())
+                .filter(|label| native.iter().any(|native| native == label))
+                .collect();
+            assert_eq!(native, expected, "{name} {event}");
+        }
+        open(&ui);
+        let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&reopened, "media viewer hovers");
+        for (label, value) in fixture["labels"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(event["reopened"].as_array().unwrap())
+        {
+            assert_eq!(
+                row(&reopened, label.as_str().unwrap()).1.checked,
+                value.as_bool().unwrap()
+            );
+        }
+        reopened.invoke_cancel();
+    }
+    // Both nested and flat routes retain real native/setting consumers.
+    viewer.invoke_eye_menu_chosen(0);
+    assert!(viewer.get_viewer_window_top());
+    viewer.invoke_eye_menu_chosen(2);
+    assert!(viewer.get_viewer_window_frameless());
+    viewer.invoke_eye_menu_chosen(6);
+    assert!(!viewer.get_draw_tags_background());
+    assert!(
+        !store
+            .read(settings::get::<ViewerBackgroundSettings>)
+            .unwrap()
+            .tags
+    );
+    viewer.invoke_eye_menu_chosen(12);
+    assert!(!viewer.get_hover_tags_enabled());
+    assert!(
+        !store
+            .read(settings::get::<ViewerHoverSettings>)
+            .unwrap()
+            .tags
+    );
+    viewer.invoke_eye_menu_chosen(15);
+    assert_eq!(viewer.get_transparency_mode(), 1);
+    viewer.invoke_eye_menu_chosen(16);
+    assert_eq!(viewer.get_transparency_mode(), 2);
+    let canvas: ViewerCanvasSettings = store.read(settings::get).unwrap();
+    assert!(canvas.transparency_checkerboard && canvas.transparency_greenscreen);
+    // Changing a new-viewer default while Options is open must survive applying
+    // a separate collapse preference from that detached snapshot.
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer hovers");
+    options.invoke_check_toggled(
+        row(&options, fixture["labels"][0].as_str().unwrap()).0,
+        false,
+    );
+    viewer.invoke_eye_menu_chosen(5);
+    options.invoke_apply();
+    assert!(
+        store
+            .read(settings::get::<ViewerEyeMenuSettings>)
+            .unwrap()
+            .start_frameless
+    );
+    assert!(viewer.get_viewer_window_frameless());
+    viewer
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::PointerMoved {
+            position: slint::LogicalPosition::new(500.0, 8.0),
+        });
+    let pixels = headless::render(&drawn, 1000, 750);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("viewer-eye-menu.png"),
+        &pixels,
+        1000,
+        750,
+    )
+    .unwrap();
+    let before: ViewerEyeMenuSettings = store.read(settings::get).unwrap();
+    viewer.invoke_close_requested();
+    viewer.invoke_eye_menu_chosen(5);
+    viewer.invoke_eye_menu_requested();
+    assert_eq!(
+        store.read(settings::get::<ViewerEyeMenuSettings>).unwrap(),
+        before
+    );
+    ui.invoke_thumbnail_activated(0);
+    let reopened = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert!(reopened.get_viewer_window_frameless());
+    reopened.invoke_eye_menu_requested();
+    assert!(!reopened.get_eye_menu().collapse_window);
+    reopened.invoke_close_requested();
+}

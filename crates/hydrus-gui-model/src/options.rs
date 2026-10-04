@@ -64,6 +64,17 @@ macro_rules! settings {
             hydrus_store::settings::set($conn, &deletion)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, viewer_eye_menu) => {
+        if $after.viewer_eye_menu != $before.viewer_eye_menu {
+            let mut eye = $after.viewer_eye_menu.clone();
+            let current: hydrus_store::settings::ViewerEyeMenuSettings = hydrus_store::settings::get($conn)?;
+            // These defaults belong to live eye-menu actions, not this Options page.
+            eye.start_on_top = current.start_on_top;
+            eye.start_on_top_while_playing = current.start_on_top_while_playing;
+            eye.start_frameless = current.start_frameless;
+            hydrus_store::settings::set($conn, &eye)?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, $field:ident) => {
         if $after.$field != $before.$field {hydrus_store::settings::set($conn, &$after.$field)?;}
     };
@@ -146,6 +157,7 @@ settings! {
     viewer_canvas: ViewerCanvasSettings,
     viewer_background: ViewerBackgroundSettings,
     viewer_hovers: ViewerHoverSettings,
+    viewer_eye_menu: hydrus_store::settings::ViewerEyeMenuSettings,
     viewer_pointer: ViewerPointerSettings,
     viewer_focus: ViewerFocusSettings,
     viewer_closing: ViewerClosingSettings,
@@ -2545,17 +2557,34 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 ),
                 boxed(
                     "top hover button/menu controls",
-                    vec![choice(
-                        "Zoom switch button switches between:",
-                        &[
-                            "100% and canvas fit",
-                            "100% and canvas fit, and recenter media on switch",
-                            "100% and canvas fit and canvas fill",
-                            "100% and canvas fit and canvas fill, and recenter media on switch",
-                        ],
-                        |s| s.viewer_playback.zoom_switch.min(3),
-                        |s, value| s.viewer_playback.zoom_switch = value,
-                    )],
+                    vec![
+                        choice(
+                            "Zoom switch button switches between:",
+                            &[
+                                "100% and canvas fit",
+                                "100% and canvas fit, and recenter media on switch",
+                                "100% and canvas fit and canvas fill",
+                                "100% and canvas fit and canvas fill, and recenter media on switch",
+                            ],
+                            |s| s.viewer_playback.zoom_switch.min(3),
+                            |s, value| s.viewer_playback.zoom_switch = value,
+                        ),
+                        check(
+                            "Collapse \"window\" submenu in 'view options' (eye menu):",
+                            |s| s.viewer_eye_menu.collapse_window,
+                            |s, v| s.viewer_eye_menu.collapse_window = v,
+                        ),
+                        check(
+                            "Collapse \"hovers\" submenu in 'view options' (eye menu):",
+                            |s| s.viewer_eye_menu.collapse_hovers,
+                            |s, v| s.viewer_eye_menu.collapse_hovers = v,
+                        ),
+                        check(
+                            "Collapse \"rendering\" submenu in 'view options' (eye menu):",
+                            |s| s.viewer_eye_menu.collapse_rendering,
+                            |s, v| s.viewer_eye_menu.collapse_rendering = v,
+                        ),
+                    ],
                 ),
                 boxed(
                     "top hover file summary",

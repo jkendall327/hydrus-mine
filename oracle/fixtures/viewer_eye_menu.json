@@ -1,0 +1,907 @@
+{
+  "initial": [
+    true,
+    true,
+    true
+  ],
+  "labels": [
+    "Collapse \"window\" submenu in 'view options' (eye menu):",
+    "Collapse \"hovers\" submenu in 'view options' (eye menu):",
+    "Collapse \"rendering\" submenu in 'view options' (eye menu):"
+  ],
+  "events": [
+    {
+      "values": [
+        false,
+        false,
+        false
+      ],
+      "stored": [
+        false,
+        false,
+        false
+      ],
+      "reopened": [
+        false,
+        false,
+        false
+      ],
+      "menu": [
+        "MAY BE BUGGY/CRASHY ON LINUX",
+        {
+          "check": "always on top",
+          "checked": false
+        },
+        {
+          "check": "always on top (while playing)",
+          "checked": false
+        },
+        {
+          "check": "remove titlebar/frame",
+          "checked": false
+        },
+        "---",
+        {
+          "check": "always start new media viewers always on top",
+          "checked": false
+        },
+        {
+          "check": "always start new media viewers on top while playing",
+          "checked": false
+        },
+        {
+          "check": "always start new media viewers without titlebar/frame",
+          "checked": false
+        },
+        "---",
+        {
+          "check": "draw tags (left) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw file information (top) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw ratings and locations (top-right) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw notes (right) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw index text (bottom-right) in the background",
+          "checked": true
+        },
+        "---",
+        {
+          "check": "hover window pop-in requires window focus",
+          "checked": true
+        },
+        {
+          "check": "pop-in tags hover window on mouseover",
+          "checked": true
+        },
+        {
+          "check": "pop-in ratings and locations hover window on mouseover",
+          "checked": true
+        },
+        {
+          "check": "pop-in notes hover window on mouseover",
+          "checked": true
+        },
+        {
+          "check": "pin the duplicates hover window so it is always visible",
+          "checked": true
+        },
+        "---",
+        {
+          "check": "apply image ICC Profile colour adjustments",
+          "checked": true
+        },
+        {
+          "check": "draw transparency as checkerboard in media viewer",
+          "checked": false
+        },
+        {
+          "check": "draw transparency as checkerboard in media viewer (duplicate filter)",
+          "checked": true
+        },
+        {
+          "check": "instead of checkerboard, use a bright greenscreen",
+          "checked": false
+        }
+      ]
+    },
+    {
+      "values": [
+        false,
+        false,
+        true
+      ],
+      "stored": [
+        false,
+        false,
+        true
+      ],
+      "reopened": [
+        false,
+        false,
+        true
+      ],
+      "menu": [
+        "MAY BE BUGGY/CRASHY ON LINUX",
+        {
+          "check": "always on top",
+          "checked": false
+        },
+        {
+          "check": "always on top (while playing)",
+          "checked": false
+        },
+        {
+          "check": "remove titlebar/frame",
+          "checked": false
+        },
+        "---",
+        {
+          "check": "always start new media viewers always on top",
+          "checked": false
+        },
+        {
+          "check": "always start new media viewers on top while playing",
+          "checked": false
+        },
+        {
+          "check": "always start new media viewers without titlebar/frame",
+          "checked": false
+        },
+        "---",
+        {
+          "check": "draw tags (left) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw file information (top) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw ratings and locations (top-right) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw notes (right) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw index text (bottom-right) in the background",
+          "checked": true
+        },
+        "---",
+        {
+          "check": "hover window pop-in requires window focus",
+          "checked": true
+        },
+        {
+          "check": "pop-in tags hover window on mouseover",
+          "checked": true
+        },
+        {
+          "check": "pop-in ratings and locations hover window on mouseover",
+          "checked": true
+        },
+        {
+          "check": "pop-in notes hover window on mouseover",
+          "checked": true
+        },
+        {
+          "check": "pin the duplicates hover window so it is always visible",
+          "checked": true
+        },
+        "---",
+        {
+          "menu": "rendering",
+          "entries": [
+            {
+              "check": "apply image ICC Profile colour adjustments",
+              "checked": true
+            },
+            {
+              "check": "draw transparency as checkerboard in media viewer",
+              "checked": false
+            },
+            {
+              "check": "draw transparency as checkerboard in media viewer (duplicate filter)",
+              "checked": true
+            },
+            {
+              "check": "instead of checkerboard, use a bright greenscreen",
+              "checked": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "values": [
+        false,
+        true,
+        false
+      ],
+      "stored": [
+        false,
+        true,
+        false
+      ],
+      "reopened": [
+        false,
+        true,
+        false
+      ],
+      "menu": [
+        "MAY BE BUGGY/CRASHY ON LINUX",
+        {
+          "check": "always on top",
+          "checked": false
+        },
+        {
+          "check": "always on top (while playing)",
+          "checked": false
+        },
+        {
+          "check": "remove titlebar/frame",
+          "checked": false
+        },
+        "---",
+        {
+          "check": "always start new media viewers always on top",
+          "checked": false
+        },
+        {
+          "check": "always start new media viewers on top while playing",
+          "checked": false
+        },
+        {
+          "check": "always start new media viewers without titlebar/frame",
+          "checked": false
+        },
+        "---",
+        {
+          "menu": "hovers",
+          "entries": [
+            {
+              "check": "draw tags (left) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw file information (top) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw ratings and locations (top-right) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw notes (right) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw index text (bottom-right) in the background",
+              "checked": true
+            },
+            "---",
+            {
+              "check": "hover window pop-in requires window focus",
+              "checked": true
+            },
+            {
+              "check": "pop-in tags hover window on mouseover",
+              "checked": true
+            },
+            {
+              "check": "pop-in ratings and locations hover window on mouseover",
+              "checked": true
+            },
+            {
+              "check": "pop-in notes hover window on mouseover",
+              "checked": true
+            },
+            {
+              "check": "pin the duplicates hover window so it is always visible",
+              "checked": true
+            }
+          ]
+        },
+        "---",
+        {
+          "check": "apply image ICC Profile colour adjustments",
+          "checked": true
+        },
+        {
+          "check": "draw transparency as checkerboard in media viewer",
+          "checked": false
+        },
+        {
+          "check": "draw transparency as checkerboard in media viewer (duplicate filter)",
+          "checked": true
+        },
+        {
+          "check": "instead of checkerboard, use a bright greenscreen",
+          "checked": false
+        }
+      ]
+    },
+    {
+      "values": [
+        false,
+        true,
+        true
+      ],
+      "stored": [
+        false,
+        true,
+        true
+      ],
+      "reopened": [
+        false,
+        true,
+        true
+      ],
+      "menu": [
+        "MAY BE BUGGY/CRASHY ON LINUX",
+        {
+          "check": "always on top",
+          "checked": false
+        },
+        {
+          "check": "always on top (while playing)",
+          "checked": false
+        },
+        {
+          "check": "remove titlebar/frame",
+          "checked": false
+        },
+        "---",
+        {
+          "check": "always start new media viewers always on top",
+          "checked": false
+        },
+        {
+          "check": "always start new media viewers on top while playing",
+          "checked": false
+        },
+        {
+          "check": "always start new media viewers without titlebar/frame",
+          "checked": false
+        },
+        "---",
+        {
+          "menu": "hovers",
+          "entries": [
+            {
+              "check": "draw tags (left) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw file information (top) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw ratings and locations (top-right) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw notes (right) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw index text (bottom-right) in the background",
+              "checked": true
+            },
+            "---",
+            {
+              "check": "hover window pop-in requires window focus",
+              "checked": true
+            },
+            {
+              "check": "pop-in tags hover window on mouseover",
+              "checked": true
+            },
+            {
+              "check": "pop-in ratings and locations hover window on mouseover",
+              "checked": true
+            },
+            {
+              "check": "pop-in notes hover window on mouseover",
+              "checked": true
+            },
+            {
+              "check": "pin the duplicates hover window so it is always visible",
+              "checked": true
+            }
+          ]
+        },
+        {
+          "menu": "rendering",
+          "entries": [
+            {
+              "check": "apply image ICC Profile colour adjustments",
+              "checked": true
+            },
+            {
+              "check": "draw transparency as checkerboard in media viewer",
+              "checked": false
+            },
+            {
+              "check": "draw transparency as checkerboard in media viewer (duplicate filter)",
+              "checked": true
+            },
+            {
+              "check": "instead of checkerboard, use a bright greenscreen",
+              "checked": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "values": [
+        true,
+        false,
+        false
+      ],
+      "stored": [
+        true,
+        false,
+        false
+      ],
+      "reopened": [
+        true,
+        false,
+        false
+      ],
+      "menu": [
+        {
+          "menu": "window",
+          "entries": [
+            "MAY BE BUGGY/CRASHY ON LINUX",
+            {
+              "check": "always on top",
+              "checked": false
+            },
+            {
+              "check": "always on top (while playing)",
+              "checked": false
+            },
+            {
+              "check": "remove titlebar/frame",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "always start new media viewers always on top",
+              "checked": false
+            },
+            {
+              "check": "always start new media viewers on top while playing",
+              "checked": false
+            },
+            {
+              "check": "always start new media viewers without titlebar/frame",
+              "checked": false
+            }
+          ]
+        },
+        "---",
+        {
+          "check": "draw tags (left) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw file information (top) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw ratings and locations (top-right) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw notes (right) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw index text (bottom-right) in the background",
+          "checked": true
+        },
+        "---",
+        {
+          "check": "hover window pop-in requires window focus",
+          "checked": true
+        },
+        {
+          "check": "pop-in tags hover window on mouseover",
+          "checked": true
+        },
+        {
+          "check": "pop-in ratings and locations hover window on mouseover",
+          "checked": true
+        },
+        {
+          "check": "pop-in notes hover window on mouseover",
+          "checked": true
+        },
+        {
+          "check": "pin the duplicates hover window so it is always visible",
+          "checked": true
+        },
+        "---",
+        {
+          "check": "apply image ICC Profile colour adjustments",
+          "checked": true
+        },
+        {
+          "check": "draw transparency as checkerboard in media viewer",
+          "checked": false
+        },
+        {
+          "check": "draw transparency as checkerboard in media viewer (duplicate filter)",
+          "checked": true
+        },
+        {
+          "check": "instead of checkerboard, use a bright greenscreen",
+          "checked": false
+        }
+      ]
+    },
+    {
+      "values": [
+        true,
+        false,
+        true
+      ],
+      "stored": [
+        true,
+        false,
+        true
+      ],
+      "reopened": [
+        true,
+        false,
+        true
+      ],
+      "menu": [
+        {
+          "menu": "window",
+          "entries": [
+            "MAY BE BUGGY/CRASHY ON LINUX",
+            {
+              "check": "always on top",
+              "checked": false
+            },
+            {
+              "check": "always on top (while playing)",
+              "checked": false
+            },
+            {
+              "check": "remove titlebar/frame",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "always start new media viewers always on top",
+              "checked": false
+            },
+            {
+              "check": "always start new media viewers on top while playing",
+              "checked": false
+            },
+            {
+              "check": "always start new media viewers without titlebar/frame",
+              "checked": false
+            }
+          ]
+        },
+        "---",
+        {
+          "check": "draw tags (left) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw file information (top) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw ratings and locations (top-right) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw notes (right) in the background",
+          "checked": true
+        },
+        {
+          "check": "draw index text (bottom-right) in the background",
+          "checked": true
+        },
+        "---",
+        {
+          "check": "hover window pop-in requires window focus",
+          "checked": true
+        },
+        {
+          "check": "pop-in tags hover window on mouseover",
+          "checked": true
+        },
+        {
+          "check": "pop-in ratings and locations hover window on mouseover",
+          "checked": true
+        },
+        {
+          "check": "pop-in notes hover window on mouseover",
+          "checked": true
+        },
+        {
+          "check": "pin the duplicates hover window so it is always visible",
+          "checked": true
+        },
+        "---",
+        {
+          "menu": "rendering",
+          "entries": [
+            {
+              "check": "apply image ICC Profile colour adjustments",
+              "checked": true
+            },
+            {
+              "check": "draw transparency as checkerboard in media viewer",
+              "checked": false
+            },
+            {
+              "check": "draw transparency as checkerboard in media viewer (duplicate filter)",
+              "checked": true
+            },
+            {
+              "check": "instead of checkerboard, use a bright greenscreen",
+              "checked": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "values": [
+        true,
+        true,
+        false
+      ],
+      "stored": [
+        true,
+        true,
+        false
+      ],
+      "reopened": [
+        true,
+        true,
+        false
+      ],
+      "menu": [
+        {
+          "menu": "window",
+          "entries": [
+            "MAY BE BUGGY/CRASHY ON LINUX",
+            {
+              "check": "always on top",
+              "checked": false
+            },
+            {
+              "check": "always on top (while playing)",
+              "checked": false
+            },
+            {
+              "check": "remove titlebar/frame",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "always start new media viewers always on top",
+              "checked": false
+            },
+            {
+              "check": "always start new media viewers on top while playing",
+              "checked": false
+            },
+            {
+              "check": "always start new media viewers without titlebar/frame",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "hovers",
+          "entries": [
+            {
+              "check": "draw tags (left) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw file information (top) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw ratings and locations (top-right) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw notes (right) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw index text (bottom-right) in the background",
+              "checked": true
+            },
+            "---",
+            {
+              "check": "hover window pop-in requires window focus",
+              "checked": true
+            },
+            {
+              "check": "pop-in tags hover window on mouseover",
+              "checked": true
+            },
+            {
+              "check": "pop-in ratings and locations hover window on mouseover",
+              "checked": true
+            },
+            {
+              "check": "pop-in notes hover window on mouseover",
+              "checked": true
+            },
+            {
+              "check": "pin the duplicates hover window so it is always visible",
+              "checked": true
+            }
+          ]
+        },
+        "---",
+        {
+          "check": "apply image ICC Profile colour adjustments",
+          "checked": true
+        },
+        {
+          "check": "draw transparency as checkerboard in media viewer",
+          "checked": false
+        },
+        {
+          "check": "draw transparency as checkerboard in media viewer (duplicate filter)",
+          "checked": true
+        },
+        {
+          "check": "instead of checkerboard, use a bright greenscreen",
+          "checked": false
+        }
+      ]
+    },
+    {
+      "values": [
+        true,
+        true,
+        true
+      ],
+      "stored": [
+        true,
+        true,
+        true
+      ],
+      "reopened": [
+        true,
+        true,
+        true
+      ],
+      "menu": [
+        {
+          "menu": "window",
+          "entries": [
+            "MAY BE BUGGY/CRASHY ON LINUX",
+            {
+              "check": "always on top",
+              "checked": false
+            },
+            {
+              "check": "always on top (while playing)",
+              "checked": false
+            },
+            {
+              "check": "remove titlebar/frame",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "always start new media viewers always on top",
+              "checked": false
+            },
+            {
+              "check": "always start new media viewers on top while playing",
+              "checked": false
+            },
+            {
+              "check": "always start new media viewers without titlebar/frame",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "hovers",
+          "entries": [
+            {
+              "check": "draw tags (left) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw file information (top) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw ratings and locations (top-right) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw notes (right) in the background",
+              "checked": true
+            },
+            {
+              "check": "draw index text (bottom-right) in the background",
+              "checked": true
+            },
+            "---",
+            {
+              "check": "hover window pop-in requires window focus",
+              "checked": true
+            },
+            {
+              "check": "pop-in tags hover window on mouseover",
+              "checked": true
+            },
+            {
+              "check": "pop-in ratings and locations hover window on mouseover",
+              "checked": true
+            },
+            {
+              "check": "pop-in notes hover window on mouseover",
+              "checked": true
+            },
+            {
+              "check": "pin the duplicates hover window so it is always visible",
+              "checked": true
+            }
+          ]
+        },
+        {
+          "menu": "rendering",
+          "entries": [
+            {
+              "check": "apply image ICC Profile colour adjustments",
+              "checked": true
+            },
+            {
+              "check": "draw transparency as checkerboard in media viewer",
+              "checked": false
+            },
+            {
+              "check": "draw transparency as checkerboard in media viewer (duplicate filter)",
+              "checked": true
+            },
+            {
+              "check": "instead of checkerboard, use a bright greenscreen",
+              "checked": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "cancelled_values": [
+    true,
+    true,
+    true
+  ]
+}

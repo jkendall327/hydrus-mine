@@ -1969,3 +1969,17 @@ Numerical samples currently respond to presses on the star graphics; Qt's
 drag-to-rate input and clicks on the adjacent fraction text remain unavailable.
 This implements the local example-panel leaf; broader service management and
 rating sizing/preferences remain partial.
+
+
+The browser viewer eye-menu collapse preferences now control the native menu's
+real window/hovers/rendering sections, with all eight combinations recorded from
+the actual reference menu. Native rows cover window top/frame state and initial
+window defaults, passive backgrounds, pop-in focus/enable controls and viewer
+checkerboard/greenscreen rendering. The reference's ICC toggle, duplicate-filter
+checkerboard and pinned duplicates hover entry are not exposed in this browser
+menu. The Linux always-on-top warning label is also absent. Native OS frame/top
+requests use Slint's platform window properties; platform support can differ.
+The three topology controls are complete within this browser-viewer scope;
+broader hover/button/view-options families remain Partial. No deeper missing
+action is presented as a placeholder. Options edits preserve concurrently changed
+new-viewer defaults, and stale viewer/Options callbacks cannot save changes.

@@ -848,6 +848,34 @@ impl Setting for ViewerHoverSettings {
     const KEY: &'static str = "viewer_hovers";
 }
 
+/// Browser viewer eye-menu grouping and initial native window presentation.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+#[allow(clippy::struct_excessive_bools)] // Independent reference checkbox preferences.
+pub struct ViewerEyeMenuSettings {
+    pub collapse_window: bool,
+    pub collapse_hovers: bool,
+    pub collapse_rendering: bool,
+    pub start_on_top: bool,
+    pub start_on_top_while_playing: bool,
+    pub start_frameless: bool,
+}
+impl Default for ViewerEyeMenuSettings {
+    fn default() -> Self {
+        Self {
+            collapse_window: true,
+            collapse_hovers: true,
+            collapse_rendering: true,
+            start_on_top: false,
+            start_on_top_while_playing: false,
+            start_frameless: false,
+        }
+    }
+}
+impl Setting for ViewerEyeMenuSettings {
+    const KEY: &'static str = "viewer_eye_menu";
+}
+
 /// Export folders.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, serde::Deserialize)]
 pub struct ExportFolders(pub Vec<hydrus_parse::folders::ExportFolder>);
