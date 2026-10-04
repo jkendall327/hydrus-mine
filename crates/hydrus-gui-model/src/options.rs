@@ -4092,7 +4092,7 @@ mod tests {
         ]
         .map(|label| {
             pages[ratings]
-                .options
+                .options()
                 .iter()
                 .position(|option| option.label == label)
                 .unwrap()
