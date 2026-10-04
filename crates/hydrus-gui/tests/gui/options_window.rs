@@ -1719,8 +1719,8 @@ fn read_list_sizes_and_float_policy_reach_rendered_new_pages() {
         ui.invoke_search_edited("".into());
         assert!(ui.get_suggestions().row_count() > 0);
         ui.set_search_focus_requests(ui.get_search_focus_requests() + 1);
-        // Layout publishes geometry from the conditional sidebar. Flush those
-        // change handlers, then render its correctly placed overlay.
+        // Live geometry bindings publish the conditional input's initial
+        // layout; the overlay is rendered at its actual bottom edge.
         headless::render(&main, 1100, 1500);
         slint::platform::update_timers_and_animations();
         let pixels = headless::render(&main, 1100, 1500);
@@ -1731,6 +1731,21 @@ fn read_list_sizes_and_float_policy_reach_rendered_new_pages() {
         );
         if index == 0 {
             assert!(ui.get_search_focused());
+            assert!(ui.get_float_autocomplete());
+            assert!(!ui.get_search_locked());
+            assert!(ui.get_note().is_empty());
+            assert!(ui.get_question().is_empty());
+            assert_eq!(ui.get_menu_panes().row_count(), 0);
+            assert_eq!(ui.get_chooser_labels().row_count(), 0);
+            assert!(
+                ui.get_autocomplete_anchor_width() > 0.0,
+                "initial conditional search input publishes its width"
+            );
+            assert!(ui.get_autocomplete_anchor_x() >= 0.0);
+            assert!(
+                ui.get_autocomplete_anchor_y() > ui.get_active_predicate_list_height(),
+                "floating results begin below the actual search input"
+            );
             assert!(ui.get_autocomplete_overlay_visible());
             floated_tags_y = Some(ui.get_search_tags_y());
         } else if index == 1 {
