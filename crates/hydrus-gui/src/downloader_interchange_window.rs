@@ -154,6 +154,41 @@ pub fn open_login_scripts(
     Ok(window)
 }
 
+/// Share selected subsidiary wrappers, including their formula and sort settings.
+pub fn open_subsidiaries(
+    slots: &Slots,
+    importing: bool,
+    parsers: Vec<hydrus_parse::content::SubsidiaryPageParser>,
+    preview: Preview<hydrus_parse::content::SubsidiaryPageParser>,
+    applied: Apply<hydrus_parse::content::SubsidiaryPageParser>,
+) -> Result<DownloaderExchangeWindow, String> {
+    use hydrus_downloader_exchange::subsidiaries;
+    let window = open_objects(
+        slots,
+        importing,
+        parsers,
+        preview,
+        applied,
+        Codec {
+            encode_text: subsidiaries::encode_text,
+            decode_text: subsidiaries::decode_text,
+            encode_png: subsidiaries::encode_png,
+            decode_png: subsidiaries::decode_png,
+            processing: false,
+        },
+    )?;
+    window.set_window_title(
+        if importing {
+            "import subsidiary parsers"
+        } else {
+            "export subsidiary parsers"
+        }
+        .into(),
+    );
+    window.set_instructions(if importing { "Paste reference subsidiary text or open a hydrus PNG. Review the recursive wrappers before adding them." } else { "Copy selected subsidiary parsers or save a hydrus PNG to share them." }.into());
+    Ok(window)
+}
+
 fn open_objects<T: Clone + 'static>(
     slots: &Slots,
     importing: bool,

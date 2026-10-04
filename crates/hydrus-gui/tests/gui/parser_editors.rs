@@ -904,7 +904,7 @@ fn subsidiary_separator_uses_converted_data_preserves_newlines_and_saves() {
     let page = child(&slots.page);
     page.set_document(before["raw"].as_str().unwrap().into());
     assert_eq!(page.get_subsidiaries().row_count(), 1);
-    page.invoke_subsidiary_clicked(0);
+    page.invoke_subsidiary_clicked(0, false, false);
     assert!(page.get_subsidiary_sorted());
     page.invoke_action("separator".into());
     let formula = slots
@@ -1239,7 +1239,7 @@ fn subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_pr
     list.invoke_row_clicked(0, false, false);
     list.invoke_action("edit".into());
     let page = child(&slots.page);
-    page.invoke_subsidiary_clicked(0);
+    page.invoke_subsidiary_clicked(0, false, false);
     page.invoke_action("edit-subsidiary".into());
     let (_, subsidiary) = recursive_child(&slots);
     subsidiary.invoke_own_sort_changed(true);
@@ -1265,4 +1265,122 @@ fn subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_pr
     assert_eq!(new.parser.subsidiary, old.parser.subsidiary);
     assert_eq!(new.parser.name, "edited subsidiary");
     assert!(!new.sort_by_source_time);
+}
+
+#[test]
+fn subsidiary_queue_exchange_is_staged_preserves_wrappers_and_reaches_saved_parser() {
+    use hydrus_downloader_exchange::subsidiaries as exchange;
+    use std::{cell::RefCell, rc::Rc};
+    let reference: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../../oracle/fixtures/subsidiary_exchange.json"
+    ))
+    .unwrap();
+    let (dir, store, slots) = setup();
+    let rendered = headless::init();
+    let mut saved = definitions(&store);
+    saved.parsers[0].content_parsers.clear();
+    store
+        .write_and_refresh(move |ctx| settings::set(ctx.conn(), &saved))
+        .unwrap();
+    let original = definitions(&store);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.invoke_action("import-subsidiary".into());
+    let import = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    import.set_text(reference["bundle"].to_string().into());
+    import.invoke_action("review".into());
+    assert!(import.get_ready());
+    page.invoke_action("apply".into());
+    assert!(slots.page.borrow().is_some());
+    import.invoke_action("accept".into());
+    assert_eq!(page.get_subsidiaries().row_count(), 2);
+    assert!(page.get_subsidiaries().iter().all(|row| row.selected));
+    assert!(!page.get_subsidiary_selected());
+    assert_eq!(definitions(&store), original);
+    page.invoke_action("export-subsidiary".into());
+    let export = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(export.get_text().as_str()).unwrap(),
+        reference["bundle"]
+    );
+    let copies = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_clipper({
+        let copies = copies.clone();
+        move |clip| copies.borrow_mut().push(clip.clone())
+    });
+    export.invoke_action("copy".into());
+    assert_eq!(
+        copies.borrow()[0],
+        hydrus_gui::Clip::Text(export.get_text().to_string())
+    );
+    let path = dir.path().join("subsidiaries.png");
+    export.set_path(path.to_string_lossy().as_ref().into());
+    export.invoke_action("save".into());
+    assert_eq!(
+        exchange::decode_png(&std::fs::read(path).unwrap()).unwrap(),
+        exchange::decode_text(&reference["bundle"].to_string()).unwrap()
+    );
+    export.invoke_action("cancel".into());
+    page.invoke_action("duplicate-subsidiary".into());
+    assert_eq!(page.get_subsidiaries().row_count(), 4);
+    page.invoke_action("delete-subsidiary".into());
+    assert_eq!(
+        page.get_question(),
+        reference["deletes"][0]["question"].as_str().unwrap()
+    );
+    page.invoke_answered(false);
+    assert_eq!(page.get_subsidiaries().row_count(), 4);
+    page.invoke_action("delete-subsidiary".into());
+    page.invoke_answered(true);
+    assert_eq!(page.get_subsidiaries().row_count(), 2);
+    screenshot(&rendered, 1, "subsidiary-exchange.png", &page);
+    page.invoke_subsidiary_clicked(0, false, false);
+    page.invoke_subsidiary_clicked(1, true, false);
+    page.invoke_action("export-subsidiary".into());
+    let export = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(export.get_text().as_str()).unwrap(),
+        reference["bundle"]
+    );
+    export.invoke_action("cancel".into());
+    page.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    let persisted = definitions(&store);
+    let texts = persisted.parsers[0]
+        .parse(&mut ParsingContext::new(), "parent document")
+        .unwrap()
+        .iter()
+        .map(|post| {
+            post.contents
+                .iter()
+                .map(|c| c.text.clone())
+                .collect::<Vec<_>>()
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(serde_json::json!(texts), reference["parsed"]);
+    assert_eq!(
+        exchange::tuple(&persisted.parsers[0].subsidiary[0]).unwrap(),
+        reference["single"]
+    );
+    // Wrong-type packages and stale accepted imports cannot change an owner draft.
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.invoke_action("import-subsidiary".into());
+    let import = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    import.set_text(r#"[136,1,["wrong",1,"",[84,1,[26,3,[]]]]]"#.into());
+    import.invoke_action("review".into());
+    assert!(!import.get_ready());
+    assert!(!import.get_error().is_empty());
+    assert_eq!(page.get_subsidiaries().row_count(), 2);
+    import.set_text(reference["single"].to_string().into());
+    import.invoke_action("review".into());
+    page.invoke_force_close();
+    assert!(!slots.exchange.has_open());
+    import.invoke_action("accept".into());
+    list.invoke_action("cancel".into());
+    assert_eq!(definitions(&store), persisted);
 }

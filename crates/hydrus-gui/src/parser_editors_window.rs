@@ -116,6 +116,8 @@ struct Editor {
     original: Value,
     selected: Option<usize>,
     subsidiary_selected: Option<usize>,
+    subsidiary_selection: ListSelection<usize>,
+    pending_subsidiary_delete: Option<Vec<(usize, hydrus_parse::content::SubsidiaryPageParser)>>,
     test: FormulaTestData,
     example: usize,
     permitted_types: Vec<usize>,
@@ -264,6 +266,7 @@ fn show_editor(w: &ParserEditWindow, e: &Editor) {
             )
         })));
         w.set_subsidiary_selected(e.subsidiary_selected.is_some());
+        w.set_subsidiary_exportable(!e.subsidiary_selection.is_empty());
         w.set_subsidiary_sorted(
             e.subsidiary_selected
                 .and_then(|i| p.subsidiary.get(i))
@@ -472,6 +475,8 @@ fn open_editor(
         value,
         selected: None,
         subsidiary_selected: None,
+        subsidiary_selection: ListSelection::default(),
+        pending_subsidiary_delete: None,
         test,
         example: 0,
         permitted_types: permitted_types.map_or_else(
@@ -506,7 +511,13 @@ fn open_editor(
         let active = active.clone();
         let slots = slots.clone();
         let fetch = fetch.clone();
-        move || !active.get() || child_open(&slots, page) || fetch.busy()
+        let weak = w.as_weak();
+        move || {
+            !active.get()
+                || child_open(&slots, page)
+                || fetch.busy()
+                || weak.upgrade().is_none_or(|w| !w.get_question().is_empty())
+        }
     });
     w.on_fetch_error_action({
         let state = state.clone();
@@ -795,7 +806,7 @@ fn open_editor(
         let state = state.clone();
         let refresh = refresh.clone();
         let blocked = blocked.clone();
-        move |row| {
+        move |row, ctrl, shift| {
             if blocked() {
                 return;
             }
@@ -804,7 +815,9 @@ fn open_editor(
                 if let Value::Page(page) = &e.value
                     && index < page.subsidiary.len()
                 {
-                    e.subsidiary_selected = Some(index);
+                    let order = (0..page.subsidiary.len()).collect::<Vec<_>>();
+                    e.subsidiary_selection.click(&order, index, ctrl, shift);
+                    e.subsidiary_selected = e.subsidiary_selection.one();
                 }
             }
             refresh();
@@ -886,9 +899,40 @@ fn open_editor(
     w.on_answered({
         let weak = w.as_weak();
         let close = close.clone();
-        let blocked = blocked.clone();
+        let active = active.clone();
+        let slots = slots.clone();
+        let fetch = fetch.clone();
+        let state = state.clone();
+        let refresh = refresh.clone();
         move |yes| {
-            if blocked() {
+            if !active.get() || child_open(&slots, page) || fetch.busy() {
+                return;
+            }
+            let pending = state.borrow_mut().pending_subsidiary_delete.take();
+            if let Some(rows) = pending {
+                if yes {
+                    let mut e = state.borrow_mut();
+                    if let Value::Page(page) = &mut e.value {
+                        if rows
+                            .iter()
+                            .all(|(i, original)| page.subsidiary.get(*i) == Some(original))
+                        {
+                            for (i, _) in rows.into_iter().rev() {
+                                page.subsidiary.remove(i);
+                            }
+                            e.subsidiary_selection = ListSelection::default();
+                            e.subsidiary_selected = None;
+                        } else if let Some(w) = weak.upgrade() {
+                            w.set_error(
+                                "The subsidiary queue changed while deletion was pending.".into(),
+                            );
+                        }
+                    }
+                }
+                if let Some(w) = weak.upgrade() {
+                    w.set_question(SharedString::new());
+                }
+                refresh();
                 return;
             }
             if yes {
@@ -900,6 +944,7 @@ fn open_editor(
     });
     w.on_action({ let weak = w.as_weak(); let state = state.clone(); let slots = slots.clone(); let store = store.clone(); let refresh = refresh.clone(); let blocked = blocked.clone(); let active = active.clone(); let close = close.clone(); let fetch = fetch.clone(); move |action| {
         if blocked() && !(action == "cancel" && fetch.busy() && active.get()) { return; } let Some(w) = weak.upgrade() else { return; };
+        if !w.get_question().is_empty() { return; }
         let result = (|| -> Result<(),String> {
             match action.as_str() {
                 "apply" => { if !state.borrow().errors.is_empty() { return Err(state.borrow().errors.values().cloned().collect::<Vec<_>>().join("\n")); } let value = match &state.borrow().value { Value::Content(e) => Value::Content(Box::new(ContentEditor::new(&e.value(),e.test.clone()))), v @ Value::Page(_) => v.clone() }; applied(value)?; close(); }
@@ -908,7 +953,7 @@ fn open_editor(
                     use hydrus_gui_model::downloader_interchange::{Definition,Native};
                     let native=match &state.borrow().value{Value::Page(p)=>Native::Page((**p).clone()),Value::Content(c)=>Native::Content(c.value())};
                     let preview=Rc::new(move |definitions:Vec<Definition>| { if definitions.len()!=1 || !matches!((page,&definitions[0].native),(true,Native::Page(_))|(false,Native::Content(_))) { return Err("Import one matching page or content parser into this editor.".into()); } Ok(format!("Replace this draft with parser: {}",definitions[0].name())) });
-                    let applied=Rc::new({let state=state.clone();let refresh=refresh.clone();move |mut definitions:Vec<Definition>| {let definition=definitions.pop().ok_or("No parser to import.")?;let mut e=state.borrow_mut();match (page,definition.native){(true,Native::Page(p))=>e.value=Value::Page(Box::new(p)),(false,Native::Content(c))=>{let test=if let Value::Content(old)=&e.value{old.test.clone()}else{FormulaTestData::default()};e.value=Value::Content(Box::new(ContentEditor::new(&c,test)));},_=>return Err("Import one matching parser.".into())}e.errors.clear();e.selected=None;e.subsidiary_selected=None;drop(e);refresh();Ok(())}});
+                    let applied=Rc::new({let state=state.clone();let refresh=refresh.clone();move |mut definitions:Vec<Definition>| {let definition=definitions.pop().ok_or("No parser to import.")?;let mut e=state.borrow_mut();match (page,definition.native){(true,Native::Page(p))=>e.value=Value::Page(Box::new(p)),(false,Native::Content(c))=>{let test=if let Value::Content(old)=&e.value{old.test.clone()}else{FormulaTestData::default()};e.value=Value::Content(Box::new(ContentEditor::new(&c,test)));},_=>return Err("Import one matching parser.".into())}e.errors.clear();e.selected=None;e.subsidiary_selected=None;e.subsidiary_selection=ListSelection::default();drop(e);refresh();Ok(())}});
                     let child=crate::downloader_interchange_window::open(&slots.exchange,action=="import",vec![Definition::new(native)],preview,applied)?; let refresh=refresh.clone(); child.on_closed(move||refresh());
                 }
                 "test" => { let mut test = test_data(&w,&state.borrow(),true)?; let mut e = state.borrow_mut();let subsidiary=e.subsidiary.clone();let parsed = match &mut e.value { Value::Page(p) => {if let Some(details)=subsidiary {test.context.insert("post_index".into(),"0".into());details.borrow().preview(p,&mut test.context,&test.text)}else{p.parse(&mut test.context,&test.text)}}, Value::Content(c) => { c.test = test; c.preview().map(|p| vec![p]) } }; w.set_preview(match parsed { Ok(posts) => model::preview_text(&posts), Err(error) => error.to_string() }.into()); }
@@ -930,9 +975,38 @@ fn open_editor(
                     w.set_document(e.test.text.as_str().into());
                     w.set_test_url(e.test.context.get("url").cloned().unwrap_or_default().into());
                 }
-                "delete-subsidiary" => {
+                "import-subsidiary" | "export-subsidiary" => {
+                    let parsers = {
+                        let e = state.borrow(); let Value::Page(page) = &e.value else { return Ok(()); };
+                        let order = (0..page.subsidiary.len()).collect::<Vec<_>>();
+                        e.subsidiary_selection.in_order(&order).iter().map(|i| page.subsidiary[*i].clone()).collect::<Vec<_>>()
+                    };
+                    if action == "export-subsidiary" && parsers.is_empty() { return Ok(()); }
+                    let preview = Rc::new(|parsers: Vec<hydrus_parse::content::SubsidiaryPageParser>| Ok(format!("Add {} subsidiary parsers:\n{}\nChanges are saved only when you apply the owning parser.", parsers.len(), parsers.iter().map(|p| p.parser.name.as_str()).collect::<Vec<_>>().join("\n"))));
+                    let applied = Rc::new({ let state = state.clone(); let active = active.clone(); let refresh = refresh.clone(); move |parsers| {
+                        if !active.get() { return Ok(()); }
+                        let mut e = state.borrow_mut(); let Value::Page(page) = &mut e.value else { return Ok(()); };
+                        let added = model::append_subsidiaries(page, parsers);
+                        e.subsidiary_selection.select_many(&added); e.subsidiary_selected = e.subsidiary_selection.one();
+                        drop(e); refresh(); Ok(())
+                    }});
+                    let child = crate::downloader_interchange_window::open_subsidiaries(&slots.exchange, action == "import-subsidiary", parsers, preview, applied)?;
+                    let refresh = refresh.clone(); child.on_closed(move || refresh());
+                }
+                "duplicate-subsidiary" => {
                     let mut e = state.borrow_mut();
-                    if let Some(index) = e.subsidiary_selected.take() && let Value::Page(p) = &mut e.value && index < p.subsidiary.len() { p.subsidiary.remove(index); }
+                    let Value::Page(page) = &e.value else { return Ok(()); };
+                    let order = (0..page.subsidiary.len()).collect::<Vec<_>>();
+                    let copies = e.subsidiary_selection.in_order(&order).into_iter().map(|i| page.subsidiary[i].clone()).collect::<Vec<_>>();
+                    let Value::Page(page) = &mut e.value else { return Ok(()); };
+                    let added = model::append_subsidiaries(page, copies);
+                    e.subsidiary_selection.select_many(&added); e.subsidiary_selected = e.subsidiary_selection.one();
+                }
+                "delete-subsidiary" => {
+                    let mut e = state.borrow_mut(); let Value::Page(page) = &e.value else { return Ok(()); };
+                    let order = (0..page.subsidiary.len()).collect::<Vec<_>>();
+                    let rows = e.subsidiary_selection.in_order(&order).into_iter().map(|i| (i, page.subsidiary[i].clone())).collect::<Vec<_>>();
+                    if !rows.is_empty() { e.pending_subsidiary_delete = Some(rows); w.set_question("Remove all selected?".into()); }
                 }
                 "add-subsidiary" | "edit-subsidiary" => {
                     let test = child_test_data(&w,&state.borrow(),false)?;
@@ -956,6 +1030,7 @@ fn open_editor(
                         } else { page.subsidiary.push(child); }
                         page.subsidiary.sort_by(|a,b|a.parser.name.cmp(&b.parser.name));
                         e.subsidiary_selected=page.subsidiary.iter().position(|child|child.parser.key==key);
+                        let selected=e.subsidiary_selected;e.subsidiary_selection.select_only(selected);
                         Ok(())
                     }});
                     let owned = Slots::default();

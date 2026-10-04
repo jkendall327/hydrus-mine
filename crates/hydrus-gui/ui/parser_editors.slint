@@ -67,6 +67,7 @@ export component ParserEditWindow inherits Window {
     in property <string> subsidiary-note;
     in property <[TableRow]> subsidiaries;
     in property <bool> subsidiary-selected;
+    in property <bool> subsidiary-exportable;
     in-out property <bool> subsidiary-sorted;
     in-out property <string> document;
     in property <[string]> examples;
@@ -94,7 +95,7 @@ export component ParserEditWindow inherits Window {
     callback force-close();
     callback fetch(); callback fetch-from-url(); callback cancel-fetch();
     callback example-chosen();
-    callback subsidiary-clicked(int); callback subsidiary-sort-changed(bool);
+    callback subsidiary-clicked(int,bool,bool); callback subsidiary-sort-changed(bool);
     callback own-sort-changed(bool);
     VerticalLayout {
         height: root.height - 52px; padding: 10px; spacing: 8px;
@@ -129,8 +130,8 @@ export component ParserEditWindow inherits Window {
                     if root.page: Button { text: "delete content parser"; enabled: root.selected && !root.child-open; clicked => { root.action("delete-content"); } }
                     if root.page: Button { text: "edit pre-parsing converter"; enabled: !root.child-open; clicked => { root.action("converter"); } }
                     if !root.page: Button { text: "edit parsing formula"; enabled: !root.child-open; clicked => { root.action("formula"); } }
-                    Button { text: "import parser"; enabled: !root.child-open; clicked => { root.action("import"); } }
-                    Button { text: "export parser"; enabled: !root.child-open; clicked => { root.action("export"); } }
+                    if !root.subsidiary: Button { text: "import parser"; enabled: !root.child-open; clicked => { root.action("import"); } }
+                    if !root.subsidiary: Button { text: "export parser"; enabled: !root.child-open; clicked => { root.action("export"); } }
                     if !root.page: Button { text: "edit veto string match"; enabled: !root.child-open; clicked => { root.action("match"); } }
                 }
                 if root.page: VerticalLayout {
@@ -140,16 +141,23 @@ export component ParserEditWindow inherits Window {
                         height: 120px;
                         columns: [{ title: "name",width: 350px },{ title: "separation formula",width: 420px,stretch: true }];
                         rows: root.subsidiaries;
-                        row-clicked(i,c,s) => { root.subsidiary-clicked(i); }
-                        row-activated(i) => { root.subsidiary-clicked(i);root.action("edit-subsidiary"); }
+                        row-clicked(i,c,s) => { root.subsidiary-clicked(i,c,s); }
+                        row-activated(i) => { root.subsidiary-clicked(i,false,false);root.action("edit-subsidiary"); }
+                        delete-pressed => { root.action("delete-subsidiary"); }
                     }
                     HorizontalLayout {
                         spacing: 6px;
                         Button { text: "add subsidiary parser"; enabled: !root.child-open; clicked => { root.action("add-subsidiary"); } }
                         Button { text: "edit subsidiary parser"; enabled: root.subsidiary-selected && !root.child-open; clicked => { root.action("edit-subsidiary"); } }
-                        Button { text: "delete subsidiary parser"; enabled: root.subsidiary-selected && !root.child-open; clicked => { root.action("delete-subsidiary"); } }
+                        Button { text: "delete subsidiary parser"; enabled: root.subsidiary-exportable && !root.child-open; clicked => { root.action("delete-subsidiary"); } }
                         Button { text: "edit separation formula"; enabled: root.subsidiary-selected && !root.child-open; clicked => { root.action("separator"); } }
                         CheckBox { text: "sort posts by source time"; checked <=> root.subsidiary-sorted; enabled: root.subsidiary-selected && !root.child-open; toggled => { root.subsidiary-sort-changed(self.checked); } }
+                    }
+                    HorizontalLayout {
+                        spacing: 6px; alignment: start;
+                        Button { text: "import subsidiary parsers"; enabled: !root.child-open; clicked => { root.action("import-subsidiary"); } }
+                        Button { text: "export subsidiary parsers"; enabled: root.subsidiary-exportable && !root.child-open; clicked => { root.action("export-subsidiary"); } }
+                        Button { text: "duplicate subsidiary parsers"; enabled: root.subsidiary-exportable && !root.child-open; clicked => { root.action("duplicate-subsidiary"); } }
                     }
                 }
                 if root.subsidiary-note != "": Text { text: root.subsidiary-note; color: Theme.text; wrap: word-wrap; }
