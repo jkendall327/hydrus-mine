@@ -86,3 +86,5 @@ pub mod login_workflows;
 pub mod regex_favourites;
 
 pub mod write_autocomplete;
+
+pub mod network_job_control;

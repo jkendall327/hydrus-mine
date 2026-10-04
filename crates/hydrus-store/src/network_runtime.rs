@@ -66,6 +66,7 @@ pub struct JobControl {
     pub created: i64,
     pub gallery: bool,
     pub domain_ok: bool,
+    pub tokens_ok: bool,
     pub auto_override: bool,
 }
 /// A recent failed request, retained even when a short request leaves the live list.

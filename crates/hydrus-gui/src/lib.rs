@@ -225,6 +225,7 @@ pub struct Bound {
     pub about: Rc<RefCell<Option<AboutWindow>>>,
     /// Live network reviews and their detached rules editor.
     pub network_data: network_data_window::Slots,
+    pub network_controls: network_job_control::Binding,
     /// The review services window while it is open.
     pub services_review: Rc<RefCell<Option<ServicesReviewWindow>>>,
     /// Staged local service editors while open.
@@ -1904,6 +1905,37 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             page().borrow().cancel_download(kind);
         }
     });
+    let network_controls = network_job_control::bind_owned(
+        window,
+        page().borrow().store().clone(),
+        Rc::new({
+            let page = page.clone();
+            move |gallery| {
+                page().borrow().importer().filter(|i| !i.local).map(|i| {
+                    hydrus_gui_model::network_job_control::Target {
+                        queue: i.queue,
+                        gallery,
+                    }
+                })
+            }
+        }),
+        Rc::new({
+            let pages = pages.clone();
+            move || hex::encode(pages.borrow().shown().key.0)
+        }),
+        network_data.clone(),
+    );
+    network_controls.set_owner_alive(Rc::new({
+        let pages = pages.clone();
+        move |key| {
+            pages
+                .borrow()
+                .session()
+                .all_pages()
+                .iter()
+                .any(|page| hex::encode(page.key.0) == key)
+        }
+    }));
     let simple_formulae = simple_formulae_window::Slots::default();
     window.on_simple_edit_formulae({
         let page = page.clone();
@@ -3252,6 +3284,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         about,
         services_review,
         network_data,
+        network_controls,
         services_editor,
         checker_options,
         session_dialog,
@@ -5480,3 +5513,5 @@ pub mod client_api_admin_window;
 pub mod network_sessions_window;
 
 pub mod network_data_window;
+
+pub mod network_job_control;

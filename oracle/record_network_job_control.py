@@ -16,10 +16,10 @@ NOW = 1770000000
 def record(session):
     c = session.controller
     def work():
-        from qtpy import QtWidgets as QW
+        from qtpy import QtWidgets as QW, QtCore as QC
         from hydrus.core import HydrusTime, HydrusConstants as HC
         from hydrus.core.networking import HydrusNetworking as HN
-        from hydrus.client.gui import ClientGUICore as CGC, ClientGUIDialogsMessage as M
+        from hydrus.client.gui import ClientGUICore as CGC, ClientGUIDialogsMessage as M, ClientGUITopLevelWindowsPanels as T
         from hydrus.client.gui.networking import ClientGUINetworkJobControl as W
         from hydrus.client.networking import ClientNetworkingJobs as J, ClientNetworkingBandwidth as B
         from hydrus.client.networking import ClientNetworkingContexts as C, ClientNetworkingDomain as D
@@ -81,6 +81,20 @@ def record(session):
         now[0] = NOW + 6
         widget._OverrideBandwidthIfAppropriate()
         out['actions']['auto_after_five'] = job2.ObeysBandwidth()
+        out['rules'] = []
+        real_exec = T.DialogEdit.exec
+        for accepted in [False, True]:
+            def execute(dialog):
+                panel = dialog._panel
+                before = sorted(panel.GetValue().GetRules())
+                panel._bandwidth_rules_ctrl._listctrl.AddData((HC.BANDWIDTH_TYPE_REQUESTS, 60, 23))
+                out['rules'].append({'title': dialog.windowTitle(), 'accepted': accepted, 'before': before, 'draft': sorted(panel.GetValue().GetRules())})
+                QC.QTimer.singleShot(0, dialog.accept if accepted else dialog.reject)
+                return real_exec(dialog)
+            T.DialogEdit.exec = execute
+            widget._EditBandwidthRules(C.GLOBAL_NETWORK_CONTEXT)
+            out['rules'][-1]['saved'] = sorted(bw.GetRules(C.GLOBAL_NETWORK_CONTEXT).GetRules())
+        T.DialogEdit.exec = real_exec
         widget.SetError('synthetic failure\nserver detail')
         widget._ShowErrorMenu()
         out['menus']['error'] = rows(captured[0])

@@ -5,7 +5,7 @@ import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, Scro
 import { ListText, Theme } from "theme.slint";
 import { ReadSuggestions } from "read_suggestions.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
-import { DownloadLine, DownloadControl, ImporterBoxes, LocalImportBox } from "importing.slint";
+import { DownloadLine, DownloadControl, JobCogMenu, ImporterBoxes, LocalImportBox } from "importing.slint";
 import { SimpleParsingBox } from "simple_downloader.slint";
 import { GalleryData, GallerySidebar } from "gallery.slint";
 import { WatcherData, WatcherSidebar } from "watcher.slint";
@@ -15,7 +15,8 @@ import { PopupData, PopupStack } from "popups.slint";
 import { DuplicatesData, DuplicatesSidebar } from "duplicates_page.slint";
 export { DuplicatesData }
 import { RatingShape } from "viewer.slint";
-export { DownloadLine, GalleryData, WatcherData }
+export { DownloadLine, GalleryData, WatcherData, JobCogMenu }
+export { NetworkErrorWindow } from "importing.slint";
 export { MenuLine, MenuPane, MenuTitle, PopupData }
 export { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 export { ListText }
@@ -601,6 +602,10 @@ export component MainWindow inherits Window {
     // (the gallery page's when true)
     in property <DownloadLine> file-download: { fraction: 0, can-cancel: false };
     in property <DownloadLine> search-download: { fraction: 0, can-cancel: false };
+    in property <JobCogMenu> file-cog;
+    in property <JobCogMenu> search-cog;
+    callback control-action(bool, int);
+    callback control-menu(bool);
     callback cancel-download(bool);
     // the page's importer's file log (the highlighted search's or
     // watcher's, on a gallery or watcher page)
@@ -958,6 +963,10 @@ export component MainWindow inherits Window {
                         other-gugs(show) => { root.gallery-other-gugs(show); }
                         limit-changed(none, value) => { root.gallery-limit(none, value); }
                         shown-limit-changed(none, value) => { root.gallery-shown-limit(none, value); }
+                        file-cog: root.file-cog;
+                        search-cog: root.search-cog;
+                        control-action(gallery, id) => { root.control-action(gallery, id); }
+                        control-menu(gallery) => { root.control-menu(gallery); }
                         cancel-download(gallery) => { root.cancel-download(gallery); }
                         file-log => { root.open-file-log(); }
                         search-log => { root.open-search-log(); }
@@ -997,6 +1006,10 @@ export component MainWindow inherits Window {
                         paste => { root.watcher-paste(); }
                         page-checker => { root.watcher-page-checker(); }
                         watcher-checker => { root.watcher-checker(); }
+                        file-cog: root.file-cog;
+                        search-cog: root.search-cog;
+                        control-action(gallery, id) => { root.control-action(gallery, id); }
+                        control-menu(gallery) => { root.control-menu(gallery); }
                         cancel-download(gallery) => { root.cancel-download(gallery); }
                         file-log => { root.open-file-log(); }
                         search-log => { root.open-search-log(); }
@@ -1045,6 +1058,10 @@ export component MainWindow inherits Window {
                     }
                     DownloadControl {
                         line: root.file-download;
+                        advanced: true;
+                        cog: root.file-cog;
+                        action(id) => { root.control-action(false, id); }
+                        open-menu => { root.control-menu(false); }
                         cancel => { root.cancel-download(false); }
                     }
                     SimpleParsingBox {
@@ -1052,6 +1069,10 @@ export component MainWindow inherits Window {
                         queue-paused: root.simple-queue-paused;
                         log-status: root.search-status;
                         page-download: root.search-download;
+                        cog: root.search-cog;
+                        control-action(id) => { root.control-action(true, id); }
+                        control-menu => { root.control-menu(true); }
+                        open-menu => { root.control-menu(true); }
                         jobs: root.simple-jobs;
                         any-job-selected: root.simple-job-selected;
                         formulae: root.simple-formulae;
@@ -1093,6 +1114,10 @@ export component MainWindow inherits Window {
                         search-status: root.search-status;
                         search-download: root.search-download;
                         pause-play-files => { root.pause-play-files(); }
+                        file-cog: root.file-cog;
+                        search-cog: root.search-cog;
+                        control-action(gallery, id) => { root.control-action(gallery, id); }
+                        control-menu(gallery) => { root.control-menu(gallery); }
                         cancel-download(gallery) => { root.cancel-download(gallery); }
                         file-log => { root.open-file-log(); }
                         search-log => { root.open-search-log(); }

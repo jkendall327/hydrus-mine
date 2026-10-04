@@ -149,5 +149,72 @@
    "Network Error",
    "synthetic failure\nserver detail"
   ]
+ ],
+ "rules": [
+  {
+   "title": "edit bandwidth rules for global",
+   "accepted": false,
+   "before": [
+    [
+     1,
+     60,
+     1
+    ]
+   ],
+   "draft": [
+    [
+     1,
+     60,
+     1
+    ],
+    [
+     1,
+     60,
+     23
+    ]
+   ],
+   "saved": [
+    [
+     1,
+     60,
+     1
+    ]
+   ]
+  },
+  {
+   "title": "edit bandwidth rules for global",
+   "accepted": true,
+   "before": [
+    [
+     1,
+     60,
+     1
+    ]
+   ],
+   "draft": [
+    [
+     1,
+     60,
+     1
+    ],
+    [
+     1,
+     60,
+     23
+    ]
+   ],
+   "saved": [
+    [
+     1,
+     60,
+     1
+    ],
+    [
+     1,
+     60,
+     23
+    ]
+   ]
+  }
  ]
 }

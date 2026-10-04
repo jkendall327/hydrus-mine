@@ -1263,3 +1263,13 @@ modal dialog, and the parent still offers its existing raw multiline fields.
 Full autocomplete context menus, favourite and child tabs remain outstanding
 across the write inputs. Expanded-row viewport height uses native fixed row
 pixels rather than Qt's font-metric character height.
+
+Downloader cog actions now reach the daemon through request/epoch-scoped local
+IPC; a stale menu cannot act on a replacement request. The automatic policy is
+local to a page control, as in Qt, and is not an application setting. Rule edits
+use native detached apply/cancel drafts. Native page controls also expose recent
+failed-request text through show/copy, although the Python importer sidebars do
+not currently call `SetError`; the shared error widget's Python consumer is the
+parser fetch owner, whose hook is a separate slice. The native error dialog is a
+scrollable window rather than Qt's critical message box. No explicit clear menu
+item is added: `ClearError` belongs to the owner, while `ClearNetworkJob` keeps it.

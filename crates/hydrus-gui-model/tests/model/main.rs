@@ -75,3 +75,5 @@ mod tab_context;
 mod tag_dialog_defaults;
 
 mod write_autocomplete;
+
+mod network_job_control;

@@ -1919,3 +1919,19 @@ on” with all four reference choices; legacy preferences import and applied cha
 reach new-page creation immediately, while an explicit “here” position overrides
 the preference. The real chooser outputs for all positions and cancellation are
 recorded in `oracle/record_tab_new_page.py`.
+
+The file and search download controls on URL, simple downloader, gallery and
+watcher pages now have the reference cog menu. Its decoded URL label copies the
+original URL, and its bandwidth-rules submenu opens the existing detached rule
+editor directly. Default contexts appear once; temporary page instances never
+get their own rule editor. Applicable actions reattempt a connection or a server
+bandwidth wait, scrub domain errors, override this job's bandwidth, or skip this
+job's gallery wait. The five-second automatic override belongs to that page's
+file/search control and survives changing the highlighted query. Closing a page
+retires its policy; accepted overrides remain in effect for the current job.
+
+A failed request leaves a last-error button on the owning page control. Its menu
+has only **show error** and **copy error**. The error window uses the reference
+**Network Error** title and preserves the text. Removing a finished job keeps its
+error; the owner's explicit clear hides the button and suppresses replay of the
+same stored failure. Parser fetch ownership is being connected separately.
