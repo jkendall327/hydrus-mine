@@ -334,7 +334,7 @@
   "nativeComponents": [
     {
       "name": "ManageTagsWindow",
-      "existingNativeId": "catalog.managetagswindow",
+      "existingNativeId": "dialog.manage-tags",
       "file": "crates/hydrus-gui/ui/manage_tags.slint",
       "newExportedWindows": 0,
       "title": "manage tags for selected files",
