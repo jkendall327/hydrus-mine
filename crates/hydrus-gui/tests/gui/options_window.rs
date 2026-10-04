@@ -1404,3 +1404,117 @@ fn removed_default_service_falls_back_in_options_and_waits_for_apply() {
         );
     }
 }
+
+#[test]
+fn search_defaults_apply_to_new_pages_and_the_real_autocomplete() {
+    use hydrus_core::ServiceKey;
+    use hydrus_core::service::builtin_keys;
+    use hydrus_gui::page_chooser::NewPage;
+    use hydrus_store::settings::{FileSearchSettings, get};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("file_search_defaults.json");
+    let saved = || store.read(get::<FileSearchSettings>).unwrap();
+    assert_eq!(
+        saved().search_immediately,
+        fixture["initial"]["search_immediately"].as_bool().unwrap()
+    );
+    assert_eq!(
+        saved().show_system_everything,
+        fixture["initial"]["show_system_everything"]
+            .as_bool()
+            .unwrap()
+    );
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "file search");
+    let (sync_row, _) = row(
+        &window,
+        "Start new search pages in 'searching immediately':",
+    );
+    let (everything_row, _) = row(&window, "Show system:everything:");
+    window.invoke_check_toggled(sync_row, false);
+    window.invoke_check_toggled(everything_row, false);
+    window.invoke_cancel();
+    assert!(saved().search_immediately && saved().show_system_everything);
+
+    let mut first_page = None;
+    for event in fixture["events"].as_array().unwrap() {
+        let enabled = event["enabled"].as_bool().unwrap();
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "file search");
+        let (sync_row, _) = row(
+            &window,
+            "Start new search pages in 'searching immediately':",
+        );
+        let (everything_row, _) = row(&window, "Show system:everything:");
+        window.invoke_check_toggled(sync_row, enabled);
+        window.invoke_check_toggled(everything_row, enabled);
+        window.invoke_apply();
+        assert_eq!(saved().search_immediately, enabled);
+        assert_eq!(saved().show_system_everything, enabled);
+        bound
+            .pages
+            .borrow_mut()
+            .new_page(&NewPage::Search {
+                domain: ServiceKey::new(builtin_keys::MY_FILES.to_vec()),
+                name: "synthetic search default recording".into(),
+            })
+            .unwrap();
+        let page = bound.pages.borrow_mut().current();
+        let first = first_page.get_or_insert_with(|| page.clone());
+        assert_eq!(
+            page.borrow().synchronised(),
+            event["new_page_synchronised"].as_bool().unwrap()
+        );
+        assert_eq!(
+            first.borrow().synchronised(),
+            event["first_page_synchronised"].as_bool().unwrap()
+        );
+        for offered in event["offered"].as_array().unwrap() {
+            let mut autocomplete = hydrus_gui::autocomplete::Autocomplete::new(store.clone());
+            let location = hydrus_core::search::context::LocationContext::single(
+                ServiceKey::from_hex(offered["location"].as_str().unwrap()).unwrap(),
+            );
+            autocomplete.set_context(
+                &location,
+                &hydrus_core::search::context::TagContext::default(),
+            );
+            assert_eq!(
+                autocomplete
+                    .suggestions()
+                    .iter()
+                    .any(|item| item.predicate == "system:everything"),
+                offered["everything"].as_bool().unwrap()
+            );
+            assert!(
+                autocomplete
+                    .suggestions()
+                    .iter()
+                    .any(|item| item.predicate == "system:limit")
+            );
+        }
+        assert!(page.borrow_mut().add_predicate("system:everything"));
+        if !enabled {
+            assert!(
+                page.borrow().results().is_empty(),
+                "paused page must defer its query"
+            );
+            page.borrow_mut().set_synchronised(true);
+        }
+        assert!(
+            !page.borrow().results().is_empty(),
+            "resuming must execute the staged query"
+        );
+        // Keep the first page paused while the new-page default changes next.
+        page.borrow_mut().set_synchronised(enabled);
+    }
+    open(&ui);
+    let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&reopened, "file search");
+    assert!(row(&reopened, "Show system:everything:").1.checked);
+    reopened.invoke_cancel();
+}

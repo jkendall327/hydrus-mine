@@ -2262,6 +2262,8 @@ fn new_search_page(store: &Store) -> Page {
 /// files stored here.
 fn new_search_page_on(store: &Store, location: hydrus_search::LocationContext) -> Page {
     use hydrus_core::service::builtin_keys;
+    let file_search: hydrus_store::settings::FileSearchSettings =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
     let sorts: hydrus_core::pages::SortSettings =
         store.read(hydrus_store::settings::get).unwrap_or_default();
     let defaults: hydrus_store::settings::SearchDefaults =
@@ -2293,7 +2295,7 @@ fn new_search_page_on(store: &Store, location: hydrus_search::LocationContext) -
                 tags,
                 ..FileSearchContext::default()
             },
-            synchronised: true,
+            synchronised: file_search.search_immediately,
             sort: None,
             lock: None,
             collect: Some(sorts.default_collect),

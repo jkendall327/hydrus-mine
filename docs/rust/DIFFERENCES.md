@@ -1181,3 +1181,8 @@ services fall back to the first local service by name.
   autocomplete and search-limit controls are absent. Tag-editing exposes only
   service memory and the default service; ManageTags currently has local tag
   service tabs, so a repository default falls back to its first local tab.
+
+The File Search initial synchronization and `system:everything` controls now
+reach new-page creation and read autocomplete. Hiding the suggestion does not
+prevent entering that predicate manually. Other File Search presentation and
+location controls are still assessed separately.

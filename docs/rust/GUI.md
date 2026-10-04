@@ -1805,3 +1805,8 @@ Changes to these options stay staged until Apply; selecting a service tab in
 a manage-tags dialog remembers it immediately when enabled, even if the tag
 edits are later cancelled. New notebooks can separately prompt for a name after
 the page chooser creates them.
+
+File Search options can start new search pages paused or searching immediately,
+and show or hide `system:everything` in read autocomplete. Apply persists both
+preferences; Cancel discards edits. Existing pages retain their pause state, and
+resuming a paused page executes the query it has accumulated.
