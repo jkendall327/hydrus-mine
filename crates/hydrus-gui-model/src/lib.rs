@@ -116,5 +116,5 @@ pub mod viewing_statistics;
 
 pub mod search_or;
 
-pub mod incremental_tagging;
 pub mod frame_locations;
+pub mod incremental_tagging;
