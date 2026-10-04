@@ -23,6 +23,11 @@ pub struct Slots {
     pub edit: Rc<RefCell<Option<EditApiPermissionsWindow>>>,
     pub filter: crate::tag_filter_window::Slot,
 }
+impl std::fmt::Debug for Slots {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Slots").finish_non_exhaustive()
+    }
+}
 thread_local! {
     static LAST: RefCell<Option<slint::Weak<ClientApiKeysWindow>>> = const { RefCell::new(None) };
     static LAST_EDIT: RefCell<Option<slint::Weak<EditApiPermissionsWindow>>> = const { RefCell::new(None) };
