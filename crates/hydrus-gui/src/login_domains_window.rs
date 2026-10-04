@@ -85,7 +85,7 @@ fn start_next(
     run.start(input, progress, completed);
 }
 fn show(window: &LoginDomainsWindow, editor: &DomainsEditor) {
-    let selected = editor.selection.in_order(&editor.order());
+    let selected = editor.selected_domains();
     let rows = editor
         .draft
         .domains
@@ -129,8 +129,7 @@ fn show(window: &LoginDomainsWindow, editor: &DomainsEditor) {
     window.set_any_selected(!selected.is_empty());
     window.set_can_edit(
         editor
-            .selection
-            .one()
+            .selected_domain()
             .as_ref()
             .and_then(|domain| editor.draft.domains.get(domain))
             .and_then(|login| editor.draft.script(login))
@@ -219,7 +218,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
             "do-login"=>{
                 let eligible = {
                     let editor=editor.borrow();
-                    let selected=editor.selection.in_order(&editor.order());
+                    let selected=editor.selected_domains();
                     let mut eligible=Vec::new();
                     for domain in selected {
                         let login=&editor.draft.domains[&domain];
@@ -254,13 +253,13 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
                 }
             },
             "credentials"=>{
-                let domain=editor.borrow().selection.one();let Some(domain)=domain else{return;};
+                let domain=editor.borrow().selected_domain();let Some(domain)=domain else{return;};
                 let (definitions,values)={let editor=editor.borrow();let login=&editor.draft.domains[&domain];let Some(script)=editor.draft.script(login)else{window.set_error(format!("Could not find a login script for \"{domain}\"! Please re-add the login script in the other dialog or update the entry here to a new one!").into());return;};if script.credentials.is_empty(){return;}(script.credentials.clone(),login.credentials.clone())};
                 let applied:crate::login_credential_window::CredentialsApplied=Rc::new({let weak=weak.clone();let editor=editor.clone();let pending=pending.clone();let active=active.clone();move|values|{if !active.get(){return Err("The domain login editor has closed.".into());}let activate=editor.borrow_mut().replace_credentials(&domain,values)?;if activate{*pending.borrow_mut()=Some(domain.clone());}if let Some(window)=weak.upgrade(){show(&window,&editor.borrow());if activate{window.set_question("Activate this login script for this domain?".into());}}Ok(())}});
                 match crate::login_credential_window::open_credentials(&definitions,&values,&credentials,applied){Ok(child)=>{window.set_child_open(true);let weak=weak.clone();child.on_closed(move||{if let Some(window)=weak.upgrade(){window.set_child_open(false);}});},Err(error)=>window.set_error(error.to_string().into())}
             },
             "activate"|"leave-inactive"=>{if let Some(domain)=pending.borrow_mut().take(){if action=="activate" && let Some(login)=editor.borrow_mut().draft.domains.get_mut(&domain){login.active=true;}}window.set_question("".into());show(&window,&editor.borrow());},
-            "flip-active"|"scrub-delays"|"scrub-invalidity"=>{let mut editor=editor.borrow_mut();let selected=editor.selection.in_order(&editor.order());for domain in selected{
+            "flip-active"|"scrub-delays"|"scrub-invalidity"=>{let mut editor=editor.borrow_mut();let selected=editor.selected_domains();for domain in selected{
                 if action=="scrub-invalidity"{let login=&editor.draft.domains[&domain];if !login.active||login.validity!=Validity::Invalid{continue;}let Some(script)=editor.draft.script(login)else{continue;};let result=script.check_credentials_for_entry(&login.credentials);let login=editor.draft.domains.get_mut(&domain).expect("selected domain");match result{Ok(())=>{login.validity=Validity::Untested;login.validity_error.clear();},Err(error)=>{login.validity_error=error;}}}
                 else if let Some(login)=editor.draft.domains.get_mut(&domain){if action=="flip-active"{login.active=!login.active;}else{login.no_work_until=0;login.delay_reason.clear();}}
             }show(&window,&editor);},

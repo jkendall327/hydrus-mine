@@ -5,7 +5,7 @@ use hydrus_gui_model::{
     list_selection::ListSelection,
     login_workflows::{ScriptsEditor, script_warning},
 };
-use hydrus_parse::login::{CredentialDefinition, LoginScript};
+use hydrus_parse::login::LoginScript;
 use hydrus_store::Store;
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 use std::{

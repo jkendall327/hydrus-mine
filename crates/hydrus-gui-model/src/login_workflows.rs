@@ -287,7 +287,7 @@ impl StepEditor {
 pub struct DomainsEditor {
     pub draft: LoginManager,
     original_domains: BTreeMap<String, hydrus_parse::login::DomainLogin>,
-    pub selection: ListSelection<String>,
+    pub selection: ListSelection<usize>,
 }
 impl DomainsEditor {
     pub fn new(draft: LoginManager) -> Self {
@@ -297,8 +297,21 @@ impl DomainsEditor {
             selection: ListSelection::default(),
         }
     }
-    pub fn order(&self) -> Vec<String> {
-        self.draft.domains.keys().cloned().collect()
+    pub fn order(&self) -> Vec<usize> {
+        (0..self.draft.domains.len()).collect()
+    }
+    pub fn domain_at(&self, index: usize) -> Option<String> {
+        self.draft.domains.keys().nth(index).cloned()
+    }
+    pub fn selected_domain(&self) -> Option<String> {
+        self.selection.one().and_then(|i| self.domain_at(i))
+    }
+    pub fn selected_domains(&self) -> Vec<String> {
+        self.selection
+            .in_order(&self.order())
+            .into_iter()
+            .filter_map(|i| self.domain_at(i))
+            .collect()
     }
     pub fn replace_credentials(
         &mut self,
