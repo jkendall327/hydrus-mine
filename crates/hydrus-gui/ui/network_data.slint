@@ -94,10 +94,12 @@ export component EditBandwidthRulesWindow inherits Window {
             delete-pressed => { root.delete-rule(); }
         }
         HorizontalLayout {
+            spacing: 8px;
             CheckBox { text: "requests (otherwise bytes)"; checked <=> root.requests; }
             LineEdit { text <=> root.amount; placeholder-text: "maximum allowed"; horizontal-stretch: 1; }
         }
         HorizontalLayout {
+            spacing: 8px;
             CheckBox { text: "monthly"; checked <=> root.monthly; }
             Text { text: "every (seconds):"; color: Theme.text; vertical-alignment: center; }
             LineEdit { text <=> root.seconds; enabled: !root.monthly; horizontal-stretch: 1; }
@@ -143,6 +145,7 @@ export component NetworkJobsWindow inherits Window {
         }
         Text { text: root.detail; wrap: word-wrap; color: Theme.text; min-height: 75px; }
         HorizontalLayout {
+            spacing: 8px;
             Button { text: "refresh snapshot"; clicked => { root.refresh(); } }
             CheckBox { text: "auto-refresh"; checked <=> root.auto-refresh; }
             Button { text: "cancel selected"; enabled: root.can-act; clicked => { root.cancel-jobs(); } }
