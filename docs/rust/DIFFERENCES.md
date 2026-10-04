@@ -1335,3 +1335,11 @@ requires the bare domain. Unsupported non-VARIABLE/VETO imported response parser
 kinds are preserved but ignored by the login executor. Network/cancellation outcomes
 apply the reference four-hour domain delay, guarded by the script key; verification
 errors set invalidity and successful login sets validity without altering activation.
+
+The import-options favourites editor uses the native import-options window and
+popup presentation. Menu actions, names, prompts, staged parent loading and
+immediate profile persistence have reference recordings and native regression
+coverage. The earlier pending favourites-popup limitation is resolved for these
+editors. Subscription copy-options menus and the standalone defaults manager
+still need the same favourites integration before the broad shared feature is
+complete. External-program editing remains its separate existing gap.

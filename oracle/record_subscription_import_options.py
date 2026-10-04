@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Record real subscription option clipboard/paste/clear decisions and reference tuples.
+"""Record real subscription clipboard, overwrite and favourites dialogs and tuples.
 
 The v688 menu labels route to the actual callback methods, including its paste
 label/method mismatch. Dictionary entries are sorted only for JSON comparison;
@@ -191,6 +191,75 @@ def record(session):
         out['favourites'].append({'action': 'delete', 'name': 'profile (1)'})
         out['favourite_rows'] = [{'name': name, 'options': normalise(json.loads(value.DumpToString()))}
                                 for name, value in sorted(manager.GetFavouriteImportOptionContainers().items())]
+        ui_manager = M.ImportOptionsManager()
+        ui_manager.SetDefaultImportOptionsContainerForCallerType(IOC.IMPORT_OPTIONS_CALLER_TYPE_GLOBAL, full)
+        ui_manager.AddFavourite('profile 10', incoming)
+        ui_manager.AddFavourite('profile 2', existing)
+        ui_manager.AddFavourite('empty', C.ImportOptionsContainer())
+        button = O.ImportOptionsContainerFavouritesButton(session.controller.gui, ui_manager,
+            current_value_callable=lambda: existing.Duplicate())
+        def ui_rows():
+            return [{'name': name, 'options': normalise(json.loads(value.DumpToString()))}
+                for name, value in sorted(ui_manager.GetFavouriteImportOptionContainers().items())]
+        ui_record = {'initial': ui_rows(), 'menus': [], 'steps': [], 'dialogs': []}
+        def menu_items(menu):
+            return [{'label': action.text(), 'children': menu_items(action.menu()) if action.menu() else []}
+                for action in menu.actions() if not action.isSeparator()]
+        old_popup = O.CGC.core().PopupMenu
+        O.CGC.core().PopupMenu = lambda widget, menu: ui_record['menus'].append(menu_items(menu))
+        button._ShowMenu()
+        old_enter = Q.EnterText
+        def enter(parent, message, **kwargs):
+            ui_record['save_question'] = {'message': message, **kwargs}
+            return 'profile 2'
+        Q.EnterText = enter
+        button._SaveCurrentValueAsNew()
+        ui_record['steps'].append({'action': 'save current', 'rows': ui_rows()})
+        Q.EnterText = old_enter
+        old_dialog = O.ClientGUITopLevelWindowsPanels.DialogEdit
+        dialog_answers = [False, True, True]
+        class FavouriteDialog(W.QDialog):
+            def __init__(self, parent, title):
+                super().__init__(parent)
+                self.title = title
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                if hasattr(self, 'panel'):
+                    self.panel.deleteLater()
+            def SetPanel(self, panel):
+                self.panel = panel
+                ui_record['dialogs'].append({'title': self.title,
+                    'description': panel._description_label.text(), 'name': panel.GetName(),
+                    'name_visible': not panel._name_edit_panel.isHidden(),
+                    'options': normalise(json.loads(panel.GetValue().DumpToString()))})
+            def exec(self):
+                self.panel._name_edit.setText('profile 2')
+                self.panel.SetValue(incoming.Duplicate())
+                return W.QDialog.DialogCode.Accepted if dialog_answers.pop(0) else W.QDialog.DialogCode.Rejected
+        O.ClientGUITopLevelWindowsPanels.DialogEdit = FavouriteDialog
+        for action in ['add cancel', 'add accept', 'edit accept']:
+            if action == 'edit accept':
+                button._Edit('profile 10', incoming)
+            else:
+                button._Add()
+            ui_record['steps'].append({'action': action, 'rows': ui_rows()})
+        O.ClientGUITopLevelWindowsPanels.DialogEdit = old_dialog
+        for accepted in [False, True]:
+            def delete_answer(parent, message, **kwargs):
+                ui_record['delete_question'] = message
+                return W.QDialog.DialogCode.Accepted if accepted else W.QDialog.DialogCode.Rejected
+            Q.GetYesNo = delete_answer
+            button._Delete('profile 2')
+            ui_record['steps'].append({'action': 'delete', 'accepted': accepted, 'rows': ui_rows()})
+        Q.GetYesNo = ask
+        O.CGC.core().PopupMenu = old_popup
+        template = O.EditImportOptionsContainerPanel(session.controller.gui, ui_manager,
+            IOC.IMPORT_OPTIONS_CALLER_TYPE_FAVOURITES, C.ImportOptionsContainer(), favourites_name='')
+        ui_record['blank_name'] = template.GetName()
+        template.deleteLater()
+        out['ui_favourites'] = ui_record
+        button.deleteLater()
         panel.deleteLater()
         return out
     return session.controller.CallBlockingToQt(session.controller.gui, qt)

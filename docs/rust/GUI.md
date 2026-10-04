@@ -2043,3 +2043,13 @@ the reference HTTP jobs on a loopback-only dummy site and records success, missi
 cookies/variables, veto, final mismatch, HTTP 401 and cancellation. Native scoped
 HTTP regressions replay those results, inspect wire requests, reopen session cookies
 and cancel an active request. The native GUI test/run consumer is being connected.
+
+Import-option editors now have the reference favourites/profiles star menu:
+load, custom load, copy, edit/add and confirmed deletion. Favourite editors
+include their name and template description; they permit loading and copying
+other profiles while preventing recursive profile edits. Save-current prompts
+for a name, and collisions follow Hydrus's suffix rules. Saves and deletions
+persist immediately, preserving other owners' defaults. Custom load and profile
+editing lock the parent draft; Cancel or owner closure invalidates retained child
+callbacks. The real Qt menu tree, prompts, editor outputs and acceptance/cancel
+paths are recorded in `subscription_import_options.json`.

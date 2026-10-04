@@ -505,3 +505,162 @@ fn a_url_downloaders_import_options_are_edited() {
         .options;
     assert!(options.presentation.is_some());
 }
+
+#[test]
+fn favourites_popup_replays_real_dialogs_persists_and_invalidates_children() {
+    use hydrus_core::import_options::{CallerType, ImportOptionsManager, ImportOptionsSlice};
+    use hydrus_downloader_exchange::import_options;
+    use hydrus_gui::import_options_favourites_window::Controller;
+    use hydrus_store::settings;
+    use serde_json::json;
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("subscription_import_options.json");
+    let reference = &fixture["ui_favourites"];
+    let existing = import_options::decode_text(&fixture["existing"].to_string()).unwrap();
+    let incoming = import_options::decode_text(&fixture["incoming"].to_string()).unwrap();
+    let current = Rc::new(RefCell::new(existing.clone()));
+    let mut manager: ImportOptionsManager = store.read(settings::get).unwrap();
+    let defaults = manager.caller_defaults.clone();
+    manager.favourites = reference["initial"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| {
+            (
+                row["name"].as_str().unwrap().to_owned(),
+                import_options::decode_text(&row["options"].to_string()).unwrap(),
+            )
+        })
+        .collect();
+    store
+        .write(move |tx| settings::set(tx.conn(), &manager))
+        .unwrap();
+    let errors = Rc::new(RefCell::new(Vec::new()));
+    let owner = Controller::new(
+        store.clone(),
+        CallerType::SpecificImporter,
+        Rc::new({
+            let current = current.clone();
+            move || Some(current.borrow().clone())
+        }),
+        Rc::new({
+            let current = current.clone();
+            move |options| *current.borrow_mut() = options
+        }),
+        Rc::new({
+            let errors = errors.clone();
+            move |error| errors.borrow_mut().push(error)
+        }),
+        Rc::new(|_| {}),
+    );
+    let menu = owner.rows().unwrap();
+    assert_eq!(
+        json!(
+            menu.iter()
+                .map(|row| row.label.to_string())
+                .collect::<Vec<_>>()
+        ),
+        json!(
+            reference["menus"][0][1]["children"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|row| row["label"].as_str().unwrap())
+                .collect::<Vec<_>>()
+        )
+    );
+    assert_eq!(
+        json!(
+            menu.iter()
+                .map(|row| row.edit_label.to_string())
+                .collect::<Vec<_>>()
+        ),
+        json!(
+            reference["menus"][0][4]["children"].as_array().unwrap()[..menu.len()]
+                .iter()
+                .map(|row| row["label"].as_str().unwrap())
+                .collect::<Vec<_>>()
+        )
+    );
+    let clipboard = import_options::encode_text(&incoming).unwrap();
+    hydrus_gui::set_clipboard_reader(move || Ok(Some(clipboard.clone())));
+    for step in reference["steps"].as_array().unwrap() {
+        match step["action"].as_str().unwrap() {
+            "save current" => {
+                owner.choose(5, "");
+                let prompt = owner.prompt_window().unwrap();
+                assert_eq!(
+                    prompt.get_message().as_str(),
+                    reference["save_question"]["message"].as_str().unwrap()
+                );
+                assert_eq!(
+                    prompt.get_name().as_str(),
+                    reference["save_question"]["default"].as_str().unwrap()
+                );
+                prompt.invoke_accepted("profile 2".into());
+                prompt.invoke_accepted("stale".into());
+            }
+            action @ ("add cancel" | "add accept" | "edit accept") => {
+                owner.choose(if action == "edit accept" { 3 } else { 4 }, "profile 10");
+                let editor = owner.editing_window().unwrap();
+                assert!(editor.get_favourite_editor());
+                assert_eq!(editor.get_window_title(), "edit favourite import options");
+                editor.set_favourite_name("profile 2".into());
+                editor.invoke_paste_options(2);
+                if action == "add cancel" {
+                    editor.invoke_cancel();
+                } else {
+                    editor.invoke_apply();
+                }
+                editor.invoke_apply();
+            }
+            "delete" => {
+                owner.choose(6, "profile 2");
+                let prompt = owner.prompt_window().unwrap();
+                assert_eq!(
+                    prompt.get_message().as_str(),
+                    reference["delete_question"].as_str().unwrap()
+                );
+                assert!(!prompt.get_asking_name());
+                if step["accepted"].as_bool().unwrap() {
+                    prompt.invoke_accepted("".into());
+                } else {
+                    prompt.invoke_cancelled();
+                }
+            }
+            action => panic!("unexpected fixture action {action}"),
+        }
+        assert!(!owner.busy());
+        let manager: ImportOptionsManager = store.read(settings::get).unwrap();
+        assert_eq!(manager.caller_defaults, defaults);
+        let mut entries = manager.favourites;
+        entries.sort_by(|a, b| a.0.cmp(&b.0));
+        assert_eq!(json!(entries.into_iter().map(|(name, options)| json!({"name":name,"options":import_options::tuple(&options).unwrap()})).collect::<Vec<_>>()), step["rows"]);
+    }
+    owner.choose(0, "profile 2 (2)");
+    assert_eq!(*current.borrow(), incoming);
+    let before = current.borrow().clone();
+    owner.choose(1, "empty");
+    let chooser = owner.overwrite_window().unwrap();
+    chooser.invoke_cancel();
+    assert_eq!(*current.borrow(), before);
+    owner.choose(1, "empty");
+    let stale_chooser = owner.overwrite_window().unwrap();
+    owner.close();
+    stale_chooser.invoke_apply();
+    owner.choose(0, "empty");
+    assert_eq!(*current.borrow(), before);
+    let reopened: ImportOptionsManager = store.read(settings::get).unwrap();
+    assert!(
+        reopened
+            .favourites
+            .iter()
+            .any(|(name, options)| name == "profile 2 (2)" && options == &incoming)
+    );
+    assert!(errors.borrow().is_empty(), "{:?}", errors.borrow());
+    assert!(windows.get(0).is_some());
+    assert_ne!(*current.borrow(), ImportOptionsSlice::default());
+}
