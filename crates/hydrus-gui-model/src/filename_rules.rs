@@ -287,3 +287,99 @@ impl Editor {
         }
     }
 }
+
+/// A shared regex input menu action; copying never changes either input field.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum RegexAction {
+    Help(String),
+    Copy(String),
+    Manage,
+    Instruction,
+}
+
+/// RegexButton's non-replacement menus used by both advanced filename inputs.
+pub fn regex_menu(
+    value: &crate::regex_favourites::RegexFavourites,
+) -> (Vec<crate::main_menu::Entry>, Vec<RegexAction>) {
+    use crate::main_menu::{Command, Entry};
+    fn item(label: String, action: RegexAction, actions: &mut Vec<RegexAction>) -> Entry {
+        let index = actions.len();
+        actions.push(action);
+        Entry::Item {
+            label,
+            command: Some(Command::Popup(index)),
+            enabled: true,
+        }
+    }
+    let mut actions = Vec::new();
+    let help = [
+        (
+            "a good regex introduction",
+            "https://www.regular-expressions.info/index.html",
+        ),
+        ("a full interactive tutorial", "https://www.regexone.com/"),
+        ("regex sandbox", "https://regexr.com/3cvmf"),
+    ]
+    .into_iter()
+    .map(|(label, url)| item(label.into(), RegexAction::Help(url.into()), &mut actions))
+    .collect();
+    let mut components = vec![
+        item(
+            "click below to copy to clipboard".into(),
+            RegexAction::Instruction,
+            &mut actions,
+        ),
+        Entry::Separator,
+    ];
+    for (index, (label, phrase)) in crate::regex_favourites::regex_tools(1)
+        .into_iter()
+        .enumerate()
+    {
+        if matches!(index, 9 | 18 | 22) {
+            components.push(Entry::Separator);
+        }
+        components.push(item(label, RegexAction::Copy(phrase), &mut actions));
+    }
+    let mut favourites = vec![
+        item(
+            "manage favourites".into(),
+            RegexAction::Manage,
+            &mut actions,
+        ),
+        Entry::Separator,
+        item(
+            "click below to copy to clipboard".into(),
+            RegexAction::Instruction,
+            &mut actions,
+        ),
+        Entry::Separator,
+    ];
+    favourites.extend(value.0.iter().map(|(phrase, description)| {
+        item(
+            description.clone(),
+            RegexAction::Copy(phrase.clone()),
+            &mut actions,
+        )
+    }));
+    (
+        vec![
+            Entry::Menu {
+                label: "regex help".into(),
+                entries: help,
+                enabled: true,
+            },
+            Entry::Separator,
+            Entry::Menu {
+                label: "regex components".into(),
+                entries: components,
+                enabled: true,
+            },
+            Entry::Menu {
+                label: "favourites".into(),
+                entries: favourites,
+                enabled: true,
+            },
+        ],
+        actions,
+    )
+}

@@ -8,6 +8,7 @@
 // "simple" and "advanced" options.
 
 import { Button, CheckBox, LineEdit, SpinBox, TextEdit } from "std-widgets.slint";
+import { MenuPane, MenuPanes } from "main_menu.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 
@@ -93,6 +94,13 @@ export component FilenameTaggingWindow inherits Window {
     in property <bool> rule-child;
     in property <bool> rule-delete;
     in property <string> rule-message;
+    in property <[MenuPane]> regex-panes;
+    in property <bool> regex-child-open;
+    callback regex-menu(float, float);
+    callback regex-placed(int, float, float, float);
+    callback regex-hovered(int, int, float, float, float);
+    callback regex-clicked(int, int, float, float, float);
+    callback regex-dismissed();
     in-out property <string> rule-namespace;
     in-out property <string> rule-regex;
     callback rule-clicked(bool, int, bool, bool);
@@ -117,7 +125,9 @@ export component FilenameTaggingWindow inherits Window {
     forward-focus: keys;
     keys := FocusScope {
         capture-key-pressed(event) => {
+            if root.regex-child-open { return accept; }
             if event.text == Key.Escape {
+                if root.regex-panes.length > 0 { root.regex-dismissed(); return accept; }
                 if root.rule-child || root.rule-delete { root.rule-cancel(); }
                 else { root.cancel(); }
                 return accept;
@@ -287,6 +297,7 @@ export component FilenameTaggingWindow inherits Window {
                         placeholder-text: "enter regex here";
                         accepted => { root.rule-action("regex_add"); }
                     }
+                    regex-button := Button { text: ".*"; enabled: !root.regex-child-open; clicked => { root.regex-menu(regex-button.absolute-position.x / 1px, (regex-button.absolute-position.y + regex-button.height) / 1px); } }
                     Button { text: "add"; clicked => { root.rule-action("regex_add"); } }
                 }
                 if !root.options-mode: BoxTitle { text: "#"; }
@@ -342,7 +353,8 @@ export component FilenameTaggingWindow inherits Window {
             spacing: 6px;
             LineEdit { horizontal-stretch: 1; text <=> root.rule-namespace; placeholder-text: "namespace"; }
             Label { text: ":"; }
-            LineEdit { horizontal-stretch: 2; text <=> root.rule-regex; placeholder-text: "regex"; accepted => { root.rule-entered(); } }
+            LineEdit { horizontal-stretch: 2; enabled: !root.regex-child-open; text <=> root.rule-regex; placeholder-text: "regex"; accepted => { root.rule-entered(); } }
+            child-regex-button := Button { text: ".*"; enabled: !root.regex-child-open; clicked => { root.regex-menu(child-regex-button.absolute-position.x / 1px, (child-regex-button.absolute-position.y + child-regex-button.height) / 1px); } }
         }
         if root.errors != "": Label { text: root.errors; color: Theme.error; }
         Rectangle { vertical-stretch: 1; }
@@ -353,6 +365,18 @@ export component FilenameTaggingWindow inherits Window {
             Button { text: root.rule-child ? "Cancel" : "no"; clicked => { root.rule-cancel(); } }
         }
     }
+    }
+
+    if root.regex-child-open: Rectangle {
+        width: root.width; height: root.height;
+        TouchArea { }
+    }
+    if root.regex-panes.length > 0: MenuPanes {
+        width: root.width; height: root.height; panes: root.regex-panes;
+        dismiss => { root.regex-dismissed(); }
+        placed(p, x, y, w) => { root.regex-placed(p, x / 1px, y / 1px, w / 1px); }
+        line-hovered(p, l, r, t, left) => { root.regex-hovered(p, l, r / 1px, t / 1px, left / 1px); }
+        line-clicked(p, l, r, t, left) => { root.regex-clicked(p, l, r / 1px, t / 1px, left / 1px); }
     }
 
 }

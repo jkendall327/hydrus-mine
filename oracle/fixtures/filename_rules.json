@@ -1078,5 +1078,849 @@
       "(\\d{4})"
     ]
   },
-  "draft_isolated": true
+  "draft_isolated": true,
+  "regex_menus": [
+    [
+      {
+        "kind": "menu",
+        "label": "regex help",
+        "rows": [
+          {
+            "kind": "item",
+            "label": "a good regex introduction",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "url",
+                "value": "https://www.regular-expressions.info/index.html"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "a full interactive tutorial",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "url",
+                "value": "https://www.regexone.com/"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "regex sandbox",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "url",
+                "value": "https://regexr.com/3cvmf"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "separator"
+      },
+      {
+        "kind": "menu",
+        "label": "regex components",
+        "rows": [
+          {
+            "kind": "item",
+            "label": "click below to copy to clipboard",
+            "enabled": true,
+            "outputs": []
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "whitespace character - \\s",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\s"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "number character - \\d",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\d"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "alphanumeric or underscore character - \\w",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\w"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "any character - .",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "."
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "backslash character - \\\\",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\\\"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "beginning of line - ^",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "^"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "end of line - $",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "$"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "any of these - [\u2026]",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "[\u2026]"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "anything other than these - [^\u2026]",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "[^\u2026]"
+              }
+            ]
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "0 or more matches, consuming as many as possible - *",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "*"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "1 or more matches, consuming as many as possible - +",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "+"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0 or 1 matches, preferring 1 - ?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "?"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0 or more matches, consuming as few as possible - *?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "*?"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "1 or more matches, consuming as few as possible - +?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "+?"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0 or 1 matches, preferring 0 - ??",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "??"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "exactly m matches - {m}",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "{m}"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "m to n matches, consuming as many as possible - {m,n}",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "{m,n}"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "m to n matches, consuming as few as possible - {m,n}?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "{m,n}?"
+              }
+            ]
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "the next characters are: (non-consuming) - (?=\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?=\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "the next characters are not: (non-consuming) - (?!\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?!\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "the previous characters are: (non-consuming) - (?<=\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?<=\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "the previous characters are not: (non-consuming) - (?<!\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?<!\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "anything except this exact phrase - ^(?!\u2026$).+$",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "^(?!\u2026$).+$"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0074 -> 74 - [1-9]+\\d*",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "[1-9]+\\d*"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "filename - (?<=/)[^/]*?(?=\\..*$)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?<=/)[^/]*?(?=\\..*$)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "menu",
+        "label": "favourites",
+        "rows": [
+          {
+            "kind": "item",
+            "label": "manage favourites",
+            "enabled": true,
+            "outputs": []
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "click below to copy to clipboard",
+            "enabled": true,
+            "outputs": []
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "numbers",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\d+"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "creator",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "artist"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "kind": "menu",
+        "label": "regex help",
+        "rows": [
+          {
+            "kind": "item",
+            "label": "a good regex introduction",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "url",
+                "value": "https://www.regular-expressions.info/index.html"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "a full interactive tutorial",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "url",
+                "value": "https://www.regexone.com/"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "regex sandbox",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "url",
+                "value": "https://regexr.com/3cvmf"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "separator"
+      },
+      {
+        "kind": "menu",
+        "label": "regex components",
+        "rows": [
+          {
+            "kind": "item",
+            "label": "click below to copy to clipboard",
+            "enabled": true,
+            "outputs": []
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "whitespace character - \\s",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\s"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "number character - \\d",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\d"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "alphanumeric or underscore character - \\w",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\w"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "any character - .",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "."
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "backslash character - \\\\",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\\\"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "beginning of line - ^",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "^"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "end of line - $",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "$"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "any of these - [\u2026]",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "[\u2026]"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "anything other than these - [^\u2026]",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "[^\u2026]"
+              }
+            ]
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "0 or more matches, consuming as many as possible - *",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "*"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "1 or more matches, consuming as many as possible - +",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "+"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0 or 1 matches, preferring 1 - ?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "?"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0 or more matches, consuming as few as possible - *?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "*?"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "1 or more matches, consuming as few as possible - +?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "+?"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0 or 1 matches, preferring 0 - ??",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "??"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "exactly m matches - {m}",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "{m}"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "m to n matches, consuming as many as possible - {m,n}",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "{m,n}"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "m to n matches, consuming as few as possible - {m,n}?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "{m,n}?"
+              }
+            ]
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "the next characters are: (non-consuming) - (?=\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?=\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "the next characters are not: (non-consuming) - (?!\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?!\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "the previous characters are: (non-consuming) - (?<=\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?<=\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "the previous characters are not: (non-consuming) - (?<!\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?<!\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "anything except this exact phrase - ^(?!\u2026$).+$",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "^(?!\u2026$).+$"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0074 -> 74 - [1-9]+\\d*",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "[1-9]+\\d*"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "filename - (?<=/)[^/]*?(?=\\..*$)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?<=/)[^/]*?(?=\\..*$)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "menu",
+        "label": "favourites",
+        "rows": [
+          {
+            "kind": "item",
+            "label": "manage favourites",
+            "enabled": true,
+            "outputs": []
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "click below to copy to clipboard",
+            "enabled": true,
+            "outputs": []
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "numbers",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\d+"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "creator",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "artist"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  ],
+  "menu_favourites": [
+    [
+      "\\d+",
+      "numbers"
+    ],
+    [
+      "artist",
+      "creator"
+    ]
+  ],
+  "managed_favourites": [
+    {
+      "accepted": false,
+      "before": [
+        [
+          "\\d+",
+          "numbers"
+        ],
+        [
+          "artist",
+          "creator"
+        ]
+      ],
+      "after": [
+        [
+          "\\d+",
+          "numbers"
+        ],
+        [
+          "artist",
+          "creator"
+        ]
+      ],
+      "filename_unchanged": true
+    },
+    {
+      "accepted": true,
+      "before": [
+        [
+          "\\d+",
+          "numbers"
+        ],
+        [
+          "artist",
+          "creator"
+        ]
+      ],
+      "after": [
+        [
+          ".*",
+          "from filename input"
+        ],
+        [
+          "\\d+",
+          "numbers"
+        ],
+        [
+          "artist",
+          "creator"
+        ]
+      ],
+      "filename_unchanged": true
+    }
+  ]
 }

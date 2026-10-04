@@ -19,12 +19,16 @@ PATHS = ['/srv/import/artist/0012 - page 3.jpg', '/srv/import/artist/0001.png', 
 def record(session):
     from qtpy import QtWidgets as QW
     from hydrus.client import ClientConstants as CC
-    from hydrus.client.gui import ClientGUIDialogs, ClientGUIDialogsQuick, ClientGUIDialogsMessage
+    from hydrus.client.gui import ClientGUIDialogs, ClientGUIDialogsQuick, ClientGUIDialogsMessage, ClientGUICore, ClientGUITopLevelWindowsPanels
+    from hydrus.client.gui.widgets import ClientGUIRegex
+    from hydrus.core import HydrusConstants as HC
     from hydrus.client.gui.importing import ClientGUIImport
     from hydrus.client.importing.options import FilenameTaggingOptions
     controller, gui = session.controller, session.controller.gui
     old = (ClientGUIDialogs.DialogInputNamespaceRegex.exec, ClientGUIDialogsQuick.GetYesNo,
-           ClientGUIDialogsMessage.ShowWarning, ClientGUIDialogsMessage.ShowCritical)
+           ClientGUIDialogsMessage.ShowWarning, ClientGUIDialogsMessage.ShowCritical,
+           ClientGUICore.core().PopupMenu, controller.pub, ClientGUIRegex.ClientGUIExecutableActions.OpenExternallyURLDefault, ClientGUITopLevelWindowsPanels.DialogEdit, ClientGUIDialogsQuick.EnterText)
+    old_favourites = list(HC.options['regex_favourites'])
     def drive():
         options = FilenameTaggingOptions.FilenameTaggingOptions()
         panel = ClientGUIImport.FilenameTaggingOptionsPanel(gui, CC.DEFAULT_LOCAL_TAG_SERVICE_KEY, options, True)
@@ -98,16 +102,68 @@ def record(session):
         step('regex_add', text=advanced._regex_input.GetValue())
         step('regex_remove', selected=[])
         step('quick_add', attempts=[['extension', r'(?<=\.)[^.]+$']])
+        # Exercise the actual RegexButton on each original input. Publication is
+        # intercepted only to record clipboard payloads and external URLs.
+        menu_favourites = [(r'\d+', 'numbers'), ('artist', 'creator')]
+        HC.options['regex_favourites'] = menu_favourites
+        menu_records, current_publication = [], []
+        def pub(topic, *args, **kwargs):
+            if topic == 'clipboard' and args[0] == 'text':
+                current_publication.append({'kind': 'copy', 'value': args[1]}); return
+            return old[5](topic, *args, **kwargs)
+        controller.pub = pub
+        ClientGUIRegex.ClientGUIExecutableActions.OpenExternallyURLDefault = lambda parent, url: current_publication.append({'kind': 'url', 'value': url})
+        def popup(parent, menu):
+            def read(menu):
+                rows = []
+                for action in menu.actions():
+                    if action.isSeparator(): rows.append({'kind': 'separator'}); continue
+                    if action.menu() is not None:
+                        rows.append({'kind': 'menu', 'label': action.text(), 'rows': read(action.menu())}); continue
+                    current_publication.clear()
+                    if action.text() != 'manage favourites': action.trigger()
+                    rows.append({'kind': 'item', 'label': action.text(), 'enabled': action.isEnabled(), 'outputs': list(current_publication)})
+                return rows
+            menu_records.append(read(menu))
+        ClientGUICore.core().PopupMenu = popup
+        advanced._regex_input._regex_button._ShowMenu()
+        quick_child = ClientGUIDialogs.DialogInputNamespaceRegex(gui, namespace='page', regex=r'\d+')
+        quick_child._regex._regex_button._ShowMenu()
+        managed = []
+        for accepted in [False, True]:
+            class ManageDialog(QW.QWidget):
+                def __init__(self, parent, title, **kwargs):
+                    super().__init__(gui); self.title = title
+                def __enter__(self): return self
+                def __exit__(self, *args): return False
+                def SetPanel(self, panel): self.panel = panel
+                def exec(self):
+                    if self.title == 'manage regex favourites':
+                        self.panel._Add()
+                        return QW.QDialog.DialogCode.Accepted if accepted else QW.QDialog.DialogCode.Rejected
+                    self.panel._control.SetValue('.*')
+                    return QW.QDialog.DialogCode.Accepted
+            ClientGUITopLevelWindowsPanels.DialogEdit = ManageDialog
+            ClientGUIDialogsQuick.EnterText = lambda *args, **kwargs: 'from filename input'
+            before = list(HC.options['regex_favourites'])
+            filename_before = panel.GetFilenameTaggingOptions().AdvancedToTuple()
+            advanced._regex_input._regex_button._ManageFavourites()
+            managed.append({'accepted': accepted, 'before': [list(row) for row in before],
+                            'after': [list(row) for row in HC.options['regex_favourites']],
+                            'filename_unchanged': filename_before == panel.GetFilenameTaggingOptions().AdvancedToTuple()})
         applied = panel.GetFilenameTaggingOptions()
         reopened = ClientGUIImport.FilenameTaggingOptionsPanel(gui, CC.DEFAULT_LOCAL_TAG_SERVICE_KEY, applied, False)
         quick, regexes = reopened.GetFilenameTaggingOptions().AdvancedToTuple()
         return {'paths': PATHS, 'initial': initial, 'steps': steps, 'applied': state(),
                 'reopened': {'quick': [list(q) for q in quick], 'regexes': list(regexes)},
-                'draft_isolated': options.AdvancedToTuple() == ([], [])}
+                'draft_isolated': options.AdvancedToTuple() == ([], []),
+                'regex_menus': menu_records, 'menu_favourites': [list(row) for row in menu_favourites], 'managed_favourites': managed}
     try: return controller.CallBlockingToQt(gui, drive)
     finally:
         (ClientGUIDialogs.DialogInputNamespaceRegex.exec, ClientGUIDialogsQuick.GetYesNo,
-         ClientGUIDialogsMessage.ShowWarning, ClientGUIDialogsMessage.ShowCritical) = old
+         ClientGUIDialogsMessage.ShowWarning, ClientGUIDialogsMessage.ShowCritical,
+         ClientGUICore.core().PopupMenu, controller.pub, ClientGUIRegex.ClientGUIExecutableActions.OpenExternallyURLDefault, ClientGUITopLevelWindowsPanels.DialogEdit, ClientGUIDialogsQuick.EnterText) = old
+        HC.options['regex_favourites'] = old_favourites
 
 
 def main():

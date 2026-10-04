@@ -277,3 +277,190 @@ fn real_lists_replay_reference_and_save_folder_consumers_without_stale_callbacks
         saved.settings
     );
 }
+
+#[test]
+fn attached_regex_menus_copy_without_edits_and_favourites_commit_independently() {
+    use std::{cell::RefCell, rc::Rc};
+    fn choose(dialog: &hydrus_gui::FilenameTaggingWindow, label: &str) {
+        let pane = dialog.get_regex_panes().row_count() - 1;
+        let lines = dialog.get_regex_panes().row_data(pane).unwrap().lines;
+        let line = (0..lines.row_count())
+            .find(|&i| lines.row_data(i).unwrap().label == label)
+            .unwrap();
+        dialog.invoke_regex_clicked(
+            i32::try_from(pane).unwrap(),
+            i32::try_from(line).unwrap(),
+            200.0,
+            100.0,
+            10.0,
+        );
+    }
+    let _windows = headless::init();
+    let (_dirs, store) = crate::subscriptions::store();
+    let fixture = hydrus_testkit::fixture_json("filename_rules.json");
+    let favourites = hydrus_gui_model::regex_favourites::RegexFavourites(
+        serde_json::from_value(fixture["menu_favourites"].clone()).unwrap(),
+    );
+    store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &favourites))
+        .unwrap();
+    let copied = Rc::new(RefCell::new(Vec::<String>::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let hydrus_gui::Clip::Text(text) = clip {
+                copied.borrow_mut().push(text.clone());
+            }
+        }
+    });
+    let launched = Rc::new(RefCell::new(Vec::<String>::new()));
+    hydrus_gui::set_launcher({
+        let launched = launched.clone();
+        move |url| launched.borrow_mut().push(url.into())
+    });
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    crate::folders::open(&ui, "manage import folders…");
+    let list = bound
+        .folders
+        .import_list
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    list.invoke_add();
+    let folder = bound
+        .folders
+        .import_edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let mine = (0..folder.get_tagging_choices().row_count())
+        .find(|&i| folder.get_tagging_choices().row_data(i).unwrap() == "my tags")
+        .unwrap();
+    folder.set_tagging_choice(i32::try_from(mine).unwrap());
+    folder.invoke_tagging_add();
+    let dialog = bound
+        .folders
+        .filename_tagging
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    for child in [false, true] {
+        if child {
+            dialog.invoke_rule_action("quick_add".into());
+            dialog.set_rule_namespace("page".into());
+            dialog.set_rule_regex(r"\d+".into());
+        }
+        dialog.set_regex_input("unchanged raw input".into());
+        for menu in fixture["regex_menus"][usize::from(child)]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|menu| menu["kind"] == "menu")
+        {
+            for entry in menu["rows"].as_array().unwrap() {
+                if entry["kind"] != "item" || entry["label"] == "manage favourites" {
+                    continue;
+                }
+                let mut label = entry["label"].as_str().unwrap().to_owned();
+                let mut outputs = entry["outputs"].clone();
+                if label.starts_with("filename - ") {
+                    let filename = hydrus_gui_model::regex_favourites::regex_tools(1)
+                        .pop()
+                        .unwrap();
+                    label = filename.0;
+                    outputs[0]["value"] = serde_json::json!(filename.1);
+                }
+                dialog.invoke_regex_menu(50.0, 60.0);
+                choose(&dialog, menu["label"].as_str().unwrap());
+                let before_copy = copied.borrow().len();
+                let before_url = launched.borrow().len();
+                choose(&dialog, &label);
+                for output in outputs.as_array().unwrap() {
+                    if output["kind"] == "copy" {
+                        assert_eq!(
+                            copied.borrow().last().unwrap(),
+                            output["value"].as_str().unwrap()
+                        );
+                    } else {
+                        assert_eq!(
+                            launched.borrow().last().unwrap(),
+                            output["value"].as_str().unwrap()
+                        );
+                    }
+                }
+                if outputs.as_array().unwrap().is_empty() {
+                    assert_eq!(copied.borrow().len(), before_copy);
+                    assert_eq!(launched.borrow().len(), before_url);
+                }
+                assert_eq!(dialog.get_regex_input(), "unchanged raw input");
+                if child {
+                    assert_eq!(dialog.get_rule_regex(), r"\d+");
+                }
+            }
+        }
+        if child {
+            dialog.invoke_rule_cancel();
+        }
+    }
+    for case in fixture["managed_favourites"].as_array().unwrap() {
+        dialog.invoke_regex_menu(50.0, 60.0);
+        choose(&dialog, "favourites");
+        choose(&dialog, "manage favourites");
+        let favourites = hydrus_gui::regex_favourites_window::last_opened().unwrap();
+        assert!(dialog.get_regex_child_open());
+        dialog.invoke_apply();
+        assert!(bound.folders.filename_tagging.borrow().is_some());
+        favourites.invoke_action("add".into());
+        favourites.set_phrase(".*".into());
+        favourites.set_description("from filename input".into());
+        favourites.invoke_action("save-row".into());
+        favourites.invoke_action(
+            if case["accepted"] == true {
+                "apply"
+            } else {
+                "cancel"
+            }
+            .into(),
+        );
+        assert!(!dialog.get_regex_child_open());
+        let saved = store.read(hydrus_store::regex_favourites::load).unwrap();
+        assert_eq!(serde_json::json!(saved.0), case["after"]);
+        assert_eq!(case["filename_unchanged"], true);
+        assert_eq!(dialog.get_quick_rows().row_count(), 0);
+        assert_eq!(dialog.get_regex_rows().row_count(), 0);
+    }
+    let before_close = store.read(hydrus_store::regex_favourites::load).unwrap();
+    dialog.invoke_regex_menu(50.0, 60.0);
+    choose(&dialog, "favourites");
+    choose(&dialog, "manage favourites");
+    let stale = hydrus_gui::regex_favourites_window::last_opened().unwrap();
+    stale.invoke_action("add".into());
+    stale.set_phrase("discarded".into());
+    stale.set_description("closed owner".into());
+    dialog.invoke_cancel();
+    stale.invoke_action("save-row".into());
+    stale.invoke_action("apply".into());
+    let saved = store.read(hydrus_store::regex_favourites::load).unwrap();
+    assert_eq!(saved, before_close);
+    assert!(
+        saved
+            .0
+            .contains(&(".*".into(), "from filename input".into()))
+    );
+    let copied_before = copied.borrow().len();
+    let launched_before = launched.borrow().len();
+    dialog.invoke_regex_menu(50.0, 60.0);
+    dialog.invoke_regex_clicked(0, 0, 0.0, 0.0, 0.0);
+    assert_eq!(copied.borrow().len(), copied_before);
+    assert_eq!(launched.borrow().len(), launched_before);
+    assert!(
+        store
+            .read(import_folders::import_folders)
+            .unwrap()
+            .is_empty()
+    );
+}
