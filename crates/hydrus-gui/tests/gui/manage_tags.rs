@@ -144,6 +144,10 @@ fn tags_are_added_and_removed_as_the_reference_does() {
         .as_ref()
         .map(slint::ComponentHandle::clone_strong)
         .expect("manage tags opened");
+    assert_eq!(window.get_window_title(), "manage tags");
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    assert_eq!(window.get_window_title(), "manage tags");
     let services = window.get_service_names();
     let mine = (0..services.row_count())
         .position(|i| services.row_data(i).unwrap() == "my tags")
