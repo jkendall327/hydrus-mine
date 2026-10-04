@@ -5,7 +5,8 @@ Synthetic local mappings and sibling/parent chains run through the actual DB.
 Children AsyncQtJob work/publish and favourite decoration lookup run synchronously
 only to make snapshots stable; their actual queries and UI consumers are used.
 Tabs retain their unfiltered tag lists, typing switches back to search, and
-chosen favourites/children update the real file-search context. Current/pending
+chosen favourites/children update the real file-search context. The favourite
+selection also records its actual file-query result count. Current/pending
 flags, zero-count descendants, a finite/zero/unlimited cap, service changes and
 predicate removals are captured. GetPredicates returns a set; only that set is
 sorted for stable evidence. Result row order is preserved. The typing snapshot
@@ -57,7 +58,7 @@ def record(session):
             job=box._async_text_info_updater;job._publish_callable(job._work_callable(job._pre_work_callable()))
         ac.RefreshFavouriteTags();ac._dropdown_notebook.setCurrentWidget(ac._favourites_list);favourites_lookup();snap('favourites',favourites=favourites)
         ac._text_ctrl.setText('draft content');ac._dropdown_notebook.setCurrentWidget(ac._favourites_list);snap('favourites_with_text')
-        ac.BroadcastChoices({P.Predicate(P.PREDICATE_TYPE_TAG,'parity:tabs root')});snap('choose_favourite')
+        ac.BroadcastChoices({P.Predicate(P.PREDICATE_TYPE_TAG,'parity:tabs root')});snap('choose_favourite',query_count=len(c.Read('file_query_ids',ac.GetFileSearchContext())))
         old_start=ClientGUIAsync.AsyncQtJob.start;ClientGUIAsync.AsyncQtJob.start=lambda job:job._publish_callable(job._work_callable())
         try:
             for limit in [40,1,0,None]:

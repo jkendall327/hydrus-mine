@@ -1185,10 +1185,20 @@ fn normal_paste_replays_cursor_selection_and_accepted_tags_preserve_the_draft() 
         headless::set_clipboard_text(&pasted);
         hydrus_gui::set_paster(move || pasted.clone());
         if child.invoke_paste(false) {
-            assert_eq!(
-                child.get_question(),
-                case["asked"][0]["message"].as_str().unwrap()
-            );
+            let question = child.get_question();
+            let (prefix, tags) = question.split_once("\n\n").unwrap();
+            let (expected_prefix, expected_tags) = case["asked"][0]["message"]
+                .as_str()
+                .unwrap()
+                .split_once("\n\n")
+                .unwrap();
+            assert_eq!(prefix, expected_prefix);
+            // Qt joins CleanTags' set without sorting, so row order varies by process.
+            let mut tags = tags.lines().collect::<Vec<_>>();
+            let mut expected_tags = expected_tags.lines().collect::<Vec<_>>();
+            tags.sort_unstable();
+            expected_tags.sort_unstable();
+            assert_eq!(tags, expected_tags);
             child.invoke_answered(case["answer"].as_bool().unwrap());
         } else {
             assert!(case["asked"].as_array().unwrap().is_empty());

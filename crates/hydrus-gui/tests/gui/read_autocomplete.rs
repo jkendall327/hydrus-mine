@@ -151,7 +151,10 @@ fn real_page_tabs_apply_caps_keep_zero_count_descendants_and_restore_context() {
                 ui.invoke_suggestion_chosen(i32::try_from(at).unwrap());
                 assert!(bound.current.borrow().borrow().results().is_empty()); // Reference paused search.
                 ui.invoke_refresh_page(); // F5 resumes and performs the actual query.
-                assert_eq!(bound.current.borrow().borrow().results().len(), 3);
+                assert_eq!(
+                    bound.current.borrow().borrow().results().len(),
+                    usize::try_from(event["query_count"].as_u64().unwrap()).unwrap()
+                );
                 ui.invoke_flip_synchronised();
             }
             "children" => {

@@ -132,7 +132,8 @@
       ],
       "predicates": [
         "parity:tabs root"
-      ]
+      ],
+      "query_count": 2
     },
     {
       "action": "children",
