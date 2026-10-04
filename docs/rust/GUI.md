@@ -1817,3 +1817,11 @@ and visible list height (1–128 rows). Clipboard paste adds cleaned unique tags
 without toggling existing tags off; its question and all staged tags are dropped
 when the owner is cancelled or closed. The running Qt client's synthetic corpus,
 rendered rows and paste decisions are in `write_tag_autocomplete.json`.
+
+The sibling and parent editors now share the same write input on both sides.
+Each service retains its own typed drafts, suggestions and highlighted result;
+keyboard entry and clicked suggestions use the selected tag, Ctrl+Space forces
+fetch, and pasted tags only add to selections. Pasting a tag on the opposite
+side removes it from the original side. A pending paste cannot apply the
+relationship editor; closing its owner invalidates subsequent answers. The real
+Qt sibling/parent preview selections are recorded alongside write suggestions.

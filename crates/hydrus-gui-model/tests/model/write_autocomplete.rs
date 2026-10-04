@@ -267,3 +267,52 @@ fn six_write_options_replay_recorded_defaults_and_stay_staged_until_apply() {
     let stored: TagEditingSettings = store.read(settings::get).unwrap();
     assert_eq!(stored, before.tag_editing); // Discarding an options draft has no side effects.
 }
+
+#[test]
+fn relationship_inputs_replay_real_add_only_paste_and_opposite_side_removal() {
+    use hydrus_gui_model::tag_relationships::{RelationKind, Relationships};
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let (_dir, store) = seeded(&fixture);
+    for (name, kind) in [
+        ("siblings", RelationKind::Siblings),
+        ("parents", RelationKind::Parents),
+    ] {
+        let mut model = Relationships::new(store.clone(), kind).unwrap();
+        let service = model
+            .service_names()
+            .iter()
+            .position(|n| n == "my tags")
+            .unwrap();
+        model.choose_service(service);
+        for event in fixture["relationship_inputs"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|v| v["kind"] == name)
+        {
+            let action = event["action"].as_str().unwrap();
+            let (right, tags) = match action {
+                "paste_left" | "repeat_left" => (
+                    false,
+                    vec!["parity:paste left a".into(), "parity:paste left b".into()],
+                ),
+                "paste_right" | "repeat_right" if kind == RelationKind::Siblings => {
+                    (true, vec!["parity:paste right".into()])
+                }
+                "paste_right" | "repeat_right" => (
+                    true,
+                    vec!["parity:paste right a".into(), "parity:paste right b".into()],
+                ),
+                "move_to_right" => (true, vec!["parity:paste left a".into()]),
+                _ => panic!("unknown event {action}"),
+            };
+            model.paste_tags(right, &tags).unwrap();
+            let (left, right) = model.inputs();
+            assert_eq!(json!(left), event["left"]);
+            assert_eq!(json!(right), event["right"]);
+        }
+        drop(model);
+        let reopened = Relationships::new(store.clone(), kind).unwrap();
+        assert_eq!(reopened.inputs(), (Vec::new(), Vec::new()));
+    }
+}

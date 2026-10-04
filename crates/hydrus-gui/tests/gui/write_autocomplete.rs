@@ -84,3 +84,76 @@ fn paste_confirmation_skip_and_list_height_are_consumed_by_manage_tags() {
     assert!(!w.invoke_paste_requested(false));
     w.invoke_cancel();
 }
+
+#[test]
+fn relationship_autocomplete_preserves_service_drafts_and_cancels_paste_with_owner() {
+    fn open(
+        ui: &MainWindow,
+        bound: &hydrus_gui::Bound,
+        name: &str,
+    ) -> hydrus_gui::TagRelationshipsWindow {
+        let top = ui
+            .get_menu_titles()
+            .iter()
+            .position(|row| row.label == "tags")
+            .unwrap();
+        ui.invoke_menu_title_pressed(i32::try_from(top).unwrap(), 0.0, 22.0);
+        let pane = ui.get_menu_panes().row_data(0).unwrap();
+        let index = pane
+            .lines
+            .iter()
+            .position(|row| row.label.starts_with(name))
+            .unwrap();
+        ui.invoke_menu_line_clicked(0, i32::try_from(index).unwrap(), 0.0, 0.0, 0.0);
+        bound
+            .tag_relationships
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong()
+    }
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    hydrus_gui::set_paster(|| "parity:paste left a\nparity:paste left b".into());
+    for kind in ["siblings", "parents"] {
+        let w = open(&ui, &bound, kind);
+        let mine = w
+            .get_service_names()
+            .iter()
+            .position(|s| s == "my tags")
+            .unwrap();
+        let other = w
+            .get_service_names()
+            .iter()
+            .position(|s| s == "downloader tags")
+            .unwrap();
+        w.invoke_service_chosen(i32::try_from(mine).unwrap());
+        w.invoke_autocomplete_edited(false, "parity:caller draft".into());
+        assert_eq!(w.get_left_suggestions().row_count(), 1);
+        w.invoke_service_chosen(i32::try_from(other).unwrap());
+        assert!(w.get_left_input().is_empty());
+        w.invoke_autocomplete_edited(false, "different service draft".into());
+        w.invoke_service_chosen(i32::try_from(mine).unwrap());
+        assert_eq!(w.get_left_input(), "parity:caller draft");
+        assert!(w.invoke_autocomplete_paste(false, false));
+        w.invoke_answered(false);
+        assert_eq!(w.get_left_input(), "parity:caller draft");
+        assert_eq!(w.get_left_tags().row_count(), 0);
+        assert!(w.invoke_autocomplete_paste(false, true));
+        assert_eq!(w.get_left_tags().row_count(), 2);
+        assert!(w.invoke_autocomplete_paste(false, true));
+        assert_eq!(w.get_left_tags().row_count(), 2);
+        assert!(w.invoke_autocomplete_paste(true, false));
+        w.window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+        w.invoke_answered(true);
+        w.invoke_apply();
+        assert!(bound.tag_relationships.borrow().is_none());
+        let w = open(&ui, &bound, kind);
+        assert_eq!(w.get_left_tags().row_count(), 0);
+        assert_eq!(w.get_right_tags().row_count(), 0);
+        w.invoke_cancel();
+    }
+}

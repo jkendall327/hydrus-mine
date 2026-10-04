@@ -135,6 +135,14 @@ impl Relationships {
         self.kind
     }
     /// Service names in the same local-then-repository order as the reference.
+    pub fn service_key(&self, index: usize) -> Option<hydrus_core::ServiceKey> {
+        self.store
+            .snapshot()
+            .services
+            .get(self.services.get(index)?.id)
+            .ok()
+            .map(|s| s.key.clone())
+    }
     pub fn service_names(&self) -> Vec<String> {
         self.services.iter().map(|s| s.name.clone()).collect()
     }
@@ -198,6 +206,13 @@ impl Relationships {
     /// Enter cleaned tags in a side's selection, toggling existing tags.
     /// A sibling has one ideal; a parent input may contain several parents.
     pub fn enter_tags(&mut self, right: bool, text: &str) -> Result<(), String> {
+        self.enter_tag_text(right, text, false)
+    }
+    /// Clipboard entry only adds tags to the side's selection.
+    pub fn paste_tags(&mut self, right: bool, tags: &[String]) -> Result<(), String> {
+        self.enter_tag_text(right, &tags.join("\n"), true)
+    }
+    fn enter_tag_text(&mut self, right: bool, text: &str, only_add: bool) -> Result<(), String> {
         let tags: Vec<String> = text
             .lines()
             .filter(|s| !s.trim().is_empty())
@@ -226,7 +241,7 @@ impl Relationships {
                 (&mut s.left, &mut s.right)
             };
             other.remove(&tag);
-            if !this.remove(&tag) {
+            if only_add || !this.remove(&tag) {
                 this.insert(tag);
             }
         }
