@@ -1219,7 +1219,9 @@ export component MainWindow inherits Window {
                     visible: root.note == "" && !root.importing && !root.gallery-page && !root.watcher-page;
                     width: self.visible ? 300px : 0px;
                     min-height: 0px;
-                    max-height: self.visible ? root.height : 0px;
+                    // A layout maximum must not depend on the containing
+                    // window's height: that height consumes this layout info.
+                    max-height: self.visible ? 100000px : 0px;
                     // the sort control, as at the top of the reference's sidebar
                     HorizontalLayout {
                         spacing: 4px;
