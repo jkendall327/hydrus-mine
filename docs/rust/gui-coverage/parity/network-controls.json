@@ -718,7 +718,195 @@
         "Error acknowledgement: ok"
       ],
       "owner": "Per-open-log Slots closed with log; closed-log downloader actions retained in main window OpenFiles slot",
-      "guiEvidence": "exchange_confirmations_png_objects_and_owner_cancel_reach_the_persisted_queue / closed_search_log_exchange_retains_real_questions_and_png_children"
+      "guiEvidence": "exchange_confirmations_png_objects_and_owner_cancel_reach_the_persisted_queue / closed_search_log_exchange_retains_real_questions_and_png_children",
+      "ownerParentIDs": [
+        "audit-network-search-log"
+      ],
+      "referenceIDs": [
+        "audit-network-search-log-exchange"
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/ui/search_log_import.slint",
+          "symbol": "export component SearchLogImportWindow",
+          "line": 4
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_log_import_window.rs",
+          "symbol": "pub(crate) fn open(",
+          "line": 93
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/search_log.rs",
+          "symbol": "fn exchange_confirmations_png_objects_and_owner_cancel_reach_the_persisted_queue(",
+          "line": 177
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/importer_list_menu.rs",
+          "symbol": "fn closed_search_log_exchange_retains_real_questions_and_png_children(",
+          "line": 264
+        }
+      ],
+      "actionGroups": [
+        {
+          "label": "duplicate decision",
+          "controls": [
+            "only add new urls",
+            "add all urls, even duplicates",
+            "cancel"
+          ]
+        },
+        {
+          "label": "continuation decision",
+          "controls": [
+            "just check what I am adding",
+            "start a potential new search for every url added",
+            "cancel"
+          ]
+        },
+        {
+          "label": "import error",
+          "controls": [
+            "ok"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "NetworkErrorWindow",
+      "file": "crates/hydrus-gui/ui/importing.slint",
+      "title": "Network Error",
+      "preferredSize": "660 \u00d7 370",
+      "controls": [
+        "scrollable retained network error text",
+        "close"
+      ],
+      "owner": "Errors owner in page/monitor/parser control; force-close closes child, SetError survives job completion until explicit owner ClearError",
+      "ownerParentIDs": [
+        "audit-network-download-control"
+      ],
+      "referenceIDs": [
+        "audit-network-download-control-errors"
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/ui/importing.slint",
+          "symbol": "export component NetworkErrorWindow",
+          "line": 29
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/network_job_control.rs",
+          "symbol": "pub fn show(&self, text:",
+          "line": 80
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
+          "symbol": "fn page_cog_rules_cancel_apply_and_error_owner_boundary(",
+          "line": 59
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
+          "symbol": "fn current_jobs_cog_retries_uses_rules_and_retains_finished_error(",
+          "line": 498
+        }
+      ],
+      "actionGroups": [
+        {
+          "label": "error submenu owned by DownloadControl",
+          "controls": [
+            "show error",
+            "copy error to clipboard"
+          ]
+        },
+        {
+          "label": "read error",
+          "controls": [
+            "scroll text",
+            "close"
+          ]
+        },
+        {
+          "label": "owner boundary",
+          "controls": [
+            "ClearError before next validated owner request; no visible clear menu item"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PngExportWindow",
+      "file": "crates/hydrus-gui/ui/png_export.slint",
+      "title": "export to png",
+      "preferredSize": "690 \u00d7 310",
+      "controls": [
+        "file path",
+        "browse\u2026",
+        "title",
+        "read-only payload description",
+        "description",
+        "width (100\u20134096, default 512)",
+        "select path/export/done status",
+        "close"
+      ],
+      "owner": "Reusable frozen-payload PNG child retained by file/search log and standalone object editor Slots; cancellation and final owner drop invalidate callbacks",
+      "ownerParentIDs": [
+        "audit-network-file-log",
+        "audit-network-search-log"
+      ],
+      "referenceIDs": [
+        "audit-network-file-log-png",
+        "audit-network-search-log-exchange"
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/ui/png_export.slint",
+          "symbol": "export component PngExportWindow",
+          "line": 4
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/png_export_window.rs",
+          "symbol": "pub fn open(",
+          "line": 71
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
+          "symbol": "fn source_png_dialogs_cancel_validate_import_export_and_close_with_the_log(",
+          "line": 349
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/search_log.rs",
+          "symbol": "fn exchange_confirmations_png_objects_and_owner_cancel_reach_the_persisted_queue(",
+          "line": 177
+        }
+      ],
+      "actionGroups": [
+        {
+          "label": "output parameters",
+          "controls": [
+            "file path",
+            "browse",
+            "title",
+            "payload summary",
+            "description",
+            "width"
+          ]
+        },
+        {
+          "label": "export",
+          "controls": [
+            "validate",
+            "atomic save",
+            "done",
+            "close"
+          ]
+        }
+      ]
     }
   ]
 }
