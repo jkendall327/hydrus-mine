@@ -48,6 +48,17 @@ impl Setting for TagAutocompleteTabs {
     const KEY: &'static str = "tag_autocomplete_tabs";
 }
 
+/// How selected viewing canvases are presented in media context menus.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ViewingStatsMenuDisplay {
+    /// Sum multiple canvases in a submenu title and retain each separate line.
+    #[default]
+    Combined,
+    /// Present each selected canvas as a separate menu label.
+    Stacked,
+}
+
 /// File viewing statistics: whether they are recorded, and which viewers'
 /// statistics count as "views" and "view time" when a search or sort does
 /// not name viewers (the reference's `file_viewing_statistics_active` and
@@ -56,6 +67,7 @@ impl Setting for TagAutocompleteTabs {
 #[serde(default)]
 pub struct FileViewingStatistics {
     pub active: bool,
+    pub menu_display: ViewingStatsMenuDisplay,
     pub interesting_canvases: Vec<CanvasType>,
 }
 
@@ -64,6 +76,7 @@ impl Default for FileViewingStatistics {
     fn default() -> Self {
         Self {
             active: true,
+            menu_display: ViewingStatsMenuDisplay::Combined,
             interesting_canvases: vec![CanvasType::MediaViewer, CanvasType::ClientApi],
         }
     }

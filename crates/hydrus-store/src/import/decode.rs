@@ -995,6 +995,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
                 })
                 .collect::<Result<_>>()?;
         }
+        viewing.menu_display =
+            if options.integers.get("file_viewing_stats_menu_display") == Some(&3) {
+                crate::settings::ViewingStatsMenuDisplay::Stacked
+            } else {
+                crate::settings::ViewingStatsMenuDisplay::Combined
+            };
         insert_setting(&mut input, &viewing)?;
         let mut similar = crate::similar::SimilarFilesSettings::default();
         if let Some(&d) = options
@@ -3174,6 +3180,35 @@ mod tests {
             settings.provider_order,
             [Provider::Favourites, Provider::Pages]
         );
+    }
+
+    #[test]
+    fn viewing_menu_preferences_import_the_display_style_and_canvas_ticks() {
+        use crate::settings::{FileViewingStatistics, ViewingStatsMenuDisplay};
+        let source = hydrus_testkit::legacy_fixture("basic");
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "file_viewing_stats_menu_display"], [0, 2]]"#,
+                    r#"[[0, "file_viewing_stats_menu_display"], [0, 3]]"#,
+                ),
+                (
+                    r#"[[0, "file_viewing_stats_interesting_canvas_types"], [2, [26, 3, [[0, 0], [0, 4]]]]]"#,
+                    r#"[[0, "file_viewing_stats_interesting_canvas_types"], [2, [26, 3, [[0, 1]]]]]"#,
+                ),
+            ],
+        );
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let viewing: FileViewingStatistics =
+            serde_json::from_value(input.settings["file_viewing_statistics"].clone()).unwrap();
+        assert_eq!(viewing.menu_display, ViewingStatsMenuDisplay::Stacked);
+        assert_eq!(viewing.interesting_canvases, [CanvasType::Preview]);
+        let old: FileViewingStatistics =
+            serde_json::from_str(r#"{"active":false,"interesting_canvases":[1]}"#).unwrap();
+        assert!(!old.active);
+        assert_eq!(old.menu_display, ViewingStatsMenuDisplay::Combined);
+        assert_eq!(old.interesting_canvases, [CanvasType::Preview]);
     }
 
     #[test]

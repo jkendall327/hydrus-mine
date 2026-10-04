@@ -57,6 +57,7 @@ const WIDGETS: &[&str] = &[
     "MediaCollectControl",
     "TagSortControl",
     "DirPickerCtrl",
+    "BetterCheckBoxList",
 ];
 
 fn is_control(item: &Json) -> bool {
@@ -134,6 +135,12 @@ fn our_rows<'a>(items: &'a [Item], boxes: &[String], out: &mut Vec<(Vec<String>,
 fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<String> {
     let num = |key: &str| theirs.get(key).and_then(Json::as_f64);
     let problem = match (kind, value) {
+        (Kind::CanvasTicks, Value::Canvases(canvases)) => {
+            let codes: Vec<_> = canvases.iter().map(|c| c.code()).collect();
+            (theirs["widget"] != "BetterCheckBoxList"
+                || theirs["value"] != serde_json::json!(codes))
+            .then(|| format!("viewing canvases {codes:?}"))
+        }
         (Kind::Check, Value::Check(b)) => {
             (theirs.get("check").is_none() || theirs["value"] != *b).then(|| format!("check {b}"))
         }

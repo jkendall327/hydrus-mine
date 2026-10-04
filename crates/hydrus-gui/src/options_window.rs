@@ -142,6 +142,25 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     out.is_none = *none;
                     out.none_phrase = (*none_phrase).into();
                 }
+                (Kind::CanvasTicks, Value::Canvases(canvases)) => {
+                    use hydrus_core::CanvasType;
+                    out.kind = 23;
+                    out.items = ModelRc::new(VecModel::from(vec![
+                        "media views".into(),
+                        "preview views".into(),
+                        "client api views".into(),
+                    ]));
+                    out.checks = ModelRc::new(VecModel::from(
+                        [
+                            CanvasType::MediaViewer,
+                            CanvasType::Preview,
+                            CanvasType::ClientApi,
+                        ]
+                        .iter()
+                        .map(|c| canvases.contains(c))
+                        .collect::<Vec<_>>(),
+                    ));
+                }
                 (Kind::Duration { units, .. }, Value::Duration(seconds)) => {
                     out.kind = 8;
                     out.fields = fields(*seconds, units);
@@ -642,6 +661,15 @@ pub(crate) fn open(
                         window.get_rows().set_row_data(index, shown);
                     }
                 }
+            }
+        }
+    });
+    window.on_canvas_toggled({
+        let editor = editor.clone();
+        let active = active.clone();
+        move |row, canvas, checked| {
+            if active.get() {
+                editor.borrow_mut().canvas(at(row), at(canvas), checked);
             }
         }
     });

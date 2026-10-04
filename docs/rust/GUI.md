@@ -2688,3 +2688,10 @@ Cancel. Mouse dragging adds a reversible range, or removes one when its initial
 Ctrl-click deselected the starting tag. Expanded parent rows share their tag's
 range position. The drag surface survives suggestion refreshes, and both Escape
 and actual mouse handlers are recorded in `write_tag_selection.json`.
+
+File viewing statistics Options now exposes the two reference media-menu display
+styles and the media/preview/Client API canvas ticks. The selected canvases reach
+view-count and viewtime searches/sorts and actual thumbnail context-menu lines;
+combined style sums multiple viewed canvases in a submenu, while stacked style
+keeps separate labels. Empty selection removes viewing labels. Changes wait for
+Apply, and Cancel/reopen preserve saved values.

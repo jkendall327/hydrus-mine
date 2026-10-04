@@ -4304,3 +4304,160 @@ fn command_palette_options_stage_queue_changes_and_persist_only_on_apply() {
     );
     successor.invoke_cancel();
 }
+
+#[test]
+fn viewing_menu_preferences_apply_to_real_menu_lines_and_cancel_preserves_them() {
+    use hydrus_core::CanvasType;
+    use hydrus_gui::thumbnail_menu::{Entry, info_menu};
+    use hydrus_store::settings::{FileViewingStatistics, ViewingStatsMenuDisplay};
+    fn recorded(entry: &Entry) -> serde_json::Value {
+        match entry {
+            Entry::Menu(label, children) => {
+                serde_json::json!({"label":label,"children":children.iter().map(recorded).collect::<Vec<_>>()})
+            }
+            Entry::Label(label) => serde_json::json!({"label":label}),
+            _ => panic!("viewing statistics are passive labels"),
+        }
+    }
+    let (_dirs, store) = store();
+    let oracle = hydrus_testkit::fixture_json("viewing_statistics_options.json");
+    let hash = oracle["file"].as_str().unwrap().parse().unwrap();
+    let file = store
+        .read(|c| hydrus_store::master::hash_id(c, &hash))
+        .unwrap()
+        .unwrap();
+    let now = oracle["now"].as_i64().unwrap() * 1000;
+    store
+        .write_content(move |w| {
+            for (canvas, ago, views, ms) in [
+                (CanvasType::MediaViewer, 10, 2, 12000),
+                (CanvasType::Preview, 20, 3, 9000),
+                (CanvasType::ClientApi, 30, 4, 28000),
+            ] {
+                w.set_views(file, canvas, Some(now - ago * 1000), views, ms)?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    for event in oracle["menu_events"].as_array().unwrap() {
+        let before = store
+            .read(hydrus_store::settings::get::<FileViewingStatistics>)
+            .unwrap();
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "file viewing statistics");
+        let (menu, control) = row(&options, "Show viewing stats on media right-click menus?:");
+        assert_eq!(control.kind, 5);
+        options.invoke_choice_chosen(menu, if event["style"] == 3 { 1 } else { 0 });
+        let (ticks, control) = row(&options, "Which views to show?:");
+        assert_eq!(control.kind, 23);
+        assert_eq!(control.items.row_count(), 3);
+        for (index, code) in [0, 1, 4].iter().enumerate() {
+            options.invoke_canvas_toggled(
+                ticks,
+                i32::try_from(index).unwrap(),
+                event["canvases"]
+                    .as_array()
+                    .unwrap()
+                    .contains(&serde_json::json!(code)),
+            );
+        }
+        assert_eq!(
+            store
+                .read(hydrus_store::settings::get::<FileViewingStatistics>)
+                .unwrap(),
+            before,
+            "changes remain staged until parent Apply"
+        );
+        options.invoke_apply();
+        assert!(bound.options.borrow().is_none());
+        let saved = store
+            .read(hydrus_store::settings::get::<FileViewingStatistics>)
+            .unwrap();
+        assert_eq!(
+            saved.menu_display,
+            if event["style"] == 3 {
+                ViewingStatsMenuDisplay::Stacked
+            } else {
+                ViewingStatsMenuDisplay::Combined
+            }
+        );
+        let entry = info_menu(
+            &store,
+            Some(file),
+            (&[file], hydrus_gui::status::Items::files(1)),
+            &Default::default(),
+            now,
+        )
+        .unwrap();
+        let Entry::Menu(_, lines) = entry else {
+            panic!("media info submenu")
+        };
+        let view_lines: Vec<_> = lines.iter().filter(|line| matches!(line,Entry::Label(label)|Entry::Menu(label,_) if label.starts_with("viewed ") || label.starts_with("no view record"))).map(recorded).collect();
+        assert_eq!(serde_json::json!(view_lines), event["menu"], "{event}");
+        open(&ui);
+        let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&reopened, "file viewing statistics");
+        assert_eq!(
+            row(&reopened, "Show viewing stats on media right-click menus?:")
+                .1
+                .index,
+            i32::from(saved.menu_display == ViewingStatsMenuDisplay::Stacked)
+        );
+        reopened.invoke_canvas_toggled(
+            ticks,
+            0,
+            !saved
+                .interesting_canvases
+                .contains(&CanvasType::MediaViewer),
+        );
+        reopened.invoke_cancel();
+        reopened.invoke_canvas_toggled(ticks, 1, true);
+        assert_eq!(
+            store
+                .read(hydrus_store::settings::get::<FileViewingStatistics>)
+                .unwrap(),
+            saved
+        );
+    }
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let current = bound.current.borrow().clone();
+    let other = current
+        .borrow()
+        .results()
+        .iter()
+        .copied()
+        .find(|id| *id != file)
+        .expect("second imported file");
+    store
+        .write_content(move |w| {
+            w.set_views(other, CanvasType::MediaViewer, Some(now), 1, 1000)?;
+            w.set_views(other, CanvasType::Preview, Some(now), 10, 1000)
+        })
+        .unwrap();
+    for (wanted, index) in [(file, 0), (other, 1)] {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "file viewing statistics");
+        let ticks = row(&options, "Which views to show?:").0;
+        for canvas in 0..3 {
+            options.invoke_canvas_toggled(ticks, canvas, canvas == index);
+        }
+        options.invoke_apply();
+        current
+            .borrow_mut()
+            .set_sort_by(hydrus_search::exec::SortBy::MediaViews);
+        current
+            .borrow_mut()
+            .set_sort_order(hydrus_search::exec::SortOrder::Descending);
+        assert_eq!(
+            current.borrow().results().first(),
+            Some(&wanted),
+            "new canvas ticks reach the actual page views sort"
+        );
+    }
+}

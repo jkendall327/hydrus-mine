@@ -1675,7 +1675,7 @@ pub(crate) mod tests {
         // recorded, counting the media viewer and the Client API
         assert_eq!(
             input.settings["file_viewing_statistics"],
-            serde_json::json!({"active": true, "interesting_canvases": [0, 4]})
+            serde_json::json!({"active": true, "menu_display":"combined", "interesting_canvases": [0, 4]})
         );
     }
 

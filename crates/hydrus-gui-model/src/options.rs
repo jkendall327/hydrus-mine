@@ -150,6 +150,8 @@ pub enum Value {
     },
     /// A time, in seconds (the reference's `TimeDeltaWidget`).
     Duration(f64),
+    /// Selected viewing canvases, in the reference checkbox-list order.
+    Canvases(Vec<hydrus_core::CanvasType>),
     /// A number per a time in seconds (the reference's `VelocityCtrl`).
     Velocity(i64, f64),
     /// A file sort: its type and order (the reference's
@@ -195,6 +197,8 @@ pub enum Kind {
     Choice(&'static [&'static str]),
     /// Named GUI sessions plus the blank-page startup choice.
     SavedSession,
+    /// Media, preview and Client API viewing-statistic canvases.
+    CanvasTicks,
     GallerySource,
     Text,
     /// An editable folder path with the shared native directory picker.
@@ -1619,11 +1623,45 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "file viewing statistics",
-            vec![check(
-                "Enable file viewing statistics tracking?:",
-                |s| s.file_viewing.active,
-                |s, v| s.file_viewing.active = v,
-            )],
+            vec![
+                check(
+                    "Enable file viewing statistics tracking?:",
+                    |s| s.file_viewing.active,
+                    |s, v| s.file_viewing.active = v,
+                ),
+                choice(
+                    "Show viewing stats on media right-click menus?:",
+                    &[
+                        "show a combined value, and stack the separate values a submenu",
+                        "stack the separate values",
+                    ],
+                    |s| {
+                        usize::from(
+                            s.file_viewing.menu_display
+                                == hydrus_store::settings::ViewingStatsMenuDisplay::Stacked,
+                        )
+                    },
+                    |s, v| {
+                        s.file_viewing.menu_display = if v == 1 {
+                            hydrus_store::settings::ViewingStatsMenuDisplay::Stacked
+                        } else {
+                            hydrus_store::settings::ViewingStatsMenuDisplay::Combined
+                        }
+                    },
+                ),
+                opt(
+                    "Which views to show?:",
+                    Kind::CanvasTicks,
+                    Rc::new(|s| Value::Canvases(s.file_viewing.interesting_canvases.clone())),
+                    Rc::new(|s, v| match v {
+                        Value::Canvases(canvases) => {
+                            s.file_viewing.interesting_canvases.clone_from(canvases);
+                            Ok(())
+                        }
+                        _ => Err(wrong("Which views to show?:")),
+                    }),
+                ),
+            ],
         ),
         page(
             "files and trash",
@@ -2866,6 +2904,9 @@ pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Sug
                     labels.extend(*unit);
                 }
                 (Kind::NoneableText { none_phrase }, _) => labels.push(*none_phrase),
+                (Kind::CanvasTicks, _) => {
+                    labels.extend(["media views", "preview views", "client api views"])
+                }
                 (Kind::Duration { units, .. }, _) => {
                     labels.extend(units.iter().map(|unit| unit.label()));
                 }
@@ -3106,6 +3147,28 @@ impl Editor {
         if let Some(i) = self.option_at(row) {
             self.values[self.page][i] = Value::Check(checked);
         }
+    }
+
+    /// Toggle one reference viewing-canvas tick, retaining its displayed order.
+    pub fn canvas(&mut self, row: usize, index: usize, checked: bool) {
+        use hydrus_core::CanvasType;
+        const CANVASES: [CanvasType; 3] = [
+            CanvasType::MediaViewer,
+            CanvasType::Preview,
+            CanvasType::ClientApi,
+        ];
+        let Some(i) = self.option_at(row) else { return };
+        let Some(canvas) = CANVASES.get(index) else {
+            return;
+        };
+        let Value::Canvases(canvases) = &mut self.values[self.page][i] else {
+            return;
+        };
+        canvases.retain(|c| c != canvas);
+        if checked {
+            canvases.push(*canvas);
+        }
+        canvases.sort_by_key(|c| CANVASES.iter().position(|v| v == c));
     }
 
     pub fn number(&mut self, row: usize, number: i64) {

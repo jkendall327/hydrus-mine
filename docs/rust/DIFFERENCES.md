@@ -1773,3 +1773,9 @@ reference's add/remove mode, including inherited rows and retained drafts. The
 native result list uses a persistent pointer surface across refreshes. The recorded mouse paths
 cover displayed rows; continuous dragging outside the viewport is not covered
 by this recording.
+
+Viewing-statistic context-menu style and canvas selection now have native Options
+controls and real menu/search/sort consumers, backed by
+`oracle/fixtures/viewing_statistics_options.json`. Native media-preview rendering
+and its minimum/maximum tracking controls remain absent. Viewer/filter recording
+and their timing/filter controls are the next part of this scoped slice.
