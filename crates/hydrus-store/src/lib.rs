@@ -64,3 +64,5 @@ pub mod api_activity;
 pub mod api_permissions;
 
 pub mod archive_repair;
+
+pub mod file_history;

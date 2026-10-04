@@ -144,3 +144,5 @@ mod notebook_tree;
 mod tab_presentation;
 
 mod archive_repair;
+
+mod file_history;

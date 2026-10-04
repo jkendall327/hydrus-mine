@@ -3025,3 +3025,11 @@ that notebook/page. Switching ordinary tabs reveals the active page's ancestors,
 and changes to the session retain the cursor by page key. The hierarchy remains
 available when main navigation tabs are hidden. Options Apply/Cancel, saved
 settings and reopening use the existing staged tab-presentation controls.
+
+Database > view file history opens an independent local-domain chart. It reads
+current/deleted imports, deletions, inbox and archive memories to draw the four
+reference sampled series. Series toggles, count/date ranges and both refit
+buttons affect the plot; refresh preserves custom ranges. Typed tags and system
+predicates run actual independent current/deleted queries. Cancelling, refreshing
+or closing prevents an older background result from replacing the current chart.
+The parent page's predicates and session tree are unaffected.
