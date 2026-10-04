@@ -106,7 +106,7 @@
       "native_source": null,
       "evidence": [],
       "limitations": [
-        "Selected feature inventory; no GUI execution or tests were run."
+        "Selected feature inventory from source review; no additional GUI execution or tests ran while compiling the inventory. Existing test and oracle evidence is linked separately."
       ],
       "descendant_count": 249,
       "descendant_status_counts": {
