@@ -754,8 +754,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line, and nested generators
-  select members with checkboxes. Definition import/export, page/content parser
-  login editors remain follow-up work.
+  select members with checkboxes. Page/content parsers and direct URL-class links
+  have native editors. Definition import/export and login editors remain
+  follow-up work.
 - Invalid example details use the native URL rules' error wording. The
   reference retains stale referral/next-page examples after a match failure;
   the native editor clears all derived output. A changed list asks before
