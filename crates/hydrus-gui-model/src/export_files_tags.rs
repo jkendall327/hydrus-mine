@@ -39,6 +39,22 @@ impl Row {
     }
 }
 
+/// The copy submenu's mutually exclusive presentation choices.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub enum CopyStyle {
+    #[default]
+    Plain,
+    Counts,
+    Underscores,
+}
+/// Which rows and tag text a recorded clipboard action includes.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct CopyOptions {
+    pub all: bool,
+    pub subtags: bool,
+    pub style: CopyStyle,
+}
+
 /// Local sort and selection are never written to the user's default tag sort.
 pub struct Tags {
     store: Arc<Store>,
@@ -47,6 +63,17 @@ pub struct Tags {
     pub selection: ListSelection<TagId>,
     text_ascending: bool,
     count_ascending: bool,
+}
+impl std::fmt::Debug for Tags {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Tags")
+            .field("sort", &self.sort)
+            .field("rows", &self.rows)
+            .field("selection", &self.selection)
+            .field("text_ascending", &self.text_ascending)
+            .field("count_ascending", &self.count_ascending)
+            .finish_non_exhaustive()
+    }
 }
 impl Tags {
     pub fn new(store: Arc<Store>) -> hydrus_store::Result<Self> {
@@ -171,7 +198,14 @@ impl Tags {
         }
     }
     /// Copy raw tags in display order, with the reference's subtag deduplication.
-    pub fn copy(&self, all: bool, subtags: bool, counts: bool, underscores: bool) -> String {
+    pub fn copy(&self, options: CopyOptions) -> String {
+        let CopyOptions {
+            all,
+            subtags,
+            style,
+        } = options;
+        let counts = style == CopyStyle::Counts;
+        let underscores = style == CopyStyle::Underscores;
         let rows = if all {
             self.rows.iter().collect()
         } else {
@@ -241,7 +275,17 @@ impl Tags {
         let copy = |label: String, all, subtags, counts, underscores| {
             item(
                 label,
-                Action::Copy(self.copy(all, subtags, counts, underscores)),
+                Action::Copy(self.copy(CopyOptions {
+                    all,
+                    subtags,
+                    style: if underscores {
+                        CopyStyle::Underscores
+                    } else if counts {
+                        CopyStyle::Counts
+                    } else {
+                        CopyStyle::Plain
+                    },
+                })),
             )
         };
         let mut copies = Vec::new();

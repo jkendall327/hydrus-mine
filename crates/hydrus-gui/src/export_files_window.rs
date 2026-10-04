@@ -263,7 +263,10 @@ pub fn open(
         let menu = tag_menu.clone();
         move || {
             if editable() && !menu.busy() {
-                let text = state.borrow().tags.copy(false, false, false, false);
+                let text = state
+                    .borrow()
+                    .tags
+                    .copy(export_files::tags::CopyOptions::default());
                 if !text.is_empty() {
                     crate::copy_to_clipboard(&text);
                 }

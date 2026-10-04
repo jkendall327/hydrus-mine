@@ -550,7 +550,7 @@ fn selected_export_tags_counts_sort_selection_and_copy_match_actual_panel() {
         assert_eq!(copies, expected);
     }
     assert_eq!(
-        tags.copy(false, false, false, false),
+        tags.copy(export_files::tags::CopyOptions::default()),
         recorded["keyboard_copy"]
     );
     assert_eq!(recorded["double_click_activated"], false);
