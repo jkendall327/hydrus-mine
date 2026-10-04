@@ -12,8 +12,7 @@ use slint::{
 
 #[test]
 fn native_or_keys_replay_drafts_and_commit_real_query_without_saving_cancelled_terms() {
-    let fixture: Value =
-        serde_json::from_str(include_str!("../../../../../oracle/fixtures/read_or.json")).unwrap();
+    let fixture: Value = hydrus_testkit::fixture_json("read_or.json");
     let (_dirs, store) = super::subscriptions::store();
     let service = store
         .snapshot()

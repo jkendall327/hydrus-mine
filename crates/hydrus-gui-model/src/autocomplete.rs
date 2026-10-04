@@ -88,7 +88,7 @@ impl Autocomplete {
     /// Count in these file domains and this tag service from now on.
     pub fn set_context(&mut self, location: &LocationContext, tags: &TagContext) {
         self.context = (location.clone(), tags.clone());
-        self.suggestions = self.search(false).unwrap_or_default();
+        self.suggestions = self.search(false);
         self.reset_highlight();
     }
 
@@ -98,7 +98,7 @@ impl Autocomplete {
     pub fn set_tab(&mut self, tab: Tab) {
         self.tab_highlights[self.tab.index()] = self.highlighted;
         self.tab = tab;
-        self.suggestions = self.search(false).unwrap_or_default();
+        self.suggestions = self.search(false);
         self.highlighted =
             self.tab_highlights[tab.index()].min(self.suggestions.len().saturating_sub(1));
     }
@@ -111,7 +111,7 @@ impl Autocomplete {
                 let selected = self
                     .highlighted()
                     .map(|i| self.suggestions[i].predicate.clone());
-                self.suggestions = self.search(false).unwrap_or_default();
+                self.suggestions = self.search(false);
                 self.highlighted = selected
                     .and_then(|selected| {
                         self.suggestions
@@ -166,7 +166,7 @@ impl Autocomplete {
         if !text.is_empty() {
             self.tab = Tab::Tags;
         }
-        self.suggestions = self.search(false).unwrap_or_default();
+        self.suggestions = self.search(false);
         self.reset_highlight();
     }
 
@@ -179,17 +179,17 @@ impl Autocomplete {
 
     /// Explicit fetch, used by Ctrl+Space when automatic fetching is off.
     pub fn fetch(&mut self) {
-        self.suggestions = self.search(true).unwrap_or_default();
+        self.suggestions = self.search(true);
         self.reset_highlight();
     }
 
     /// The constructed predicate is the first result, including an empty input.
     pub fn set_or_draft(&mut self, label: Option<String>) {
         self.or_draft = label;
-        self.suggestions = self.search(false).unwrap_or_default();
+        self.suggestions = self.search(false);
         self.reset_highlight();
     }
-    fn search(&self, manual: bool) -> Option<Vec<Suggestion>> {
+    fn search(&self, manual: bool) -> Vec<Suggestion> {
         let mut suggestions = self.search_results(manual).unwrap_or_default();
         if self.tab == Tab::Tags
             && let Some(label) = &self.or_draft
@@ -203,7 +203,7 @@ impl Autocomplete {
                 },
             );
         }
-        Some(suggestions)
+        suggestions
     }
     fn search_results(&self, manual: bool) -> Option<Vec<Suggestion>> {
         if self.tab != Tab::Tags {
