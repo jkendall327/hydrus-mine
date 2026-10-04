@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "agent": "search-options",
+  "baseline_git_head": "d50df26b",
+  "claims": [
+    {
+      "id": "audit-options-file-search-file-search-autocomplete-start-new-search-pages-in-searching-immediately",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Checkbox defaults true; Apply persists the initial synchronization state for newly created search pages, including the standalone constructor and notebook/session page factory. Existing pages retain their pause state. Paused searches stage predicates until resumed, then execute the query.",
+      "limits": [],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/src/pages.rs::new_search_page_on; crates/hydrus-gui/src/page.rs::SearchPage::new/set_synchronised",
+        "crates/hydrus-store/src/settings.rs::FileSearchSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::file_search_boolean_controls_replay_reference_defaults_and_staged_edits",
+        "crates/hydrus-gui/tests/gui/options_window.rs::search_defaults_apply_to_new_pages_and_the_real_autocomplete",
+        "crates/hydrus-store/src/import/decode.rs::file_search_defaults_convert_user_values"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_file_search_defaults.py",
+        "fixture": "oracle/fixtures/file_search_defaults.json",
+        "executed": true
+      },
+      "implementationCommit": "d9dd265d19ba01011623471e12a15890c5f3b713"
+    },
+    {
+      "id": "audit-options-file-search-file-search-autocomplete-show-system-everything",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Checkbox defaults true; Apply governs whether read autocomplete offers system:everything in local and all-known-file domains. Counts and remaining predicates are preserved; users can still enter system:everything manually.",
+      "limits": [
+        "Native read autocomplete has no forced-system-everything caller; the reference forced override is recorded but is outside this checkbox editing path."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui-model/src/autocomplete.rs::Autocomplete::system_predicates",
+        "crates/hydrus-store/src/settings.rs::FileSearchSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::file_search_boolean_controls_replay_reference_defaults_and_staged_edits",
+        "crates/hydrus-gui/tests/gui/options_window.rs::search_defaults_apply_to_new_pages_and_the_real_autocomplete",
+        "crates/hydrus-store/src/import/decode.rs::file_search_defaults_convert_user_values"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_file_search_defaults.py",
+        "fixture": "oracle/fixtures/file_search_defaults.json",
+        "executed": true
+      },
+      "implementationCommit": "d9dd265d19ba01011623471e12a15890c5f3b713"
+    }
+  ],
+  "summary": {
+    "concrete_existing_reference_controls_completed": 2,
+    "parent_or_alias_completions": 0
+  },
+  "validation": "Formatting, diff checks and Python compile pass. Rust validation delegated to root GitHub CI; no local Cargo builds."
+}
