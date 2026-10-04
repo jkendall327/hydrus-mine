@@ -72,7 +72,12 @@ fn popup_new_page_and_here_replay_real_reference_order_selection_and_cancellatio
     let (_dirs, store) = store();
     let fixture = hydrus_testkit::fixture_json("tab_new_page.json");
     for step in fixture["steps"].as_array().unwrap() {
-        let original = source();
+        let original: Vec<_> = step["initial_names"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|name| notebook(name.as_str().unwrap(), vec![]))
+            .collect();
         let selected =
             original[usize::try_from(step["initial_selected"].as_u64().unwrap()).unwrap()].key;
         let mode = hydrus_store::settings::PageInsertion::from_code(step["mode"].as_i64().unwrap())

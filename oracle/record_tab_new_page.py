@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Record actual notebook popup chooser insertion before a clicked tab, all four default
 insertion positions and chooser cancellation. The real _ChooseNewPage receives a pages choice
-while another sibling is selected; outputs include order, selection and children.
+while another sibling is selected; inputs include the actual initial order created under
+the insertion preference, and outputs include order, selection and children.
 """
 import json
 import sys
@@ -36,10 +37,11 @@ def record(session):
             notebook=ClientGUIPages.PagesNotebook(gui,'source')
             for name in ['first','second','third']:notebook.NewPagesNotebook(name=name,give_it_a_blank_page=False)
             notebook.setCurrentIndex(selected)
+            initial_names=[p.GetName() for p in notebook.GetPages()]
             def accepted(self):return QW.QDialog.DialogCode.Rejected if cancel else QW.QDialog.DialogCode.Accepted
             Chosen.exec=accepted
             notebook._ChooseNewPage(1 if here else None)
-            rows.append({'mode':mode,'initial_selected':selected,'here':here,'cancel':cancel,'insertion_index':1 if here else None,
+            rows.append({'mode':mode,'initial_names':initial_names,'initial_selected':selected,'here':here,'cancel':cancel,'insertion_index':1 if here else None,
                 'names':[p.GetName() for p in notebook.GetPages()],
                 'selected':notebook.currentIndex(),
                 'children':[[c.GetName() for c in p.GetPages()] for p in notebook.GetPages()]})
