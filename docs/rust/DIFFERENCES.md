@@ -280,7 +280,13 @@ search.
   "administrate", for repository admins; the database menu's backup
   entries as hydrus has them for a database across several locations;
   and the
-  undo menu's undo, redo and search history, which hydrus-rs doesn't keep.
+  undo menu's content undo and redo. Search predicate history now has native
+  addition/removal consumers and confirmed clearing, checked against an
+  executed actual Qt recording; its authored model/native replay awaits CI.
+  Changes within one batch are kept in deterministic predicate order, whereas
+  Qt emits a Python set difference whose internal order can vary between
+  processes. A populated locked page currently recomputes its displayed
+  hash count after a hidden-query Undo; Qt retains its prior lock-panel count.
   Hydrus's menu entries describe themselves in the status bar as the
   pointer passes; ours don't yet, and the history's latest page isn't in
   bold. Saving a session asks its name and its questions in one dialog,

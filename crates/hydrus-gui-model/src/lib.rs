@@ -50,6 +50,7 @@ pub mod options;
 pub mod page_chooser;
 pub mod png_export;
 pub mod predicate_editors;
+pub mod predicate_history;
 pub mod ratings;
 pub mod ratings_editor;
 pub mod scanbar;

@@ -55,6 +55,7 @@ mod page_navigation_options;
 mod page_scroll;
 mod popups;
 mod predicate_editors;
+mod predicate_history;
 mod ratings;
 mod recent_predicates;
 mod scanbar;

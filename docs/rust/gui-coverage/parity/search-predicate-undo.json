@@ -1,0 +1,372 @@
+{
+  "schema_version": 1,
+  "agent": "follow-predicate-undo",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "validation": "Executed actual Qt recorder via shared /workspace/parallel/with-oracle on 2026-10-04 at 19:44:59 UTC against fresh basic fixture: 20 events, actual query sidebars, queued deltas, QAction menu consumers, OR, editor Cancel, page close/restore, clear rejection/acceptance, real lock replacement/hidden-query Undo and empty notebook. Only question answers are scripted. Python syntax, source cargo fmt, diff whitespace and cached warning-aware Slint checks pass. Authored model and native regression replay not run locally; no Cargo builds, tests or native render claimed.",
+  "claims": [
+    {
+      "reference_id": "audit-options-search-undo",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "change_kind": "implementation",
+      "exactBehavior": "Frame-owned, transient, separate deduplicated addition/removal recency lists populate the actual searching submenus newest first. Typed stable commands toggle the selected historical predicate on the currently visible media page, retire its entry before recording the resulting delta, and leave stale commands inert. New/restored page predicates do not enter history; histories survive page close/restore, apply across pages and stay independent across windows. Committed typed OR is one entry; cancelled predicate children and refused inputs add none. Undo enters a locked page hidden query while retaining its lock; with an empty notebook selected, it preserves history. Clear history uses the exact reference confirmation: rejection retains both lists; acceptance clears both without changing searches or closed-page history.",
+      "limits": [
+        "Native menu entries do not yet expose the reference status-bar tooltips explaining that results depend on the visible query.",
+        "Within one multi-predicate delta, native recency follows deterministic predicate order; reference Python set-difference ordering can vary across processes. Single-entry and cross-event recency, recorded batch outputs, and canonical identities are covered by authored replay.",
+        "The zero-file locked-page consumer is recorded. For a populated lock, the inherited native badge currently recomputes its hash count after hidden-query Undo, while reference retains its prior lock-panel count; populated badge lifecycle remains a follow-up.",
+        "Rust model/native compilation, regression execution and native rendering await hosted CI. No full completion promotion is proposed."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/predicate_history.rs",
+          "line": 16,
+          "symbol": "pub struct History",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 591,
+          "symbol": "fn undo_menu",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 1580,
+          "symbol": "fn enter_predicates",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2193,
+          "symbol": "fn undo_predicate",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 286,
+          "symbol": "pub fn undo_search_predicate",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/menu_bar.rs",
+          "line": 643,
+          "symbol": "Command::ClearSearchHistory",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/predicate_history.rs",
+          "line": 36,
+          "symbol": "fn actual_histories_replay_toggles_recency_cross_page_or_and_clear",
+          "kind": "authored_model_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/predicate_history.rs",
+          "line": 139,
+          "symbol": "fn refused_inputs_reordering_and_stale_history_commands_do_not_mutate_recency",
+          "kind": "authored_model_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/predicate_history.rs",
+          "line": 48,
+          "symbol": "fn recorded_global_history_reaches_visible_locked_restored_and_empty_pages",
+          "kind": "authored_native_regression"
+        }
+      ],
+      "referenceRecording": [
+        {
+          "path": "oracle/record_search_predicate_undo.py",
+          "line": 20,
+          "symbol": "def record",
+          "kind": "executed_reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/search_predicate_undo.json",
+          "line": 1,
+          "symbol": "20 actual Qt events and three confirmation prompts",
+          "kind": "executed_reference_fixture"
+        }
+      ],
+      "referenceSource": [
+        "hydrus/client/gui/ClientGUI.py:548 frame histories; :3210-3268 search submenu; :7325 _UndoSearchPredAdd; :7338 _UndoSearchPredRemove; :7602 AskToDeleteAllSearchPredHistory; :9189 SetSearchPredHistoryAdded; :9201 SetSearchPredHistoryRemoved",
+        "hydrus/client/gui/pages/ClientGUISidebarQuery.py:131 queued history signals; :355 _UpdateSystemLockFiles; :400 EnterPredicates; :517 SearchChanged",
+        "hydrus/client/gui/search/ClientGUIACDropdown.py:3402 EnterPredicates"
+      ]
+    },
+    {
+      "reference_id": "audit-options-search-undo-undo-predicate-additions",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "change_kind": "implementation",
+      "exactBehavior": "Frame-owned, transient, separate deduplicated addition/removal recency lists populate the actual searching submenus newest first. Typed stable commands toggle the selected historical predicate on the currently visible media page, retire its entry before recording the resulting delta, and leave stale commands inert. New/restored page predicates do not enter history; histories survive page close/restore, apply across pages and stay independent across windows. Committed typed OR is one entry; cancelled predicate children and refused inputs add none. Undo enters a locked page hidden query while retaining its lock; with an empty notebook selected, it preserves history. Clear history uses the exact reference confirmation: rejection retains both lists; acceptance clears both without changing searches or closed-page history.",
+      "limits": [
+        "Native menu entries do not yet expose the reference status-bar tooltips explaining that results depend on the visible query.",
+        "Within one multi-predicate delta, native recency follows deterministic predicate order; reference Python set-difference ordering can vary across processes. Single-entry and cross-event recency, recorded batch outputs, and canonical identities are covered by authored replay.",
+        "The zero-file locked-page consumer is recorded. For a populated lock, the inherited native badge currently recomputes its hash count after hidden-query Undo, while reference retains its prior lock-panel count; populated badge lifecycle remains a follow-up.",
+        "Rust model/native compilation, regression execution and native rendering await hosted CI. No full completion promotion is proposed."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/predicate_history.rs",
+          "line": 16,
+          "symbol": "pub struct History",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 591,
+          "symbol": "fn undo_menu",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 1580,
+          "symbol": "fn enter_predicates",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2193,
+          "symbol": "fn undo_predicate",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 286,
+          "symbol": "pub fn undo_search_predicate",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/menu_bar.rs",
+          "line": 643,
+          "symbol": "Command::ClearSearchHistory",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/predicate_history.rs",
+          "line": 36,
+          "symbol": "fn actual_histories_replay_toggles_recency_cross_page_or_and_clear",
+          "kind": "authored_model_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/predicate_history.rs",
+          "line": 139,
+          "symbol": "fn refused_inputs_reordering_and_stale_history_commands_do_not_mutate_recency",
+          "kind": "authored_model_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/predicate_history.rs",
+          "line": 48,
+          "symbol": "fn recorded_global_history_reaches_visible_locked_restored_and_empty_pages",
+          "kind": "authored_native_regression"
+        }
+      ],
+      "referenceRecording": [
+        {
+          "path": "oracle/record_search_predicate_undo.py",
+          "line": 20,
+          "symbol": "def record",
+          "kind": "executed_reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/search_predicate_undo.json",
+          "line": 1,
+          "symbol": "20 actual Qt events and three confirmation prompts",
+          "kind": "executed_reference_fixture"
+        }
+      ],
+      "referenceSource": [
+        "hydrus/client/gui/ClientGUI.py:548 frame histories; :3210-3268 search submenu; :7325 _UndoSearchPredAdd; :7338 _UndoSearchPredRemove; :7602 AskToDeleteAllSearchPredHistory; :9189 SetSearchPredHistoryAdded; :9201 SetSearchPredHistoryRemoved",
+        "hydrus/client/gui/pages/ClientGUISidebarQuery.py:131 queued history signals; :355 _UpdateSystemLockFiles; :400 EnterPredicates; :517 SearchChanged",
+        "hydrus/client/gui/search/ClientGUIACDropdown.py:3402 EnterPredicates"
+      ]
+    },
+    {
+      "reference_id": "audit-options-search-undo-undo-predicate-removals",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "change_kind": "implementation",
+      "exactBehavior": "Frame-owned, transient, separate deduplicated addition/removal recency lists populate the actual searching submenus newest first. Typed stable commands toggle the selected historical predicate on the currently visible media page, retire its entry before recording the resulting delta, and leave stale commands inert. New/restored page predicates do not enter history; histories survive page close/restore, apply across pages and stay independent across windows. Committed typed OR is one entry; cancelled predicate children and refused inputs add none. Undo enters a locked page hidden query while retaining its lock; with an empty notebook selected, it preserves history. Clear history uses the exact reference confirmation: rejection retains both lists; acceptance clears both without changing searches or closed-page history.",
+      "limits": [
+        "Native menu entries do not yet expose the reference status-bar tooltips explaining that results depend on the visible query.",
+        "Within one multi-predicate delta, native recency follows deterministic predicate order; reference Python set-difference ordering can vary across processes. Single-entry and cross-event recency, recorded batch outputs, and canonical identities are covered by authored replay.",
+        "The zero-file locked-page consumer is recorded. For a populated lock, the inherited native badge currently recomputes its hash count after hidden-query Undo, while reference retains its prior lock-panel count; populated badge lifecycle remains a follow-up.",
+        "Rust model/native compilation, regression execution and native rendering await hosted CI. No full completion promotion is proposed."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/predicate_history.rs",
+          "line": 16,
+          "symbol": "pub struct History",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 591,
+          "symbol": "fn undo_menu",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 1580,
+          "symbol": "fn enter_predicates",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2193,
+          "symbol": "fn undo_predicate",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 286,
+          "symbol": "pub fn undo_search_predicate",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/menu_bar.rs",
+          "line": 643,
+          "symbol": "Command::ClearSearchHistory",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/predicate_history.rs",
+          "line": 36,
+          "symbol": "fn actual_histories_replay_toggles_recency_cross_page_or_and_clear",
+          "kind": "authored_model_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/predicate_history.rs",
+          "line": 139,
+          "symbol": "fn refused_inputs_reordering_and_stale_history_commands_do_not_mutate_recency",
+          "kind": "authored_model_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/predicate_history.rs",
+          "line": 48,
+          "symbol": "fn recorded_global_history_reaches_visible_locked_restored_and_empty_pages",
+          "kind": "authored_native_regression"
+        }
+      ],
+      "referenceRecording": [
+        {
+          "path": "oracle/record_search_predicate_undo.py",
+          "line": 20,
+          "symbol": "def record",
+          "kind": "executed_reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/search_predicate_undo.json",
+          "line": 1,
+          "symbol": "20 actual Qt events and three confirmation prompts",
+          "kind": "executed_reference_fixture"
+        }
+      ],
+      "referenceSource": [
+        "hydrus/client/gui/ClientGUI.py:548 frame histories; :3210-3268 search submenu; :7325 _UndoSearchPredAdd; :7338 _UndoSearchPredRemove; :7602 AskToDeleteAllSearchPredHistory; :9189 SetSearchPredHistoryAdded; :9201 SetSearchPredHistoryRemoved",
+        "hydrus/client/gui/pages/ClientGUISidebarQuery.py:131 queued history signals; :355 _UpdateSystemLockFiles; :400 EnterPredicates; :517 SearchChanged",
+        "hydrus/client/gui/search/ClientGUIACDropdown.py:3402 EnterPredicates"
+      ]
+    },
+    {
+      "reference_id": "audit-options-search-undo-clear-search-history",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "change_kind": "implementation",
+      "exactBehavior": "Frame-owned, transient, separate deduplicated addition/removal recency lists populate the actual searching submenus newest first. Typed stable commands toggle the selected historical predicate on the currently visible media page, retire its entry before recording the resulting delta, and leave stale commands inert. New/restored page predicates do not enter history; histories survive page close/restore, apply across pages and stay independent across windows. Committed typed OR is one entry; cancelled predicate children and refused inputs add none. Undo enters a locked page hidden query while retaining its lock; with an empty notebook selected, it preserves history. Clear history uses the exact reference confirmation: rejection retains both lists; acceptance clears both without changing searches or closed-page history.",
+      "limits": [
+        "Native menu entries do not yet expose the reference status-bar tooltips explaining that results depend on the visible query.",
+        "Within one multi-predicate delta, native recency follows deterministic predicate order; reference Python set-difference ordering can vary across processes. Single-entry and cross-event recency, recorded batch outputs, and canonical identities are covered by authored replay.",
+        "The zero-file locked-page consumer is recorded. For a populated lock, the inherited native badge currently recomputes its hash count after hidden-query Undo, while reference retains its prior lock-panel count; populated badge lifecycle remains a follow-up.",
+        "Rust model/native compilation, regression execution and native rendering await hosted CI. No full completion promotion is proposed."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/predicate_history.rs",
+          "line": 16,
+          "symbol": "pub struct History",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 591,
+          "symbol": "fn undo_menu",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 1580,
+          "symbol": "fn enter_predicates",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2193,
+          "symbol": "fn undo_predicate",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 286,
+          "symbol": "pub fn undo_search_predicate",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/menu_bar.rs",
+          "line": 643,
+          "symbol": "Command::ClearSearchHistory",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/predicate_history.rs",
+          "line": 36,
+          "symbol": "fn actual_histories_replay_toggles_recency_cross_page_or_and_clear",
+          "kind": "authored_model_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/predicate_history.rs",
+          "line": 139,
+          "symbol": "fn refused_inputs_reordering_and_stale_history_commands_do_not_mutate_recency",
+          "kind": "authored_model_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/predicate_history.rs",
+          "line": 48,
+          "symbol": "fn recorded_global_history_reaches_visible_locked_restored_and_empty_pages",
+          "kind": "authored_native_regression"
+        }
+      ],
+      "referenceRecording": [
+        {
+          "path": "oracle/record_search_predicate_undo.py",
+          "line": 20,
+          "symbol": "def record",
+          "kind": "executed_reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/search_predicate_undo.json",
+          "line": 1,
+          "symbol": "20 actual Qt events and three confirmation prompts",
+          "kind": "executed_reference_fixture"
+        }
+      ],
+      "referenceSource": [
+        "hydrus/client/gui/ClientGUI.py:548 frame histories; :3210-3268 search submenu; :7325 _UndoSearchPredAdd; :7338 _UndoSearchPredRemove; :7602 AskToDeleteAllSearchPredHistory; :9189 SetSearchPredHistoryAdded; :9201 SetSearchPredHistoryRemoved",
+        "hydrus/client/gui/pages/ClientGUISidebarQuery.py:131 queued history signals; :355 _UpdateSystemLockFiles; :400 EnterPredicates; :517 SearchChanged",
+        "hydrus/client/gui/search/ClientGUIACDropdown.py:3402 EnterPredicates"
+      ]
+    }
+  ]
+}

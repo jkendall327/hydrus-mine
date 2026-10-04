@@ -1,0 +1,889 @@
+{
+  "events": [
+    {
+      "label": "empty",
+      "operation": {},
+      "current": "Undo A",
+      "searches": {
+        "Undo A": []
+      },
+      "added": [],
+      "removed": [],
+      "menu": [],
+      "undo_enabled": false
+    },
+    {
+      "label": "add alpha",
+      "operation": {
+        "enter": [
+          14,
+          8,
+          [
+            0,
+            "undo:alpha",
+            true
+          ]
+        ]
+      },
+      "current": "Undo A",
+      "searches": {
+        "Undo A": [
+          "undo:alpha"
+        ]
+      },
+      "added": [
+        "undo:alpha"
+      ],
+      "removed": [],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "add beta",
+      "operation": {
+        "enter": [
+          14,
+          8,
+          [
+            0,
+            "undo:beta",
+            true
+          ]
+        ]
+      },
+      "current": "Undo A",
+      "searches": {
+        "Undo A": [
+          "undo:alpha",
+          "undo:beta"
+        ]
+      },
+      "added": [
+        "undo:alpha",
+        "undo:beta"
+      ],
+      "removed": [],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:beta",
+            "undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "remove alpha",
+      "operation": {
+        "enter": [
+          14,
+          8,
+          [
+            0,
+            "undo:alpha",
+            true
+          ]
+        ]
+      },
+      "current": "Undo A",
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ]
+      },
+      "added": [
+        "undo:alpha",
+        "undo:beta"
+      ],
+      "removed": [
+        "undo:alpha"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:beta",
+            "undo:alpha"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "addition toggles absent alpha in",
+      "operation": {
+        "undo": "addition",
+        "predicate": "undo:alpha"
+      },
+      "current": "Undo A",
+      "searches": {
+        "Undo A": [
+          "undo:alpha",
+          "undo:beta"
+        ]
+      },
+      "added": [
+        "undo:beta",
+        "undo:alpha"
+      ],
+      "removed": [
+        "undo:alpha"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:alpha",
+            "undo:beta"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "removal toggles present alpha out",
+      "operation": {
+        "undo": "removal",
+        "predicate": "undo:alpha"
+      },
+      "current": "Undo A",
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ]
+      },
+      "added": [
+        "undo:beta",
+        "undo:alpha"
+      ],
+      "removed": [
+        "undo:alpha"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:alpha",
+            "undo:beta"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "new restored predicates do not enter history",
+      "operation": {
+        "new": "Undo B"
+      },
+      "current": "Undo B",
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ],
+        "Undo B": [
+          "undo:restored"
+        ]
+      },
+      "added": [
+        "undo:beta",
+        "undo:alpha"
+      ],
+      "removed": [
+        "undo:alpha"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:alpha",
+            "undo:beta"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "global addition applies to visible B",
+      "operation": {
+        "undo": "addition",
+        "predicate": "undo:alpha"
+      },
+      "current": "Undo B",
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ],
+        "Undo B": [
+          "undo:alpha",
+          "undo:restored"
+        ]
+      },
+      "added": [
+        "undo:beta",
+        "undo:alpha"
+      ],
+      "removed": [
+        "undo:alpha"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:alpha",
+            "undo:beta"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "replace alpha with excluded alpha",
+      "operation": {
+        "enter": [
+          14,
+          8,
+          [
+            0,
+            "undo:alpha",
+            false
+          ]
+        ]
+      },
+      "current": "Undo B",
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ],
+        "Undo B": [
+          "-undo:alpha",
+          "undo:restored"
+        ]
+      },
+      "added": [
+        "undo:beta",
+        "undo:alpha",
+        "-undo:alpha"
+      ],
+      "removed": [
+        "undo:alpha"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "-undo:alpha",
+            "undo:alpha",
+            "undo:beta"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "one typed OR history entry",
+      "operation": {
+        "enter": [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "undo:or one",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "undo:or two",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      },
+      "current": "Undo B",
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ],
+        "Undo B": [
+          "-undo:alpha",
+          "undo:or one OR undo:or two",
+          "undo:restored"
+        ]
+      },
+      "added": [
+        "undo:beta",
+        "undo:alpha",
+        "-undo:alpha",
+        "undo:or one OR undo:or two"
+      ],
+      "removed": [
+        "undo:alpha"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:or one OR undo:or two",
+            "-undo:alpha",
+            "undo:alpha",
+            "undo:beta"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "cancel system child adds no history",
+      "operation": {
+        "cancel_child": true
+      },
+      "current": "Undo B",
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ],
+        "Undo B": [
+          "-undo:alpha",
+          "undo:or one OR undo:or two",
+          "undo:restored"
+        ]
+      },
+      "added": [
+        "undo:beta",
+        "undo:alpha",
+        "-undo:alpha",
+        "undo:or one OR undo:or two"
+      ],
+      "removed": [
+        "undo:alpha"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:or one OR undo:or two",
+            "-undo:alpha",
+            "undo:alpha",
+            "undo:beta"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "close B preserves history",
+      "operation": {
+        "close": "Undo B"
+      },
+      "current": "Undo A",
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ],
+        "Undo B": [
+          "-undo:alpha",
+          "undo:or one OR undo:or two",
+          "undo:restored"
+        ]
+      },
+      "added": [
+        "undo:beta",
+        "undo:alpha",
+        "-undo:alpha",
+        "undo:or one OR undo:or two"
+      ],
+      "removed": [
+        "undo:alpha"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:or one OR undo:or two",
+            "-undo:alpha",
+            "undo:alpha",
+            "undo:beta"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "restore B preserves history",
+      "operation": {
+        "restore": "Undo B"
+      },
+      "current": "Undo B",
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ],
+        "Undo B": [
+          "-undo:alpha",
+          "undo:or one OR undo:or two",
+          "undo:restored"
+        ]
+      },
+      "added": [
+        "undo:beta",
+        "undo:alpha",
+        "-undo:alpha",
+        "undo:or one OR undo:or two"
+      ],
+      "removed": [
+        "undo:alpha"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:or one OR undo:or two",
+            "-undo:alpha",
+            "undo:alpha",
+            "undo:beta"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "cancel clear retains both histories",
+      "operation": {
+        "clear": false
+      },
+      "current": "Undo B",
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ],
+        "Undo B": [
+          "-undo:alpha",
+          "undo:or one OR undo:or two",
+          "undo:restored"
+        ]
+      },
+      "added": [
+        "undo:beta",
+        "undo:alpha",
+        "-undo:alpha",
+        "undo:or one OR undo:or two"
+      ],
+      "removed": [
+        "undo:alpha"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:or one OR undo:or two",
+            "-undo:alpha",
+            "undo:alpha",
+            "undo:beta"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "accept clear keeps search predicates",
+      "operation": {
+        "clear": true
+      },
+      "current": "Undo B",
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ],
+        "Undo B": [
+          "-undo:alpha",
+          "undo:or one OR undo:or two",
+          "undo:restored"
+        ]
+      },
+      "added": [],
+      "removed": [],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:or one OR undo:or two",
+            "-undo:alpha",
+            "undo:alpha",
+            "undo:beta"
+          ],
+          "disabled": true
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:alpha"
+          ],
+          "disabled": true
+        },
+        "clear history…"
+      ],
+      "undo_enabled": false
+    },
+    {
+      "label": "seed before locking",
+      "operation": {
+        "enter": [
+          14,
+          8,
+          [
+            0,
+            "undo:alpha",
+            true
+          ]
+        ]
+      },
+      "current": "Undo B",
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ],
+        "Undo B": [
+          "undo:alpha",
+          "undo:or one OR undo:or two",
+          "undo:restored"
+        ]
+      },
+      "added": [
+        "undo:alpha"
+      ],
+      "removed": [
+        "-undo:alpha"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:alpha"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "-undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "lock search records predicate replacement",
+      "operation": {
+        "lock": true,
+        "replace": [
+          [
+            14,
+            8,
+            [
+              12,
+              [
+                [],
+                "sha256"
+              ],
+              true
+            ]
+          ]
+        ]
+      },
+      "current": "Undo B",
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ],
+        "Undo B": [
+          "system:hash is 0 hashes"
+        ]
+      },
+      "added": [
+        "undo:alpha",
+        "system:hash is 0 hashes"
+      ],
+      "removed": [
+        "-undo:alpha",
+        "undo:alpha",
+        "undo:or one OR undo:or two",
+        "undo:restored"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "system:hash is 0 hashes",
+            "undo:alpha"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:restored",
+            "undo:or one OR undo:or two",
+            "undo:alpha",
+            "-undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "undo enters hidden locked search",
+      "operation": {
+        "undo": "addition",
+        "predicate": "undo:alpha"
+      },
+      "current": "Undo B",
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ],
+        "Undo B": [
+          "system:hash is 0 hashes",
+          "undo:alpha"
+        ]
+      },
+      "added": [
+        "system:hash is 0 hashes",
+        "undo:alpha"
+      ],
+      "removed": [
+        "-undo:alpha",
+        "undo:alpha",
+        "undo:or one OR undo:or two",
+        "undo:restored"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:alpha",
+            "system:hash is 0 hashes"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:restored",
+            "undo:or one OR undo:or two",
+            "undo:alpha",
+            "-undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "empty notebook has no current media page",
+      "operation": {
+        "empty_notebook": true
+      },
+      "current": null,
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ],
+        "Undo B": [
+          "system:hash is 0 hashes",
+          "undo:alpha"
+        ]
+      },
+      "added": [
+        "system:hash is 0 hashes",
+        "undo:alpha"
+      ],
+      "removed": [
+        "-undo:alpha",
+        "undo:alpha",
+        "undo:or one OR undo:or two",
+        "undo:restored"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:alpha",
+            "system:hash is 0 hashes"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:restored",
+            "undo:or one OR undo:or two",
+            "undo:alpha",
+            "-undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    },
+    {
+      "label": "no current media page retains history",
+      "operation": {
+        "undo": "addition",
+        "predicate": "undo:alpha"
+      },
+      "current": null,
+      "searches": {
+        "Undo A": [
+          "undo:beta"
+        ],
+        "Undo B": [
+          "system:hash is 0 hashes",
+          "undo:alpha"
+        ]
+      },
+      "added": [
+        "system:hash is 0 hashes",
+        "undo:alpha"
+      ],
+      "removed": [
+        "-undo:alpha",
+        "undo:alpha",
+        "undo:or one OR undo:or two",
+        "undo:restored"
+      ],
+      "menu": [
+        {
+          "menu": "addition",
+          "entries": [
+            "undo:alpha",
+            "system:hash is 0 hashes"
+          ]
+        },
+        {
+          "menu": "removal",
+          "entries": [
+            "undo:restored",
+            "undo:or one OR undo:or two",
+            "undo:alpha",
+            "-undo:alpha"
+          ]
+        },
+        "clear history…"
+      ],
+      "undo_enabled": true
+    }
+  ],
+  "questions": [
+    "Clear the entire search predicate history? This cannot be undone.",
+    "Clear the entire search predicate history? This cannot be undone.",
+    "This will lock the page, collapsing the current search to a system:hash of the current files. Is this ok?"
+  ]
+}

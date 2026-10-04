@@ -2,7 +2,9 @@
 //! or a page that shows files without a search, and which file is selected.
 //! Plain Rust, driven by the window and by tests alike.
 
+use std::cell::RefCell;
 use std::collections::HashMap;
+use std::rc::Rc;
 use std::sync::Arc;
 
 use hydrus_core::HashId;
@@ -31,6 +33,8 @@ pub struct SearchPage {
     /// The page's file and tag domains (its predicates are `predicates`).
     context: FileSearchContext,
     predicates: Vec<Predicate>,
+    /// One frame's transient history, attached explicitly by its Pages owner.
+    predicate_history: Rc<RefCell<hydrus_gui_model::predicate_history::History>>,
     /// Whether the page searches as its predicates change.
     synchronised: bool,
     /// Whether the search is locked to a `system:hash` of the page's
@@ -229,6 +233,7 @@ impl SearchPage {
             store,
             context,
             predicates: Vec::new(),
+            predicate_history: Rc::default(),
             synchronised: file_search.search_immediately,
             locked: false,
             lock_syncs: HashLock::default(),
@@ -374,6 +379,9 @@ impl SearchPage {
         self.autocomplete
             .set_context(&self.context.location, &self.context.tags);
         self.autocomplete.clear();
+        self.predicate_history
+            .borrow_mut()
+            .record(&self.predicates, &predicates);
         self.predicates = predicates;
         self.sync_autocomplete_tags();
         self.synchronised = favourite.synchronised;
@@ -1552,7 +1560,7 @@ impl SearchPage {
 
     /// How the page writes predicates: with the store's services, viewing
     /// options and tag presentation.
-    fn text_context(&self) -> TextContext {
+    pub(crate) fn text_context(&self) -> TextContext {
         let snapshot = self.store.snapshot();
         let viewing = self
             .store
@@ -1563,13 +1571,21 @@ impl SearchPage {
         context
     }
 
-    /// Enter predicates into the search as the reference's list of them
-    /// takes them ([`hydrus_search::enter_predicates`]): one already there
-    /// goes, one that isn't comes in and those it excludes go, then they
-    /// sort.
+    /// Attach this page to the transient history owned by its frame.
+    pub(crate) fn attach_predicate_history(
+        &mut self,
+        history: Rc<RefCell<hydrus_gui_model::predicate_history::History>>,
+    ) {
+        self.predicate_history = history;
+    }
+    /// Toggle, exclude and sort before recording the actual predicate delta.
     fn enter_predicates(&mut self, predicates: &[Predicate]) {
         let context = self.text_context();
+        let before = self.predicates.clone();
         hydrus_search::enter_predicates(&mut self.predicates, predicates, &context);
+        self.predicate_history
+            .borrow_mut()
+            .record(&before, &self.predicates);
         self.sync_autocomplete_tags();
     }
 
@@ -1803,10 +1819,14 @@ impl SearchPage {
 
     /// Make the search a `system:hash` of `hashes` (`_UpdateSystemLockFiles`).
     fn set_lock_hashes(&mut self, hashes: std::collections::BTreeSet<hydrus_core::Sha256>) {
+        let before = self.predicates.clone();
         self.predicates = vec![Predicate::System(SystemPredicate::Hash {
             hashes: FileHashes::Sha256(hashes),
             inclusive: true,
         })];
+        self.predicate_history
+            .borrow_mut()
+            .record(&before, &self.predicates);
         self.sync_autocomplete_tags();
     }
 
@@ -2242,6 +2262,20 @@ impl SearchPage {
         true
     }
 
+    /// The frame history enters the hidden query even when its search is
+    /// locked. Pages without a query still retire the history entry only.
+    pub(crate) fn undo_predicate(&mut self, predicate: &Predicate) {
+        if self.note.is_some() {
+            return;
+        }
+        self.enter_predicates(std::slice::from_ref(predicate));
+        self.error = None;
+        self.autocomplete.clear();
+        if self.synchronised && !self.locked {
+            self.search();
+        }
+    }
+
     /// Enter a predicate as typed (a tag, or a system predicate such as
     /// `system:inbox`) and search again; whether it was taken. One that
     /// doesn't parse is refused with the reason; one already there is
@@ -2275,7 +2309,11 @@ impl SearchPage {
 
     pub fn remove_predicate(&mut self, index: usize) {
         if !self.locked && index < self.predicates.len() {
+            let before = self.predicates.clone();
             self.predicates.remove(index);
+            self.predicate_history
+                .borrow_mut()
+                .record(&before, &self.predicates);
             self.sync_autocomplete_tags();
             if self.synchronised {
                 self.search();

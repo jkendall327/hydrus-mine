@@ -106,8 +106,16 @@ as Qt's do; a press anywhere else closes them. What works so far:
   running an export folder now, opening the installation and database
   directories, the options, and exit;
 - undo: the pages closed in the last hour, latest first, to reopen any of
-  them, or forget them all (asking first); with none, the menu is greyed
-  out, as hydrus's is;
+  them, or forget them all (asking first); searching additions and removals,
+  latest first, to toggle a historical predicate on the visible media page,
+  and “clear history…” with the reference confirmation. These are two shared,
+  transient frame histories, independent of each page's saved predicates.
+  Opening/restoring a page and cancelling an editor add no history; committing
+  an OR adds one typed entry. Undo can enter a locked page's hidden query; an
+  empty notebook retains the history entry. With neither closed pages nor
+  search history, the menu is greyed out. Actual Qt inputs and menus are in
+  `oracle/fixtures/search_predicate_undo.json`; authored model/native replay
+  tests await hosted CI;
 - pages: how many pages are open and the session's weight (files, and
   twenty for each download's item or search); the history of pages shown,
   latest first, to show one again; refresh; appending a saved session,

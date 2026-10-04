@@ -92,6 +92,19 @@ pub(crate) fn facts(pages: &RefCell<Pages>, weigh: bool) -> Facts {
     }
     facts.history = Some(pages.history().to_vec());
     facts.closed_pages = pages.closed_names();
+    let history = pages.predicate_history();
+    let context = pages.current().borrow().text_context();
+    let labelled = |predicates: Vec<hydrus_search::Predicate>| {
+        predicates
+            .into_iter()
+            .map(|predicate| {
+                let label = hydrus_search::predicate_text(&predicate, &context);
+                (predicate, label)
+            })
+            .collect()
+    };
+    facts.search_added = labelled(history.added);
+    facts.search_removed = labelled(history.removed);
     facts
 }
 
@@ -621,6 +634,21 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             (hooks.ask)(
                 format!("Clear the {} closed pages?", human_int(count as u64)),
                 Rc::new(move || pages.borrow_mut().forget_closed()),
+            );
+        }
+        Command::UndoSearch { kind, predicate } => change_pages(&|pages| {
+            pages.undo_search_predicate(kind, &predicate);
+            Ok(())
+        }),
+        Command::ClearSearchHistory => {
+            let pages = hooks.pages.clone();
+            let reshow = hooks.reshow.clone();
+            (hooks.ask)(
+                "Clear the entire search predicate history? This cannot be undone.".into(),
+                Rc::new(move || {
+                    pages.borrow_mut().clear_predicate_history();
+                    reshow();
+                }),
             );
         }
         Command::Unclose(index) => change_pages(&|pages| {
