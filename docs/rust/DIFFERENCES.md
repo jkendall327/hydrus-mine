@@ -684,10 +684,13 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **The string converter editor** keeps the last conversion used (which
   "add" starts from) while hydrus-rs runs, where the reference keeps it
   in its options. Its conversion editor's date phrase link is shown as
-  text. hydrus-rs keeps date conversions without running them (see the
-  URL classes), so their examples show an error in hydrus-rs's words; a
-  bad hex or base64 string's error is in its words too where Python's
-  says more.
+  text. Date conversions execute and update live previews. Advanced parsing
+  uses Jiff's diagnostic reasons rather than Python's; English directives and
+  common ISO/English automatic dates are supported. The easy parser supports
+  relative English units (seconds through years), now/today/yesterday/tomorrow,
+  but not dateparser's full multilingual and fuzzy grammar. Locale-dependent
+  date phrases use English/C forms. A bad hex or base64 string's error is in
+  hydrus-rs's words too where Python's says more.
 - **The import and export folders dialogs**: an import folder's filename
   tagging is added for a tag service chosen from a list beside "add" (the
   reference asks which in a dialog), and edited in the "filename tagging"

@@ -1,0 +1,2112 @@
+{
+ "cases": [
+  {
+   "conversions": [],
+   "example": "2024-02-29",
+   "converter": [
+    84,
+    1,
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        55,
+        2,
+        [
+         [],
+         "the converter's own"
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [],
+      "selected": [],
+      "can_up": false,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [],
+            "2024-02-29"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      {
+       "type": "datestring to timestamp (advanced)",
+       "text": "%Y-%m-%d",
+       "timezone_decode": "UTC"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "append text",
+        "shown": {
+         "text": "text to append: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "extra text",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "2024-02-29",
+        "result": "2024-02-29extra text",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                3,
+                "extra text"
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "datestring to timestamp (advanced)",
+        "shown": {
+         "text": "date decode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": true,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y-%m-%d",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "2024-02-29",
+        "result": "1709164800",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                10,
+                [
+                 "%Y-%m-%d",
+                 0,
+                 0
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: ('%Y-%m-%d', 0, 0)",
+        "1709164800"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               0,
+               0
+              ]
+             ]
+            ],
+            "2024-02-29"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      {
+       "type": "timestamp to datestring",
+       "text": "%Y-%m-%d %H:%M:%S",
+       "timezone_encode": "UTC"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "datestring to timestamp (advanced)",
+        "shown": {
+         "text": "date decode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": true,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y-%m-%d",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "1709164800",
+        "result": "ERROR: Could not apply \"datestring to timestamp: ('%Y-%m-%d', 0, 0)\" to string \"1709164800\": time data '1709164800' does not match format '%Y-%m-%d'",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                10,
+                [
+                 "%Y-%m-%d",
+                 0,
+                 0
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "timestamp to datestring",
+        "shown": {
+         "text": "date encode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": true,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y-%m-%d %H:%M:%S",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "1709164800",
+        "result": "2024-02-29 00:00:00",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                12,
+                [
+                 "%Y-%m-%d %H:%M:%S",
+                 0
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: ('%Y-%m-%d', 0, 0)",
+        "1709164800"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S', 0)",
+        "2024-02-29 00:00:00"
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               0,
+               0
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S",
+               0
+              ]
+             ]
+            ],
+            "2024-02-29"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      0,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: ('%Y-%m-%d', 0, 0)",
+        "1709164800"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S', 0)",
+        "2024-02-29 00:00:00"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               0,
+               0
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S",
+               0
+              ]
+             ]
+            ],
+            "2024-02-29"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "timezone_decode": "Offset",
+       "offset": 3600
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "datestring to timestamp (advanced)",
+        "shown": {
+         "text": "date decode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": true,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y-%m-%d",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "2024-02-29",
+        "result": "1709164800",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                10,
+                [
+                 "%Y-%m-%d",
+                 0,
+                 0
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "datestring to timestamp (advanced)",
+        "shown": {
+         "text": "date decode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": true,
+         "timezone_offset": true,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y-%m-%d",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "Offset",
+        "offset": 3600,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "2024-02-29",
+        "result": "1709161200",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                10,
+                [
+                 "%Y-%m-%d",
+                 2,
+                 3600
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: ('%Y-%m-%d', 2, 3600)",
+        "1709161200"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S', 0)",
+        "2024-02-28 23:00:00"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               2,
+               3600
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S",
+               0
+              ]
+             ]
+            ],
+            "2024-02-29"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      null
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "datestring to timestamp (advanced)",
+        "shown": {
+         "text": "date decode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": true,
+         "timezone_offset": true,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y-%m-%d",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "Offset",
+        "offset": 3600,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "2024-02-29",
+        "result": "1709161200",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                10,
+                [
+                 "%Y-%m-%d",
+                 2,
+                 3600
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       }
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: ('%Y-%m-%d', 2, 3600)",
+        "1709161200"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S', 0)",
+        "2024-02-28 23:00:00"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               2,
+               3600
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S",
+               0
+              ]
+             ]
+            ],
+            "2024-02-29"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "example",
+      "2023-02-29"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: ('%Y-%m-%d', 2, 3600)",
+        "ERROR: Could not apply \"datestring to timestamp: ('%Y-%m-%d', 2, 3600)\" to string \"2023-02-29\": day is out of range for month"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S', 0)",
+        "ERROR: Could not apply \"datestring to timestamp: ('%Y-%m-%d', 2, 3600)\" to string \"2023-02-29\": day is out of range for month"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               2,
+               3600
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S",
+               0
+              ]
+             ]
+            ],
+            "2023-02-29"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "example",
+      "1970-01-01"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: ('%Y-%m-%d', 2, 3600)",
+        "-3600"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S', 0)",
+        "1969-12-31 23:00:00"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               2,
+               3600
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S",
+               0
+              ]
+             ]
+            ],
+            "1970-01-01"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      0,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: ('%Y-%m-%d', 2, 3600)",
+        "-3600"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S', 0)",
+        "1969-12-31 23:00:00"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               2,
+               3600
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S",
+               0
+              ]
+             ]
+            ],
+            "1970-01-01"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "timezone_decode": "Local"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "datestring to timestamp (advanced)",
+        "shown": {
+         "text": "date decode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": true,
+         "timezone_offset": true,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y-%m-%d",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "Offset",
+        "offset": 3600,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "1970-01-01",
+        "result": "-3600",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                10,
+                [
+                 "%Y-%m-%d",
+                 2,
+                 3600
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "datestring to timestamp (advanced)",
+        "shown": {
+         "text": "date decode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": true,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y-%m-%d",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "Local",
+        "offset": 3600,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "1970-01-01",
+        "result": "0",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                10,
+                [
+                 "%Y-%m-%d",
+                 1,
+                 3600
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: ('%Y-%m-%d', 1, 3600)",
+        "0"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S', 0)",
+        "1970-01-01 00:00:00"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               1,
+               3600
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S",
+               0
+              ]
+             ]
+            ],
+            "1970-01-01"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      1,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: ('%Y-%m-%d', 1, 3600)",
+        "0"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S', 0)",
+        "1970-01-01 00:00:00"
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               1,
+               3600
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S",
+               0
+              ]
+             ]
+            ],
+            "1970-01-01"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "timezone_encode": "Local",
+       "text": "%Y-%m-%d %H:%M:%S %f %z %Z"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "timestamp to datestring",
+        "shown": {
+         "text": "date encode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": true,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y-%m-%d %H:%M:%S",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "0",
+        "result": "1970-01-01 00:00:00",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                12,
+                [
+                 "%Y-%m-%d %H:%M:%S",
+                 0
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "timestamp to datestring",
+        "shown": {
+         "text": "date encode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": true,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y-%m-%d %H:%M:%S %f %z %Z",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "Local",
+        "hash": "md5",
+        "example": "0",
+        "result": "1970-01-01 00:00:00 000000  ",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                12,
+                [
+                 "%Y-%m-%d %H:%M:%S %f %z %Z",
+                 1
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: ('%Y-%m-%d', 1, 3600)",
+        "0"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S %f %z %Z', 1)",
+        "1970-01-01 00:00:00 000000  "
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               1,
+               3600
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S %f %z %Z",
+               1
+              ]
+             ]
+            ],
+            "1970-01-01"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "up"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S %f %z %Z', 1)",
+        "ERROR: Could not apply \"timestamp to datestring: ('%Y-%m-%d %H:%M:%S %f %z %Z', 1)\" to string \"1970-01-01\": \"1970-01-01\" was not an integer!"
+       ],
+       [
+        "2",
+        "datestring to timestamp: ('%Y-%m-%d', 1, 3600)",
+        "ERROR: Could not apply \"timestamp to datestring: ('%Y-%m-%d %H:%M:%S %f %z %Z', 1)\" to string \"1970-01-01\": \"1970-01-01\" was not an integer!"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S %f %z %Z",
+               1
+              ]
+             ],
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               1,
+               3600
+              ]
+             ]
+            ],
+            "1970-01-01"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "down"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: ('%Y-%m-%d', 1, 3600)",
+        "0"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S %f %z %Z', 1)",
+        "1970-01-01 00:00:00 000000  "
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               1,
+               3600
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S %f %z %Z",
+               1
+              ]
+             ]
+            ],
+            "1970-01-01"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      0,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: ('%Y-%m-%d', 1, 3600)",
+        "0"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S %f %z %Z', 1)",
+        "1970-01-01 00:00:00 000000  "
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               1,
+               3600
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S %f %z %Z",
+               1
+              ]
+             ]
+            ],
+            "1970-01-01"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "type": "datestring to timestamp (easy)"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "datestring to timestamp (advanced)",
+        "shown": {
+         "text": "date decode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": true,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y-%m-%d",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "Local",
+        "offset": 3600,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "1970-01-01",
+        "result": "0",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                10,
+                [
+                 "%Y-%m-%d",
+                 1,
+                 3600
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "datestring to timestamp (easy)",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": true
+        },
+        "text": "%Y-%m-%d",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "Local",
+        "offset": 3600,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "1970-01-01",
+        "result": "0",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                14,
+                null
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: automatic",
+        "0"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S %f %z %Z', 1)",
+        "1970-01-01 00:00:00 000000  "
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              14,
+              null
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S %f %z %Z",
+               1
+              ]
+             ]
+            ],
+            "1970-01-01"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "example",
+      "7/18/2023 8:32:00AM"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: automatic",
+        "1689669120"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S %f %z %Z', 1)",
+        "2023-07-18 08:32:00 000000  "
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              14,
+              null
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S %f %z %Z",
+               1
+              ]
+             ]
+            ],
+            "7/18/2023 8:32:00AM"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "example",
+      "2024-01-01T12:00:00+05:30"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: automatic",
+        "1704090600"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S %f %z %Z', 1)",
+        "2024-01-01 06:30:00 000000  "
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              14,
+              null
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S %f %z %Z",
+               1
+              ]
+             ]
+            ],
+            "2024-01-01T12:00:00+05:30"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "example",
+      "not a date"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: automatic",
+        "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"not a date\": Sorry, could not parse that date!"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S %f %z %Z', 1)",
+        "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"not a date\": Sorry, could not parse that date!"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              14,
+              null
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S %f %z %Z",
+               1
+              ]
+             ]
+            ],
+            "not a date"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      1,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: automatic",
+        "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"not a date\": Sorry, could not parse that date!"
+       ],
+       [
+        "2",
+        "timestamp to datestring: ('%Y-%m-%d %H:%M:%S %f %z %Z', 1)",
+        "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"not a date\": Sorry, could not parse that date!"
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              14,
+              null
+             ],
+             [
+              12,
+              [
+               "%Y-%m-%d %H:%M:%S %f %z %Z",
+               1
+              ]
+             ]
+            ],
+            "not a date"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "delete"
+     ],
+     "said": [
+      {
+       "asked": "Delete all selected?"
+      }
+     ],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "datestring to timestamp: automatic",
+        "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"not a date\": Sorry, could not parse that date!"
+       ]
+      ],
+      "selected": [],
+      "can_up": false,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              14,
+              null
+             ]
+            ],
+            "not a date"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

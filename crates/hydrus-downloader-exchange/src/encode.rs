@@ -48,6 +48,13 @@ fn converter(c: &StringConverter) -> Result<Value> {
         .conversions
         .iter()
         .map(|conversion| {
+            let upgraded = match conversion {
+                Conversion::Unsupported { code, data } => {
+                    Conversion::from_preserved_date(*code, data)
+                }
+                _ => None,
+            };
+            let conversion = upgraded.as_ref().unwrap_or(conversion);
             Ok(match conversion {
                 Conversion::RemoveFromStart(n) => json!([0, n]),
                 Conversion::RemoveFromEnd(n) => json!([1, n]),
@@ -62,6 +69,15 @@ fn converter(c: &StringConverter) -> Result<Value> {
                     pattern,
                     replacement,
                 } => json!([9, [pattern.pattern(), replacement]]),
+                Conversion::DateDecode {
+                    phrase,
+                    timezone,
+                    offset,
+                } => json!([10, [phrase, timezone.code(), offset]]),
+                Conversion::DateEncode { phrase, timezone } => {
+                    json!([12, [phrase, timezone.code()]])
+                }
+                Conversion::DateParse => json!([14, null]),
                 Conversion::IntegerAddition(n) => json!([11, n]),
                 Conversion::Hash(h) => json!([
                     13,

@@ -1,0 +1,348 @@
+{
+ "now": "2026-10-04T12:30:00",
+ "timezone": "UTC",
+ "cases": [
+  {
+   "conversion": [
+    10,
+    [
+     "%Y-%m-%d",
+     0,
+     0
+    ]
+   ],
+   "text": "2024-02-29",
+   "result": "1709164800",
+   "error": false
+  },
+  {
+   "conversion": [
+    10,
+    [
+     "%Y-%m-%d %H:%M:%S",
+     2,
+     19800
+    ]
+   ],
+   "text": "1970-01-01 05:30:00",
+   "result": "0",
+   "error": false
+  },
+  {
+   "conversion": [
+    10,
+    [
+     "%Y-%m-%d %H:%M:%S",
+     2,
+     -18000
+    ]
+   ],
+   "text": "1969-12-31 19:00:00",
+   "result": "0",
+   "error": false
+  },
+  {
+   "conversion": [
+    10,
+    [
+     "%Y-%m-%dT%H:%M:%S%z",
+     0,
+     0
+    ]
+   ],
+   "text": "2024-01-01T12:00:00+0530",
+   "result": "1704110400",
+   "error": false
+  },
+  {
+   "conversion": [
+    10,
+    [
+     "%Y-%m-%dT%H:%M:%S%z",
+     1,
+     0
+    ]
+   ],
+   "text": "2024-01-01T12:00:00+0530",
+   "result": "1704090600",
+   "error": false
+  },
+  {
+   "conversion": [
+    10,
+    [
+     "%Y-%m-%d %H:%M:%S.%f",
+     0,
+     0
+    ]
+   ],
+   "text": "1969-12-31 23:59:59.900000",
+   "result": "-1",
+   "error": false
+  },
+  {
+   "conversion": [
+    10,
+    [
+     "%Y-%m-%d %H:%M:%S.%f",
+     1,
+     0
+    ]
+   ],
+   "text": "1969-12-31 23:59:59.900000",
+   "result": "0",
+   "error": false
+  },
+  {
+   "conversion": [
+    10,
+    [
+     "%H:%M",
+     0,
+     0
+    ]
+   ],
+   "text": "12:34",
+   "result": "-2208943560",
+   "error": false
+  },
+  {
+   "conversion": [
+    10,
+    [
+     "%Y %j",
+     0,
+     0
+    ]
+   ],
+   "text": "2024 060",
+   "result": "1709164800",
+   "error": false
+  },
+  {
+   "conversion": [
+    10,
+    [
+     "%Y-%m-%d",
+     0,
+     0
+    ]
+   ],
+   "text": "2023-02-29",
+   "result": "ERROR: Could not apply \"datestring to timestamp: ('%Y-%m-%d', 0, 0)\" to string \"2023-02-29\": day is out of range for month",
+   "error": true
+  },
+  {
+   "conversion": [
+    10,
+    [
+     "%Y-%m-%d",
+     0,
+     0
+    ]
+   ],
+   "text": "2024-01-01extra",
+   "result": "ERROR: Could not apply \"datestring to timestamp: ('%Y-%m-%d', 0, 0)\" to string \"2024-01-01extra\": unconverted data remains: extra",
+   "error": true
+  },
+  {
+   "conversion": [
+    10,
+    [
+     "%Y-%m-%d",
+     0,
+     0
+    ]
+   ],
+   "text": "not a date",
+   "result": "ERROR: Could not apply \"datestring to timestamp: ('%Y-%m-%d', 0, 0)\" to string \"not a date\": time data 'not a date' does not match format '%Y-%m-%d'",
+   "error": true
+  },
+  {
+   "conversion": [
+    12,
+    [
+     "%Y-%m-%d %H:%M:%S %f %z %Z",
+     0
+    ]
+   ],
+   "text": "-1",
+   "result": "1969-12-31 23:59:59 000000  ",
+   "error": false
+  },
+  {
+   "conversion": [
+    12,
+    [
+     "%Y-%m-%d %H:%M:%S",
+     0
+    ]
+   ],
+   "text": " +1_700_000_000 ",
+   "result": "2023-11-14 22:13:20",
+   "error": false
+  },
+  {
+   "conversion": [
+    12,
+    [
+     "%c / %x / %X / %%",
+     0
+    ]
+   ],
+   "text": "0",
+   "result": "Thu Jan  1 00:00:00 1970 / 01/01/70 / 00:00:00 / %",
+   "error": false
+  },
+  {
+   "conversion": [
+    12,
+    [
+     "%Y",
+     0
+    ]
+   ],
+   "text": "1.5",
+   "result": "ERROR: Could not apply \"timestamp to datestring: ('%Y', 0)\" to string \"1.5\": \"1.5\" was not an integer!",
+   "error": true
+  },
+  {
+   "conversion": [
+    12,
+    [
+     "%Y",
+     0
+    ]
+   ],
+   "text": "9223372036854775807",
+   "result": "ERROR: Could not apply \"timestamp to datestring: ('%Y', 0)\" to string \"9223372036854775807\": Python int too large to convert to C int",
+   "error": true
+  },
+  {
+   "conversion": [
+    14,
+    null
+   ],
+   "text": "2024-02-29",
+   "result": "1709164800",
+   "error": false
+  },
+  {
+   "conversion": [
+    14,
+    null
+   ],
+   "text": "2024-01-01T12:00:00+05:30",
+   "result": "1704090600",
+   "error": false
+  },
+  {
+   "conversion": [
+    14,
+    null
+   ],
+   "text": "2024-01-01 12:00:00",
+   "result": "1704110400",
+   "error": false
+  },
+  {
+   "conversion": [
+    14,
+    null
+   ],
+   "text": "7/18/2023 8:32:00AM",
+   "result": "1689669120",
+   "error": false
+  },
+  {
+   "conversion": [
+    14,
+    null
+   ],
+   "text": "4 March 2020",
+   "result": "1583280000",
+   "error": false
+  },
+  {
+   "conversion": [
+    14,
+    null
+   ],
+   "text": "January 12, 2012 10:00 PM",
+   "result": "1326405600",
+   "error": false
+  },
+  {
+   "conversion": [
+    14,
+    null
+   ],
+   "text": "Wed, 02 Oct 2002 13:00:00 +0200",
+   "result": "1033556400",
+   "error": false
+  },
+  {
+   "conversion": [
+    14,
+    null
+   ],
+   "text": "2 hours ago",
+   "result": "1791109800",
+   "error": false
+  },
+  {
+   "conversion": [
+    14,
+    null
+   ],
+   "text": "3 days ago",
+   "result": "1790857800",
+   "error": false
+  },
+  {
+   "conversion": [
+    14,
+    null
+   ],
+   "text": "yesterday",
+   "result": "1791030600",
+   "error": false
+  },
+  {
+   "conversion": [
+    14,
+    null
+   ],
+   "text": "tomorrow",
+   "result": "1791203400",
+   "error": false
+  },
+  {
+   "conversion": [
+    14,
+    null
+   ],
+   "text": "today",
+   "result": "1791117000",
+   "error": false
+  },
+  {
+   "conversion": [
+    14,
+    null
+   ],
+   "text": "now",
+   "result": "1791117000",
+   "error": false
+  },
+  {
+   "conversion": [
+    14,
+    null
+   ],
+   "text": "not a date",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"not a date\": Sorry, could not parse that date!",
+   "error": true
+  }
+ ]
+}

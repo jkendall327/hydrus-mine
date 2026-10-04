@@ -7,8 +7,8 @@
 
 use hydrus_core::pyjson::PyJson;
 use hydrus_core::url::strings::{
-    Conversion, Encoding, FlexibleMatch, HashFunction, MatchKind, ProcessingStep, PyRegex,
-    SortKind, StringConverter, StringMatch, StringProcessor, TagFilterStep, join_texts,
+    Conversion, DateTimezone, Encoding, FlexibleMatch, HashFunction, MatchKind, ProcessingStep,
+    PyRegex, SortKind, StringConverter, StringMatch, StringProcessor, TagFilterStep, join_texts,
     slice_texts, sort_texts, split_text,
 };
 
@@ -1048,6 +1048,22 @@ impl ConversionEditor {
                 editor.hash = HASH_FUNCTIONS.iter().position(|(f, _)| f == h).unwrap_or(0);
                 code_index(13)
             }
+            Conversion::DateDecode {
+                phrase,
+                timezone,
+                offset,
+            } => {
+                editor.text.clone_from(phrase);
+                editor.timezone_decode = count_of(timezone.code());
+                editor.timezone_offset = *offset;
+                code_index(10)
+            }
+            Conversion::DateEncode { phrase, timezone } => {
+                editor.text.clone_from(phrase);
+                editor.timezone_encode = count_of(timezone.code());
+                code_index(12)
+            }
+            Conversion::DateParse => code_index(14),
             Conversion::Unsupported { code, data } => {
                 let data = hydrus_core::pyjson::PyJson::parse(data).ok();
                 let item = |i: usize| {
@@ -1164,11 +1180,18 @@ impl ConversionEditor {
             },
             11 => Conversion::IntegerAddition(self.number),
             13 => Conversion::Hash(HASH_FUNCTIONS[self.hash].0),
-            10 => unsupported(
-                10,
-                serde_json::json!([self.text, self.timezone_decode, self.timezone_offset]),
-            ),
-            12 => unsupported(12, serde_json::json!([self.text, self.timezone_encode])),
+            10 => Conversion::DateDecode {
+                phrase: self.text.clone(),
+                timezone: DateTimezone::from_code(i64::try_from(self.timezone_decode).unwrap_or(0))
+                    .unwrap_or(DateTimezone::Utc),
+                offset: self.timezone_offset,
+            },
+            12 => Conversion::DateEncode {
+                phrase: self.text.clone(),
+                timezone: DateTimezone::from_code(i64::try_from(self.timezone_encode).unwrap_or(0))
+                    .unwrap_or(DateTimezone::Utc),
+            },
+            14 => Conversion::DateParse,
             code => unsupported(code, serde_json::Value::Null),
         }
     }

@@ -221,3 +221,38 @@ fn maximum_documented_definition_count_roundtrips_and_the_next_one_is_rejected()
     oversized[2].as_array_mut().unwrap().push(extra);
     assert!(decode_text(&oversized.to_string()).is_err());
 }
+
+#[test]
+fn date_conversions_keep_reference_codes_through_definition_exchange() {
+    let converter = json!([
+        55,
+        2,
+        [
+            [
+                [10, ["%Y-%m-%d", 2, 3600]],
+                [12, ["%Y-%m-%d", 0]],
+                [14, null]
+            ],
+            "2024-02-29"
+        ]
+    ]);
+    let processor = json!([84, 1, [26, 3, [[2, converter]]]]);
+    let source = json!([136, 1, ["date fixture", 2, "", processor]]);
+    let definitions = decode_text(&source.to_string()).unwrap();
+    let encoded: Value = serde_json::from_str(&encode_text(&definitions).unwrap()).unwrap();
+    assert_eq!(encoded, source);
+    assert_eq!(
+        decode_png(&encode_png(&definitions).unwrap()).unwrap(),
+        definitions
+    );
+    let Native::Formula(formula) = &definitions[0].native else {
+        panic!("formula")
+    };
+    assert_eq!(
+        formula
+            .processor
+            .process(vec!["2024-02-29".into()])
+            .unwrap(),
+        vec!["1709078400"]
+    );
+}

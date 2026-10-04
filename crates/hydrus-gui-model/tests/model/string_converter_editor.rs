@@ -28,7 +28,13 @@ fn converter(value: &Value) -> StringConverter {
 /// date (whose error hydrus-rs words its own way).
 fn random_or_date(conversion: &Conversion) -> bool {
     matches!(conversion, Conversion::AppendRandom { population, count } if !population.is_empty() && *count > 0)
-        || matches!(conversion, Conversion::Unsupported { .. })
+        || matches!(
+            conversion,
+            Conversion::Unsupported { .. }
+                | Conversion::DateDecode { .. }
+                | Conversion::DateEncode { .. }
+                | Conversion::DateParse
+        )
 }
 
 /// An error's text up to its reason.
@@ -44,6 +50,7 @@ fn same_result(ours: &str, theirs: &str, loose: bool, context: &str) {
     } else if let Some(theirs) = before_reason(theirs) {
         assert_eq!(before_reason(ours), Some(theirs), "{context}");
     } else {
+        // Random conversions are the only successful values with unstable text.
         assert_eq!(
             ours.chars().count(),
             theirs.chars().count(),
@@ -92,7 +99,9 @@ fn check_conversion(editor: &ConversionEditor, state: &Value, context: &str) {
     same_result(
         &editor.result(),
         state["result"].as_str().unwrap(),
-        random_or_date(&value),
+        random_or_date(&value)
+            && (state["result"].as_str().unwrap().starts_with("ERROR:")
+                || matches!(value, Conversion::AppendRandom { .. })),
         context,
     );
 }
@@ -151,7 +160,11 @@ fn check(editor: &ConverterEditor, state: &Value, context: &str) {
     for (i, (row, theirs)) in rows.iter().zip(recorded).enumerate() {
         assert_eq!(row[0], theirs[0], "{context}");
         assert_eq!(row[1], theirs[1], "{context}");
-        let loose = value.conversions[..=i].iter().any(random_or_date);
+        let loose = value.conversions[..=i].iter().any(|v| {
+            random_or_date(v)
+                && (theirs[2].as_str().unwrap().starts_with("ERROR:")
+                    || matches!(v, Conversion::AppendRandom { .. }))
+        });
         same_result(&row[2], theirs[2].as_str().unwrap(), loose, context);
     }
     assert_eq!(json!(editor.selected()), state["selected"], "{context}");
@@ -161,7 +174,16 @@ fn check(editor: &ConverterEditor, state: &Value, context: &str) {
 
 #[test]
 fn the_string_converter_editor_works_as_the_references_does() {
-    let recorded = hydrus_testkit::fixture_json("string_converter_editor.json");
+    replay("string_converter_editor.json");
+}
+
+#[test]
+fn date_controls_and_live_preview_follow_real_qt_accept_cancel_and_reorder() {
+    replay("string_date_editor.json");
+}
+
+fn replay(fixture: &str) {
+    let recorded = hydrus_testkit::fixture_json(fixture);
     for (c, case) in recorded["cases"].as_array().unwrap().iter().enumerate() {
         let mut editor = ConverterEditor::new(
             &converter(&case["converter"]),

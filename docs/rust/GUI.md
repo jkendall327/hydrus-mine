@@ -353,6 +353,14 @@ regex that captures a group with no replacement). What they show at each
 step is as `oracle/record_string_processor_editor.py`,
 `oracle/record_string_match_editor.py` and
 `oracle/record_string_converter_editor.py` recorded the reference's.
+Date conversion fields now execute in downloader and sidecar consumers: advanced
+strptime decoding honors UTC/local/offset, timestamp formatting honors the
+reference's current local offset, and the easy parser accepts common ISO and
+English dates and relative expressions. The conversion window and sequence rows
+update their previews live, including invalid input. Typed date values retain
+reference interchange codes 10/12/14; older native preserved date payloads also
+execute. `oracle/dump_string_dates.py` and `oracle/record_string_date_editor.py`
+record timezone/fraction/pre-epoch and Qt accept/cancel/reorder boundaries.
 
 Help > about opens the about window (`ui/about.slint`,
 `src/about_window.rs`, `hydrus-gui-model/src/about.rs`), as the

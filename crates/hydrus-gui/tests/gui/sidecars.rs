@@ -507,3 +507,65 @@ fn a_sidecars_filename_conversion_is_edited_in_the_converter_editor() {
     );
     assert_eq!(node.get_result(), "myimage.jpg.txt");
 }
+
+#[test]
+fn date_conversion_fields_preview_and_cancel_reach_the_converter() {
+    use hydrus_core::url::strings::{Conversion, DateTimezone, StringConverter};
+    use hydrus_gui::string_processor_window::{Slots, open_converter};
+    use std::{cell::RefCell, rc::Rc};
+    let _windows = headless::init();
+    let slots = Slots::default();
+    let accepted = Rc::new(RefCell::new(None));
+    let original = StringConverter {
+        example: "2024-02-29".into(),
+        conversions: vec![Conversion::DateDecode {
+            phrase: "%Y-%m-%d".into(),
+            timezone: DateTimezone::Utc,
+            offset: 0,
+        }],
+    };
+    let window = open_converter(
+        &original,
+        None,
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |value| *accepted.borrow_mut() = Some(value)
+        }),
+    )
+    .unwrap();
+    window.invoke_row_clicked(0, false, false);
+    window.invoke_edit();
+    let child = slots.conversion.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(child.get_result(), "1709164800");
+    assert!(child.get_show_timezone_decode());
+    assert!(!child.get_show_timezone_offset());
+    child.set_timezone_decode(2);
+    child.set_timezone_offset(3600);
+    child.invoke_changed();
+    assert!(child.get_show_timezone_offset());
+    assert_eq!(child.get_result(), "1709161200");
+    child.invoke_cancel();
+    window.invoke_edit();
+    let child = slots.conversion.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(child.get_timezone_decode(), 0);
+    child.set_text("%Y".into());
+    child.invoke_changed();
+    assert!(child.get_result().starts_with("ERROR:"));
+    child.set_text("%Y-%m-%d".into());
+    child.set_timezone_decode(2);
+    child.set_timezone_offset(3600);
+    child.invoke_changed();
+    child.invoke_apply();
+    window.invoke_apply();
+    let value = accepted.borrow().clone().unwrap();
+    assert_eq!(value.convert("2024-02-29").unwrap(), "1709161200");
+    assert!(matches!(
+        value.conversions[0],
+        Conversion::DateDecode {
+            timezone: DateTimezone::Offset,
+            offset: 3600,
+            ..
+        }
+    ));
+}

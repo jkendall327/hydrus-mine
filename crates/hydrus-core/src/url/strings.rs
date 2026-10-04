@@ -273,6 +273,39 @@ pub enum HashFunction {
     Sha512,
 }
 
+/// How an advanced date conversion interprets its wall-clock time.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DateTimezone {
+    /// Discard parsed timezone information and interpret the fields as UTC.
+    Utc,
+    /// Use parsed timezone information, otherwise the system timezone.
+    Local,
+    /// Subtract the supplied offset in seconds from the UTC wall-clock fields.
+    Offset,
+}
+
+impl DateTimezone {
+    /// The reference's interchange code.
+    pub const fn code(self) -> i64 {
+        match self {
+            Self::Utc => 0,
+            Self::Local => 1,
+            Self::Offset => 2,
+        }
+    }
+
+    /// Decode a reference timezone code without silently changing unknown values.
+    pub const fn from_code(code: i64) -> Option<Self> {
+        match code {
+            0 => Some(Self::Utc),
+            1 => Some(Self::Local),
+            2 => Some(Self::Offset),
+            _ => None,
+        }
+    }
+}
+
 /// One transformation of a [`StringConverter`]. Counts are in characters.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -298,12 +331,49 @@ pub enum Conversion {
     },
     IntegerAddition(i64),
     Hash(HashFunction),
-    /// A conversion hydrus-rs doesn't run yet (date formatting and parsing),
+    /// Parse a Python strptime phrase into an integer Unix timestamp.
+    DateDecode {
+        phrase: String,
+        timezone: DateTimezone,
+        offset: i64,
+    },
+    /// Format an integer Unix timestamp with a Python strftime phrase.
+    DateEncode {
+        phrase: String,
+        timezone: DateTimezone,
+    },
+    /// Parse a common date or English relative date without a phrase.
+    DateParse,
+    /// An unknown conversion hydrus-rs does not run,
     /// kept as the reference's code and data (its JSON).
     Unsupported {
         code: i64,
         data: String,
     },
+}
+
+impl Conversion {
+    /// Upgrade date payloads saved by earlier native versions, retaining their
+    /// reference format rather than requiring users to reopen each editor.
+    pub fn from_preserved_date(code: i64, data: &str) -> Option<Self> {
+        use crate::pyjson::PyJson;
+        if code == 14 {
+            return Some(Self::DateParse);
+        }
+        let parsed = PyJson::parse(data).ok()?;
+        let values = parsed.as_list()?;
+        let phrase = values.first()?.as_str()?.to_owned();
+        let timezone = DateTimezone::from_code(values.get(1)?.as_i64()?)?;
+        match code {
+            10 => Some(Self::DateDecode {
+                phrase,
+                timezone,
+                offset: values.get(2)?.as_i64()?,
+            }),
+            12 => Some(Self::DateEncode { phrase, timezone }),
+            _ => None,
+        }
+    }
 }
 
 /// Why a conversion failed.
@@ -437,7 +507,19 @@ fn apply(conversion: &Conversion, s: &str) -> Result<String, String> {
                 HashFunction::Sha512 => hex::encode(sha2::Sha512::digest(bytes)),
             }
         }
-        Conversion::Unsupported { code, .. } => {
+        Conversion::DateDecode {
+            phrase,
+            timezone,
+            offset,
+        } => super::string_dates::decode(s, phrase, *timezone, *offset)?,
+        Conversion::DateEncode { phrase, timezone } => {
+            super::string_dates::encode(s, phrase, *timezone)?
+        }
+        Conversion::DateParse => super::string_dates::parse(s)?,
+        Conversion::Unsupported { code, data } => {
+            if let Some(date) = Conversion::from_preserved_date(*code, data) {
+                return apply(&date, s);
+            }
             return Err(format!("conversion type {code} is not supported yet"));
         }
     })
