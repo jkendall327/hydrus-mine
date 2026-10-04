@@ -2316,3 +2316,15 @@ outer Apply; Cancel also closes and invalidates child handles. Saved defaults,
 URL overrides and profiles are visible on reopening and reach importer defaults.
 `import_options_panel.json` records the actual Qt lists, stacks, editor kinds and
 fallback sources, clear/reset/name prompts, cancellation and apply isolation.
+
+The media viewer's four closing-focus preferences now act on the page that
+launched that viewer. Reselecting switches back to that page; selecting exit
+media focuses its thumbnail (or collection), retains an existing multiple
+selection, and scrolls to it. A background tab change does not redirect those
+actions. A closed undoable source receives selection while hidden and reveals it
+on undo; an absent exit file keeps its selection. Advanced activation applies
+when either focusing action is requested, and debug activation applies to every
+close, independently and in that order. Both use the weak main window's native
+focus request. Options wait for Apply, persist and import their reference keys.
+The real Qt `viewer_closing_options.json` recording covers all sixteen preference
+combinations plus missing media, multiple selection, unowned and closed sources.

@@ -1524,3 +1524,13 @@ old list visible until reopening. The paste menu preserves the reference's curre
 label-to-handler mapping (merge-paste invokes replace, fill-in-gaps-paste invokes
 merge, replace-paste invokes fill). Existing import-options editor limitations,
 including program-command editing/execution, remain as described above.
+
+Closing-focus preferences now preserve the viewer's original page identity and
+exit file, including a hidden undoable source. Replacing the session destroys
+that weak source; closing its viewer then leaves replacement pages alone, while
+the separate debug preference can still activate the weak main window. Native
+activation uses winit's desktop focus request instead of Qt's activateWindow;
+headless regression observes actual activation attempts without replacing that
+request. The reference's separate advanced and debug notifications remain
+separate, so enabling both can request activation twice. Existing viewer
+shortcut/menu differences remain outside these ordinary close preferences.

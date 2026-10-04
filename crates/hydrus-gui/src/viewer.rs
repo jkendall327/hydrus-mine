@@ -79,6 +79,11 @@ impl MediaViewer {
         self.index
     }
 
+    /// The exit file, or none after the final file was removed.
+    pub fn exit_media(&self) -> Option<HashId> {
+        self.files.get(self.index).copied()
+    }
+
     pub fn current(&self) -> HashId {
         self.files[self.index]
     }

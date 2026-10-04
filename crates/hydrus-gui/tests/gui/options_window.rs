@@ -2892,3 +2892,320 @@ fn focus_options_reach_native_activity_and_actual_mouseover_gates() {
     assert!(!viewer.get_window_active());
     viewer.invoke_close_requested();
 }
+
+const CLOSING_LABELS: [&str; 4] = [
+    "When closing the media viewer, re-select original search page: ",
+    "When closing the media viewer, tell original search page to select exit media: ",
+    "ADVANCED: When closing the media viewer with the above focusing options, activate Main GUI: ",
+    "DEBUG: When closing the media viewer at any time, activate Main GUI: ",
+];
+
+fn closing_draft(ui: &MainWindow, bound: &hydrus_gui::Bound, values: &[bool]) -> OptionsWindow {
+    open(ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "media viewer");
+    for (label, &value) in CLOSING_LABELS.iter().zip(values) {
+        window.invoke_check_toggled(row(&window, label).0, value);
+    }
+    window
+}
+
+fn show_original_key(ui: &MainWindow, bound: &hydrus_gui::Bound, key: hydrus_core::pages::PageKey) {
+    let index = bound
+        .pages
+        .borrow()
+        .session()
+        .pages
+        .iter()
+        .position(|page| page.key == key)
+        .unwrap();
+    ui.invoke_tab_chosen(0, i32::try_from(index).unwrap());
+    assert_eq!(bound.pages.borrow().shown().key, key);
+}
+
+#[test]
+fn closing_preferences_reach_frozen_page_selection_and_native_main_activation() {
+    use hydrus_gui::viewer_closing::set_activation_observer;
+    use hydrus_gui_model::viewer_closing::Action;
+    use std::{cell::RefCell, rc::Rc};
+    let fixture = hydrus_testkit::fixture_json("viewer_closing_options.json");
+    let (_dirs, store) = store();
+    let ids: Vec<_> = fixture["hashes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|hash| {
+            store
+                .read(|conn| {
+                    hydrus_store::master::hash_id(conn, &hash.as_str().unwrap().parse().unwrap())
+                })
+                .unwrap()
+                .unwrap()
+        })
+        .collect();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let location = hydrus_search::LocationContext::single(
+        hydrus_core::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE,
+    );
+    let mut pages = Pages::single(hydrus_gui::SearchPage::new(store.clone()));
+    pages.open_files(location.clone(), ids[..2].to_vec(), None, None);
+    let original_key = pages.shown().key;
+    let original = pages.current();
+    pages.open_files(location, ids[..2].to_vec(), None, None);
+    let other_key = pages.shown().key;
+    let bound = bind(&ui, pages);
+    ui.show().unwrap();
+    let drawn = windows.get(0).unwrap();
+    headless::render(&drawn, 900, 700);
+    let activation = Rc::new(RefCell::new(Vec::new()));
+    let weak_main = ui.as_weak();
+    set_activation_observer(Some(Rc::new({
+        let activation = activation.clone();
+        move |main, reason| {
+            let expected = weak_main.upgrade().unwrap();
+            assert!(
+                std::ptr::eq(main.window(), expected.window()),
+                "activate the weak main owner"
+            );
+            activation.borrow_mut().push(match reason {
+                Action::ActivateFocusing => "focusing-panel",
+                Action::ActivateDebug => "debug-main",
+                Action::ReselectPage | Action::SelectExitMedia => panic!("not an activation"),
+            });
+        }
+    })));
+    for event in fixture["events"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|event| event["scenario"] != "unowned")
+    {
+        let values: Vec<_> = event["values"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|value| value.as_bool().unwrap())
+            .collect();
+        closing_draft(&ui, &bound, &values).invoke_apply();
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "media viewer");
+        for (label, &expected) in CLOSING_LABELS.iter().zip(&values) {
+            assert_eq!(
+                row(&window, label).1.checked,
+                expected,
+                "persisted/reopened {label}"
+            );
+        }
+        window.invoke_cancel();
+        show_original_key(&ui, &bound, original_key);
+        let missing = event["scenario"] == "missing-exit";
+        if missing {
+            original.borrow_mut().add_files(&ids[2..]);
+        }
+        let start = original
+            .borrow()
+            .results()
+            .iter()
+            .position(|file| *file == ids[0])
+            .unwrap();
+        original.borrow_mut().hit(None, false, false);
+        original.borrow_mut().select(start);
+        if event["scenario"] == "selected-multiple" {
+            let exit = original
+                .borrow()
+                .results()
+                .iter()
+                .position(|file| *file == ids[1])
+                .unwrap();
+            original.borrow_mut().hit(Some(exit), true, false);
+        }
+        let viewer_files = original.borrow().files();
+        let start_pos = viewer_files
+            .iter()
+            .position(|file| *file == ids[0])
+            .unwrap();
+        let exit = ids[if missing { 2 } else { 1 }];
+        let exit_pos = viewer_files.iter().position(|file| *file == exit).unwrap();
+        ui.invoke_thumbnail_activated(i32::try_from(start).unwrap());
+        let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+        for _ in 0..(exit_pos + viewer_files.len() - start_pos) % viewer_files.len() {
+            viewer.invoke_next();
+        }
+        if missing {
+            original.borrow_mut().remove_files(&ids[2..]);
+        }
+        show_original_key(&ui, &bound, other_key);
+        let closed = event["scenario"] == "closed-owner";
+        if closed {
+            bound
+                .pages
+                .borrow_mut()
+                .close_tab_keys(&[original_key])
+                .unwrap();
+        }
+        activation.borrow_mut().clear();
+        let reveal_before = ui.get_viewer_reveal_request();
+        viewer.invoke_close_requested();
+        assert!(bound.viewer.borrow().is_none());
+        let expected_key = if event["after"]["page"] == "original" {
+            original_key
+        } else {
+            other_key
+        };
+        assert_eq!(bound.pages.borrow().shown().key, expected_key, "{event:?}");
+        let hash_of = |id| {
+            store
+                .read(|conn| hydrus_store::master::hashes(conn, &[id]))
+                .unwrap()[&id]
+                .to_hex()
+        };
+        let selected: Vec<_> = original
+            .borrow()
+            .selected_files()
+            .into_iter()
+            .map(hash_of)
+            .collect();
+        assert_eq!(
+            serde_json::json!(selected),
+            event["after"]["selected"],
+            "{event:?}"
+        );
+        let source = original.borrow();
+        let focused = source
+            .focused()
+            .map(|index| hash_of(source.results()[index]));
+        assert_eq!(
+            serde_json::json!(focused),
+            event["after"]["focused"],
+            "{event:?}"
+        );
+        drop(source);
+        assert_eq!(
+            serde_json::json!(*activation.borrow()),
+            event["after"]["activation"],
+            "{event:?}"
+        );
+        if values[0] && values[1] && !closed && !missing {
+            assert_ne!(ui.get_viewer_reveal_request(), reveal_before);
+            let index = original
+                .borrow()
+                .results()
+                .iter()
+                .position(|file| *file == exit)
+                .unwrap();
+            assert_eq!(ui.get_viewer_reveal_index(), i32::try_from(index).unwrap());
+        }
+        if closed {
+            assert!(bound.pages.borrow_mut().unclose());
+            show_original_key(&ui, &bound, original_key);
+            assert_eq!(
+                original.borrow().selected_files(),
+                [ids[1]],
+                "undo preserves the hidden owner's exit selection"
+            );
+            assert_ne!(
+                ui.get_viewer_reveal_request(),
+                reveal_before,
+                "pending exit scroll follows frozen owner on undo"
+            );
+        }
+    }
+    set_activation_observer(None);
+    bound.pages.borrow_mut().save(1_700_000_000).unwrap();
+    let mut reopened = Pages::open(store).unwrap();
+    assert_eq!(
+        reopened
+            .page(&original_key)
+            .unwrap()
+            .borrow()
+            .selected_files(),
+        [ids[1]],
+        "exit selection persists in the last session"
+    );
+}
+
+#[test]
+fn cancelled_closing_options_and_stale_viewers_cannot_redirect_the_live_owner() {
+    use hydrus_gui::viewer_closing::set_activation_observer;
+    use std::{cell::RefCell, rc::Rc};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    assert!(files.len() > 2);
+    closing_draft(&ui, &bound, &[true, false, true, true]).invoke_apply();
+    ui.invoke_thumbnail_activated(0);
+    let stale = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    ui.invoke_thumbnail_activated(1);
+    let live = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let calls = Rc::new(RefCell::new(Vec::new()));
+    set_activation_observer(Some(Rc::new({
+        let calls = calls.clone();
+        move |_, action| calls.borrow_mut().push(action)
+    })));
+    stale.invoke_close_requested();
+    assert!(
+        calls.borrow().is_empty(),
+        "a stale callback does not activate or close its successor"
+    );
+    assert!(std::ptr::eq(
+        bound.viewer.borrow().as_ref().unwrap().window(),
+        live.window()
+    ));
+    closing_draft(&ui, &bound, &[false, true, false, false]).invoke_cancel();
+    live.invoke_close_requested();
+    assert_eq!(
+        calls.borrow().as_slice(),
+        [
+            hydrus_gui_model::viewer_closing::Action::ActivateFocusing,
+            hydrus_gui_model::viewer_closing::Action::ActivateDebug
+        ]
+    );
+    assert!(bound.viewer.borrow().is_none());
+    assert!(
+        store
+            .read(hydrus_gui::options::Settings::load)
+            .unwrap()
+            .viewer_closing
+            .reselect_page
+    );
+    // A session replacement destroys the original panel. The viewer's weak
+    // owner must not select the replacement page or request focusing activation.
+    closing_draft(&ui, &bound, &[true, true, true, true]).invoke_apply();
+    bound
+        .pages
+        .borrow_mut()
+        .save_session("closing replacement", 1_700_000_000)
+        .unwrap();
+    ui.invoke_thumbnail_activated(0);
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let old_page = std::rc::Rc::downgrade(&bound.current.borrow());
+    bound
+        .pages
+        .borrow_mut()
+        .clear_and_load("closing replacement")
+        .unwrap();
+    ui.invoke_tab_chosen(0, 0);
+    assert!(
+        old_page.upgrade().is_none(),
+        "the original page is destroyed after session replacement"
+    );
+    let replacement = bound.current.borrow().clone();
+    let before = replacement.borrow().selected_files();
+    calls.borrow_mut().clear();
+    viewer.invoke_close_requested();
+    assert_eq!(replacement.borrow().selected_files(), before);
+    assert_eq!(
+        calls.borrow().as_slice(),
+        [hydrus_gui_model::viewer_closing::Action::ActivateDebug]
+    );
+    set_activation_observer(None);
+}
