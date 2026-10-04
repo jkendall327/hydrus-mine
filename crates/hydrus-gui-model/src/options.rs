@@ -31,7 +31,8 @@ use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FileHandlingSettings, FileSearchSettings, FileViewingStatistics,
     FolderSettings, GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings,
-    SearchDefaults, TagAutocompleteTabs, ThumbnailLayout, ViewerCanvasSettings, ViewerHoverSettings,
+    SearchDefaults, TagAutocompleteTabs, ThumbnailLayout, ViewerCanvasSettings,
+    ViewerHoverSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
