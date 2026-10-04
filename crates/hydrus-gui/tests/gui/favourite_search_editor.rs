@@ -132,6 +132,13 @@ fn favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches()
     let adapter = rendered.get(rendered.count() - 2).unwrap();
     let pixels = headless::render(&adapter, 1100, 1000);
     assert!(pixels.chunks_exact(4).any(|p| p[3] != 0));
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("favourite_search_editor.png"),
+        &pixels,
+        1100,
+        1000,
+    )
+    .unwrap();
     // Child Apply only stages the favourite. The manager owns persistence.
     w.invoke_apply();
     assert_eq!(
