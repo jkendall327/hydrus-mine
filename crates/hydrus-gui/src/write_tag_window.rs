@@ -122,6 +122,7 @@ fn open_internal(
                     .map(|r| crate::list_text(&r.label, colours.tag(&r.colour_tag)))
                     .collect::<Vec<_>>(),
             )));
+            w.set_selected(ModelRc::new(VecModel::from(m.input.selection_mask())));
             w.set_tab_index(i32::try_from(m.input.tab().index()).unwrap_or(0));
             w.set_highlighted(
                 m.input
@@ -274,6 +275,20 @@ fn open_internal(
             }
             model.borrow_mut().input.move_highlight(by as isize);
             refresh();
+        }
+    });
+    window.on_selection_clicked({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let editable = editable.clone();
+        move |i, ctrl, shift| {
+            if !editable() {
+                return;
+            }
+            if let Ok(i) = usize::try_from(i) {
+                model.borrow_mut().input.click(i, ctrl, shift);
+                refresh();
+            }
         }
     });
     window.on_entered({

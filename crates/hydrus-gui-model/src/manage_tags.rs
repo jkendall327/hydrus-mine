@@ -376,13 +376,13 @@ impl ManageTags {
         self.input.move_highlight(by);
     }
     pub fn enter_input(&mut self) -> Result<(), String> {
-        if let Some(tag) = self.input.chosen(None) {
+        for tag in self.input.chosen_tags(None) {
             self.enter(&tag)?;
         }
         Ok(())
     }
     pub fn choose_suggestion(&mut self, index: usize) -> Result<(), String> {
-        if let Some((tag, _)) = self.suggestions().get(index).cloned() {
+        for tag in self.input.chosen_tags(Some(index)) {
             self.enter(&tag)?;
         }
         Ok(())

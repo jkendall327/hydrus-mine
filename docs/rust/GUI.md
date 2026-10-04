@@ -2525,3 +2525,12 @@ tags, repositories and all known tags, retaining independent check states.
 Namespace sorts also offer display, multiple-media and single-media tag views.
 These choices remain in the Options draft until Apply; Cancel preserves saved
 settings, and reopening retains the chosen context and view.
+
+Shared write-tag result lists now support logical multi-selection in Manage Tags,
+both sibling/parent inputs and detached additional-tag/favourite editors. A click
+selects without changing tags; Ctrl toggles, Shift adds a reversible range and
+Ctrl+Shift removes a reversible range. Expanded parent rows share their child's
+selection. Enter or double-click activates the selected batch; unchanged fetches
+and decoration changes retain it. The reference steps are recorded in
+`oracle/fixtures/write_tag_selection.json`. Staged tags still wait for Apply,
+and cancelled owners ignore later selection and activation callbacks.

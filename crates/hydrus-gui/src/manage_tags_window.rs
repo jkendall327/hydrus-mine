@@ -63,6 +63,9 @@ pub(crate) fn open(
                 .map(|r| list_text(&r.label, colours.tag(&r.colour_tag)))
                 .collect();
             window.set_suggestions(ModelRc::new(VecModel::from(suggestions)));
+            window.set_suggestion_selected(ModelRc::new(VecModel::from(
+                model.write_input().selection_mask(),
+            )));
             window.set_highlighted(
                 model
                     .highlighted()
@@ -316,6 +319,22 @@ pub(crate) fn open(
             refresh();
         }
     });
+    window.on_selection_clicked({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
+        move |i, ctrl, shift| {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+                return;
+            }
+            if let Ok(i) = usize::try_from(i) {
+                model.borrow_mut().write_input_mut().click(i, ctrl, shift);
+                refresh();
+            }
+        }
+    });
     window.on_entered({
         let model = model.clone();
         let weak = window.as_weak();
@@ -329,7 +348,11 @@ pub(crate) fn open(
                 return;
             }
             // (enter with nothing typed applies, as in the reference)
-            let empty = model.borrow().text().trim().is_empty();
+            let empty = {
+                let model = model.borrow();
+                model.text().trim().is_empty()
+                    && model.autocomplete_tab() == hydrus_gui_model::write_autocomplete::Tab::Tags
+            };
             if empty {
                 apply();
                 return;

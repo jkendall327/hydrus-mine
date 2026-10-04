@@ -140,6 +140,8 @@ pub(crate) fn open(
             window.set_right_tab(i32::try_from(right_input.tab().index()).unwrap_or(0));
             window.set_left_suggestions(suggestions(left_input));
             window.set_right_suggestions(suggestions(right_input));
+            window.set_left_selected(ModelRc::new(VecModel::from(left_input.selection_mask())));
+            window.set_right_selected(ModelRc::new(VecModel::from(right_input.selection_mask())));
             window.set_left_highlighted(
                 left_input
                     .highlighted()
@@ -480,7 +482,9 @@ pub(crate) fn open(
             if b.input_mut(right).text() != text.as_str() {
                 b.input_mut(right).set_text(&text);
             }
-            if let Some(chosen) = b.input_mut(right).chosen(None) {
+            let chosen = b.input_mut(right).chosen_tags(None);
+            if !chosen.is_empty() {
+                let chosen = chosen.join("\n");
                 match b.model.enter_tags(right, &chosen) {
                     Ok(()) => {
                         w.set_error("".into());
@@ -552,6 +556,21 @@ pub(crate) fn open(
             refresh();
         }
     });
+    window.on_autocomplete_clicked({
+        let binding = binding.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let tag_menu = tag_menu.clone();
+        move |right, i, ctrl, shift| {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
+                return;
+            }
+            if let Ok(i) = usize::try_from(i) {
+                binding.borrow_mut().input_mut(right).click(i, ctrl, shift);
+                refresh();
+            }
+        }
+    });
     window.on_autocomplete_chosen({
         let binding = binding.clone();
         let refresh = refresh.clone();
@@ -563,7 +582,9 @@ pub(crate) fn open(
                 return;
             }
             let mut b = binding.borrow_mut();
-            if let Some(tag) = b.input_mut(right).chosen(usize::try_from(i).ok()) {
+            let tags = b.input_mut(right).chosen_tags(usize::try_from(i).ok());
+            if !tags.is_empty() {
+                let tag = tags.join("\n");
                 if let Err(e) = b.model.enter_tags(right, &tag)
                     && let Some(w) = weak.upgrade()
                 {

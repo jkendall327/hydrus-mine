@@ -8,6 +8,7 @@ export component WriteTagInput inherits FocusScope {
     in-out property <string> text;
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
+    in property <[bool]> selected;
     in-out property <int> tab-index;
     in property <int> list-height: 11;
     in property <string> placeholder: "enter a tag";
@@ -17,6 +18,7 @@ export component WriteTagInput inherits FocusScope {
     callback fetch();
     callback move-highlight(int);
     callback chosen(int);
+    callback selection-clicked(int, bool, bool);
     callback context-menu(int, length, length);
     callback domain-menu(bool,length,length);
     in property <string> file-label;
@@ -68,20 +70,21 @@ export component WriteTagInput inherits FocusScope {
                     alignment: start;
                     for suggestion[i] in root.suggestions: Rectangle {
                         height: 22px;
-                        background: i == root.highlighted ? Theme.highlight : transparent;
+                        background: root.selected[i] ? Theme.highlight : transparent;
                         Text {
                             x: 4px;
                             text: suggestion.text;
-                            color: i == root.highlighted ? Theme.highlight-text : suggestion.colour;
+                            color: root.selected[i] ? Theme.highlight-text : suggestion.colour;
                             vertical-alignment: center;
                             overflow: elide;
                             width: parent.width - 8px;
                         }
                         TouchArea {
                             enabled: root.enabled;
+                            double-clicked => { root.chosen(i); }
                             pointer-event(event) => {
                                 if event.kind == PointerEventKind.down && event.button == PointerEventButton.right { root.context-menu(i, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y); }
-                                if event.kind == PointerEventKind.up && event.button == PointerEventButton.left { root.chosen(i); }
+                                if event.kind == PointerEventKind.down && event.button == PointerEventButton.left { root.selection-clicked(i, event.modifiers.control, event.modifiers.shift); }
                             }
                         }
                     }
@@ -137,6 +140,7 @@ export component WriteTagsWindow inherits Window {
     in property <[ListText]> tags;
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
+    in property <[bool]> selected;
     in property <int> tab-index;
     in property <int> list-height: 11;
     in property <string> question;
@@ -147,6 +151,7 @@ export component WriteTagsWindow inherits Window {
     callback fetch();
     callback move-highlight(int);
     callback chosen(int);
+    callback selection-clicked(int, bool, bool);
     callback context-menu(int, length, length);
     callback domain-menu(bool,length,length);
     in property <string> file-label;
@@ -178,6 +183,7 @@ export component WriteTagsWindow inherits Window {
                 text <=> root.text;
                 suggestions: root.suggestions;
                 highlighted: root.highlighted;
+                selected: root.selected;
                 tab-index: root.tab-index;
                 tab-chosen(i) => { root.tab-chosen(i); }
                 list-height: root.list-height;
@@ -186,6 +192,7 @@ export component WriteTagsWindow inherits Window {
                 fetch => { root.fetch(); }
                 move-highlight(by) => { root.move-highlight(by); }
                 chosen(i) => { root.chosen(i); }
+                selection-clicked(i,ctrl,shift) => { root.selection-clicked(i,ctrl,shift); }
                 context-menu(i,x,y) => { root.context-menu(i,x,y); }
                 file-label:root.file-label;tag-label:root.tag-label;
                 domain-menu(tags,x,y)=>{root.domain-menu(tags,x,y);}

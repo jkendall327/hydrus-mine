@@ -1,5 +1,5 @@
 //! Shared write-tag suggestions, highlighted entry and multiline paste decisions.
-use std::sync::Arc;
+use std::{collections::BTreeSet, sync::Arc};
 
 use hydrus_core::{ServiceKey, ServiceType, Tag, search::context::LocationContext};
 use hydrus_store::{
@@ -88,6 +88,77 @@ impl Tab {
     }
 }
 
+/// The reference tag list keeps earlier selections during Shift ranges and
+/// uses Ctrl+Shift to remove a reversible range, unlike a table selection.
+#[derive(Debug, Default)]
+struct Selection {
+    selected: BTreeSet<usize>,
+    last: Option<usize>,
+    anchor: Option<usize>,
+    added: BTreeSet<usize>,
+    removed: BTreeSet<usize>,
+}
+impl Selection {
+    fn reset(&mut self, first: Option<usize>) {
+        *self = Self::default();
+        if let Some(first) = first {
+            self.click(first, false, false);
+        }
+    }
+    fn click(&mut self, hit: usize, ctrl: bool, shift: bool) {
+        if !shift {
+            self.anchor = Some(hit);
+            self.added.clear();
+            self.removed.clear();
+        }
+        if shift {
+            if self.anchor.is_none() || self.last.is_none() {
+                self.anchor = Some(self.last.unwrap_or(hit));
+            }
+            if ctrl && !self.added.is_empty() {
+                self.anchor = self.last;
+                self.added.clear();
+            } else if !ctrl && !self.removed.is_empty() {
+                self.anchor = self.last;
+                self.removed.clear();
+            }
+            let anchor = self.anchor.unwrap_or(hit);
+            let range: BTreeSet<_> = (anchor.min(hit)..=anchor.max(hit)).collect();
+            if ctrl {
+                let removed: Vec<_> = range.intersection(&self.selected).copied().collect();
+                let restored: Vec<_> = self.removed.difference(&range).copied().collect();
+                for index in removed {
+                    self.selected.remove(&index);
+                    self.removed.insert(index);
+                }
+                for index in restored {
+                    self.selected.insert(index);
+                    self.removed.remove(&index);
+                }
+            } else {
+                let added: Vec<_> = range.difference(&self.selected).copied().collect();
+                let restored: Vec<_> = self.added.difference(&range).copied().collect();
+                for index in added {
+                    self.selected.insert(index);
+                    self.added.insert(index);
+                }
+                for index in restored {
+                    self.selected.remove(&index);
+                    self.added.remove(&index);
+                }
+            }
+        } else if ctrl {
+            if !self.selected.remove(&hit) {
+                self.selected.insert(hit);
+            }
+        } else if !self.selected.contains(&hit) {
+            self.selected.clear();
+            self.selected.insert(hit);
+        }
+        self.last = Some(hit);
+    }
+}
+
 pub struct WriteAutocomplete {
     store: Arc<Store>,
     service: ServiceKey,
@@ -95,7 +166,8 @@ pub struct WriteAutocomplete {
     text: String,
     rows: Vec<Suggestion>,
     suggestions: Vec<(String, String)>,
-    highlighted: usize,
+    selections: [Selection; 3],
+    selection_rows: [Vec<(String, CountRange)>; 3],
     tab: Tab,
     context_tags: std::collections::BTreeSet<String>,
     decorations: [[Option<bool>; 3]; 3],
@@ -119,7 +191,8 @@ impl WriteAutocomplete {
             text: String::new(),
             rows: Vec::new(),
             suggestions: Vec::new(),
-            highlighted: 0,
+            selections: std::array::from_fn(|_| Selection::default()),
+            selection_rows: std::array::from_fn(|_| Vec::new()),
             tab: Tab::Tags,
             context_tags: std::collections::BTreeSet::new(),
             decorations: [[None; 3]; 3],
@@ -245,34 +318,104 @@ impl WriteAutocomplete {
     pub fn suggestions(&self) -> &[(String, String)] {
         &self.suggestions
     }
+    fn primary_rows(&self) -> impl Iterator<Item = (usize, &Suggestion)> {
+        self.rows
+            .iter()
+            .enumerate()
+            .filter(|(_, row)| !row.parent_row)
+    }
+    fn logical_index(&self, physical: usize) -> Option<usize> {
+        let row = self.rows.get(physical)?;
+        self.primary_rows()
+            .position(|(_, primary)| primary.tag == row.tag)
+    }
     pub fn highlighted(&self) -> Option<usize> {
-        (!self.rows.is_empty()).then_some(self.highlighted)
+        let logical = self.selections[self.tab.index()].last?;
+        self.primary_rows()
+            .nth(logical)
+            .map(|(physical, _)| physical)
+    }
+    pub fn selection_mask(&self) -> Vec<bool> {
+        let selection = &self.selections[self.tab.index()].selected;
+        self.rows
+            .iter()
+            .enumerate()
+            .map(|(physical, _)| {
+                self.logical_index(physical)
+                    .is_some_and(|logical| selection.contains(&logical))
+            })
+            .collect()
+    }
+    pub fn selected_tags(&self) -> Vec<String> {
+        let selected = &self.selections[self.tab.index()].selected;
+        self.primary_rows()
+            .enumerate()
+            .filter(|(logical, _)| selected.contains(logical))
+            .map(|(_, (_, row))| row.tag.clone())
+            .collect()
+    }
+    /// Clicking never enters a tag; the owner activates the selected batch separately.
+    pub fn click(&mut self, physical: usize, ctrl: bool, shift: bool) {
+        if let Some(logical) = self.logical_index(physical) {
+            self.selections[self.tab.index()].click(logical, ctrl, shift);
+        }
     }
     pub fn move_highlight(&mut self, by: isize) {
-        if let Some(last) = self.rows.len().checked_sub(1) {
-            self.highlighted = self.highlighted.saturating_add_signed(by).min(last);
+        if let Some(last) = self.primary_rows().count().checked_sub(1) {
+            let selection = &mut self.selections[self.tab.index()];
+            let next = selection
+                .last
+                .unwrap_or(0)
+                .saturating_add_signed(by)
+                .min(last);
+            selection.reset(Some(next));
         }
     }
     pub fn chosen(&self, index: Option<usize>) -> Option<String> {
         index
-            .or_else(|| self.highlighted())
             .and_then(|i| self.rows.get(i))
-            .map(|r| r.tag.clone())
-            .or_else(|| Tag::new(&self.text).map(|t| t.as_str().to_owned()))
+            .map(|row| row.tag.clone())
+            .or_else(|| self.selected_tags().into_iter().next())
+            .or_else(|| Tag::new(&self.text).map(|tag| tag.as_str().to_owned()))
+    }
+    /// A double-click retains a selected batch, or selects the clicked new tag.
+    pub fn chosen_tags(&mut self, index: Option<usize>) -> Vec<String> {
+        if let Some(index) = index {
+            if self.logical_index(index).is_none() {
+                return Vec::new();
+            }
+            self.click(index, false, false);
+        }
+        let selected = self.selected_tags();
+        if selected.is_empty() && self.rows.is_empty() {
+            Tag::new(&self.text)
+                .map(|tag| vec![tag.as_str().to_owned()])
+                .unwrap_or_default()
+        } else {
+            selected
+        }
     }
     pub fn fetch(&mut self) {
         self.refresh(true);
     }
     fn refresh(&mut self, manual: bool) {
         self.rows = self.search(manual).unwrap_or_default();
-        self.highlighted = if self.options().select_first_with_count {
-            self.rows
-                .iter()
-                .position(|r| r.counted && !r.parent_row)
-                .unwrap_or(0)
-        } else {
-            0
-        };
+        let keys: Vec<_> = self
+            .primary_rows()
+            .map(|(_, row)| (row.tag.clone(), row.count))
+            .collect();
+        let tab = self.tab.index();
+        if self.selection_rows[tab] != keys {
+            let first = if self.options().select_first_with_count {
+                self.primary_rows()
+                    .position(|(_, row)| row.counted)
+                    .unwrap_or(0)
+            } else {
+                0
+            };
+            self.selections[tab].reset((!keys.is_empty()).then_some(first));
+            self.selection_rows[tab] = keys;
+        }
         self.suggestions = self
             .rows
             .iter()
@@ -552,9 +695,12 @@ impl TagEntry {
         tags
     }
     pub fn enter(&mut self, index: Option<usize>) {
-        if let Some(tag) = self.input.chosen(index) {
-            if self.add_only || !self.tags.remove(&tag) {
-                self.tags.insert(tag);
+        let tags = self.input.chosen_tags(index);
+        if !tags.is_empty() {
+            for tag in tags {
+                if self.add_only || !self.tags.remove(&tag) {
+                    self.tags.insert(tag);
+                }
             }
             self.input.set_context_tags(self.tags.iter().cloned());
             self.input.clear();

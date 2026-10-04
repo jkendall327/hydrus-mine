@@ -34,6 +34,7 @@ export component ManageTagsWindow inherits Window {
     in property <[ListText]> tags;
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
+    in property <[bool]> suggestion-selected;
     in property <int> autocomplete-tab;
     in property <string> error;
     in property <string> question;
@@ -47,6 +48,7 @@ export component ManageTagsWindow inherits Window {
     callback refresh-autocomplete();
     callback entered();
     callback suggestion-chosen(int);
+    callback selection-clicked(int,bool,bool);
     callback context-menu(int,length,length);
     callback domain-menu(bool,length,length);
     in property <string> file-label;
@@ -104,6 +106,7 @@ export component ManageTagsWindow inherits Window {
                     text <=> root.text;
                     suggestions: root.suggestions;
                     highlighted: root.highlighted;
+                    selected: root.suggestion-selected;
                     tab-index: root.autocomplete-tab;
                     tab-chosen(i) => { root.tab-chosen(i); }
                     list-height: root.autocomplete-height;
@@ -112,6 +115,7 @@ export component ManageTagsWindow inherits Window {
                     fetch => { root.fetch(); }
                     move-highlight(by) => { root.move-highlight(by); }
                     chosen(i) => { root.suggestion-chosen(i); }
+                    selection-clicked(i,ctrl,shift) => { root.selection-clicked(i,ctrl,shift); }
                     context-menu(i,x,y) => { root.context-menu(i,x,y); }
                     file-label:root.file-label;tag-label:root.tag-label;
                     domain-menu(tags,x,y)=>{root.domain-menu(tags,x,y);}

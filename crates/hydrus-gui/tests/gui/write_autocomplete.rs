@@ -784,3 +784,139 @@ fn write_domain_buttons_query_counts_and_own_cancelled_location_child() {
     assert_eq!(applied.get(), 0);
     assert!(hydrus_gui::locations_window::last_opened().is_none());
 }
+
+#[test]
+fn selected_batches_stage_in_shared_dialogs_and_closed_owners_ignore_callbacks() {
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let tags = vec![
+        "parity:multi alpha".to_owned(),
+        "parity:multi beta".to_owned(),
+        "parity:multi gamma".to_owned(),
+    ];
+    let saved = tags.clone();
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &settings::FavouriteTags(saved)))
+        .unwrap();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let applied = Rc::new(RefCell::new(Vec::<String>::new()));
+    let open = || {
+        hydrus_gui::write_tag_window::open(
+            &store,
+            key.clone(),
+            &[],
+            "batch tags",
+            &slot,
+            Rc::new({
+                let applied = applied.clone();
+                move |tags| *applied.borrow_mut() = tags
+            }),
+            Rc::new(|| {}),
+        )
+        .unwrap()
+    };
+    let child = open();
+    child.invoke_tab_chosen(1);
+    child.invoke_selection_clicked(2, true, false);
+    assert_eq!(
+        child.get_selected().iter().collect::<Vec<_>>(),
+        vec![true, false, true]
+    );
+    assert_eq!(child.get_tags().row_count(), 0);
+    child.invoke_entered();
+    assert_eq!(
+        child
+            .get_tags()
+            .iter()
+            .map(|row| row.text.to_string())
+            .collect::<Vec<_>>(),
+        vec![tags[0].clone(), tags[2].clone()]
+    );
+    child.invoke_cancel();
+    child.invoke_selection_clicked(1, true, false);
+    child.invoke_chosen(1);
+    child.invoke_apply();
+    assert!(applied.borrow().is_empty());
+    let child = open();
+    assert_eq!(child.get_tags().row_count(), 0);
+    child.invoke_tab_chosen(1);
+    child.invoke_selection_clicked(2, false, true);
+    child.invoke_chosen(1); // Double-click an already selected row activates the batch.
+    child.invoke_apply();
+    assert_eq!(*applied.borrow(), tags);
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    manage.invoke_tab_chosen(1);
+    manage.invoke_selection_clicked(2, false, true);
+    manage.invoke_entered(); // Empty favourites text must enter choices, not apply the dialog.
+    assert!(bound.manage_tags.borrow().is_some());
+    for tag in &tags {
+        assert!(
+            manage
+                .get_tags()
+                .iter()
+                .any(|row| row.text.starts_with(tag.as_str()))
+        );
+    }
+    manage.invoke_cancel();
+    manage.invoke_selection_clicked(0, false, false);
+    manage.invoke_entered();
+    manage.invoke_apply();
+    ui.invoke_manage_tags_selected();
+    let reopened = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    for tag in &tags {
+        assert!(
+            !reopened
+                .get_tags()
+                .iter()
+                .any(|row| row.text.starts_with(tag.as_str()))
+        );
+    }
+    reopened.invoke_cancel();
+    // The separate relationships consumer accepts both sides as staged batches.
+    let top = ui
+        .get_menu_titles()
+        .iter()
+        .position(|row| row.label == "tags")
+        .unwrap();
+    ui.invoke_menu_title_pressed(i32::try_from(top).unwrap(), 0.0, 22.0);
+    let pane = ui.get_menu_panes().row_data(0).unwrap();
+    let at = pane
+        .lines
+        .iter()
+        .position(|row| row.label.starts_with("parents"))
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(at).unwrap(), 0.0, 0.0, 0.0);
+    let relation = bound
+        .tag_relationships
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    relation.invoke_autocomplete_tab(false, 1);
+    relation.invoke_autocomplete_clicked(false, 2, true, false);
+    relation.invoke_enter_tags(false, "".into());
+    assert_eq!(relation.get_left_tags().row_count(), 2);
+    relation.invoke_autocomplete_tab(true, 1);
+    relation.invoke_autocomplete_clicked(true, 2, false, true);
+    relation.invoke_autocomplete_chosen(true, 1);
+    assert_eq!(relation.get_right_tags().row_count(), 3);
+    relation.invoke_cancel();
+    relation.invoke_autocomplete_clicked(false, 1, true, false);
+    relation.invoke_autocomplete_chosen(false, 1);
+    relation.invoke_add();
+    relation.invoke_apply();
+    assert!(bound.tag_relationships.borrow().is_none());
+}

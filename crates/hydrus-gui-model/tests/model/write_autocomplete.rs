@@ -1031,3 +1031,130 @@ fn favourite_options_replay_add_only_choices_and_parent_transaction() {
         reopened.favourite_tags
     );
 }
+
+#[test]
+fn recorded_logical_selection_ranges_parent_hits_and_batch_activation() {
+    let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
+    let (_dir, store) = seeded(&fixture);
+    let snapshot = store.snapshot();
+    let service = snapshot.services.by_name("my tags").unwrap();
+    for (kind, field) in [
+        (RelationKind::Siblings, "siblings"),
+        (RelationKind::Parents, "parents"),
+    ] {
+        tag_relations::apply(
+            &store,
+            kind,
+            fixture[field]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|pair| RelationUpdate {
+                    service: service.id,
+                    left: Tag::new(pair[0].as_str().unwrap()).unwrap(),
+                    right: Tag::new(pair[1].as_str().unwrap()).unwrap(),
+                    action: RelationAction::Add,
+                })
+                .collect(),
+        )
+        .unwrap();
+    }
+    let key = service.key.clone();
+    store
+        .write(move |ctx| {
+            let mut prefs: TagEditingSettings = settings::get(ctx.conn())?;
+            prefs.select_first_with_count = false;
+            prefs.autocomplete_show_parents = true;
+            prefs.autocomplete_expand_parents = true;
+            prefs.autocomplete_show_siblings = true;
+            settings::set(ctx.conn(), &prefs)?;
+            let mut widgets: hydrus_store::tag_display_config::AutocompleteWidgetSettings =
+                settings::get(ctx.conn())?;
+            let mut options = widgets.options(&key);
+            options.write_tag_service = key.clone();
+            widgets.services.insert(key.to_hex(), options);
+            settings::set(ctx.conn(), &widgets)
+        })
+        .unwrap();
+    let mut entry = hydrus_gui_model::write_autocomplete::TagEntry::new(
+        WriteAutocomplete::new(
+            store,
+            service.key.clone(),
+            LocationContext::single(hydrus_core::ServiceKey::new(
+                hydrus_core::service::builtin_keys::MY_FILES,
+            )),
+        ),
+        &[],
+    );
+    entry.input.set_text("parity:multi");
+    let rows: Vec<_> = entry
+        .input
+        .rows()
+        .iter()
+        .map(|row| json!({"tag":row.tag,"text":row.label}))
+        .collect();
+    assert_eq!(json!(rows), fixture["rows"]);
+    for step in fixture["steps"].as_array().unwrap() {
+        match step["action"].as_str().unwrap() {
+            "initial" => {}
+            "click" | "parent_click" => {
+                let index = step["physical"]
+                    .as_u64()
+                    .map(|i| usize::try_from(i).unwrap())
+                    .unwrap_or_else(|| {
+                        entry
+                            .input
+                            .rows()
+                            .iter()
+                            .position(|row| {
+                                row.tag == step["tag"].as_str().unwrap() && !row.parent_row
+                            })
+                            .unwrap()
+                    });
+                entry.input.click(
+                    index,
+                    step["ctrl"].as_bool().unwrap(),
+                    step["shift"].as_bool().unwrap(),
+                );
+            }
+            "activate" => {
+                let mask = entry.input.selection_mask();
+                assert!(mask[1] && mask[2]); // Primary and inherited row share logical selection.
+                entry.input.fetch(); // Repeating a result must preserve the batch.
+                entry.input.decorate(
+                    entry.input.tab(),
+                    hydrus_gui_model::write_tag_menu::Decoration::Expanded,
+                    false,
+                );
+                assert_eq!(json!(entry.input.selected_tags()), step["entered"][0]);
+                entry.enter(None);
+                assert_eq!(json!(entry.tags()), step["entered"][0]);
+                assert_eq!(entry.input.text(), step["text"].as_str().unwrap());
+                continue;
+            }
+            action => panic!("unexpected recorded action {action}"),
+        }
+        assert_eq!(
+            json!(entry.input.selected_tags()),
+            step["selected"],
+            "{step}"
+        );
+        let physical = entry.input.highlighted().unwrap();
+        let logical = entry.input.rows()[..=physical]
+            .iter()
+            .filter(|row| !row.parent_row)
+            .count()
+            - 1;
+        assert_eq!(json!(logical), step["last_hit"]);
+    }
+    // A wholly deselected result must not secretly enter the typed manual tag.
+    entry.input.set_text("parity:multi beta");
+    for index in (0..entry.input.rows().len()).collect::<Vec<_>>() {
+        if entry.input.selection_mask()[index] {
+            entry.input.click(index, true, false);
+        }
+    }
+    let before = entry.tags();
+    entry.enter(None);
+    assert_eq!(entry.tags(), before);
+}
