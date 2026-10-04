@@ -213,12 +213,12 @@ fn expanded_parent_rows_keep_colour_and_activate_their_originating_tag() {
     );
     assert_eq!(
         tags.row_data(child + 1).unwrap().colour,
-        slint::Color::from_rgb(3, 5, 7)
+        slint::Color::from_rgb_u8(3, 5, 7)
     );
     assert_eq!(tags.row_data(child + 2).unwrap().text, "    series:root");
     assert_eq!(
         tags.row_data(child + 2).unwrap().colour,
-        slint::Color::from_rgb(11, 13, 17)
+        slint::Color::from_rgb_u8(11, 13, 17)
     );
     manage.invoke_tag_activated(i32::try_from(child + 1).unwrap());
     manage.invoke_cancel();
