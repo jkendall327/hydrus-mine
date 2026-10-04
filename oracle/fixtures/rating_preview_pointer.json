@@ -1,0 +1,671 @@
+{
+  "cases": [
+    {
+      "side": 0,
+      "opening": {
+        "colours": [
+          [
+            0,
+            [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                80,
+                200,
+                120
+              ]
+            ]
+          ],
+          [
+            1,
+            [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                255,
+                255,
+                255
+              ]
+            ]
+          ],
+          [
+            2,
+            [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                191,
+                191,
+                191
+              ]
+            ]
+          ],
+          [
+            4,
+            [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                95,
+                95,
+                95
+              ]
+            ]
+          ]
+        ],
+        "show_in_thumbnail": false,
+        "show_in_thumbnail_even_when_null": false,
+        "shape": 0,
+        "rating_svg": null,
+        "num_stars": 5,
+        "allow_zero": true,
+        "custom_pad": 3,
+        "show_fraction_beside_stars": 0
+      },
+      "events": [
+        {
+          "action": "press",
+          "x": 2,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.0,
+          "state": 3,
+          "fraction": "0/5",
+          "other_state": 2
+        },
+        {
+          "action": "move",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "held": true,
+          "right": false,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5",
+          "other_state": 2
+        },
+        {
+          "action": "move",
+          "x": -10,
+          "width": 609,
+          "icon": 12,
+          "held": true,
+          "right": false,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5",
+          "other_state": 2
+        },
+        {
+          "action": "release",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5",
+          "other_state": 2
+        },
+        {
+          "action": "move",
+          "x": 121.80000000000001,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5",
+          "other_state": 2
+        },
+        {
+          "action": "press",
+          "x": 79,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.2,
+          "state": 3,
+          "fraction": "1/5",
+          "other_state": 2
+        },
+        {
+          "action": "release",
+          "x": 79,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.2,
+          "state": 3,
+          "fraction": "1/5",
+          "other_state": 2
+        },
+        {
+          "action": "press",
+          "x": 607,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 1.0,
+          "state": 3,
+          "fraction": "5/5",
+          "other_state": 2
+        },
+        {
+          "action": "release",
+          "x": 607,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 1.0,
+          "state": 3,
+          "fraction": "5/5",
+          "other_state": 2
+        },
+        {
+          "action": "press",
+          "x": 0,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5",
+          "other_state": 2
+        },
+        {
+          "action": "release",
+          "x": 0,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5",
+          "other_state": 2
+        },
+        {
+          "action": "press",
+          "x": 304.5,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": true,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5",
+          "other_state": 2
+        }
+      ],
+      "example_value": {}
+    },
+    {
+      "side": 1,
+      "opening": {
+        "colours": [
+          [
+            0,
+            [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                80,
+                200,
+                120
+              ]
+            ]
+          ],
+          [
+            1,
+            [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                255,
+                255,
+                255
+              ]
+            ]
+          ],
+          [
+            2,
+            [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                191,
+                191,
+                191
+              ]
+            ]
+          ],
+          [
+            4,
+            [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                95,
+                95,
+                95
+              ]
+            ]
+          ]
+        ],
+        "show_in_thumbnail": false,
+        "show_in_thumbnail_even_when_null": false,
+        "shape": 0,
+        "rating_svg": null,
+        "num_stars": 5,
+        "allow_zero": true,
+        "custom_pad": 3,
+        "show_fraction_beside_stars": 1
+      },
+      "events": [
+        {
+          "action": "press",
+          "x": 2,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.0,
+          "state": 3,
+          "fraction": "0/5",
+          "other_state": 2
+        },
+        {
+          "action": "move",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "held": true,
+          "right": false,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5",
+          "other_state": 2
+        },
+        {
+          "action": "move",
+          "x": -10,
+          "width": 609,
+          "icon": 12,
+          "held": true,
+          "right": false,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5",
+          "other_state": 2
+        },
+        {
+          "action": "release",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5",
+          "other_state": 2
+        },
+        {
+          "action": "move",
+          "x": 121.80000000000001,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5",
+          "other_state": 2
+        },
+        {
+          "action": "press",
+          "x": 3,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.0,
+          "state": 3,
+          "fraction": "0/5",
+          "other_state": 2
+        },
+        {
+          "action": "release",
+          "x": 3,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.0,
+          "state": 3,
+          "fraction": "0/5",
+          "other_state": 2
+        },
+        {
+          "action": "press",
+          "x": 607,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 1.0,
+          "state": 3,
+          "fraction": "5/5",
+          "other_state": 2
+        },
+        {
+          "action": "release",
+          "x": 607,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 1.0,
+          "state": 3,
+          "fraction": "5/5",
+          "other_state": 2
+        },
+        {
+          "action": "press",
+          "x": 0,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5",
+          "other_state": 2
+        },
+        {
+          "action": "release",
+          "x": 0,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5",
+          "other_state": 2
+        },
+        {
+          "action": "press",
+          "x": 304.5,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": true,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5",
+          "other_state": 2
+        }
+      ],
+      "example_value": {}
+    },
+    {
+      "side": 2,
+      "opening": {
+        "colours": [
+          [
+            0,
+            [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                80,
+                200,
+                120
+              ]
+            ]
+          ],
+          [
+            1,
+            [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                255,
+                255,
+                255
+              ]
+            ]
+          ],
+          [
+            2,
+            [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                191,
+                191,
+                191
+              ]
+            ]
+          ],
+          [
+            4,
+            [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                95,
+                95,
+                95
+              ]
+            ]
+          ]
+        ],
+        "show_in_thumbnail": false,
+        "show_in_thumbnail_even_when_null": false,
+        "shape": 0,
+        "rating_svg": null,
+        "num_stars": 5,
+        "allow_zero": true,
+        "custom_pad": 3,
+        "show_fraction_beside_stars": 2
+      },
+      "events": [
+        {
+          "action": "press",
+          "x": 2,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.0,
+          "state": 3,
+          "fraction": "0/5",
+          "other_state": 2
+        },
+        {
+          "action": "move",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "held": true,
+          "right": false,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5",
+          "other_state": 2
+        },
+        {
+          "action": "move",
+          "x": -10,
+          "width": 609,
+          "icon": 12,
+          "held": true,
+          "right": false,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5",
+          "other_state": 2
+        },
+        {
+          "action": "release",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5",
+          "other_state": 2
+        },
+        {
+          "action": "move",
+          "x": 121.80000000000001,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5",
+          "other_state": 2
+        },
+        {
+          "action": "press",
+          "x": 79,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.2,
+          "state": 3,
+          "fraction": "1/5",
+          "other_state": 2
+        },
+        {
+          "action": "release",
+          "x": 79,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.2,
+          "state": 3,
+          "fraction": "1/5",
+          "other_state": 2
+        },
+        {
+          "action": "press",
+          "x": 607,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 1.0,
+          "state": 3,
+          "fraction": "5/5",
+          "other_state": 2
+        },
+        {
+          "action": "release",
+          "x": 607,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 1.0,
+          "state": 3,
+          "fraction": "5/5",
+          "other_state": 2
+        },
+        {
+          "action": "press",
+          "x": 0,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5",
+          "other_state": 2
+        },
+        {
+          "action": "release",
+          "x": 0,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5",
+          "other_state": 2
+        },
+        {
+          "action": "press",
+          "x": 304.5,
+          "width": 609,
+          "icon": 12,
+          "held": false,
+          "right": true,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5",
+          "other_state": 2
+        }
+      ],
+      "example_value": {}
+    }
+  ],
+  "original_unchanged": true
+}

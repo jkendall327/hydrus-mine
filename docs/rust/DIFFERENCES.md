@@ -1965,8 +1965,10 @@ star-count changes repaint the stored fraction; the allow-zero checkbox changes
 the saved service configuration, without changing the opening preview conversion.
 This includes the one-star boundary: the preview keeps its opening nonzero scale,
 while the saved one-star configuration separately normalizes to allow zero.
-Numerical samples currently respond to presses on the star graphics; Qt's
-drag-to-rate input and clicks on the adjacent fraction text remain unavailable.
+Numerical samples now share one whole-widget hit area, including fraction text
+and blank space, with held-left drag input. The opening fraction-side conversion
+is retained, matching Qt; dragging outside preserves the last valid value, while
+an outside press clears it. These pointer routes have a separate actual Qt replay.
 This implements the local example-panel leaf; broader service management and
 rating sizing/preferences remain partial.
 

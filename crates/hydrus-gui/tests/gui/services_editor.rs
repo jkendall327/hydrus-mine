@@ -814,3 +814,137 @@ fn one_star_rating_preview_replays_four_samples_and_preserves_saved_normalizatio
     );
     ui.hide().unwrap();
 }
+
+#[test]
+fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area() {
+    use hydrus_gui::{services_editor_window, services_editor_window::Slots};
+    use hydrus_store::{services, services::ServiceKind};
+    use slint::platform::{PointerEventButton, WindowEvent};
+    use std::rc::Rc;
+
+    let (_dirs, store) = crate::subscriptions::store();
+    let reference = hydrus_testkit::fixture_json("rating_preview_pointer.json");
+    let windows = headless::init();
+    for case in reference["cases"].as_array().unwrap() {
+        let side = u8::try_from(case["side"].as_u64().unwrap()).unwrap();
+        let service = store.snapshot().services.by_name("stars").unwrap().clone();
+        let id = service.id;
+        let mut kind = service.kind.clone();
+        let ServiceKind::RatingNumerical(config) = &mut kind else {
+            unreachable!()
+        };
+        config.num_stars = 5;
+        config.allow_zero = true;
+        config.custom_pad = 3;
+        config.show_fraction_beside_stars = side;
+        store
+            .write_and_refresh(move |ctx| services::update_config(ctx.conn(), id, &kind))
+            .unwrap();
+        let before = store.snapshot().services.by_name("stars").unwrap().clone();
+        let slots = Slots::default();
+        let manage = services_editor_window::open(&store, &slots, Rc::new(|| {})).unwrap();
+        let index = manage
+            .get_rows()
+            .iter()
+            .position(|r| r.cells.row_data(0).unwrap() == "stars")
+            .unwrap();
+        manage.invoke_row_clicked(i32::try_from(index).unwrap(), false, false);
+        manage.invoke_edit_clicked();
+        let edit = slots.edit.borrow().as_ref().unwrap().clone_strong();
+        let last = (0..100)
+            .take_while(|&n| windows.get(n).is_some())
+            .last()
+            .unwrap();
+        let window = windows.get(last).unwrap();
+        for _ in 0..3 {
+            headless::render(&window, 640, 1000);
+        }
+        let x = edit.get_first_preview_x();
+        let y = edit.get_first_preview_y() + edit.get_first_preview_height() / 2.0;
+        let width = edit.get_first_preview_width();
+        assert!(width > 200.0 && y > 0.0 && y < 1000.0);
+        let move_to = |at: f32| {
+            edit.window().dispatch_event(WindowEvent::PointerMoved {
+                position: slint::LogicalPosition::new(x + at, y),
+            });
+            headless::render(&window, 640, 1000);
+        };
+        let press = |at: f32, button| {
+            edit.window().dispatch_event(WindowEvent::PointerMoved {
+                position: slint::LogicalPosition::new(x + at, y),
+            });
+            edit.window().dispatch_event(WindowEvent::PointerPressed {
+                position: slint::LogicalPosition::new(x + at, y),
+                button,
+            });
+            headless::render(&window, 640, 1000);
+        };
+        let release = |at: f32| {
+            edit.window().dispatch_event(WindowEvent::PointerReleased {
+                position: slint::LogicalPosition::new(x + at, y),
+                button: PointerEventButton::Left,
+            });
+            headless::render(&window, 640, 1000);
+        };
+        press(2.0, PointerEventButton::Left);
+        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "0/5");
+        move_to(width * 0.85);
+        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "4/5");
+        if side == 2 {
+            let pixels = headless::render(&window, 640, 1000);
+            assert!(pixels.chunks_exact(4).any(|pixel| pixel[3] == 255));
+            assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                    .join("service-rating-pointer.png"),
+                &pixels,
+                640,
+                1000,
+            )
+            .unwrap();
+        }
+        move_to(-10.0);
+        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "4/5");
+        release(width * 0.85);
+        move_to(width * 0.2);
+        assert_eq!(
+            edit.get_examples().row_data(0).unwrap().fraction,
+            "4/5",
+            "hover after release must not rate"
+        );
+        assert_eq!(edit.get_examples().row_data(1).unwrap().fraction, "-/5");
+        if side != 0 {
+            let fraction = edit.get_first_preview_fraction_x() - x + 3.0;
+            press(fraction, PointerEventButton::Left);
+            release(fraction);
+            // Clicking the actual text is handled by the same stretched widget,
+            // not treated as an isolated star/fraction segment.
+            assert_eq!(
+                edit.get_examples().row_data(0).unwrap().fraction,
+                if side == 1 { "0/5" } else { "1/5" }
+            );
+        }
+        press(width - 2.0, PointerEventButton::Left);
+        release(width - 2.0);
+        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "5/5");
+        press(0.0, PointerEventButton::Left);
+        release(0.0);
+        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "-/5");
+        press(width * 0.5, PointerEventButton::Right);
+        edit.window().dispatch_event(WindowEvent::PointerReleased {
+            position: slint::LogicalPosition::new(x + width * 0.5, y),
+            button: PointerEventButton::Right,
+        });
+        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "-/5");
+        manage.invoke_cancel_clicked();
+        let retired = edit.get_examples().row_data(0).unwrap().fraction;
+        edit.invoke_preview_pointer(0, false, width * 0.85, width, 12.0, true);
+        edit.invoke_apply_clicked();
+        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, retired);
+        assert!(slots.edit.borrow().is_none());
+        assert_eq!(
+            store.snapshot().services.by_name("stars").unwrap().as_ref(),
+            before.as_ref()
+        );
+    }
+}

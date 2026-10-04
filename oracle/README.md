@@ -158,3 +158,10 @@ colour/shape/star-count/padding/fraction updates, opening numerical conversion,
 empty example persistence values and unchanged original services. The counter's
 real edit-value dialog receives scripted accept/cancel decisions. Qt example PNGs
 are saved beside `service_rating_preview.json`; no fixture service edits commit.
+
+
+`record_rating_preview_pointer.py` dispatches real Qt numerical example pointer
+presses, held left-button motion, outside movement/presses, release, ordinary
+motion and clicks on painted fraction text, for all three opening fraction sides.
+It records whole-widget positions/dimensions, fractions and the unchanged second
+sample, preserves original fixture services, and saves a populated drag-state PNG.

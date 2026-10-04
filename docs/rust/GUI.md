@@ -2929,3 +2929,9 @@ existing background/pop-in hover consumers and checkerboard/greenscreen drawing.
 Menu callbacks belong to their viewer slot and retire on close. The eight actual
 Qt combinations are recorded in `oracle/fixtures/viewer_eye_menu.json`; authored
 model/native/store regressions cover staging, reopening and real consumers.
+
+Numerical rating examples accept left-button dragging and clicks on either
+fraction label through the same whole-widget control as their star graphics.
+Dragging outside keeps the last valid sample; an outside press clears it. Hover
+motion after release does not change a rating, and each context remains independent.
+The pointer-route Qt recording is `rating_preview_pointer.json`.
