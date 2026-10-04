@@ -1457,7 +1457,7 @@ closed pages (Ctrl+U reopens them one at a time), managing tags on tag
 repositories (pending and petitioning), dragging thumbnails, the rest of
 the thumbnails' menu, system
 predicates in the autocomplete, the rest of the viewer's hover frames
-(the top one's zoom options, volume, shortcuts and view options menus,
+(the top one's zoom options, volume, shortcuts and deeper view-options actions,
 window move and embedded metadata buttons, and its tooltips; editing,
 copying and hiding notes), the volume shortcuts
 other than the global mute, the scanbar's buffering
@@ -2900,3 +2900,15 @@ status transition from deleted to unknown are in `service_deleted.json`.
 Opening another service review cancels the previous owner's pending question;
 retained callbacks from that retired owner cannot clear records or close the
 replacement review.
+
+
+The browser viewer's eye button now opens view options. The three Media Viewer
+Hovers collapse controls stage independently in Options, save on Apply, and
+reopen with their saved values. A checked control puts window, hovers or rendering
+rows in a submenu; an unchecked control puts that section's rows directly in the
+menu. Each opening reads current preferences, including in an already-open
+viewer. Actions reach native always-on-top/frame properties, new-viewer defaults,
+existing background/pop-in hover consumers and checkerboard/greenscreen drawing.
+Menu callbacks belong to their viewer slot and retire on close. The eight actual
+Qt combinations are recorded in `oracle/fixtures/viewer_eye_menu.json`; authored
+model/native/store regressions cover staging, reopening and real consumers.

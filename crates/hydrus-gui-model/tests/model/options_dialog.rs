@@ -1958,3 +1958,71 @@ fn export_default_directory_matches_recorded_blank_literal_and_portable_paths() 
             .to_string_lossy()
     );
 }
+
+#[test]
+fn eye_menu_preferences_follow_all_reference_combinations_without_saving_detached_edits() {
+    use hydrus_gui_model::options::{Editor, Row as EditorRow};
+    use serde_json::json;
+
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("viewer_eye_menu.json");
+    let (_dirs, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    let eye = &settings.viewer_eye_menu;
+    assert_eq!(
+        json!([
+            eye.collapse_window,
+            eye.collapse_hovers,
+            eye.collapse_rendering
+        ]),
+        fixture["initial"]
+    );
+    let mut editor = Editor::new(settings.clone());
+    let page = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "media viewer hovers")
+        .unwrap();
+    editor.show_page(page);
+    let rows: Vec<_> = fixture["labels"].as_array().unwrap().iter().map(|label| {
+        editor.rows().iter().position(|row| matches!(row, EditorRow::Opt {option,..} if option.label == label.as_str().unwrap())).unwrap()
+    }).collect();
+    for event in fixture["events"].as_array().unwrap() {
+        for (row, value) in rows.iter().zip(event["values"].as_array().unwrap()) {
+            editor.check(*row, value.as_bool().unwrap());
+        }
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty(), "{problems:?}");
+        let eye = applied.viewer_eye_menu;
+        assert_eq!(
+            json!([
+                eye.collapse_window,
+                eye.collapse_hovers,
+                eye.collapse_rendering
+            ]),
+            event["stored"]
+        );
+        assert_eq!(store.read(Settings::load).unwrap(), settings);
+    }
+    // The existing Options storage merge preserves live eye-menu defaults,
+    // even when the detached Options snapshot changes a collapse flag.
+    let mut applied = settings.clone();
+    applied.viewer_eye_menu.collapse_window = false;
+    let baseline = settings.clone();
+    store
+        .write(move |ctx| {
+            let mut live: hydrus_store::settings::ViewerEyeMenuSettings =
+                hydrus_store::settings::get(ctx.conn())?;
+            live.start_frameless = true;
+            hydrus_store::settings::set(ctx.conn(), &live)?;
+            applied.save(ctx.conn(), &baseline)
+        })
+        .unwrap();
+    let saved = store.read(Settings::load).unwrap().viewer_eye_menu;
+    assert!(!saved.collapse_window);
+    assert!(saved.start_frameless);
+    assert_eq!(
+        saved.collapse_hovers,
+        settings.viewer_eye_menu.collapse_hovers
+    );
+}

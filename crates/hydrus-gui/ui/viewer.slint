@@ -1,3 +1,4 @@
+import { ViewerEyeMenu, ViewerEyeButton } from "viewer_eye_menu.slint";
 // The media viewer's window: one file, at its default zoom (fitted to the
 // window, by default). Right and left (or down and up, page down and up,
 // or the mouse wheel) move through the page's files, home and end to the
@@ -122,6 +123,15 @@ import { TransparencyBackdrop } from "transparency_backdrop.slint";
 
 export component MediaViewerWindow inherits Window {
     title: root.caption;
+    in-out property <bool> viewer-window-top;
+    in-out property <bool> viewer-top-while-playing;
+    in-out property <bool> viewer-window-frameless;
+    in property <bool> media-playing;
+    always-on-top: root.viewer-top-while-playing ? root.media-playing : root.viewer-window-top;
+    no-frame: root.viewer-window-frameless;
+    in property <ViewerEyeMenu> eye-menu;
+    callback eye-menu-requested();
+    callback eye-menu-chosen(int);
     preferred-width: 1000px;
     preferred-height: 750px;
     background: #202020;
@@ -1261,6 +1271,11 @@ export component MediaViewerWindow inherits Window {
                             HoverButton {
                                 icon: @image-url("../../../static/drag.png");
                                 clicked => { root.show-in-file-browser(); }
+                            }
+                            ViewerEyeButton {
+                                menu: root.eye-menu;
+                                requested => { root.eye-menu-requested(); }
+                                chosen(id) => { root.eye-menu-chosen(id); }
                             }
                             HoverButton {
                                 icon: @image-url("../../../static/stop.png");

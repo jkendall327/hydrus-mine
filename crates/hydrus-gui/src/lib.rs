@@ -120,6 +120,7 @@ mod unlock;
 mod viewer;
 pub mod viewer_closing;
 pub mod viewer_cursor;
+mod viewer_eye_menu;
 pub mod viewer_focus;
 pub mod viewer_menu;
 mod viewer_presentation;
@@ -4626,6 +4627,15 @@ fn open_viewer(
         hydrus_core::CanvasType::MediaViewer,
     );
     let model = Rc::new(RefCell::new(model));
+    viewer_eye_menu::bind(
+        &window,
+        model.borrow().store(),
+        slot,
+        Rc::new({
+            let model = model.clone();
+            move || model.borrow().current()
+        }),
+    );
     let playback = playback::Playback::for_store(model.borrow().store().clone());
     let animator = animation::Animator::for_store(model.borrow().store().clone());
     // (where it opens, and how big: fullscreen, by hydrus's default)
@@ -5005,18 +5015,28 @@ fn open_viewer(
         let scanbar = scanbar.clone();
         let show_scanbar = show_scanbar.clone();
         let show_frame = show_frame.clone();
-        move || match scanbar.get() {
-            Some((_, false)) => {
-                if let Some(position) = playback.position_ms() {
-                    show_scanbar(position);
-                }
+        let weak = window.as_weak();
+        move || {
+            if let Some(window) = weak.upgrade() {
+                window.set_media_playing(match scanbar.get() {
+                    Some((_, false)) => !playback.paused(),
+                    Some((_, true)) => animator.status().is_some_and(|status| !status.paused),
+                    None => false,
+                });
             }
-            Some((_, true)) => {
-                if let Some(status) = animator.status() {
-                    show_frame(status.index, status.at_ms);
+            match scanbar.get() {
+                Some((_, false)) => {
+                    if let Some(position) = playback.position_ms() {
+                        show_scanbar(position);
+                    }
                 }
+                Some((_, true)) => {
+                    if let Some(status) = animator.status() {
+                        show_frame(status.index, status.at_ms);
+                    }
+                }
+                None => {}
             }
-            None => {}
         }
     });
     window.on_scan({
