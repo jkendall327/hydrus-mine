@@ -2212,8 +2212,42 @@ impl Editor {
         }
     }
 
-    /// The suggestions whose text has `query` in it, ignoring case (as the
-    /// reference's completer matches); none for no query.
+    /// Resolve service controls when opening, as `BetterChoice.SetValue` falls
+    /// back to its first item if a service has been removed. Capture their
+    /// displayed service names for the options search at the same time.
+    pub fn resolve_tag_services(&mut self, store: &hydrus_store::Store) {
+        for (page_index, page) in self.pages.iter().enumerate() {
+            for (option, value) in page.options().iter().zip(&mut self.values[page_index]) {
+                let (Kind::TagService { combined }, Value::TagService(key)) = (&option.kind, value)
+                else {
+                    continue;
+                };
+                let choices = tag_service_choices(store, *combined);
+                let chosen = choices
+                    .iter()
+                    .find(|(service, _)| service == &*key)
+                    .or_else(|| choices.first());
+                if let Some((service, name)) = chosen {
+                    *key = service.clone();
+                    let label = format!("{} ({})", option.label, page.name);
+                    if let Some(row) = self
+                        .suggestions
+                        .iter()
+                        .find(|suggestion| suggestion.text == label)
+                        .map(|suggestion| suggestion.row)
+                    {
+                        self.suggestions.push(Suggestion {
+                            text: format!("{name} ({})", page.name),
+                            page: page_index,
+                            row,
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    /// Suggestions containing the query, ignoring case; none for no query.
     pub fn search(&self, query: &str) -> Vec<&Suggestion> {
         let query = query.to_lowercase();
         if query.is_empty() {

@@ -37,10 +37,13 @@ def record(session):
                 create('default service recording')
             options.SetKey('default_tag_service_search_page', b'missing service')
             create('missing default recording')
+            missing_panel = FileSearchPanel.FileSearchPanel(controller.gui, options)
+            missing_control = missing_panel._default_tag_service_search_page.GetValue().hex()
+            missing_panel.deleteLater()
         finally:
             options.SetKey('default_tag_service_search_page', bytes.fromhex(initial))
             panel.deleteLater()
-        return {'initial': initial, 'choices': choices, 'events': events}
+        return {'initial': initial, 'choices': choices, 'events': events, 'missing_control': missing_control}
     return session.controller.CallBlockingToQt(session.controller.gui, qt)
 
 

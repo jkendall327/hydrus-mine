@@ -230,7 +230,9 @@ pub(crate) fn open(
         .map_err(|e| format!("could not read the options: {e}"))?;
     let window = OptionsWindow::new().map_err(|e| e.to_string())?;
     window.set_search_at_top(settings.options_preferences.search_at_top);
-    let editor = Rc::new(RefCell::new(Editor::new(settings)));
+    let mut editor = Editor::new(settings);
+    editor.resolve_tag_services(store);
+    let editor = Rc::new(RefCell::new(editor));
     let regex_slot: crate::regex_favourites_window::Slot = Rc::default();
     let names: Vec<StandardListViewItem> = editor
         .borrow()

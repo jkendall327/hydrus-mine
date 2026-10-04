@@ -1355,3 +1355,42 @@ fn default_search_service_option_changes_new_pages_and_missing_keys_fall_back() 
         );
     }
 }
+
+#[test]
+fn removed_default_service_falls_back_in_options_and_waits_for_apply() {
+    use hydrus_store::settings::{SearchDefaults, get, set};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    store
+        .write(|ctx| {
+            let mut defaults = get::<SearchDefaults>(ctx.conn())?;
+            defaults.tag_service = hydrus_core::ServiceKey::new(b"missing service".to_vec());
+            set(ctx.conn(), &defaults)
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    for apply in [false, true] {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "file search");
+        assert_eq!(
+            row(&window, "Default tag service in search pages:").1.index,
+            0
+        );
+        if apply {
+            window.invoke_apply();
+        } else {
+            window.invoke_cancel();
+        }
+        assert_eq!(
+            store
+                .read(get::<SearchDefaults>)
+                .unwrap()
+                .tag_service
+                .as_bytes()
+                == hydrus_core::service::builtin_keys::COMBINED_TAG,
+            apply
+        );
+    }
+}

@@ -882,3 +882,38 @@ fn tag_service_controls_match_reference_and_remember_interlock() {
         );
     }
 }
+
+#[test]
+fn removed_service_choices_clamp_drafts_and_service_names_are_searchable() {
+    use hydrus_gui_model::options::Editor;
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("search_default_service.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let mut settings = store.read(Settings::load).unwrap();
+    settings.search_defaults.tag_service =
+        hydrus_core::ServiceKey::new(b"missing service".to_vec());
+    let mut editor = Editor::new(settings);
+    editor.resolve_tag_services(&store);
+    let (after, before, problems) = editor.applied();
+    assert!(problems.is_empty());
+    assert_eq!(
+        after.search_defaults.tag_service.to_hex(),
+        fixture["missing_control"].as_str().unwrap()
+    );
+    assert_ne!(
+        after.search_defaults.tag_service,
+        before.search_defaults.tag_service
+    );
+    assert!(
+        editor
+            .search("all known tags")
+            .iter()
+            .any(|suggestion| suggestion.text == "all known tags (file search)")
+    );
+    assert!(
+        editor
+            .search("my tags")
+            .iter()
+            .any(|suggestion| suggestion.text == "my tags (tag editing)")
+    );
+}
