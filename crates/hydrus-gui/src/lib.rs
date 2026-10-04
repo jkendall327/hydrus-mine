@@ -192,6 +192,8 @@ pub struct Bound {
     pub tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     /// Display/search or relationship application configuration.
     pub tag_display: Rc<RefCell<Option<TagDisplayWindow>>>,
+    /// The global tag migration window while one is open.
+    pub tag_migration: tag_migration_window::Slot,
     /// The manage notes dialog while one is open.
     pub manage_notes: Rc<RefCell<Option<ManageNotesWindow>>>,
     /// The manage ratings dialog while one is open.
@@ -962,6 +964,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
     let tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>> = Rc::default();
     let tag_display: Rc<RefCell<Option<TagDisplayWindow>>> = Rc::default();
+    let tag_migration = tag_migration_window::Slot::default();
     let tags_changed: Rc<dyn Fn()> = Rc::new({
         let page = page.clone();
         let shown = shown.clone();
@@ -1326,6 +1329,41 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 })
             },
+            tag_migrate: Rc::new({
+                let slot = tag_migration.clone();
+                let pages = pages.clone();
+                let changed: Rc<dyn Fn()> = Rc::new({
+                    let pages = pages.clone();
+                    let shown = shown.clone();
+                    let rows = rows.clone();
+                    let viewer = viewer.clone();
+                    let manage_tags = manage_tags.clone();
+                    move || {
+                        for page in pages.borrow().open_pages() {
+                            page.borrow_mut().refresh_tags();
+                        }
+                        rows.forget_files();
+                        shown(false);
+                        if let Some(window) = viewer.borrow().as_ref() {
+                            window.invoke_refresh_tags();
+                        }
+                        if let Some(window) = manage_tags.borrow().as_ref() {
+                            window.invoke_refresh_autocomplete();
+                        }
+                    }
+                });
+                move || {
+                    let store = pages.borrow().store().clone();
+                    let key = hydrus_core::ServiceKey::new(
+                        hydrus_core::service::builtin_keys::MY_TAGS.to_vec(),
+                    );
+                    if let Err(error) =
+                        tag_migration_window::open(&store, &key, Vec::new(), &slot, changed.clone())
+                    {
+                        eprintln!("could not open tag migration: {error}");
+                    }
+                }
+            }),
             tag_relationships: {
                 let slot = tag_relationships.clone();
                 let pages = pages.clone();
@@ -3092,6 +3130,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         manage_tags,
         tag_relationships,
         tag_display,
+        tag_migration,
         manage_notes,
         manage_ratings,
         manage_times,

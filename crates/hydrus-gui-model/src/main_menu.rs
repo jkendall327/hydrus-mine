@@ -122,6 +122,8 @@ pub enum Command {
     /// Display/search (false) or relationship application (true).
     TagDisplay(bool),
     TagRelationships(hydrus_store::display::RelationKind),
+    /// Open the service-to-service tag migration window.
+    TagMigrate,
     /// Copy a label's text (the reference's `AppendMenuLabel`).
     Copy(String),
     /// An entry of a window's own popup menu: its index among that menu's
@@ -948,7 +950,7 @@ fn tags_menu() -> Entry {
     menu(
         "&tags",
         vec![
-            todo(dots("migrate")),
+            item(dots("migrate"), Command::TagMigrate),
             SEP,
             item(dots("display/search"), Command::TagDisplay(false)),
             SEP,

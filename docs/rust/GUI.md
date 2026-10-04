@@ -1558,7 +1558,7 @@ commands, and render the review, rules and current-jobs windows.
 
 ## Service-to-service tag migration
 
-Service review's local/repository tag pages and Manage Tags' selected files open
+Tags > migrate, service review's local/repository tag pages and Manage Tags' selected files open
 "migrate tags…". Choose mappings, siblings or parents; a real source and
 destination; current/deleted source content (also pending or current and pending
 for repositories); and the actions available for the destination. Local services

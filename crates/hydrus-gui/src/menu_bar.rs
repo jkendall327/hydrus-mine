@@ -23,6 +23,8 @@ pub(crate) struct Hooks {
     /// Open the siblings or parents editor.
     pub tag_display: Rc<dyn Fn(bool)>,
     pub tag_relationships: Rc<dyn Fn(hydrus_store::display::RelationKind)>,
+    /// Open tag migration without a selected-file restriction.
+    pub tag_migrate: Rc<dyn Fn()>,
     pub pages: Rc<RefCell<Pages>>,
     pub network_data: crate::network_data_window::Slots,
     pub change_pages: ChangePages,
@@ -602,6 +604,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         }
         Command::TagDisplay(application) => (hooks.tag_display)(application),
         Command::TagRelationships(kind) => (hooks.tag_relationships)(kind),
+        Command::TagMigrate => (hooks.tag_migrate)(),
         Command::ManageDownloaderDefinitions(classes) => {
             (hooks.manage_downloader_definitions)(classes);
         }
