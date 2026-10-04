@@ -1884,35 +1884,6 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "media viewer",
             vec![
                 boxed(
-                    "closing focus",
-                    vec![
-                        check(
-                            "When closing the media viewer, re-select original search page: ",
-                            |settings| settings.viewer_closing.reselect_page,
-                            |settings, value| settings.viewer_closing.reselect_page = value,
-                        ),
-                        check(
-                            "When closing the media viewer, tell original search page to select exit media: ",
-                            |settings| settings.viewer_closing.select_exit_media,
-                            |settings, value| {
-                                settings.viewer_closing.select_exit_media = value;
-                            },
-                        ),
-                        check(
-                            "ADVANCED: When closing the media viewer with the above focusing options, activate Main GUI: ",
-                            |settings| settings.viewer_closing.activate_focusing,
-                            |settings, value| {
-                                settings.viewer_closing.activate_focusing = value;
-                            },
-                        ),
-                        check(
-                            "DEBUG: When closing the media viewer at any time, activate Main GUI: ",
-                            |settings| settings.viewer_closing.activate_always,
-                            |settings, value| settings.viewer_closing.activate_always = value,
-                        ),
-                    ],
-                ),
-                boxed(
                     "mouse behaviour",
                     vec![
                         check(
@@ -2003,6 +1974,35 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             none("do not use", 50, (1, 500), Some("%")),
                             |s| s.slideshow.long_overspill_percentage,
                             |s, v| s.slideshow.long_overspill_percentage = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "closing focus",
+                    vec![
+                        check(
+                            "When closing the media viewer, re-select original search page: ",
+                            |settings| settings.viewer_closing.reselect_page,
+                            |settings, value| settings.viewer_closing.reselect_page = value,
+                        ),
+                        check(
+                            "When closing the media viewer, tell original search page to select exit media: ",
+                            |settings| settings.viewer_closing.select_exit_media,
+                            |settings, value| {
+                                settings.viewer_closing.select_exit_media = value;
+                            },
+                        ),
+                        check(
+                            "ADVANCED: When closing the media viewer with the above focusing options, activate Main GUI: ",
+                            |settings| settings.viewer_closing.activate_focusing,
+                            |settings, value| {
+                                settings.viewer_closing.activate_focusing = value;
+                            },
+                        ),
+                        check(
+                            "DEBUG: When closing the media viewer at any time, activate Main GUI: ",
+                            |settings| settings.viewer_closing.activate_always,
+                            |settings, value| settings.viewer_closing.activate_always = value,
                         ),
                     ],
                 ),
