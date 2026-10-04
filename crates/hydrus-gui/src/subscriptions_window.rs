@@ -32,9 +32,10 @@ use crate::subscriptions_dialog::{
 use crate::subscriptions_list::ShortSummary;
 use crate::{SubscriptionGalleryWindow, SubscriptionsWindow, TableRow, Tick};
 
-/// What a question waits on.
+/// The reference warns before using a custom overwrite with several selected rows.
 const MULTIPLE_FAVOURITE_LOAD: &str = "Hey, multiple items in the subscriptions list are selected. I am only going to do this on the topmost selected.  If you need to do this to multiple entries, set up one exactly how you want and then copy/replace-paste to the rest.";
 
+/// What a question waits on.
 enum Asking {
     FavouriteLoad(String),
     Delete,
@@ -898,7 +899,7 @@ pub(crate) fn open(
         move || refresh()
     });
     window.on_favourite({ let state = state.clone(); let targets = targets.clone(); let favourites = favourites.clone(); let change = change.clone(); let active = active.clone(); let refresh = refresh_favourites.clone(); move |action, name| {
-        if !active.get() || favourites.busy() { return; }
+        if !active.get() || favourites.busy() || state.borrow().asking.is_some() { return; }
         if action == 0 || action == 1 {
             let keys = state.borrow().dialog.selected(now());
             if keys.is_empty() { change(&|open| open.asking = Some(Asking::Information("Hey, nothing is selected in the subscriptions list--select something and try loading again.".into()))); return; }

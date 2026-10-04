@@ -197,7 +197,7 @@ export component SubscriptionsWindow inherits Window {
 
     forward-focus: keys;
     Timer {
-        interval: 2s;
+        interval: 3s;
         running: root.import-status != "";
         triggered => { root.import-status = ""; }
     }
