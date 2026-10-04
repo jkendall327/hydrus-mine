@@ -8,7 +8,7 @@
 use std::sync::Arc;
 
 use serde_json::Value as Json;
-use slint::Model as _;
+use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_core::search::context::{LocationContext, TagContext};
 use hydrus_core::service::builtin_keys;
@@ -1271,7 +1271,7 @@ fn imported_predicate_defaults_reach_panels_and_reset_never_resurrects_legacy_va
         &destination.path().join(hydrus_store::store::DB_FILE_NAME),
     )
     .unwrap();
-    let store = Arc::new(Store::open(destination.path()).unwrap());
+    let store = Store::open(destination.path()).unwrap();
     assert_eq!(
         store
             .read(hydrus_store::settings::get::<CustomDefaults>)
