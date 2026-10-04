@@ -71,7 +71,7 @@ fn the_options_window_applies_its_changes() {
     let settings = || store.read(hydrus_gui::options::Settings::load).unwrap();
     let before = settings();
 
-    // its pages, as the reference lists them; it opens on the first
+    // its pages, as the reference lists them; it opens on gui
     open(&ui);
     let window = options();
     assert_eq!(
@@ -99,7 +99,8 @@ fn the_options_window_applies_its_changes() {
             "advanced"
         ]
     );
-    assert_eq!(window.get_page(), 0);
+    assert_eq!(page_names(&window)[window.get_page() as usize], "gui");
+    show_page(&window, "audio");
     assert_eq!(row(&window, "Label for files with audio: ").1.kind, 6);
 
     // the search: suggestions as it is typed; the arrows pick one, enter
@@ -154,7 +155,9 @@ fn the_options_window_applies_its_changes() {
     window.invoke_none_toggled(i, true);
     window.invoke_cancel();
     assert!(bound.options.borrow().is_none(), "closed");
-    assert_eq!(settings(), before);
+    let mut remembered_before = before.clone();
+    remembered_before.options_preferences.last_panel = "files and trash".into();
+    assert_eq!(settings(), remembered_before);
 
     // and those applied are kept: in the store, and in the tab names
     open(&ui);
@@ -866,4 +869,50 @@ fn the_checker_options_buttons_edit_the_default_checker_options() {
         stored.subscriptions,
         CheckerDefaults::default().subscriptions
     );
+}
+
+#[test]
+fn options_remember_navigation_and_apply_search_placement() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let recorded = hydrus_testkit::fixture_json("options_preferences.json");
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(page_names(&window)[window.get_page() as usize], "gui");
+    assert_eq!(
+        window.get_search_at_top(),
+        recorded["cases"][0]["top"].as_bool().unwrap()
+    );
+    show_page(&window, "connection");
+    window.invoke_cancel();
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        page_names(&window)[window.get_page() as usize],
+        "connection"
+    );
+    show_page(&window, "gui");
+    let (remember, _) = row(&window, "Remember last open options panel in this window: ");
+    let (placement, _) = row(&window, "Put the options search bar at the: ");
+    window.invoke_check_toggled(remember, false);
+    window.invoke_choice_chosen(placement, 1);
+    show_page(&window, "audio");
+    window.invoke_apply();
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(page_names(&window)[window.get_page() as usize], "gui");
+    assert!(!window.get_search_at_top());
+    window.invoke_search_edited("bottom of this window (gui)".into());
+    assert_eq!(window.get_matches().row_count(), 1);
+    window.invoke_search_chosen(0);
+    assert!(row(&window, "Put the options search bar at the: ").1.found);
+    show_page(&window, "connection");
+    window.invoke_cancel();
+    let preferences = store
+        .read(hydrus_store::settings::get::<hydrus_store::settings::OptionsPreferences>)
+        .unwrap();
+    assert!(!preferences.remember_panel);
+    assert_eq!(preferences.last_panel, "audio");
 }

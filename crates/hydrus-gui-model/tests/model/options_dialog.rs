@@ -490,3 +490,64 @@ fn advanced_network_ranges_and_clamps_match_the_reference() {
         }
     }
 }
+
+#[test]
+fn remembered_options_pages_and_auxiliary_search_match_the_reference() {
+    use hydrus_gui_model::options::{Editor, Row};
+    let recorded = hydrus_testkit::fixture_json("options_preferences.json");
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let mut settings = store.read(Settings::load).unwrap();
+    for case in recorded["cases"].as_array().unwrap() {
+        settings.options_preferences.remember_panel = case["remember"].as_bool().unwrap();
+        settings.options_preferences.last_panel = case["last"].as_str().unwrap().into();
+        settings.options_preferences.search_at_top = case["top"].as_bool().unwrap();
+        let mut editor = Editor::new(settings.clone());
+        assert_eq!(
+            editor.page_names()[editor.page()],
+            case["opened"].as_str().unwrap()
+        );
+        let audio = editor
+            .page_names()
+            .iter()
+            .position(|name| *name == "audio")
+            .unwrap();
+        editor.show_page(audio);
+        let (after, _, problems) = editor.applied();
+        assert!(problems.is_empty());
+        assert_eq!(
+            after.options_preferences.last_panel,
+            case["remembered_after_page_change"].as_str().unwrap()
+        );
+        let reopened = Editor::new(after);
+        assert_eq!(
+            reopened.page_names()[reopened.page()],
+            case["reopened"].as_str().unwrap()
+        );
+    }
+    let mut editor = Editor::new(settings);
+    let theirs = recorded["suggestions"].as_array().unwrap();
+    for text in [
+        "no size limit (files and trash)",
+        "s (media viewer)",
+        "hours (connection)",
+        "top of this window (gui)",
+    ] {
+        // Snapshot reflects the last recorded case's bottom search placement.
+        let text = if text == "top of this window (gui)" {
+            "bottom of this window (gui)"
+        } else {
+            text
+        };
+        assert!(theirs.iter().any(|value| value == text), "{text}");
+        let suggestion = editor
+            .search(text)
+            .into_iter()
+            .find(|s| s.text == text)
+            .unwrap()
+            .clone();
+        editor.go_to(&suggestion);
+        assert!(matches!(editor.rows()[suggestion.row], Row::Opt { .. }));
+        assert!(editor.found(suggestion.row));
+    }
+}

@@ -303,18 +303,16 @@ search.
   rating service's dropdown, the clickable examples, and the preview
   window's and dialogs' sizes; and on the thumbnails page, fading, the blurhash fallback, focusing on ctrl- and shift-selection,
   key navigation's scrolling, the scroll rate, the background image and
-  the rendering tech). It opens on its first page,
-  rather than "gui" or the page last open; options' tooltips aren't shown;
+  the rendering tech). Options' tooltips aren't shown;
   a box's title is a heading over its options rather than a frame around
   them; a sort's type is a dropdown of the types a page's sort control
   lists, where the reference's is a button opening a menu of them, and a
   collect's choices are checkboxes under its label, with its unmatched
   files' choice, where the reference's are a dropdown and a cog menu; and a time behind a button in the reference (the downloaders'
   waits after errors) shows its fields in place. Its search suggests only
-  the options it has, and their boxes (the reference's also suggests other
-  text on its pages, such as units and dropdowns' choices), and is always
-  at the top (the reference's "Put the options search bar at the" isn't
-  an option yet). Connection/error-delay ranges follow the saved advanced mode
+  the options it has, their boxes, auxiliary labels and initial dropdown values;
+  broader explanatory text on absent pages is unavailable. Search position and
+  remembering the last panel are editable. Connection/error-delay ranges follow the saved advanced mode
   when opening the window; changing that mode takes effect on reopening, as in
   the reference. Two options with the same label each go to their own
   row (the reference's both go to the last). The checker options editor

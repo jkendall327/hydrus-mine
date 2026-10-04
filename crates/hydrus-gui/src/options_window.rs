@@ -209,6 +209,7 @@ pub(crate) fn open(
         .read(Settings::load)
         .map_err(|e| format!("could not read the options: {e}"))?;
     let window = OptionsWindow::new().map_err(|e| e.to_string())?;
+    window.set_search_at_top(settings.options_preferences.search_at_top);
     let editor = Rc::new(RefCell::new(Editor::new(settings)));
     let names: Vec<StandardListViewItem> = editor
         .borrow()
@@ -237,6 +238,19 @@ pub(crate) fn open(
                 .collect();
             window.set_page(int(editor.page() as i64));
             window.set_rows(ModelRc::new(VecModel::from(rows)));
+            if let Some(name) = editor.remembered_panel()
+                && let Err(error) = store.write(move |ctx| {
+                    let mut preferences: hydrus_store::settings::OptionsPreferences =
+                        hydrus_store::settings::get(ctx.conn())?;
+                    if preferences.last_panel != name {
+                        name.clone_into(&mut preferences.last_panel);
+                        hydrus_store::settings::set(ctx.conn(), &preferences)?;
+                    }
+                    Ok(())
+                })
+            {
+                eprintln!("could not remember the options page: {error}");
+            }
         }
     };
     show_page();

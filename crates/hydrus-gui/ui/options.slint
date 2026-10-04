@@ -97,6 +97,7 @@ export component OptionsWindow inherits Window {
     // the search box: its placeholder, text, what it suggests (at most
     // `shown` at once), and the one picked by the arrows (-1 for none)
     in property <string> search-placeholder;
+    in property <bool> search-at-top: true;
     in property <int> shown: 10;
     in-out property <string> search-text;
     in property <[string]> matches;
@@ -163,10 +164,8 @@ export component OptionsWindow inherits Window {
         VerticalLayout {
             padding: 8px;
             spacing: 6px;
-            search := LineEdit {
-                placeholder-text: root.search-placeholder;
-                text <=> root.search-text;
-                edited(text) => { root.search-edited(text); }
+            top-search-slot := Rectangle {
+                height: root.search-at-top ? 30px : 0px;
             }
             HorizontalLayout {
                 spacing: 8px;
@@ -379,6 +378,9 @@ export component OptionsWindow inherits Window {
                     }
                 }
             }
+            bottom-search-slot := Rectangle {
+                height: root.search-at-top ? 0px : 30px;
+            }
             HorizontalLayout {
                 spacing: 6px;
                 alignment: end;
@@ -392,9 +394,18 @@ export component OptionsWindow inherits Window {
                 }
             }
         }
+        search := LineEdit {
+            x: 8px;
+            y: root.search-at-top ? top-search-slot.y : bottom-search-slot.y;
+            width: parent.width - 16px;
+            height: 30px;
+            placeholder-text: root.search-placeholder;
+            text <=> root.search-text;
+            edited(text) => { root.search-edited(text); }
+        }
         if root.matches.length > 0: Rectangle {
             x: search.x;
-            y: search.y + search.height + 2px;
+            y: root.search-at-top ? search.y + search.height + 2px : search.y - self.height - 2px;
             width: search.width;
             height: min(root.matches.length, root.shown) * 24px + 4px;
             background: Theme.panel;

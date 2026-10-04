@@ -410,9 +410,12 @@ take it, and a thumbnail made at the old size is shown scaled to the new
 one and made again from its file, as the reference does. Times
 show as the reference's fields (days, hours, minutes, seconds, ms), and a
 rate as its number, the reference's words ("errors within") and a time;
-text that may be none has the reference's "none" box. Above the pages is
-the reference's search box ("Search options... (Experimental!)"): as it
-is typed in, it suggests the box titles and options whose text has what
+text that may be none has the reference's "none" box. The window opens on
+"gui", or the remembered last panel when enabled; navigation is remembered even
+when edits are canceled. The gui page lets the search appear above or below the
+pages on reopening. Its reference search box ("Search options... (Experimental!)"): as it
+is typed in, it suggests box titles, option labels, auxiliary unit/none labels
+and current dropdown text whose text has what
 was typed in it (ignoring case), as "text (page)", ten at a time; the
 arrows, enter or a click choose one, which shows its page with that row
 highlighted, as the reference's does (and the page list brought round to

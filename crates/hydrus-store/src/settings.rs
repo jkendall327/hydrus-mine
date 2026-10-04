@@ -106,6 +106,29 @@ impl Setting for Pauses {
     const KEY: &'static str = "pauses";
 }
 
+/// The options window’s opening page and search placement.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct OptionsPreferences {
+    pub remember_panel: bool,
+    pub last_panel: String,
+    pub search_at_top: bool,
+}
+
+impl Default for OptionsPreferences {
+    fn default() -> Self {
+        Self {
+            remember_panel: true,
+            last_panel: "gui".into(),
+            search_at_top: true,
+        }
+    }
+}
+
+impl Setting for OptionsPreferences {
+    const KEY: &'static str = "options_preferences";
+}
+
 /// Which recognised URL types the desktop watches for in changed clipboard text.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

@@ -27,7 +27,7 @@ use hydrus_store::file_maintenance::FileMaintenanceSettings;
 use hydrus_store::network::NetworkSettings;
 use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FileHandlingSettings, FileViewingStatistics, FolderSettings,
-    PageSettings, ThumbnailLayout,
+    OptionsPreferences, PageSettings, ThumbnailLayout,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::trash::TrashSettings;
@@ -78,6 +78,7 @@ settings! {
     info_line: InfoLineSettings,
     media_viewer: MediaViewerSettings,
     network: NetworkSettings,
+    options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
     similar_files: SimilarFilesSettings,
@@ -1296,14 +1297,32 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "gui",
-            vec![boxed(
-                "frame locations",
-                vec![check(
-                    "Save media viewer window size and position on close: ",
-                    |s| s.windows.save_media_viewer_on_close,
-                    |s, v| s.windows.save_media_viewer_on_close = v,
-                )],
-            )],
+            vec![
+                boxed(
+                    "misc",
+                    vec![
+                        check(
+                            "Remember last open options panel in this window: ",
+                            |s| s.options_preferences.remember_panel,
+                            |s, v| s.options_preferences.remember_panel = v,
+                        ),
+                        choice(
+                            "Put the options search bar at the: ",
+                            &["top of this window", "bottom of this window"],
+                            |s| usize::from(!s.options_preferences.search_at_top),
+                            |s, v| s.options_preferences.search_at_top = v == 0,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "frame locations",
+                    vec![check(
+                        "Save media viewer window size and position on close: ",
+                        |s| s.windows.save_media_viewer_on_close,
+                        |s, v| s.windows.save_media_viewer_on_close = v,
+                    )],
+                ),
+            ],
         ),
         page(
             "gui pages",
@@ -1851,6 +1870,64 @@ pub fn suggestions(pages: &[Page]) -> Vec<Suggestion> {
     out
 }
 
+/// Searchable auxiliary labels and current combo values, captured on opening as
+/// the reference captures its widget text when building its completer.
+pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Suggestion> {
+    let mut out = suggestions(pages);
+    for (page_index, page) in pages.iter().enumerate() {
+        let mut option_index = 0;
+        fn walk<'a>(items: &'a [Item], out: &mut Vec<&'a Item>) {
+            for item in items {
+                out.push(item);
+                if let Item::Box(_, children) = item {
+                    walk(children, out);
+                }
+            }
+        }
+        let mut rows = Vec::new();
+        walk(&page.items, &mut rows);
+        for (row, item) in rows.into_iter().enumerate() {
+            let Item::Opt(option) = item else { continue };
+            let value = &values[page_index][option_index];
+            option_index += 1;
+            let mut labels = Vec::new();
+            match (&option.kind, value) {
+                (Kind::Choice(items), Value::Choice(index)) => {
+                    if let Some(text) = items.get(*index) {
+                        labels.push(*text);
+                    }
+                }
+                (
+                    Kind::Noneable {
+                        none_phrase, unit, ..
+                    },
+                    _,
+                ) => {
+                    labels.push(*none_phrase);
+                    labels.extend(*unit);
+                }
+                (Kind::NoneableText { none_phrase }, _) => labels.push(*none_phrase),
+                (Kind::Duration { units, .. }, _) => {
+                    labels.extend(units.iter().map(|unit| unit.label()));
+                }
+                (Kind::Velocity { per, units, .. }, _) => {
+                    labels.push(*per);
+                    labels.extend(units.iter().map(|unit| unit.label()));
+                }
+                _ => {}
+            }
+            for label in labels.into_iter().filter(|label| !label.is_empty()) {
+                out.push(Suggestion {
+                    text: format!("{label} ({})", page.name),
+                    page: page_index,
+                    row,
+                });
+            }
+        }
+    }
+    out
+}
+
 /// A row of the page shown: a box's title, or an option.
 #[derive(Debug)]
 pub enum Row<'a> {
@@ -1903,13 +1980,22 @@ impl Editor {
                     .collect()
             })
             .collect();
-        let suggestions = suggestions(&pages);
+        let suggestions = suggestions_with_values(&pages, &values);
+        let default_page = pages.iter().position(|p| p.name == "gui").unwrap_or(0);
+        let page = if settings.options_preferences.remember_panel {
+            pages
+                .iter()
+                .position(|p| p.name == settings.options_preferences.last_panel)
+                .unwrap_or(default_page)
+        } else {
+            default_page
+        };
         Self {
             pages,
             before: settings,
             values,
             numbers,
-            page: 0,
+            page,
             suggestions,
             found: std::collections::BTreeSet::new(),
         }
@@ -1937,6 +2023,14 @@ impl Editor {
     /// Whether the page shown's row was gone to from the search.
     pub fn found(&self, row: usize) -> bool {
         self.found.contains(&(self.page, row))
+    }
+
+    /// The page to remember, using the switch captured when this window opened.
+    pub fn remembered_panel(&self) -> Option<&'static str> {
+        self.before
+            .options_preferences
+            .remember_panel
+            .then_some(self.pages[self.page].name)
     }
 
     pub fn page_names(&self) -> Vec<&'static str> {
@@ -2136,7 +2230,10 @@ impl Editor {
     /// The settings as edited, those they started as, and why any edits
     /// couldn't be made.
     pub fn applied(&self) -> (Settings, &Settings, Vec<String>) {
-        let (after, problems) = applied(&self.pages, &self.before, &self.values);
+        let (mut after, problems) = applied(&self.pages, &self.before, &self.values);
+        if let Some(name) = self.remembered_panel() {
+            name.clone_into(&mut after.options_preferences.last_panel);
+        }
         (after, &self.before, problems)
     }
 }

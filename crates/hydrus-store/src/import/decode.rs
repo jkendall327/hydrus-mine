@@ -118,6 +118,19 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     {
         insert_setting(&mut input, &crate::settings::AdvancedMode(advanced))?;
     }
+    let mut preferences = crate::settings::OptionsPreferences::default();
+    if let Some(options) = &options {
+        if let Some(&value) = options.booleans.get("remember_options_window_panel") {
+            preferences.remember_panel = value;
+        }
+        if let Some(&value) = options.booleans.get("options_search_bar_top_of_window") {
+            preferences.search_at_top = value;
+        }
+        if let Some(value) = options.strings.get("last_options_window_panel") {
+            preferences.last_panel.clone_from(value);
+        }
+    }
+    insert_setting(&mut input, &preferences)?;
     let mut delete_lock = crate::delete_lock::DeleteLock::default();
     if let Some(options) = &options {
         for (key, field) in delete_lock.by_option_name() {
