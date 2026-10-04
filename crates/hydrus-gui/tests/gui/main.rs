@@ -90,5 +90,5 @@ mod network_data;
 mod downloader_interchange;
 mod tag_migration;
 
-mod tag_filter_favourites;
 mod regex_favourites;
+mod tag_filter_favourites;
