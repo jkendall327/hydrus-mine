@@ -57,8 +57,20 @@ fn remembered_tag_service_survives_native_cancel_without_saving_staged_tags() {
     w.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
     assert!(bound.manage_tags.borrow().is_none());
+    let stale = w;
     ui.invoke_manage_tags_selected();
     let w = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    let stale_mine = stale
+        .get_service_names()
+        .iter()
+        .position(|n| n == "my tags")
+        .unwrap();
+    stale.invoke_service_chosen(i32::try_from(stale_mine).unwrap());
+    stale.invoke_apply();
+    stale.invoke_cancel();
+    assert!(bound.manage_tags.borrow().is_some());
+    assert!(w.window().is_visible());
+    assert_eq!(preferences(&store), (true, "downloader tags".into()));
     assert_eq!(selected(&w), "downloader tags");
     assert!(
         !w.get_tags()

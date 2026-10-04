@@ -1,6 +1,6 @@
 //! The manage tags window, bound to its model ([`ManageTags`]).
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
@@ -59,10 +59,15 @@ pub(crate) fn open(
             }
         }
     };
+    let active = Rc::new(Cell::new(true));
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let active = active.clone();
         move || {
+            if !active.replace(false) {
+                return;
+            }
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -110,7 +115,11 @@ pub(crate) fn open(
         let model = model.clone();
         let weak = window.as_weak();
         let close = close.clone();
+        let active = active.clone();
         move || {
+            if !active.get() {
+                return;
+            }
             if let Err(e) = model.borrow().apply() {
                 if let Some(window) = weak.upgrade() {
                     window.set_error(format!("could not apply the changes: {e}").into());
@@ -125,7 +134,11 @@ pub(crate) fn open(
         let model = model.clone();
         let refresh = refresh.clone();
         let weak = window.as_weak();
+        let active = active.clone();
         move |i| {
+            if !active.get() {
+                return;
+            }
             if let Err(error) = model
                 .borrow_mut()
                 .choose_service(usize::try_from(i).unwrap_or(usize::MAX))
@@ -201,7 +214,11 @@ pub(crate) fn open(
         }
     });
     window.on_apply(apply);
-    window.on_cancel(close);
+    window.on_cancel(close.clone());
+    window.window().on_close_requested(move || {
+        close();
+        slint::CloseRequestResponse::HideWindow
+    });
     refresh();
     window.show()?;
     Ok(window)
