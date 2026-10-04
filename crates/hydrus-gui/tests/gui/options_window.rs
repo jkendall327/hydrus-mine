@@ -1709,6 +1709,10 @@ fn read_list_sizes_and_float_policy_reach_rendered_new_pages() {
             event["view"]["embedded_in_layout"].as_bool().unwrap()
         );
         ui.set_search_focus_requests(ui.get_search_focus_requests() + 1);
+        // Layout publishes geometry from the conditional sidebar. Flush those
+        // change handlers, then render its correctly placed overlay.
+        headless::render(&main, 1100, 1500);
+        slint::platform::update_timers_and_animations();
         let pixels = headless::render(&main, 1100, 1500);
         assert!(pixels.iter().any(|pixel| *pixel != 0));
         assert!(ui.get_active_predicate_list_height() >= 28.0);
