@@ -2831,5 +2831,6 @@ Child Apply adds one tag per original file to the selected service's private
 Manage Tags draft, preserving other namespace tags. Parent Apply commits it;
 child/parent Cancel and window closure discard pending mappings and invalidate
 retained callbacks. While the child is open, service changes, tag entry and
-parent Apply are blocked. Actual Qt recorded child/parent cancellation, negative
+parent Apply are blocked. Reopening an existing Manage Tags owner preserves its
+original selection and file-count title. Actual Qt recorded child/parent cancellation, negative
 steps, reverse order, remembered reopening and persisted per-file mappings.
