@@ -1818,10 +1818,11 @@ result multi-selection/context menus, interactive OR construction and advanced
 OR input remain distinct gaps, so the search-autocomplete parent stays partial.
 
 Automatic domain login now runs before downloader connection admission and uses
-the shared persisted session cookies. Its per-store gate spans engine instances
-within one process; forced/manual login and separate GUI/daemon process gates
-still need a common durable lease. The native domain manager monitors and cancels
-fresh daemon login processes instead of showing the reference JobStatus popup.
+the shared persisted session cookies. Its crash-safe per-store file lease spans independently opened GUI/daemon engines
+and real manual/forced login attempts. Owner identity and cancellation are
+persisted without a global mutable registry; stale crash metadata is ignored
+when the file lease is free. The native domain manager monitors and cancels
+this live owner directly instead of showing the reference JobStatus popup.
 A triggering downloader cancellation leaves its engine-owned login alive, while
 process cancellation stops later steps and records the reference four-hour delay.
 Invalid ordinary requests wait 60 seconds; subscriptions retain the exact

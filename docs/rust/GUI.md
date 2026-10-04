@@ -2740,10 +2740,17 @@ Cancel/Apply and restored-page consumers are covered against
 Downloader HTTP requests now perform domain login admission before acquiring a
 connection slot. Active most-specific login domains use current credentials and
 shared cookies; inactive/already logged-in domains proceed directly. One
-engine-owned login process serves queued requests across engine instances sharing
-a store in the same process. Login-step requests bypass this admission. Cancelling
+store-owned file lease serves queued requests across independently opened GUI and
+daemon engines and real manual/forced login attempts. Login-step requests bypass this admission. Cancelling
 a triggering download preserves the login for other requests. The reopened domain
-manager monitors fresh daemon process progress and can cancel that process by its
-reviewed owner identifier; this cancellation persists the reference login delay.
+manager monitors the persisted live login owner directly, without needing daemon
+snapshot publication, and can cancel that process by its reviewed owner identifier; this cancellation persists the reference login delay.
 Ordinary jobs show invalid/delayed-login status and wait; subscription jobs cancel
 with the reference explanatory note.
+
+Login admission uses the existing crash-safe store file-lock mechanism. Owned
+engine clones retain their current control, while owner epochs and cancellation
+are persisted per store. Dropped/unpolled processes retire only their owner;
+stale metadata after a crash cannot keep the admission lock or cancel a new
+process. Queued manual cancellation preserves the current global login, and
+forced login still executes with existing session cookies.
