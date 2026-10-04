@@ -110,3 +110,5 @@ mod viewing_statistics;
 
 mod search_or;
 mod system_or_activation;
+
+mod frame_locations;

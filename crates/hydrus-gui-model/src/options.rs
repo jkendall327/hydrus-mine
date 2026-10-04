@@ -42,6 +42,19 @@ use hydrus_store::trash::TrashSettings;
 use rusqlite::Connection;
 
 macro_rules! settings {
+    (@save $conn:ident, $after:ident, $before:ident, windows) => {
+        if $after.windows != $before.windows {
+            let mut windows: WindowSettings = hydrus_store::settings::get($conn)?;
+            let before_frames = $before.windows.frames();
+            for (name,frame) in $after.windows.frames() {
+                if before_frames.get(&name) != Some(&frame) { windows.set_frame(&name,frame); }
+            }
+            if $after.windows.save_media_viewer_on_close != $before.windows.save_media_viewer_on_close {
+                windows.save_media_viewer_on_close = $after.windows.save_media_viewer_on_close;
+            }
+            hydrus_store::settings::set($conn,&windows)?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, deletion) => {
         if $after.deletion != $before.deletion {
             let mut deletion = $after.deletion.clone();
@@ -183,6 +196,7 @@ pub enum Value {
     RegexFavourites(RegexFavourites),
     /// Ordered advanced file-deletion reason suggestions.
     DeletionReasons(Vec<String>),
+    FrameLocations(std::collections::BTreeMap<String, hydrus_core::windows::FrameLocation>),
     /// Shared favourite tags, staged until the parent options dialog applies.
     FavouriteTags(FavouriteTags),
     ImportOptions(crate::import_options_panel::Value),
@@ -257,6 +271,7 @@ pub enum Kind {
     RegexFavourites,
     /// Inline ordered advanced file-deletion reason queue.
     DeletionReasons,
+    FrameLocations,
     /// Importable current file domains, edited in a child selector.
     LocalLocation,
     /// A detached tag list editor sharing write autocomplete.
@@ -1941,11 +1956,27 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 ),
                 boxed(
                     "frame locations",
-                    vec![check(
-                        "Save media viewer window size and position on close: ",
-                        |s| s.windows.save_media_viewer_on_close,
-                        |s, v| s.windows.save_media_viewer_on_close = v,
-                    )],
+                    vec![
+                        check(
+                            "Save media viewer window size and position on close: ",
+                            |s| s.windows.save_media_viewer_on_close,
+                            |s, v| s.windows.save_media_viewer_on_close = v,
+                        ),
+                        opt(
+                            "",
+                            Kind::FrameLocations,
+                            Rc::new(|s| Value::FrameLocations(s.windows.frames())),
+                            Rc::new(|s, v| match v {
+                                Value::FrameLocations(frames) => {
+                                    for (name, frame) in frames {
+                                        s.windows.set_frame(name, frame.clone());
+                                    }
+                                    Ok(())
+                                }
+                                _ => Err(wrong("frame locations")),
+                            }),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -3605,6 +3636,32 @@ impl Editor {
                 *value = Value::NamespaceSorts(sorts);
                 return;
             }
+        }
+    }
+
+    pub fn edited_frame_locations(
+        &self,
+    ) -> std::collections::BTreeMap<String, hydrus_core::windows::FrameLocation> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|v| match v {
+                Value::FrameLocations(frames) => Some(frames.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.windows.frames())
+    }
+    pub fn set_frame_locations(
+        &mut self,
+        frames: std::collections::BTreeMap<String, hydrus_core::windows::FrameLocation>,
+    ) {
+        if let Some(value) = self
+            .values
+            .iter_mut()
+            .flatten()
+            .find(|v| matches!(v, Value::FrameLocations(_)))
+        {
+            *value = Value::FrameLocations(frames);
         }
     }
 

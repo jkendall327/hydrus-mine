@@ -388,6 +388,7 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
             option.kind,
             Kind::RegexFavourites
                 | Kind::DeletionReasons
+                | Kind::FrameLocations
                 | Kind::FavouriteTags
                 | Kind::GallerySource
                 | Kind::ImportOptions
