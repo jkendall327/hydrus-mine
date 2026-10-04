@@ -1,5 +1,6 @@
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, VerticalBox } from "std-widgets.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
+import { DownloadControl, DownloadLine, JobCogMenu } from "importing.slint";
 import { Theme } from "theme.slint";
 
 export struct MonthlyBandwidthBar { month: string, usage: string, fraction: float }
@@ -160,6 +161,10 @@ export component NetworkJobsWindow inherits Window {
     in property <string> detail;
     in property <string> status;
     in property <bool> can-act;
+    in property <DownloadLine> download;
+    in property <JobCogMenu> cog;
+    callback control-menu();
+    callback control-action(int);
     callback row-clicked(int, bool, bool);
     callback sort(int, bool);
     callback refresh();
@@ -171,6 +176,14 @@ export component NetworkJobsWindow inherits Window {
         ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
             row-clicked(r,c,s) => { root.row-clicked(r,c,s); }
             sort(c,a) => { root.sort(c,a); }
+        }
+        DownloadControl {
+            line: root.download;
+            advanced: true;
+            cog: root.cog;
+            open-menu => { root.control-menu(); }
+            action(id) => { root.control-action(id); }
+            cancel => { root.cancel-jobs(); }
         }
         Text { text: root.detail; wrap: word-wrap; color: Theme.text; min-height: 75px; }
         HorizontalLayout {

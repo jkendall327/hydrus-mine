@@ -20,7 +20,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/network_job_control.rs",
-          "line": 314,
+          "line": 344,
           "symbol": "fn action(&self"
         },
         {
@@ -30,8 +30,13 @@
         },
         {
           "relativepath": "crates/hydrus-net/src/engine.rs",
-          "line": 604,
+          "line": 615,
           "symbol": "pub fn runtime_command("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs",
+          "symbol": "fn control_action(&self",
+          "line": 1040
         }
       ],
       "testAnchors": [
@@ -52,12 +57,12 @@
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
-          "line": 247,
+          "line": 253,
           "symbol": "fn page_override"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
-          "line": 347,
+          "line": 366,
           "symbol": "fn auto_policy"
         },
         {
@@ -69,6 +74,11 @@
           "relativepath": "crates/hydrus-net/tests/engine.rs",
           "line": 1211,
           "symbol": "fn runtime_cog_gallery"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
+          "symbol": "fn current_jobs_cog",
+          "line": 498
         }
       ],
       "referenceRecording": {
@@ -101,7 +111,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/network_job_control.rs",
-          "line": 314,
+          "line": 344,
           "symbol": "fn action(&self"
         },
         {
@@ -111,8 +121,13 @@
         },
         {
           "relativepath": "crates/hydrus-net/src/engine.rs",
-          "line": 604,
+          "line": 615,
           "symbol": "pub fn runtime_command("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs",
+          "symbol": "fn control_action(&self",
+          "line": 1040
         }
       ],
       "testAnchors": [
@@ -133,12 +148,12 @@
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
-          "line": 247,
+          "line": 253,
           "symbol": "fn page_override"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
-          "line": 347,
+          "line": 366,
           "symbol": "fn auto_policy"
         },
         {
@@ -150,6 +165,11 @@
           "relativepath": "crates/hydrus-net/tests/engine.rs",
           "line": 1211,
           "symbol": "fn runtime_cog_gallery"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
+          "symbol": "fn current_jobs_cog",
+          "line": 498
         }
       ],
       "referenceRecording": {

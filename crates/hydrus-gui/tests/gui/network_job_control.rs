@@ -342,6 +342,14 @@ fn page_override_reaches_live_engine_and_auto_policy_reaches_next_request() {
     let created = engine.runtime_snapshot().controls[0].created;
     window.invoke_control_action(false, 7);
     assert!(window.get_file_cog().auto_override);
+    let monitor_slots = network_data_window::Slots::default();
+    let monitor = network_data_window::open_jobs(store.clone(), &monitor_slots).unwrap();
+    until(|| monitor.get_rows().row_count() == 1);
+    monitor.invoke_row_clicked(0, false, false);
+    monitor.invoke_control_action(7);
+    assert!(monitor.get_cog().auto_override);
+    window.invoke_control_action(false, 7);
+    assert!(!window.get_file_cog().auto_override);
     until(|| completed.try_recv().is_ok());
     assert!(
         now() > created + 5,
@@ -349,6 +357,7 @@ fn page_override_reaches_live_engine_and_auto_policy_reaches_next_request() {
     );
     assert!(engine.runtime_snapshot().jobs.is_empty());
     assert!(engine.runtime_snapshot().errors.is_empty());
+    monitor_slots.close();
     worker.join().unwrap();
     server.join().unwrap();
 }
@@ -450,4 +459,103 @@ fn auto_policy_belongs_to_page_control_and_retires_when_page_closes() {
         )));
     window.invoke_control_action(false, 7);
     assert!(!window.get_file_cog().auto_override);
+    *page.borrow_mut() = "page B".into();
+    queue.set(3);
+    window.invoke_control_menu(false);
+    window.invoke_control_action(false, 7);
+    until(|| {
+        commands.extend(
+            store
+                .write(|ctx| network_runtime::take_commands(ctx.conn()))
+                .unwrap(),
+        );
+        commands.iter().any(|c| {
+            c.job == 44
+                && matches!(
+                    c.action,
+                    JobAction::AutoOverrideBandwidthFor { enabled: true, .. }
+                )
+        })
+    });
+    drop(owner);
+    until(|| {
+        commands.extend(
+            store
+                .write(|ctx| network_runtime::take_commands(ctx.conn()))
+                .unwrap(),
+        );
+        commands.iter().any(|c| {
+            c.job == 44
+                && matches!(
+                    c.action,
+                    JobAction::AutoOverrideBandwidthFor { enabled: false, .. }
+                )
+        })
+    });
+}
+
+#[test]
+fn current_jobs_cog_retries_uses_rules_and_retains_finished_error() {
+    headless::init();
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let mut s = snapshot();
+    s.jobs[0].wait = WaitReason::ServerBandwidth;
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &s))
+        .unwrap();
+    let slots = network_data_window::Slots::default();
+    let jobs = network_data_window::open_jobs(store.clone(), &slots).unwrap();
+    until(|| jobs.get_rows().row_count() == 1);
+    jobs.invoke_row_clicked(0, false, false);
+    jobs.invoke_control_menu();
+    assert_eq!(jobs.get_cog().url, "https://example.com/a b");
+    assert!(jobs.get_cog().actions.iter().any(|r| r.id == 4));
+    assert!(!jobs.get_cog().actions.iter().any(|r| r.id == 2));
+    jobs.invoke_control_action(4);
+    let mut commands = Vec::new();
+    until(|| {
+        commands.extend(
+            store
+                .write(|ctx| network_runtime::take_commands(ctx.conn()))
+                .unwrap(),
+        );
+        !commands.is_empty()
+    });
+    assert_eq!(commands[0].action, JobAction::OverrideServerBandwidthWait);
+    assert_eq!(commands[0].job, 42);
+    jobs.invoke_control_action(100);
+    until(|| network_data_window::last_rules().is_some());
+    network_data_window::last_rules()
+        .unwrap()
+        .invoke_cancel_clicked();
+    store
+        .write(|ctx| {
+            let mut s = snapshot();
+            s.errors.push(JobError {
+                id: 42,
+                url: s.jobs[0].url.clone(),
+                contexts: s.jobs[0].contexts.clone(),
+                gallery: false,
+                text: "failure after completion".into(),
+            });
+            s.jobs.clear();
+            s.controls.clear();
+            settings::set(ctx.conn(), &s)
+        })
+        .unwrap();
+    jobs.invoke_refresh();
+    until(|| jobs.get_rows().row_count() == 0 && jobs.get_cog().has_error);
+    jobs.invoke_control_action(8);
+    let error = gui::last_error().unwrap();
+    assert_eq!(error.get_error_text(), "failure after completion");
+    slots.close();
+    assert!(!error.window().is_visible());
+    jobs.invoke_control_action(4);
+    assert!(
+        store
+            .write(|ctx| network_runtime::take_commands(ctx.conn()))
+            .unwrap()
+            .is_empty()
+    );
 }

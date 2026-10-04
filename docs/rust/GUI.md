@@ -1952,3 +1952,8 @@ When several controls review the same request, each automatic override has its
 own owner. Closing or unchecking one control leaves another control's policy
 intact. The override also skips a data-speed wait after five seconds and counts
 the transferred data normally.
+
+The current-network-jobs review shows the same selected-job control, including
+context rules, applicable retry/wait actions, and show/copy for a failure retained
+after the selected request disappears. Its automatic policy has an independent
+owner, so unchecking a page control does not disable the review's policy.

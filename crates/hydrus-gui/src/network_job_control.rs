@@ -46,9 +46,8 @@ impl Worker {
                     }
                     Err(crossbeam_channel::RecvTimeoutError::Timeout) => {}
                 }
-                if events.send(Review::load(&store, now())).is_err() {
-                    break;
-                }
+                // Drain queued commands before Stop even after the view is gone.
+                let _ = events.send(Review::load(&store, now()));
             }
         });
         Self { send, receive }
