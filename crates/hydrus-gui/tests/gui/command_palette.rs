@@ -299,3 +299,45 @@ fn media_provider_uses_the_actual_thumbnail_dispatcher_and_rejects_a_changed_pag
         "a frozen media result must not mutate the old page after its owner changes"
     );
 }
+
+#[test]
+fn asynchronous_calculator_ignores_page_threshold_and_activation_keeps_owner_open() {
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &CommandPaletteSettings {
+                    provider_order: vec![Provider::Calculator],
+                    threshold: 64,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store).unwrap());
+    let page = bound.pages.borrow().shown().key;
+    ui.invoke_command_palette_requested();
+    let window = bound
+        .command_palette
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    window.set_query("-2**2".into());
+    window.invoke_query_edited(window.get_query());
+    wait(&window, "-4");
+    activate(&window, "-4");
+    assert!(bound.command_palette.borrow().is_some());
+    assert_eq!(bound.pages.borrow().shown().key, page);
+    assert_eq!(window.get_query(), "-2**2");
+    window.set_query("2**100".into());
+    window.invoke_query_edited(window.get_query());
+    wait(&window, "1267650600228229401496703205376");
+    assert_eq!(names(&window), ["1267650600228229401496703205376"]);
+    window.invoke_cancel();
+    assert!(bound.command_palette.borrow().is_none());
+}

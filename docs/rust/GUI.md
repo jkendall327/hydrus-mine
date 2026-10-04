@@ -2614,7 +2614,11 @@ full domain, predicate, sync, sort and collect context; menu/media results invok
 existing native dispatchers. Queries run on one worker per palette and stale
 results/callbacks cannot affect a reopened owner. Arrow/Page/Home/End navigation,
 mouse activation, Escape and native focus loss are wired. The calculator
-provider is the remaining part of this palette slice.
+evaluates the reference's closed arithmetic language on the worker, including
+Python power precedence, signed floor division and modulo, large integer results
+and its named math functions. Invalid expressions show no row. Selecting a
+calculator result keeps the palette open; the calculator bypasses the page/menu
+character threshold.
 
 System viewing-time predicates retain the millisecond field, including when
 importing stored Python predicates or reopening recent entries. The labels and

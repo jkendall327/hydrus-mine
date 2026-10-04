@@ -92,7 +92,9 @@ pub fn query(
     settings: &CommandPaletteSettings,
     data: &Snapshot,
 ) -> Vec<Suggestion> {
-    if !settings.provider_order.contains(&provider) || !typed_enough(text, settings) {
+    if !settings.provider_order.contains(&provider)
+        || (provider != Provider::Calculator && !typed_enough(text, settings))
+    {
         return Vec::new();
     }
     let folded = casefold(text);
@@ -185,8 +187,16 @@ pub fn query(
                 }
             }
         }
-        // Calculator parsing is independent of application contexts and is added separately.
-        Provider::Calculator => {}
+        Provider::Calculator => {
+            if let Some(value) = crate::palette_calculator::calculate(text) {
+                rows.push(Suggestion {
+                    primary: value,
+                    secondary: "Calculator".into(),
+                    checked: None,
+                    action: Some(Action::Calculator),
+                });
+            }
+        }
     }
     rows
 }

@@ -105,9 +105,6 @@ fn providers_match_real_qt_order_limits_and_thresholds() {
     };
     for (index, event) in oracle["events"].as_array().unwrap().iter().enumerate() {
         let code = usize::try_from(event["provider"].as_u64().unwrap()).unwrap();
-        if code == 0 {
-            continue;
-        } // calculator parsing is covered with its native slice
         match index {
             10 => settings.show_notebooks = true,
             11 => settings.page_limit = Some(1),
@@ -280,4 +277,44 @@ fn each_live_provider_policy_reaches_its_results_and_preferences_persist() {
         .read(hydrus_store::settings::get::<CommandPaletteSettings>)
         .unwrap();
     assert_eq!(reopened, settings);
+}
+
+#[test]
+fn calculator_matches_qt_precedence_integer_types_errors_and_special_values() {
+    let oracle = fixture();
+    let settings = CommandPaletteSettings {
+        threshold: 64,
+        ..Default::default()
+    };
+    for event in oracle["calculator_events"].as_array().unwrap() {
+        let query = event["query"].as_str().unwrap();
+        let rows = palette::query(Provider::Calculator, query, &settings, &Snapshot::default());
+        let expected = event["rows"].as_array().unwrap();
+        assert_eq!(rows.len(), expected.len(), "{query}");
+        if expected.is_empty() {
+            continue;
+        }
+        assert_eq!(rows[0].secondary, "Calculator");
+        assert_eq!(rows[0].action, Some(Action::Calculator));
+        if query == "random()" {
+            let value: f64 = rows[0].primary.parse().unwrap();
+            assert!((0.0..1.0).contains(&value));
+        } else if matches!(query, "gamma(-.5)" | "lgamma(5)") {
+            // Python uses its own Lanczos routine here. Preserve semantics but
+            // document the native library's possible final-bit difference.
+            let ours: f64 = rows[0].primary.parse().unwrap();
+            let theirs: f64 = expected[0]["text"][0].as_str().unwrap().parse().unwrap();
+            assert!(
+                (ours - theirs).abs() <= theirs.abs() * 4.0 * f64::EPSILON,
+                "{query}: {ours} / {theirs}"
+            );
+        } else {
+            assert_eq!(rows[0].primary, expected[0]["text"][0], "{query}");
+        }
+    }
+    let mut removed = settings;
+    removed
+        .provider_order
+        .retain(|p| *p != Provider::Calculator);
+    assert!(palette::query(Provider::Calculator, "2+2", &removed, &Snapshot::default()).is_empty());
 }

@@ -24,6 +24,10 @@ hex.workspace = true
 serde_json.workspace = true
 serde.workspace = true
 jiff.workspace = true
+num-bigint = "0.4"
+num-traits = "0.2"
+libm = "0.2"
+rand.workspace = true
 
 [dev-dependencies]
 hydrus-legacy.workspace = true

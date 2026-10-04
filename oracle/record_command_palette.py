@@ -61,6 +61,27 @@ def record(session):
             options.SetNoneableInteger('command_palette_'+key,initial[key])
         options.SetInteger('command_palette_num_chars_for_results_threshold',4)
         events.extend(snap(code,text) for code,text in ((3,'Pal'),(3,'Pale'),(3,'   '),(1,'Pal'),(1,'Pale')))
+        # Calculator bypasses the application-provider character threshold.
+        calculator_events=[snap(0,text) for text in (
+            '2', '-2**2', '(-2)**2', '2**-2', '2**3**2', '--3',
+            '7//3', '-7//3', '7//-3', '-7%3', '7%-3', '7.0//3', '-7.0%3',
+            '0.0%-3', '1e3', '.5+1.', '01', '01.0', '000', '2(3)',
+            'abs(-5)', 'abs(-5.0)', 'ceil(2.2)', 'floor(-2.2)', 'ceil(inf)',
+            'gcd()', 'gcd(-5)', 'gcd(5.0)', 'hypot()', 'hypot(-5)',
+            'factorial(6)', 'factorial(6.0)', 'factorial(-1)', 'factorial(30)',
+            'exp(1)', 'exp(1000)', 'exp(inf)', 'log(e)', 'log(0)',
+            'log2(8)', 'log10(100)', 'sqrt(16)', 'sqrt(-1)',
+            'acos(1)', 'asin(0)', 'atan(1)', 'atan2(1)', 'cos(0)',
+            'sin(pi/2)', 'tan(0)', 'degrees(pi)', 'radians(180)',
+            'acosh(1)', 'asinh(0)', 'atanh(.5)', 'atanh(1)',
+            'cosh(0)', 'sinh(0)', 'tanh(inf)', 'erf(0)', 'erfc(0)',
+            'gamma(5)', 'gamma(0)', 'gamma(-.5)', 'lgamma(5)',
+            'pow(2)', 'pow(2,3)', 'randint(1,2)', 'random()',
+            'pi', 'e', 'inf', '-inf', 'inf-inf', 'inf%2', '2%inf', '-2%inf',
+            'inf//2', '2//inf', '(-2)**.5', '0**-1', '1e308*2', '1e308**2',
+            '2**100', '999999999999999999999999999999+1',
+            '__import__(1)', 'sqrt', '2^3', '1E3', '1/0', '1//0', '1%0', '', '   '
+        )]
         options.SetInteger('command_palette_num_chars_for_results_threshold',1)
         p,rows=query(3,'Palette Alpha');p.resultSelected(rows[0].id)
         selected={'page':notebook.GetCurrentMediaPage().GetName()}
@@ -98,7 +119,7 @@ def record(session):
             ClientGUIDialogsQuick.GetYesNo=old_yesno;ClientGUIDialogsQuick.SelectFromListButtons=old_select
             session.controller.favourite_search_manager.SetFavouriteSearchRows(old_favourites)
             gui._menubar.removeAction(menu.menuAction());menu.deleteLater();panel.deleteLater()
-        return {'initial':initial,'events':events,'selected':selected,'window_route':window_route,'media_events':media_events,'queue_events':queue_events,'questions':questions,'persisted':persisted}
+        return {'initial':initial,'events':events,'selected':selected,'window_route':window_route,'media_events':media_events,'calculator_events':calculator_events,'queue_events':queue_events,'questions':questions,'persisted':persisted}
     return session.controller.CallBlockingToQt(session.controller.gui,qt)
 
 def main():

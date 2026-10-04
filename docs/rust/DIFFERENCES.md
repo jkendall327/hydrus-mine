@@ -1733,6 +1733,12 @@ settings and migrates legacy preferences. The native Ctrl+P window now queries
 and launches pages, history, favourites and the supported native main/media menu
 actions. Media results carry an action snapshot and refuse to mutate a different
 page or changed selection. The palette closes on native focus loss through the
-shared focus observer. Calculator parsing remains pending, and native menus
-retain their existing unavailable commands. No whole-palette completion is
-claimed by these first slices.
+shared focus observer. The calculator now parses the reference's closed numeric
+language, including all its callable names (commas remain forbidden by the
+reference, so two-argument calls produce no result). Native math functions can
+differ in their final floating-point bit, particularly gamma/lgamma; expressions
+requiring huge intermediate powers or conversion of enormous integers to floats
+have bounded native evaluation. The native palette uses plain matched text
+rather than Qt's rich-text emphasis and result icons; native menus retain their
+existing unavailable commands. These boundaries keep the whole-palette entry
+partial while its concrete preference and provider-order controls have consumers.
