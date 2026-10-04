@@ -90,6 +90,121 @@
       4096
     ]
   ],
+  "sort_rows": {
+    "recent": [
+      [
+        2,
+        [
+          "example.com",
+          [
+            "recent"
+          ]
+        ]
+      ],
+      "web domain",
+      4096,
+      [
+        4096,
+        1
+      ],
+      [
+        7168,
+        3
+      ],
+      [
+        4096,
+        1
+      ],
+      false,
+      0
+    ],
+    "old": [
+      [
+        2,
+        [
+          "example.com",
+          [
+            "old"
+          ]
+        ]
+      ],
+      "web domain",
+      0,
+      [
+        0,
+        0
+      ],
+      [
+        512,
+        1
+      ],
+      [
+        0,
+        0
+      ],
+      false,
+      0
+    ],
+    "bytes": [
+      [
+        2,
+        [
+          "example.com",
+          [
+            "bytes"
+          ]
+        ]
+      ],
+      "web domain",
+      123,
+      [
+        123,
+        0
+      ],
+      [
+        123,
+        0
+      ],
+      [
+        123,
+        0
+      ],
+      false,
+      0
+    ]
+  },
+  "default_choices": [
+    {
+      "label": "global",
+      "type": 0,
+      "data": null
+    },
+    {
+      "label": "hydrus service default (0 rules)",
+      "type": 1,
+      "data": null
+    },
+    {
+      "label": "web domain default (0 rules)",
+      "type": 2,
+      "data": null
+    },
+    {
+      "label": "downloader page default (0 rules)",
+      "type": 4,
+      "data": null
+    },
+    {
+      "label": "subscription default (0 rules)",
+      "type": 5,
+      "data": null
+    },
+    {
+      "label": "watcher page default (0 rules)",
+      "type": 6,
+      "data": null
+    }
+  ],
   "rules_before": [
     [
       0,

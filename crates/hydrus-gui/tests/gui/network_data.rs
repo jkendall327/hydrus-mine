@@ -418,3 +418,169 @@ fn bandwidth_filters_chart_multiselect_delete_cancel_live_reset_and_saved_age() 
     );
     reopened.invoke_close_clicked();
 }
+
+#[test]
+fn bandwidth_history_columns_sort_detail_and_default_kind_routing() {
+    use hydrus_core::bandwidth::{Rule, Rules};
+    use hydrus_store::bandwidth::{self, BandwidthSettings};
+    let _rendered = headless::init();
+    let slots = windows::Slots::default();
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let now = TimestampMs::now().millis() / 1000;
+    let mut a = Tracker::new(now);
+    for (amount, at) in [
+        (8192, now - 35 * 86400),
+        (4096, now - 2 * 86400),
+        (2048, now),
+    ] {
+        a.report_data(amount, at);
+        a.report_requests(1, at);
+    }
+    let mut z = Tracker::new(now);
+    z.report_data(900, now);
+    z.report_requests(1, now);
+    store
+        .write(move |ctx| {
+            bandwidth::save_usage(
+                ctx.conn(),
+                &[
+                    (NetworkContext::domain("a.example.com"), a),
+                    (NetworkContext::domain("z.example.com"), z),
+                ],
+            )
+        })
+        .unwrap();
+    let review = windows::open_bandwidth(store.clone(), &slots).unwrap();
+    until(|| review.get_rows().row_count() == 2);
+    let a_row = || {
+        review
+            .get_rows()
+            .iter()
+            .position(|r| r.cells.row_data(0).unwrap().contains("a.example.com"))
+            .unwrap()
+    };
+    let history_cell = || {
+        review
+            .get_rows()
+            .row_data(a_row())
+            .unwrap()
+            .cells
+            .row_data(4)
+            .unwrap()
+    };
+    assert_eq!(history_cell(), "6 KB in 2 requests");
+    review.set_history(1);
+    review.invoke_refresh();
+    assert_eq!(history_cell(), "2 KB in 1 requests");
+    review.set_history(2);
+    review.invoke_refresh();
+    assert_eq!(
+        history_cell(),
+        review
+            .get_rows()
+            .row_data(a_row())
+            .unwrap()
+            .cells
+            .row_data(5)
+            .unwrap()
+    );
+    review.set_history(3);
+    review.invoke_refresh();
+    assert_eq!(history_cell(), "14 KB in 3 requests");
+    review.set_history(1);
+    review.invoke_refresh();
+    review.invoke_sort(4, true);
+    assert!(
+        review
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(0)
+            .unwrap()
+            .contains("z.example.com")
+    );
+    review.invoke_sort(4, false);
+    assert!(
+        review
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(0)
+            .unwrap()
+            .contains("a.example.com")
+    );
+    review.invoke_row_clicked(i32::try_from(a_row()).unwrap(), false, false);
+    assert!(review.get_detail().contains("uses default rules"));
+    assert!(
+        review
+            .get_detail()
+            .contains("All time usage: 14 KB in 3 requests")
+    );
+    assert!(review.get_detail().contains("2 KB used"));
+    assert!(!review.get_can_revert());
+    store
+        .write(|ctx| {
+            let mut options = settings::get::<BandwidthSettings>(ctx.conn())?;
+            options.rules.push((
+                NetworkContext::domain("a.example.com"),
+                Rules::new([Rule::new(BandwidthType::Requests, Some(86400), 10)]),
+            ));
+            settings::set(ctx.conn(), &options)
+        })
+        .unwrap();
+    review.invoke_refresh();
+    until(|| review.get_can_revert());
+    assert!(review.get_detail().contains("has its own rules"));
+    assert!(
+        review
+            .get_detail()
+            .contains("10 requests every 1 day (1 used)")
+    );
+    let f = hydrus_testkit::fixture_json("bandwidth_history.json");
+    let kinds = [0, 2, 1, 4, 5, 6];
+    let reference_kinds: Vec<_> = f["default_choices"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|c| c["type"].as_i64().unwrap())
+        .collect();
+    for (index, kind) in kinds.into_iter().enumerate() {
+        assert!(reference_kinds.contains(&kind));
+        review.set_default_kind(i32::try_from(index).unwrap());
+        review.invoke_default_clicked();
+        let editor = windows::last_rules().unwrap();
+        assert_eq!(
+            editor.get_window_title(),
+            format!(
+                "edit bandwidth rules for {}",
+                NetworkContext::default_of_kind(kind).to_human_string()
+            )
+        );
+        editor.set_requests(true);
+        editor.set_monthly(false);
+        editor.set_amount("113".into());
+        editor.set_seconds("67".into());
+        editor.invoke_add_rule();
+        editor.invoke_apply_clicked();
+        until(|| windows::last_rules().is_none());
+        assert!(
+            store
+                .read(settings::get::<BandwidthSettings>)
+                .unwrap()
+                .rules
+                .iter()
+                .any(
+                    |(context, rules)| context == &NetworkContext::default_of_kind(kind)
+                        && rules.rules().contains(&Rule::new(
+                            BandwidthType::Requests,
+                            Some(67),
+                            113
+                        ))
+                )
+        );
+    }
+    review.invoke_close_clicked();
+}

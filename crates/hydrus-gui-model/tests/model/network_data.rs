@@ -209,6 +209,24 @@ fn reference_bandwidth_age_rule_filters_months_and_history_deletion() {
         visible.sort();
         assert_eq!(serde_json::json!(visible), filter["contexts"]);
     }
+    let mut live_sort = review.clone();
+    live_sort.live = true;
+    for name in ["recent", "old", "bytes"] {
+        let recorded = &f["sort_rows"][name];
+        assert_eq!(
+            live_sort.sort_key(&context(name), 2, None, now),
+            model::SortKey::Counts(recorded[2].as_u64().unwrap(), 0)
+        );
+        for column in [3, 4, 5] {
+            assert_eq!(
+                live_sort.sort_key(&context(name), column, None, now),
+                model::SortKey::Counts(
+                    recorded[column][0].as_u64().unwrap(),
+                    recorded[column][1].as_u64().unwrap()
+                )
+            );
+        }
+    }
     let months = model::monthly_history(&review.tracker(&context("recent"), now));
     assert_eq!(
         serde_json::json!(

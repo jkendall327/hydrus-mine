@@ -46,6 +46,14 @@ def record(session):
             out['filters'].append({'span': span, 'include_rules': include_rules,
                 'contexts': sorted(c.ToString() for c in panel._bandwidths.GetData())})
         out['months'] = manager.GetTracker(contexts['recent']).GetMonthlyDataUsage()
+        out['sort_rows'] = {name: panel._ConvertNetworkContextsToSortTuple(contexts[name]) for name in ['recent', 'old', 'bytes']}
+        from hydrus.core import HydrusExceptions
+        def defaults(parent, title, choices, *args, **kwargs):
+            out['default_choices'] = [{'label': label, 'type': value[0].context_type, 'data': value[0].context_data}
+                for label, value in choices]
+            raise HydrusExceptions.CancelledException()
+        Q.SelectFromList = defaults
+        panel._EditDefaultBandwidthRules()
         out['rules_before'] = list(manager.GetRules(contexts['rules']).GetRules())
         panel._bandwidths.SelectDatas([contexts['recent'], contexts['rules']], deselect_others=True)
         Q.GetYesNo = lambda parent, text, **kw: (out['questions'].append(text), W.QDialog.DialogCode.Rejected)[1]
