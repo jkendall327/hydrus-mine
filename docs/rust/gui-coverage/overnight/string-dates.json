@@ -2,7 +2,7 @@
   "schema_version": 1,
   "agent": "string-dates",
   "baseline_git_head": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
-  "implementation_git_head": "f017801421aaeafacb95c344ca02d6c88eaa7a04",
+  "implementation_git_head": "8d7096fe833010eab2c0ecc120d5627e134ee46a",
   "implementation_commits": [
     "fb4ce6e2",
     "2c946b4f",
@@ -10,7 +10,8 @@
     "b2689d91",
     "83d4d7e4",
     "53575a98",
-    "f0178014"
+    "f0178014",
+    "8d7096fe"
   ],
   "dependencies": [
     {
@@ -29,7 +30,8 @@
       "oracle/dump_string_dates.py (46 conversion +5 local/DST cases)",
       "oracle/record_string_date_editor.py",
       "oracle/record_processing_exchange.py",
-      "oracle/record_regex_favourites.py"
+      "oracle/record_regex_favourites.py",
+      "oracle/record_string_conversion_preference.py (4 fresh parents with real option serialization/reload)"
     ],
     "cargo_fmt": "passed",
     "rustc_date_harness": "All 46 direct conversion vectors and 5 named-local/DST contexts passed using existing Jiff/regex/serde_json artifacts; no Cargo build or target directory created.",
@@ -302,7 +304,7 @@
   ],
   "unclaimed_parent_limitations": {
     "string-match": "Remains partial until regex help links are implemented; favourites/components do not turn the whole dialog green.",
-    "string-converter": "Automatic date grammar and persistent last-used conversion preference remain incomplete.",
+    "string-converter": "Full automatic date grammar, converter favourite/help menus and clickable date-format documentation remain incomplete; persistent last-used conversion now works for Store-connected consumers.",
     "string-processor": "Sidecar automatic starting examples remain incomplete."
   },
   "additional_behavior_without_completion_claim": {
@@ -332,6 +334,48 @@
         "line": 100,
         "git_head": "f017801421aaeafacb95c344ca02d6c88eaa7a04"
       }
+    ]
+  },
+  "additional_persistence_behavior_without_completion_claim": {
+    "reference_id": "string-converter",
+    "proposed_status": "partial",
+    "behavior": "Persist the last accepted child conversion before applying its draft and closing. Parent Cancel preserves the global preference, child Cancel does not change it, fresh editor Slots reload it and preserved reference options are used until a native save. A write failure leaves the child open and parent draft unchanged. No new completion claim for this broader parent.",
+    "source_anchors": [
+      {
+        "path": "crates/hydrus-store/src/string_conversion.rs",
+        "line": 22,
+        "git_head": "8d7096fe833010eab2c0ecc120d5627e134ee46a"
+      },
+      {
+        "path": "crates/hydrus-legacy/src/objects/client_options.rs",
+        "line": 498,
+        "git_head": "8d7096fe833010eab2c0ecc120d5627e134ee46a"
+      },
+      {
+        "path": "crates/hydrus-gui/src/string_processor_window.rs",
+        "line": 60,
+        "git_head": "8d7096fe833010eab2c0ecc120d5627e134ee46a"
+      }
+    ],
+    "test_anchors": [
+      {
+        "path": "crates/hydrus-gui-model/tests/model/string_converter_editor.rs",
+        "line": 254,
+        "git_head": "8d7096fe833010eab2c0ecc120d5627e134ee46a"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/regex_favourites.rs",
+        "line": 172,
+        "git_head": "8d7096fe833010eab2c0ecc120d5627e134ee46a"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/regex_favourites.rs",
+        "line": 230,
+        "git_head": "8d7096fe833010eab2c0ecc120d5627e134ee46a"
+      }
+    ],
+    "boundaries": [
+      "Store-less embedded API callers retain the in-memory fallback. Parser/formula initializers are coordinated for root integration."
     ]
   }
 }
