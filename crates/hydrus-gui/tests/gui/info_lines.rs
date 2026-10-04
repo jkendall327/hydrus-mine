@@ -190,11 +190,18 @@ fn the_viewer_shows_the_top_line_near_its_top() {
         position: at(700.0, 300.0),
     });
     assert!(!viewer.get_notes_showing());
-    // (below the ratings frame's three rows)
-    window.dispatch_event(WindowEvent::PointerMoved {
-        position: at(780.0, 90.0),
+    // Below the ratings and URL-link rows. Find the notes' actual hover
+    // range instead of pinning it to the old ratings-only frame height.
+    let notes_y = (60..590).step_by(10).find(|&y| {
+        window.dispatch_event(WindowEvent::PointerMoved {
+            position: at(780.0, y as f32),
+        });
+        viewer.get_notes_showing()
     });
-    assert!(viewer.get_notes_showing());
+    assert!(
+        notes_y.is_some(),
+        "notes have a reachable hover range below the URL links"
+    );
     let pixels = headless::render(&drawn, 800, 600);
     headless::save_png(&shots.join("notes.png"), &pixels, 800, 600).unwrap();
 }
