@@ -1,0 +1,253 @@
+{
+  "schema_version": 1,
+  "agent": "tag-banner-options",
+  "baseline_git_head": "4356918f",
+  "implementation_base": "70350f1ec45b17f1b53e517a8c4371250da721b7",
+  "claims": [
+    {
+      "id": "audit-options-tag-presentation-tag-banners-on-thumbnail-top",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "The exact On thumbnail top: Options row opens its detached generator. The button displays the generated example, child Apply stages the edited generator and child Cancel preserves it. Parent Apply persists only changed settings; parent Cancel discards accepted child changes. Apply invalidates existing thumbnail banner cache, updates RGBA drawing properties and redraws current/pending combined SingleMedia tag summary. Existing rows are populated before Apply in the native regression.",
+      "limits": [
+        "Native RGBA spin boxes and swatches replace the Qt AlphaColourControl/QColorDialog picker; deeper colour-picker hierarchy remains unclaimed. Namespace entry uses three owned inline questions with the exact defaults/allow-blank semantics, rather than three separate Qt text-entry windows.",
+        "Authored native/model regression execution and rendered PNG inspection await hosted CI; source formatting, diff checks and cached warning-aware Slint compilation passed locally."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::Settings/pages/Editor::edited_banner/Editor::set_banner",
+        "crates/hydrus-gui-model/src/tag_banner.rs::Editor",
+        "crates/hydrus-gui/src/options_window.rs::option_row/open",
+        "crates/hydrus-gui/src/tag_banner_window.rs::open",
+        "crates/hydrus-gui/ui/options.slint::OptionsWindow",
+        "crates/hydrus-gui/ui/tag_banner.slint::TagBannerWindow",
+        "crates/hydrus-gui/src/lib.rs::lay_out_thumbnails/options applied callback",
+        "crates/hydrus-gui/src/grid.rs::ThumbnailRows::set_summaries",
+        "crates/hydrus-gui-model/src/thumbnail_icons.rs::banners/banner_tags"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::option_banner_children_stage_by_original_target_and_save_only_with_parent",
+        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_tag_banner_editors.py",
+        "fixture": "oracle/fixtures/tag_banner_editors.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T21:04:10Z",
+        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,12 three-question namespace edits plus cancelled edits/deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
+      },
+      "implementationCommits": [
+        "b31e0bb3",
+        "53588a05"
+      ]
+    },
+    {
+      "id": "audit-options-tag-presentation-tag-banners-on-thumbnail-bottom-right",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "The exact On thumbnail bottom-right: Options row edits its independent generator through the same owned detached draft. Reopening reads staged or persisted value, and cancellation/stale child callbacks cannot overwrite a newer owner. Parent Apply refreshes the existing bottom-right thumbnail banner cache and its text/background RGBA; fixture consumer summary is p2-3-10-alpha.",
+      "limits": [
+        "Native RGBA spin boxes and swatches replace the Qt AlphaColourControl/QColorDialog picker; deeper colour-picker hierarchy remains unclaimed. Namespace entry uses three owned inline questions with the exact defaults/allow-blank semantics, rather than three separate Qt text-entry windows.",
+        "Authored native/model regression execution and rendered PNG inspection await hosted CI; source formatting, diff checks and cached warning-aware Slint compilation passed locally."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::Settings/pages/Editor::edited_banner/Editor::set_banner",
+        "crates/hydrus-gui-model/src/tag_banner.rs::Editor",
+        "crates/hydrus-gui/src/options_window.rs::option_row/open",
+        "crates/hydrus-gui/src/tag_banner_window.rs::open",
+        "crates/hydrus-gui/ui/options.slint::OptionsWindow",
+        "crates/hydrus-gui/ui/tag_banner.slint::TagBannerWindow",
+        "crates/hydrus-gui/src/lib.rs::lay_out_thumbnails",
+        "crates/hydrus-gui/src/grid.rs::ThumbnailRows::set_summaries",
+        "crates/hydrus-gui-model/src/thumbnail_icons.rs::banners"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::option_banner_children_stage_by_original_target_and_save_only_with_parent",
+        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_tag_banner_editors.py",
+        "fixture": "oracle/fixtures/tag_banner_editors.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T21:04:10Z",
+        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,12 three-question namespace edits plus cancelled edits/deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
+      },
+      "implementationCommits": [
+        "b31e0bb3",
+        "53588a05"
+      ]
+    },
+    {
+      "id": "audit-options-tag-presentation-tag-banners-on-media-viewer-top",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "The exact On media viewer top: Options row edits its independent generator. The real media viewer now generates its title from combined SingleMedia filtered current/pending tags, displays it above information in the passive and top-hover areas, and regenerates it on file change and parent Apply for an already-open viewer. Disabled generator yields no title. Generator RGBA affects thumbnails only, matching the reference colour note.",
+      "limits": [
+        "Native RGBA spin boxes and swatches replace the Qt AlphaColourControl/QColorDialog picker; deeper colour-picker hierarchy remains unclaimed. Namespace entry uses three owned inline questions with the exact defaults/allow-blank semantics, rather than three separate Qt text-entry windows.",
+        "Authored native/model regression execution and rendered PNG inspection await hosted CI; source formatting, diff checks and cached warning-aware Slint compilation passed locally."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::Settings/pages/Editor::edited_banner/Editor::set_banner",
+        "crates/hydrus-gui-model/src/tag_banner.rs::Editor",
+        "crates/hydrus-gui/src/options_window.rs::option_row/open",
+        "crates/hydrus-gui/src/tag_banner_window.rs::open",
+        "crates/hydrus-gui/ui/options.slint::OptionsWindow",
+        "crates/hydrus-gui/ui/tag_banner.slint::TagBannerWindow",
+        "crates/hydrus-gui-model/src/thumbnail_icons.rs::viewer_banner/banner_tags",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/ui/viewer.slint::tag-banner/passive banner-information/top-hover"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::option_banner_children_stage_by_original_target_and_save_only_with_parent",
+        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_tag_banner_editors.py",
+        "fixture": "oracle/fixtures/tag_banner_editors.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T21:04:10Z",
+        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,12 three-question namespace edits plus cancelled edits/deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
+      },
+      "implementationCommits": [
+        "b31e0bb3",
+        "53588a05"
+      ]
+    },
+    {
+      "id": "audit-options-nested-tag-banner-appearance",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "The shared child editor changes enabled state, all four text/background RGBA channels and global namespace separator. RGBA values clamp to0..255; swatches show alpha. Turning show off gives the exact not showing example while summary consumers yield empty text. Edits remain isolated until child and parent Apply, and generated thumbnail colours update from persisted channels.",
+      "limits": [
+        "Native RGBA spin boxes and swatches replace the Qt AlphaColourControl/QColorDialog picker; deeper colour-picker hierarchy remains unclaimed. Namespace entry uses three owned inline questions with the exact defaults/allow-blank semantics, rather than three separate Qt text-entry windows.",
+        "Authored native/model regression execution and rendered PNG inspection await hosted CI; source formatting, diff checks and cached warning-aware Slint compilation passed locally."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::Settings/pages/Editor::edited_banner/Editor::set_banner",
+        "crates/hydrus-gui-model/src/tag_banner.rs::Editor",
+        "crates/hydrus-gui/src/options_window.rs::option_row/open",
+        "crates/hydrus-gui/src/tag_banner_window.rs::open",
+        "crates/hydrus-gui/ui/options.slint::OptionsWindow",
+        "crates/hydrus-gui/ui/tag_banner.slint::TagBannerWindow",
+        "crates/hydrus-core/src/tag_summary.rs::TagSummaryGenerator"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::option_banner_children_stage_by_original_target_and_save_only_with_parent",
+        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_tag_banner_editors.py",
+        "fixture": "oracle/fixtures/tag_banner_editors.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T21:04:10Z",
+        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,12 three-question namespace edits plus cancelled edits/deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
+      },
+      "implementationCommits": [
+        "b31e0bb3",
+        "53588a05"
+      ]
+    },
+    {
+      "id": "audit-options-nested-tag-banner-namespaces",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "An ordered multi-selection list adds or edits namespace/prefix/separator through the three exact allow-blank questions, defaulting a new row to empty namespace/prefix and comma-space separator. Edit uses the first selected row in displayed order; cancelling any question retains the original row. Up/down move selected blocks stably; delete freezes selected row IDs, asks Remove N selected?, and cancelled confirmation retains them. Row ordering and prefixes/separators feed the actual generator.",
+      "limits": [
+        "Native RGBA spin boxes and swatches replace the Qt AlphaColourControl/QColorDialog picker; deeper colour-picker hierarchy remains unclaimed. Namespace entry uses three owned inline questions with the exact defaults/allow-blank semantics, rather than three separate Qt text-entry windows.",
+        "Authored native/model regression execution and rendered PNG inspection await hosted CI; source formatting, diff checks and cached warning-aware Slint compilation passed locally."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::Settings/pages/Editor::edited_banner/Editor::set_banner",
+        "crates/hydrus-gui-model/src/tag_banner.rs::Editor",
+        "crates/hydrus-gui/src/options_window.rs::option_row/open",
+        "crates/hydrus-gui/src/tag_banner_window.rs::open",
+        "crates/hydrus-gui/ui/options.slint::OptionsWindow",
+        "crates/hydrus-gui/ui/tag_banner.slint::TagBannerWindow",
+        "crates/hydrus-gui-model/src/tag_banner.rs::Editor::put/move_selected/delete",
+        "crates/hydrus-gui/src/tag_banner_window.rs::Prompt/prompt/open"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::option_banner_children_stage_by_original_target_and_save_only_with_parent",
+        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_tag_banner_editors.py",
+        "fixture": "oracle/fixtures/tag_banner_editors.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T21:04:10Z",
+        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,12 three-question namespace edits plus cancelled edits/deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
+      },
+      "implementationCommits": [
+        "b31e0bb3",
+        "53588a05"
+      ]
+    },
+    {
+      "id": "audit-options-nested-tag-banner-preview",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Multiline example tags are cleaned and deduplicated through Tag::new, and the visible summary regenerates on show/separator/examples/namespace changes. It uses the currently persisted TagPresentation rendering, matches all40 actual Qt previews and ordinary/numeric summary outputs, and preserves configured examples when child/parent Apply succeeds. Unicode decimal subtags now use the reference str.isdecimal collapse rule.",
+      "limits": [
+        "Native RGBA spin boxes and swatches replace the Qt AlphaColourControl/QColorDialog picker; deeper colour-picker hierarchy remains unclaimed. Namespace entry uses three owned inline questions with the exact defaults/allow-blank semantics, rather than three separate Qt text-entry windows.",
+        "Authored native/model regression execution and rendered PNG inspection await hosted CI; source formatting, diff checks and cached warning-aware Slint compilation passed locally."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::Settings/pages/Editor::edited_banner/Editor::set_banner",
+        "crates/hydrus-gui-model/src/tag_banner.rs::Editor",
+        "crates/hydrus-gui/src/options_window.rs::option_row/open",
+        "crates/hydrus-gui/src/tag_banner_window.rs::open",
+        "crates/hydrus-gui/ui/options.slint::OptionsWindow",
+        "crates/hydrus-gui/ui/tag_banner.slint::TagBannerWindow",
+        "crates/hydrus-gui-model/src/tag_banner.rs::Editor::value/preview",
+        "crates/hydrus-core/src/tag_summary.rs::TagSummaryGenerator::summary"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::detached_banner_drafts_match_actual_qt_queue_and_live_preview",
+        "crates/hydrus-gui-model/tests/model/tag_banner.rs::option_banner_children_stage_by_original_target_and_save_only_with_parent",
+        "crates/hydrus-gui/tests/gui/options_window.rs::banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_tag_banner_editors.py",
+        "fixture": "oracle/fixtures/tag_banner_editors.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T21:04:10Z",
+        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,12 three-question namespace edits plus cancelled edits/deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
+      },
+      "implementationCommits": [
+        "b31e0bb3",
+        "53588a05"
+      ]
+    }
+  ],
+  "excludedParents": [
+    {
+      "id": "audit-options-tag-presentation-tag-banners",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "reason": "Group/container for the3concrete Options button leaves; excluded from completion counts."
+    },
+    {
+      "id": "audit-options-nested-tag-banner",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "reason": "Parent dialog is reachable with the3concrete edit leaves, but Qt colour-picker/deeper child-window hierarchy is not reproduced; excluded from completion counts."
+    }
+  ],
+  "validation": {
+    "local": [
+      "cargo fmt --all",
+      "git diff --check",
+      "/workspace/parallel/parity-slint-syntax.sh /workspace/parallel/follow-tag-banners"
+    ],
+    "rustTests": "Authored; root hosted CI pending. No local Cargo builds/tests or mutation runs.",
+    "renderedArtifacts": "Native test writes tag_banner_editor.png, tag_banner_viewer.png and tag_banner_thumbnails.png under CARGO_TARGET_TMPDIR when executed; no executed native render claimed yet."
+  },
+  "notes": [
+    "Existing duplicate namespace summary output was already correct; BTreeMap storage deduplication is an equivalent internal refactor, not a caught behavior bug. Unicode decimal collapse is the supported behavior addition.",
+    "No canonical inventory, HTML or ROADMAP edits.6distinct original concrete leaves proposed; parents/aliases are excluded."
+  ]
+}
