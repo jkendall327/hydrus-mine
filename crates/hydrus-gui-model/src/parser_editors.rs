@@ -487,7 +487,7 @@ impl Draft {
         let candidates = self.auto_link_candidates();
         for (class_key, parser_key) in &mut self.classes.parser_links {
             if parser_key.is_some()
-                && let Some((_, new)) = candidates.iter().find(|(key, _)| key == &*class_key)
+                && let Some((_, new)) = candidates.iter().find(|(key, _)| key == class_key)
             {
                 *parser_key = Some(new.clone());
             }
@@ -551,7 +551,7 @@ impl Draft {
             .classes
             .parser_links
             .iter_mut()
-            .find(|(key, _)| key == &*class_key)
+            .find(|(key, _)| key == class_key)
         {
             *old = value;
         } else {

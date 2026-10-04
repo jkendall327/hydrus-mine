@@ -942,7 +942,6 @@ async fn escaped_query_tag_errors_count_across_queries_delay_persist_and_reset_n
                         ..Default::default()
                     },
                 )],
-                ..Default::default()
             };
             let first = subs::add_query(ctx.conn(), id, &query, 0)?;
             query.query_text = "1".into();
@@ -1046,7 +1045,6 @@ async fn none_disables_abandonment_for_real_escaped_store_failures() {
                         ..Default::default()
                     },
                 )],
-                ..Default::default()
             };
             let queue = subs::add_query(ctx.conn(), id, &query, 0)?;
             queues::add_file_seeds(

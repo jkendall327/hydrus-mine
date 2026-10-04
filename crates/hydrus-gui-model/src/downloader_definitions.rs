@@ -1043,7 +1043,7 @@ impl DefinitionEditor {
             let Some(value) = values.get_mut(i) else {
                 return false;
             };
-            *value = text.to_owned();
+            text.clone_into(value);
         } else {
             values.push(text.to_owned());
         }

@@ -406,7 +406,7 @@ mod tests {
             let count = case["count"].as_u64().unwrap() as u16;
             let always_loop = case["always"].as_bool().unwrap();
             store
-                .write(|ctx| {
+                .write(move |ctx| {
                     hydrus_store::settings::set(
                         ctx.conn(),
                         &hydrus_store::settings::ViewerPlaybackSettings {

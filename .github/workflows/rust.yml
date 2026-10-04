@@ -53,6 +53,15 @@ jobs:
         run: cargo test --workspace --locked --no-fail-fast
       - name: parity ratchet
         run: cargo xtask ratchet --check
+      - name: save native GUI renders
+        if: ${{ always() }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-gui-renders-${{ github.run_id }}-${{ github.run_attempt }}
+          path: target/tmp/*.png
+          if-no-files-found: ignore
+          retention-days: 3
 
   # Keep exact-reference backend/model replays moving when GUI compilation
   # needs a repair. This lane is only for the owner's continuing parity work.

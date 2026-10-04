@@ -1499,7 +1499,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             }),
                             Rc::new(|settings, value| match value {
                                 Value::NamespaceSorts(sorts) => {
-                                    settings.sorts.namespace_sorts = sorts.clone();
+                                    settings.sorts.namespace_sorts.clone_from(sorts);
                                     Ok(())
                                 }
                                 _ => Err(wrong("namespace file sorting")),
@@ -2003,7 +2003,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     vec![
                         noneable(
                             "Time until mouse cursor autohides on media viewer:",
-                            none("do not autohide", 700, (100, 100000), Some("ms")),
+                            none("do not autohide", 700, (100, 100_000), Some("ms")),
                             |settings| settings.viewer_cursor.autohide_ms.map(i64::from),
                             |settings, value| {
                                 settings.viewer_cursor.autohide_ms =
