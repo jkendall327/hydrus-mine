@@ -13,6 +13,7 @@ pub mod auto_resolution_review;
 pub mod auto_resolution_rules;
 pub mod autocomplete;
 pub mod checker_options;
+pub mod clipboard_urls;
 pub mod collect;
 pub mod datetime_editor;
 pub mod domains;

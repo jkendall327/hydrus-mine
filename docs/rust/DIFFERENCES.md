@@ -991,3 +991,8 @@ to use the current permissions after rebind; revocation still invalidates them.
 The base-URL button prefers the daemon's actual listener over the service's
 configured port to support native CLI overrides. It falls back to the saved
 configuration when the daemon does not report a listening address.
+
+Clipboard URL monitoring runs while the desktop is open. Fatal clipboard access
+errors use the shared popup queue so they remain visible on downloader and
+notebook pages. The reference watcher policy and toggle resets are replayed from
+`oracle/fixtures/clipboard_urls.json`.

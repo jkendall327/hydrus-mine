@@ -62,6 +62,8 @@ pub(crate) struct Hooks {
     pub review_services: Rc<dyn Fn()>,
     /// Open staged service management.
     pub manage_services: Rc<dyn Fn()>,
+    /// Toggle watcher or other recognised clipboard URL imports.
+    pub watch_clipboard: Rc<dyn Fn(bool)>,
 }
 
 /// What the menus show now: the store's facts and the pages'.
@@ -516,6 +518,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         }
         Command::ChooseNewPage => window.invoke_new_page(),
         Command::NewPage(page) => change_pages(&|pages| pages.new_page(&page)),
+        Command::WatchClipboard(watchers) => (hooks.watch_clipboard)(watchers),
         Command::ClearWatcherHighlights => {
             hooks.pages.borrow_mut().clear_watcher_highlights();
             (hooks.reshow)();

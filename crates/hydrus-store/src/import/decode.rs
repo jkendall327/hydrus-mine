@@ -349,6 +349,15 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         n.wake_delay_period = unsigned("wake_delay_period").unwrap_or(n.wake_delay_period);
     }
     insert_setting(&mut input, &network)?;
+    let clipboard = crate::settings::ClipboardUrls {
+        watchers: options
+            .as_ref()
+            .is_some_and(|o| o.booleans.get("watch_clipboard_for_watcher_urls") == Some(&true)),
+        other_recognised: options.as_ref().is_some_and(|o| {
+            o.booleans.get("watch_clipboard_for_other_recognised_urls") == Some(&true)
+        }),
+    };
+    insert_setting(&mut input, &clipboard)?;
     let mut export = crate::settings::ExportSettings::default();
     if let Some(options) = &options {
         if let Some(phrase) = options.strings.get("export_phrase") {
@@ -2227,6 +2236,46 @@ mod tests {
             [dump.into_bytes()],
         )
         .unwrap();
+    }
+
+    #[test]
+    fn clipboard_monitor_switches_convert_independently() {
+        use crate::settings::ClipboardUrls;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ClipboardUrls>(input.settings["clipboard_urls"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), ClipboardUrls::default());
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "watch_clipboard_for_watcher_urls"], [0, false]]"#,
+                r#"[[0, "watch_clipboard_for_watcher_urls"], [0, true]]"#,
+            )],
+        );
+        assert_eq!(
+            decoded(),
+            ClipboardUrls {
+                watchers: true,
+                other_recognised: false
+            }
+        );
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "watch_clipboard_for_other_recognised_urls"], [0, false]]"#,
+                r#"[[0, "watch_clipboard_for_other_recognised_urls"], [0, true]]"#,
+            )],
+        );
+        assert_eq!(
+            decoded(),
+            ClipboardUrls {
+                watchers: true,
+                other_recognised: true
+            }
+        );
     }
 
     /// The thumbnail grid's border and margin come across.

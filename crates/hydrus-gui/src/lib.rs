@@ -27,6 +27,7 @@ mod auto_resolution_preview_window;
 mod auto_resolution_review_window;
 mod auto_resolution_rules_window;
 mod checker_options_window;
+pub mod clipboard_monitor;
 pub mod daemon;
 pub mod downloader_definitions_window;
 mod drops;
@@ -272,6 +273,8 @@ pub struct Bound {
     _menu_titles: Rc<slint::Timer>,
     /// Shows the popup messages (held likewise).
     _popups: Rc<slint::Timer>,
+    /// Automatic recognised URL imports while this desktop window is bound.
+    pub clipboard_monitor: clipboard_monitor::Monitor,
 }
 
 impl std::fmt::Debug for Bound {
@@ -1255,9 +1258,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         open_files: open_files.clone(),
         ..folders_window::Slots::default()
     };
+    let clipboard_monitor = clipboard_monitor::Monitor::bind(
+        window,
+        pages.clone(),
+        Rc::new({
+            let change_pages = change_pages.clone();
+            move || change_pages(&|_| Ok(()))
+        }),
+    );
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
+            watch_clipboard: Rc::new({
+                let monitor = clipboard_monitor.clone();
+                move |watchers| monitor.toggle(watchers)
+            }),
             tag_display: {
                 let slot = tag_display.clone();
                 let pages = pages.clone();
@@ -3070,6 +3085,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         _thumbnails: thumbnails,
         _menu_titles: menu_titles,
         _popups: popup_timer,
+        clipboard_monitor,
     }
 }
 
@@ -3589,12 +3605,33 @@ pub fn set_paster(paster: impl Fn() -> String + 'static) {
 
 /// The clipboard's text (or the paster's).
 pub(crate) fn from_clipboard() -> Result<String, String> {
-    if let Some(paster) = PASTER.with(|p| p.borrow().clone()) {
-        return Ok(paster());
+    clipboard_text()?.ok_or_else(|| arboard::Error::ContentNotAvailable.to_string())
+}
+
+/// Text reads distinguish an empty/non-text clipboard from an access failure.
+pub(crate) fn clipboard_text() -> Result<Option<String>, String> {
+    if let Some(reader) = CLIPBOARD_READER.with(|reader| reader.borrow().clone()) {
+        return reader();
     }
-    arboard::Clipboard::new()
-        .and_then(|mut c| c.get_text())
-        .map_err(|e| e.to_string())
+    if let Some(paster) = PASTER.with(|p| p.borrow().clone()) {
+        return Ok(Some(paster()));
+    }
+    match arboard::Clipboard::new().and_then(|mut c| c.get_text()) {
+        Ok(text) => Ok(Some(text)),
+        Err(arboard::Error::ContentNotAvailable) => Ok(None),
+        Err(error) => Err(error.to_string()),
+    }
+}
+
+type ClipboardReader = Rc<dyn Fn() -> Result<Option<String>, String>>;
+thread_local! {
+    static CLIPBOARD_READER: RefCell<Option<ClipboardReader>> = RefCell::new(None);
+}
+
+/// Substitute clipboard reads, including unavailable text and access failures,
+/// on this thread for deterministic monitoring tests.
+pub fn set_clipboard_reader(reader: impl Fn() -> Result<Option<String>, String> + 'static) {
+    CLIPBOARD_READER.with(|slot| *slot.borrow_mut() = Some(Rc::new(reader)));
 }
 
 /// Give what is copied to `clipper` rather than the clipboard (for tests,

@@ -133,6 +133,8 @@ pub enum Command {
     ClearAndLoadSession(String),
     /// Switch a pause on or off.
     Pause(Pause),
+    /// Switch automatic clipboard imports for watchers (true) or other recognised URLs.
+    WatchClipboard(bool),
     /// Check an import folder now (none: all of them).
     CheckImportFolder(Option<String>),
     /// Run an export folder now (none: all of them).
@@ -226,6 +228,7 @@ pub struct Facts {
     pub search_domains: Vec<(ServiceKey, String)>,
     pub maintenance: FileMaintenanceSettings,
     pub pauses: Pauses,
+    pub clipboard_urls: hydrus_store::settings::ClipboardUrls,
     /// The repositories, and their pending content (none: no repositories).
     pub pending: Option<Vec<Pending>>,
 }
@@ -287,6 +290,7 @@ impl Facts {
                 search_domains,
                 maintenance: settings::get(conn)?,
                 pauses: settings::get(conn)?,
+                clipboard_urls: settings::get(conn)?,
                 pending,
                 ..Facts::default()
             })
@@ -842,8 +846,16 @@ fn network_menu(facts: &Facts) -> Entry {
                     menu(
                         "watch clipboard for urls",
                         vec![
-                            check("watcher urls", None, false),
-                            check("other recognised urls", None, false),
+                            check(
+                                "watcher urls",
+                                Some(Command::WatchClipboard(true)),
+                                facts.clipboard_urls.watchers,
+                            ),
+                            check(
+                                "other recognised urls",
+                                Some(Command::WatchClipboard(false)),
+                                facts.clipboard_urls.other_recognised,
+                            ),
                         ],
                     ),
                     SEP,

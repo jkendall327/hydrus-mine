@@ -106,6 +106,25 @@ impl Setting for Pauses {
     const KEY: &'static str = "pauses";
 }
 
+/// Which recognised URL types the desktop watches for in changed clipboard text.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ClipboardUrls {
+    pub watchers: bool,
+    pub other_recognised: bool,
+}
+
+impl Setting for ClipboardUrls {
+    const KEY: &'static str = "clipboard_urls";
+}
+
+impl ClipboardUrls {
+    /// Whether the desktop should read clipboard text at all.
+    pub fn enabled(self) -> bool {
+        self.watchers || self.other_recognised
+    }
+}
+
 impl Pauses {
     /// The reference's option names, with this field.
     pub fn by_option_name(&mut self) -> [(&'static str, &mut bool); 6] {

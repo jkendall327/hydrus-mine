@@ -1,0 +1,552 @@
+{
+ "classes": [
+  [
+   50,
+   "watch",
+   15,
+   [
+    "0101010101010101010101010101010101010101010101010101010101010101",
+    4,
+    "https",
+    [
+     139,
+     1,
+     [
+      [
+       "watch.example"
+      ],
+      [],
+      false,
+      false
+     ]
+    ],
+    [
+     true,
+     false,
+     false,
+     true,
+     false,
+     true,
+     false
+    ],
+    [],
+    [
+     26,
+     3,
+     []
+    ],
+    false,
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ],
+    [],
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    0,
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    null,
+    null,
+    1,
+    "https://watch.example/1"
+   ]
+  ],
+  [
+   50,
+   "post",
+   15,
+   [
+    "0202020202020202020202020202020202020202020202020202020202020202",
+    0,
+    "https",
+    [
+     139,
+     1,
+     [
+      [
+       "post.example"
+      ],
+      [],
+      false,
+      false
+     ]
+    ],
+    [
+     true,
+     false,
+     false,
+     true,
+     false,
+     true,
+     false
+    ],
+    [],
+    [
+     26,
+     3,
+     []
+    ],
+    false,
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ],
+    [],
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    0,
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    null,
+    null,
+    1,
+    "https://post.example/1"
+   ]
+  ],
+  [
+   50,
+   "gallery",
+   15,
+   [
+    "0303030303030303030303030303030303030303030303030303030303030303",
+    3,
+    "https",
+    [
+     139,
+     1,
+     [
+      [
+       "gallery.example"
+      ],
+      [],
+      false,
+      false
+     ]
+    ],
+    [
+     true,
+     false,
+     false,
+     true,
+     false,
+     true,
+     false
+    ],
+    [],
+    [
+     26,
+     3,
+     []
+    ],
+    false,
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ],
+    [],
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    0,
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    null,
+    null,
+    1,
+    "https://gallery.example/1"
+   ]
+  ],
+  [
+   50,
+   "file",
+   15,
+   [
+    "0404040404040404040404040404040404040404040404040404040404040404",
+    2,
+    "https",
+    [
+     139,
+     1,
+     [
+      [
+       "file.example"
+      ],
+      [],
+      false,
+      false
+     ]
+    ],
+    [
+     true,
+     false,
+     false,
+     true,
+     false,
+     true,
+     false
+    ],
+    [],
+    [
+     26,
+     3,
+     []
+    ],
+    false,
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ],
+    [],
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    0,
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    null,
+    null,
+    1,
+    "https://file.example/1"
+   ]
+  ],
+  [
+   50,
+   "unlinked",
+   15,
+   [
+    "0505050505050505050505050505050505050505050505050505050505050505",
+    0,
+    "https",
+    [
+     139,
+     1,
+     [
+      [
+       "unlinked.example"
+      ],
+      [],
+      false,
+      false
+     ]
+    ],
+    [
+     true,
+     false,
+     false,
+     true,
+     false,
+     true,
+     false
+    ],
+    [],
+    [
+     26,
+     3,
+     []
+    ],
+    false,
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ],
+    [],
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    0,
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    null,
+    null,
+    1,
+    "https://unlinked.example/1"
+   ]
+  ]
+ ],
+ "parser_key": "7777777777777777777777777777777777777777777777777777777777777777",
+ "linked": [
+  "0101010101010101010101010101010101010101010101010101010101010101",
+  "0202020202020202020202020202020202020202020202020202020202020202",
+  "0303030303030303030303030303030303030303030303030303030303030303",
+  "0404040404040404040404040404040404040404040404040404040404040404"
+ ],
+ "steps": [
+  {
+   "name": "disabled",
+   "text": "https://watch.example/1\nhttps://post.example/1\nhttps://gallery.example/1\nhttp://file.example/a b.jpg#ignored\nhttps://unlinked.example/1\nhttps://unknown.example/1\nhttp rubbish\nHTTPS://file.example/upper.jpg",
+   "failure": false,
+   "reset": false,
+   "watchers": false,
+   "other_recognised": false,
+   "routed": [],
+   "messages": []
+  },
+  {
+   "name": "enable watchers",
+   "text": "https://watch.example/1\nhttps://post.example/1\nhttps://gallery.example/1\nhttp://file.example/a b.jpg#ignored\nhttps://unlinked.example/1\nhttps://unknown.example/1\nhttp rubbish\nHTTPS://file.example/upper.jpg",
+   "failure": false,
+   "reset": true,
+   "watchers": true,
+   "other_recognised": false,
+   "routed": [
+    {
+     "url": "https://watch.example/1",
+     "destination": "watchers"
+    }
+   ],
+   "messages": []
+  },
+  {
+   "name": "unchanged",
+   "text": "https://watch.example/1\nhttps://post.example/1\nhttps://gallery.example/1\nhttp://file.example/a b.jpg#ignored\nhttps://unlinked.example/1\nhttps://unknown.example/1\nhttp rubbish\nHTTPS://file.example/upper.jpg",
+   "failure": false,
+   "reset": false,
+   "watchers": true,
+   "other_recognised": false,
+   "routed": [],
+   "messages": []
+  },
+  {
+   "name": "enable other urls",
+   "text": "https://watch.example/1\nhttps://post.example/1\nhttps://gallery.example/1\nhttp://file.example/a b.jpg#ignored\nhttps://unlinked.example/1\nhttps://unknown.example/1\nhttp rubbish\nHTTPS://file.example/upper.jpg",
+   "failure": false,
+   "reset": true,
+   "watchers": true,
+   "other_recognised": true,
+   "routed": [
+    {
+     "url": "https://watch.example/1",
+     "destination": "watchers"
+    },
+    {
+     "url": "https://post.example/1",
+     "destination": "urls"
+    },
+    {
+     "url": "https://gallery.example/1",
+     "destination": "urls"
+    },
+    {
+     "url": "https://file.example/a%20b.jpg",
+     "destination": "urls"
+    }
+   ],
+   "messages": []
+  },
+  {
+   "name": "unchanged again",
+   "text": "https://watch.example/1\nhttps://post.example/1\nhttps://gallery.example/1\nhttp://file.example/a b.jpg#ignored\nhttps://unlinked.example/1\nhttps://unknown.example/1\nhttp rubbish\nHTTPS://file.example/upper.jpg",
+   "failure": false,
+   "reset": false,
+   "watchers": true,
+   "other_recognised": true,
+   "routed": [],
+   "messages": []
+  },
+  {
+   "name": "empty",
+   "text": "",
+   "failure": false,
+   "reset": false,
+   "watchers": true,
+   "other_recognised": true,
+   "routed": [],
+   "messages": []
+  },
+  {
+   "name": "repeat after empty",
+   "text": "https://watch.example/1\nhttps://post.example/1\nhttps://gallery.example/1\nhttp://file.example/a b.jpg#ignored\nhttps://unlinked.example/1\nhttps://unknown.example/1\nhttp rubbish\nHTTPS://file.example/upper.jpg",
+   "failure": false,
+   "reset": false,
+   "watchers": true,
+   "other_recognised": true,
+   "routed": [
+    {
+     "url": "https://watch.example/1",
+     "destination": "watchers"
+    },
+    {
+     "url": "https://post.example/1",
+     "destination": "urls"
+    },
+    {
+     "url": "https://gallery.example/1",
+     "destination": "urls"
+    },
+    {
+     "url": "https://file.example/a%20b.jpg",
+     "destination": "urls"
+    }
+   ],
+   "messages": []
+  },
+  {
+   "name": "disable watchers",
+   "text": "https://watch.example/1\nhttps://post.example/1\nhttps://gallery.example/1\nhttp://file.example/a b.jpg#ignored\nhttps://unlinked.example/1\nhttps://unknown.example/1\nhttp rubbish\nHTTPS://file.example/upper.jpg",
+   "failure": false,
+   "reset": true,
+   "watchers": false,
+   "other_recognised": true,
+   "routed": [
+    {
+     "url": "https://post.example/1",
+     "destination": "urls"
+    },
+    {
+     "url": "https://gallery.example/1",
+     "destination": "urls"
+    },
+    {
+     "url": "https://file.example/a%20b.jpg",
+     "destination": "urls"
+    }
+   ],
+   "messages": []
+  },
+  {
+   "name": "trim lines",
+   "text": "﻿ https://file.example/2.jpg \r\nhttps://unknown.example/2\n",
+   "failure": false,
+   "reset": false,
+   "watchers": false,
+   "other_recognised": true,
+   "routed": [
+    {
+     "url": "https://file.example/2.jpg",
+     "destination": "urls"
+    }
+   ],
+   "messages": []
+  },
+  {
+   "name": "unavailable",
+   "text": null,
+   "failure": false,
+   "reset": false,
+   "watchers": false,
+   "other_recognised": true,
+   "routed": [],
+   "messages": []
+  },
+  {
+   "name": "same after unavailable",
+   "text": "﻿ https://file.example/2.jpg \r\nhttps://unknown.example/2\n",
+   "failure": false,
+   "reset": false,
+   "watchers": false,
+   "other_recognised": true,
+   "routed": [
+    {
+     "url": "https://file.example/2.jpg",
+     "destination": "urls"
+    }
+   ],
+   "messages": []
+  },
+  {
+   "name": "access failure",
+   "text": null,
+   "failure": true,
+   "reset": false,
+   "watchers": false,
+   "other_recognised": true,
+   "routed": [],
+   "messages": [
+    "Could not access the clipboard: test clipboard access failure"
+   ]
+  }
+ ]
+}

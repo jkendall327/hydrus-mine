@@ -10,6 +10,7 @@ mod archive_delete;
 mod auto_resolution_preview;
 mod auto_resolution_review;
 mod auto_resolution_rules;
+mod clipboard_urls;
 mod collect;
 mod downloader_definitions;
 mod downloader_lists;

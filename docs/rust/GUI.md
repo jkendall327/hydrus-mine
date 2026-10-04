@@ -1482,3 +1482,18 @@ listener reconfiguration and uses that same session after bind-failure recovery.
 Opening the API base URL uses the daemon's reported listening address, so CLI
 port and binding overrides are honored even when the saved service is off.
 Wildcard binds open through loopback; IPv6 URLs retain their brackets.
+
+## Clipboard URL monitoring
+
+Network > downloaders > watch clipboard for urls has independent persistent
+switches for watcher URLs and other recognised URLs. The desktop checks changed
+clipboard text once a second, ignores unknown URLs and recognised URLs without
+a required parser, and sends accepted URLs to the current compatible importer
+or the first open one. A new importer is created when needed, leaving the page
+already selected in view; an empty notebook selects its first new child.
+Unchanged text is routed only once, and switching either option lets the current
+clipboard be examined again. An access failure produces a global popup and
+suspends reads until a switch is toggled. Imported reference options carry both
+switches over. The real Qt watcher and URL-routing policy are recorded by
+`oracle/record_clipboard_urls.py`; native tests cover page routing, nested
+notebooks, menu persistence and failure recovery.
