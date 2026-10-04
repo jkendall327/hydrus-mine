@@ -271,6 +271,91 @@ fn fetched_page_examples_use_actual_network_headers_cookies_context_and_child_co
     reopened.invoke_force_close();
     list.invoke_action("cancel".into());
 }
+#[test]
+fn page_fetch_error_menu_retains_completed_failure_and_clears_at_next_request() {
+    use std::{cell::RefCell, rc::Rc};
+    let reference: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../../oracle/fixtures/parser_fetch_errors.json"
+    ))
+    .unwrap();
+    assert_eq!(
+        reference["menus"][0],
+        serde_json::json!(["show error", "copy error"])
+    );
+    assert_eq!(reference["states"][2]["has_job"], false);
+    assert_eq!(reference["states"][2]["has_error"], true);
+    assert_eq!(reference["states"][3]["has_error"], false);
+    assert_eq!(reference["show_copy_identical"], true);
+    let server = TestDocuments::start();
+    let (_dir, store, slots) = setup();
+    let rendered = headless::init();
+    let original = definitions(&store);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    let copies = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_clipper({
+        let copies = copies.clone();
+        move |clip| copies.borrow_mut().push(clip.clone())
+    });
+    page.set_test_url(format!("{}/error", server.base).into());
+    page.invoke_fetch();
+    assert!(!page.get_fetch_has_error());
+    until_fetch(|| !page.get_fetching());
+    assert!(page.get_fetch_has_error());
+    page.invoke_fetch_error_action(8);
+    let error = hydrus_gui::network_job_control::last_error().unwrap();
+    assert_eq!(error.get_error_text(), "404: missing\n\nmissing");
+    page.invoke_fetch_error_action(9);
+    assert_eq!(
+        copies.borrow().last().unwrap(),
+        &hydrus_gui::Clip::Text(error.get_error_text().to_string())
+    );
+    let pixels = headless::render(&rendered.get(rendered.count() - 1).unwrap(), 660, 370);
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
+    headless::save_png(
+        &std::path::PathBuf::from(env!("CARGO_TARGET_TMPDIR")).join("parser-fetch-error.png"),
+        &pixels,
+        660,
+        370,
+    )
+    .unwrap();
+    error.invoke_close_clicked();
+    page.set_test_url("".into());
+    page.invoke_fetch();
+    assert!(page.get_fetch_has_error());
+    page.set_test_url("invalid".into());
+    page.invoke_fetch();
+    assert!(page.get_fetch_has_error());
+    // A raw test-panel fetch has no NetworkJobControl owner in the reference.
+    page.set_fetch_url(format!("{}/document", server.base).into());
+    page.invoke_fetch_from_url();
+    until_fetch(|| !page.get_fetching());
+    assert!(page.get_fetch_has_error());
+    page.set_test_url(format!("{}/document", server.base).into());
+    page.invoke_fetch();
+    assert!(!page.get_fetch_has_error());
+    until_fetch(|| !page.get_fetching());
+    assert!(!page.get_fetch_has_error());
+    let count = copies.borrow().len();
+    page.invoke_fetch_error_action(9);
+    assert_eq!(copies.borrow().len(), count);
+    page.set_test_url(format!("{}/error", server.base).into());
+    page.invoke_fetch();
+    until_fetch(|| !page.get_fetching());
+    page.invoke_fetch_error_action(8);
+    let retained = hydrus_gui::network_job_control::last_error().unwrap();
+    page.invoke_force_close();
+    assert!(!retained.window().is_visible());
+    assert!(slots.page.borrow().is_none());
+    page.invoke_fetch_error_action(8);
+    page.invoke_fetch_error_action(9);
+    assert!(!retained.window().is_visible());
+    assert_eq!(copies.borrow().len(), count);
+    list.invoke_action("cancel".into());
+    assert_eq!(definitions(&store), original);
+}
 fn child(slot: &std::rc::Rc<std::cell::RefCell<Option<ParserEditWindow>>>) -> ParserEditWindow {
     slot.borrow().as_ref().unwrap().clone_strong()
 }

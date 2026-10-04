@@ -1935,3 +1935,9 @@ has only **show error** and **copy error**. The error window uses the reference
 **Network Error** title and preserves the text. Removing a finished job keeps its
 error; the owner's explicit clear hides the button and suppresses replay of the
 same stored failure. Parser fetch ownership is being connected separately.
+
+Page parser example-data fetching retains its network failure after the job ends.
+The error menu shows the full native diagnostic or copies it unchanged; the next
+validated example request clears the retained failure. Closing the parser also
+closes its error popup and invalidates retained callbacks. Raw formula/content
+URL fetching uses its own test text, as in the reference.

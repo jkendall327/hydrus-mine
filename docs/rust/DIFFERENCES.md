@@ -1273,3 +1273,7 @@ not currently call `SetError`; the shared error widget's Python consumer is the
 parser fetch owner, whose hook is a separate slice. The native error dialog is a
 scrollable window rather than Qt's critical message box. No explicit clear menu
 item is added: `ClearError` belongs to the owner, while `ClearNetworkJob` keeps it.
+
+Page-parser network error popups use native Rust failure diagnostics and response
+text instead of Python traceback frames. Error ownership, show/copy, completion
+retention and clearing on the next example request match the recorded Qt owner.

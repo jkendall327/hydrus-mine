@@ -111,6 +111,7 @@ enum Value {
 }
 struct Editor {
     errors: std::collections::BTreeMap<i32, String>,
+    fetch_control: hydrus_gui_model::network_job_control::Control,
     value: Value,
     original: Value,
     selected: Option<usize>,
@@ -225,6 +226,7 @@ fn fields(value: &Value, permitted_types: &[usize]) -> Vec<DefinitionField> {
     }
 }
 fn show_editor(w: &ParserEditWindow, e: &Editor) {
+    w.set_fetch_has_error(e.fetch_control.error().is_some());
     w.set_subsidiary(e.subsidiary.is_some());
     if let Some(details) = &e.subsidiary {
         let details = details.borrow();
@@ -465,6 +467,7 @@ fn open_editor(
     );
     let state = Rc::new(RefCell::new(Editor {
         errors: std::collections::BTreeMap::new(),
+        fetch_control: hydrus_gui_model::network_job_control::Control::default(),
         original: value.clone(),
         value,
         selected: None,
@@ -485,6 +488,7 @@ fn open_editor(
     }));
     let active = Rc::new(Cell::new(true));
     let fetch = crate::parser_test_fetch::Slot::default();
+    let fetch_errors = crate::network_job_control::Errors::default();
     let refresh: Rc<dyn Fn()> = Rc::new({
         let weak = w.as_weak();
         let state = state.clone();
@@ -503,6 +507,26 @@ fn open_editor(
         let slots = slots.clone();
         let fetch = fetch.clone();
         move || !active.get() || child_open(&slots, page) || fetch.busy()
+    });
+    w.on_fetch_error_action({
+        let state = state.clone();
+        let active = active.clone();
+        let fetch_errors = fetch_errors.clone();
+        move |action| {
+            if !active.get() || !page || state.borrow().subsidiary.is_some() {
+                return;
+            }
+            let error = state.borrow().fetch_control.error().map(str::to_owned);
+            if let Some(error) = error {
+                match action {
+                    8 => {
+                        let _ = fetch_errors.show(&error);
+                    }
+                    9 => crate::copy_to_clipboard(&error),
+                    _ => (),
+                }
+            }
+        }
     });
     w.on_cancel_fetch({
         let fetch = fetch.clone();
@@ -566,6 +590,10 @@ fn open_editor(
             request.one_shot = example_url;
             let referral = w.get_referral_url().trim().to_owned();
             request.referral_url = (example_url && !referral.is_empty()).then_some(referral);
+            // Only the page example-data owner has NetworkJobControl in Qt.
+            if example_url {
+                state.borrow_mut().fetch_control.clear_error();
+            }
             w.set_fetch_status("initialising…".into());
             w.set_error(SharedString::new());
             let progress = Rc::new({
@@ -592,6 +620,20 @@ fn open_editor(
                         return;
                     };
                     let mut editor = state.borrow_mut();
+                    if example_url
+                        && let hydrus_gui_model::formula_editors::FetchedDocument::Failed {
+                            error,
+                            text,
+                        } = &outcome.document
+                    {
+                        // Preserve native failure details after the live job is removed.
+                        let detail = if text.is_empty() {
+                            error.clone()
+                        } else {
+                            format!("{error}\n\n{text}")
+                        };
+                        editor.fetch_control.set_error(detail);
+                    }
                     editor.example =
                         editor
                             .test
@@ -803,11 +845,13 @@ fn open_editor(
         let active = active.clone();
         let slots = slots.clone();
         let fetch = fetch.clone();
+        let fetch_errors = fetch_errors.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
             fetch.stop();
+            fetch_errors.cancel();
             let child = slots.child.borrow_mut().take();
             if let Some(child) = child {
                 child.cancel();
