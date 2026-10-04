@@ -49,6 +49,8 @@ export component ManageTagsWindow inherits Window {
     in-out property <string> text;
 
     public function normal-paste() { input.normal-paste(); }
+    public function focus-input() { input.focus-input(); }
+    out property <bool> input-focused: input.editor-focused;
     public function select-input(anchor: int, cursor: int) { input.select-input(anchor,cursor); }
     callback service-chosen(int);
     callback text-edited(string);

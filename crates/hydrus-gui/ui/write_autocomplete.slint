@@ -31,6 +31,8 @@ export component WriteTagInput inherits FocusScope {
     out property <length> results-y: result-keys.absolute-position.y;
     public function escape-results() -> bool { root.enabled && result-keys.has-focus && root.results-action(3) }
     public function focus-results() { result-keys.focus(); }
+    public function focus-input() { input.focus(); }
+    out property <bool> editor-focused: input.has-focus;
     public function normal-paste() { input.paste(); }
     public function undo-input() { input.undo(); }
     public function redo-input() { input.redo(); }
@@ -221,6 +223,8 @@ export component WriteTagsWindow inherits Window {
     out property <length> results-x: input.results-x;
     out property <length> results-y: input.results-y;
     public function focus-results() { input.focus-results(); }
+    public function focus-input() { input.focus-input(); }
+    out property <bool> input-focused: input.editor-focused;
     public function normal-paste() { input.normal-paste(); }
     public function undo-input() { input.undo-input(); }
     public function redo-input() { input.redo-input(); }

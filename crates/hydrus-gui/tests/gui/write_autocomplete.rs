@@ -1275,7 +1275,8 @@ fn normal_paste_replays_cursor_selection_and_accepted_tags_preserve_the_draft() 
             .iter()
             .any(|row| row.text.starts_with("parity:paste one"))
     );
-    manage.invoke_select_input(0, 6);
+    // Replace the complete caller prefix, including its separating space.
+    manage.invoke_select_input(0, 7);
     assert!(manage.invoke_paste_requested(false));
     manage.invoke_paste_answered(false);
     assert_eq!(manage.get_text(), "parity:paste one\nparity:paste twodraft");
@@ -1668,7 +1669,7 @@ fn replacement_history_replays_real_keys_typing_undo_redo_and_independent_owners
     }
 
     let (_dirs, store) = crate::subscriptions::store();
-    let _windows = headless::init();
+    let windows = headless::init();
     let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
     let service = store
         .snapshot()
@@ -1702,6 +1703,16 @@ fn replacement_history_replays_real_keys_typing_undo_redo_and_independent_owners
         )
         .unwrap();
         child.invoke_edited(case["initial"].as_str().unwrap().into());
+        let native = windows.get(windows.count() - 1).unwrap();
+        headless::render(&native, 460, 600);
+        child
+            .window()
+            .dispatch_event(WindowEvent::WindowActiveChanged(true));
+        child.invoke_focus_input();
+        assert!(
+            child.get_input_focused(),
+            "live native editor is the target of the recorded Qt editor keys"
+        );
         for step in case["steps"].as_array().unwrap() {
             let action = step["action"].as_array().unwrap();
             match action[0].as_str().unwrap() {
