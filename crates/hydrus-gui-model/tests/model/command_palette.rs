@@ -16,7 +16,7 @@ fn favourite(folder: Option<&str>, name: &str) -> FavouriteSearch {
     FavouriteSearch {
         folder: folder.map(str::to_owned),
         name: name.to_owned(),
-        search: hydrus_core::search::FileSearchContext::default(),
+        search: hydrus_core::search::context::FileSearchContext::default(),
         synchronised: folder.is_none(),
         sort: None,
         collect: None,
