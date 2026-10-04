@@ -37,6 +37,11 @@ fn real_incremental_child_replays_cancel_apply_memory_and_blocks_parent_mutation
         ui.invoke_select_all();
         ui.invoke_manage_tags_selected();
         let parent = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+        assert_eq!(parent.get_window_title(), "manage tags for 3 files");
+        ui.invoke_thumbnail_clicked(0, false, false);
+        assert_eq!(bound.current.borrow().borrow().selected_files().len(), 1);
+        ui.invoke_manage_tags_selected();
+        assert_eq!(parent.get_window_title(), "manage tags for 3 files");
         let mine = parent
             .get_service_names()
             .iter()
