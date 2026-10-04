@@ -584,6 +584,14 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   time); a router's rows go through its processor in the order the
   sidecars give them (the reference's go through a set, so a slice or
   rows the human sort ties come out in no set order);
+  the import-folder cached-path child now edits a complete private queue in
+  memory and accepts it into the manager draft. Cancelling that child or the
+  manager does not mutate the live cache; accepted edits survive cancelling
+  only an existing folder's fields editor. The manager still lacks the Qt
+  application-wide pause/wait lease while editing folders, so an independently
+  running folder worker can make progress during a native manager's draft.
+  Shared file-log menu parity (including all bulk-action questions and ignored
+  retry regex filtering) remains independently incomplete.
   its simple tag lists use an owned shared autocomplete editor plus direct
   paste buttons, rather than Qt's inline autocomplete and tag list. The native
   child has Apply/Cancel within the filename draft, and holds the service/file

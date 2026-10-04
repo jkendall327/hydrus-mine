@@ -222,6 +222,7 @@ fn exists(path: &str) -> bool {
 
 /// The import folders list's state while it is open.
 struct ImportList {
+    closed: bool,
     list: Named<ImportFolderEdit>,
     /// Those deleted that are in the store.
     deleted: Vec<i64>,
@@ -262,30 +263,32 @@ fn write_import_folders(store: &Store, open: ImportList) -> hydrus_store::Result
             queues::delete_queue(conn, *id)?;
         }
         for folder in &folders {
-            match folder.id {
+            let id = match folder.id {
                 Some(id) => {
                     queues::rename_queue(conn, id, &folder.name)?;
                     queues::set_paused(conn, id, Some(folder.paused), None)?;
                     import_folders::set_settings(conn, id, &folder.settings)?;
                     queues::set_queue_options(conn, id, &folder.options)?;
+                    Some(id)
                 }
-                None => {
-                    if import_folders::create_import_folder(
-                        conn,
-                        &folder.name,
-                        &folder.settings,
-                        &folder.options,
-                        folder.paused,
-                        now,
-                    )?
-                    .is_none()
-                    {
-                        eprintln!(
-                            "could not add the import folder {:?}: the name is taken",
-                            folder.name
-                        );
-                    }
-                }
+                None => import_folders::create_import_folder(
+                    conn,
+                    &folder.name,
+                    &folder.settings,
+                    &folder.options,
+                    folder.paused,
+                    now,
+                )?,
+            };
+            if let (Some(id), Some(seeds)) = (id, &folder.file_seeds) {
+                queues::replace_file_seeds(conn, id, seeds)?;
+                queues::nudge(conn, id)?;
+            }
+            if id.is_none() {
+                eprintln!(
+                    "could not add the import folder {:?}: the name is taken",
+                    folder.name
+                );
             }
         }
         Ok(())
@@ -319,9 +322,11 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
                 .map(|q| q.options)
                 .unwrap_or_default(),
             settings: f.settings,
+            file_seeds: None,
         })
         .collect();
     let state = Rc::new(RefCell::new(ImportList {
+        closed: false,
         list: Named::new(folders),
         deleted: Vec::new(),
         asking: None,
@@ -335,6 +340,9 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         let weak = window.as_weak();
         let state = state.clone();
         Rc::new(move |f: &dyn Fn(&mut ImportList)| {
+            if state.borrow().closed {
+                return;
+            }
             f(&mut state.borrow_mut());
             if let Some(window) = weak.upgrade() {
                 show_import_list(&window, &state.borrow());
@@ -344,14 +352,24 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
     let close = {
         let weak = window.as_weak();
         let slots = slots.clone();
+        let state = state.clone();
         move || {
+            if state.borrow().closed {
+                return;
+            }
+            state.borrow_mut().closed = true;
             slots.sidecars.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
             slots.import_list.borrow_mut().take();
-            if let Some(edit) = slots.import_edit.borrow_mut().take() {
-                let _ = edit.hide();
+            let edit = slots
+                .import_edit
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(edit) = edit {
+                edit.invoke_cancel();
             }
         }
     };
@@ -362,6 +380,9 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         let slots = slots.clone();
         let store = store.clone();
         Rc::new(move |key: Option<u64>| {
+            if state.borrow().closed {
+                return;
+            }
             if slots.import_edit.borrow().is_some() {
                 return;
             }
@@ -384,7 +405,20 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
                     });
                 })
             };
-            match open_import_folder(&store, folder, &slots, &done) {
+            let cache_applied: Rc<dyn Fn(Vec<queues::FileSeed>)> = Rc::new({
+                let change = change.clone();
+                move |seeds| {
+                    if let Some(key) = key {
+                        change(&|open| {
+                            if let Some(mut folder) = open.list.get(key).cloned() {
+                                folder.file_seeds = Some(seeds.clone());
+                                open.list.replace(key, folder);
+                            }
+                        });
+                    }
+                }
+            });
+            match open_import_folder(&store, folder, &slots, &done, cache_applied) {
                 Ok(window) => *slots.import_edit.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the import folder: {e}"),
             }
@@ -408,10 +442,15 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         let state = state.clone();
         let store = store.clone();
         let close = close.clone();
+        let slots = slots.clone();
         move || {
+            if state.borrow().closed || slots.import_edit.borrow().is_some() {
+                return;
+            }
             let open = std::mem::replace(
                 &mut *state.borrow_mut(),
                 ImportList {
+                    closed: false,
                     list: Named::new(Vec::new()),
                     deleted: Vec::new(),
                     asking: None,
@@ -513,6 +552,7 @@ fn bind_list<S: 'static>(
 
 /// The import folder edit dialog's state while it is open.
 struct ImportEdit {
+    closed: bool,
     folder: ImportFolderEdit,
     asking: Option<Asking>,
 }
@@ -619,6 +659,14 @@ fn example_path(folder: &str) -> String {
     files.into_iter().next().unwrap_or_default()
 }
 
+fn seed_counts(seeds: &[queues::FileSeed]) -> queues::StatusCounts {
+    let mut counts = queues::StatusCounts::new();
+    for seed in seeds {
+        *counts.entry(seed.status).or_default() += 1;
+    }
+    counts
+}
+
 /// Open the edit import folder dialog on a folder; on "apply" (once it
 /// checks out) it gives the edited folder to `done`.
 fn open_import_folder(
@@ -626,26 +674,12 @@ fn open_import_folder(
     folder: ImportFolderEdit,
     slots: &Slots,
     done: &Rc<dyn Fn(ImportFolderEdit)>,
+    cache_applied: Rc<dyn Fn(Vec<queues::FileSeed>)>,
 ) -> Result<ImportFolderWindow, String> {
     let slot = &slots.import_edit;
     let window = ImportFolderWindow::new().map_err(|e| e.to_string())?;
-    // its file log (a new folder has none yet)
-    window.set_has_file_log(folder.id.is_some());
-    if let Some(queue) = folder.id {
-        let store = store.clone();
-        let log = slots.log.clone();
-        let open_files = slots.open_files.clone();
-        window.on_file_log(move || {
-            let old = log.borrow_mut().take();
-            if let Some(old) = old {
-                old.invoke_close_window();
-            }
-            match crate::file_log_window::open(&store, queue, &log, &open_files) {
-                Ok(window) => *log.borrow_mut() = Some(window),
-                Err(e) => eprintln!("could not open the file log: {e}"),
-            }
-        });
-    }
+    // New folders can review an empty cache before they receive a live queue.
+    window.set_has_file_log(true);
     let s = &folder.settings;
     window.set_name(folder.name.clone().into());
     window.set_path(s.path.clone().into());
@@ -658,10 +692,14 @@ fn open_import_folder(
     window.set_show_popup(s.show_working_popup);
     window.set_publish_popup_button(s.publish_files_to_popup_button);
     window.set_publish_page(s.publish_files_to_page);
-    let seen = folder
-        .id
-        .and_then(|id| store.read(|c| queues::file_seed_counts(c, id)).ok())
-        .unwrap_or_default();
+    let seen = if let Some(seeds) = &folder.file_seeds {
+        seed_counts(seeds)
+    } else {
+        folder
+            .id
+            .and_then(|id| store.read(|c| queues::file_seed_counts(c, id)).ok())
+            .unwrap_or_default()
+    };
     window.set_cached_paths(queues::file_log_status(&seen).into());
     window
         .set_import_options(crate::edit_subscription::import_options_label(&folder.options).into());
@@ -672,9 +710,82 @@ fn open_import_folder(
     show_filename_tagging(&window, store, &folder);
     window.set_sidecars(sidecars_label(store, &s.routers).into());
     let state = Rc::new(RefCell::new(ImportEdit {
+        closed: false,
         folder,
         asking: None,
     }));
+    window.on_file_log({
+        let store = store.clone();
+        let log = slots.log.clone();
+        let open_files = slots.open_files.clone();
+        let state = state.clone();
+        let weak = window.as_weak();
+        move || {
+            let Some(owner) = weak.upgrade() else {
+                return;
+            };
+            if state.borrow().closed || owner.get_asking() || log.borrow().is_some() {
+                return;
+            }
+            let seeds = {
+                let state = state.borrow();
+                match &state.folder.file_seeds {
+                    Some(seeds) => Ok(seeds.clone()),
+                    None => state.folder.id.map_or_else(
+                        || Ok(Vec::new()),
+                        |queue| store.read(|conn| queues::file_seeds(conn, queue)),
+                    ),
+                }
+            };
+            let seeds = match seeds {
+                Ok(seeds) => seeds,
+                Err(error) => {
+                    eprintln!("could not read the folder log: {error}");
+                    return;
+                }
+            };
+            let applied = Rc::new({
+                let state = Rc::downgrade(&state);
+                let weak = weak.clone();
+                let cache_applied = cache_applied.clone();
+                move |seeds: Vec<queues::FileSeed>| {
+                    let (Some(state), Some(owner)) = (state.upgrade(), weak.upgrade()) else {
+                        return;
+                    };
+                    if state.borrow().closed {
+                        return;
+                    }
+                    owner.set_cached_paths(queues::file_log_status(&seed_counts(&seeds)).into());
+                    state.borrow_mut().folder.file_seeds = Some(seeds.clone());
+                    // Qt's existing folder object belongs to the manager; an
+                    // accepted cache survives cancelling only its fields editor.
+                    cache_applied(seeds);
+                }
+            });
+            let closed = Rc::new({
+                let weak = weak.clone();
+                move || {
+                    if let Some(owner) = weak.upgrade() {
+                        owner.set_file_log_open(false);
+                    }
+                }
+            });
+            match crate::file_log_window::open_staged(
+                &store,
+                &seeds,
+                &log,
+                &open_files,
+                applied,
+                closed,
+            ) {
+                Ok(window) => {
+                    *log.borrow_mut() = Some(window);
+                    owner.set_file_log_open(true);
+                }
+                Err(error) => eprintln!("could not open the folder log: {error}"),
+            }
+        }
+    });
     // its sidecars, in the sidecar editors (an import's)
     window.on_edit_sidecars({
         let weak = window.as_weak();
@@ -734,8 +845,21 @@ fn open_import_folder(
         let weak = window.as_weak();
         let slot = slot.clone();
         let sidecars = slots.sidecars.clone();
+        let log = slots.log.clone();
+        let state = state.clone();
         move || {
+            if state.borrow().closed {
+                return;
+            }
+            state.borrow_mut().closed = true;
             sidecars.cancel();
+            let child = log
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(child) = child {
+                child.invoke_close_window();
+            }
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -1001,6 +1125,9 @@ fn open_import_folder(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if state.borrow().closed || window.get_file_log_open() {
+                return;
+            }
             read_import_fields(&window, &mut state.borrow_mut().folder);
             let checked = check_import_folder(&state.borrow().folder, &sensitive(&store), &exists);
             match checked {
@@ -1023,6 +1150,9 @@ fn open_import_folder(
         let show = show.clone();
         let finish = finish.clone();
         move |_| {
+            if state.borrow().closed {
+                return;
+            }
             let asking = state.borrow_mut().asking.take();
             if let Some(Asking::Messages(mut messages, after)) = asking {
                 messages.remove(0);

@@ -26,6 +26,7 @@ fn import_folder(case: &Json) -> ImportFolderEdit {
             ..ImportFolderSettings::default()
         },
         options: hydrus_core::import_options::ImportOptionsSlice::default(),
+        file_seeds: None,
     }
 }
 

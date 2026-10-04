@@ -161,6 +161,9 @@ pub struct ImportFolderEdit {
     pub settings: ImportFolderSettings,
     /// Its own import options.
     pub options: hydrus_core::import_options::ImportOptionsSlice,
+    /// An accepted copied cache, held by the manager draft until its Apply.
+    /// None retains the live cache (and any importer progress) unchanged.
+    pub file_seeds: Option<Vec<hydrus_store::queues::FileSeed>>,
 }
 
 impl ImportFolderEdit {
@@ -172,6 +175,7 @@ impl ImportFolderEdit {
             paused: false,
             settings: ImportFolderSettings::default(),
             options: hydrus_core::import_options::ImportOptionsSlice::default(),
+            file_seeds: None,
         }
     }
 }

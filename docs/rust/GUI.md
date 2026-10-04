@@ -675,6 +675,14 @@ all pasted tags to each selected file. Child Apply updates the filename draft;
 child Cancel and owner closure discard it. The same all-files list edits and
 reopens in import-folder options (`oracle/record_filename_simple.py`).
 
+The import folder's cached-path log is an owned copy, including for a new
+folder with an empty cache. Its Apply accepts complete ordered seed records
+into the folder-manager draft; log Cancel discards them. Accepted cache edits
+survive cancelling an existing folder's fields editor, as Qt's setter acts on
+that manager-owned folder. Manager Apply writes the cache with the folder's
+settings in one transaction; manager Cancel and closure reject it. Immediate
+importer logs retain their live behavior (`oracle/record_import_folder_log.py`).
+
 An import folder's dialog lists the tag services it tags files for by
 their paths, with "edit" and "delete" for each and "add" for another
 (refused, with the reference's warning, for one it has). "add" and

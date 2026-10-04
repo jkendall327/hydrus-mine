@@ -34,7 +34,31 @@ enum Asking {
     Renormalise,
 }
 
+#[derive(Clone)]
+enum Source {
+    Live(Arc<Store>),
+    Draft(Rc<queues::FileSeedDraft>),
+}
+impl Source {
+    fn seeds(&self, queue: i64) -> hydrus_store::Result<Vec<FileSeed>> {
+        match self {
+            Self::Live(store) => store.read(|conn| queues::file_seeds(conn, queue)),
+            Self::Draft(draft) => draft.seeds(),
+        }
+    }
+    fn change(&self, queue: i64, change: StoreChange) -> hydrus_store::Result<()> {
+        match self {
+            Self::Live(store) => store.write(move |ctx| {
+                change(ctx.conn())?;
+                queues::nudge(ctx.conn(), queue)
+            }),
+            Self::Draft(draft) => draft.change(change),
+        }
+    }
+}
+
 struct State {
+    source: Source,
     queue: i64,
     seeds: Vec<FileSeed>,
     selection: ListSelection<i64>,
@@ -129,8 +153,8 @@ fn node(entry: &Entry) -> PopupNode<'_, Entry, Action> {
     }
 }
 
-fn read(store: &Store, state: &mut State) {
-    match store.read(|c| queues::file_seeds(c, state.queue)) {
+fn read(state: &mut State) {
+    match state.source.seeds(state.queue) {
         Ok(seeds) => state.seeds = seeds,
         Err(e) => eprintln!("could not read the file log: {e}"),
     }
@@ -199,11 +223,9 @@ fn act(store: &Arc<Store>, state: &mut State, action: &Action, open_files: &Open
     let queue = state.queue;
     let now = now();
     // (each change nudges the daemon, which works the queue)
+    let source = state.source.clone();
     let write = |f: StoreChange| {
-        if let Err(e) = store.write(move |ctx| {
-            f(ctx.conn())?;
-            queues::nudge(ctx.conn(), queue)
-        }) {
+        if let Err(e) = source.change(queue, f) {
             eprintln!("could not change the file log: {e}");
         }
     };
@@ -321,11 +343,14 @@ fn act(store: &Arc<Store>, state: &mut State, action: &Action, open_files: &Open
                 let result =
                     crate::file_log::pasted_sources(&payload, &store.snapshot().url_classes)
                         .and_then(|seeds| {
-                            store
-                                .write(move |ctx| {
-                                    queues::add_file_seeds(ctx.conn(), queue, &seeds, false, now)?;
-                                    queues::nudge(ctx.conn(), queue)
-                                })
+                            source
+                                .change(
+                                    queue,
+                                    Box::new(move |conn| {
+                                        queues::add_file_seeds(conn, queue, &seeds, false, now)?;
+                                        Ok(())
+                                    }),
+                                )
                                 .map_err(|e| e.to_string())
                         });
                 if let Err(error) = result {
@@ -343,11 +368,14 @@ fn act(store: &Arc<Store>, state: &mut State, action: &Action, open_files: &Open
                         .map_err(|e| ("Clipboard Error!".to_owned(), e))
                 })
                 .and_then(|seeds| {
-                    store
-                        .write(move |ctx| {
-                            queues::add_file_seeds(ctx.conn(), queue, &seeds, false, now)?;
-                            queues::nudge(ctx.conn(), queue)
-                        })
+                    source
+                        .change(
+                            queue,
+                            Box::new(move |conn| {
+                                queues::add_file_seeds(conn, queue, &seeds, false, now)?;
+                                Ok(())
+                            }),
+                        )
                         .map_err(|e| ("Could not import!".to_owned(), e.to_string()))
                 });
             if let Err((title, text)) = result {
@@ -380,6 +408,7 @@ pub(crate) fn act_on_queue(
     open_files: &OpenFiles,
 ) -> Option<String> {
     let mut state = State {
+        source: Source::Live(store.clone()),
         queue,
         seeds: Vec::new(),
         selection: ListSelection::default(),
@@ -387,7 +416,7 @@ pub(crate) fn act_on_queue(
         exports: open_files.2.clone(),
         exports_closed: Rc::new(|| {}),
     };
-    read(store, &mut state);
+    read(&mut state);
     act(store, &mut state, action, open_files);
     match state.asking {
         Some(Asking::Error(title, text)) => Some(format!("{title} {text}")),
@@ -414,9 +443,53 @@ pub(crate) fn open(
     slot: &Rc<RefCell<Option<FileLogWindow>>>,
     open_files: &OpenFiles,
 ) -> Result<FileLogWindow, String> {
+    open_source(
+        store,
+        queue,
+        Source::Live(store.clone()),
+        slot,
+        open_files,
+        None,
+        Rc::new(|| {}),
+    )
+}
+
+/// The folder's owned copy: Apply returns its complete ordered cache, while
+/// close/Escape and retained callbacks cannot change the accepted owner cache.
+pub(crate) fn open_staged(
+    store: &Arc<Store>,
+    seeds: &[FileSeed],
+    slot: &Rc<RefCell<Option<FileLogWindow>>>,
+    open_files: &OpenFiles,
+    applied: Rc<dyn Fn(Vec<FileSeed>)>,
+    closed: Rc<dyn Fn()>,
+) -> Result<FileLogWindow, String> {
+    let draft = Rc::new(queues::FileSeedDraft::new(seeds).map_err(|e| e.to_string())?);
+    open_source(
+        store,
+        draft.queue(),
+        Source::Draft(draft),
+        slot,
+        open_files,
+        Some(applied),
+        closed,
+    )
+}
+
+fn open_source(
+    store: &Arc<Store>,
+    queue: i64,
+    source: Source,
+    slot: &Rc<RefCell<Option<FileLogWindow>>>,
+    open_files: &OpenFiles,
+    applied: Option<Rc<dyn Fn(Vec<FileSeed>)>>,
+    closed: Rc<dyn Fn()>,
+) -> Result<FileLogWindow, String> {
     let window = FileLogWindow::new().map_err(|e| e.to_string())?;
     let alive = Rc::new(Cell::new(true));
+    window.set_staged(applied.is_some());
     let state = Rc::new(RefCell::new(State {
+        source,
         queue,
         seeds: Vec::new(),
         selection: ListSelection::default(),
@@ -437,7 +510,7 @@ pub(crate) fn open(
             }
         }
     });
-    read(store, &mut state.borrow_mut());
+    read(&mut state.borrow_mut());
     // (the reference's widths, in characters)
     window.set_columns(columns(&[
         ("#", 40.0),
@@ -453,14 +526,13 @@ pub(crate) fn open(
     let refresh = {
         let weak = window.as_weak();
         let state = state.clone();
-        let store = store.clone();
         let alive = alive.clone();
         move |reread: bool| {
             if !alive.get() {
                 return;
             }
             if reread {
-                read(&store, &mut state.borrow_mut());
+                read(&mut state.borrow_mut());
             }
             if let Some(window) = weak.upgrade() {
                 show(&window, &state.borrow());
@@ -474,14 +546,44 @@ pub(crate) fn open(
         let state = state.clone();
         let alive = alive.clone();
         move || {
-            alive.set(false);
+            if !alive.replace(false) {
+                return;
+            }
             state.borrow().exports.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
+            closed();
         }
     };
+    window.on_apply({
+        let alive = alive.clone();
+        let state = state.clone();
+        let close = close.clone();
+        let refresh = refresh.clone();
+        move || {
+            if !alive.get() || state.borrow().asking.is_some() || state.borrow().exports.has_open()
+            {
+                return;
+            }
+            let Some(applied) = &applied else {
+                return;
+            };
+            let result = state.borrow().source.seeds(queue);
+            match result {
+                Ok(seeds) => {
+                    applied(seeds);
+                    close();
+                }
+                Err(error) => {
+                    state.borrow_mut().asking =
+                        Some(Asking::Error("Could not apply!".into(), error.to_string()));
+                    refresh(false);
+                }
+            }
+        }
+    });
     window.on_row_clicked({
         let state = state.clone();
         let refresh = refresh.clone();
@@ -643,22 +745,26 @@ pub(crate) fn open(
             if index == 0 {
                 match asking {
                     Some(Asking::Delete(ids)) => {
-                        if let Err(e) = store
-                            .write(move |ctx| queues::remove_file_seeds_by_id(ctx.conn(), &ids))
-                        {
+                        let source = state.borrow().source.clone();
+                        if let Err(e) = source.change(
+                            queue,
+                            Box::new(move |conn| queues::remove_file_seeds_by_id(conn, &ids)),
+                        ) {
                             eprintln!("could not change the file log: {e}");
                         }
                     }
                     Some(Asking::OpenMany(sources)) => open_sources(&sources),
                     Some(Asking::Renormalise) => {
                         let queue = state.borrow().queue;
-                        if let Err(error) = store.write(move |ctx| {
-                            let classes = hydrus_core::url::UrlClasses::new(
-                                hydrus_store::settings::get(ctx.conn())?,
-                            );
-                            queues::renormalise_file_seeds(ctx.conn(), queue, &classes)?;
-                            queues::nudge(ctx.conn(), queue)
-                        }) {
+                        let source = state.borrow().source.clone();
+                        let classes = store.snapshot().url_classes.clone();
+                        if let Err(error) = source.change(
+                            queue,
+                            Box::new(move |conn| {
+                                queues::renormalise_file_seeds(conn, queue, &classes)?;
+                                Ok(())
+                            }),
+                        ) {
                             state.borrow_mut().asking = Some(Asking::Error(
                                 "Could not re-normalise!".into(),
                                 error.to_string(),
