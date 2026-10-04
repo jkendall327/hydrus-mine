@@ -125,6 +125,7 @@ export component OptionsWindow inherits Window {
     callback field-edited(int, int, int);
     // (checker options' button clicked)
     callback checker-clicked(int);
+    callback regex-favourites-clicked();
     callback apply();
     callback cancel();
 
@@ -276,6 +277,10 @@ export component OptionsWindow inherits Window {
                                     checked: row.is-none;
                                     toggled => { root.none-toggled(i, self.checked); }
                                 }
+                            }
+                            if row.kind == 14: Button {
+                                text: row.text;
+                                clicked => { root.regex-favourites-clicked(); }
                             }
                             if row.kind == 13: HorizontalLayout {
                                 width: 260px;

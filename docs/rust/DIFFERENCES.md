@@ -284,7 +284,7 @@ search.
   aren't there, and the optional libraries tab lists ffmpeg alone. The
   boot time is in UTC, and there is no hydrus icon over the name.
 - **The options window has only the options hydrus-rs honours** (so far
-  those on twenty-one pages; the others, and pages with none, aren't there:
+  those on twenty-two pages; the others, and pages with none, aren't there:
   on the connection page, the CA bundle and curl_cffi test; on the
   downloading page, the default download source, the
   number of subscriptions syncing at once and the failed-imports limit; on
@@ -313,7 +313,9 @@ search.
   the options it has, their boxes, auxiliary labels and initial dropdown values;
   broader explanatory text on absent pages is unavailable. Application naming
   reaches the main-window title; secondary window titles still use their existing
-  captions. Exit confirmation honors the switch and auto-accept timeout; importer
+  captions. Regex favourites open in a child list editor rather than embedding
+  that list on the options page; their changes still wait for the parent Apply.
+  Exit confirmation honors the switch and auto-accept timeout; importer
   activity reasons and shutdown-maintenance questions are not yet included. Search position and
   remembering the last panel are editable. Connection/error-delay ranges follow the saved advanced mode
   when opening the window; changing that mode takes effect on reopening, as in

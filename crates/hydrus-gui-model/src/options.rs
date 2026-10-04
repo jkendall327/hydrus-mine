@@ -25,6 +25,7 @@ use hydrus_store::duplicates::DuplicateFilterSettings;
 use hydrus_store::duplicates::auto::AutoResolutionSettings;
 use hydrus_store::file_maintenance::FileMaintenanceSettings;
 use hydrus_store::network::NetworkSettings;
+use hydrus_store::regex_favourites::RegexFavourites;
 use hydrus_store::session_backups::SessionBackupSettings;
 use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
@@ -36,7 +37,9 @@ use hydrus_store::trash::TrashSettings;
 use rusqlite::Connection;
 
 macro_rules! settings {
-    ($($field:ident: $ty:ty),* $(,)?) => {
+    (@load $conn:ident, $ty:ty, $load:path) => { $load($conn) };
+    (@load $conn:ident, $ty:ty) => { hydrus_store::settings::get::<$ty>($conn) };
+    ($($field:ident: $ty:ty $(=> $load:path)?),* $(,)?) => {
         /// The settings the options window edits, as the store has them.
         #[derive(Debug, Clone, PartialEq)]
         pub struct Settings {
@@ -46,7 +49,7 @@ macro_rules! settings {
         impl Settings {
             pub fn load(conn: &Connection) -> hydrus_store::Result<Self> {
                 Ok(Self {
-                    $($field: hydrus_store::settings::get(conn)?,)*
+                    $($field: settings!(@load conn, $ty $(, $load)?)?,)*
                 })
             }
 
@@ -85,6 +88,7 @@ settings! {
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
+    regex_favourites: RegexFavourites => hydrus_store::regex_favourites::load,
     session_backups: SessionBackupSettings,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
@@ -129,6 +133,8 @@ pub enum Value {
     TagSort(TagSort),
     /// Checker options (the reference's `CheckerOptionsButton`).
     Checker(CheckerOptions),
+    /// The editable regular expression/description pairs.
+    RegexFavourites(RegexFavourites),
 }
 
 /// What kind of control an option has.
@@ -178,6 +184,8 @@ pub enum Kind {
     /// Checker options: a "checker options" button opening their editor
     /// (`checker_options`).
     Checker,
+    /// A button opening the transactional favourites list editor.
+    RegexFavourites,
 }
 
 /// A tag sort's types, as the reference's control names them
@@ -1711,6 +1719,21 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             ],
         ),
         page(
+            "regex favourites",
+            vec![opt(
+                "",
+                Kind::RegexFavourites,
+                Rc::new(|settings| Value::RegexFavourites(settings.regex_favourites.clone())),
+                Rc::new(|settings, value| match value {
+                    Value::RegexFavourites(favourites) => {
+                        settings.regex_favourites = favourites.clone();
+                        Ok(())
+                    }
+                    _ => Err(wrong("regex favourites")),
+                }),
+            )],
+        ),
+        page(
             "tag presentation",
             vec![
                 boxed(
@@ -1917,11 +1940,13 @@ pub fn suggestions(pages: &[Page]) -> Vec<Suggestion> {
                 Item::Box(title, _) => title,
                 Item::Opt(option) => option.label,
             };
-            out.push(Suggestion {
-                text: format!("{text} ({name})"),
-                page,
-                row: *row,
-            });
+            if !text.is_empty() {
+                out.push(Suggestion {
+                    text: format!("{text} ({name})"),
+                    page,
+                    row: *row,
+                });
+            }
             *row += 1;
             if let Item::Box(_, items) = item {
                 walk(items, page, name, row, out);
@@ -2289,6 +2314,31 @@ impl Editor {
             && matches!(self.values[self.page][i], Value::Checker(_))
         {
             self.values[self.page][i] = Value::Checker(options);
+        }
+    }
+
+    /// The current favourites draft, independent of the selected options page.
+    pub fn edited_regex_favourites(&self) -> RegexFavourites {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| {
+                if let Value::RegexFavourites(favourites) = value {
+                    Some(favourites.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| self.before.regex_favourites.clone())
+    }
+
+    /// Accept the child list editor’s draft without writing the parent settings.
+    pub fn set_regex_favourites(&mut self, favourites: RegexFavourites) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::RegexFavourites(_)) {
+                *value = Value::RegexFavourites(favourites);
+                return;
+            }
         }
     }
 

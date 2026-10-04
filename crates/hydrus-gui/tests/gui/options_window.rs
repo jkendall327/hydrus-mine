@@ -94,6 +94,7 @@ fn the_options_window_applies_its_changes() {
             "media viewer",
             "media viewer hovers",
             "ratings",
+            "regex favourites",
             "tag presentation",
             "tag sort",
             "thumbnails",
@@ -1084,4 +1085,41 @@ fn notebook_focus_option_changes_the_next_tab_close() {
             .unwrap()
             .close_focus_left
     );
+}
+
+#[test]
+fn regex_favourites_open_from_options_and_keep_parent_transaction() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let original = store.read(hydrus_store::regex_favourites::load).unwrap();
+    for apply in [false, true] {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "regex favourites");
+        window.invoke_regex_favourites_clicked();
+        let child = hydrus_gui::regex_favourites_window::last_opened().unwrap();
+        child.invoke_action("add".into());
+        child.set_phrase("^example$".into());
+        child.set_description("example favourite".into());
+        child.invoke_changed();
+        assert!(child.get_valid());
+        child.invoke_action("save-row".into());
+        child.invoke_action("apply".into());
+        assert_eq!(
+            store.read(hydrus_store::regex_favourites::load).unwrap(),
+            original
+        );
+        if apply {
+            window.invoke_apply();
+        } else {
+            window.invoke_cancel();
+        }
+        let saved = store.read(hydrus_store::regex_favourites::load).unwrap();
+        assert_eq!(
+            saved.0.iter().any(|(phrase, _)| phrase == "^example$"),
+            apply
+        );
+    }
 }

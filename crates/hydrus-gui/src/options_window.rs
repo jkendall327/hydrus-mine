@@ -169,6 +169,10 @@ fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
                     // (as the reference's, a subtag sort doesn't group)
                     out.grouped = sort.sort_type != hydrus_core::tag_sort::TagSortType::Subtag;
                 }
+                (Kind::RegexFavourites, Value::RegexFavourites(_)) => {
+                    out.kind = 14;
+                    out.text = "edit regex favourites".into();
+                }
                 (Kind::Checker, Value::Checker(_)) => {
                     out.kind = 13;
                     out.text = "checker options".into();
@@ -211,6 +215,7 @@ pub(crate) fn open(
     let window = OptionsWindow::new().map_err(|e| e.to_string())?;
     window.set_search_at_top(settings.options_preferences.search_at_top);
     let editor = Rc::new(RefCell::new(Editor::new(settings)));
+    let regex_slot: crate::regex_favourites_window::Slot = Rc::default();
     let names: Vec<StandardListViewItem> = editor
         .borrow()
         .page_names()
@@ -257,7 +262,9 @@ pub(crate) fn open(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let regex_slot = regex_slot.clone();
         move || {
+            crate::regex_favourites_window::cancel(&regex_slot);
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -316,6 +323,31 @@ pub(crate) fn open(
                 window.set_search_text(SharedString::new());
                 window.set_matches(ModelRc::default());
                 window.set_match_highlighted(-1);
+            }
+        }
+    });
+    window.on_regex_favourites_clicked({
+        let editor = editor.clone();
+        let regex_slot = regex_slot.clone();
+        let show_page = show_page.clone();
+        move || {
+            if crate::regex_favourites_window::has_open(&regex_slot) {
+                return;
+            }
+            let favourites = editor.borrow().edited_regex_favourites();
+            let applied = Rc::new({
+                let editor = editor.clone();
+                let show_page = show_page.clone();
+                move |favourites| {
+                    editor.borrow_mut().set_regex_favourites(favourites);
+                    show_page();
+                    Ok(())
+                }
+            });
+            if let Err(error) =
+                crate::regex_favourites_window::open(&favourites, &regex_slot, applied)
+            {
+                eprintln!("could not open regex favourites: {error}");
             }
         }
     });

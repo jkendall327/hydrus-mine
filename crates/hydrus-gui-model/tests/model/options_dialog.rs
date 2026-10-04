@@ -319,6 +319,11 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
     let mut after = 0;
     for (boxes, item) in mine {
         let Item::Opt(option) = item else { continue };
+        // This reference page embeds the list; native opens the same transaction
+        // in a child window, covered by regex_favourites’s dedicated recording.
+        if matches!(option.kind, Kind::RegexFavourites) {
+            continue;
+        }
         let found = rows
             .iter()
             .enumerate()
@@ -690,4 +695,29 @@ fn notebook_navigation_preferences_match_recorded_controls() {
         .unwrap();
     (rename.set)(&mut settings, &Value::Check(true)).unwrap();
     assert!(settings.notebooks.rename_sent_notebooks);
+}
+
+#[test]
+fn regex_favourites_child_edits_wait_for_parent_apply() {
+    use hydrus_gui_model::options::Editor;
+    use hydrus_store::regex_favourites::RegexFavourites;
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let before = store.read(Settings::load).unwrap();
+    let mut editor = Editor::new(before.clone());
+    let changed = RegexFavourites(vec![("^example$".into(), "example favourite".into())]);
+    editor.set_regex_favourites(changed.clone());
+    assert_eq!(editor.edited_regex_favourites(), changed);
+    assert_eq!(store.read(Settings::load).unwrap(), before);
+    let (after, original, problems) = editor.applied();
+    assert!(problems.is_empty());
+    assert_eq!(after.regex_favourites, changed);
+    let original = original.clone();
+    store
+        .write(move |ctx| after.save(ctx.conn(), &original))
+        .unwrap();
+    assert_eq!(
+        store.read(Settings::load).unwrap().regex_favourites,
+        changed
+    );
 }
