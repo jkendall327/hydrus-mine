@@ -1047,6 +1047,7 @@ fn notebook_focus_option_changes_the_next_tab_close() {
     let (_dirs, store) = store();
     let _windows = headless::init();
     let mut pages = Pages::single(hydrus_gui::SearchPage::new(store.clone()));
+    let mut left_key = None;
     for name in ["left", "middle", "right"] {
         pages
             .new_page(&NewPage::Search {
@@ -1056,6 +1057,9 @@ fn notebook_focus_option_changes_the_next_tab_close() {
                 name: name.into(),
             })
             .unwrap();
+        if name == "left" {
+            left_key = Some(pages.shown().key);
+        }
     }
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, pages);
@@ -1073,7 +1077,7 @@ fn notebook_focus_option_changes_the_next_tab_close() {
     ui.invoke_tab_chosen(0, 2);
     ui.invoke_close_tab(0, 2);
     assert_eq!(ui.get_tab_rows().row_data(0).unwrap().selected, 1);
-    assert!(bound.pages.borrow().shown().name.starts_with("left"));
+    assert_eq!(bound.pages.borrow().shown().key, left_key.unwrap());
     let stored = store
         .read(hydrus_store::settings::get::<hydrus_store::sessions::NotebookSettings>)
         .unwrap();

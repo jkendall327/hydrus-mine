@@ -1638,7 +1638,7 @@ pub(crate) mod tests {
         );
         assert_eq!(
             input.settings["file_handling"],
-            serde_json::json!({"comic_book_detection": true, "transparency_strictness": 2, "do_not_chmod": false})
+            serde_json::json!({"comic_book_detection": true, "transparency_strictness": 2, "do_not_chmod": false, "prefix_hash_when_copying": false})
         );
         assert_eq!(
             input.settings["pages"],

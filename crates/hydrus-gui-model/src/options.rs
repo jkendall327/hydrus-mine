@@ -2543,8 +2543,17 @@ mod tests {
             .iter()
             .position(|p| p.name == "files and trash")
             .unwrap();
-        values[trash][1] = Value::Noneable(None);
-        values[trash][3] = Value::Check(true);
+        let trash_options = pages[trash].options();
+        let age = trash_options
+            .iter()
+            .position(|option| {
+                option.label
+                    == "Number of hours a file will stay in the trash before being deleted: "
+            })
+            .unwrap();
+        let copy = trash_options.iter().position(|option| option.label == "TEST: Import local files directly from source, do not copy to temp dir beforehand.").unwrap();
+        values[trash][age] = Value::Noneable(None);
+        values[trash][copy] = Value::Check(true);
         let (after, problems) = applied(&pages, &before, &values);
         assert!(problems.is_empty());
         assert_eq!(after.trash.max_age_hours, None);
@@ -2785,19 +2794,30 @@ mod tests {
             })
             .collect();
         assert_eq!(titles, [("delete lock", 0)]);
-        assert!(matches!(rows[6], Row::Opt { depth: 1, .. }));
+        let find = |label: &str| {
+            rows.iter()
+                .position(|row| matches!(row, Row::Opt { option, .. } if option.label == label))
+                .unwrap()
+        };
+        let age = find("Number of hours a file will stay in the trash before being deleted: ");
+        let archived = find("Do not permit archived files to be deleted from the trash: ");
+        let title = rows
+            .iter()
+            .position(|row| matches!(row, Row::Title { title, .. } if *title == "delete lock"))
+            .unwrap();
+        assert!(matches!(rows[archived], Row::Opt { depth: 1, .. }));
         // a noneable number keeps its number while none
-        editor.none(1, true);
-        editor.number(1, 99);
-        editor.check(6, true);
+        editor.none(age, true);
+        editor.number(age, 99);
+        editor.check(archived, true);
         let (after, _, problems) = editor.applied();
         assert!(problems.is_empty());
         assert_eq!(after.trash.max_age_hours, None);
         assert!(after.delete_lock.archived);
-        editor.none(1, false);
+        editor.none(age, false);
         assert_eq!(editor.applied().0.trash.max_age_hours, Some(99));
         // (a title is no option)
-        editor.check(5, true);
+        editor.check(title, true);
         assert_eq!(editor.applied().0.file_handling, before.file_handling);
     }
 }
