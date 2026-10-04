@@ -16,7 +16,8 @@
     "21f4fa12",
     "519107d6",
     "0df36e40",
-    "0124224a"
+    "0124224a",
+    "ef8edac0"
   ],
   "implementation_leaf_count": 8,
   "partial_improvements": 4,
@@ -1409,6 +1410,37 @@
         "b5ebaf2b2748082ce100cc6b24c84bc8a198c922",
         "244c9da991fba59587a83e13ab8ffc150eee041f"
       ]
+    },
+    {
+      "baseline": "2388372d",
+      "implementation_commit": "ef8edac0",
+      "reference_ids": [
+        "audit-media-tags-autocomplete",
+        "siblings-autocomplete",
+        "parents-autocomplete"
+      ],
+      "status": "partial",
+      "exact_behavior": "Real result-keyboard sequence: logical arrow wrapping; reversible Shift/Ctrl+Shift selection; Home/End endpoints; physical-row PageUp/PageDown including expanded parent rows; CtrlP/N; focused result CtrlA; ordered CtrlC and deduplicated parents on CtrlShiftC. Native selected editor text keeps its own copy engine. All three owner callbacks guard pending operations and closed owners; navigation keeps draft unchanged and scrolls to last hit.",
+      "limits": "Native tab dropdown/layout and synchronous fetch remain different; Escape/result drag and read-search favourite/children/OR controls are not claimed in this slice. No new completed original IDs or validated counts.",
+      "source_anchors": [
+        "crates/hydrus-gui-model/src/write_autocomplete.rs::WriteAutocomplete::navigate",
+        "crates/hydrus-gui-model/src/write_autocomplete.rs::WriteAutocomplete::copy_selection",
+        "crates/hydrus-gui/ui/write_autocomplete.slint::WriteTagInput::capture-key-pressed",
+        "crates/hydrus-gui/ui/write_tag_line_edit.slint::WriteTagLineEdit",
+        "crates/hydrus-gui/src/write_tag_menu.rs::results_action",
+        "crates/hydrus-gui/src/manage_tags_window.rs::on_navigate",
+        "crates/hydrus-gui/src/tag_relationships_window.rs::on_autocomplete_navigate",
+        "crates/hydrus-gui/src/write_tag_window.rs::on_results_action"
+      ],
+      "test_anchors": [
+        "crates/hydrus-gui-model/tests/model/write_autocomplete.rs::check_recorded_keyboard",
+        "crates/hydrus-gui/tests/gui/write_autocomplete.rs::keyboard_result_selection_copy_and_native_text_copy_use_their_own_focus"
+      ],
+      "reference_recording": [
+        "oracle/record_write_tag_selection.py",
+        "oracle/fixtures/write_tag_selection.json::keyboard"
+      ],
+      "executed_validation": "Executed actual Qt keyboard/result-list/clipboard recording via shared with-oracle lock, 2026-10-04 18:03 UTC. Basic fixture client API could not listen under sandbox; local Qt sequence and recorder completed successfully. Warning-free cached Slint source compilation, Python syntax, fmt and diff checks passed. Model/native regressions authored for root asynchronous GitHub CI, not executed locally. No Cargo/mutation tests."
     }
   ],
   "continuations": [
