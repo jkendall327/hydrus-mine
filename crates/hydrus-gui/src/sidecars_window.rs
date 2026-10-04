@@ -84,7 +84,7 @@ impl std::fmt::Debug for Slots {
             .field("node", &self.node.borrow().is_some())
             .field("strings", &self.strings)
             .field("formula", &self.formula)
-            .finish()
+            .finish_non_exhaustive()
     }
 }
 
