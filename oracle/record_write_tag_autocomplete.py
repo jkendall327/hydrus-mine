@@ -84,8 +84,29 @@ def record(session):
         consumed=qt(lambda:ac._Paste() if button else ac._TryToProcessAPasteEvent())
         paste_events.append({'text':text,'skip':skip,'answer':yes,'button':button,'consumed':consumed,'asked':list(asked),'pasted':list(pasted)})
         asked.clear();pasted.clear()
+    def relation_inputs():
+        from hydrus.client.gui.metadata.ClientGUIManageTagSiblings import ManageTagSiblings
+        from hydrus.client.gui.metadata.ClientGUIManageTagParents import ManageTagParents
+        results=[]
+        for kind, cls in [('siblings',ManageTagSiblings),('parents',ManageTagParents)]:
+            panel=cls._Panel(c.gui,local)
+            inputs=(panel._old_input,panel._new_input) if kind == 'siblings' else (panel._children_input,panel._parents_input)
+            def snapshot(action):
+                left=panel._old_siblings.GetTags() if kind == 'siblings' else panel._children.GetTags()
+                right=[] if kind == 'siblings' and panel._current_new is None else ([panel._current_new] if kind == 'siblings' else panel._parents.GetTags())
+                results.append({'kind':kind,'action':action,'left':sorted(left),'right':sorted(right)})
+            left_text='parity:paste left a\nparity:paste left b'
+            right_text='parity:paste right' if kind == 'siblings' else 'parity:paste right a\nparity:paste right b'
+            clipboard['text']=left_text;inputs[0]._Paste();snapshot('paste_left')
+            inputs[0]._Paste();snapshot('repeat_left')
+            clipboard['text']=right_text;inputs[1]._Paste();snapshot('paste_right')
+            inputs[1]._Paste();snapshot('repeat_right')
+            clipboard['text']='parity:paste left a';inputs[1]._Paste();snapshot('move_to_right')
+            panel.deleteLater()
+        return results
+    relationship_inputs=qt(relation_inputs)
     qt(ac.deleteLater);c.CallToThread=old_thread;c.GetClipboardText=old_clipboard
-    return {'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
+    return {'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
 def child(out):
     import hydrus_driver,record_api
     result=hydrus_driver.run_client(record_api.unpack_fixture('basic'),record)

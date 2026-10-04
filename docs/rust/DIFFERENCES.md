@@ -923,9 +923,10 @@ into the new manual settings; choices made in this window are persisted.
 
 ## Tag relationship editors
 
-The first siblings/parents editors use clean-tag text inputs and preview
-lists; the reference's full write autocomplete, paste buttons, tag context
-menus, and default service-tab preference are not connected yet. Import/export
+The siblings/parents editors share write-autocomplete, counts, decorated
+suggestions, manual fetch and add-only paste with Manage Tags. The reference's
+tag context menus, favourite/children tabs and default service-tab preference
+are not connected yet. Import/export
 are direct clipboard and .txt buttons rather than two popup menus. Relationship
 rows are loaded synchronously when the dialog opens, so opening a service with
 very many pairs can pause the UI; reference background fetch/progress states
@@ -1220,8 +1221,7 @@ parent and sibling rows, manual fetch, a scrollable suggestions list, multiline
 paste and all six Tag Editing autocomplete preferences. The reference's
 favourite/children suggestion tabs and tag context menus are still absent.
 Declining a multiline paste leaves the existing text draft intact; Qt returns
-that event to its line editor's normal paste handling. The relationship and
-import-options text inputs have not yet adopted this shared widget. Expanded
+that event to its line editor's normal paste handling. The import-options text inputs have not yet adopted this shared widget. Expanded
 parent rows enter their originating child, matching Qt's logical-list selection.
 
 File Search list heights and floating policy reach new-page presentation;

@@ -1,9 +1,10 @@
 //! The siblings and parents windows, sharing the relationship editor and list.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
 use hydrus_gui_model::tag_relationships::{Question, Relationships};
+use hydrus_gui_model::write_autocomplete::{Paste, WriteAutocomplete};
 use slint::{ComponentHandle as _, ModelRc, VecModel};
 
 use crate::{TableRow, TagRelationshipsWindow};
@@ -14,13 +15,25 @@ enum Operation {
     Delete,
     Import(String),
     Apply,
+    Paste {
+        right: bool,
+        tags: Vec<String>,
+        message: String,
+    },
 }
 
 struct Binding {
     model: Relationships,
     operation: Option<Operation>,
     answers: Vec<Option<String>>,
-    inputs: Vec<(String, String)>,
+    inputs: Vec<(WriteAutocomplete, WriteAutocomplete)>,
+}
+
+impl Binding {
+    fn input_mut(&mut self, right: bool) -> &mut WriteAutocomplete {
+        let pair = &mut self.inputs[self.model.service()];
+        if right { &mut pair.1 } else { &mut pair.0 }
+    }
 }
 
 /// Open a staged editor. Closing drops changes; Apply calls `applied` only
@@ -39,7 +52,21 @@ pub(crate) fn open(
             .map(Into::into)
             .collect::<Vec<_>>(),
     )));
-    let inputs = vec![(String::new(), String::new()); model.service_names().len()];
+    let location = model
+        .store()
+        .read(hydrus_store::settings::get::<hydrus_store::settings::SearchDefaults>)
+        .unwrap_or_default()
+        .local_location;
+    let inputs = (0..model.service_names().len())
+        .map(|i| {
+            let key = model.service_key(i).expect("loaded editable service");
+            (
+                WriteAutocomplete::new(model.store().clone(), key.clone(), location.clone()),
+                WriteAutocomplete::new(model.store().clone(), key, location.clone()),
+            )
+        })
+        .collect();
+    let active = Rc::new(Cell::new(true));
     let binding = Rc::new(RefCell::new(Binding {
         inputs,
         model,
@@ -85,6 +112,36 @@ pub(crate) fn open(
                         .collect::<Vec<_>>(),
                 ))
             };
+            let (left_input, right_input) = &binding.inputs[model.service()];
+            let suggestions = |input: &WriteAutocomplete| {
+                ModelRc::new(VecModel::from(
+                    input
+                        .suggestions()
+                        .iter()
+                        .map(|(t, label)| crate::list_text(label, colours.tag(t)))
+                        .collect::<Vec<_>>(),
+                ))
+            };
+            window.set_left_suggestions(suggestions(left_input));
+            window.set_right_suggestions(suggestions(right_input));
+            window.set_left_highlighted(
+                left_input
+                    .highlighted()
+                    .and_then(|i| i32::try_from(i).ok())
+                    .unwrap_or(-1),
+            );
+            window.set_right_highlighted(
+                right_input
+                    .highlighted()
+                    .and_then(|i| i32::try_from(i).ok())
+                    .unwrap_or(-1),
+            );
+            window.set_left_input(left_input.text().into());
+            window.set_right_input(right_input.text().into());
+            window.set_autocomplete_height(
+                i32::try_from(left_input.options().autocomplete_list_height.clamp(1, 128))
+                    .unwrap_or(11),
+            );
             window.set_left_tags(tags(left));
             window.set_right_tags(tags(right));
             window.set_service_index(i32::try_from(model.service()).unwrap_or(0));
@@ -106,7 +163,13 @@ pub(crate) fn open(
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slot = slot.clone();
+        let active = active.clone();
+        let binding = binding.clone();
         move || {
+            if !active.replace(false) {
+                return;
+            }
+            binding.borrow_mut().operation = None;
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
             }
@@ -128,6 +191,28 @@ pub(crate) fn open(
             };
             let answers = binding.answers.clone();
             let result = match &op {
+                Operation::Paste {
+                    right,
+                    tags,
+                    message,
+                } => {
+                    if answers.is_empty() {
+                        Err(Question {
+                            message: message.clone(),
+                            yes: "yes".into(),
+                            no: "no".into(),
+                            reason: false,
+                        })
+                    } else {
+                        if answers[0].is_some() {
+                            if let Err(e) = binding.model.paste_tags(*right, tags) {
+                                window.set_error(e.into());
+                            }
+                            binding.input_mut(*right).clear();
+                        }
+                        Ok(())
+                    }
+                }
                 Operation::Add => binding.model.add(&answers),
                 Operation::Delete => binding.model.delete(&answers),
                 Operation::Import(text) => binding.model.import(text, &answers).map(|odd| {
@@ -186,7 +271,11 @@ pub(crate) fn open(
         let binding = binding.clone();
         let weak = window.as_weak();
         let run = run.clone();
+        let active = active.clone();
         move |op| {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return;
+            }
             if let Some(w) = weak.upgrade() {
                 w.set_error("".into());
             }
@@ -217,7 +306,11 @@ pub(crate) fn open(
         let binding = binding.clone();
         let weak = window.as_weak();
         let run = run.clone();
+        let active = active.clone();
         move |yes| {
+            if !active.get() || binding.borrow().operation.is_none() {
+                return;
+            }
             let Some(w) = weak.upgrade() else {
                 return;
             };
@@ -240,22 +333,21 @@ pub(crate) fn open(
         let binding = binding.clone();
         let weak = window.as_weak();
         let refresh = refresh.clone();
+        let active = active.clone();
         move |i| {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return;
+            }
             let Some(w) = weak.upgrade() else {
                 return;
             };
             let mut b = binding.borrow_mut();
             let previous = b.model.service();
-            b.inputs[previous] = (
-                w.get_left_input().to_string(),
-                w.get_right_input().to_string(),
-            );
+            b.inputs[previous].0.set_text(w.get_left_input().as_str());
+            b.inputs[previous].1.set_text(w.get_right_input().as_str());
             b.model
                 .choose_service(usize::try_from(i).unwrap_or(usize::MAX));
-            let (left, right) = b.inputs[b.model.service()].clone();
             drop(b);
-            w.set_left_input(left.into());
-            w.set_right_input(right.into());
             refresh();
         }
     });
@@ -263,28 +355,145 @@ pub(crate) fn open(
         let binding = binding.clone();
         let weak = window.as_weak();
         let refresh = refresh.clone();
+        let active = active.clone();
         move |right, text| {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return;
+            }
             let Some(w) = weak.upgrade() else {
                 return;
             };
-            match binding.borrow_mut().model.enter_tags(right, &text) {
-                Ok(()) => {
-                    w.set_error("".into());
-                    if right {
-                        w.set_right_input("".into());
-                    } else {
-                        w.set_left_input("".into());
-                    }
-                }
-                Err(e) => w.set_error(e.into()),
+            let mut b = binding.borrow_mut();
+            if b.input_mut(right).text() != text.as_str() {
+                b.input_mut(right).set_text(&text);
             }
+            if let Some(chosen) = b.input_mut(right).chosen(None) {
+                match b.model.enter_tags(right, &chosen) {
+                    Ok(()) => {
+                        w.set_error("".into());
+                        b.input_mut(right).clear();
+                    }
+                    Err(e) => w.set_error(e.into()),
+                }
+            }
+            drop(b);
             refresh();
+        }
+    });
+    window.on_autocomplete_edited({
+        let binding = binding.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        move |right, text| {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return;
+            }
+            binding.borrow_mut().input_mut(right).set_text(&text);
+            refresh();
+        }
+    });
+    window.on_autocomplete_fetch({
+        let binding = binding.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        move |right| {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return;
+            }
+            binding.borrow_mut().input_mut(right).fetch();
+            refresh();
+        }
+    });
+    window.on_autocomplete_move({
+        let binding = binding.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        move |right, by| {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return;
+            }
+            binding
+                .borrow_mut()
+                .input_mut(right)
+                .move_highlight(by as isize);
+            refresh();
+        }
+    });
+    window.on_autocomplete_chosen({
+        let binding = binding.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let weak = window.as_weak();
+        move |right, i| {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return;
+            }
+            let mut b = binding.borrow_mut();
+            if let Some(tag) = b.input_mut(right).chosen(usize::try_from(i).ok()) {
+                if let Err(e) = b.model.enter_tags(right, &tag)
+                    && let Some(w) = weak.upgrade()
+                {
+                    w.set_error(e.into());
+                }
+                b.input_mut(right).clear();
+            }
+            drop(b);
+            refresh();
+        }
+    });
+    window.on_autocomplete_paste({
+        let binding = binding.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let start = start.clone();
+        let weak = window.as_weak();
+        move |right, button| {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return true;
+            }
+            let text = match crate::from_clipboard() {
+                Ok(text) => text,
+                Err(e) => {
+                    if let Some(w) = weak.upgrade() {
+                        w.set_error(e.into());
+                    }
+                    return true;
+                }
+            };
+            let options = binding.borrow_mut().input_mut(right).options();
+            match hydrus_gui_model::write_autocomplete::paste(&text, button, &options) {
+                Paste::Text => false,
+                Paste::Confirm { message, tags } => {
+                    start(Operation::Paste {
+                        right,
+                        message,
+                        tags,
+                    });
+                    true
+                }
+                Paste::Tags(tags) => {
+                    let mut b = binding.borrow_mut();
+                    if let Err(e) = b.model.paste_tags(right, &tags)
+                        && let Some(w) = weak.upgrade()
+                    {
+                        w.set_error(e.into());
+                    }
+                    b.input_mut(right).clear();
+                    drop(b);
+                    refresh();
+                    true
+                }
+            }
         }
     });
     window.on_remove_input({
         let binding = binding.clone();
         let refresh = refresh.clone();
+        let active = active.clone();
         move |right, i| {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return;
+            }
             let mut b = binding.borrow_mut();
             let (left, rights) = b.model.inputs();
             if let Some(t) =
@@ -300,7 +509,11 @@ pub(crate) fn open(
         let binding = binding.clone();
         let weak = window.as_weak();
         let refresh = refresh.clone();
+        let active = active.clone();
         move || {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return;
+            }
             if let Some(w) = weak.upgrade() {
                 binding.borrow_mut().model.set_filters(
                     w.get_show_all(),
@@ -314,7 +527,11 @@ pub(crate) fn open(
     window.on_wipe_workspace({
         let binding = binding.clone();
         let refresh = refresh.clone();
+        let active = active.clone();
         move || {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return;
+            }
             binding.borrow_mut().model.wipe_workspace();
             refresh();
         }
@@ -322,7 +539,11 @@ pub(crate) fn open(
     window.on_row_clicked({
         let binding = binding.clone();
         let refresh = refresh.clone();
+        let active = active.clone();
         move |i, ctrl, shift| {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return;
+            }
             binding
                 .borrow_mut()
                 .model
@@ -333,7 +554,11 @@ pub(crate) fn open(
     window.on_row_activated({
         let binding = binding.clone();
         let start = start.clone();
+        let active = active.clone();
         move |i| {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return;
+            }
             binding.borrow_mut().model.click(
                 usize::try_from(i).unwrap_or(usize::MAX),
                 false,
@@ -346,7 +571,11 @@ pub(crate) fn open(
         let binding = binding.clone();
         let weak = window.as_weak();
         let refresh = refresh.clone();
+        let active = active.clone();
         move |c, asc| {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return;
+            }
             binding
                 .borrow_mut()
                 .model

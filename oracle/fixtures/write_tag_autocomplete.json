@@ -1,4 +1,110 @@
 {
+  "relationship_inputs": [
+    {
+      "kind": "siblings",
+      "action": "paste_left",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": []
+    },
+    {
+      "kind": "siblings",
+      "action": "repeat_left",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": []
+    },
+    {
+      "kind": "siblings",
+      "action": "paste_right",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste right"
+      ]
+    },
+    {
+      "kind": "siblings",
+      "action": "repeat_right",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste right"
+      ]
+    },
+    {
+      "kind": "siblings",
+      "action": "move_to_right",
+      "left": [
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste left a"
+      ]
+    },
+    {
+      "kind": "parents",
+      "action": "paste_left",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": []
+    },
+    {
+      "kind": "parents",
+      "action": "repeat_left",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": []
+    },
+    {
+      "kind": "parents",
+      "action": "paste_right",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste right a",
+        "parity:paste right b"
+      ]
+    },
+    {
+      "kind": "parents",
+      "action": "repeat_right",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste right a",
+        "parity:paste right b"
+      ]
+    },
+    {
+      "kind": "parents",
+      "action": "move_to_right",
+      "left": [
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste left a",
+        "parity:paste right a",
+        "parity:paste right b"
+      ]
+    }
+  ],
   "controls": {
     "values": [
       false,
@@ -60,8 +166,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         },
         {
@@ -69,8 +175,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         }
       ],
@@ -98,8 +204,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         },
         {
@@ -107,8 +213,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         }
       ],
@@ -234,7 +340,7 @@
       "consumed": false,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:amber\nparity:new",
           "title": "Want to paste everything?"
         }
       ],
@@ -248,7 +354,7 @@
       "consumed": true,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:amber\nparity:new",
           "title": "Want to paste everything?"
         }
       ],

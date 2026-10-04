@@ -1866,3 +1866,11 @@ page-weight label for the clicked subtree: each child contributes its file count
 and each importer file or gallery seed contributes twenty, including repeated
 files shown in separate children. `oracle/record_tab_refresh.py` records the real
 recursive dispatch, search states, weights and clipboard text.
+
+The sibling and parent editors now share the same write input on both sides.
+Each service retains its own typed drafts, suggestions and highlighted result;
+keyboard entry and clicked suggestions use the selected tag, Ctrl+Space forces
+fetch, and pasted tags only add to selections. Pasting a tag on the opposite
+side removes it from the original side. A pending paste cannot apply the
+relationship editor; closing its owner invalidates subsequent answers. The real
+Qt sibling/parent preview selections are recorded alongside write suggestions.
