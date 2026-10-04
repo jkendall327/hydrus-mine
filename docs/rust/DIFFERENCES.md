@@ -925,8 +925,11 @@ existing hardlinks are detached so other directory entries retain their bytes.
 Existing sidecars are detached before routing for the same reason.
 
 The window offers the reference's interactive pattern-shortcut clipboard menu;
-the selected-files tags sidebar is still absent. Native shortcut menus do not
-reproduce Qt's bold heading or action hover tooltips.
+the selected-files tags sidebar supplies actual display counts, local sorting,
+copy/search/relationship/favourite menus and owner cancellation. Its generic
+maintenance → regenerate tag display action, advanced experimental display-type
+switch and full keyboard navigation remain unported. Native shortcut menus do
+not reproduce Qt's bold heading or action hover tooltips.
 "Export and close" closes the review window (the reference's quit-afterwards
 flag also closes its review frame, not the whole client). Cancellation completes
 an in-flight copy before stopping between files. Progress is in the review

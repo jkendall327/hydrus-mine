@@ -985,6 +985,16 @@ reference's confirmation and disables links; "export and close" asks "Export
 as shown?" and closes after success. `oracle/record_export_files.py` records
 the reference panel's previews, removal and confirmations, and its export
 worker's collision filenames and overwritten file contents.
+The read-only "files' tags" sidebar shows actual display tags for selected
+files, falling back to all kept files, with current, pending and petitioned
+counts. Local tag/subtag/count sorting preserves selected tags and remembers
+text/count order separately. Ctrl+C copies selected raw tags; context menus
+copy raw/subtags/counts, open native AND/OR/separate search or duplicate pages,
+edit relationships, and persist favourites/most-used choices. Middle-click
+launches a search (Shift uses OR); double-click has no action. Closing the owner
+invalidates pending menu answers and nested relationship editors.
+`oracle/record_export_selected_tags.py` records these actions on the actual
+reference panel with controlled pending/petitioned mappings in the basic store.
 Export phrases accept either slash style between the final folder and filename
 on Windows, as the reference does; native separators preserve nested folders.
 
