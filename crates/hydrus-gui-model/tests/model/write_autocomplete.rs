@@ -132,7 +132,21 @@ fn exact_rows_counts_domains_decorations_and_first_selection_match_reference() {
                 actual.push(json!({"tag":row.tag,"count":row.counted,"rows":[row.label]}));
             }
         }
-        assert_eq!(json!(actual), query["suggestions"], "{query}");
+        // Qt iterates an unsorted parent collection (ListBoxItemTextTag
+        // _AppendParentsTextWithNamespaces); actual reruns emit either order.
+        // Preserve logical suggestion order, its primary row, counts and every
+        // inherited label, while comparing only that unordered suffix as a bag.
+        let canonical = |suggestions: &mut [Value]| {
+            for suggestion in suggestions {
+                let rows = suggestion["rows"].as_array_mut().unwrap();
+                rows[1..].sort_by(|a, b| a.as_str().unwrap().cmp(b.as_str().unwrap()));
+            }
+        };
+        let mut expected: Vec<Value> =
+            serde_json::from_value(query["suggestions"].clone()).unwrap();
+        canonical(&mut actual);
+        canonical(&mut expected);
+        assert_eq!(actual, expected, "{query}");
         assert_eq!(json!([input.chosen(None).unwrap()]), query["selected"]);
     }
     // Fetch-as-you-type disabled must suppress suggestions, while Ctrl+Space still fetches.
@@ -818,6 +832,26 @@ fn write_domain_menus_and_interlocks_replay_reference_without_persisting_options
         .key
         .clone();
     let initial = LocationContext::single(ServiceKey::new(builtin_keys::MY_FILES.to_vec()));
+    // The recorder explicitly sets the widget to "my files" and observes
+    // the client's configured local fallback; these are independent of a
+    // freshly constructed widget's per-service domain override.
+    let recorded_defaults = &fixture["domain_preferences"];
+    let keys = |name: &str| {
+        recorded_defaults[name]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|key| ServiceKey::from_hex(key.as_str().unwrap()).unwrap())
+            .collect::<Vec<_>>()
+    };
+    let defaults = LocationContext::new(keys("current"), keys("deleted"));
+    store
+        .write(move |ctx| {
+            let mut options: settings::SearchDefaults = settings::get(ctx.conn())?;
+            options.local_location = defaults;
+            settings::set(ctx.conn(), &options)
+        })
+        .unwrap();
     let before = serde_json::to_value(
         store
             .read(settings::get::<hydrus_store::tag_display_config::AutocompleteWidgetSettings>)
@@ -825,6 +859,7 @@ fn write_domain_menus_and_interlocks_replay_reference_without_persisting_options
     )
     .unwrap();
     let mut input = WriteAutocomplete::new(store.clone(), key.clone(), initial.clone());
+    input.choose_domain(hydrus_gui_model::domains::Choice::Location(initial.clone()));
     for event in fixture["domains"].as_array().unwrap() {
         let entries = input.domain_menu(event["tags"].as_bool().unwrap());
         let actual: Vec<_> = entries
