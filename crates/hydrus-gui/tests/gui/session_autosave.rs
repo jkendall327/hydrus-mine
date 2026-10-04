@@ -144,7 +144,7 @@ fn applied_idle_and_period_controls_drive_real_archives_with_unchanged_suppressi
 
 #[test]
 fn actual_key_and_pointer_events_reset_idle_and_other_startup_stops_autosave() {
-    let _windows = headless::init();
+    let windows = headless::init();
     let (_dirs, store) = store();
     store
         .write(move |ctx| {
@@ -162,7 +162,11 @@ fn actual_key_and_pointer_events_reset_idle_and_other_startup_stops_autosave() {
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     ui.show().unwrap();
+    let main = windows.get(0).unwrap();
+    main.dispatch_event(slint::platform::WindowEvent::WindowActiveChanged(true));
+    headless::render(&main, 1100, 900);
     ui.set_search_focus_requests(ui.get_search_focus_requests() + 1);
+    headless::render(&main, 1100, 900);
     let future = hydrus_core::TimestampMs::now().0 + 120_001;
     bound.session_autosave.user_at(0);
     bound.session_autosave.mouse_at(0);
@@ -171,6 +175,7 @@ fn actual_key_and_pointer_events_reset_idle_and_other_startup_stops_autosave() {
         .dispatch_event(slint::platform::WindowEvent::PointerMoved {
             position: slint::LogicalPosition::new(10.0, 10.0),
         });
+    headless::render(&main, 1100, 900);
     assert!(!bound.session_autosave.idle_at(future));
     bound.session_autosave.mouse_at(0);
     assert!(bound.session_autosave.idle_at(future));
