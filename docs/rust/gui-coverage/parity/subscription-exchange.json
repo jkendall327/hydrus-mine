@@ -6,13 +6,15 @@
     "fd6551d7641cf36cbf213a29013cadfa2867e7cc",
     "155db883697c23d5142509ee2d90bb2507f62e03",
     "6637b490ef94dae95512dc25fd74038437dd2738",
-    "3a1ab359ae925ddd87f09e4dd3050f6748261300"
+    "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+    "7753f862f02f82510c402602c8c7553b1b79e14b",
+    "1654a1cb7f4750391e745ad076e8cf6de1f236e1"
   ],
   "validation": {
     "reference_recording": "Passed three actual Qt recorder executions using shared with-oracle lock, last includes JSON file exports/imports/cancel and exact overwrite rejection/acceptance; synthetic domains only; screenshot inspected.",
     "formatting": "rustfmt --edition 2024, git diff --check and Python recorder syntax passed.",
     "slint_source_check": "Passed cached Slint compiler with no Cargo builds.",
-    "rust_tests": "Authored full codec roundtrip, actual model/store consumers and GUI staging/persistence/cancel/invalid-file/overwrite/closed-owner regressions. Root hosted CI pending; no local Cargo or mutation tests."
+    "rust_tests": "Root hosted parity-models passed at integrated3d3b5108 (CI37221484662); newer exact missing-history model/GUI regressions and full GUI/runtime checks await hosted CI. Clippy assigning_clones repair1654a1cb sent. No local Cargo or mutation tests."
   },
   "native_navigation": [
     {
@@ -35,11 +37,11 @@
       "before": "missing",
       "proposed_status": "partial",
       "proposedStatus": "partial",
-      "behavior": "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata.",
-      "exactBehavior": "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata.",
+      "behavior": "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata. Incomplete objects now ask the exact reference missing query log data title, message and import/back-out choices before they enter the draft; accepting persists empty logs and rejecting or cancelling continues remaining objects in list order. Apply is blocked while the question remains unanswered.",
+      "exactBehavior": "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata. Incomplete objects now ask the exact reference missing query log data title, message and import/back-out choices before they enter the draft; accepting persists empty logs and rejecting or cancelling continues remaining objects in list order. Apply is blocked while the question remains unanswered.",
       "limits": [
         "Legacy subscription type3 conversion is still absent.",
-        "The original export/import popup placement and missing-history GetYesNo question are not yet reproduced; modern missing history is described in the explicit package review and initialised empty only after accepting it.",
+        "Original list export/import popup placement remains pending. Missing histories ask the exact original confirmation; native initialises accepted missing logs directly during Apply instead of requiring a reopen.",
         "Native package/file selection review rejects an entire invalid selection atomically; the reference can retain earlier valid objects and show type warnings.",
         "Clipboard PNG-image precedence and PNG drag/drop remain absent; PNG files are supported.",
         "Native compiled model/GUI regressions and native screenshot capture are authored but await root hosted CI. No completion is claimed for this Partial step.",
@@ -104,6 +106,18 @@
           "line": 2929,
           "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
           "symbol": "pub fn restore_subscription_log("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/subscription_exchange.rs",
+          "line": 17,
+          "commit": "1654a1cb7f4750391e745ad076e8cf6de1f236e1",
+          "symbol": "pub fn missing_history_question("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/subscriptions_window.rs",
+          "line": 402,
+          "commit": "1654a1cb7f4750391e745ad076e8cf6de1f236e1",
+          "symbol": "fn import_next("
         }
       ],
       "test_anchors": [
@@ -136,6 +150,18 @@
           "line": 1040,
           "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
           "symbol": "fn subscription_exchange_file_menus_load_selected_packages_and_cancel_invalid_batches("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/subscription_exchange.rs",
+          "line": 114,
+          "commit": "1654a1cb7f4750391e745ad076e8cf6de1f236e1",
+          "symbol": "fn missing_history_question_matches_actual_qt_message_title_and_decisions("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/subscriptions.rs",
+          "line": 1120,
+          "commit": "1654a1cb7f4750391e745ad076e8cf6de1f236e1",
+          "symbol": "fn subscription_missing_history_asks_original_question_before_staging_or_persisting("
         }
       ],
       "reference_recording": [
