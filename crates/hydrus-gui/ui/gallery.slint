@@ -256,11 +256,6 @@ export component GallerySidebar inherits VerticalLayout {
                 file-log => { root.file-log(); }
                 search-log => { root.search-log(); }
             }
-            if root.data.has-other-gugs: CheckBox {
-                text: "show other downloaders";
-                checked: root.data.show-other-gugs;
-                toggled => { root.other-gugs(self.checked); }
-            }
             HorizontalLayout {
                 spacing: 4px;
                 Text {
