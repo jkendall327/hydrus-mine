@@ -17,6 +17,16 @@ pub struct Slot {
     nested: Rc<RefCell<Option<Self>>>,
     pub system: Rc<RefCell<Option<PredicateEditorWindow>>>,
 }
+impl std::fmt::Debug for Slot {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("Slot")
+            .field("window_open", &self.window.borrow().is_some())
+            .field("nested_open", &self.child().is_some())
+            .field("system_open", &self.system.borrow().is_some())
+            .finish()
+    }
+}
 impl std::ops::Deref for Slot {
     type Target = RefCell<Option<SearchOrWindow>>;
     fn deref(&self) -> &Self::Target {
