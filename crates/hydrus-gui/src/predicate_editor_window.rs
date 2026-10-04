@@ -14,7 +14,7 @@ use hydrus_search::{Predicate, SystemPredicate, TextContext, predicate_text};
 use hydrus_store::Store;
 
 pub use crate::predicate_editors::button_label;
-use crate::predicate_editors::{Context, Editor, Field, Panel, Pressed};
+use crate::predicate_editors::{Context, Editor, Field, Panel, Pressed, defaults::CustomDefaults};
 use crate::{EditorField, EditorPanel, EditorTreeRow, PredicateEditorWindow};
 
 /// A field as the window shows it.
@@ -194,7 +194,7 @@ fn change_recent(store: &Store, change: impl FnOnce(&mut RecentPredicates)) {
 pub(crate) fn open(
     slot: &Rc<RefCell<Option<PredicateEditorWindow>>>,
     store: Arc<Store>,
-    editor: Editor,
+    mut editor: Editor,
     context: Context,
     text: TextContext,
     chosen: Rc<dyn Fn(Vec<Predicate>)>,
@@ -202,6 +202,10 @@ pub(crate) fn open(
     if let Some(old) = slot.borrow_mut().take() {
         let _ = old.hide();
     }
+    let defaults = store
+        .read(hydrus_store::settings::get::<CustomDefaults>)
+        .map_err(|e| e.to_string())?;
+    editor.apply_defaults(&defaults, &context);
     let window = PredicateEditorWindow::new().map_err(|e| e.to_string())?;
     window.set_note(editor.note.clone().unwrap_or_default().into());
     let names: Vec<SharedString> = if editor.pages.len() > 1 {
@@ -488,6 +492,73 @@ pub(crate) fn open(
                     Pressed::Warning(said) => Some(said),
                     _ => None,
                 });
+            }
+        }
+    });
+    window.on_defaults_menu({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        move |p| {
+            let Some(window) = weak.upgrade() else { return };
+            if !window.window().is_visible() || !window.get_question().is_empty() {
+                return;
+            }
+            let state = state.borrow();
+            let Some(panel) = state.panels().get(index(p)) else {
+                return;
+            };
+            let defaults = match store.read(hydrus_store::settings::get::<CustomDefaults>) {
+                Ok(defaults) => defaults,
+                Err(e) => {
+                    window.set_error(e.to_string().into());
+                    return;
+                }
+            };
+            let mut actions = vec![SharedString::from("set this as new default")];
+            if defaults.uses(panel.kind) {
+                actions.push("reset to original default".into());
+            }
+            window.set_defaults_actions(ModelRc::new(VecModel::from(actions)));
+        }
+    });
+    window.on_defaults_action({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        move |p, action| {
+            let Some(window) = weak.upgrade() else { return };
+            if !window.window().is_visible() || !window.get_question().is_empty() {
+                return;
+            }
+            let state = state.borrow();
+            let Some(panel) = state.panels().get(index(p)) else {
+                return;
+            };
+            let made = match action.as_str() {
+                "set this as new default" => match panel.predicates(&state.context) {
+                    Ok(predicates) => Some(predicates),
+                    Err(e) => {
+                        window.set_error(e.into());
+                        return;
+                    }
+                },
+                "reset to original default" => None,
+                _ => return,
+            };
+            let kind = panel.kind;
+            let result = store.write(move |writer| {
+                let mut defaults = hydrus_store::settings::get::<CustomDefaults>(writer.conn())?;
+                if let Some(predicates) = made {
+                    defaults.save(predicates);
+                } else {
+                    defaults.reset(kind);
+                }
+                hydrus_store::settings::set(writer.conn(), &defaults)
+            });
+            match result {
+                Ok(()) => window.set_error(SharedString::new()),
+                Err(e) => window.set_error(e.to_string().into()),
             }
         }
     });

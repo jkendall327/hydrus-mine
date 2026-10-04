@@ -836,8 +836,18 @@ one added again moved to the front. Each page shows its types' recent
 predicates over its buttons (the dimensions page its heights, widths,
 ratios and numbers of pixels; "system:time"'s import page its import
 times...), less any a button of the page adds, each adding itself again
-or, with "forget", forgotten. Yours come across from hydrus. Not yet:
-setting a panel's values as its default (the star).
+or, with "forget", forgotten. Yours come across from hydrus. Each panel's star
+opens "set this as new default", with "reset to original default" when its
+comparable family has a saved value. Saving stores canonical typed predicates
+immediately and affects future editors; closing or cancelling the current owner
+keeps that change. Reset also commits immediately and leaves current fields
+untouched. Explicit compatible typed input takes precedence. Date/relative time,
+views/viewtime and the four URL-rule types have independent defaults. Rating
+comparability spans service keys, as the reference does; per-service rating
+panels expose save/reset but retain their built-in initial values, while advanced
+rating uses saved defaults. A number-of-tags shortcut that emits a namespace is
+saved without becoming a number-of-tags default. All 40 panel families and 1,600
+comparability pairs are recorded by `oracle/record_predicate_custom_defaults.py`.
 Typing in the search box lists
 the matching tags with their counts (display tags, in the page's file domains
 and tag service; the exact match first, then the most used), up and down move the

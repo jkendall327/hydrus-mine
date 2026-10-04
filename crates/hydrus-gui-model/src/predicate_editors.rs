@@ -22,6 +22,8 @@ use hydrus_core::search::time::{CalendarDelta, CivilDateTime, RelativeOp, TimeKi
 use hydrus_core::{ContentStatus, ServiceKey, ServiceType, Tag};
 use hydrus_search::{TextContext, predicate_text};
 
+pub mod defaults;
+mod initialise;
 mod special;
 pub(crate) use special::FILETYPE_TREE;
 pub use special::Pressed;

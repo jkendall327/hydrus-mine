@@ -23,6 +23,7 @@ export QT_QPA_PLATFORM=offscreen
 |---|---|
 | `dump_constants.py` | `fixtures/constants.json`: file types, service types, enum codes |
 | `dump_tag_cleaning.py` | `fixtures/tag_cleaning.json`: tag cleaning on awkward inputs |
+| `record_predicate_custom_defaults.py` | `fixtures/predicate_custom_defaults.json`: actual Qt star actions across all 40 panel families, 1,600 comparability pairs, explicit-input precedence, immediate reset and owner-close persistence |
 | `dump_system_predicates.py` | `fixtures/system_predicates.json`: search predicate parsing (system predicates and Client API tag lists) over a large corpus |
 | `make_import_media.py` | `fixtures/import_media/`: small deterministic media corpus (committed) |
 | `make_repository_fixture.py` | `fixtures/legacy_db/repositories.tar.gz` + manifest: `basic` with a tag and a file repository holding pending content |

@@ -232,7 +232,15 @@ search.
   the reference warns of in a dialog is said under the panels.
   "Paste image!" takes a file's path from the clipboard, not image data.
   A recent predicate is forgotten with a "forget" button where the
-  reference has a trash icon.
+  reference has a trash icon. The star menu now saves/resets typed defaults
+  immediately, surviving owner Cancel and keeping current fields unchanged on
+  reset. Its date/relative, views/viewtime, URL-type and cross-service rating
+  comparability follows the actual reference. Per-service rating panels preserve
+  the reference's omission of custom-default initialization; advanced rating uses
+  it. Existing legacy custom-default options are still preserved in the imported
+  options object rather than activated as native defaults. URL class defaults
+  retain the existing native predicate's class-name identity. Date and fractional
+  viewtime precision retain the limits above.
 
 - **Thumbnails on a scaled screen are resampled to its pixels** (area
   when shrinking, Lanczos when growing, as the reference resizes

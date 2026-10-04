@@ -139,6 +139,35 @@ component FieldView {
     }
 }
 
+// A panel's star menu changes shared defaults immediately, outside its draft.
+component DefaultsButton inherits Rectangle {
+    in property <[string]> actions;
+    in property <bool> enabled;
+    callback opening();
+    callback selected(string);
+    width: 36px; height: 28px;
+    Button { text: "★"; enabled: root.enabled; clicked => {root.opening(); entries.show();} }
+    entries := PopupWindow {
+        x: 0px; y: root.height;
+        Rectangle {
+            width: 270px;
+            height: root.actions.length * 32px + 8px;
+            background: Theme.panel;
+            border-color: Theme.border;
+            border-width: 1px;
+            VerticalLayout {
+                padding: 4px;
+                for action in root.actions: Rectangle {
+                    height: 32px;
+                    background: hit.has-hover ? Theme.highlight : transparent;
+                    Text { x: 6px; text: action; vertical-alignment: center; color: hit.has-hover ? Theme.highlight-text : Theme.text; }
+                    hit := TouchArea { clicked => {entries.close(); root.selected(action);} }
+                }
+            }
+        }
+    }
+}
+
 export component PredicateEditorWindow inherits Window {
     title: "input predicate";
     preferred-width: 1020px;
@@ -176,6 +205,10 @@ export component PredicateEditorWindow inherits Window {
     callback tree-ticked(int, int, int, int, bool);
     // (panel, field, group, expanded)
     callback expanded(int, int, int, bool);
+    // Each panel's immediate star menu; reset appears only for saved families.
+    in property <[string]> defaults-actions;
+    callback defaults-menu(int);
+    callback defaults-action(int, string);
     callback ok(int);
     callback cancel();
 
@@ -276,6 +309,12 @@ export component PredicateEditorWindow inherits Window {
                             padding: 4px;
                             spacing: 4px;
                             HorizontalLayout {
+                                DefaultsButton {
+                                    actions: root.defaults-actions;
+                                    enabled: root.question == "";
+                                    opening => { root.defaults-menu(p); }
+                                    selected(action) => { root.defaults-action(p, action); }
+                                }
                                 for field[f] in panel.fields: FieldView {
                                     field: field;
                                     blocked: root.question != "";
