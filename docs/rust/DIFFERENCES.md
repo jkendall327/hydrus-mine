@@ -672,11 +672,12 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   own (the reference embeds it in the router editor), list "Which
   type?"'s descriptions in its message, and take JSON object names a
   line each. JSON sidecar formulae use the reusable HTML/JSON editor;
-  the router editor has no testing panel; the routers list has no
-  import and export buttons.
-- **The string processor editor** has no starting strings to test with
-  from the sidecar editors (the reference takes them from its example
-  files; the single example can be typed). Import/export/paste use a shared
+  router testing uses per-source tables instead of a notebook. The routers
+  list still has no import and export buttons. Export-folder search results
+  are not yet supplied as media examples (manual exports are).
+- **The string processor editor** receives starting strings from the sidecar
+  owner's first example, including source processors before their own processing.
+  Import/export/paste use a shared
   text/PNG review window. Unsupported mixed packages are rejected atomically;
   the reference may append permitted entries and warn about rejected ones.
   "add" lists its kinds' descriptions in

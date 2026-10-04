@@ -1042,3 +1042,257 @@ pub fn remove_question(n: usize) -> String {
         hydrus_core::numbers::human_int(n as u64)
     )
 }
+
+/// An owner's sidecar test context: a local input path or a stored media result.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum TestObject {
+    File(String),
+    Media(hydrus_core::HashId),
+}
+/// The reference samples at most 25 objects when an owner opens its editor.
+pub const TEST_OBJECT_LIMIT: usize = 25;
+
+/// Example paths from an import folder, excluding documents and sidecars by MIME.
+pub fn folder_test_objects(folder: &str) -> Vec<TestObject> {
+    let tools = hydrus_media::MediaTools::new();
+    std::fs::read_dir(folder)
+        .into_iter()
+        .flatten()
+        .flatten()
+        .take(TEST_OBJECT_LIMIT)
+        .filter(|entry| {
+            entry.path().is_file()
+                && tools
+                    .detect_mime(&entry.path())
+                    .is_ok_and(|mime| hydrus_media::mimes::is_allowed(mime))
+        })
+        .map(|entry| TestObject::File(entry.path().to_string_lossy().into_owned()))
+        .collect()
+}
+
+fn test_media(
+    store: &hydrus_store::Store,
+    id: hydrus_core::HashId,
+) -> Result<hydrus_store::media::MediaResult, String> {
+    let snapshot = store.snapshot();
+    store
+        .read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, &[id]))
+        .map_err(|error| error.to_string())?
+        .results
+        .into_iter()
+        .next()
+        .ok_or_else(|| "the file is not in the database".into())
+}
+
+/// The input path or media hash shown in the example table.
+pub fn test_object_label(store: &hydrus_store::Store, object: &TestObject) -> String {
+    match object {
+        TestObject::File(path) => path.clone(),
+        TestObject::Media(id) => {
+            test_media(store, *id).map_or_else(|error| error, |media| media.hash.to_hex())
+        }
+    }
+}
+
+fn test_media_strings(
+    store: &hydrus_store::Store,
+    id: hydrus_core::HashId,
+    source: &Source,
+) -> Result<Vec<String>, String> {
+    use hydrus_core::{ContentStatus, TimestampMs};
+    let media = test_media(store, id)?;
+    let snapshot = store.snapshot();
+    let service = |key: &str| {
+        ServiceKey::from_hex(key)
+            .ok()
+            .and_then(|key| snapshot.services.by_key(&key).ok())
+    };
+    Ok(match source {
+        Source::MediaUrls => {
+            let mut urls = media.urls;
+            urls.sort();
+            urls
+        }
+        Source::MediaNotes => hydrus_parse::sidecar::notes_to_rows(
+            media
+                .notes
+                .iter()
+                .map(|(name, text)| (name.as_str(), text.as_str())),
+        ),
+        Source::MediaTags {
+            service_key,
+            display,
+        } => {
+            let Some(wanted) = service(service_key) else {
+                return Ok(Vec::new());
+            };
+            let mut ids = std::collections::BTreeSet::new();
+            for candidate in snapshot.services.tag_services() {
+                if wanted.service_type() != ServiceType::CombinedTag && candidate.id != wanted.id {
+                    continue;
+                }
+                if let Some(tags) = media
+                    .tags
+                    .get(&candidate.id)
+                    .and_then(|tags| tags.by_status.get(&ContentStatus::Current))
+                {
+                    match display {
+                        TagDisplay::Storage => ids.extend(tags.iter().copied()),
+                        TagDisplay::DisplayActual => {
+                            let graph = snapshot.display.get(candidate.id);
+                            ids.extend(tags.iter().flat_map(|tag| graph.display_tags(*tag)));
+                        }
+                    }
+                }
+            }
+            let ids = ids.into_iter().collect::<Vec<_>>();
+            let mut tags = store
+                .read(|conn| hydrus_store::master::tags(conn, &ids))
+                .map_err(|error| error.to_string())?
+                .into_values()
+                .map(|tag| hydrus_parse::sidecar::undouble_leading_colon(tag.as_str()))
+                .collect::<Vec<_>>();
+            hydrus_core::sort::human_sort(&mut tags);
+            tags
+        }
+        Source::MediaTimestamp(stub) => {
+            let timestamp: Option<TimestampMs> = match (&stub.kind, &stub.location) {
+                (TimestampType::Archived, _) => {
+                    if media.inbox {
+                        None
+                    } else {
+                        media.archived
+                    }
+                }
+                (TimestampType::ModifiedAggregate, _) => media.aggregate_modified(),
+                (TimestampType::ModifiedFile, _) => {
+                    media.info.as_ref().and_then(|info| info.file_modified)
+                }
+                (TimestampType::ModifiedDomain, TimestampLocation::Domain(domain)) => media
+                    .domain_modified
+                    .iter()
+                    .find(|(d, _)| d == domain)
+                    .map(|(_, time)| *time),
+                (TimestampType::Imported, TimestampLocation::Service(key)) => {
+                    service(key).and_then(|s| media.added_to(s.id))
+                }
+                (TimestampType::Deleted, TimestampLocation::Service(key)) => {
+                    service(key).and_then(|s| {
+                        media
+                            .deleted
+                            .iter()
+                            .find(|location| location.service == s.id)
+                            .and_then(|location| location.deleted)
+                    })
+                }
+                (TimestampType::PreviouslyImported, TimestampLocation::Service(key)) => {
+                    service(key).and_then(|s| {
+                        media
+                            .deleted
+                            .iter()
+                            .find(|location| location.service == s.id)
+                            .and_then(|location| location.originally_added)
+                    })
+                }
+                (TimestampType::LastViewed, TimestampLocation::Canvas(canvas)) => media
+                    .viewing
+                    .iter()
+                    .find(|stats| i64::from(stats.canvas.code()) == *canvas)
+                    .and_then(|stats| stats.last_viewed),
+                _ => None,
+            };
+            timestamp
+                .map(|time| time.0.div_euclid(1000).to_string())
+                .into_iter()
+                .collect()
+        }
+        Source::Txt { .. } | Source::Json { .. } => Vec::new(),
+    })
+}
+
+/// Example strings use the real importer and its processor; errors remain visible.
+pub fn test_importer_strings(
+    store: &hydrus_store::Store,
+    importer: &Importer,
+    object: &TestObject,
+    sans_processing: bool,
+) -> Vec<String> {
+    let result = match object {
+        TestObject::File(path) => {
+            let mut importer = importer.clone();
+            if sans_processing {
+                importer.processor = StringProcessor::default();
+            }
+            hydrus_parse::sidecar::import_sidecar(&importer, path)
+                .unwrap_or(Ok(Vec::new()))
+                .map_err(|error| match error {
+                    hydrus_parse::sidecar::SidecarError::Read { path: _, reason }
+                        if reason.starts_with("Unable to parse") =>
+                    {
+                        reason
+                    }
+                    hydrus_parse::sidecar::SidecarError::Read {
+                        path: sidecar,
+                        reason,
+                    } => {
+                        format!("Could not import from {sidecar} (from file path {path}: {reason}")
+                    }
+                    other => other.to_string(),
+                })
+        }
+        TestObject::Media(id) => test_media_strings(store, *id, &importer.source).map(|texts| {
+            if sans_processing {
+                texts
+            } else {
+                hydrus_parse::sidecar::process(&importer.processor, texts)
+            }
+        }),
+    };
+    result.unwrap_or_else(|error| vec![error])
+}
+
+/// Per-source table columns: example object, alphabetically sorted source texts,
+/// and the router processor's result (or the literal reference "no changes").
+pub fn router_test_rows(
+    store: &hydrus_store::Store,
+    router: &Router,
+    source: usize,
+    objects: &[TestObject],
+) -> Vec<[String; 3]> {
+    let Some(importer) = router.importers.get(source) else {
+        return Vec::new();
+    };
+    objects
+        .iter()
+        .map(|object| {
+            let mut texts = test_importer_strings(store, importer, object, false);
+            texts.sort();
+            let processed = if router.processor.makes_changes() {
+                hydrus_parse::sidecar::process(&router.processor, texts.clone())
+            } else {
+                vec!["no changes".into()]
+            };
+            [
+                test_object_label(store, object),
+                texts.join(", "),
+                processed.join(", "),
+            ]
+        })
+        .collect()
+}
+
+/// Processor children receive each source's output for the first example only.
+pub fn router_test_strings(
+    store: &hydrus_store::Store,
+    router: &Router,
+    objects: &[TestObject],
+) -> Vec<String> {
+    let Some(object) = objects.first() else {
+        return Vec::new();
+    };
+    router
+        .importers
+        .iter()
+        .flat_map(|importer| test_importer_strings(store, importer, object, false))
+        .collect()
+}

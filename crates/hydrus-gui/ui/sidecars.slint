@@ -173,8 +173,8 @@ export component SidecarRoutersWindow inherits Window {
 export component SidecarRouterWindow inherits Window {
     in property <string> window-title: "edit metadata migration router";
     title: root.window-title;
-    preferred-width: 720px;
-    preferred-height: 480px;
+    preferred-width: 1000px;
+    preferred-height: 720px;
     background: Theme.window;
     in property <[TableRow]> sources;
     in property <bool> one-selected;
@@ -183,9 +183,15 @@ export component SidecarRouterWindow inherits Window {
     in property <string> processing;
     in property <string> destination;
     in property <bool> asking;
+    in property <bool> child-open;
     in property <string> asking-title;
     in property <string> asking-message;
     in property <[string]> asking-choices;
+    in property <[string]> test-sources;
+    in-out property <int> test-source;
+    in property <[TableRow]> test-rows;
+    in property <string> test-note;
+    callback test-source-chosen();
     callback row-clicked(int, bool, bool);
     callback row-activated(int);
     callback add();
@@ -208,7 +214,7 @@ export component SidecarRouterWindow inherits Window {
                 vertical-stretch: 1;
                 column: "source";
                 rows: root.sources;
-                asking: root.asking;
+                asking: root.asking || root.child-open;
                 one-selected: root.one-selected;
                 any-selected: root.any-selected;
                 row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
@@ -226,7 +232,7 @@ export component SidecarRouterWindow inherits Window {
             }
             Button {
                 text: root.processing;
-                enabled: !root.asking;
+                enabled: !root.asking && !root.child-open;
                 clicked => { root.edit-processing(); }
             }
         }
@@ -243,9 +249,19 @@ export component SidecarRouterWindow inherits Window {
                 }
                 Button {
                     text: "edit";
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.child-open;
                     clicked => { root.edit-destination(); }
                 }
+            }
+        }
+        Box {
+            title: "testing";
+            if root.test-note != "": Text {text: root.test-note;color: Theme.text;wrap: word-wrap;}
+            if root.test-sources.length > 1: ComboBox {model: root.test-sources;current-index <=> root.test-source;selected => {root.test-source-chosen();}}
+            if root.test-sources.length > 0: ListTable {
+                min-height: 160px;
+                columns: [{title: "file",width: 300px},{title: "source texts",width: 280px},{title: "processed texts",width: 280px,stretch: true}];
+                rows: root.test-rows;
             }
         }
         if root.asking: Asking {
@@ -256,7 +272,7 @@ export component SidecarRouterWindow inherits Window {
             cancelled => { root.cancelled(); }
         }
         ApplyCancel {
-            enabled: !root.asking;
+            enabled: !root.asking && !root.child-open;
             apply => { root.apply(); }
             cancel => { root.cancel(); }
         }
@@ -330,6 +346,7 @@ export component SidecarNodeWindow inherits Window {
     callback cancelled();
     callback apply();
     callback cancel();
+    callback closed();
 
     VerticalLayout {
         padding: 10px;

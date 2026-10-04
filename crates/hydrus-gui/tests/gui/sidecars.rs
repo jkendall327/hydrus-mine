@@ -621,3 +621,180 @@ fn processing_exchange_reviews_append_and_parent_cancel_invalidates_children() {
     window.invoke_apply();
     assert!(accepted.borrow().is_none());
 }
+
+fn test_table(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<Vec<String>> {
+    rows.iter()
+        .map(|row| row.cells.iter().map(|cell| cell.to_string()).collect())
+        .collect()
+}
+
+#[test]
+fn router_examples_follow_reference_source_tabs_and_processor_children_without_exports() {
+    use hydrus_gui::sidecars_window::{self, Slots};
+    use hydrus_gui_model::sidecar_editors::{Context, TestObject};
+    use std::{cell::RefCell, rc::Rc};
+    let (_dirs, store) = store();
+    let rendered = headless::init();
+    let directory = tempfile::tempdir().unwrap();
+    let cases = hydrus_testkit::fixture_json("sidecar_testing.json");
+    let case = &cases.as_array().unwrap()[0];
+    for (name, text) in case["documents"].as_object().unwrap() {
+        std::fs::write(directory.path().join(name), text.as_str().unwrap()).unwrap();
+    }
+    let object =
+        hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(&case["tuple"].to_string())
+            .unwrap();
+    let original = hydrus_legacy::objects::sidecars::router(&object).unwrap();
+    let slots = Slots::default();
+    slots.set_test_objects(
+        ["one.png", "two.png", "missing.png"]
+            .into_iter()
+            .map(|name| {
+                TestObject::File(directory.path().join(name).to_string_lossy().into_owned())
+            })
+            .collect(),
+    );
+    let accepted = Rc::new(RefCell::new(None));
+    let window = sidecars_window::open_router(
+        &store,
+        Context::Import,
+        original.clone(),
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            let store = store.clone();
+            move |router| {
+                let persisted = hydrus_gui_model::export_files::Preferences {
+                    routers: vec![router.clone()],
+                    ..hydrus_gui_model::export_files::Preferences::default()
+                };
+                store
+                    .write(move |ctx| settings::set(ctx.conn(), &persisted))
+                    .unwrap();
+                *accepted.borrow_mut() = Some(router);
+            }
+        }),
+    )
+    .unwrap();
+    *slots.router.borrow_mut() = Some(window.clone_strong());
+    for source in 0..2 {
+        window.set_test_source(source);
+        window.invoke_test_source_chosen();
+        let mut rows = test_table(&window.get_test_rows());
+        for row in &mut rows {
+            row[0] = row[0]
+                .replace(directory.path().to_str().unwrap(), "<examples>")
+                .replace('\\', "/");
+        }
+        assert_eq!(
+            serde_json::to_value(rows).unwrap(),
+            case["tables"][usize::try_from(source).unwrap()]["rows"]
+        );
+    }
+    let pixels = headless::render(&rendered.get(0).unwrap(), 1000, 720);
+    assert!(pixels.iter().any(|pixel| *pixel > 100));
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("sidecar-examples.png"),
+        &pixels,
+        1000,
+        720,
+    )
+    .unwrap();
+    window.invoke_edit_processing();
+    let processor = slots
+        .strings
+        .processor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        serde_json::to_value(table(&processor.get_starting())).unwrap(),
+        case["processor_texts"]
+    );
+    assert!(window.get_child_open());
+    window.invoke_apply();
+    assert!(accepted.borrow().is_none());
+    processor.invoke_row_clicked(0, false, false);
+    processor.invoke_edit();
+    let step = slots.strings.step.borrow().as_ref().unwrap().clone_strong();
+    step.set_ascending(false);
+    step.invoke_changed();
+    step.invoke_apply();
+    processor.invoke_apply();
+    assert!(!window.get_child_open());
+    assert!(window.get_processing().contains("descending"));
+    window.invoke_apply();
+    let saved = accepted.borrow().clone().unwrap();
+    assert_ne!(saved.processor, original.processor);
+    let persisted: hydrus_gui_model::export_files::Preferences = store.read(settings::get).unwrap();
+    assert_eq!(persisted.routers, [saved.clone()]);
+    let inputs = hydrus_gui_model::sidecar_editors::router_test_strings(
+        &store,
+        &saved,
+        &slots.test_objects.borrow(),
+    );
+    assert_eq!(
+        saved.route(inputs),
+        ["source:item10", "source:item2", "json2", "json1"]
+    );
+    assert!(!directory.path().join("one.png.export.txt").exists());
+    // Source processors inherit their unprocessed first example; formula children
+    // inherit the reference source's parsed JSON texts with preserved newlines.
+    let window = sidecars_window::open_router(
+        &store,
+        Context::Import,
+        original.clone(),
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |router| *accepted.borrow_mut() = Some(router)
+        }),
+    )
+    .unwrap();
+    *slots.router.borrow_mut() = Some(window.clone_strong());
+    window.invoke_row_clicked(0, false, false);
+    window.invoke_edit();
+    let source = slots.node.borrow().as_ref().unwrap().clone_strong();
+    source.invoke_edit_processing();
+    let processor = slots
+        .strings
+        .processor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        table(&processor.get_starting()),
+        ["item10", "item2", "item2"]
+    );
+    window.invoke_cancel();
+    assert!(slots.node.borrow().is_none());
+    assert!(slots.strings.processor.borrow().is_none());
+    processor.invoke_apply();
+    source.invoke_apply();
+    window.invoke_apply();
+    assert_eq!(accepted.borrow().as_ref(), Some(&saved));
+    let persisted: hydrus_gui_model::export_files::Preferences = store.read(settings::get).unwrap();
+    assert_eq!(persisted.routers, [saved]);
+    let window =
+        sidecars_window::open_router(&store, Context::Import, original, &slots, Rc::new(|_| {}))
+            .unwrap();
+    *slots.router.borrow_mut() = Some(window.clone_strong());
+    window.invoke_row_clicked(1, false, false);
+    window.invoke_edit();
+    let source = slots.node.borrow().as_ref().unwrap().clone_strong();
+    source.invoke_edit_formula();
+    let formula = slots
+        .formula
+        .formula
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(formula.get_document(), "json2");
+    assert_eq!(formula.get_examples().row_count(), 2);
+    assert!(!formula.get_allow_type_change());
+    window.invoke_cancel();
+    assert!(slots.formula.formula.borrow().is_none());
+}

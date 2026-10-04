@@ -223,6 +223,15 @@ pub fn open(
         let refresh = refresh.clone();
         move || {
             let routers = state.borrow().preferences.routers.clone();
+            slots.sidecars.set_test_objects(
+                state
+                    .borrow()
+                    .files
+                    .iter()
+                    .copied()
+                    .map(crate::sidecar_editors::TestObject::Media)
+                    .collect(),
+            );
             let state = state.clone();
             let refresh = refresh.clone();
             let store_saved = store.clone();

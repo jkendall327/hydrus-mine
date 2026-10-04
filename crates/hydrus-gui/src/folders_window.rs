@@ -681,6 +681,12 @@ fn open_import_folder(
         let sidecars = slots.sidecars.clone();
         move || {
             let routers = state.borrow().folder.settings.routers.clone();
+            sidecars.set_test_objects(crate::sidecar_editors::folder_test_objects(
+                &weak
+                    .upgrade()
+                    .map(|window| window.get_path().to_string())
+                    .unwrap_or_default(),
+            ));
             let applied: Rc<dyn Fn(Vec<hydrus_parse::sidecar::Router>)> = {
                 let weak = weak.clone();
                 let state = state.clone();
