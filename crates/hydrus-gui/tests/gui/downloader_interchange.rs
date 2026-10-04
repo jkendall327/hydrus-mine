@@ -250,7 +250,8 @@ fn closing_a_sibling_definition_list_keeps_the_owning_import_open() {
     gugs.invoke_action("cancel".into());
     assert!(slots.gugs.borrow().is_none());
     assert!(slots.class_exchange.has_open());
-    let class = hydrus_gui_model::downloader_definitions::new_class();
+    let mut class = hydrus_gui_model::downloader_definitions::new_class();
+    class.key = vec![1; 32];
     import.set_text(
         exchange::encode_text(&[Definition::new(Native::Class(Box::new(class)))])
             .unwrap()
