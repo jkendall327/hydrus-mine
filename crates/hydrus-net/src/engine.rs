@@ -360,6 +360,9 @@ pub struct NetEngine {
     /// The bandwidth rules and usage, and when the usage was last saved.
     bandwidth: Mutex<(Manager, i64, HistoryResets)>,
     bandwidth_settings: RwLock<BandwidthSettings>,
+    /// Last successfully persisted counts and their reset generations. Serializes
+    /// saves without holding the live bandwidth-manager lock across store I/O.
+    saved_bandwidth: Mutex<(Vec<(NetworkContext, Tracker)>, HistoryResets)>,
     /// When each domain last had serious errors (`DomainOK`).
     domain_errors: Mutex<std::collections::HashMap<String, Vec<i64>>>,
     /// When the sleep check last ran, and (after a wake) when requests may
@@ -583,7 +586,8 @@ impl NetEngine {
             })
             .map_err(|e| NetError::Io(e.to_string()))?;
         let mut manager = Manager::new(bandwidth_settings.rules.clone());
-        manager.set_trackers(usage);
+        manager.set_trackers(usage.clone());
+        let saved_bandwidth = (usage, history_resets.clone());
         Ok(Self {
             client: RwLock::new(client),
             store,
@@ -591,6 +595,7 @@ impl NetEngine {
             domain_slots: Mutex::default(),
             bandwidth: Mutex::new((manager, now, history_resets)),
             bandwidth_settings: RwLock::new(bandwidth_settings),
+            saved_bandwidth: Mutex::new(saved_bandwidth),
             domain_errors: Mutex::default(),
             wake: Mutex::default(),
             started: now,
@@ -798,19 +803,33 @@ impl NetEngine {
     /// Keep the bandwidth usage that changed (done every minute as it
     /// changes; call it when stopping).
     pub fn save_bandwidth(&self) -> Result<(), NetError> {
-        let (dirty, seen) = {
-            let mut b = self.bandwidth.lock();
-            b.1 = now();
-            (b.0.take_dirty(), b.2.clone())
+        let mut saved = self.saved_bandwidth.lock();
+        let (current, seen) = {
+            let mut bandwidth = self.bandwidth.lock();
+            bandwidth.1 = now();
+            (bandwidth.0.all_trackers(), bandwidth.2.clone())
         };
-        if dirty.is_empty() {
-            return Ok(());
-        }
+        let previous: Vec<_> = saved
+            .0
+            .iter()
+            .filter(|(context, _)| saved.1.generation(context) == seen.generation(context))
+            .cloned()
+            .collect();
+        let to_save = current.clone();
+        let previous_seen = seen.clone();
         self.store
             .write(move |ctx| {
-                hydrus_store::bandwidth::save_usage_after_resets(ctx.conn(), &dirty, &seen)
+                hydrus_store::bandwidth::save_usage_deltas_after_resets(
+                    ctx.conn(),
+                    &to_save,
+                    &previous,
+                    &previous_seen,
+                    now(),
+                )
             })
-            .map_err(|e| NetError::Io(e.to_string()))
+            .map_err(|e| NetError::Io(e.to_string()))?;
+        *saved = (current, seen);
+        Ok(())
     }
 
     /// Save the usage if it hasn't been for a minute.

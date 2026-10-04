@@ -142,3 +142,55 @@ pub fn save_usage_after_resets(
         .collect();
     save_usage(conn, &fresh)
 }
+
+/// Add only newly counted bucket usage from an independent network engine.
+/// The writer transaction reads the latest totals and reset generations so a
+/// GUI test fetch cannot replace daemon traffic or restore deleted history.
+pub fn save_usage_deltas_after_resets(
+    conn: &Connection,
+    current_usage: &[(NetworkContext, Tracker)],
+    previously_saved: &[(NetworkContext, Tracker)],
+    seen: &HistoryResets,
+    now: i64,
+) -> Result<()> {
+    let current_resets = crate::settings::get::<HistoryResets>(conn)?;
+    let stored = usage(conn, now)?;
+    let mut merged = Vec::new();
+    for (context, tracker) in current_usage {
+        if context.is_ephemeral() || current_resets.generation(context) != seen.generation(context)
+        {
+            continue;
+        }
+        let current = tracker.to_counters();
+        let previous = previously_saved
+            .iter()
+            .find(|(c, _)| c == context)
+            .map_or_else(
+                || std::array::from_fn(|_| Vec::new()),
+                |(_, t)| t.to_counters(),
+            );
+        let existing = stored.iter().find(|(c, _)| c == context).map_or_else(
+            || std::array::from_fn(|_| Vec::new()),
+            |(_, t)| t.to_counters(),
+        );
+        let mut changed = false;
+        let counters = std::array::from_fn(|i| {
+            let before: std::collections::BTreeMap<_, _> = previous[i].iter().copied().collect();
+            let mut totals: std::collections::BTreeMap<_, _> =
+                existing[i].iter().copied().collect();
+            for (at, count) in &current[i] {
+                let delta = count.saturating_sub(before.get(at).copied().unwrap_or(0));
+                if delta > 0 {
+                    changed = true;
+                    let total = totals.entry(*at).or_insert(0);
+                    *total = total.saturating_add(delta);
+                }
+            }
+            totals.into_iter().collect()
+        });
+        if changed {
+            merged.push((context.clone(), Tracker::from_counters(counters, now)));
+        }
+    }
+    save_usage(conn, &merged)
+}

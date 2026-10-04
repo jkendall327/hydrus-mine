@@ -1046,3 +1046,80 @@ async fn disabling_sleep_detection_reloads_and_releases_pending_requests() {
     .unwrap()
     .unwrap();
 }
+
+#[tokio::test]
+async fn independent_engines_add_new_usage_without_replacing_each_other_or_double_counting() {
+    use hydrus_core::bandwidth::{BandwidthType, Tracker};
+    use hydrus_store::bandwidth;
+    let setup = setup(|_| Vec::new()).await;
+    let now = setup.engine.runtime_snapshot().at;
+    let context = NetworkContext::global();
+    let mut old = Tracker::new(now);
+    old.report_data(1234, now);
+    old.report_requests(7, now);
+    setup
+        .store
+        .write({
+            let context = context.clone();
+            move |ctx| bandwidth::save_usage(ctx.conn(), &[(context, old)])
+        })
+        .unwrap();
+    let first = NetEngine::new(setup.store.clone(), setup.engine.options()).unwrap();
+    let second = NetEngine::new(setup.store.clone(), setup.engine.options()).unwrap();
+    let request = Request::get(format!("{}/echo", setup.base));
+    let one = first.fetch(&request, &Job::new()).await.unwrap();
+    let two = second.fetch(&request, &Job::new()).await.unwrap();
+    first.save_bandwidth().unwrap();
+    second.save_bandwidth().unwrap();
+    let read = || {
+        setup
+            .store
+            .read(|conn| bandwidth::usage(conn, now))
+            .unwrap()
+            .into_iter()
+            .find(|(c, _)| c == &context)
+            .unwrap()
+            .1
+    };
+    let mut usage = read();
+    assert_eq!(
+        usage.all_usage(BandwidthType::Data),
+        1234 + one.bytes_read + two.bytes_read
+    );
+    assert_eq!(usage.all_usage(BandwidthType::Requests), 9);
+    first.save_bandwidth().unwrap();
+    second.save_bandwidth().unwrap();
+    assert_eq!(read().to_counters(), usage.to_counters());
+    let three = first.fetch(&request, &Job::new()).await.unwrap();
+    first.save_bandwidth().unwrap();
+    let mut usage = read();
+    assert_eq!(
+        usage.all_usage(BandwidthType::Data),
+        1234 + one.bytes_read + two.bytes_read + three.bytes_read
+    );
+    assert_eq!(usage.all_usage(BandwidthType::Requests), 10);
+    // A generation change skips stale deltas and clears the old baseline before
+    // the next request is accounted, even while the other engine still exists.
+    setup
+        .store
+        .write({
+            let context = context.clone();
+            move |ctx| bandwidth::delete_history(ctx.conn(), &[context])
+        })
+        .unwrap();
+    second.save_bandwidth().unwrap();
+    assert!(
+        !setup
+            .store
+            .read(|conn| bandwidth::usage(conn, now))
+            .unwrap()
+            .iter()
+            .any(|(c, _)| c == &context)
+    );
+    first.publish_runtime().unwrap();
+    let fresh = first.fetch(&request, &Job::new()).await.unwrap();
+    first.save_bandwidth().unwrap();
+    let mut usage = read();
+    assert_eq!(usage.all_usage(BandwidthType::Data), fresh.bytes_read);
+    assert_eq!(usage.all_usage(BandwidthType::Requests), 1);
+}
