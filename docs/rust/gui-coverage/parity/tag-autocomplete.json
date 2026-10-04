@@ -22,7 +22,8 @@
     "c9193ab9",
     "651f86d7b2acf3edc9c4183ef481c61856ffa2eb",
     "b420919ba495b363d3c617019bc72ea8bda1bec5",
-    "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+    "000ac150b02a4649fa924301d8a136d1c6e0a7a8",
+    "a2af26d41b6df622a698c7168c7b008cc009818f"
   ],
   "implementation_leaf_count": 12,
   "partial_improvements": 4,
@@ -1484,6 +1485,24 @@
           "line": 181,
           "symbol": "fn actual_basic_and_advanced",
           "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+          "line": 15,
+          "symbol": "pub struct Slot",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 310,
+          "symbol": "let nested_slot = bound.search_or.child()",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 331,
+          "symbol": "let system = bound",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
         }
       ],
       "reference_recording": [
@@ -1513,7 +1532,8 @@
         }
       ],
       "consumer_commits": [
-        "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        "000ac150b02a4649fa924301d8a136d1c6e0a7a8",
+        "a2af26d41b6df622a698c7168c7b008cc009818f"
       ]
     },
     {
@@ -1584,6 +1604,24 @@
           "line": 181,
           "symbol": "fn actual_basic_and_advanced",
           "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+          "line": 15,
+          "symbol": "pub struct Slot",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 310,
+          "symbol": "let nested_slot = bound.search_or.child()",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 331,
+          "symbol": "let system = bound",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
         }
       ],
       "reference_recording": [
@@ -1613,7 +1651,8 @@
         }
       ],
       "consumer_commits": [
-        "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        "000ac150b02a4649fa924301d8a136d1c6e0a7a8",
+        "a2af26d41b6df622a698c7168c7b008cc009818f"
       ]
     },
     {
@@ -1684,6 +1723,24 @@
           "line": 181,
           "symbol": "fn actual_basic_and_advanced",
           "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+          "line": 15,
+          "symbol": "pub struct Slot",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 310,
+          "symbol": "let nested_slot = bound.search_or.child()",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 331,
+          "symbol": "let system = bound",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
         }
       ],
       "reference_recording": [
@@ -1713,7 +1770,8 @@
         }
       ],
       "consumer_commits": [
-        "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        "000ac150b02a4649fa924301d8a136d1c6e0a7a8",
+        "a2af26d41b6df622a698c7168c7b008cc009818f"
       ]
     },
     {
@@ -1784,6 +1842,24 @@
           "line": 181,
           "symbol": "fn actual_basic_and_advanced",
           "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+          "line": 15,
+          "symbol": "pub struct Slot",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 310,
+          "symbol": "let nested_slot = bound.search_or.child()",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 331,
+          "symbol": "let system = bound",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
         }
       ],
       "reference_recording": [
@@ -1813,7 +1889,8 @@
         }
       ],
       "consumer_commits": [
-        "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        "000ac150b02a4649fa924301d8a136d1c6e0a7a8",
+        "a2af26d41b6df622a698c7168c7b008cc009818f"
       ]
     }
   ],
@@ -2044,6 +2121,12 @@
           "line": 956,
           "symbol": "window.on_search_or_action",
           "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+          "line": 15,
+          "symbol": "pub struct Slot",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
         }
       ],
       "test_anchors": [
@@ -2070,6 +2153,18 @@
           "line": 181,
           "symbol": "fn actual_basic_and_advanced",
           "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 310,
+          "symbol": "let nested_slot = bound.search_or.child()",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 331,
+          "symbol": "let system = bound",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
         }
       ],
       "reference_recording": [

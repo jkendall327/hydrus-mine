@@ -44,6 +44,12 @@
           "line": 956,
           "symbol": "window.on_search_or_action",
           "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+          "line": 15,
+          "symbol": "pub struct Slot",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
         }
       ],
       "testAnchors": [
@@ -70,6 +76,18 @@
           "line": 181,
           "symbol": "fn actual_basic_and_advanced",
           "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 310,
+          "symbol": "let nested_slot = bound.search_or.child()",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 331,
+          "symbol": "let system = bound",
+          "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
         }
       ],
       "referenceRecording": [
@@ -98,17 +116,12 @@
           "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
         }
       ],
-      "owner": "One MainWindow child slot; basic search draft is separate from caller. Nested slots cancel recursively; live caller guards and closed states reject stale Apply.",
+      "owner": "One MainWindow child slot; basic search draft is separate from caller. Nested slots cancel recursively; live caller guards and closed states reject stale Apply. Inspection uses Bound.search_or and explicit per-owner Slot.child()/Slot.system; no mutable global registry.",
       "parents": [
         {
           "id": "catalog.mainwindow",
           "relationship": "owned_child",
           "note": "ReadAutocomplete OR / advanced buttons in embedded and floating SearchPage dropdowns"
-        },
-        {
-          "id": "catalog.searchorwindow",
-          "relationship": "recursive_owned_child",
-          "note": "Basic child read autocomplete can open a nested basic or advanced OR editor"
         }
       ],
       "sharedLinks": [
@@ -356,6 +369,46 @@
               "line": 181,
               "symbol": "fn actual_basic_and_advanced",
               "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+            }
+          ]
+        },
+        {
+          "id": "catalog.searchorwindow.nested",
+          "label": "Owned recursive OR and shared system children",
+          "kind": "feature_group",
+          "status": "first_pass",
+          "exactBehavior": "Explicit parent-owned nested/system slots expose real child handles, cancel descendants and reject retained Apply/OK, including recent predicate persistence after cancellation.",
+          "sourceAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+              "line": 15,
+              "symbol": "pub struct Slot",
+              "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
+            }
+          ],
+          "testAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+              "line": 310,
+              "symbol": "let nested_slot = bound.search_or.child()",
+              "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+              "line": 331,
+              "symbol": "let system = bound",
+              "commit": "a2af26d41b6df622a698c7168c7b008cc009818f"
+            }
+          ],
+          "sharedLinks": [
+            {
+              "id": "catalog.searchorwindow",
+              "relationship": "recursive_owned_child_instance",
+              "note": "Separate child Slot; reference link rather than a cyclic hierarchy parent"
+            },
+            {
+              "id": "catalog.predicateeditorwindow",
+              "relationship": "owned_shared_child"
             }
           ]
         }
