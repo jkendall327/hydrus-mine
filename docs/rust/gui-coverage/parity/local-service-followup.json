@@ -168,7 +168,7 @@
         "result": "Passed actual Qt three local kinds; initial state and each left/right/middle action replayed, queued actual live data changes settled, exact fraction output and opening numerical conversion captured. All examples return empty persistence contribution and original service dictionaries remain unchanged. Fresh temporary basic fixture, no reference edits or service commits; only real counter dialog exec decision scripted. Three actual example PNGs inspected."
       },
       "limitations": [
-        "Thumbnail/media viewer examples use their real typed sizing preferences; separate preview/dialog sizing settings are not native yet, so those examples use recorded 12px defaults.",
+        "All four examples use their saved context sizing preferences, including the implemented Dialog consumers; the Preview Window canvas is still absent. Full mixed-button drag capture across an edge after Right release remains outside this FirstPass example scope.",
         "Native uses existing shared rating graphics and inline owned counter-value prompt rather than a separate Qt modal child. Named SVG graphics retain existing fallback.",
         "Reference keeps opening numerical click conversion, including star count and allow-zero, while live display settings repaint stored fraction; native mirrors this observed contract.",
         "Service management and rating preferences parents stay partial; no remote/IPFS/account/listener scope, aliases or parent promotions.",
