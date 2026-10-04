@@ -492,7 +492,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             *current.borrow_mut() = opened.clone();
             let key = pages.borrow().shown().key;
             let scroll = scrolls.borrow().get(&key).copied().unwrap_or(0.0);
-            rows.set_page(opened);
+            rows.set_page(opened.clone());
             if let Some(window) = weak.upgrade() {
                 show_tabs(&window, &pages.borrow());
                 window.set_grid_scroll(scroll);
