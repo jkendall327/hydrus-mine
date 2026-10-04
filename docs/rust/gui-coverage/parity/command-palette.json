@@ -1,0 +1,687 @@
+{
+  "schema_version": 1,
+  "agent": "command-palette",
+  "baseline_git_head": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "implementation_base": "2388372d",
+  "claims": [
+    {
+      "id": "audit-options-command-palette-command-palette-initially-show-all-page-results",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "8ccce2cd",
+        "d5944def",
+        "c7f4726f",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Defaulttrue checkbox gates empty-query page rows. Typing filters pages independent of initial visibility; configured threshold, notebook inclusion and page limit still apply. All options use exact reference labels/defaults, stage under the Options draft, migrate legacy values and persist only on parentApply.",
+      "limits": [
+        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui/src/pages.rs::Pages::command_palette_pages",
+        "crates/hydrus-gui/src/command_palette_window.rs::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette-command-palette-initially-show-page-history-results",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "8ccce2cd",
+        "d5944def",
+        "c7f4726f",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Defaulttrue checkbox gates empty-query navigation history. Typed history uses newest-first order with matched-result ordinal labels and its configured limit. All options use exact reference labels/defaults, stage under the Options draft, migrate legacy values and persist only on parentApply.",
+      "limits": [
+        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui/src/pages.rs::Pages::command_palette_pages",
+        "crates/hydrus-gui/src/command_palette_window.rs::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette-command-palette-initially-show-favourite-search-results",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "8ccce2cd",
+        "d5944def",
+        "c7f4726f",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Defaultfalse checkbox gates empty-query favourites. Typed queries match name or folder in stored order; the favourite limit still applies. All options use exact reference labels/defaults, stage under the Options draft, migrate legacy values and persist only on parentApply.",
+      "limits": [
+        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui/src/pages.rs::Pages::command_palette_pages",
+        "crates/hydrus-gui/src/command_palette_window.rs::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette-command-palette-start-searching-when-this-many-characters-have-been-typed",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "8ccce2cd",
+        "d5944def",
+        "c7f4726f",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Exact1..64 integer control, default1, suppresses nonempty trimmed queries below threshold for application providers. Calculator bypasses it. Menus retain their additional raw three-character/history gates. All options use exact reference labels/defaults, stage under the Options draft, migrate legacy values and persist only on parentApply.",
+      "limits": [
+        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui/src/pages.rs::Pages::command_palette_pages",
+        "crates/hydrus-gui/src/command_palette_window.rs::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette-command-palette-max-page-results-to-show",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "8ccce2cd",
+        "d5944def",
+        "c7f4726f",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Noneable1..1000000 limit, defaultNone and numeric fallback10, caps preorder page results after filtering. None means all matching pages, not a hidden provider. All options use exact reference labels/defaults, stage under the Options draft, migrate legacy values and persist only on parentApply.",
+      "limits": [
+        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui/src/pages.rs::Pages::command_palette_pages",
+        "crates/hydrus-gui/src/command_palette_window.rs::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette-command-palette-max-page-history-to-show",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "8ccce2cd",
+        "d5944def",
+        "c7f4726f",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Noneable1..1000000 limit, default10, caps newest-first matched navigation history and its ordinal result labels. None removes that cap. All options use exact reference labels/defaults, stage under the Options draft, migrate legacy values and persist only on parentApply.",
+      "limits": [
+        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui/src/pages.rs::Pages::command_palette_pages",
+        "crates/hydrus-gui/src/command_palette_window.rs::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette-command-palette-max-favourite-searches-to-show",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "8ccce2cd",
+        "d5944def",
+        "c7f4726f",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Noneable1..1000000 limit, defaultNone and numeric fallback10, caps matching favourites in persisted order. None removes that cap. All options use exact reference labels/defaults, stage under the Options draft, migrate legacy values and persist only on parentApply.",
+      "limits": [
+        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui/src/pages.rs::Pages::command_palette_pages",
+        "crates/hydrus-gui/src/command_palette_window.rs::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette-command-palette-include-page-of-pages-page-results",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "8ccce2cd",
+        "d5944def",
+        "c7f4726f",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Defaultfalse checkbox excludes notebook results while still traversing their children. Enabling adds selectable notebook rows with original parent names; activation focuses that notebook through the existing page selector. All options use exact reference labels/defaults, stage under the Options draft, migrate legacy values and persist only on parentApply.",
+      "limits": [
+        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui/src/pages.rs::Pages::command_palette_pages",
+        "crates/hydrus-gui/src/command_palette_window.rs::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette-command-palette-open-favourite-searches-in-a-new-page",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "8ccce2cd",
+        "d5944def",
+        "c7f4726f",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Defaulttrue checkbox creates a named actual search tab and applies full favourite context/synchronisation/sort/collect. False overwrites the currently supported search page without adding or renaming it. New-page initial search timing follows existing File Search settings before the favourite overrides synchronisation, as the reference does. All options use exact reference labels/defaults, stage under the Options draft, migrate legacy values and persist only on parentApply.",
+      "limits": [
+        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui/src/pages.rs::Pages::command_palette_favourite"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette-command-palette-advanced-search-main-menubar",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "8ccce2cd",
+        "d5944def",
+        "c7f4726f",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Defaultfalse checkbox gates actual flattened native main-menubar leaves, independent of presence in provider order. Queries obey history/three-character/threshold gates; selected supported results reuse the real main-menu dispatcher, including opening Options. All options use exact reference labels/defaults, stage under the Options draft, migrate legacy values and persist only on parentApply.",
+      "limits": [
+        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui/src/pages.rs::Pages::command_palette_pages",
+        "crates/hydrus-gui/src/command_palette_window.rs::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette-command-palette-advanced-search-media-menu",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "8ccce2cd",
+        "d5944def",
+        "c7f4726f",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Defaultfalse checkbox gates actual current thumbnail-menu leaves. Results launch through its native action dispatcher with frozen origin page, focused media and selected-file context; stale queries or changed contexts cannot mutate a different page. All options use exact reference labels/defaults, stage under the Options draft, migrate legacy values and persist only on parentApply.",
+      "limits": [
+        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui/src/command_palette_window.rs::bind",
+        "crates/hydrus-gui/src/lib.rs::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::media_provider_uses_the_actual_thumbnail_dispatcher_and_rejects_a_changed_page"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette-command-palette-search-provider-order-ordered-editor-list",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "8ccce2cd",
+        "d5944def",
+        "c7f4726f",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Real inline staged queue renders all six stable provider names in persisted priority. Plain/control/shift selection, up/down, confirmed deletion and cancelled deletion follow reference QueueListBox behavior. Worker arrival order cannot reorder display groups; removed providers neither query nor render. ParentApply commits, Cancel and old callbacks discard; reopen preserves saved order. All options use exact reference labels/defaults, stage under the Options draft, migrate legacy values and persist only on parentApply.",
+      "limits": [
+        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui-model/src/command_palette.rs::ProviderOrder",
+        "crates/hydrus-gui/src/options_palette.rs::bind",
+        "crates/hydrus-gui/ui/palette_provider_queue.slint::PaletteProviderQueue"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::defaults_and_provider_queue_match_the_qt_options_editor",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::late_workers_cannot_repopulate_a_new_query_or_closed_owner",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::palette_reopen_rejects_stale_callbacks_and_removed_providers_do_not_return",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette-command-palette-search-provider-order-add",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "8ccce2cd",
+        "d5944def",
+        "c7f4726f",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Actual add button presents only removed providers in stable registration order using exact reference prompt. Cancelling changes nothing; accepting appends once, closes chooser and stages under parentOptions; all-present add is a no-op. Saving then reopening preserves the added provider and restores its actual suggestions. All options use exact reference labels/defaults, stage under the Options draft, migrate legacy values and persist only on parentApply.",
+      "limits": [
+        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui-model/src/command_palette.rs::ProviderOrder",
+        "crates/hydrus-gui/src/options_palette.rs::bind",
+        "crates/hydrus-gui/ui/palette_provider_queue.slint::PaletteProviderQueue"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::defaults_and_provider_queue_match_the_qt_options_editor",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::late_workers_cannot_repopulate_a_new_query_or_closed_owner",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::palette_reopen_rejects_stale_callbacks_and_removed_providers_do_not_return",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsConcrete": false,
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "d5944def",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Ctrl+P opens an owned native frameless asynchronous palette with real pages/history/favourites/main-menu/media-menu/calculator providers; key/mouse selection launches actual supported contexts, cancelled/stale async results and prior owners cannot affect a reopened palette. All13 concrete option/queue leaves have actual consumers. Parent retainedPartial for explicitly documented whole-palette numerical/presentation boundaries.",
+      "limits": [
+        "Native calculator math functions may differ in the final float bit from Python, particularly gamma/lgamma. Very large intermediate powers and enormous integer-to-float conversions are bounded.",
+        "Native palette uses plain matched text rather than Qt rich-text emphasis and result icons. Existing native menu command availability still bounds corresponding results.",
+        "No parent/container/alias completion is included in the concrete total. Rust/model/GUI regressions are authored for root hosted CI; no local Cargo builds or tests were run."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui-model/src/palette_calculator.rs::calculate"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::calculator_matches_qt_precedence_integer_types_errors_and_special_values",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::asynchronous_calculator_ignores_page_threshold_and_activation_keeps_owner_open"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette-command-palette",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsConcrete": false,
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "d5944def",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Ctrl+P opens an owned native frameless asynchronous palette with real pages/history/favourites/main-menu/media-menu/calculator providers; key/mouse selection launches actual supported contexts, cancelled/stale async results and prior owners cannot affect a reopened palette. All13 concrete option/queue leaves have actual consumers. Parent retainedPartial for explicitly documented whole-palette numerical/presentation boundaries.",
+      "limits": [
+        "Native calculator math functions may differ in the final float bit from Python, particularly gamma/lgamma. Very large intermediate powers and enormous integer-to-float conversions are bounded.",
+        "Native palette uses plain matched text rather than Qt rich-text emphasis and result icons. Existing native menu command availability still bounds corresponding results.",
+        "No parent/container/alias completion is included in the concrete total. Rust/model/GUI regressions are authored for root hosted CI; no local Cargo builds or tests were run."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui-model/src/palette_calculator.rs::calculate"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::calculator_matches_qt_precedence_integer_types_errors_and_special_values",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::asynchronous_calculator_ignores_page_threshold_and_activation_keeps_owner_open"
+      ]
+    },
+    {
+      "id": "audit-options-command-palette-command-palette-search-provider-order",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsConcrete": false,
+      "implementationCommit": "72eb6c81",
+      "dependencies": [
+        "d5944def",
+        "3a56eced",
+        "be58bc07"
+      ],
+      "behavior": "Ctrl+P opens an owned native frameless asynchronous palette with real pages/history/favourites/main-menu/media-menu/calculator providers; key/mouse selection launches actual supported contexts, cancelled/stale async results and prior owners cannot affect a reopened palette. All13 concrete option/queue leaves have actual consumers. Parent retainedPartial for explicitly documented whole-palette numerical/presentation boundaries.",
+      "limits": [
+        "Native calculator math functions may differ in the final float bit from Python, particularly gamma/lgamma. Very large intermediate powers and enormous integer-to-float conversions are bounded.",
+        "Native palette uses plain matched text rather than Qt rich-text emphasis and result icons. Existing native menu command availability still bounds corresponding results.",
+        "No parent/container/alias completion is included in the concrete total. Rust/model/GUI regressions are authored for root hosted CI; no local Cargo builds or tests were run."
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_command_palette.py",
+        "fixture": "oracle/fixtures/command_palette.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T18:09:33Z",
+        "reference": "Actual v688 CommandPalettePanel controls/bounds, real Qt providers on a synthetic nested session, real favourite/page/main-menu activation, real locator opening/query/down/activation/closing, actual thumbnail refresh menu, provider queue movement/removal/cancel/re-add;94 calculator precedence/type/function/nonfinite/error cases recorded at threshold4. Clean client shutdown; random output is validated by range rather than a fixed PRNG sequence."
+      },
+      "source": [
+        "crates/hydrus-store/src/command_palette.rs::CommandPaletteSettings",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences",
+        "crates/hydrus-gui-model/src/options.rs::command_palette_page",
+        "crates/hydrus-gui-model/src/command_palette.rs::query",
+        "crates/hydrus-gui/src/command_palette_window.rs::open",
+        "crates/hydrus-gui/ui/command_palette.slint::CommandPaletteWindow",
+        "crates/hydrus-gui-model/src/palette_calculator.rs::calculate"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::providers_match_real_qt_order_limits_and_thresholds",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::each_live_provider_policy_reaches_its_results_and_preferences_persist",
+        "crates/hydrus-store/src/import/decode.rs::command_palette_preferences_migrate_defaults_and_nondefault_provider_policies",
+        "crates/hydrus-gui/tests/gui/options_window.rs::command_palette_options_stage_queue_changes_and_persist_only_on_apply",
+        "crates/hydrus-gui-model/tests/model/command_palette.rs::calculator_matches_qt_precedence_integer_types_errors_and_special_values",
+        "crates/hydrus-gui/tests/gui/command_palette.rs::asynchronous_calculator_ignores_page_threshold_and_activation_keeps_owner_open"
+      ]
+    }
+  ],
+  "counts": {
+    "concrete_first_pass": 13,
+    "parent_or_alias_first_pass": 0,
+    "parent_partial": 3
+  },
+  "validation": {
+    "format_and_checkdiff": "passed",
+    "cached_slint_source_compile": "passed (warning-aware cached checker)",
+    "reference_recording": "executed actualQt18:09:33UTC",
+    "local_cargo_builds_or_tests": false,
+    "rust_validation": "Root asynchronous GitHub CI; no local Cargo builds/tests per user authorization."
+  }
+}
