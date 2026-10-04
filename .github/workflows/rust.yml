@@ -41,7 +41,24 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ffmpeg libfontconfig1-dev
       - name: fmt
         run: cargo fmt --all --check
+      - name: compiler diagnostics
+        # Catch GUI/test type errors without waiting for full code generation.
+        env:
+          CARGO_BUILD_JOBS: 1
+        run: |
+          set -o pipefail
+          cargo check --workspace --all-targets --locked --keep-going 2>&1 | tee /tmp/hydrus-types.log
+      - name: save immediate compiler diagnostics
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiler-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/hydrus-types.log
+          if-no-files-found: ignore
+          retention-days: 3
       - name: clippy
+        if: ${{ !cancelled() }}
         run: |
           set -o pipefail
           cargo clippy --workspace --all-targets --locked --keep-going 2>&1 | tee /tmp/hydrus-clippy.log
