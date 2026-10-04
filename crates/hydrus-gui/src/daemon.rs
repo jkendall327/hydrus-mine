@@ -308,6 +308,9 @@ mod tests {
             std::process::exit(1);
         }
         let _held = hydrus_store::store::lock_serving(&dir).unwrap().unwrap();
+        // Publish readiness after taking the real lock. A parent probing the
+        // lock during startup can otherwise win it briefly and fail this child.
+        std::fs::write(dir.join("fake-daemon-ready"), []).unwrap();
         if kind == "stubborn" {
             std::thread::sleep(Duration::from_secs(120));
         }
@@ -335,6 +338,11 @@ mod tests {
         }
     }
 
+    fn until_running(dir: &Path) {
+        until(|| dir.join("fake-daemon-ready").is_file());
+        assert!(running(dir), "ready daemon holds the serving lock");
+    }
+
     #[test]
     fn starts_one_while_none_runs_and_stops_it_on_closing() {
         let _turn = one_at_a_time();
@@ -342,7 +350,7 @@ mod tests {
         let mut daemon = Daemon::launched_by(dir.path(), fake("serve"));
         assert_eq!(daemon.check(), State::Running);
         assert!(daemon.started());
-        until(|| running(dir.path()));
+        until_running(dir.path());
         assert_eq!(daemon.check(), State::Running);
         // (its input closed, it stops by itself, and lets the store go)
         assert_eq!(daemon.stop(Duration::from_secs(20)), Some(true));
@@ -363,7 +371,7 @@ mod tests {
         drop(theirs);
         assert_eq!(daemon.check(), State::Running);
         assert!(daemon.started());
-        until(|| running(dir.path()));
+        until_running(dir.path());
         assert_eq!(daemon.stop(Duration::from_secs(20)), Some(true));
     }
 
@@ -391,7 +399,7 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let mut daemon = Daemon::launched_by(dir.path(), fake("stubborn"));
         daemon.check();
-        until(|| running(dir.path()));
+        until_running(dir.path());
         let started = Instant::now();
         assert_eq!(daemon.stop(Duration::from_millis(300)), Some(false));
         assert!(started.elapsed() < Duration::from_secs(10));
