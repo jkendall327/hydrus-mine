@@ -139,7 +139,7 @@ fn favourite_controls_replay_reference_domain_sort_collect_and_predicate_values(
                 }
             }
             "unmatched_separate" => {
-                edit.collect = collect::with_unmatched(&choices, &edit.collect, false)
+                edit.collect = collect::with_unmatched(&choices, &edit.collect, false);
             }
             "collect_local_tags" => {
                 edit.collect.tag_context.service =

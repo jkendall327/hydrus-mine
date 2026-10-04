@@ -555,7 +555,7 @@ pub fn open(
                         name.to_string(),
                         filter,
                         imported,
-                    ))
+                    ));
                 }
                 Ok(true) => {
                     if imported {
@@ -696,7 +696,7 @@ pub fn open(
                         }
                     }
                     (Asking::DeleteFavourite(name), Some(0)) => {
-                        FavouriteTagFilters::delete(&store, name).map_err(|e| e.to_string())?
+                        FavouriteTagFilters::delete(&store, name).map_err(|e| e.to_string())?;
                     }
                     _ => (),
                 }
