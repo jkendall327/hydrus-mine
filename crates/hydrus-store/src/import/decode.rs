@@ -4038,6 +4038,46 @@ mod tests {
         );
     }
 
+    #[test]
+    fn suggested_layout_and_unavailable_default_pages_migrate_without_losing_choices() {
+        use crate::settings::TagSuggestionSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<TagSuggestionSettings>(
+                input.settings["tag_suggestions"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), TagSuggestionSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "suggested_tags_width"], [0, 300]]"#,
+                    r#"[[0, "suggested_tags_width"], [0, 240]]"#,
+                ),
+                (
+                    r#"[[0, "suggested_tags_layout"], [0, "notebook"]]"#,
+                    r#"[[0, "suggested_tags_layout"], [0, "columns"]]"#,
+                ),
+                (
+                    r#"[[0, "default_suggested_tags_notebook_page"], [0, "related"]]"#,
+                    r#"[[0, "default_suggested_tags_notebook_page"], [0, "file_lookup_scripts"]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            TagSuggestionSettings {
+                width: 240,
+                columns: true,
+                default_page: "file_lookup_scripts".into(),
+                ..TagSuggestionSettings::default()
+            }
+        );
+    }
+
     /// Whether a sort chosen on a page becomes the default comes across.
     #[test]
     fn saving_the_page_sort_on_change_converts() {
