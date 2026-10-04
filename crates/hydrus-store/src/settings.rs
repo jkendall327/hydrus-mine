@@ -199,6 +199,54 @@ impl Setting for PageInsertion {
     const KEY: &'static str = "gui_page_insertion";
 }
 
+/// Startup and periodic last-session saving, as GUI Sessions edits it.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct GuiSessionSettings {
+    pub startup: Option<String>,
+    pub autosave_minutes: u16,
+    pub only_during_idle: bool,
+    pub warn_large_session: bool,
+}
+
+impl Default for GuiSessionSettings {
+    fn default() -> Self {
+        Self {
+            startup: Some(crate::sessions::LAST_SESSION.into()),
+            autosave_minutes: 5,
+            only_during_idle: false,
+            warn_large_session: true,
+        }
+    }
+}
+
+impl Setting for GuiSessionSettings {
+    const KEY: &'static str = "gui_sessions";
+}
+
+/// Idle eligibility from the reference's user-action and mouse timers.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct GuiIdleSettings {
+    pub enabled: bool,
+    pub user_seconds: Option<u64>,
+    pub mouse_seconds: Option<u64>,
+    pub api_seconds: Option<u64>,
+}
+impl Default for GuiIdleSettings {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            user_seconds: Some(1800),
+            mouse_seconds: Some(600),
+            api_seconds: None,
+        }
+    }
+}
+impl Setting for GuiIdleSettings {
+    const KEY: &'static str = "gui_idle";
+}
+
 /// Which recognised URL types the desktop watches for in changed clipboard text.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

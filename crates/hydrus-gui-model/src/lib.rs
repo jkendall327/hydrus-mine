@@ -52,6 +52,7 @@ pub mod search_log;
 pub mod selection;
 pub mod services_editor;
 pub mod services_review;
+pub mod session_lifecycle;
 pub mod session_saving;
 pub mod sidecar_editors;
 pub mod sidecars;

@@ -31,6 +31,7 @@ mod ratings_editor;
 mod recent_predicates;
 mod search_log;
 mod selection;
+mod session_lifecycle;
 mod session_saving;
 mod sidecar_descriptions;
 mod sidecar_editors;

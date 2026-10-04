@@ -1,0 +1,125 @@
+{
+  "steps": [
+    {
+      "startup": "last session",
+      "only_idle": true,
+      "idle": false,
+      "minutes": 5,
+      "add_notebook": null,
+      "now": 1700100060000,
+      "calls": [
+        {
+          "delay": 60,
+          "label": "auto session save wait loop"
+        }
+      ],
+      "saves": [],
+      "backups": []
+    },
+    {
+      "startup": "last session",
+      "only_idle": true,
+      "idle": true,
+      "minutes": 5,
+      "add_notebook": null,
+      "now": 1700100120000,
+      "calls": [
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ],
+      "saves": [
+        {
+          "name": "last session",
+          "changed": true
+        }
+      ],
+      "backups": [
+        1700100000000
+      ]
+    },
+    {
+      "startup": "last session",
+      "only_idle": false,
+      "idle": true,
+      "minutes": 1,
+      "add_notebook": null,
+      "now": 1700100180000,
+      "calls": [
+        {
+          "delay": 60,
+          "label": "auto save session"
+        }
+      ],
+      "saves": [
+        {
+          "name": "last session",
+          "changed": false
+        }
+      ],
+      "backups": [
+        1700100000000
+      ]
+    },
+    {
+      "startup": "last session",
+      "only_idle": false,
+      "idle": true,
+      "minutes": 2,
+      "add_notebook": "changed autosave",
+      "now": 1700100240000,
+      "calls": [
+        {
+          "delay": 120,
+          "label": "auto save session"
+        }
+      ],
+      "saves": [
+        {
+          "name": "last session",
+          "changed": true
+        }
+      ],
+      "backups": [
+        1700100000000,
+        1700100120000
+      ]
+    },
+    {
+      "startup": "other startup",
+      "only_idle": true,
+      "idle": false,
+      "minutes": 7,
+      "add_notebook": null,
+      "now": 1700100300000,
+      "calls": [
+        {
+          "delay": 60,
+          "label": "auto session save wait loop"
+        }
+      ],
+      "saves": [],
+      "backups": [
+        1700100000000,
+        1700100120000
+      ]
+    },
+    {
+      "startup": "other startup",
+      "only_idle": true,
+      "idle": true,
+      "minutes": 7,
+      "add_notebook": null,
+      "now": 1700100360000,
+      "calls": [],
+      "saves": [],
+      "backups": [
+        1700100000000,
+        1700100120000
+      ]
+    }
+  ],
+  "default_minutes": 5,
+  "default_only_idle": false
+}

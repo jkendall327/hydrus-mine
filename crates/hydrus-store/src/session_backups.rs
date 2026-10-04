@@ -81,6 +81,27 @@ pub fn save(conn: &Connection, session: &Session, now_ms: i64) -> Result<()> {
     sessions::save(conn, session, timestamp / 1000)
 }
 
+/// Suppress unchanged automatic saves, as the controller's last-session hash
+/// does. Thumbnail selection is retained in the snapshot but does not make
+/// session page data dirty. The previous hash belongs to this running client.
+pub fn save_automatic(
+    conn: &Connection,
+    session: &Session,
+    now_ms: i64,
+    previous: Option<&str>,
+) -> Result<Option<String>> {
+    let mut comparable = capture(conn, session)?;
+    for media in &mut comparable.media {
+        media.selected.clear();
+    }
+    let data = serde_json::to_string(&comparable).expect("session snapshot serialises");
+    if previous == Some(data.as_str()) {
+        return Ok(None);
+    }
+    save(conn, session, now_ms)?;
+    Ok(Some(data))
+}
+
 /// Capture a complete session in a stable writer/reader transaction.
 pub fn capture(conn: &Connection, session: &Session) -> Result<Snapshot> {
     let pages = session.all_pages();
@@ -278,6 +299,56 @@ mod tests {
                 content: PageContent::Pages(Vec::new()),
             }],
         }
+    }
+
+    #[test]
+    fn automatic_last_session_hash_replays_real_unchanged_suppression_and_history() {
+        let conn = connection();
+        let fixture = hydrus_testkit::fixture_json("session_autosave.json");
+        let mut saved = session(sessions::LAST_SESSION);
+        sessions::save(&conn, &saved, 1700100000).unwrap();
+        let mut previous = None;
+        for step in fixture["steps"].as_array().unwrap() {
+            if let Some(name) = step["add_notebook"].as_str() {
+                saved.pages.push(Page {
+                    key: PageKey::random(),
+                    name: name.into(),
+                    content: PageContent::Pages(vec![]),
+                });
+            }
+            if let Some(save) = step["saves"].as_array().unwrap().first() {
+                let next = save_automatic(
+                    &conn,
+                    &saved,
+                    step["now"].as_i64().unwrap(),
+                    previous.as_deref(),
+                )
+                .unwrap();
+                assert_eq!(next.is_some(), save["changed"].as_bool().unwrap());
+                if let Some(data) = next {
+                    previous = Some(data);
+                }
+            }
+            assert_eq!(
+                serde_json::json!(
+                    names(&conn)
+                        .unwrap()
+                        .into_iter()
+                        .find(|(name, _)| name == sessions::LAST_SESSION)
+                        .map(|(_, timestamps)| timestamps)
+                        .unwrap_or_default()
+                ),
+                step["backups"]
+            );
+        }
+        let latest = latest(&conn, sessions::LAST_SESSION).unwrap().unwrap();
+        assert_eq!(latest.session, saved);
+        // This running client hash is not persisted: a new boot saves once.
+        assert!(
+            save_automatic(&conn, &saved, 1700100500000, None)
+                .unwrap()
+                .is_some()
+        );
     }
 
     #[test]
