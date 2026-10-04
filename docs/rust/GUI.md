@@ -1758,3 +1758,17 @@ retaining first-seen file order and removing repeated files. Its single warning
 can be cancelled; accepted source tabs remain in closed-page undo. The actual
 loaded-media reference recording `oracle/record_tab_harvest.py` and native GUI
 regressions cover each scope, nested sources, copied selection and cancellation.
+
+## Downloader and URL display
+
+Network > downloaders > downloader and url display opens detached display lists
+for single/nested gallery generators and media-viewer URL classes. Each list has
+extended selection, name/type/display sorting, and a batch yes/no/cancel question.
+The unmatched-URL checkbox belongs to the media-viewer tab. Apply atomically merges
+only edited display identities; Cancel discards the draft. Other definition and
+parser edits are preserved. Existing gallery pages refresh their primary choices;
+"show other downloaders" exposes the secondary list and retains the selected
+caption. The media viewer's top-right hover frame displays clickable URL class
+names, multi-domain class labels and unmatched domains using current preferences,
+including changes made while the viewer remains open. The reference's matched-link
+limit and ordering are replayed by `record_downloader_display.py`.

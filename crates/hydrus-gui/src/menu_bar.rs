@@ -37,6 +37,7 @@ pub(crate) struct Hooks {
     pub manage_subscriptions: Rc<dyn Fn()>,
     /// Open URL class or gallery URL generator definition editors.
     pub manage_downloader_definitions: Rc<dyn Fn(bool)>,
+    pub manage_downloader_display: Rc<dyn Fn()>,
     /// Open native parser definitions or URL-class links.
     pub manage_parsers: Rc<dyn Fn(bool)>,
     pub manage_network_sessions: Rc<dyn Fn(bool)>,
@@ -697,6 +698,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::TagDisplay(application) => (hooks.tag_display)(application),
         Command::TagRelationships(kind) => (hooks.tag_relationships)(kind),
         Command::TagMigrate => (hooks.tag_migrate)(),
+        Command::ManageDownloaderDisplay => (hooks.manage_downloader_display)(),
         Command::ManageDownloaderDefinitions(classes) => {
             (hooks.manage_downloader_definitions)(classes);
         }

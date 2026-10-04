@@ -31,6 +31,7 @@ mod client_exit;
 pub mod clipboard_monitor;
 pub mod daemon;
 pub mod downloader_definitions_window;
+pub mod downloader_display_window;
 pub mod downloader_interchange_window;
 mod drops;
 mod duplicates_sidebar;
@@ -1499,6 +1500,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 })
             },
+            manage_downloader_display: {
+                let pages = pages.clone();
+                let slots = downloader_display_window::Slots::default();
+                Rc::new(move || {
+                    let store = pages.borrow().store().clone();
+                    if let Err(e) = downloader_display_window::open(&store, &slots) {
+                        eprintln!("could not open downloader display: {e}");
+                    }
+                })
+            },
             manage_downloader_definitions: {
                 let pages = pages.clone();
                 let slots = downloader_definitions.clone();
@@ -2072,13 +2083,25 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         move |index| {
             let page = page();
-            let chosen = usize::try_from(index)
-                .ok()
-                .and_then(|i| page.borrow().gallery()?.gugs.get(i).cloned());
+            let chosen = usize::try_from(index).ok().and_then(|i| {
+                page.borrow()
+                    .gallery()?
+                    .selector_gugs()
+                    .get(i)
+                    .map(|g| (**g).clone())
+            });
             if let Some((key, name, _)) = chosen {
                 page.borrow_mut().set_gug(&key, &name);
                 shown(false);
             }
+        }
+    });
+    window.on_gallery_other_gugs({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |show| {
+            page().borrow_mut().set_show_other_gugs(show);
+            shown(false);
         }
     });
     window.on_gallery_limit({
@@ -4029,12 +4052,54 @@ fn open_viewer(
             }
         }
     });
+    // Display choices reach an already-open viewer as well as navigation.
+    let show_url_links: Rc<dyn Fn()> = Rc::new({
+        let model = model.clone();
+        let weak = window.as_weak();
+        let previous = RefCell::new(Vec::<(String, String)>::new());
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let model = model.borrow();
+            match downloader_display_window::file_links(model.store(), model.current()) {
+                Ok(links) if *previous.borrow() != links => {
+                    window.set_url_links(ModelRc::new(VecModel::from(
+                        links
+                            .iter()
+                            .map(|(label, url)| ViewerUrlRow {
+                                label: label.as_str().into(),
+                                url: url.as_str().into(),
+                            })
+                            .collect::<Vec<_>>(),
+                    )));
+                    *previous.borrow_mut() = links;
+                }
+                Ok(_) => {}
+                Err(e) => eprintln!("could not read media viewer URLs: {e}"),
+            }
+        }
+    });
+    window.on_url_clicked({
+        let weak = window.as_weak();
+        move |index| {
+            use slint::Model as _;
+            if let (Some(window), Ok(index)) = (weak.upgrade(), usize::try_from(index))
+                && let Some(link) = window.get_url_links().row_data(index)
+                && hydrus_core::url::functions::check_full_url(link.url.as_str()).is_ok()
+            {
+                launch(link.url.as_str());
+            }
+        }
+    });
     // the file's info line and buttons, in the top hover frame, and its
     // notes
     let show_info = {
         let model = model.clone();
         let weak = window.as_weak();
+        let show_url_links = show_url_links.clone();
         move || {
+            show_url_links();
             let Some(window) = weak.upgrade() else {
                 return;
             };
@@ -4360,6 +4425,8 @@ fn open_viewer(
     };
     let moving = slint::Timer::default();
     moving.start(slint::TimerMode::Repeated, Duration::from_millis(100), {
+        let show_url_links = show_url_links.clone();
+        let url_ticks = Cell::new(0_u8);
         let model = model.clone();
         let show = show.clone();
         let slideshow = slideshow.clone();
@@ -4370,6 +4437,10 @@ fn open_viewer(
         let slideshow_settings = slideshow_settings.clone();
         let weak = window.as_weak();
         move || {
+            url_ticks.set((url_ticks.get() + 1) % 10);
+            if url_ticks.get() == 0 {
+                show_url_links();
+            }
             // (not while the viewer asks something, as the reference's
             // waits while a menu is open)
             let asking = weak.upgrade().is_some_and(|w| {
@@ -5075,14 +5146,13 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
     let own = gallery.gallery();
     // (the downloader among those offered; one not found, or none, after
     // them, as the reference's selector labels it)
-    let found = gallery
-        .gugs
+    let offered = gallery.selector_gugs();
+    let found = offered
         .iter()
         .position(|g| g.0 == own.gug_key)
-        .or_else(|| gallery.gugs.iter().position(|g| g.1 == own.gug_name))
+        .or_else(|| offered.iter().position(|g| g.1 == own.gug_name))
         .filter(|_| !own.gug_name.is_empty());
-    let mut gug_names: Vec<SharedString> =
-        gallery.gugs.iter().map(|g| g.1.as_str().into()).collect();
+    let mut gug_names: Vec<SharedString> = offered.iter().map(|g| g.1.as_str().into()).collect();
     let gug_index = found.unwrap_or_else(|| {
         gug_names.push(if own.gug_name.is_empty() {
             "no downloader set".into()
@@ -5104,8 +5174,13 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
         import_options: edit_subscription::import_options_label(&gallery.state.options).into(),
         gug_names: ModelRc::new(VecModel::from(gug_names)),
         gug_index: i32::try_from(gug_index).unwrap_or(0),
+        show_other_gugs: gallery.show_other_gugs,
+        has_other_gugs: gallery
+            .gugs
+            .iter()
+            .any(|g| !gallery.gug_keys_to_display.contains(&g.0)),
         initial_search_text: found
-            .map(|i| gallery.gugs[i].2.as_str())
+            .map(|i| offered[i].2.as_str())
             .unwrap_or_default()
             .into(),
         no_limit: own.file_limit.is_none(),

@@ -68,3 +68,4 @@ mod tag_migration;
 mod favourite_search_editor;
 mod regex_favourites;
 mod tab_context;
+mod downloader_display;

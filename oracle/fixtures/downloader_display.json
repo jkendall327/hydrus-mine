@@ -1,0 +1,316 @@
+{
+  "initial": {
+    "gugs": [
+      [
+        "alpha",
+        "yes"
+      ],
+      [
+        "beta",
+        "no"
+      ]
+    ],
+    "classes": [
+      [
+        "example post",
+        "post url",
+        "yes"
+      ],
+      [
+        "multi post",
+        "post url",
+        "yes"
+      ]
+    ]
+  },
+  "questions": [
+    {
+      "message": "Show\n\nalpha\nbeta\n\nin the main selector list?",
+      "title": "Show in the first list?",
+      "cancel": true
+    },
+    {
+      "message": "Show\n\nalpha\nbeta\n\nin the main selector list?",
+      "title": "Show in the first list?",
+      "cancel": true
+    },
+    {
+      "message": "Show\n\nalpha\nbeta\n\nin the main selector list?",
+      "title": "Show in the first list?",
+      "cancel": true
+    },
+    {
+      "message": "Show\n\nexample post\nmulti post\n\nin the media viewer?",
+      "title": "Show in the media viewer?",
+      "cancel": true
+    },
+    {
+      "message": "Show\n\nexample post\nmulti post\n\nin the media viewer?",
+      "title": "Show in the media viewer?",
+      "cancel": true
+    },
+    {
+      "message": "Show\n\nexample post\nmulti post\n\nin the media viewer?",
+      "title": "Show in the media viewer?",
+      "cancel": true
+    }
+  ],
+  "steps": [
+    {
+      "gugs": [
+        [
+          "alpha",
+          "yes"
+        ],
+        [
+          "beta",
+          "no"
+        ]
+      ],
+      "classes": [
+        [
+          "example post",
+          "post url",
+          "yes"
+        ],
+        [
+          "multi post",
+          "post url",
+          "yes"
+        ]
+      ]
+    },
+    {
+      "gugs": [
+        [
+          "alpha",
+          "yes"
+        ],
+        [
+          "beta",
+          "yes"
+        ]
+      ],
+      "classes": [
+        [
+          "example post",
+          "post url",
+          "yes"
+        ],
+        [
+          "multi post",
+          "post url",
+          "yes"
+        ]
+      ]
+    },
+    {
+      "gugs": [
+        [
+          "alpha",
+          "no"
+        ],
+        [
+          "beta",
+          "no"
+        ]
+      ],
+      "classes": [
+        [
+          "example post",
+          "post url",
+          "yes"
+        ],
+        [
+          "multi post",
+          "post url",
+          "yes"
+        ]
+      ]
+    },
+    {
+      "gugs": [
+        [
+          "alpha",
+          "no"
+        ],
+        [
+          "beta",
+          "no"
+        ]
+      ],
+      "classes": [
+        [
+          "example post",
+          "post url",
+          "yes"
+        ],
+        [
+          "multi post",
+          "post url",
+          "yes"
+        ]
+      ]
+    },
+    {
+      "gugs": [
+        [
+          "alpha",
+          "no"
+        ],
+        [
+          "beta",
+          "no"
+        ]
+      ],
+      "classes": [
+        [
+          "example post",
+          "post url",
+          "no"
+        ],
+        [
+          "multi post",
+          "post url",
+          "no"
+        ]
+      ]
+    },
+    {
+      "gugs": [
+        [
+          "alpha",
+          "no"
+        ],
+        [
+          "beta",
+          "no"
+        ]
+      ],
+      "classes": [
+        [
+          "example post",
+          "post url",
+          "yes"
+        ],
+        [
+          "multi post",
+          "post url",
+          "yes"
+        ]
+      ]
+    }
+  ],
+  "urls": [
+    "https://other.example/item",
+    "https://example.com/",
+    "https://a.example/",
+    "invalid",
+    "https://b.example/"
+  ],
+  "viewer": [
+    [
+      [
+        "example post",
+        "https://example.com/"
+      ],
+      [
+        "other.example",
+        "https://other.example/item"
+      ],
+      [
+        "unknown",
+        "invalid"
+      ]
+    ],
+    [
+      [
+        "multi post (a.example)",
+        "https://a.example/"
+      ],
+      [
+        "multi post (b.example)",
+        "https://b.example/"
+      ],
+      [
+        "other.example",
+        "https://other.example/item"
+      ],
+      [
+        "unknown",
+        "invalid"
+      ]
+    ],
+    []
+  ],
+  "cap_urls": [
+    "https://other.example/first",
+    "https://example.com/?id=0",
+    "https://example.com/?id=1",
+    "https://example.com/?id=2",
+    "https://example.com/?id=3",
+    "https://example.com/?id=4",
+    "https://example.com/?id=5",
+    "https://example.com/?id=6",
+    "https://example.com/?id=7",
+    "https://example.com/?id=8",
+    "https://example.com/?id=9",
+    "https://example.com/?id=10",
+    "https://example.com/?id=11",
+    "https://other.example/last"
+  ],
+  "cap": [
+    [
+      "example post",
+      "https://example.com/?id=0"
+    ],
+    [
+      "example post",
+      "https://example.com/?id=1"
+    ],
+    [
+      "example post",
+      "https://example.com/?id=2"
+    ],
+    [
+      "example post",
+      "https://example.com/?id=3"
+    ],
+    [
+      "example post",
+      "https://example.com/?id=4"
+    ],
+    [
+      "example post",
+      "https://example.com/?id=5"
+    ],
+    [
+      "example post",
+      "https://example.com/?id=6"
+    ],
+    [
+      "example post",
+      "https://example.com/?id=7"
+    ],
+    [
+      "example post",
+      "https://example.com/?id=8"
+    ],
+    [
+      "example post",
+      "https://example.com/?id=9"
+    ],
+    [
+      "other.example",
+      "https://other.example/first"
+    ]
+  ],
+  "value": {
+    "gugs": [],
+    "classes": [
+      "3333333333333333333333333333333333333333333333333333333333333333",
+      "4444444444444444444444444444444444444444444444444444444444444444"
+    ],
+    "unmatched": false
+  }
+}

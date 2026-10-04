@@ -236,6 +236,7 @@ pub enum Command {
     NetworkData(bool),
     /// Manage URL classes (true) or gallery URL generators (false).
     ManageDownloaderDefinitions(bool),
+    ManageDownloaderDisplay,
     /// Parser definitions (`false`) or URL-class parser links (`true`).
     ManageParsers(bool),
     /// Review network sessions (`false`) or edit custom HTTP headers (`true`).
@@ -952,7 +953,10 @@ fn network_menu(facts: &Facts) -> Entry {
                         Command::ExchangeDownloaders(false),
                     ),
                     SEP,
-                    todo(dots("downloader and url display")),
+                    item(
+                        dots("downloader and url display"),
+                        Command::ManageDownloaderDisplay,
+                    ),
                     menu(
                         "watch clipboard for urls",
                         vec![

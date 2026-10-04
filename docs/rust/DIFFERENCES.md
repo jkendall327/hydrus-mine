@@ -1155,3 +1155,17 @@ the native default local search domain (my files). The broader reference default
 local-location preference is still deferred. Session-per-notebook menus remain
 unimplemented. An accepted collapse freezes the media shown when its confirmation
 opened; if its source keys have left their shared notebook, it does nothing.
+
+## Downloader and URL display
+
+The native display editor uses a tab selector and an inline yes/no/cancel question
+instead of Qt's notebook and modal question dialog. Native gallery selectors use
+an explicit "show other downloaders" switch for the secondary choices. URL display
+preferences are a separate durable native setting; the legacy domain manager's
+URL-class visibility keys are not imported. Until edited, all installed URL classes
+and unmatched URLs are displayed. No site-specific display defaults are installed.
+An open media viewer refreshes its links within one second after Apply. Invalid
+unmatched URL text retains the reference's "unknown" label but cannot launch the
+system browser. URL links are right-aligned in the ratings hover frame; long labels
+are elided and the native media viewer does not add the reference's hyperlink
+context menu to these links (the existing URLs menu remains available).

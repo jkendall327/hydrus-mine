@@ -486,6 +486,8 @@ impl SearchPage {
             sort: (Column::Query, true),
             selection: crate::list_selection::ListSelection::default(),
             gugs: crate::gallery::offered_gugs(&definitions.gugs),
+            gug_keys_to_display: definitions.gugs.keys_to_display,
+            show_other_gugs: false,
             settings,
             short_summary: (naming.short_summary_new, naming.short_summary_deleted),
         });
@@ -1159,6 +1161,13 @@ impl SearchPage {
             eprintln!("could not set the file limit: {e}");
         }
         self.refresh_import();
+    }
+
+    /// Expose the secondary downloader list without changing display preferences.
+    pub fn set_show_other_gugs(&mut self, show: bool) {
+        if let Some(gallery) = &mut self.gallery {
+            gallery.show_other_gugs = show;
+        }
     }
 
     /// Set the page's file limit for new searches (`None`: no limit).

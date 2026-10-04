@@ -27,6 +27,8 @@ import { LineEdit } from "std-widgets.slint";
 import { ListText } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 
+export struct ViewerUrlRow { label: string, url: string }
+
 // one shape of a rating control, its outline and fill
 export struct RatingShape {
     pen: color,
@@ -111,10 +113,12 @@ export component MediaViewerWindow inherits Window {
     // the file's ratings, for the top-right hover frame, as the reference
     // draws them
     in property <[RatingRow]> ratings;
+    in property <[ViewerUrlRow]> url-links;
+    callback url-clicked(int);
     in property <length> rating-size: 12px;
     in property <length> incdec-height: 12px;
     in property <length> rating-outline: 1px;
-    out property <bool> ratings-showing: root.ratings.length > 0 && (ratings-frame.has-hover
+    out property <bool> ratings-showing: (root.ratings.length > 0 || root.url-links.length > 0) && (ratings-frame.has-hover
         || (pointer.has-hover && pointer.mouse-x >= root.width - ratings-box.preferred-width - 20px
             && pointer.mouse-y <= ratings-box.preferred-height + 20px));
     out property <bool> tags-showing: pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
@@ -1092,7 +1096,7 @@ export component MediaViewerWindow inherits Window {
         // (nothing in it takes the pointer, so the area below keeps it)
         notes-box := Rectangle {
             x: root.width * 0.8;
-            y: root.ratings.length > 0 ? ratings-box.preferred-height + 4px : 0;
+            y: root.ratings.length > 0 || root.url-links.length > 0 ? ratings-box.preferred-height + 4px : 0;
             width: root.width * 0.2;
             height: min(notes-layout.preferred-height, root.height - self.y);
             background: #202020e8;
@@ -1181,6 +1185,12 @@ export component MediaViewerWindow inherits Window {
                                 }
                             }
                         }
+                    }
+                    for link[i] in root.url-links: Rectangle {
+                        width: min(root.width * 0.35, 280px);
+                        height: 22px;
+                        Text { text: link.label; color: #70b5ff; font-size: 12px; horizontal-alignment: right; vertical-alignment: center; overflow: elide; }
+                        TouchArea { mouse-cursor: pointer; clicked => { root.url-clicked(i); } }
                     }
                 }
             }

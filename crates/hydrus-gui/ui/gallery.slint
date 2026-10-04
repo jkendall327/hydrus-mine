@@ -26,6 +26,8 @@ export struct GalleryData {
     // the downloader for new queries, among those offered
     gug-names: [string],
     gug-index: int,
+    show-other-gugs: bool,
+    has-other-gugs: bool,
     initial-search-text: string,
     // the file limit for new queries
     no-limit: bool,
@@ -76,6 +78,7 @@ export component GallerySidebar inherits VerticalLayout {
     callback queries-entered(string);
     callback paste();
     callback gug-chosen(int);
+    callback other-gugs(bool);
     callback limit-changed(bool, int);
     callback cancel-download(bool);
     // the highlighted query's file log
@@ -186,6 +189,11 @@ export component GallerySidebar inherits VerticalLayout {
                 current-index: root.data.gug-index;
                 selected => { root.gug-chosen(self.current-index); }
             }
+            if root.data.has-other-gugs: CheckBox {
+                text: "show other downloaders";
+                checked: root.data.show-other-gugs;
+                toggled => { root.other-gugs(self.checked); }
+            }
             HorizontalLayout {
                 spacing: 4px;
                 Text {
@@ -247,6 +255,11 @@ export component GallerySidebar inherits VerticalLayout {
                 cancel-download(gallery) => { root.cancel-download(gallery); }
                 file-log => { root.file-log(); }
                 search-log => { root.search-log(); }
+            }
+            if root.data.has-other-gugs: CheckBox {
+                text: "show other downloaders";
+                checked: root.data.show-other-gugs;
+                toggled => { root.other-gugs(self.checked); }
             }
             HorizontalLayout {
                 spacing: 4px;

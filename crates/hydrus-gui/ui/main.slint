@@ -21,7 +21,7 @@ export { ListText }
 
 // (the palette, to choose light or dark: by default the system's)
 export { Palette } from "std-widgets.slint";
-export { MediaViewerWindow, NoteRow, RatingRow, RatingShape } from "viewer.slint";
+export { MediaViewerWindow, NoteRow, RatingRow, RatingShape, ViewerUrlRow } from "viewer.slint";
 export { ArchiveDeleteWindow } from "archive_delete.slint";
 export { BandwidthWindow, EditBandwidthRulesWindow, NetworkJobsWindow, MonthlyBandwidthBar } from "network_data.slint";
 export { TagDisplayWindow } from "tag_display.slint";
@@ -619,6 +619,7 @@ export component MainWindow inherits Window {
     callback gallery-queries(string);
     callback gallery-paste();
     callback gallery-gug(int);
+    callback gallery-other-gugs(bool);
     callback gallery-limit(bool, int);
     // a watcher page's sidebar (watcher.slint)
     in property <bool> watcher-page;
@@ -935,6 +936,7 @@ export component MainWindow inherits Window {
                         queries-entered(text) => { root.gallery-queries(text); }
                         paste => { root.gallery-paste(); }
                         gug-chosen(index) => { root.gallery-gug(index); }
+                        other-gugs(show) => { root.gallery-other-gugs(show); }
                         limit-changed(none, value) => { root.gallery-limit(none, value); }
                         shown-limit-changed(none, value) => { root.gallery-shown-limit(none, value); }
                         cancel-download(gallery) => { root.cancel-download(gallery); }
@@ -1936,3 +1938,4 @@ export { ClientApiKeysWindow, EditApiPermissionsWindow, ApiPermissionRow } from 
 export { NetworkDataWindow, EditNetworkValueWindow, CookieImportWindow, HeaderApprovalWindow } from "network_sessions.slint";
 
 export { RegexFavouritesWindow } from "regex_favourites.slint";
+export { DownloaderDisplayWindow } from "downloader_display.slint";
