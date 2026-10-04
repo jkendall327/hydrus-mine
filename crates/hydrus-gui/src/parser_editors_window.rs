@@ -663,10 +663,10 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
             }
             let mut s = state.borrow_mut();
             if let Ok(r) = usize::try_from(r)
-                && let Some(&i) = s.order.get(r)
+                && r < s.order.len()
             {
                 let order = s.order.clone();
-                s.selection.click(&order, i, c, h);
+                s.selection.click(&order, r, c, h);
             }
             drop(s);
             refresh();

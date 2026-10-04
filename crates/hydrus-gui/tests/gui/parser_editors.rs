@@ -205,3 +205,56 @@ fn url_class_links_are_staged_cancel_safe_and_refresh_capability() {
         vec![("01".into(), None)]
     );
 }
+
+#[test]
+fn sorted_parser_rows_and_sparse_link_rows_select_the_visible_definition() {
+    let (_dir, store, slots) = setup();
+    headless::init();
+    store
+        .write_and_refresh(|ctx| {
+            let conn = ctx.conn();
+            let mut values: Downloaders = settings::get(conn)?;
+            values.parsers[0].name = "z last".into();
+            let mut first = new_page();
+            first.name = "a first".into();
+            first.key = "first".into();
+            values.parsers.push(first);
+            let mut classes: UrlClassSettings = settings::get(conn)?;
+            classes.url_classes.insert(
+                0,
+                UrlClass {
+                    name: "file without parser".into(),
+                    key: vec![2],
+                    url_type: UrlType::File,
+                    ..UrlClass::default()
+                },
+            );
+            classes.parser_keys.push("first".into());
+            settings::set(conn, &values)?;
+            settings::set(conn, &classes)
+        })
+        .unwrap();
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    assert_eq!(page.get_fields().row_data(0).unwrap().text, "a first");
+    page.invoke_action("cancel".into());
+    list.invoke_sort(0, false);
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    assert_eq!(page.get_fields().row_data(0).unwrap().text, "z last");
+    page.invoke_action("cancel".into());
+    list.invoke_action("cancel".into());
+    let links = windows::open(&store, &slots, true).unwrap();
+    assert_eq!(links.get_rows().row_count(), 1);
+    links.invoke_row_clicked(0, false, false);
+    links.set_chosen_parser(1);
+    links.invoke_action("link".into());
+    links.invoke_action("apply".into());
+    assert_eq!(
+        store.snapshot().url_classes.settings().parser_links,
+        vec![("01".into(), Some("first".into()))]
+    );
+}
