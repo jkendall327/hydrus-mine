@@ -1,0 +1,32 @@
+// The reference shared ExportPatternButton: copy shortcuts to the clipboard.
+import { Button } from "std-widgets.slint";
+export component ExportPatternButton inherits ContextMenuArea {
+    in property <[string]> labels;
+    in property <string> heading;
+    in property <bool> available: true;
+    callback selected(int);
+    preferred-width: button.preferred-width;
+    preferred-height: button.preferred-height;
+    enabled: root.available;
+    Menu {
+        MenuItem { title: root.heading; activated => { root.selected(7); } }
+        MenuSeparator {}
+        MenuItem { title: root.labels[0]; activated => { root.selected(0); } }
+        MenuItem { title: root.labels[1]; activated => { root.selected(1); } }
+        MenuItem { title: root.labels[2]; activated => { root.selected(2); } }
+        MenuItem { title: root.labels[3]; activated => { root.selected(3); } }
+        MenuItem { title: root.labels[4]; activated => { root.selected(4); } }
+        MenuSeparator {}
+        MenuItem { title: root.labels[5]; activated => { root.selected(5); } }
+        MenuSeparator {}
+        MenuItem { title: root.labels[6]; activated => { root.selected(6); } }
+
+    }
+    button := Button {
+        width: parent.width;
+        height: parent.height;
+        text: "pattern shortcuts";
+        enabled: root.available;
+        clicked => { root.show({ x: 0px, y: self.height }); }
+    }
+}

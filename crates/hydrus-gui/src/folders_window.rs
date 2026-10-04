@@ -1318,6 +1318,25 @@ fn open_export_folder(
     sidecars.set_test_objects(Vec::new());
     let active = Rc::new(Cell::new(true));
     let example_timer = Rc::new(RefCell::new(None::<slint::Timer>));
+    window.set_pattern_shortcuts(strings(
+        hydrus_gui_model::export_files::PATTERN_SHORTCUTS
+            .iter()
+            .map(|(label, _)| (*label).to_owned())
+            .collect(),
+    ));
+    window.set_pattern_heading(hydrus_gui_model::export_files::PATTERN_SHORTCUT_HEADING.into());
+    window.on_pattern_chosen({
+        let active = active.clone();
+        let sidecars = sidecars.clone();
+        move |index| {
+            if active.get()
+                && sidecars.routers.borrow().is_none()
+                && let Some(phrase) = hydrus_gui_model::export_files::pattern_shortcut(index)
+            {
+                crate::copy_to_clipboard(phrase);
+            }
+        }
+    });
     window.on_update_examples({
         let weak = window.as_weak();
         let store = store.clone();

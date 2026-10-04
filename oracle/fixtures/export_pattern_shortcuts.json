@@ -1,0 +1,83 @@
+{
+ "button": "pattern shortcuts",
+ "phrase_before": "keep {hash}",
+ "menu": [
+  {
+   "label": "click on a phrase to copy to clipboard",
+   "enabled": true,
+   "separator": false,
+   "tooltip": "copy \"click on a phrase to copy to clipboard\" to clipboard"
+  },
+  {
+   "label": "",
+   "enabled": true,
+   "separator": true,
+   "tooltip": ""
+  },
+  {
+   "label": "unique numerical file id - {file_id}",
+   "enabled": true,
+   "separator": false,
+   "tooltip": "copy \"{file_id}\" to the clipboard"
+  },
+  {
+   "label": "the file's hash - {hash}",
+   "enabled": true,
+   "separator": false,
+   "tooltip": "copy \"{hash}\" to the clipboard"
+  },
+  {
+   "label": "all the file's tags - {tags}",
+   "enabled": true,
+   "separator": false,
+   "tooltip": "copy \"{tags}\" to the clipboard"
+  },
+  {
+   "label": "all the file's non-namespaced tags - {nn tags}",
+   "enabled": true,
+   "separator": false,
+   "tooltip": "copy \"{nn tags}\" to the clipboard"
+  },
+  {
+   "label": "file order - {#}",
+   "enabled": true,
+   "separator": false,
+   "tooltip": "copy \"{#}\" to the clipboard"
+  },
+  {
+   "label": "",
+   "enabled": true,
+   "separator": true,
+   "tooltip": ""
+  },
+  {
+   "label": "all instances of a particular namespace - […]",
+   "enabled": true,
+   "separator": false,
+   "tooltip": "copy \"[…]\" to the clipboard"
+  },
+  {
+   "label": "",
+   "enabled": true,
+   "separator": true,
+   "tooltip": ""
+  },
+  {
+   "label": "a particular tag, if the file has it - (…)",
+   "enabled": true,
+   "separator": false,
+   "tooltip": "copy \"(…)\" to the clipboard"
+  }
+ ],
+ "copied": [
+  "click on a phrase to copy to clipboard",
+  "{file_id}",
+  "{hash}",
+  "{tags}",
+  "{nn tags}",
+  "{#}",
+  "[…]",
+  "(…)"
+ ],
+ "phrase_after": "keep {hash}"
+}

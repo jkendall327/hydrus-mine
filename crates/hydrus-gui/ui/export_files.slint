@@ -3,6 +3,7 @@ import { Button, CheckBox, LineEdit, ProgressIndicator } from "std-widgets.slint
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 import { Asking } from "subscriptions.slint";
+import { ExportPatternButton } from "export_pattern.slint";
 export component ExportFilesWindow inherits Window {
     title: "export files";
     preferred-width: 880px;
@@ -11,6 +12,9 @@ export component ExportFilesWindow inherits Window {
     in property <[TableRow]> rows;
     in-out property <string> destination;
     in-out property <string> phrase;
+    in property <[string]> pattern-shortcuts;
+    in property <string> pattern-heading;
+    callback pattern-chosen(int);
     in-out property <bool> trash;
     in-out property <bool> symlinks;
     in property <string> sidecars: "no sidecars";
@@ -52,6 +56,12 @@ export component ExportFilesWindow inherits Window {
         HorizontalLayout {
             LineEdit { text <=> root.phrase; enabled: !root.working && !root.asking; accepted => { root.update(); } }
             Button { text: "update"; enabled: !root.working && !root.asking; clicked => { root.update(); } }
+            ExportPatternButton {
+                labels: root.pattern-shortcuts;
+                heading: root.pattern-heading;
+                available: !root.working && !root.asking;
+                selected(index) => { root.pattern-chosen(index); }
+            }
         }
         Text { text: "{hash}   {file_id}   {#}   {tags}   {nn tags}   [namespace]   (tag)"; color: Theme.text; }
         CheckBox { text: "trash files in hydrus client after export"; checked <=> root.trash; enabled: !root.working && !root.asking; toggled => { if root.trash { root.symlinks = false; } } }

@@ -342,6 +342,12 @@ and supplies up to 25 media results to router/source previews. The button says
 **loading…**, then **got N files!**; editing the query resets it while retaining
 previous examples. Closing the owner discards pending results. This is recorded
 against actual reference database queries in `oracle/record_export_folder_examples.py`.
+The folder and manual-export filename boxes share **pattern shortcuts**. Their
+native menu copies the seven reference phrases (including the Unicode namespace
+and tag placeholders) and the clickable heading to the clipboard, leaving the
+current filename pattern unchanged. Pasting a copied phrase uses the existing
+filename generator. `oracle/record_export_pattern_shortcuts.py` records all labels,
+separators and clipboard payloads from the actual shared reference button.
 
 Router queues also import and export selected routers through clipboard text or
 reference PNGs, duplicate selected rows, and ask before deleting them. Imports
