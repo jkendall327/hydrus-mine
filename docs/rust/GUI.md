@@ -790,10 +790,15 @@ if it is synchronised. "manage favourite searches" opens hydrus's "edit
 favourite searches" list (folder, name, search, sort, collect; sorted on
 a header clicked, the folder by default, as hydrus sorts it), with "add",
 "edit" (or a double-click) and "delete" (asking first), kept only on
-"apply". "edit favourite search" has the folder and name, the search
-(typed predicates added, a double-click removing one, searching as it
-changes or not), and whether to save its sort and collect; renaming onto
-a search that exists asks before overwriting it. "save this search" opens
+"apply". "edit favourite search" edits folder/name, file/tag domains and
+current/pending tags, search suggestions, sort type/direction, and collection
+namespaces/ratings, tag domain and unmatched files. Blank system suggestions
+open the shared predicate editors; accepting stages their predicates and
+cancelling the favourite or manager cancels pending children. Sort/collect
+save ticks keep these values optional. Collection uses the saved tag service
+and both current and pending tags, as the reference does. Renaming onto
+a search that exists asks before overwriting it. These controls and collection
+results are recorded by `oracle/record_favourite_search_editor.py`. "save this search" opens
 both on the page's search, sort and collect, named "new favourite search"
 (with " (1)" and so on if any folder has that name). The lock button beside them
 locks the page's search to a `system:hash` of the files in view (asking

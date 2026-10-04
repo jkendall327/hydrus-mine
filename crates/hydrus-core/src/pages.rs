@@ -448,6 +448,8 @@ pub struct PageCollect {
     pub ratings: Vec<ServiceKey>,
     /// Whether the files that match none collect together, or stay single.
     pub collect_unmatched: bool,
+    /// Persisted collect context; namespace groups use its service with current and pending tags.
+    pub tag_context: crate::search::context::TagContext,
 }
 
 impl Default for PageCollect {
@@ -457,6 +459,7 @@ impl Default for PageCollect {
             namespaces: Vec::new(),
             ratings: Vec::new(),
             collect_unmatched: true,
+            tag_context: crate::search::context::TagContext::default(),
         }
     }
 }
@@ -642,6 +645,7 @@ mod tests {
                             namespaces: vec!["series".into()],
                             ratings: Vec::new(),
                             collect_unmatched: false,
+                            tag_context: crate::search::context::TagContext::default(),
                         }),
                     },
                 }]),

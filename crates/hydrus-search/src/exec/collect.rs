@@ -49,6 +49,30 @@ pub(crate) fn collect_and_sort(
             .map(|m| displayed(env, m))
             .unwrap_or_default()
     };
+    // The reference's GetNamespaceSlice always unions current and pending;
+    // its collect context selects the service, independent of search toggles.
+    let collect_context = hydrus_core::search::context::TagContext::new(
+        collect.tag_context.service.clone(),
+        true,
+        true,
+    );
+    let collect_scope = super::context::resolve_tags(env.snapshot, &collect_context)?;
+    let collect_tags = |file: HashId| -> BTreeSet<TagId> {
+        let Some(media) = results.get(&file) else {
+            return BTreeSet::new();
+        };
+        let mut tags = BTreeSet::new();
+        for service in &collect_scope.services {
+            if let Some(mapped) = media.tags.get(&service.id) {
+                for status in &collect_scope.statuses {
+                    for &stored in mapped.by_status.get(status).into_iter().flatten() {
+                        tags.extend(service.graph.display_tags(stored));
+                    }
+                }
+            }
+        }
+        tags
+    };
     let names = &batch.tags;
     // group, in the page's order
     let ratings: Vec<ServiceId> = collect
@@ -60,7 +84,7 @@ pub(crate) fn collect_and_sort(
     let mut groups: Vec<(GroupKey, Vec<HashId>)> = Vec::new();
     let mut at: HashMap<GroupKey, usize> = HashMap::new();
     for &file in files {
-        let slice: BTreeSet<String> = tags(file)
+        let slice: BTreeSet<String> = collect_tags(file)
             .iter()
             .filter_map(|t| names.get(t))
             .map(Tag::as_str)

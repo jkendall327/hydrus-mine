@@ -103,6 +103,7 @@ pub fn toggled(
         namespaces: Vec::new(),
         ratings: Vec::new(),
         collect_unmatched: collect.collect_unmatched,
+        tag_context: collect.tag_context.clone(),
     };
     for (i, choice) in choices.iter().enumerate() {
         let checked = if i == index {

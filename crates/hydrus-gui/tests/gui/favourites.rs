@@ -131,6 +131,7 @@ fn a_favourite_s_collect_collects_the_page() {
         namespaces: vec!["creator".into()],
         ratings: Vec::new(),
         collect_unmatched: true,
+        tag_context: hydrus_core::search::context::TagContext::default(),
     };
     favourite.collect = Some(by_creator.clone());
     page.load_favourite(&favourite);

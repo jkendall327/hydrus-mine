@@ -3,8 +3,9 @@
 // a list of them to add to, edit and delete from, and its "edit favourite
 // search" (`EditFavouriteSearchPanel`) for one.
 
-import { Button, CheckBox, LineEdit, ScrollView } from "std-widgets.slint";
+import { Button, CheckBox, ComboBox, LineEdit, ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
+import { Tick } from "subscriptions.slint";
 
 // A row of the list: its folder, name, search, sort and collect.
 export struct FavouriteListRow {
@@ -174,7 +175,8 @@ export component FavouritesWindow inherits Window {
 
 export component FavouriteEditWindow inherits Window {
     title: "edit favourite search";
-    min-width: 560px;
+    min-width: 700px;
+    preferred-height: 900px;
     background: Theme.window;
     in-out property <string> folder;
     in-out property <string> name;
@@ -191,6 +193,38 @@ export component FavouriteEditWindow inherits Window {
     in property <string> collect-label;
     in property <bool> save-collect;
     in property <string> question;
+    in property <[string]> location-choices;
+    in property <int> location-index;
+    in property <[string]> tag-choices;
+    in property <int> tag-index;
+    in property <bool> include-current;
+    in property <bool> include-pending;
+    in property <[string]> sort-choices;
+    in property <int> sort-index;
+    in property <[string]> sort-orders;
+    in property <int> sort-order;
+    in property <[Tick]> collect-choices;
+    in property <bool> collect-unmatched;
+    in property <int> collect-tag-index;
+    callback collect-tag-chosen(int);
+    in property <[Tick]> location-ticks;
+    in property <bool> selecting-locations;
+    in property <[string]> suggestions;
+    in property <int> suggestion-highlight;
+    callback suggestion-moved(int);
+    in property <bool> child-open;
+    out property <bool> can-edit: !root.child-open && !root.selecting-locations && root.question == "";
+    callback location-chosen(int);
+    callback tag-chosen(int);
+    callback tag-status-ticked(bool, bool);
+    callback location-ticked(int, bool);
+    callback locations-answered(bool);
+    callback sort-chosen(int);
+    callback sort-order-chosen(int);
+    callback collect-ticked(int, bool);
+    callback collect-unmatched-ticked(bool);
+    callback typed-edited();
+    callback suggestion-chosen(int);
     callback typed-accepted();
     callback predicate-removed(int);
     callback flip-synchronised();
@@ -222,6 +256,7 @@ export component FavouriteEditWindow inherits Window {
                     }
                     LineEdit {
                         text <=> root.folder;
+                        enabled: root.can-edit;
                     }
                 }
                 Row {
@@ -232,15 +267,38 @@ export component FavouriteEditWindow inherits Window {
                     }
                     LineEdit {
                         text <=> root.name;
+                        enabled: root.can-edit;
                     }
                 }
             }
             // the search: what is typed adds to it, a double-click removes
             // from it
-            LineEdit {
-                placeholder-text: "search";
-                text <=> root.typed;
-                accepted => { root.typed-accepted(); }
+            FocusScope {
+                height: search-input.preferred-height;
+                capture-key-pressed(event) => {
+                    if root.can-edit && event.text == Key.UpArrow { root.suggestion-moved(-1); return accept; }
+                    if root.can-edit && event.text == Key.DownArrow { root.suggestion-moved(1); return accept; }
+                    reject
+                }
+                search-input := LineEdit {
+                    placeholder-text: "search";
+                    text <=> root.typed;
+                    enabled: root.can-edit;
+                    edited => { root.typed-edited(); }
+                    accepted => { root.typed-accepted(); }
+                }
+            }
+            ScrollView {
+                height: min(root.suggestions.length, 5) * 24px;
+                VerticalLayout {
+                    alignment: start;
+                    for suggestion[i] in root.suggestions: Rectangle {
+                        height: 24px;
+                        background: root.suggestion-highlight == i ? Theme.highlight : transparent;
+                        Text { text: suggestion; color: root.suggestion-highlight == i ? Theme.highlight-text : Theme.text; vertical-alignment: center; }
+                        TouchArea { enabled: root.can-edit; clicked => { root.suggestion-chosen(i); } }
+                    }
+                }
             }
             if root.error != "": Text {
                 text: root.error;
@@ -252,20 +310,38 @@ export component FavouriteEditWindow inherits Window {
                 Button {
                     horizontal-stretch: 1;
                     text: root.synchronised ? "searching immediately" : "search paused";
+                    enabled: root.can-edit;
                     clicked => { root.flip-synchronised(); }
                 }
             }
             HorizontalLayout {
                 spacing: 4px;
-                Button {
+                ComboBox {
                     horizontal-stretch: 1;
-                    enabled: false;
-                    text: root.location-label;
+                    model: root.location-choices;
+                    current-index: root.location-index;
+                    enabled: root.can-edit;
+                    selected(i) => { root.location-chosen(i); }
                 }
-                Button {
+                ComboBox {
                     horizontal-stretch: 1;
-                    enabled: false;
-                    text: root.tags-label;
+                    model: root.tag-choices;
+                    current-index: root.tag-index;
+                    enabled: root.can-edit;
+                    selected(i) => { root.tag-chosen(i); }
+                }
+                CheckBox { text: "include current tags"; checked: root.include-current; enabled: root.can-edit; toggled => { root.tag-status-ticked(false, self.checked); } }
+                CheckBox { text: "include pending tags"; checked: root.include-pending; enabled: root.can-edit; toggled => { root.tag-status-ticked(true, self.checked); } }
+            }
+            if root.selecting-locations: VerticalLayout {
+                for tick[i] in root.location-ticks: CheckBox {
+                    text: tick.label;
+                    checked: tick.on;
+                    toggled => { root.location-ticked(i, self.checked); }
+                }
+                HorizontalLayout {
+                    Button { text: "apply locations"; clicked => { root.locations-answered(true); } }
+                    Button { text: "cancel locations"; clicked => { root.locations-answered(false); } }
                 }
             }
             Rectangle {
@@ -292,6 +368,7 @@ export component FavouriteEditWindow inherits Window {
                                 color: Theme.text;
                             }
                             remove-touch := TouchArea {
+                                enabled: root.can-edit;
                                 double-clicked => { root.predicate-removed(i); }
                             }
                         }
@@ -310,6 +387,7 @@ export component FavouriteEditWindow inherits Window {
                     CheckBox {
                         horizontal-stretch: 1;
                         checked: root.save-sort;
+                        enabled: root.can-edit;
                         toggled => { root.save-sort-ticked(self.checked); }
                     }
                 }
@@ -320,11 +398,9 @@ export component FavouriteEditWindow inherits Window {
                         vertical-alignment: center;
                         color: Theme.text;
                     }
-                    Text {
-                        horizontal-stretch: 1;
-                        text: root.sort-label;
-                        vertical-alignment: center;
-                        color: root.save-sort ? Theme.text : Theme.muted;
+                    HorizontalLayout {
+                        ComboBox { horizontal-stretch: 1; model: root.sort-choices; current-index: root.sort-index; enabled: root.save-sort && root.can-edit; selected(i) => { root.sort-chosen(i); } }
+                        ComboBox { model: root.sort-orders; current-index: root.sort-order; enabled: root.save-sort && root.can-edit; selected(i) => { root.sort-order-chosen(i); } }
                     }
                 }
                 Row {
@@ -337,6 +413,7 @@ export component FavouriteEditWindow inherits Window {
                     CheckBox {
                         horizontal-stretch: 1;
                         checked: root.save-collect;
+                        enabled: root.can-edit;
                         toggled => { root.save-collect-ticked(self.checked); }
                     }
                 }
@@ -347,11 +424,16 @@ export component FavouriteEditWindow inherits Window {
                         vertical-alignment: center;
                         color: Theme.text;
                     }
-                    Text {
-                        horizontal-stretch: 1;
-                        text: root.collect-label;
-                        vertical-alignment: center;
-                        color: root.save-collect ? Theme.text : Theme.muted;
+                    VerticalLayout {
+                        ScrollView {
+                            height: 90px;
+                            VerticalLayout {
+                                alignment: start;
+                                for tick[i] in root.collect-choices: CheckBox { text: tick.label; checked: tick.on; enabled: root.save-collect && root.can-edit; toggled => { root.collect-ticked(i, self.checked); } }
+                            }
+                        }
+                        ComboBox { model: root.tag-choices; current-index: root.collect-tag-index; enabled: root.save-collect && root.can-edit; selected(i) => { root.collect-tag-chosen(i); } }
+                        CheckBox { text: "collect unmatched files"; checked: root.collect-unmatched; enabled: root.save-collect && root.can-edit; toggled => { root.collect-unmatched-ticked(self.checked); } }
                     }
                 }
             }
@@ -364,6 +446,7 @@ export component FavouriteEditWindow inherits Window {
                 spacing: 6px;
                 Button {
                     text: "apply";
+                    enabled: root.can-edit;
                     clicked => { root.apply(); }
                 }
                 Button {

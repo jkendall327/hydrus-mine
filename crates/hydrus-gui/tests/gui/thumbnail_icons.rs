@@ -263,6 +263,7 @@ fn a_collection_s_banners_say_what_all_its_files_do() {
             namespaces: vec!["series".into()],
             ratings: Vec::new(),
             collect_unmatched: false,
+            tag_context: hydrus_core::search::context::TagContext::default(),
         });
     bound.rows.reset();
     let summaries = hydrus_core::tag_summary::TagSummaries::default();

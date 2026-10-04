@@ -85,6 +85,7 @@ fn page_collect(recorded: &Value) -> PageCollect {
             .map(|k| hydrus_core::ServiceKey::new(unhex(k.as_str().unwrap())))
             .collect(),
         collect_unmatched: recorded["collect_unmatched"].as_bool().unwrap(),
+        tag_context: hydrus_core::search::context::TagContext::default(),
     }
 }
 
@@ -327,6 +328,7 @@ fn a_page_opened_from_a_collected_page_collects_as_it_did() {
         namespaces: vec!["creator".into()],
         ratings: Vec::new(),
         collect_unmatched: false,
+        tag_context: hydrus_core::search::context::TagContext::default(),
     });
     let files = page.borrow().files();
     bound.pages.borrow_mut().open_files(
@@ -365,6 +367,7 @@ fn a_session_page_keeps_how_it_collects() {
         namespaces: vec!["series".into()],
         ratings: Vec::new(),
         collect_unmatched: false,
+        tag_context: hydrus_core::search::context::TagContext::default(),
     };
     // a page collecting by series, and one collecting nothing (though
     // leaving unmatched files separate)

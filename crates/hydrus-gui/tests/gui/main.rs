@@ -92,3 +92,5 @@ mod tag_migration;
 
 mod regex_favourites;
 mod tag_filter_favourites;
+
+mod favourite_search_editor;

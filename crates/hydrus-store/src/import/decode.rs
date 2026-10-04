@@ -2197,6 +2197,12 @@ fn page_collect(collect: &legacy::MediaCollect) -> hydrus_core::pages::PageColle
         namespaces: collect.namespaces.clone(),
         ratings: collect.rating_service_keys.clone(),
         collect_unmatched: collect.collect_unmatched,
+        tag_context: hydrus_core::search::context::TagContext {
+            service: collect.tag_context.service_key.clone(),
+            include_current: collect.tag_context.include_current_tags,
+            include_pending: collect.tag_context.include_pending_tags,
+            display_service: collect.tag_context.display_service_key.clone(),
+        },
     }
 }
 

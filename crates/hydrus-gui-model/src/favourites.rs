@@ -304,6 +304,44 @@ impl Edit {
         }
     }
 
+    /// Choose a file domain with the shared search-domain interlocks.
+    pub fn choose_location(
+        &mut self,
+        services: &hydrus_store::services::ServiceRegistry,
+        location: hydrus_search::LocationContext,
+    ) {
+        let mut domains = crate::domains::Domains {
+            location: self.search.location.clone(),
+            tags: self.search.tags.clone(),
+        };
+        domains.choose_location(services, location);
+        self.search.location = domains.location;
+        self.search.tags = domains.tags;
+    }
+
+    /// Choose a tag domain, restoring local files when combined tags cannot search all files.
+    pub fn choose_tags(
+        &mut self,
+        service: hydrus_core::ServiceKey,
+        default_location: &hydrus_search::LocationContext,
+    ) {
+        let mut domains = crate::domains::Domains {
+            location: self.search.location.clone(),
+            tags: self.search.tags.clone(),
+        };
+        domains.choose_tags(service, default_location);
+        self.search.location = domains.location;
+        self.search.tags = domains.tags;
+    }
+
+    /// Choose a sort type using its reference default direction.
+    pub fn choose_sort(&mut self, choice: &crate::sort::PageChoice) {
+        self.sort = PageSort {
+            by: choice.by.clone(),
+            ascending: choice.default_ascending,
+        };
+    }
+
     /// What the dialog gives back (`GetValue`): no folder for a blank one.
     pub fn value(&self) -> FavouriteSearch {
         FavouriteSearch {

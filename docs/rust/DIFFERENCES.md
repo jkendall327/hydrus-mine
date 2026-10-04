@@ -205,17 +205,14 @@ search.
 
 ## Pages (`hydrus-gui`)
 
-- **The "edit favourite search" dialog's search is typed**, not the
-  reference's whole autocomplete: a predicate typed and entered is added
-  (as the page's search box adds what is typed), a double-click removes
-  one, and the domains it searches are shown but not changed there; its
-  sort and collect show as text beside "save sort" and "save collect", not
-  as the page's controls. To change those, load the search into a page,
-  change it there, and save it again. Its questions ("Remove all
-  selected?", "already exists! Do you want to overwrite it?") are asked in
-  the dialog rather than in a window of their own, and the list sorts
-  names casefolded as lowercase (Python's casefold differs only for a few
-  letters, such as "ß", which we fold to "ss" as it does).
+- **Favourite search autocomplete shares the native page's suggestion model**,
+  including blank system predicate editors, and has editable file/tag domains,
+  current/pending tags, sort and collection controls. It does not yet offer the
+  reference's autocomplete cog, explicit OR-construction buttons, favourite
+  predicates or fetch/children tabs. Multiple/deleted location selection and
+  overwrite/delete questions appear inside the owner window. The list sorts
+  names casefolded as lowercase (Python's casefold differs for a few letters,
+  such as "ß", which we fold to "ss" as it does).
 
 - **System predicate editors type dates** ("2011-06-04", and "13:05") where
   the reference's have a calendar and a time box, and a viewing time is

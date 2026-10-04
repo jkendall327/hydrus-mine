@@ -980,6 +980,7 @@ fn pages_collect_as_the_reference_s_pages_collect() {
                 .map(|r| key(&unhex(r.as_str().unwrap())))
                 .collect(),
             collect_unmatched: c["collect_unmatched"].as_bool().unwrap(),
+            tag_context: hydrus_core::search::context::TagContext::default(),
         };
         for s in case["sorts"].as_array().unwrap() {
             let sort = &s["sort"];
@@ -1043,4 +1044,93 @@ fn pages_collect_as_the_reference_s_pages_collect() {
         wrong[..wrong.len().min(25)].join("\n")
     );
     assert_eq!(checked, 10 * 64);
+}
+
+#[test]
+fn saved_collect_tag_domains_group_files_as_the_reference_does() {
+    use hydrus_core::pages::{PageCollect, PageMedia, PageSort, PageSortBy};
+    let f = hydrus_testkit::fixture_json("favourite_search_editor.json");
+    let store = &SHARED.store;
+    let snapshot = store.snapshot();
+    let key_named = |name: &str| {
+        snapshot
+            .services
+            .all()
+            .find(|s| s.name == name)
+            .unwrap()
+            .key
+            .clone()
+    };
+    let search = FileSearchContext {
+        location: LocationContext::single(key_named("my files")),
+        ..FileSearchContext::default()
+    };
+    let files: Vec<HashId> = f["collect_groups"][0]["groups"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .flat_map(|g| g.as_array().unwrap())
+        .map(|h| {
+            store
+                .read(|conn| {
+                    hydrus_store::master::hash_id(conn, &h.as_str().unwrap().parse().unwrap())
+                })
+                .unwrap()
+                .unwrap()
+        })
+        .collect();
+    let sort = PageSort {
+        by: PageSortBy::System(0),
+        ascending: true,
+    };
+    for case in f["collect_groups"].as_array().unwrap() {
+        let collect = PageCollect {
+            namespaces: vec!["series".into()],
+            ratings: Vec::new(),
+            collect_unmatched: false,
+            tag_context: TagContext::new(
+                key_named(case["service"].as_str().unwrap()),
+                case["current"].as_bool().unwrap(),
+                case["pending"].as_bool().unwrap(),
+            ),
+        };
+        let grouped = store
+            .read(|conn| {
+                Ok(super::collect_page_files(
+                    conn,
+                    &snapshot,
+                    &search,
+                    &files,
+                    &collect,
+                    &sort,
+                    None,
+                    &Clock::system(),
+                ))
+            })
+            .unwrap()
+            .unwrap();
+        let hashes = store
+            .read(|conn| hydrus_store::master::hashes(conn, &files))
+            .unwrap();
+        let mut groups: Vec<Vec<String>> = grouped
+            .into_iter()
+            .map(|m| {
+                let ids = match m {
+                    PageMedia::File(id) => vec![id],
+                    PageMedia::Collection(ids) => ids,
+                };
+                let mut names: Vec<String> = ids.iter().map(|id| hashes[id].to_string()).collect();
+                names.sort();
+                names
+            })
+            .collect();
+        groups.sort();
+        assert_eq!(
+            case["groups"],
+            serde_json::json!(groups),
+            "{} / current={}",
+            case["service"],
+            case["current"]
+        );
+    }
 }

@@ -65,5 +65,6 @@ mod downloader_interchange;
 mod network_data;
 mod tag_migration;
 
+mod favourite_search_editor;
 mod regex_favourites;
 mod tab_context;
