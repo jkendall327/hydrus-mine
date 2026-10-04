@@ -702,6 +702,57 @@
         "Existing PyJson constraints for duplicate object keys and lone UTF-16 surrogates apply.",
         "Read-only raw previews use the native layout instead of Qt tabs; post-conversion/separation preview tabs remain outside this slice."
       ]
+    },
+    {
+      "reference_id": "audit-network-export-folder-examples",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "partial",
+      "proposedStatus": "partial",
+      "behavior": "Export-folder update test example files runs the actual current query on a worker and publishes up to 25 media examples to router and source child previews. It matches reference loading/got-N/reset states, size selection only when a local query limit removes results, previous examples retained after query changes, and empty results. Closing the folder/list discards pending results and stale mutations; edited queries remain staged until owner Apply and reach the persisted real query consumer.",
+      "exactBehavior": "Export-folder update test example files runs the actual current query on a worker and publishes up to 25 media examples to router and source child previews. It matches reference loading/got-N/reset states, size selection only when a local query limit removes results, previous examples retained after query changes, and empty results. Closing the folder/list discards pending results and stale mutations; edited queries remain staged until owner Apply and reach the persisted real query consumer.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/folders.rs",
+          "line": 17,
+          "commit": "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
+          "symbol": "export_test_examples"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/folders_window.rs",
+          "line": 1280,
+          "commit": "de70266f3f02b2d0bb328ae384462eee67b407e7",
+          "symbol": "open_export_folder"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/folders.rs",
+          "line": 362,
+          "commit": "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
+          "symbol": "export_folder_examples_use_recorded_queries_limits_and_media_contexts"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 1189,
+          "commit": "de70266f3f02b2d0bb328ae384462eee67b407e7",
+          "symbol": "export_folder_query_examples_refresh_media_and_reach_source_children"
+        }
+      ],
+      "reference_evidence": {
+        "export_folder_examples_recorder": "oracle/record_export_folder_examples.py",
+        "export_folder_examples_fixture": "oracle/fixtures/export_folder_examples.json",
+        "export_folder_examples_visual": "oracle/fixtures/export_folder_examples_editor.png",
+        "export_folder_examples_recording": "passed: real Qt query work/publish callbacks against basic database, four unrestricted/limited/nonmatching queries, 25 result bound, exact button states and actual first-media URL strings; scheduler alone deferred for deterministic capture"
+      },
+      "limitations": [
+        "The original filename pattern shortcuts button is not yet wired; the reference source at line 449 refreshes only router media examples and has no separate sample-media filename preview worker.",
+        "Unlimited results use stable file-id order rather than Python set iteration. All-known-file context is unavailable in the reference export-folder query control; imported all-known contexts retain native deterministic size selection."
+      ],
+      "limits": [
+        "The original filename pattern shortcuts button is not yet wired; the reference source at line 449 refreshes only router media examples and has no separate sample-media filename preview worker.",
+        "Unlimited results use stable file-id order rather than Python set iteration. All-known-file context is unavailable in the reference export-folder query control; imported all-known contexts retain native deterministic size selection."
+      ]
     }
   ]
 }
