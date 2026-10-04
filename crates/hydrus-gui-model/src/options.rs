@@ -2889,7 +2889,7 @@ impl Editor {
     pub fn set_favourite_tags(&mut self, tags: &[String]) {
         let mut tags: Vec<String> = tags
             .iter()
-            .filter_map(hydrus_core::Tag::new)
+            .filter_map(|tag| hydrus_core::Tag::new(tag))
             .map(|tag| tag.as_str().to_owned())
             .collect::<std::collections::BTreeSet<_>>()
             .into_iter()
