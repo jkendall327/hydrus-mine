@@ -6,13 +6,16 @@
     "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
     "37affafb961b0146f229ff0c706cb8cb5c1a714e",
     "2a7ad8aeddcb2752b2779a203636e664ce9df1b9",
-    "24fbb367ec67b29eca8c53b62905adf1ba8acf80"
+    "24fbb367ec67b29eca8c53b62905adf1ba8acf80",
+    "c55c726dc9f7ae91650ba00755299db47701b641",
+    "2b5015e642d20c1bd83450fe31ac63334735e8aa"
   ],
   "validation": {
-    "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states",
+    "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states; real router queues in import/export contexts, six node kinds, exact vetoes, duplication, PNG and sidecar worker output",
     "formatting": "cargo fmt --all, git diff --check and Python recorder syntax check passed",
     "rust_tests": "authored exact model reference replays, real-store GUI persistence, recursive/stale owner regressions and saved router consumer assertions; root asynchronous CI pending; no local Cargo builds",
-    "rendered_ui": "reference screenshot inspected; native headless render assertions authored and pending root CI"
+    "rendered_ui": "reference screenshot inspected; native headless render assertions authored and pending root CI",
+    "slint_source_check": "passed against merged ea4dc4f7 with cached compiler; no Cargo build"
   },
   "entries": [
     {
@@ -321,6 +324,94 @@
       },
       "limitations": [],
       "limits": []
+    },
+    {
+      "reference_id": "sidecar-router",
+      "previous_status": "partial",
+      "before": "partial",
+      "proposed_status": "partial",
+      "proposedStatus": "partial",
+      "behavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content.",
+      "exactBehavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/routers.rs",
+          "line": 121,
+          "commit": "c55c726dc9f7ae91650ba00755299db47701b641",
+          "symbol": "tuple"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sidecar_editors.rs",
+          "line": 1331,
+          "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+          "symbol": "validate_router_import"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/sidecars_window.rs",
+          "line": 1167,
+          "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+          "symbol": "open_routers"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/sidecars_window.rs",
+          "line": 42,
+          "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+          "symbol": "Slots::cancel"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_interchange_window.rs",
+          "line": 193,
+          "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+          "symbol": "open_routers"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/tests/routers.rs",
+          "line": 6,
+          "commit": "c55c726dc9f7ae91650ba00755299db47701b641",
+          "symbol": "recorded_router_queues_preserve_editor_fields_and_reference_png"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sidecar_editors.rs",
+          "line": 20,
+          "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+          "symbol": "recorded_router_queue_restrictions_veto_wrong_direction_and_sources"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 805,
+          "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+          "symbol": "router_queue_exchange_is_staged_context_checked_and_reaches_manual_export"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 1024,
+          "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+          "symbol": "closing_manual_export_discards_its_pending_router_exchange"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_router_exchange.py",
+        "fixture": "oracle/fixtures/router_exchange.json",
+        "png": "oracle/fixtures/router_exchange.png",
+        "visual_reference": "oracle/fixtures/router_exchange_editor.png",
+        "actual_recording": "passed: real Qt queue controls and clipboard, all six node kinds, exact direction/source warnings, selected duplication, reference PNG decode, v2 upgrade and real generated sidecar write"
+      },
+      "limitations": [
+        "The sidecar-router parent remains partial here: no broad parent/descendant completion is inferred from queue exchange.",
+        "Unsupported mixed packages are rejected atomically rather than appending a permitted subset with a warning.",
+        "PNG exchange uses the existing shared review/path export UI; the separate reference title/description/width export panel is not connected to this owner yet.",
+        "Export-folder query results are still not provided as media examples; existing manual-export/import-folder/filename-tagging examples remain covered.",
+        "Non-stub timestamps and unsupported processors are rejected before staging so unrepresentable data is not silently lost."
+      ],
+      "limits": [
+        "The sidecar-router parent remains partial here: no broad parent/descendant completion is inferred from queue exchange.",
+        "Unsupported mixed packages are rejected atomically rather than appending a permitted subset with a warning.",
+        "PNG exchange uses the existing shared review/path export UI; the separate reference title/description/width export panel is not connected to this owner yet.",
+        "Export-folder query results are still not provided as media examples; existing manual-export/import-folder/filename-tagging examples remain covered.",
+        "Non-stub timestamps and unsupported processors are rejected before staging so unrepresentable data is not silently lost."
+      ]
     }
   ]
 }
