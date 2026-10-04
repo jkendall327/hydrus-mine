@@ -106,10 +106,8 @@ pub(crate) fn bind(
     });
     window.on_quality_line_clicked({
         let inner = inner.clone();
-        let selected = selected.clone();
         let weak = window.as_weak();
         let store = store.clone();
-        let message = message.clone();
         move |p, l, r, t, left| {
             if !inner.alive.get() || inner.pending.borrow().is_some() {
                 return;

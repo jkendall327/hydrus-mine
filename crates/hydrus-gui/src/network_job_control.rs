@@ -126,12 +126,14 @@ struct Held {
     job: Option<u64>,
     actions: HashMap<i32, Action>,
 }
+type OwnerAlive = Rc<dyn Fn(&str) -> bool>;
+
 struct State {
     window: slint::Weak<MainWindow>,
     store: Arc<Store>,
     target: Rc<dyn Fn(bool) -> Option<Target>>,
     owner_key: Rc<dyn Fn() -> String>,
-    owner_alive: RefCell<Rc<dyn Fn(&str) -> bool>>,
+    owner_alive: RefCell<OwnerAlive>,
     leases: RefCell<HashMap<(String, bool), u64>>,
     targets: RefCell<HashMap<(String, bool), Target>>,
     rules: network_data_window::Slots,
