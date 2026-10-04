@@ -13,6 +13,10 @@ use hydrus_store::{
 use slint::{ComponentHandle, ModelRc, Timer, TimerMode, VecModel};
 use std::{cell::RefCell, collections::HashMap, rc::Rc, sync::Arc, time::Duration};
 
+pub(crate) fn new_control_owner() -> u64 {
+    static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+    (u64::from(std::process::id()) << 32) | NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+}
 fn now() -> i64 {
     hydrus_core::time::TimestampMs::now().millis() / 1000
 }
@@ -115,6 +119,7 @@ struct State {
     target: Rc<dyn Fn(bool) -> Option<Target>>,
     owner_key: Rc<dyn Fn() -> String>,
     owner_alive: RefCell<Rc<dyn Fn(&str) -> bool>>,
+    leases: RefCell<HashMap<(String, bool), u64>>,
     targets: RefCell<HashMap<(String, bool), Target>>,
     rules: network_data_window::Slots,
     errors: Errors,
@@ -143,7 +148,54 @@ fn action_id(action: &Action) -> i32 {
         _ => -1,
     }
 }
+pub(crate) fn menu_data(menu: model::Cog, has_error: bool) -> (JobCogMenu, HashMap<i32, Action>) {
+    let auto_override = menu.auto_override;
+    let mut actions = HashMap::new();
+    let url = menu.url.map_or_else(String::new, |entry| {
+        actions.insert(1, entry.action);
+        entry.label
+    });
+    let rules = menu
+        .rules
+        .into_iter()
+        .enumerate()
+        .map(|(i, entry)| {
+            let id = i32::try_from(i).unwrap_or(i32::MAX).saturating_add(100);
+            actions.insert(id, entry.action);
+            item(entry.label, id)
+        })
+        .collect::<Vec<_>>();
+    let rows = menu
+        .actions
+        .into_iter()
+        .map(|entry| {
+            let id = action_id(&entry.action);
+            actions.insert(id, entry.action);
+            item(entry.label, id)
+        })
+        .collect::<Vec<_>>();
+    let menu = JobCogMenu {
+        url: url.into(),
+        rules: ModelRc::new(VecModel::from(rules)),
+        actions: ModelRc::new(VecModel::from(rows)),
+        auto_override,
+        has_error,
+    };
+    (menu, actions)
+}
+
 impl State {
+    fn send_auto(&self, key: &(String, bool), mut command: Command) {
+        if let JobAction::AutoOverrideBandwidth(enabled) = command.action {
+            let owner = *self
+                .leases
+                .borrow_mut()
+                .entry(key.clone())
+                .or_insert_with(new_control_owner);
+            command.action = JobAction::AutoOverrideBandwidthFor { owner, enabled };
+        }
+        let _ = self.worker.send.send(Operation::Command(command));
+    }
     fn key(&self, gallery: bool) -> (String, bool) {
         ((self.owner_key)(), gallery)
     }
@@ -181,11 +233,14 @@ impl State {
                 && let Some(target) = self.targets.borrow().get(key)
                 && let Some((job, _)) = target.job(&review.runtime, now())
             {
-                let _ = self.worker.send.send(Operation::Command(Command {
-                    epoch: review.runtime.epoch.clone(),
-                    job: job.id,
-                    action: JobAction::AutoOverrideBandwidth(false),
-                }));
+                self.send_auto(
+                    key,
+                    Command {
+                        epoch: review.runtime.epoch.clone(),
+                        job: job.id,
+                        action: JobAction::AutoOverrideBandwidth(false),
+                    },
+                );
             }
             self.targets.borrow_mut().remove(key);
             self.held.borrow_mut().remove(key);
@@ -201,11 +256,14 @@ impl State {
                         && let Some((job, _)) =
                             previous.and_then(|old| old.job(&review.runtime, now()))
                     {
-                        let _ = self.worker.send.send(Operation::Command(Command {
-                            epoch: review.runtime.epoch.clone(),
-                            job: job.id,
-                            action: JobAction::AutoOverrideBandwidth(false),
-                        }));
+                        self.send_auto(
+                            &key,
+                            Command {
+                                epoch: review.runtime.epoch.clone(),
+                                job: job.id,
+                                action: JobAction::AutoOverrideBandwidth(false),
+                            },
+                        );
                     }
                     self.targets.borrow_mut().insert(key.clone(), target);
                     controls.entry(key).or_default();
@@ -216,11 +274,14 @@ impl State {
                 if controls.get(&key).is_some_and(|c| c.auto_override)
                     && let Some((job, _)) = previous.and_then(|old| old.job(&review.runtime, now()))
                 {
-                    let _ = self.worker.send.send(Operation::Command(Command {
-                        epoch: review.runtime.epoch.clone(),
-                        job: job.id,
-                        action: JobAction::AutoOverrideBandwidth(false),
-                    }));
+                    self.send_auto(
+                        &key,
+                        Command {
+                            epoch: review.runtime.epoch.clone(),
+                            job: job.id,
+                            action: JobAction::AutoOverrideBandwidth(false),
+                        },
+                    );
                 }
             }
         }
@@ -229,7 +290,7 @@ impl State {
                 continue;
             };
             if let Some(command) = control.sync(target, &review.runtime, now()) {
-                let _ = self.worker.send.send(Operation::Command(command));
+                self.send_auto(key, command);
             }
         }
         if let Some(window) = self.window.upgrade() {
@@ -264,30 +325,7 @@ impl State {
         };
         let job = target.job(&review.runtime, now());
         let menu = model::cog(review, job, control.auto_override, now());
-        let mut actions = HashMap::new();
-        let url = menu.url.map_or_else(String::new, |entry| {
-            actions.insert(1, entry.action);
-            entry.label
-        });
-        let rules = menu
-            .rules
-            .into_iter()
-            .enumerate()
-            .map(|(i, entry)| {
-                let id = i32::try_from(i).unwrap_or(i32::MAX).saturating_add(100);
-                actions.insert(id, entry.action);
-                item(entry.label, id)
-            })
-            .collect::<Vec<_>>();
-        let rows = menu
-            .actions
-            .into_iter()
-            .map(|entry| {
-                let id = action_id(&entry.action);
-                actions.insert(id, entry.action);
-                item(entry.label, id)
-            })
-            .collect::<Vec<_>>();
+        let (menu, actions) = menu_data(menu, control.error().is_some());
         self.held.borrow_mut().insert(
             self.key(gallery),
             Held {
@@ -296,13 +334,6 @@ impl State {
                 actions,
             },
         );
-        let menu = JobCogMenu {
-            url: url.into(),
-            rules: ModelRc::new(VecModel::from(rules)),
-            actions: ModelRc::new(VecModel::from(rows)),
-            auto_override: control.auto_override,
-            has_error: control.error().is_some(),
-        };
         if let Some(window) = self.window.upgrade() {
             if gallery {
                 window.set_search_cog(menu);
@@ -385,11 +416,14 @@ impl Drop for State {
                     && let Some(target) = self.targets.borrow().get(key)
                     && let Some((job, _)) = target.job(&review.runtime, now())
                 {
-                    let _ = self.worker.send.send(Operation::Command(Command {
-                        epoch: review.runtime.epoch.clone(),
-                        job: job.id,
-                        action: JobAction::AutoOverrideBandwidth(false),
-                    }));
+                    self.send_auto(
+                        key,
+                        Command {
+                            epoch: review.runtime.epoch.clone(),
+                            job: job.id,
+                            action: JobAction::AutoOverrideBandwidth(false),
+                        },
+                    );
                 }
             }
         }
@@ -461,6 +495,7 @@ pub fn bind_owned(
         target,
         owner_key,
         owner_alive: RefCell::new(Rc::new(|_| true)),
+        leases: RefCell::default(),
         targets: RefCell::default(),
         rules,
         errors: Errors::default(),

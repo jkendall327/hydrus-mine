@@ -114,7 +114,13 @@ fn page_cog_rules_cancel_apply_and_error_owner_boundary() {
         );
         commands
             .iter()
-            .filter(|c| !matches!(c.action, JobAction::AutoOverrideBandwidth(_)))
+            .filter(|c| {
+                !matches!(
+                    c.action,
+                    JobAction::AutoOverrideBandwidth(_)
+                        | JobAction::AutoOverrideBandwidthFor { .. }
+                )
+            })
             .count()
             == 4
     });
@@ -252,6 +258,7 @@ fn page_override_reaches_live_engine_and_auto_policy_reaches_next_request() {
     let store = Store::open(dir.path()).unwrap();
     let mut used = Tracker::new(now());
     used.report_requests(1, now());
+    used.report_data(1, now());
     store
         .write(move |ctx| {
             settings::set(
@@ -259,7 +266,10 @@ fn page_override_reaches_live_engine_and_auto_policy_reaches_next_request() {
                 &BandwidthSettings {
                     rules: vec![(
                         NetworkContext::global(),
-                        Rules::new([Rule::new(BandwidthType::Requests, Some(3600), 1)]),
+                        Rules::new([
+                            Rule::new(BandwidthType::Requests, Some(3600), 1),
+                            Rule::new(BandwidthType::Data, Some(15), 1),
+                        ]),
                     )],
                     ..BandwidthSettings::default()
                 },
@@ -425,15 +435,19 @@ fn auto_policy_belongs_to_page_control_and_retires_when_page_closes() {
                 .write(|ctx| network_runtime::take_commands(ctx.conn()))
                 .unwrap(),
         );
-        commands
-            .iter()
-            .any(|c| c.job == 43 && c.action == JobAction::AutoOverrideBandwidth(false))
+        commands.iter().any(|c| {
+            c.job == 43
+                && matches!(
+                    c.action,
+                    JobAction::AutoOverrideBandwidthFor { enabled: false, .. }
+                )
+        })
     });
-    assert!(
-        commands
-            .iter()
-            .any(|c| c.job == 43 && c.action == JobAction::AutoOverrideBandwidth(true))
-    );
+    assert!(commands.iter().any(|c| c.job == 43
+        && matches!(
+            c.action,
+            JobAction::AutoOverrideBandwidthFor { enabled: true, .. }
+        )));
     window.invoke_control_action(false, 7);
     assert!(!window.get_file_cog().auto_override);
 }

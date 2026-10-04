@@ -112,6 +112,11 @@ pub enum JobAction {
     ScrubDomainErrors,
     /// Applies to this request only; the GUI control owns future-request policy.
     AutoOverrideBandwidth(bool),
+    /// Independent control owners may watch the same request.
+    AutoOverrideBandwidthFor {
+        owner: u64,
+        enabled: bool,
+    },
 }
 
 /// Commands cannot affect a replacement daemon or a later request on one job.

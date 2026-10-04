@@ -1947,3 +1947,8 @@ columns, with merge, fill-in-gaps and replace presets plus per-kind checkboxes.
 Applying the child replaces only the parent draft; closing either owner cancels
 uncommitted edits and retained callbacks cannot apply twice. Non-full replacement
 of global options is rejected with the reference information message.
+
+When several controls review the same request, each automatic override has its
+own owner. Closing or unchecking one control leaves another control's policy
+intact. The override also skips a data-speed wait after five seconds and counts
+the transferred data normally.
