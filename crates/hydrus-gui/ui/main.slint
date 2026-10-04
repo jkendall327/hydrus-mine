@@ -23,6 +23,7 @@ export { ListText }
 export { Palette } from "std-widgets.slint";
 export { MediaViewerWindow, NoteRow, RatingRow, RatingShape } from "viewer.slint";
 export { ArchiveDeleteWindow } from "archive_delete.slint";
+export { TagDisplayWindow } from "tag_display.slint";
 export { TagRelationshipsWindow } from "tag_relationships.slint";
 export { ManageTagsWindow } from "manage_tags.slint";
 export { ManageNotesWindow } from "manage_notes.slint";
@@ -722,6 +723,7 @@ export component MainWindow inherits Window {
     callback sort-chosen(int);
     callback order-chosen(int);
     callback search-edited(string);
+    callback search-fetch();
     callback search-accepted();
     // the star button's menu, opened at (x, y)
     callback favourites-menu-requested(length, length);
@@ -1229,6 +1231,7 @@ export component MainWindow inherits Window {
                                 root.flip-synchronised();
                                 return accept;
                             }
+                            if event.modifiers.control && event.text == " " { root.search-fetch(); return accept; }
                             if (event.text == Key.UpArrow) {
                                 root.move-highlight(-1);
                                 return accept;
@@ -1914,3 +1917,6 @@ export component MainWindow inherits Window {
         }
     }
 }
+
+export { ParserListWindow, ParserEditWindow } from "parser_editors.slint";
+export { ClientApiKeysWindow, EditApiPermissionsWindow, ApiPermissionRow } from "client_api_admin.slint";

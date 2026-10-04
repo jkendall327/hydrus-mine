@@ -1415,3 +1415,70 @@ the main page refreshes its tags. `oracle/record_tag_relationships.py` records
 the reference panels' labels and local/remote action-context transitions;
 model replay, snapshot/count rollback checks, and real-store menu/window tests
 cover the implementation.
+
+**Tag display/search** (`tags > display/search`) edits each tag service's single
+file and selection display filters with the native tag-filter editor, plus
+fetch-as-you-type, character threshold, query rules and write autocomplete
+file/tag domains. Domain changes use the native location selector, including all
+known files and existing combined domains outside advanced mode. Ctrl+Space
+fetches search/manage-tags suggestions manually. The advanced `manage where tag
+siblings and parents apply` window edits ordered source queues in ListTable;
+empty queues disable that relationship kind. Both dialogs stage changes until
+Apply, disable parent editing while a nested editor is open, close owned nested
+editors on cancel and preserve unrelated settings.
+Applying updates selection tags on all open pages (including locked pages),
+viewer tags, search suggestions (including an open manage-tags draft), graphs
+and counts. The real reference panels
+and checkbox interlocks are recorded in `oracle/record_tag_display.py`; pure model
+and real-store GUI regressions cover persistence and publication.
+
+The parser editor foundation (`hydrus-gui-model::parser_editors`) owns native
+page/content drafts and direct URL-class links. Its nine typed content kinds,
+URL/post-index/context-variable tests and real parser previews replay
+`oracle/record_parser_editors.py`, which drives the reference's content,
+page, named parser and URL-class link panels. Persistence updates parser keys
+and links in one transaction, preserves generators and unrelated URL settings,
+and rejects concurrent parser/link edits. The existing downloader reloads
+changed parser definitions through its normal settings refresh; a local site
+regression proves an existing downloader follows an edited parser and link.
+Network > downloaders > parsers now opens the native named parser list
+(add/edit/duplicate/delete), and url class links opens staged direct parser
+associations. Page editors edit names, example URLs, pre-parsing converters and
+content nodes. Content editors support URLs, tags, notes, hashes, timestamps,
+titles, headers, temporary variables and vetoes, reusing the HTML/JSON formula
+and string-match editors. Test panels accept the document, page URL, post
+index and validated key=value context variables, and run the live parser engine.
+Child editors block parent changes and Apply; cancellation or owner closure
+invalidates all child callbacks. GUI/store regressions include rendered page
+and note-content screenshots through HYDRUS_PARSER_SCREENSHOTS.
+
+Parser deletion confirms a snapshot of stable parser keys; selection, sorting
+and other list actions wait until Yes/No. Applying changed parser associations
+checks the current URL class's type and redirect converter in the transaction,
+so a concurrent class edit cannot install a link on a file or redirect source.
+
+Service review now opens a native Client API access-key list with the reference
+columns, extended selection, sorting, add/edit/duplicate/delete, copy-key and
+local base-URL opening. Permission editors expose all 14 basic permissions,
+full access, the reusable permitted-search-tags filter and explicit key rotation
+with validation/collision refusal. List and nested edits remain detached until
+Apply; Cancel and closing service review cancel their descendants. Real Qt
+controls/questions are recorded in `client_api_admin.json`; actual native-store
+GUI regressions render `client_api_keys.png`, `client_api_permissions.png` and
+`client_api_service.png` during the GUI test batch.
+
+Manage services narrowly permits editing the built-in API service's enabled
+state, port, local/network binding, CORS and anonymous request logging. Other
+imported flags remain preserved and display plain values, with unset external
+URL fields labeled "not set". Imported HTTPS can be disabled; enabling it
+is unsupported. The daemon notices configuration changes within one second and
+restarts only the API listener, keeping downloads, queues and authentication
+sessions alive. A bind failure reports its cause and recovers after settings
+are corrected; HTTPS reports a failure instead of silently serving HTTP.
+Explicit CLI `--port` and `--bind` overrides retain precedence.
+The local daemon regression additionally mints an authenticated session before
+listener reconfiguration and uses that same session after bind-failure recovery.
+
+Opening the API base URL uses the daemon's reported listening address, so CLI
+port and binding overrides are honored even when the saved service is off.
+Wildcard binds open through loopback; IPv6 URLs retain their brackets.

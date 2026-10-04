@@ -10,7 +10,7 @@ use std::sync::Arc;
 use hydrus_core::{HashId, ServiceId, ServiceType, Tag};
 use hydrus_store::Store;
 use hydrus_store::autocomplete::{
-    self, AutocompleteInput, AutocompleteSettings, CountDomain, TagDisplayType, TagSearchScope,
+    self, AutocompleteInput, AutocompleteSettings, TagDisplayType, TagSearchScope,
 };
 use hydrus_store::content::MappingAction;
 
@@ -20,6 +20,7 @@ const SUGGESTIONS: usize = 12;
 pub struct ManageTags {
     store: Arc<Store>,
     files: Vec<HashId>,
+    location: hydrus_core::search::context::LocationContext,
     /// The local tag services, by name.
     services: Vec<(ServiceId, String)>,
     service: usize,
@@ -65,6 +66,7 @@ impl ManageTags {
             staged: vec![BTreeMap::new(); services.len()],
             store,
             files,
+            location: hydrus_core::search::context::LocationContext::default(),
             services,
             service: 0,
             stored,
@@ -74,6 +76,10 @@ impl ManageTags {
         })
     }
 
+    /// File domain of the page/viewer that launched this editor.
+    pub fn set_location(&mut self, location: hydrus_core::search::context::LocationContext) {
+        self.location = location;
+    }
     pub fn store(&self) -> &Arc<Store> {
         &self.store
     }
@@ -218,7 +224,7 @@ impl ManageTags {
     pub fn set_text(&mut self, text: &str) {
         text.clone_into(&mut self.text);
         self.highlighted = 0;
-        self.suggestions = self.search().unwrap_or_default();
+        self.suggestions = self.search(false).unwrap_or_default();
     }
 
     /// (tag, label) of each suggestion.
@@ -254,7 +260,12 @@ impl ManageTags {
         }
     }
 
-    fn search(&self) -> Option<Vec<(String, String)>> {
+    /// Explicitly fetch suggestions even when fetch-as-you-type is disabled.
+    pub fn fetch(&mut self) {
+        self.suggestions = self.search(true).unwrap_or_default();
+    }
+
+    fn search(&self, manual: bool) -> Option<Vec<(String, String)>> {
         if self.text.trim().is_empty() {
             return Some(Vec::new());
         }
@@ -262,26 +273,53 @@ impl ManageTags {
         let snapshot = self.store.snapshot();
         let registry = &snapshot.services;
         let service = self.services[self.service].0;
-        let domains = registry
-            .of_type(ServiceType::CombinedLocalFileDomains)
-            .map(|s| CountDomain {
-                service: s.id,
-                exact: true,
-            })
-            .collect();
+        let key = registry.get(service).ok()?.key.clone();
+        let options = self
+            .store
+            .read(
+                hydrus_store::settings::get::<
+                    hydrus_store::tag_display_config::AutocompleteWidgetSettings,
+                >,
+            )
+            .ok()?
+            .options(&key);
+        let location = if options.override_location {
+            &options.write_location
+        } else {
+            &self.location
+        };
+        // The reference avoids all-known files × all-known tags for writes.
+        let local_storage;
+        let location = if location.is_all_known_files()
+            && options.write_tag_service.as_bytes()
+                == hydrus_core::service::builtin_keys::COMBINED_TAG
+        {
+            local_storage = hydrus_core::search::context::LocationContext::single(
+                hydrus_core::ServiceKey::new(
+                    hydrus_core::service::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE.to_vec(),
+                ),
+            );
+            &local_storage
+        } else {
+            location
+        };
+        let domains = crate::autocomplete::count_domains(registry, location);
         let scope = TagSearchScope {
             domains,
-            tag_service: Some(service),
+            tag_service: registry
+                .by_key(&options.write_tag_service)
+                .ok()
+                .filter(|s| s.service_type() != ServiceType::CombinedTag)
+                .map(|s| s.id),
             display: TagDisplayType::Storage,
             include_current: true,
             include_pending: true,
         };
-        let key = registry.get(service).ok()?.key.clone();
         let mut matches = self
             .store
             .read(|conn| {
                 let rules = hydrus_store::settings::get::<AutocompleteSettings>(conn)?.rules(&key);
-                let Some(query) = input.tag_query(&rules) else {
+                let Some(query) = options.query(&input, &rules, manual) else {
                     return Ok(Vec::new());
                 };
                 autocomplete::search_tags(conn, registry, &snapshot.display, &scope, &query)

@@ -105,7 +105,7 @@ impl Autocomplete {
     pub fn set_text(&mut self, text: &str) {
         text.clone_into(&mut self.text);
         self.highlighted = 0;
-        self.suggestions = self.search().unwrap_or_default();
+        self.suggestions = self.search(false).unwrap_or_default();
     }
 
     /// How the user has tags shown.
@@ -115,7 +115,13 @@ impl Autocomplete {
             .unwrap_or_default()
     }
 
-    fn search(&self) -> Option<Vec<Suggestion>> {
+    /// Explicit fetch, used by Ctrl+Space when automatic fetching is off.
+    pub fn fetch(&mut self) {
+        self.highlighted = 0;
+        self.suggestions = self.search(true).unwrap_or_default();
+    }
+
+    fn search(&self, manual: bool) -> Option<Vec<Suggestion>> {
         if self.text.trim().is_empty() {
             return self.system_predicates();
         }
@@ -140,7 +146,11 @@ impl Autocomplete {
             .read(|conn| {
                 let rules =
                     hydrus_store::settings::get::<AutocompleteSettings>(conn)?.rules(&tags.service);
-                let Some(query) = input.tag_query(&rules) else {
+                let options = hydrus_store::settings::get::<
+                    hydrus_store::tag_display_config::AutocompleteWidgetSettings,
+                >(conn)?
+                .options(&tags.service);
+                let Some(query) = options.query(&input, &rules, manual) else {
                     return Ok(Vec::new());
                 };
                 autocomplete::search_tags(conn, registry, &snapshot.display, &scope, &query)
@@ -313,7 +323,10 @@ fn searchable_mimes() -> std::rc::Rc<Vec<rusqlite::types::Value>> {
 /// Where tag counts come from for a page's file domains: each current
 /// domain exactly, and, for deleted files, "deleted from anywhere" as an
 /// upper bound (as the Client API's tag search does).
-fn count_domains(registry: &ServiceRegistry, location: &LocationContext) -> Vec<CountDomain> {
+pub(crate) fn count_domains(
+    registry: &ServiceRegistry,
+    location: &LocationContext,
+) -> Vec<CountDomain> {
     let mut domains: Vec<CountDomain> = location
         .current()
         .iter()

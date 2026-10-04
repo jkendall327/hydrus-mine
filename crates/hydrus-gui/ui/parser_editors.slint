@@ -1,0 +1,133 @@
+// Native parser definitions, content nodes and direct URL-class associations.
+import { Button, CheckBox, ComboBox, LineEdit, ScrollView, TextEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableColumn, TableRow } from "list_table.slint";
+import { DefinitionField } from "downloader_definitions.slint";
+import { Question } from "favourites.slint";
+export component ParserListWindow inherits Window {
+    in property <bool> links;
+    title: root.links ? "url class links" : "parsers";
+    preferred-width: 1000px; preferred-height: 580px;
+    background: Theme.window;
+    in property <[TableColumn]> columns;
+    in property <[TableRow]> rows;
+    in property <bool> selected;
+    in property <bool> child-open;
+    in property <[string]> parser-choices;
+    in-out property <int> chosen-parser;
+    in property <string> error;
+    in property <string> question;
+    callback row-clicked(int,bool,bool);
+    callback sort(int,bool);
+    callback action(string);
+    callback answered(bool);
+    VerticalLayout {
+        padding: 10px; spacing: 8px;
+        ListTable {
+            columns: root.columns; rows: root.rows;
+            row-clicked(i,c,s) => { if root.question == "" { root.row-clicked(i,c,s); } }
+            row-activated(i) => { if root.question == "" { root.row-clicked(i,false,false); root.action(root.links ? "link" : "edit"); } }
+            sort(c,a) => { if root.question == "" { root.sort(c,a); } }
+            delete-pressed => { if root.question == "" { root.action(root.links ? "clear" : "delete"); } }
+        }
+        HorizontalLayout {
+            spacing: 6px; alignment: start;
+            if !root.links: Button { text: "add"; enabled: !root.child-open && root.question == ""; clicked => { root.action("add"); } }
+            if !root.links: Button { text: "edit"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("edit"); } }
+            if !root.links: Button { text: "duplicate"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("duplicate"); } }
+            if !root.links: Button { text: "delete"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("delete"); } }
+            if root.links: ComboBox { enabled: root.question == ""; model: root.parser-choices; current-index <=> root.chosen-parser; }
+            if root.links: Button { text: "link"; enabled: root.selected && root.question == ""; clicked => { root.action("link"); } }
+            if root.links: Button { text: "clear"; enabled: root.selected && root.question == ""; clicked => { root.action("clear"); } }
+        }
+        if root.links: Text { text: "API/redirect source classes use their target's parser. Associations apply to the live downloader."; color: Theme.text; wrap: word-wrap; }
+        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        if root.question != "": Question { text: root.question; answered(yes) => { root.answered(yes); } }
+        HorizontalLayout {
+            alignment: end; spacing: 6px;
+            Button { text: "apply"; enabled: !root.child-open && root.question == ""; clicked => { root.action("apply"); } }
+            Button { text: "cancel"; enabled: !root.child-open && root.question == ""; clicked => { root.action("cancel"); } }
+        }
+    }
+}
+export component ParserEditWindow inherits Window {
+    in property <bool> page;
+    title: root.page ? "edit page parser" : "edit content parser";
+    preferred-width: 1000px; preferred-height: 780px;
+    background: Theme.window;
+    in property <[DefinitionField]> fields;
+    in property <[TableRow]> nodes;
+    in property <bool> selected;
+    in property <bool> child-open;
+    in property <string> subsidiary-note;
+    in-out property <string> document;
+    in-out property <string> test-url;
+    in-out property <string> post-index: "0";
+    in-out property <string> variables;
+    in property <string> preview;
+    in property <string> error;
+    in property <string> question;
+    out property <float> footer-y: footer.y / 1px;
+    callback text-edited(int,string);
+    callback choice-edited(int,int);
+    callback toggled(int,bool);
+    callback row-clicked(int,bool,bool);
+    callback action(string);
+    callback answered(bool);
+    callback closed();
+    callback force-close();
+    VerticalLayout {
+        height: root.height - 52px; padding: 10px; spacing: 8px;
+        ScrollView {
+            min-height: 0px; vertical-stretch: 1;
+            VerticalLayout {
+                spacing: 8px; alignment: start;
+                for field in root.fields: HorizontalLayout {
+                    spacing: 8px; min-height: field.kind == 3 ? 70px : 32px; vertical-stretch: 0;
+                    Text { width: 245px; text: field.label; color: Theme.text; vertical-alignment: center; }
+                    if field.kind == 0: LineEdit { text: field.text; enabled: !root.child-open && field.enabled; edited(t) => { root.text-edited(field.id,t); } }
+                    if field.kind == 1: ComboBox { model: field.options; current-index: field.chosen; enabled: !root.child-open && field.enabled; selected => { root.choice-edited(field.id,self.current-index); } }
+                    if field.kind == 2: CheckBox { checked: field.checked; enabled: !root.child-open && field.enabled; toggled => { root.toggled(field.id,self.checked); } }
+                    if field.kind == 3: TextEdit { height: 70px; text: field.text; enabled: !root.child-open; edited(t) => { root.text-edited(field.id,t); } }
+                }
+                if root.page: ListTable {
+                    height: 160px;
+                    columns: [ { title: "name", width: 350px }, { title: "content type", width: 220px } ]; rows: root.nodes;
+                    row-clicked(i,c,s) => { root.row-clicked(i,c,s); }
+                    row-activated(i) => { root.row-clicked(i,false,false); root.action("edit-content"); }
+                    delete-pressed => { root.action("delete-content"); }
+                }
+                HorizontalLayout {
+                    spacing: 6px; alignment: start;
+                    if root.page: Button { text: "add content parser"; enabled: !root.child-open; clicked => { root.action("add-content"); } }
+                    if root.page: Button { text: "edit content parser"; enabled: root.selected && !root.child-open; clicked => { root.action("edit-content"); } }
+                    if root.page: Button { text: "delete content parser"; enabled: root.selected && !root.child-open; clicked => { root.action("delete-content"); } }
+                    if root.page: Button { text: "edit pre-parsing converter"; enabled: !root.child-open; clicked => { root.action("converter"); } }
+                    if !root.page: Button { text: "edit parsing formula"; enabled: !root.child-open; clicked => { root.action("formula"); } }
+                    if !root.page: Button { text: "edit veto string match"; enabled: !root.child-open; clicked => { root.action("match"); } }
+                }
+                if root.subsidiary-note != "": Text { text: root.subsidiary-note; color: Theme.text; wrap: word-wrap; }
+                Text { text: "test document"; color: Theme.text; }
+                TextEdit { height: 130px; text <=> root.document; enabled: !root.child-open; }
+                HorizontalLayout {
+                    Text { text: "page URL"; color: Theme.text; vertical-alignment: center; }
+                    LineEdit { text <=> root.test-url; enabled: !root.child-open; }
+                    Text { text: "post index"; color: Theme.text; vertical-alignment: center; }
+                    LineEdit { width: 90px; text <=> root.post-index; enabled: !root.child-open; }
+                }
+                Text { text: "context variables (one key=value per line)"; color: Theme.text; }
+                TextEdit { height: 60px; text <=> root.variables; enabled: !root.child-open; }
+                Button { text: "test parse"; enabled: !root.child-open; clicked => { root.action("test"); } }
+                TextEdit { height: 140px; text: root.preview; read-only: true; }
+            }
+        }
+        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        if root.question != "" && !root.child-open: Question { text: root.question; answered(yes) => { root.answered(yes); } }
+    }
+    footer := HorizontalLayout {
+        x: 10px; y: root.height - 42px; width: root.width - 20px; height: 32px;
+        alignment: end; spacing: 6px;
+        Button { text: "apply"; enabled: !root.child-open; clicked => { root.action("apply"); } }
+        Button { text: "cancel"; enabled: !root.child-open; clicked => { root.action("cancel"); } }
+    }
+}

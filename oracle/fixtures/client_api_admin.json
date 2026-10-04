@@ -1,0 +1,146 @@
+{
+ "columns": [
+  "name",
+  "basic permissions",
+  "advanced permissions"
+ ],
+ "rows": [
+  [
+   "searcher",
+   "search for and fetch files",
+   "Can search: allowing all tags"
+  ],
+  [
+   "full",
+   "can do anything",
+   ""
+  ]
+ ],
+ "permissions": [
+  [
+   1,
+   "import and delete files"
+  ],
+  [
+   2,
+   "edit file tags"
+  ],
+  [
+   0,
+   "import and edit urls"
+  ],
+  [
+   3,
+   "search for and fetch files"
+  ],
+  [
+   4,
+   "manage pages"
+  ],
+  [
+   5,
+   "manage cookies and headers"
+  ],
+  [
+   6,
+   "manage database"
+  ],
+  [
+   7,
+   "edit file notes"
+  ],
+  [
+   8,
+   "edit file relationships"
+  ],
+  [
+   9,
+   "edit file ratings"
+  ],
+  [
+   10,
+   "manage popups"
+  ],
+  [
+   11,
+   "edit file times"
+  ],
+  [
+   12,
+   "commit pending"
+  ],
+  [
+   13,
+   "see local file paths"
+  ]
+ ],
+ "status": "The client api should be running on port 45901.",
+ "actions": [
+  {
+   "question": "Remove all selected?"
+  },
+  {
+   "question": "Enter your new Access Key here. It must be 64 characters of hex. The button below has a valid random key.\n\nOBVIOUSLY ANYTHING THAT USES THIS CURRENT ACCESS KEY WILL LOSE ACCESS ONCE YOU CHANGE IT"
+  },
+  {
+   "title": "wrong key length",
+   "message": "Sorry, the key you submitted was 3 characters long. It needs to be 64."
+  }
+ ],
+ "search_enabled": {
+  "basic": true,
+  "all": true,
+  "filter": true
+ },
+ "full_enabled": {
+  "basic": false,
+  "all": false,
+  "filter": false
+ },
+ "none_enabled": {
+  "basic": true,
+  "all": true,
+  "filter": false
+ },
+ "duplicates": [
+  [
+   "full",
+   "can do anything",
+   ""
+  ],
+  [
+   "searcher",
+   "search for and fetch files",
+   "Can search: allowing all tags"
+  ],
+  [
+   "full (1)",
+   "can do anything",
+   ""
+  ],
+  [
+   "searcher (1)",
+   "search for and fetch files",
+   "Can search: allowing all tags"
+  ]
+ ],
+ "server": {
+  "running": true,
+  "port": 45901,
+  "port_range": [
+   1,
+   65535
+  ],
+  "fields": {
+   "port": 45901,
+   "allow_non_local_connections": false,
+   "use_https": false,
+   "support_cors": false,
+   "log_requests": false,
+   "use_normie_eris": false,
+   "external_scheme_override": null,
+   "external_host_override": null,
+   "external_port_override": null
+  }
+ }
+}

@@ -20,20 +20,32 @@ handover patch has been applied and removed. Store snapshot revisions also
 propagate service, URL-class and tag-graph edits to a running daemon.
 Service deletion also refreshes open viewer and locked-selection tags.
 
+The second parallel slate (2026-10-03) adds Client API key administration and
+supported server settings; tag display/search and relationship application
+configuration; and page/content parser editors with URL-class links. It uses
+three feature worktrees with staged integration and batched GUI validation.
+Reference recordings, behavioral regressions and independent review replace
+mutation runs at the owner's request. Review this slate before starting more.
+
 The next breadth work, in the owner's existing order:
 
 1. **Services**: remote repositories/IPFS/account administration, Client API
-   service configuration, live rating previews and review bulk maintenance.
-2. **Tags**: display/search configuration, migration and sibling/parent sync.
+   request-registration capture dialog, HTTPS/UPnP support, live rating previews
+   and review bulk maintenance. Native access-key administration and supported
+   listener settings are implemented in the second slate.
+2. **Tags**: migration and sibling/parent sync. Display/search and ordered
+   relationship application configuration are implemented in the second slate.
    Existing relationship editors still need write autocomplete, asynchronous
    loading, default service tabs and repository permission/reason suggestions.
-3. **Downloader definitions**: page/content parser editors, URL class links,
-   logins and serialized downloader import/export. The reusable formula editor
-   can support the parser work; nested/zipper/context/static editing, formula
+3. **Downloader definitions**: logins and serialized downloader import/export.
+   Native page/content parser editors and direct URL-class parser links are
+   implemented; subsidiary editing and auto-link/review controls remain
+   follow-up. The reusable formula editor covers HTML/JSON;
+   nested/zipper/context/static editing, formula
    import/export and fetch/multiple-example test controls remain.
 
 Then the gaps listed under "Later", and the half-done items below. Review
-the first parallel slate before starting another one.
+the second parallel slate before starting another one.
 
 ## 1. Manage subscriptions (network > subscriptions…)
 
@@ -193,6 +205,8 @@ shared with the system:filetype editor; `hydrus-gui-model`'s
   - The larger system predicate editors that remain.
   - Domain and tag service buttons' remaining cases.
 - **Testing.**
+  - Mutation work below is deferred during the current breadth pass, at the
+    owner's request. Use reference recordings and behavioral integration checks.
   - Fuzz/property tests for the parsers that take untrusted input
     (system predicates, Client API parameters, URL parsing).
   - A cargo-mutants sweep of `hydrus-search` and `hydrus-core`.

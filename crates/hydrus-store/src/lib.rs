@@ -38,6 +38,7 @@ pub mod store;
 pub mod subscriptions;
 pub mod synth;
 pub mod tag_display;
+pub mod tag_display_config;
 pub mod text;
 pub mod transfer;
 pub mod trash;
@@ -47,3 +48,5 @@ pub mod watchers;
 pub use conn::{Db, Paused, WriteCtx};
 pub use error::{Result, StoreError};
 pub use store::{Snapshot, Store};
+
+pub mod api_permissions;

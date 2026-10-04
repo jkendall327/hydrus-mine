@@ -1534,6 +1534,12 @@ impl SearchPage {
     /// Count the tag list's tags again (after they were changed).
     pub fn refresh_tags(&mut self) {
         self.count_tags();
+        self.autocomplete
+            .set_context(&self.context.location, &self.context.tags);
+    }
+    /// Fetch search suggestions manually (Ctrl+Space).
+    pub fn fetch_autocomplete(&mut self) {
+        self.autocomplete.fetch();
     }
 
     /// The file domains the page searches.

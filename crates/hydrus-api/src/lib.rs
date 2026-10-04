@@ -45,6 +45,8 @@ pub struct AppState {
     pub paused: parking_lot::Mutex<Option<hydrus_store::Paused>>,
     /// When the access keys were last read from the database.
     pub keys_read: parking_lot::Mutex<std::time::Instant>,
+    /// Last committed permission revision loaded into the registry.
+    pub keys_revision: parking_lot::Mutex<u64>,
     /// Identifies this run of the client (`/client_info`).
     pub boot_id: [u8; 32],
     pub boot_time_ms: i64,
@@ -52,7 +54,12 @@ pub struct AppState {
 
 impl AppState {
     pub fn new(store: Arc<Store>) -> hydrus_store::Result<Arc<Self>> {
-        let access = store.read(AccessRegistry::load)?;
+        let (access, keys_revision) = store.read(|conn| {
+            // Store::read already owns one SQLite read transaction.
+            let access = AccessRegistry::load(conn)?;
+            let revision = hydrus_store::api_permissions::revision(conn)?;
+            Ok((access, revision))
+        })?;
         let importer =
             hydrus_import::FileImporter::new(Arc::clone(&store), hydrus_media::MediaTools::new());
         let network: hydrus_store::network::NetworkSettings =
@@ -85,24 +92,39 @@ impl AppState {
             locked: std::sync::atomic::AtomicBool::new(false),
             paused: parking_lot::Mutex::new(None),
             keys_read: parking_lot::Mutex::new(std::time::Instant::now()),
+            keys_revision: parking_lot::Mutex::new(keys_revision),
             boot_id: rand::random(),
             boot_time_ms: hydrus_core::time::TimestampMs::now().millis(),
         }))
     }
 
     /// Who is making this request. Keys can be added or removed by another
-    /// process (`hydrus api-keys`), so they are read again at least once a
-    /// minute, and before a key we don't know is refused.
+    /// process, so each request checks its committed permission revision. Raw
+    /// legacy writes without a revision are reread once a minute and on unknown keys.
     pub fn authenticate(&self, req: &ApiRequest) -> ApiResult<AccessPermissions> {
-        let reload = || {
-            *self.keys_read.lock() = std::time::Instant::now();
-            self.store.read(|c| self.access.reload_keys(c)).is_ok()
-        };
-        if self.keys_read.lock().elapsed() > std::time::Duration::from_secs(60) {
-            reload();
+        // lock_off must authenticate while the writer/read pool is paused.
+        if self.locked.load(std::sync::atomic::Ordering::SeqCst) {
+            return self.access.authenticate(&req.headers, &req.params);
         }
+        let mut revision = self.keys_revision.lock();
+        self.store
+            .read(|conn| {
+                let committed = hydrus_store::api_permissions::revision(conn)?;
+                if committed != *revision
+                    || self.keys_read.lock().elapsed() > std::time::Duration::from_secs(60)
+                {
+                    self.access.reload_keys(conn)?;
+                    *revision = committed;
+                    *self.keys_read.lock() = std::time::Instant::now();
+                }
+                Ok(())
+            })
+            .map_err(ApiError::from)?;
         match self.access.authenticate(&req.headers, &req.params) {
-            Err(e) if e.message == auth::UNKNOWN_KEY && reload() => {
+            Err(e) if e.message == auth::UNKNOWN_KEY => {
+                self.store
+                    .read(|c| self.access.reload_keys(c))
+                    .map_err(ApiError::from)?;
                 self.access.authenticate(&req.headers, &req.params)
             }
             other => other,

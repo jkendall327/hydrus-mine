@@ -16,6 +16,8 @@ export component ServicesReviewWindow inherits Window {
     callback refresh-clicked();
     callback copy-key();
     callback show-id();
+    in property <bool> client-api;
+    callback manage-api-keys();
     callback close-clicked();
     VerticalBox {
         padding: 14px; spacing: 12px;
@@ -27,6 +29,7 @@ export component ServicesReviewWindow inherits Window {
         Text { text: root.error; color: red; wrap: word-wrap; }
         Rectangle { vertical-stretch: 1; }
         HorizontalBox {
+            if root.client-api: Button { text: "client api access keys"; clicked => { root.manage-api-keys(); } }
             Button { text: "id"; clicked => { root.show-id(); } }
             Button { text: "copy service key"; clicked => { root.copy-key(); } }
             Button { text: "refresh"; clicked => { root.refresh-clicked(); } }

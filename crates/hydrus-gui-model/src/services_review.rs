@@ -115,7 +115,7 @@ pub fn rows(store: &Store) -> Result<Vec<Row>> {
                 ServiceKind::LocalTags => "Tag migration is not available yet.",
                 ServiceKind::Trash => "Bulk clear trash and undelete all are not available here yet.",
                 ServiceKind::RatingLike(_) | ServiceKind::RatingNumerical(_) | ServiceKind::RatingIncDec(_) => "Bulk clear ratings is not available here yet.",
-                ServiceKind::ClientApi(_) => "Client API permission controls are not available here yet.",
+                ServiceKind::ClientApi(_) => "API request registration uses hydrus api-keys listen; remote account controls are not available yet.",
                 ServiceKind::LocalFileStorage => "Clear deleted files record is not available here yet.",
                 _ => "",
             };

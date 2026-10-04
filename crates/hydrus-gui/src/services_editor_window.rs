@@ -6,8 +6,12 @@ use hydrus_store::{
     Store,
     services::{PenBrush, RatingDisplay, Rgb, Service, ServiceKind, StarAppearance, StarShape},
 };
-use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
-use std::{cell::RefCell, rc::Rc, sync::Arc};
+use slint::{ComponentHandle, ModelRc, SharedString, VecModel};
+use std::{
+    cell::{Cell, RefCell},
+    rc::Rc,
+    sync::Arc,
+};
 
 /// Windows retained by the main window and exposed to interaction tests.
 #[derive(Clone, Default)]
@@ -40,7 +44,6 @@ fn show(window: &ServicesEditorWindow, editor: &Editor) {
             ServiceKind::TagRepository(_)
                 | ServiceKind::FileRepository(_)
                 | ServiceKind::Ipfs(_)
-                | ServiceKind::ClientApi(_)
                 | ServiceKind::Unsupported { .. }
         )
     }));
@@ -77,6 +80,24 @@ fn edited_kind(
     original: &ServiceKind,
     colours: &[(String, String)],
 ) -> Result<ServiceKind, String> {
+    if let ServiceKind::ClientApi(config) = original {
+        use hydrus_gui_model::client_api_admin::{Binding, ListenerEdit, server_config};
+        return server_config(
+            config,
+            &ListenerEdit {
+                port: window.get_api_running().then(|| window.get_api_port()),
+                binding: if window.get_api_non_local() {
+                    Binding::Network
+                } else {
+                    Binding::LocalOnly
+                },
+                cors: window.get_api_cors(),
+                logs: window.get_api_logs(),
+                disable_https: window.get_api_disable_https(),
+            },
+        )
+        .map(ServiceKind::ClientApi);
+    }
     let mut kind = original.clone();
     let display = match &mut kind {
         ServiceKind::RatingLike(c) => Some(&mut c.display),
@@ -135,6 +156,7 @@ fn edit(
     service: Service,
     slots: &Slots,
     done: Rc<dyn Fn(String, ServiceKind)>,
+    parent_active: Rc<Cell<bool>>,
 ) -> Result<(), String> {
     let window = EditServiceWindow::new().map_err(|e| e.to_string())?;
     window.set_service_name(service.name.as_str().into());
@@ -142,6 +164,33 @@ fn edit(
     window.set_rating(display(&service.kind).is_some());
     window.set_star_rating(appearance(&service.kind).is_some());
     window.set_numerical(matches!(service.kind, ServiceKind::RatingNumerical(_)));
+    window.set_client_api(matches!(service.kind, ServiceKind::ClientApi(_)));
+    if let ServiceKind::ClientApi(c) = &service.kind {
+        window.set_api_running(c.port.is_some());
+        window.set_api_port(i32::from(c.port.unwrap_or(45869)));
+        window.set_api_non_local(c.allow_non_local_connections);
+        window.set_api_cors(c.support_cors);
+        window.set_api_logs(c.log_requests);
+        window.set_api_https(c.use_https);
+        let enabled = |value| if value { "enabled" } else { "disabled" };
+        let scheme = c
+            .external_scheme_override
+            .as_deref()
+            .filter(|value| !value.is_empty())
+            .unwrap_or("not set");
+        let host = c
+            .external_host_override
+            .as_deref()
+            .filter(|value| !value.is_empty())
+            .unwrap_or("not set");
+        let port = c
+            .external_port_override
+            .map_or_else(|| "not set".to_owned(), |port| port.to_string());
+        window.set_api_unsupported(format!(
+            "Imported unsupported settings (preserved):\nHTTPS: {}\nnormie Eris: {}\nexternal URL scheme: {scheme}\nexternal URL host: {host}\nexternal URL port: {port}\nIf HTTPS is enabled, disable it before starting the HTTP listener.",
+            enabled(c.use_https), enabled(c.use_normie_eris)
+        ).into());
+    }
     let mut colours = Vec::new();
     let mut colour_rows = Vec::new();
     if let Some(d) = display(&service.kind) {
@@ -208,10 +257,15 @@ fn edit(
             }
         }
     });
+    let active = Rc::new(Cell::new(true));
     let close = Rc::new({
+        let active = active.clone();
         let slot = slots.edit.clone();
         let weak = window.as_weak();
         move || {
+            if !active.replace(false) {
+                return;
+            }
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
             }
@@ -222,6 +276,9 @@ fn edit(
         let weak = window.as_weak();
         let close = close.clone();
         move || {
+            if !active.get() || !parent_active.get() {
+                return;
+            }
             let Some(w) = weak.upgrade() else { return };
             if w.get_service_name().is_empty() {
                 w.set_error("Please enter a name!".into());
@@ -256,6 +313,7 @@ pub fn open(
     changed: Rc<dyn Fn()>,
 ) -> Result<ServicesEditorWindow, String> {
     let window = ServicesEditorWindow::new().map_err(|e| e.to_string())?;
+    let active = Rc::new(Cell::new(true));
     let editor = Rc::new(RefCell::new(Editor::new(store).map_err(|e| e.to_string())?));
     window.set_columns(ModelRc::new(VecModel::from(
         services_editor::COLUMNS
@@ -278,11 +336,20 @@ pub fn open(
     let close = Rc::new({
         let weak = window.as_weak();
         let slots = slots.clone();
+        let active = active.clone();
         move || {
-            if let Some(w) = weak.upgrade() {
-                let _ = w.hide();
+            if !active.replace(false) {
+                return;
             }
-            if let Some(w) = slots.edit.borrow_mut().take() {
+            let edit = slots
+                .edit
+                .borrow()
+                .as_ref()
+                .map(ComponentHandle::clone_strong);
+            if let Some(edit) = edit {
+                edit.invoke_cancel_clicked();
+            }
+            if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
             }
             slots.manage.borrow_mut().take();
@@ -313,7 +380,11 @@ pub fn open(
         let editor = editor.clone();
         let weak = window.as_weak();
         let slots = slots.clone();
+        let active = active.clone();
         move |i| {
+            if !active.get() || slots.edit.borrow().is_some() {
+                return;
+            }
             let Some(w) = weak.upgrade() else { return };
             let Some(kind) = usize::try_from(i)
                 .ok()
@@ -344,7 +415,7 @@ pub fn open(
                     }
                 }
             });
-            if let Err(e) = edit(service, &slots, done) {
+            if let Err(e) = edit(service, &slots, done, active.clone()) {
                 w.set_error(e.into());
             }
         }
@@ -353,10 +424,17 @@ pub fn open(
         let editor = editor.clone();
         let weak = window.as_weak();
         let slots = slots.clone();
+        let active = active.clone();
         move || {
+            if !active.get() || slots.edit.borrow().is_some() {
+                return;
+            }
             let Some(w) = weak.upgrade() else { return };
             if !w.get_can_edit() {
-                w.set_error("Remote repository, IPFS, account and Client API configuration is not available here yet.".into());
+                w.set_error(
+                    "Remote repository, IPFS and account configuration is not available here yet."
+                        .into(),
+                );
                 return;
             }
             let Some(row) = editor.borrow().selected().cloned() else {
@@ -383,7 +461,7 @@ pub fn open(
                     }
                 }
             });
-            if let Err(e) = edit(row.service, &slots, done) {
+            if let Err(e) = edit(row.service, &slots, done, active.clone()) {
                 w.set_error(e.into());
             }
         }
@@ -412,7 +490,12 @@ pub fn open(
         let store = store.clone();
         let close = close.clone();
         let weak = window.as_weak();
+        let active = active.clone();
+        let slots = slots.clone();
         move || {
+            if !active.get() || slots.edit.borrow().is_some() {
+                return;
+            }
             if let Some(w) = weak.upgrade() {
                 match editor.borrow().apply(&store) {
                     Ok(()) => {

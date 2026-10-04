@@ -47,7 +47,7 @@ pub mod headless;
 mod import_options_window;
 mod import_window;
 mod importer_list_menu;
-mod locations_window;
+pub mod locations_window;
 mod manage_notes_window;
 mod manage_ratings_window;
 pub(crate) mod manage_tags_window;
@@ -59,6 +59,7 @@ pub mod mpv;
 mod options_window;
 mod page;
 mod pages;
+pub mod parser_editors_window;
 mod playback;
 mod popup_menu;
 mod popups;
@@ -73,6 +74,7 @@ pub mod slideshow;
 pub mod still;
 pub mod string_processor_window;
 mod subscriptions_window;
+pub(crate) mod tag_display_window;
 pub mod tag_filter_window;
 pub(crate) mod tag_relationships_window;
 pub mod thumbnail_menu;
@@ -185,6 +187,8 @@ pub struct Bound {
     pub manage_tags: Rc<RefCell<Option<ManageTagsWindow>>>,
     /// Siblings or parents while the corresponding editor is open.
     pub tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
+    /// Display/search or relationship application configuration.
+    pub tag_display: Rc<RefCell<Option<TagDisplayWindow>>>,
     /// The manage notes dialog while one is open.
     pub manage_notes: Rc<RefCell<Option<ManageNotesWindow>>>,
     /// The manage ratings dialog while one is open.
@@ -219,6 +223,8 @@ pub struct Bound {
     pub subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>>,
     /// URL class and gallery URL generator definition editors.
     pub downloader_definitions: downloader_definitions_window::Slots,
+    /// Native parser and URL-class link windows.
+    pub parser_editors: parser_editors_window::Slots,
     /// The edit subscription dialog while it is open (from the manage
     /// subscriptions dialog).
     pub edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>>,
@@ -634,6 +640,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             });
         }
     });
+    window.on_search_fetch({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            page().borrow_mut().fetch_autocomplete();
+            shown(false);
+        }
+    });
     window.on_search_edited({
         let page = page.clone();
         let shown = shown.clone();
@@ -937,6 +951,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // F3: manage tags; once applied, the tags are counted again
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
     let tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>> = Rc::default();
+    let tag_display: Rc<RefCell<Option<TagDisplayWindow>>> = Rc::default();
     let tags_changed: Rc<dyn Fn()> = Rc::new({
         let page = page.clone();
         let shown = shown.clone();
@@ -957,10 +972,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     let open_manage_tags = {
         let manage_tags = manage_tags.clone();
+        let page = page.clone();
         move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
-            let Some(model) = manage_tags::ManageTags::new(store, files) else {
+            let Some(mut model) = manage_tags::ManageTags::new(store, files) else {
                 return;
             };
+            model.set_location(page().borrow().location().clone());
             match manage_tags_window::open(model, &manage_tags, applied) {
                 Ok(window) => *manage_tags.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage tags: {e}"),
@@ -1230,6 +1247,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
     let downloader_definitions = downloader_definitions_window::Slots::default();
+    let parser_editors = parser_editors_window::Slots::default();
     let edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>> = Rc::default();
     // a downloader list's menu's actions, as last opened
     let importer_actions: Rc<RefCell<Vec<importer_menu::Action>>> = Rc::default();
@@ -1240,6 +1258,49 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
+            tag_display: {
+                let slot = tag_display.clone();
+                let pages = pages.clone();
+                let applied: Rc<dyn Fn()> = Rc::new({
+                    let pages = pages.clone();
+                    let shown = shown.clone();
+                    let viewer = viewer.clone();
+                    let rows = rows.clone();
+                    let manage_tags = manage_tags.clone();
+                    move || {
+                        for page in pages.borrow().open_pages() {
+                            page.borrow_mut().refresh_tags();
+                        }
+                        rows.forget_files();
+                        shown(false);
+                        if let Some(w) = manage_tags.borrow().as_ref() {
+                            w.invoke_refresh_autocomplete();
+                        }
+                        if let Some(w) = viewer.borrow().as_ref() {
+                            w.invoke_refresh_tags();
+                        }
+                    }
+                });
+                Rc::new(move |application| {
+                    if slot.borrow().is_some() {
+                        return;
+                    }
+                    match hydrus_gui_model::tag_display::TagDisplayEditor::new(
+                        pages.borrow().store().clone(),
+                    ) {
+                        Ok(model) => match tag_display_window::open(
+                            model,
+                            application,
+                            &slot,
+                            applied.clone(),
+                        ) {
+                            Ok(w) => *slot.borrow_mut() = Some(w),
+                            Err(e) => eprintln!("could not open tag display: {e}"),
+                        },
+                        Err(e) => eprintln!("could not load tag display: {e}"),
+                    }
+                })
+            },
             tag_relationships: {
                 let slot = tag_relationships.clone();
                 let pages = pages.clone();
@@ -1316,6 +1377,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     match options_window::open(&store, &slot, &checker_slot, applied) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not open the options: {e}"),
+                    }
+                })
+            },
+            manage_parsers: {
+                let pages = pages.clone();
+                let slots = parser_editors.clone();
+                Rc::new(move |links| {
+                    let store = pages.borrow().store().clone();
+                    if let Err(e) = parser_editors_window::open(&store, &slots, links) {
+                        eprintln!("could not open parser definitions: {e}");
                     }
                 })
             },
@@ -2960,6 +3031,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         viewer,
         manage_tags,
         tag_relationships,
+        tag_display,
         manage_notes,
         manage_ratings,
         manage_times,
@@ -2976,6 +3048,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         session_dialog,
         subscriptions,
         downloader_definitions,
+        parser_editors,
         edit_subscription,
         folders,
         simple_formulae,
@@ -5097,3 +5170,5 @@ mod tests {
         );
     }
 }
+
+pub mod client_api_admin_window;

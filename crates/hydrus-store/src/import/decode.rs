@@ -558,6 +558,38 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     if let Some(manager) = db.tag_display_manager()? {
         insert_setting(&mut input, &autocomplete_settings(&manager))?;
         insert_setting(&mut input, &tag_display_filters(&manager))?;
+        let services = manager
+            .autocomplete_options
+            .iter()
+            .map(|o| {
+                (
+                    o.service_key.to_hex(),
+                    crate::tag_display_config::AutocompleteOptions {
+                        write_tag_service: o.write_autocomplete_tag_domain.clone(),
+                        override_location: o.override_write_autocomplete_location_context,
+                        write_location: hydrus_core::search::context::LocationContext::new(
+                            o.write_autocomplete_location_context
+                                .current
+                                .iter()
+                                .cloned(),
+                            o.write_autocomplete_location_context
+                                .deleted
+                                .iter()
+                                .cloned(),
+                        ),
+                        fetch_automatically: o.fetch_results_automatically,
+                        exact_match_threshold: o
+                            .exact_match_character_threshold
+                            .and_then(|n| u16::try_from(n).ok())
+                            .filter(|n| (1..=256).contains(n)),
+                    },
+                )
+            })
+            .collect();
+        insert_setting(
+            &mut input,
+            &crate::tag_display_config::AutocompleteWidgetSettings { services },
+        )?;
     }
     network_input(db, &mut input)?;
     bandwidth_input(db, options.as_ref(), &mut input)?;
@@ -1166,8 +1198,8 @@ fn seed_status(code: i64, what: &str, warnings: &mut Vec<String>) -> SeedStatus 
     })
 }
 
-/// Each tag service's autocomplete search rules. (The options that only
-/// shape the GUI's autocomplete widget are not carried over.)
+/// Each tag service's autocomplete search rules. Widget behavior is imported
+/// separately so it does not gate API searches.
 fn autocomplete_settings(manager: &legacy::TagDisplayManager) -> AutocompleteSettings {
     let services = manager
         .autocomplete_options

@@ -21,6 +21,7 @@ type ShownLines = Rc<RefCell<Vec<(Vec<MenuLine>, ModelRc<MenuLine>)>>>;
 /// What the menu bar works with.
 pub(crate) struct Hooks {
     /// Open the siblings or parents editor.
+    pub tag_display: Rc<dyn Fn(bool)>,
     pub tag_relationships: Rc<dyn Fn(hydrus_store::display::RelationKind)>,
     pub pages: Rc<RefCell<Pages>>,
     pub change_pages: ChangePages,
@@ -33,6 +34,8 @@ pub(crate) struct Hooks {
     pub manage_subscriptions: Rc<dyn Fn()>,
     /// Open URL class or gallery URL generator definition editors.
     pub manage_downloader_definitions: Rc<dyn Fn(bool)>,
+    /// Open native parser definitions or URL-class links.
+    pub manage_parsers: Rc<dyn Fn(bool)>,
     /// Open the manage import folders (`true`) or export folders dialog.
     pub manage_folders: Rc<dyn Fn(bool)>,
     /// Open the "review files to import" window.
@@ -562,10 +565,12 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
                 eprintln!("could not nudge the subscriptions: {e}");
             }
         }
+        Command::TagDisplay(application) => (hooks.tag_display)(application),
         Command::TagRelationships(kind) => (hooks.tag_relationships)(kind),
         Command::ManageDownloaderDefinitions(classes) => {
             (hooks.manage_downloader_definitions)(classes);
         }
+        Command::ManageParsers(links) => (hooks.manage_parsers)(links),
         Command::ManageSubscriptions => (hooks.manage_subscriptions)(),
         Command::ManageImportFolders => (hooks.manage_folders)(true),
         Command::ManageExportFolders => (hooks.manage_folders)(false),

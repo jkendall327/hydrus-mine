@@ -1,5 +1,6 @@
 //! `/manage_popups/*`: showing the user messages and progress.
 
+use crate::auth::PermissionChecks as _;
 use std::sync::Arc;
 
 use axum::extract::State;

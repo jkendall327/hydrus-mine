@@ -754,8 +754,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line, and nested generators
-  select members with checkboxes. Definition import/export, page/content parser
-  editors, URL class links and login editors remain follow-up work.
+  select members with checkboxes. Page/content parsers and direct URL-class links
+  have native editors. Definition import/export and login editors remain
+  follow-up work.
 - Invalid example details use the native URL rules' error wording. The
   reference retains stale referral/next-page examples after a match failure;
   the native editor clears all derived output. A changed list asks before
@@ -866,9 +867,9 @@ Checked by the `popups` conformance scenario.
   `false` for a numerical or inc/dec rating service (Python counts a bool as
   an int, so the reference stores `true` as one star).
 
-- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, Client API account controls, repository/IPFS administration, tag migration and bulk clear/undelete maintenance actions remain unavailable and are described in the window.
+- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, repository/IPFS account administration, tag migration and bulk clear/undelete maintenance actions remain unavailable and are described in the window.
 
-- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields and there is no live rating preview; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account and Client API configuration edits remain unavailable here. A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
+- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields and there is no live rating preview; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available; HTTPS, normie Eris and external URL overrides are preserved imported values, with an explicit control to disable unsupported HTTPS. A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
 
 ## Manual file exports
 
@@ -916,7 +917,7 @@ warning (the display graph ignores such pairs anyway). Batches creating loops
 or conflicting sibling ideals are rejected with an explicit message; enter
 the pairs separately to perform the ordinary automatic repairs. Already corrupt
 reference graph cycles are traversed safely, but do not raise its detailed
-pre-existing-loop warning. Tag display application editing, tag migration and
+pre-existing-loop warning. Tag migration and
 manual background sibling/parent synchronization remain separate future work.
 
 ## Detailed embedded file metadata (`hydrus-gui`, `hydrus-media`)
@@ -935,3 +936,58 @@ non-local behavior.
   recover a partial tree.
 - A missing or unreadable local file shows its read error within the window;
   the reference logs an exception while opening the window with basics alone.
+
+
+Tag display configuration uses immediate atomic graph/count publication instead
+of the reference's background sibling/parent sync. The native application table
+uses a zero source id solely to represent an explicitly empty queue; absent queues
+retain the default of applying the service's own rules. Deleting the last source
+from an explicit queue preserves its empty intent. Native settings preserve
+unknown JSON fields and unedited service settings. The application
+window uses ordered native lists and an inline source selector. Display/search
+uses a numeric zero for the reference's nullable "always autocomplete" threshold.
+Tag migration and manual/background sibling/parent sync remain unimplemented.
+Autocomplete configuration refresh preserves any open manage-tags draft; its
+location editor always exposes the permitted file domains.
+Display/search edits merge unedited services and setting areas from the current
+database. Concurrent edits to the same area use the last successful Apply.
+
+
+The native parser editor model supports all nine content kinds and typed test
+context. Native page/content/parser-list and direct URL-class-link windows are available. Subsidiary parser editing,
+formula kinds beyond the existing HTML/JSON editors, downloader import/export,
+and remote test-data fetching remain deferred; existing subsidiary parsers and
+unsupported formulas are preserved intact.
+
+The URL-class links panel uses a parser chooser and explicit staged link/clear
+actions. Automatic gap filling and the reference API/redirect review tab are
+deferred; API/redirect source classes are excluded because their targets own
+the parser. The temporary-variable content kind is also editable here, while
+the reference page editor normally limits its creation to lookup scripts.
+
+Changed parser links are rejected if another editor removed their URL class or
+changed it to a kind that cannot own a parser. Reopening the links panel then
+shows the current eligible classes; unrelated class edits are preserved.
+
+Client API key edits made through native persistence now take effect on the
+next authenticated request through a durable permission revision, including
+existing sessions. Changed/revoked keys lose their previous restricted search
+results; a stale in-flight search cannot restore them. The database unlock
+endpoint authenticates its cached admin key while the native store is paused.
+The detached GUI model saves a whole key edit only on Apply and rejects stale
+concurrent editor state; Qt service review applies list actions immediately.
+The access-key window opens separately from service review; the reference
+embeds its list within that panel. API-request registration still uses
+`hydrus api-keys listen` rather than the Qt capture-request dialog. Key-change
+questions use an inline edit panel and generated-key button. Listener changes
+may take up to one second; current requests drain for at most ten seconds
+before restart. HTTP logs omit query strings and credentials. HTTPS is refused
+rather than served as plain HTTP; normie Eris/external URL override fields are
+shown as unsupported preserved values in plain text; unset external URL fields
+read "not set".
+Listener reconfiguration retains the same API state, so session keys continue
+to use the current permissions after rebind; revocation still invalidates them.
+
+The base-URL button prefers the daemon's actual listener over the service's
+configured port to support native CLI overrides. It falls back to the saved
+configuration when the daemon does not report a listening address.

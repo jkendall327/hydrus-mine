@@ -6,6 +6,7 @@
 //! 2026-10-01). What they ask of a page goes to the client while it is open,
 //! and is otherwise done to the session, which the client opens with.
 
+use crate::auth::PermissionChecks as _;
 use std::collections::HashMap;
 use std::sync::Arc;
 

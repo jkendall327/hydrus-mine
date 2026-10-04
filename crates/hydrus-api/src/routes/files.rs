@@ -1,5 +1,6 @@
 //! Fetching files, thumbnails, paths and metadata.
 
+use crate::auth::PermissionChecks as _;
 use std::collections::HashMap;
 use std::sync::Arc;
 

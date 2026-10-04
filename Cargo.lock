@@ -2404,6 +2404,7 @@ dependencies = [
  "hydrus-store",
  "hydrus-testkit",
  "rand 0.10.3",
+ "serde_json",
  "tempfile",
  "tokio",
  "tracing",

@@ -81,3 +81,135 @@ async fn a_requested_key_works_once_accepted() {
     assert_eq!(body["name"], "a tool");
     assert_eq!(body["basic_permissions"], serde_json::json!([0, 3]));
 }
+
+#[tokio::test]
+async fn edits_and_revocation_apply_to_existing_keys_and_sessions_immediately() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = hydrus_store::Store::open(dir.path()).unwrap();
+    let mut permissions = AccessPermissions {
+        access_key: vec![42; 32],
+        name: "tool".into(),
+        permits_everything: true,
+        basic: std::collections::BTreeSet::default(),
+        search_filter: hydrus_core::TagFilter::default(),
+    };
+    let saved = permissions.clone();
+    store
+        .write(move |ctx| auth::save_key(ctx.conn(), &saved))
+        .unwrap();
+    let state = hydrus_api::AppState::new(store.clone()).unwrap();
+    let router = hydrus_api::router(state.clone());
+    let key = hex::encode(&permissions.access_key);
+    assert_eq!(
+        get(&router, "/manage_pages/get_pages", Some(&key)).await.0,
+        200
+    );
+    let session = state.access.new_session(&permissions.access_key);
+    permissions.permits_everything = false;
+    permissions.basic.insert(Permission::SearchFiles);
+    permissions.search_filter = restricted_filter("safe");
+    let old = permissions.clone();
+    let saved = old.clone();
+    store
+        .write(move |ctx| auth::save_key(ctx.conn(), &saved))
+        .unwrap();
+    assert_eq!(get(&router, "/verify_access_key", Some(&key)).await.0, 200);
+    state.access.record_search(&old, &[hydrus_core::HashId(1)]);
+    assert!(
+        state
+            .access
+            .check_can_see(&old, &[hydrus_core::HashId(1)])
+            .is_ok()
+    );
+    permissions.search_filter = restricted_filter("other");
+    let stale = AccessPermissions {
+        search_filter: restricted_filter("safe"),
+        ..permissions.clone()
+    };
+    let saved = permissions.clone();
+    store
+        .write(move |ctx| auth::save_key(ctx.conn(), &saved))
+        .unwrap();
+    assert_eq!(
+        get(&router, "/manage_pages/get_pages", Some(&key)).await.0,
+        403
+    );
+    state
+        .access
+        .record_search(&stale, &[hydrus_core::HashId(1)]);
+    assert!(
+        state
+            .access
+            .check_can_see(&permissions, &[hydrus_core::HashId(1)])
+            .is_err(),
+        "old search results invalidated"
+    );
+    let response = router
+        .clone()
+        .oneshot(
+            Request::get("/manage_pages/get_pages")
+                .header(auth::SESSION_KEY_HEADER, hex::encode(&session))
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(response.status(), 403, "session obeys narrowed permissions");
+    let deleted = permissions.access_key.clone();
+    store
+        .write(move |ctx| auth::delete_key(ctx.conn(), &deleted).map(|_| ()))
+        .unwrap();
+    assert_eq!(get(&router, "/verify_access_key", Some(&key)).await.0, 403);
+    let response = router
+        .oneshot(
+            Request::get("/verify_access_key")
+                .header(auth::SESSION_KEY_HEADER, hex::encode(&session))
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(response.status(), 419, "revoked session removed");
+}
+fn restricted_filter(tag: &str) -> hydrus_core::TagFilter {
+    use hydrus_core::tag_filter::FilterRule::{Blacklist, Whitelist};
+    hydrus_core::TagFilter::new()
+        .with_rule("", Blacklist)
+        .with_rule(":", Blacklist)
+        .with_rule(tag, Whitelist)
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn permission_revision_check_does_not_block_database_unlock() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = hydrus_store::Store::open(dir.path()).unwrap();
+    let permissions = AccessPermissions {
+        access_key: vec![77; 32],
+        name: "lock admin".into(),
+        permits_everything: true,
+        basic: std::collections::BTreeSet::default(),
+        search_filter: hydrus_core::TagFilter::default(),
+    };
+    store
+        .write(move |ctx| auth::save_key(ctx.conn(), &permissions))
+        .unwrap();
+    let state = hydrus_api::AppState::new(store).unwrap();
+    let router = hydrus_api::router(state);
+    let key = hex::encode([77; 32]);
+    for endpoint in ["/manage_database/lock_on", "/manage_database/lock_off"] {
+        let request = Request::post(endpoint)
+            .header(auth::ACCESS_KEY_HEADER, &key)
+            .header("content-type", "application/json")
+            .body(Body::from("{}"))
+            .unwrap();
+        let response = tokio::time::timeout(
+            std::time::Duration::from_secs(3),
+            router.clone().oneshot(request),
+        )
+        .await
+        .expect("database unlock must not wait on the paused read pool")
+        .unwrap();
+        assert_eq!(response.status(), 200);
+    }
+    assert_eq!(get(&router, "/verify_access_key", Some(&key)).await.0, 200);
+}

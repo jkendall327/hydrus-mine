@@ -1,6 +1,7 @@
 //! Cookies and custom HTTP headers for the client's network requests
 //! (what browser extensions send so downloads can log in).
 
+use crate::auth::PermissionChecks as _;
 use std::sync::Arc;
 
 use axum::extract::State;

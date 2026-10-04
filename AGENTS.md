@@ -65,18 +65,12 @@ box. Each one is a commit that passes CI on its own.
    test binary: `cargo test -p hydrus-gui --test gui <area>::`. Replay
    the recording step by step where you can (see
    `tests/gui/downloader_lists.rs`, `tests/model/subscriptions_list.rs`).
-5. **Check the tests bite** with cargo-mutants on what you changed:
-   ```sh
-   git add -N <new files>            # so --in-diff sees them
-   git diff -- crates/<crate>/src > /tmp/x.diff
-   cargo mutants --in-place --in-diff /tmp/x.diff -p <crate> \
-       --cargo-test-arg=--test=gui -- <one test name filter>
-   ```
-   `--in-place` edits the source while it runs: don't edit those crates
-   until it finishes, and check `git diff` afterwards. Only one test name
-   filter works after `--`. A survivor means a missing assertion, or code
-   that does nothing (both happen); fix it, or say in the commit why it
-   stays.
+5. **Verify meaningful boundaries and integration.** Replay the reference
+   recording and cover cancellation, persistence after reopening, invalid
+   input and changes reaching the consumers of edited settings. The owner's
+   current breadth-work instruction is to omit mutation testing: use the
+   reference, behavioral regressions, rendered UI inspection and independent
+   review instead. Do not run cargo-mutants unless the owner requests it.
 6. **Look at it.** The GUI runs headless in tests, but a person should
    see new windows at least once (`cargo run -p hydrus-gui -- <store
    dir>`; with no display, under Xvfb with `xdotool` driving it).
@@ -110,7 +104,12 @@ box. Each one is a commit that passes CI on its own.
   `docs/rust/DIFFERENCES.md`. Keep edits there small (a module line, a
   callback's wiring, a paragraph) so merges stay easy; put the bulk of a
   feature in its own files.
-- Rebase or merge often; run `scripts/check.sh` after merging.
+- Integrate small slices as they become ready and run their relevant
+  backend/model tests immediately. Batch GUI compilation and run targeted GUI
+  regressions for the batch. Start the GUI batch with strict Clippy so warnings
+  and type errors are caught before expensive test code generation. Run the
+  full `scripts/check.sh` before pushing
+  the assembled slate. Changes or failures justify additional checks.
 - When worktrees share a Cargo target directory, set `HYDRUS_FIXTURE_DIR`
   to the current worktree's absolute `oracle/fixtures` path. Otherwise a
   cached `hydrus-testkit` can read the checkout it was compiled in.

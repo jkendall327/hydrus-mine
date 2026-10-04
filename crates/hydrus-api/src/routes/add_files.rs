@@ -1,5 +1,6 @@
 //! `/add_files/*` endpoints that change which domains files are in.
 
+use crate::auth::PermissionChecks as _;
 use std::sync::Arc;
 
 use axum::extract::State;

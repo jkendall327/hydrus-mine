@@ -87,7 +87,8 @@ fn preview_and_confirmations_match_reference_panel() {
         for (row, theirs) in rows.iter().zip(case["rows"].as_array().unwrap()) {
             assert_eq!(row.number.to_string(), theirs[0]);
             assert_eq!(row.mime, theirs[1]);
-            assert_eq!(row.destination.to_str().unwrap(), theirs[2]);
+            let expected = std::path::absolute(theirs[2].as_str().unwrap()).unwrap();
+            assert_eq!(row.destination, expected);
         }
     }
     let work = tempfile::tempdir().unwrap();
