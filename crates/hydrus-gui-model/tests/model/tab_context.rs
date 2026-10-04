@@ -98,7 +98,13 @@ fn dynamic_close_select_move_and_sort_menus_match_real_reference() {
         let clicked = recorded["clicked"].as_u64().unwrap() as usize;
         let selected = recorded["selected"].as_u64().unwrap() as usize;
         let menu = tab_context::menu(0, clicked, 4, selected);
-        for label in ["select", "move page", "sort pages"] {
+        for label in [
+            "select",
+            "move page",
+            "sort pages",
+            "collapse to a single page",
+            "send down to a new page of pages",
+        ] {
             let expected = recorded["entries"]
                 .as_array()
                 .unwrap()

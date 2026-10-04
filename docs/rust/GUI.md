@@ -1750,3 +1750,11 @@ settings; disabling detection clears its pending network wait at the next check.
 Files and trash can prefix copied hashes with their booru type. The preference
 applies to both the focused file and selected files, for digest, blurhash and
 pixel-hash clipboard actions; only hashes available in the store are copied.
+
+Tab menus also duplicate pages and entire nested notebooks beside the original,
+with independent media and importer queues. Collapse gathers the clicked page,
+it and its right siblings, or only the right siblings into one new search page,
+retaining first-seen file order and removing repeated files. Its single warning
+can be cancelled; accepted source tabs remain in closed-page undo. The actual
+loaded-media reference recording `oracle/record_tab_harvest.py` and native GUI
+regressions cover each scope, nested sources, copied selection and cancellation.

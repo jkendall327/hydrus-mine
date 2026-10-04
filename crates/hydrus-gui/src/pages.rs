@@ -1679,6 +1679,164 @@ impl Pages {
         rename(&mut self.session.pages, key, name);
     }
 
+    /// Copy the clicked subtree beside itself with fresh media and importer
+    /// storage. A copied notebook starts on its first child, as session insert.
+    pub fn duplicate_tab(&mut self, depth: usize, index: usize) -> Result<(), String> {
+        let Some((key, _)) = self.tab_identity(depth, index) else {
+            return Ok(());
+        };
+        self.sync(
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX)),
+        )
+        .map_err(|e| e.to_string())?;
+        let original = self
+            .session
+            .all_pages()
+            .into_iter()
+            .find(|page| page.key == key)
+            .cloned()
+            .ok_or("page disappeared")?;
+        let session = Session {
+            name: "dupe session".into(),
+            pages: vec![original],
+        };
+        let mut copies = self
+            .store
+            .write(move |ctx| {
+                let snapshot = hydrus_store::session_backups::capture(ctx.conn(), &session)?;
+                hydrus_store::session_backups::restore_pages(ctx.conn(), snapshot)
+            })
+            .map_err(|e| e.to_string())?;
+        let copy = copies.pop().ok_or("could not duplicate page")?;
+        self.kept_counts = self
+            .store
+            .read(sessions::page_file_counts)
+            .map_err(|e| e.to_string())?;
+        self.remember();
+        self.notebook_mut(depth).insert(index + 1, copy);
+        self.path.truncate(depth);
+        self.select(depth, index + 1);
+        Ok(())
+    }
+
+    /// Freeze both target keys and their current ordered media for the harvest
+    /// confirmation. Groups deduplicate their flattened notebook media.
+    pub fn collapse_tabs_question(
+        &mut self,
+        depth: usize,
+        index: usize,
+        scope: crate::tab_context::Send,
+    ) -> Result<Option<(Vec<PageKey>, Vec<HashId>, String)>, String> {
+        let keys = self.send_tab_targets(depth, index, scope);
+        if keys.is_empty() {
+            return Ok(None);
+        }
+        let mut files = Vec::new();
+        for key in &keys {
+            for leaf in self.pages_under(key) {
+                let media = if let Some(open) = self.open.get(&leaf) {
+                    open.borrow().files()
+                } else {
+                    self.store
+                        .read(|conn| sessions::page_files(conn, &leaf))
+                        .map_err(|e| e.to_string())?
+                };
+                files.extend(media);
+            }
+        }
+        // A notebook's GetHashes deduplicates its leaves; group harvest also
+        // deduplicates across sibling pages, always keeping first appearance.
+        let mut seen = std::collections::HashSet::new();
+        files.retain(|file| seen.insert(*file));
+        let question = crate::tab_context::collapse_question(
+            files.len(),
+            keys.len(),
+            scope == crate::tab_context::Send::This,
+        );
+        Ok(Some((keys, files, question)))
+    }
+
+    /// Harvest the frozen media, close source tabs into undo without further
+    /// importer objections, and insert a default search at the first source.
+    pub fn collapse_tab_keys(&mut self, keys: &[PageKey], files: &[HashId]) -> Result<(), String> {
+        let Some(&first) = keys.first() else {
+            return Ok(());
+        };
+        let Some(path) = page_path(&self.session.pages, first) else {
+            return Ok(());
+        };
+        // Do nothing if the confirmed siblings have since been removed/moved.
+        let parent = &path[..path.len() - 1];
+        if keys.iter().any(|key| {
+            page_path(&self.session.pages, *key).is_none_or(|p| p[..p.len() - 1] != *parent)
+        }) {
+            return Ok(());
+        }
+        let depth = path.len() - 1;
+        let insertion = path[depth];
+        let replaces_all_top = depth == 0 && keys.len() == self.session.pages.len();
+        let mut page = new_search_page(&self.store);
+        let PageContent::Search {
+            search,
+            synchronised,
+            lock,
+            sort,
+            collect,
+        } = &mut page.content
+        else {
+            unreachable!("a search page");
+        };
+        if !files.is_empty() {
+            let hashes = self
+                .store
+                .read(|conn| hydrus_store::master::hashes(conn, files))
+                .map_err(|e| e.to_string())?;
+            search.predicates = vec![hydrus_search::Predicate::System(
+                hydrus_core::search::predicate::SystemPredicate::Hash {
+                    hashes: hydrus_core::search::predicate::FileHashes::Sha256(
+                        files
+                            .iter()
+                            .filter_map(|file| hashes.get(file).copied())
+                            .collect(),
+                    ),
+                    inclusive: true,
+                },
+            )];
+            *lock = Some(hydrus_core::pages::HashLock::default());
+        }
+        let opened = SearchPage::restored(
+            self.store.clone(),
+            search.clone(),
+            *synchronised,
+            sort.as_ref(),
+            files.to_vec(),
+        )
+        .with_lock(*lock)
+        .with_collect(collect.clone());
+        self.show(&first);
+        self.close_tab_keys(keys)?;
+        // Closing all children leaves their parent notebook selected. Retain
+        // its ancestry explicitly, including the top-level empty fallback.
+        self.path = parent.to_vec();
+        if self.path.is_empty() {
+            self.path.push(0);
+        }
+        let row = self.notebook_mut(depth);
+        if replaces_all_top {
+            // Ordinary last-tab close supplies a blank fallback; this action
+            // already provides its replacement and must not keep that fallback.
+            row.clear();
+        }
+        let at = insertion.min(row.len());
+        row.insert(at, page.clone());
+        self.open.insert(page.key, Rc::new(RefCell::new(opened)));
+        self.path.truncate(depth);
+        self.select(depth, at);
+        Ok(())
+    }
+
     /// Freeze the siblings targeted by a send-down menu action.
     pub fn send_tab_targets(
         &self,

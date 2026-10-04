@@ -138,6 +138,17 @@ pub enum Command {
         depth: usize,
         index: usize,
     },
+    /// Independently duplicate the clicked page or notebook beside it.
+    DuplicateTab {
+        depth: usize,
+        index: usize,
+    },
+    /// Harvest frozen siblings into one search page after confirmation.
+    CollapseTabs {
+        depth: usize,
+        index: usize,
+        scope: crate::tab_context::Send,
+    },
     /// Move frozen siblings into a new notebook, optionally naming it.
     SendTabs {
         depth: usize,

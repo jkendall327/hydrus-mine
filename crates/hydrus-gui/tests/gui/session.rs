@@ -2402,3 +2402,217 @@ fn downloader_backup_and_freshest_load_survive_source_queue_deletion() {
     assert_eq!(reopened.shown().key, pages.shown().key);
     assert_eq!(reopened.current().borrow().import_progress(), (1, 3));
 }
+
+/// Reconstruct a reference harvest tree with its exact ordered media.
+fn harvest_source(store: &Store, rows: &serde_json::Value) -> Vec<Page> {
+    rows.as_array()
+        .unwrap()
+        .iter()
+        .map(|row| {
+            if row.get("children").is_some() {
+                page(
+                    row["name"].as_str().unwrap(),
+                    PageContent::Pages(harvest_source(store, &row["children"])),
+                )
+            } else {
+                let result = page(
+                    row["name"].as_str().unwrap(),
+                    PageContent::Search {
+                        search: FileSearchContext::default(),
+                        synchronised: false,
+                        sort: None,
+                        lock: None,
+                        collect: None,
+                    },
+                );
+                let key = result.key;
+                let hashes: Vec<_> = row["hashes"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|v| v.as_str().unwrap().parse::<hydrus_core::Sha256>().unwrap())
+                    .collect();
+                store
+                    .write(move |ctx| {
+                        let ids = hydrus_store::master::hash_ids(ctx.conn(), &hashes)?;
+                        let files: Vec<_> = hashes.iter().map(|h| ids[h]).collect();
+                        sessions::set_page_files(ctx.conn(), &key, &files)
+                    })
+                    .unwrap();
+                result
+            }
+        })
+        .collect()
+}
+
+fn harvest_tree(store: &Store, rows: &[Page]) -> serde_json::Value {
+    serde_json::json!(
+        rows.iter()
+            .map(|page| {
+                if let PageContent::Pages(children) = &page.content {
+                    serde_json::json!({"name":page.name,"children":harvest_tree(store, children)})
+                } else {
+                    let hashes = store
+                        .read(|conn| {
+                            let files = sessions::page_files(conn, &page.key)?;
+                            let hashes = hydrus_store::master::hashes(conn, &files)?;
+                            Ok(files
+                                .iter()
+                                .map(|id| hashes[id].to_hex())
+                                .collect::<Vec<_>>())
+                        })
+                        .unwrap();
+                    serde_json::json!({"name":page.name,"hashes":hashes})
+                }
+            })
+            .collect::<Vec<_>>()
+    )
+}
+
+#[test]
+fn duplicate_and_collapse_menus_replay_real_ordered_media_and_cancellation() {
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("tab_harvest.json");
+    fn choose(ui: &MainWindow, pane: i32, label: &str) {
+        let lines = ui.get_menu_panes().row_data(pane as usize).unwrap().lines;
+        let index = (0..lines.row_count())
+            .find(|&i| lines.row_data(i).unwrap().label == label)
+            .unwrap();
+        ui.invoke_menu_line_clicked(pane, index as i32, 200.0, 100.0, 10.0);
+    }
+    for (action, steps) in [
+        ("collapse", &fixture["collapse"]),
+        ("duplicate", &fixture["duplicate"]),
+    ] {
+        for step in steps.as_array().unwrap() {
+            let original = harvest_source(&store, &step["before"]["tree"]);
+            let session = Session {
+                name: LAST_SESSION.into(),
+                pages: original.clone(),
+            };
+            store
+                .write(move |ctx| sessions::save(ctx.conn(), &session, 100))
+                .unwrap();
+            let ui = MainWindow::new().unwrap();
+            let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+            ui.invoke_tab_chosen(0, 0);
+            ui.invoke_tab_chosen(1, 1);
+            let index = step["index"].as_i64().unwrap() as i32;
+            let scope = step["scope"].as_str().unwrap_or("this");
+            let clicked = if scope == "right" { index - 1 } else { index };
+            ui.invoke_tab_menu_requested(0, clicked, 30.0, 55.0);
+            if action == "duplicate" {
+                choose(&ui, 0, "duplicate page");
+            } else {
+                choose(&ui, 0, "collapse to a single page");
+                choose(
+                    &ui,
+                    1,
+                    match scope {
+                        "from_here" => "pages from here to the right",
+                        "right" => "pages to the right",
+                        _ => "this page",
+                    },
+                );
+                assert_eq!(ui.get_question(), step["asked"][0].as_str().unwrap());
+                ui.invoke_answer(step["accepted"].as_bool().unwrap());
+            }
+            bound.pages.borrow_mut().sync(200).unwrap();
+            assert_eq!(
+                harvest_tree(&store, &bound.pages.borrow().session().pages),
+                step["after"]["tree"]
+            );
+            assert_eq!(
+                bound.pages.borrow().shown().name,
+                step["after"]["shown"].as_str().unwrap()
+            );
+            assert_eq!(
+                bound.pages.borrow_mut().closed_names().len(),
+                step["after"]["closed_indices"].as_array().unwrap().len()
+            );
+            if action == "duplicate" {
+                let cloned = bound.pages.borrow().session().pages[index as usize + 1].clone();
+                assert_ne!(cloned.key, original[index as usize].key);
+                let copied_media = bound.pages.borrow().shown().key;
+                let original_media = if index == 0 {
+                    let PageContent::Pages(children) = &original[0].content else {
+                        unreachable!()
+                    };
+                    children[0].key
+                } else {
+                    original[1].key
+                };
+                bound.pages.borrow_mut().close(0, index as usize).unwrap();
+                bound.pages.borrow_mut().forget_closed();
+                assert!(
+                    store
+                        .read(|conn| sessions::page_files(conn, &original_media))
+                        .unwrap()
+                        .is_empty()
+                );
+                assert!(
+                    !store
+                        .read(|conn| sessions::page_files(conn, &copied_media))
+                        .unwrap()
+                        .is_empty()
+                );
+            } else if step["accepted"] == true {
+                let replacement = bound.pages.borrow().shown().key;
+                assert!(matches!(
+                    bound.pages.borrow().shown().content,
+                    PageContent::Search { lock: Some(_), .. }
+                ));
+                while bound.pages.borrow_mut().unclose() {}
+                for source in &original {
+                    assert!(
+                        bound
+                            .pages
+                            .borrow()
+                            .session()
+                            .all_pages()
+                            .iter()
+                            .any(|p| p.key == source.key)
+                    );
+                }
+                assert!(bound.pages.borrow_mut().show(&replacement));
+            } else {
+                assert_eq!(bound.pages.borrow().session().pages, original);
+            }
+        }
+    }
+}
+
+#[test]
+fn collapse_empty_nested_notebook_has_no_hash_lock_and_one_replacement() {
+    use hydrus_gui::tab_context::Send;
+    let (_dirs, store) = store();
+    let empty = page("empty", PageContent::Pages(Vec::new()));
+    let parent = page("parent", PageContent::Pages(vec![empty]));
+    store
+        .write(move |ctx| {
+            sessions::save(
+                ctx.conn(),
+                &Session {
+                    name: LAST_SESSION.into(),
+                    pages: vec![parent],
+                },
+                100,
+            )
+        })
+        .unwrap();
+    let mut pages = Pages::open(store.clone()).unwrap();
+    let (keys, files, _) = pages
+        .collapse_tabs_question(1, 0, Send::This)
+        .unwrap()
+        .unwrap();
+    assert!(files.is_empty());
+    pages.collapse_tab_keys(&keys, &files).unwrap();
+    assert_eq!(pages.tabs()[1].names, ["files"]);
+    assert!(matches!(
+        pages.shown().content,
+        PageContent::Search { lock: None, .. }
+    ));
+    pages.sync(200).unwrap();
+    assert_eq!(Pages::open(store).unwrap().shown().key, pages.shown().key);
+}

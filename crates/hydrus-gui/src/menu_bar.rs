@@ -425,6 +425,32 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
     let store = hooks.pages.borrow().store().clone();
     let change_pages = &hooks.change_pages;
     match command {
+        Command::DuplicateTab { depth, index } => {
+            change_pages(&|pages| pages.duplicate_tab(depth, index));
+        }
+        Command::CollapseTabs {
+            depth,
+            index,
+            scope,
+        } => {
+            let harvest = hooks
+                .pages
+                .borrow_mut()
+                .collapse_tabs_question(depth, index, scope);
+            match harvest {
+                Ok(Some((keys, files, question))) => {
+                    let change = hooks.change_pages.clone();
+                    (hooks.ask)(
+                        question,
+                        Rc::new(move || {
+                            change(&|pages| pages.collapse_tab_keys(&keys, &files));
+                        }),
+                    );
+                }
+                Ok(None) => {}
+                Err(error) => eprintln!("could not harvest pages: {error}"),
+            }
+        }
         Command::RenameTab { depth, index } => {
             if let (Ok(depth), Ok(index)) = (i32::try_from(depth), i32::try_from(index)) {
                 window.invoke_tab_rename_requested(depth, index);

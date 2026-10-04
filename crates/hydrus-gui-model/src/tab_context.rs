@@ -201,10 +201,19 @@ pub fn menu(depth: usize, index: usize, count: usize, selected: usize) -> Vec<En
             entries: moves,
             enabled: true,
         });
-        entries.push(sort_menu(depth));
     }
     entries.push(item("rename page", Command::RenameTab { depth, index }));
-    entries.push(send_menu(depth, index, count));
+    entries.push(item(
+        "duplicate page",
+        Command::DuplicateTab { depth, index },
+    ));
+    if count > 1 {
+        entries.push(Entry::Separator);
+        entries.push(sort_menu(depth));
+    }
+    entries.push(Entry::Separator);
+    entries.push(scope_menu(depth, index, count, true));
+    entries.push(scope_menu(depth, index, count, false));
     entries
 }
 
@@ -235,14 +244,22 @@ fn sort_menu(depth: usize) -> Entry {
     }
 }
 
-fn send_menu(depth: usize, index: usize, count: usize) -> Entry {
+fn scope_menu(depth: usize, index: usize, count: usize, collapse: bool) -> Entry {
     let item = |label: &str, scope| Entry::Item {
         label: label.into(),
         enabled: true,
-        command: Some(Command::SendTabs {
-            depth,
-            index,
-            scope,
+        command: Some(if collapse {
+            Command::CollapseTabs {
+                depth,
+                index,
+                scope,
+            }
+        } else {
+            Command::SendTabs {
+                depth,
+                index,
+                scope,
+            }
         }),
     };
     let mut entries = vec![item("this page", Send::This)];
@@ -251,8 +268,28 @@ fn send_menu(depth: usize, index: usize, count: usize) -> Entry {
         entries.push(item("pages to the right", Send::Right));
     }
     Entry::Menu {
-        label: "send down to a new page of pages".into(),
+        label: if collapse {
+            "collapse to a single page"
+        } else {
+            "send down to a new page of pages"
+        }
+        .into(),
         entries,
         enabled: true,
+    }
+}
+
+/// The reference's destructive harvest confirmation, including notebook files.
+pub fn collapse_question(files: usize, pages: usize, single: bool) -> String {
+    let files = hydrus_core::numbers::human_int(files as u64);
+    if single {
+        format!(
+            "This will collect the {files} files in this page and place them, in current order, in a single new search page. This can work on a page of pages.\n\nThe old page will be closed, no matter its type."
+        )
+    } else {
+        let pages = hydrus_core::numbers::human_int(pages as u64);
+        format!(
+            "This will collect the {files} files in view in the {pages} pages and place them, in current order, in a single new search page.\n\nAll the pages harvested from will be closed, no matter their type."
+        )
     }
 }

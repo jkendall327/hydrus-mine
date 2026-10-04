@@ -1149,3 +1149,9 @@ the native question offers yes/no. Other context submenus remain deferred.
 
 - Hash clipboard actions honour the booru prefix option, but do not show the
   reference’s missing-digest warning or its transient hashes-copied notification.
+
+Duplicate and collapse tab actions now work on native page trees; collapse uses
+the native default local search domain (my files). The broader reference default
+local-location preference is still deferred. Session-per-notebook menus remain
+unimplemented. An accepted collapse freezes the media shown when its confirmation
+opened; if its source keys have left their shared notebook, it does nothing.
