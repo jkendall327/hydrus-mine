@@ -1,6 +1,7 @@
 //! Looking up URLs: what kind of URL something is, and which files it has
 //! been seen for.
 
+use crate::auth::PermissionChecks as _;
 use std::sync::Arc;
 
 use axum::extract::State;

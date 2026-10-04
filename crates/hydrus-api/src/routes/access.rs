@@ -1,5 +1,6 @@
 //! Versions, access keys, services, tag cleaning.
 
+use crate::auth::PermissionChecks as _;
 use std::sync::Arc;
 
 use axum::extract::State;

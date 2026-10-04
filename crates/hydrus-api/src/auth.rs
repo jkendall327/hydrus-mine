@@ -6,7 +6,7 @@
 //! which searches it may run. A restricted key may only fetch files its own
 //! last search returned.
 
-use std::collections::{BTreeSet, HashMap, HashSet};
+use std::collections::{HashMap, HashSet};
 use std::time::{Duration, Instant};
 
 use axum::http::HeaderMap;
@@ -14,101 +14,24 @@ use parking_lot::RwLock;
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 
-use hydrus_core::{HashId, TagFilter};
+use hydrus_core::HashId;
 
 use crate::error::{ApiError, ApiResult, ErrorKind};
 use crate::params::Params;
 
-/// Basic permissions, with the reference's codes.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
-#[serde(into = "u8", try_from = "u8")]
-pub enum Permission {
-    AddUrls = 0,
-    AddFiles = 1,
-    AddTags = 2,
-    SearchFiles = 3,
-    ManagePages = 4,
-    ManageHeaders = 5,
-    ManageDatabase = 6,
-    AddNotes = 7,
-    ManageFileRelationships = 8,
-    EditRatings = 9,
-    ManagePopups = 10,
-    EditTimes = 11,
-    CommitPending = 12,
-    SeeLocalPaths = 13,
+pub use hydrus_store::api_permissions::{
+    AccessPermissions, Permission, delete_key, save_key, stored_keys,
+};
+
+/// HTTP permission refusals for persisted access permissions.
+pub trait PermissionChecks {
+    fn check(&self, permission: Permission) -> ApiResult<()>;
+    fn check_any(&self, permissions: &[Permission]) -> ApiResult<()>;
+    fn check_can_search_tags(&self, positive_tags: &[String]) -> ApiResult<()>;
+    fn check_can_see_all_files(&self) -> ApiResult<()>;
 }
-
-impl Permission {
-    pub const ALL: [Permission; 14] = [
-        Permission::AddUrls,
-        Permission::AddFiles,
-        Permission::AddTags,
-        Permission::SearchFiles,
-        Permission::ManagePages,
-        Permission::ManageHeaders,
-        Permission::ManageDatabase,
-        Permission::AddNotes,
-        Permission::ManageFileRelationships,
-        Permission::EditRatings,
-        Permission::ManagePopups,
-        Permission::EditTimes,
-        Permission::CommitPending,
-        Permission::SeeLocalPaths,
-    ];
-
-    pub fn description(self) -> &'static str {
-        match self {
-            Permission::AddUrls => "import and edit urls",
-            Permission::AddFiles => "import and delete files",
-            Permission::AddTags => "edit file tags",
-            Permission::SearchFiles => "search for and fetch files",
-            Permission::ManagePages => "manage pages",
-            Permission::ManageHeaders => "manage cookies and headers",
-            Permission::ManageDatabase => "manage database",
-            Permission::AddNotes => "edit file notes",
-            Permission::ManageFileRelationships => "edit file relationships",
-            Permission::EditRatings => "edit file ratings",
-            Permission::ManagePopups => "manage popups",
-            Permission::EditTimes => "edit file times",
-            Permission::CommitPending => "commit pending",
-            Permission::SeeLocalPaths => "see local file paths",
-        }
-    }
-}
-
-impl From<Permission> for u8 {
-    fn from(p: Permission) -> u8 {
-        p as u8
-    }
-}
-
-impl TryFrom<u8> for Permission {
-    type Error = String;
-    fn try_from(code: u8) -> Result<Self, String> {
-        Permission::ALL
-            .get(usize::from(code))
-            .copied()
-            .ok_or_else(|| format!("unknown permission {code}"))
-    }
-}
-
-/// One access key's permissions.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct AccessPermissions {
-    pub access_key: Vec<u8>,
-    pub name: String,
-    pub permits_everything: bool,
-    pub basic: BTreeSet<Permission>,
-    pub search_filter: TagFilter,
-}
-
-impl AccessPermissions {
-    pub fn has(&self, permission: Permission) -> bool {
-        self.permits_everything || self.basic.contains(&permission)
-    }
-
-    pub fn check(&self, permission: Permission) -> ApiResult<()> {
+impl PermissionChecks for AccessPermissions {
+    fn check(&self, permission: Permission) -> ApiResult<()> {
         if self.has(permission) {
             Ok(())
         } else {
@@ -118,8 +41,7 @@ impl AccessPermissions {
             )))
         }
     }
-
-    pub fn check_any(&self, permissions: &[Permission]) -> ApiResult<()> {
+    fn check_any(&self, permissions: &[Permission]) -> ApiResult<()> {
         if permissions.iter().any(|p| self.has(*p)) {
             return Ok(());
         }
@@ -129,15 +51,7 @@ impl AccessPermissions {
             names.join(", ")
         )))
     }
-
-    /// Whether searches are unrestricted.
-    pub fn searches_unrestricted(&self) -> bool {
-        self.permits_everything || self.search_filter.allows_everything()
-    }
-
-    /// A restricted key's search must include at least one positive tag its
-    /// filter allows.
-    pub fn check_can_search_tags(&self, positive_tags: &[String]) -> ApiResult<()> {
+    fn check_can_search_tags(&self, positive_tags: &[String]) -> ApiResult<()> {
         if self.searches_unrestricted()
             || positive_tags
                 .iter()
@@ -150,8 +64,7 @@ impl AccessPermissions {
             self.search_filter.to_permitted_string()
         )))
     }
-
-    pub fn check_can_see_all_files(&self) -> ApiResult<()> {
+    fn check_can_see_all_files(&self) -> ApiResult<()> {
         if self.permits_everything
             || (self.has(Permission::SearchFiles) && self.search_filter.allows_everything())
         {
@@ -161,25 +74,6 @@ impl AccessPermissions {
                 "You do not have permission to see all files, so you cannot do this.",
             ))
         }
-    }
-
-    fn basic_string(&self) -> String {
-        if self.permits_everything {
-            return "can do anything".into();
-        }
-        let mut names: Vec<&str> = self.basic.iter().map(|p| p.description()).collect();
-        names.sort_unstable();
-        names.join(", ")
-    }
-
-    /// e.g. "API Permissions (name): search for and fetch files: Can search: only allowing safe"
-    pub fn human_description(&self) -> String {
-        let mut s = format!("API Permissions ({}): ", self.name);
-        s += &self.basic_string();
-        if !self.permits_everything && self.has(Permission::SearchFiles) {
-            s += &format!(": Can search: {}", self.search_filter.to_permitted_string());
-        }
-        s
     }
 }
 
@@ -202,44 +96,6 @@ pub struct AccessRegistry {
 /// The refusal of an access key that isn't known.
 pub const UNKNOWN_KEY: &str = "Did not find an entry for that access key!";
 
-/// Every access key in the database.
-pub fn stored_keys(conn: &Connection) -> hydrus_store::Result<Vec<AccessPermissions>> {
-    Ok(AccessRegistry::load(conn)?
-        .keys
-        .into_inner()
-        .into_values()
-        .collect())
-}
-
-/// Add (or replace) an access key in the database.
-pub fn save_key(conn: &Connection, key: &AccessPermissions) -> hydrus_store::Result<()> {
-    let filter = if key.search_filter == TagFilter::default() {
-        None
-    } else {
-        Some(serde_json::to_string(&key.search_filter)?)
-    };
-    conn.execute(
-        "INSERT OR REPLACE INTO api_permissions (access_key, name, permits_everything, permissions, search_tag_filter)
-         VALUES (?, ?, ?, ?, ?)",
-        rusqlite::params![
-            key.access_key,
-            key.name,
-            key.permits_everything,
-            serde_json::to_string(&key.basic)?,
-            filter
-        ],
-    )?;
-    Ok(())
-}
-
-/// Remove an access key from the database; whether there was one.
-pub fn delete_key(conn: &Connection, access_key: &[u8]) -> hydrus_store::Result<bool> {
-    Ok(conn.execute(
-        "DELETE FROM api_permissions WHERE access_key = ?",
-        [access_key],
-    )? > 0)
-}
-
 /// Access keys asked for through `/request_new_permissions`, while
 /// `hydrus api-keys <store> listen` (standing in for the reference's
 /// registration dialog) is running.
@@ -261,42 +117,24 @@ impl AccessRegistry {
     /// keeping sessions.
     pub fn reload_keys(&self, conn: &Connection) -> hydrus_store::Result<()> {
         let fresh = Self::load(conn)?.keys.into_inner();
-        *self.keys.write() = fresh;
+        let mut keys = self.keys.write();
+        // Previously returned files cannot survive a narrowed filter or revoke.
+        self.last_search
+            .write()
+            .retain(|key, _| keys.get(key) == fresh.get(key) && fresh.contains_key(key));
+        self.sessions
+            .write()
+            .retain(|_, (key, _)| fresh.contains_key(key));
+        *keys = fresh;
         Ok(())
     }
 
     /// Load every access key from the database.
     pub fn load(conn: &Connection) -> hydrus_store::Result<Self> {
-        let mut stmt =
-            conn.prepare("SELECT access_key, name, permits_everything, permissions, search_tag_filter FROM api_permissions")?;
-        let rows = stmt.query_map([], |r| {
-            Ok((
-                r.get::<_, Vec<u8>>(0)?,
-                r.get::<_, String>(1)?,
-                r.get::<_, bool>(2)?,
-                r.get::<_, String>(3)?,
-                r.get::<_, Option<String>>(4)?,
-            ))
-        })?;
-        let mut keys = HashMap::new();
-        for row in rows {
-            let (access_key, name, permits_everything, permissions, filter) = row?;
-            let basic: BTreeSet<Permission> = serde_json::from_str(&permissions)?;
-            let search_filter = match filter {
-                Some(f) => serde_json::from_str(&f)?,
-                None => TagFilter::default(),
-            };
-            keys.insert(
-                access_key.clone(),
-                AccessPermissions {
-                    access_key,
-                    name,
-                    permits_everything,
-                    basic,
-                    search_filter,
-                },
-            );
-        }
+        let keys = stored_keys(conn)?
+            .into_iter()
+            .map(|key| (key.access_key.clone(), key))
+            .collect();
         Ok(Self {
             keys: RwLock::new(keys),
             ..Self::default()
@@ -369,7 +207,10 @@ impl AccessRegistry {
 
     /// Remember a restricted key's latest search results.
     pub fn record_search(&self, permissions: &AccessPermissions, results: &[HashId]) {
-        if !permissions.searches_unrestricted() {
+        let keys = self.keys.read();
+        if keys.get(&permissions.access_key) == Some(permissions)
+            && !permissions.searches_unrestricted()
+        {
             self.last_search.write().insert(
                 permissions.access_key.clone(),
                 (results.iter().copied().collect(), Instant::now()),

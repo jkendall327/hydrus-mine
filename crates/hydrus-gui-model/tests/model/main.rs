@@ -54,3 +54,5 @@ mod services_editor;
 
 mod parser_editors;
 mod tag_display;
+
+mod client_api_admin;

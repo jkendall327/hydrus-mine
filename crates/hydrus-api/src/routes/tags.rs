@@ -1,5 +1,6 @@
 //! Tag autocomplete and sibling/parent lookups.
 
+use crate::auth::PermissionChecks as _;
 use std::collections::BTreeSet;
 use std::sync::Arc;
 

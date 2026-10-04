@@ -1,6 +1,7 @@
 //! `/add_notes/*`, `/edit_ratings/*` and `/edit_times/*`: editing what is
 //! attached to files.
 
+use crate::auth::PermissionChecks as _;
 use std::collections::BTreeMap;
 use std::sync::Arc;
 

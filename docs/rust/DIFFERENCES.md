@@ -957,3 +957,12 @@ actions. Automatic gap filling and the reference API/redirect review tab are
 deferred; API/redirect source classes are excluded because their targets own
 the parser. The temporary-variable content kind is also editable here, while
 the reference page editor normally limits its creation to lookup scripts.
+
+Client API key edits made through native persistence now take effect on the
+next authenticated request through a durable permission revision, including
+existing sessions. Changed/revoked keys lose their previous restricted search
+results; a stale in-flight search cannot restore them. The database unlock
+endpoint authenticates its cached admin key while the native store is paused.
+The detached GUI model saves a whole key edit only on Apply and rejects stale
+concurrent editor state; Qt service review applies list actions immediately.
+Desktop access-key windows and supported listener settings remain in progress.

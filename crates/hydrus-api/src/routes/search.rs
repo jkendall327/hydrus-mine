@@ -1,6 +1,7 @@
 //! File search: `/get_files/search_files`, and the parameters it shares with
 //! other endpoints that take a search (file domain, tag domain, `tags`).
 
+use crate::auth::PermissionChecks as _;
 use std::sync::Arc;
 
 use axum::extract::State;

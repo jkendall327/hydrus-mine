@@ -1,5 +1,6 @@
 //! `/add_tags/*` endpoints that change tags.
 
+use crate::auth::PermissionChecks as _;
 use std::collections::BTreeSet;
 use std::sync::Arc;
 

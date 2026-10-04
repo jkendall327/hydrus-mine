@@ -70,3 +70,5 @@ pub mod tag_relationships;
 
 pub mod parser_editors;
 pub mod tag_display;
+
+pub mod client_api_admin;

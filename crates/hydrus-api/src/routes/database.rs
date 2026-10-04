@@ -1,6 +1,7 @@
 //! `/manage_database/*`: library statistics, and locking the database so it
 //! can be backed up.
 
+use crate::auth::PermissionChecks as _;
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
 

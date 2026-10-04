@@ -1,5 +1,6 @@
 //! `/manage_services/*`: content waiting to be uploaded to repositories.
 
+use crate::auth::PermissionChecks as _;
 use std::sync::Arc;
 
 use axum::extract::State;

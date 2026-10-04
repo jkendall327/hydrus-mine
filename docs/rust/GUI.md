@@ -1448,3 +1448,10 @@ index and validated key=value context variables, and run the live parser engine.
 Child editors block parent changes and Apply; cancellation or owner closure
 invalidates all child callbacks. GUI/store regressions include rendered page
 and note-content screenshots through HYDRUS_PARSER_SCREENSHOTS.
+
+Client API administration groundwork now shares native typed permission records
+between the HTTP server and desktop models. The detached keys model covers the
+reference list columns, 14 basic permissions, full access, search restrictions,
+key rotation/collision rejection, duplicate names and staged deletion. Actual Qt
+review/editor controls and questions are recorded in `client_api_admin.json`.
+The new desktop windows and listener setting controls are still being wired.

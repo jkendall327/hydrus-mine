@@ -1,5 +1,6 @@
 //! File relationships: duplicates, alternates and potential pairs.
 
+use crate::auth::PermissionChecks as _;
 use std::collections::HashMap;
 use std::sync::Arc;
 
