@@ -30,7 +30,7 @@ step() {
 clean_executables() {
   if [ "${HYDRUS_CHECK_LOW_DISK:-0}" = 1 ]; then
     if [ "${HYDRUS_CHECK_KEEP_GUI:-0}" = 1 ]; then
-      find target/debug/deps -maxdepth 1 -type f -executable ! -name "*.so" ! -name "*.rlib" ! -name "gui-*" -delete
+      find target/debug/deps -maxdepth 1 -type f -executable ! -name "*.so" ! -name "*.rlib" ! -name "gui-*" ! -name "hydrus_gui-*" -delete
     else
       find target/debug/deps -maxdepth 1 -type f -executable ! -name "*.so" ! -name "*.rlib" -delete
     fi
