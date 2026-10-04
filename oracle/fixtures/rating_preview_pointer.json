@@ -220,6 +220,151 @@
           "other_state": 2
         }
       ],
+      "chord_events": [
+        {
+          "action": "press",
+          "x": 121.80000000000001,
+          "width": 609,
+          "icon": 12,
+          "button": 1,
+          "left_held": true,
+          "rating": 0.2,
+          "state": 3,
+          "fraction": "1/5"
+        },
+        {
+          "action": "press",
+          "x": 121.80000000000001,
+          "width": 609,
+          "icon": 12,
+          "button": 2,
+          "left_held": true,
+          "rating": 0.2,
+          "state": 3,
+          "fraction": "1/5"
+        },
+        {
+          "action": "move",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": true,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5"
+        },
+        {
+          "action": "release",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 2,
+          "left_held": true,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5"
+        },
+        {
+          "action": "move",
+          "x": 365.4,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": true,
+          "rating": 0.6,
+          "state": 3,
+          "fraction": "3/5"
+        },
+        {
+          "action": "move",
+          "x": -10,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": true,
+          "rating": 0.6,
+          "state": 3,
+          "fraction": "3/5"
+        },
+        {
+          "action": "move",
+          "x": 243.60000000000002,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": true,
+          "rating": 0.4,
+          "state": 3,
+          "fraction": "2/5"
+        },
+        {
+          "action": "release",
+          "x": 243.60000000000002,
+          "width": 609,
+          "icon": 12,
+          "button": 1,
+          "left_held": false,
+          "rating": 0.4,
+          "state": 3,
+          "fraction": "2/5"
+        },
+        {
+          "action": "move",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": false,
+          "rating": 0.4,
+          "state": 3,
+          "fraction": "2/5"
+        },
+        {
+          "action": "press",
+          "x": 121.80000000000001,
+          "width": 609,
+          "icon": 12,
+          "button": 2,
+          "left_held": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5"
+        },
+        {
+          "action": "move",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5"
+        },
+        {
+          "action": "release",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 2,
+          "left_held": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5"
+        },
+        {
+          "action": "move",
+          "x": 365.4,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5"
+        }
+      ],
       "example_value": {}
     },
     {
@@ -442,6 +587,151 @@
           "other_state": 2
         }
       ],
+      "chord_events": [
+        {
+          "action": "press",
+          "x": 121.80000000000001,
+          "width": 609,
+          "icon": 12,
+          "button": 1,
+          "left_held": true,
+          "rating": 0.2,
+          "state": 3,
+          "fraction": "1/5"
+        },
+        {
+          "action": "press",
+          "x": 121.80000000000001,
+          "width": 609,
+          "icon": 12,
+          "button": 2,
+          "left_held": true,
+          "rating": 0.2,
+          "state": 3,
+          "fraction": "1/5"
+        },
+        {
+          "action": "move",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": true,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5"
+        },
+        {
+          "action": "release",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 2,
+          "left_held": true,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5"
+        },
+        {
+          "action": "move",
+          "x": 365.4,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": true,
+          "rating": 0.6,
+          "state": 3,
+          "fraction": "3/5"
+        },
+        {
+          "action": "move",
+          "x": -10,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": true,
+          "rating": 0.6,
+          "state": 3,
+          "fraction": "3/5"
+        },
+        {
+          "action": "move",
+          "x": 243.60000000000002,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": true,
+          "rating": 0.4,
+          "state": 3,
+          "fraction": "2/5"
+        },
+        {
+          "action": "release",
+          "x": 243.60000000000002,
+          "width": 609,
+          "icon": 12,
+          "button": 1,
+          "left_held": false,
+          "rating": 0.4,
+          "state": 3,
+          "fraction": "2/5"
+        },
+        {
+          "action": "move",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": false,
+          "rating": 0.4,
+          "state": 3,
+          "fraction": "2/5"
+        },
+        {
+          "action": "press",
+          "x": 121.80000000000001,
+          "width": 609,
+          "icon": 12,
+          "button": 2,
+          "left_held": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5"
+        },
+        {
+          "action": "move",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5"
+        },
+        {
+          "action": "release",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 2,
+          "left_held": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5"
+        },
+        {
+          "action": "move",
+          "x": 365.4,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5"
+        }
+      ],
       "example_value": {}
     },
     {
@@ -662,6 +952,151 @@
           "state": 2,
           "fraction": "-/5",
           "other_state": 2
+        }
+      ],
+      "chord_events": [
+        {
+          "action": "press",
+          "x": 121.80000000000001,
+          "width": 609,
+          "icon": 12,
+          "button": 1,
+          "left_held": true,
+          "rating": 0.2,
+          "state": 3,
+          "fraction": "1/5"
+        },
+        {
+          "action": "press",
+          "x": 121.80000000000001,
+          "width": 609,
+          "icon": 12,
+          "button": 2,
+          "left_held": true,
+          "rating": 0.2,
+          "state": 3,
+          "fraction": "1/5"
+        },
+        {
+          "action": "move",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": true,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5"
+        },
+        {
+          "action": "release",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 2,
+          "left_held": true,
+          "rating": 0.8,
+          "state": 3,
+          "fraction": "4/5"
+        },
+        {
+          "action": "move",
+          "x": 365.4,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": true,
+          "rating": 0.6,
+          "state": 3,
+          "fraction": "3/5"
+        },
+        {
+          "action": "move",
+          "x": -10,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": true,
+          "rating": 0.6,
+          "state": 3,
+          "fraction": "3/5"
+        },
+        {
+          "action": "move",
+          "x": 243.60000000000002,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": true,
+          "rating": 0.4,
+          "state": 3,
+          "fraction": "2/5"
+        },
+        {
+          "action": "release",
+          "x": 243.60000000000002,
+          "width": 609,
+          "icon": 12,
+          "button": 1,
+          "left_held": false,
+          "rating": 0.4,
+          "state": 3,
+          "fraction": "2/5"
+        },
+        {
+          "action": "move",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": false,
+          "rating": 0.4,
+          "state": 3,
+          "fraction": "2/5"
+        },
+        {
+          "action": "press",
+          "x": 121.80000000000001,
+          "width": 609,
+          "icon": 12,
+          "button": 2,
+          "left_held": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5"
+        },
+        {
+          "action": "move",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5"
+        },
+        {
+          "action": "release",
+          "x": 517.65,
+          "width": 609,
+          "icon": 12,
+          "button": 2,
+          "left_held": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5"
+        },
+        {
+          "action": "move",
+          "x": 365.4,
+          "width": 609,
+          "icon": 12,
+          "button": 0,
+          "left_held": false,
+          "rating": 0.0,
+          "state": 2,
+          "fraction": "-/5"
         }
       ],
       "example_value": {}

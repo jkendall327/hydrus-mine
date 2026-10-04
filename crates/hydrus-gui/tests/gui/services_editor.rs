@@ -936,6 +936,32 @@ fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area() {
             button: PointerEventButton::Right,
         });
         assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "-/5");
+        // Left remains held through a Right press/release. Qt gives Left
+        // priority for this press and continues rating on subsequent movement.
+        press(width * 0.2, PointerEventButton::Left);
+        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "1/5");
+        press(width * 0.2, PointerEventButton::Right);
+        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "1/5");
+        move_to(width * 0.85);
+        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "4/5");
+        edit.window().dispatch_event(WindowEvent::PointerReleased {
+            position: slint::LogicalPosition::new(x + width * 0.85, y),
+            button: PointerEventButton::Right,
+        });
+        move_to(width * 0.6);
+        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "3/5");
+        release(width * 0.6);
+        move_to(width * 0.85);
+        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "3/5");
+        press(width * 0.2, PointerEventButton::Right);
+        move_to(width * 0.85);
+        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "-/5");
+        edit.window().dispatch_event(WindowEvent::PointerReleased {
+            position: slint::LogicalPosition::new(x + width * 0.85, y),
+            button: PointerEventButton::Right,
+        });
+        move_to(width * 0.6);
+        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "-/5");
         manage.invoke_cancel_clicked();
         let retired = edit.get_examples().row_data(0).unwrap().fraction;
         edit.invoke_preview_pointer(0, false, width * 0.85, width, 12.0, true);

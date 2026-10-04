@@ -178,3 +178,10 @@ An abandoned detached Options draft preserves saved values. Executed successfull
 freshly unpacked basic fixture with clean reference shutdown. The fixture and
 inspected PNG are `rating_context_sizes.json` and `rating_context_sizes.png`. No
 rating handlers or registered services were replaced; the dialog was cancelled.
+
+
+The rating pointer recorder additionally dispatches mixed Left+Right presses,
+Right release with Left still held, continuing/outside/re-entered Left motion,
+Left release, and right-only dragging. It captures the reference's Left-priority
+press routing. Native delivered in-widget chord movement is covered; Slint's
+loss of capture after Right release remains a documented cross-edge limitation.

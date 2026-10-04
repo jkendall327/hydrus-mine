@@ -2966,3 +2966,8 @@ height, with counter width expanding for long values. Held right-button movement
 clears without rating stars; held left movement rates the dialog's draft. All
 four service-editor examples read their corresponding saved sizing preferences.
 The Preview Window preferences have no native preview-canvas consumer yet.
+
+Numerical rating examples also continue a held Left drag across a Right
+press/release while the pointer remains in the sample; a right-only drag does not
+set a rating. The actual Qt chord sequence extends `rating_preview_pointer.json`.
+The cross-edge chord capture boundary is documented separately in DIFFERENCES.

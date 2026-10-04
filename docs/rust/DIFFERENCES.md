@@ -2015,3 +2015,12 @@ tab text did not change. Small native overflow arrows replace Qt's styled arrows
 Rust behavior/render tests for this slice are authored for hosted CI; locally only
 real Qt recordings, formatting, diff checks and cached Slint source compilation
 were executed.
+
+Numerical rating examples retain a held Left button through an additional Right
+press/release, with Qt's Left-priority press conversion. Delivered in-widget
+movement continues after Right release; right-only dragging and released hover
+remain inert. Slint 1.18 drops its private mouse grab on every button release,
+so leaving the sample after the extra Right release cancels its capture: native
+cannot resume that chord drag upon re-entry while Left remains held. Ordinary
+single-button captured drags retain the previously recorded outside behavior.
+This framework boundary remains explicit; full chord capture parity is not claimed.

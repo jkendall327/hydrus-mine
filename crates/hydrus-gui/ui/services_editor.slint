@@ -32,14 +32,18 @@ component RatingSampleControl inherits HorizontalBox {
             x: root.sample.fraction-placement == 1 ? 2px : graphic.x + graphic.width + 1px;
         }
         sample-touch := TouchArea { enabled: root.interactive;
+            // Slint drops capture on any button release. Exit then clears pressed
+            // without a Cancel event when its private grab is already gone.
+            changed pressed => { if !self.pressed { root.left-dragging = false; } }
             pointer-event(ev) => {
                 if ev.kind == PointerEventKind.down {
-                    root.left-dragging = ev.button == PointerEventButton.left;
+                    if ev.button == PointerEventButton.left { root.left-dragging = true; }
                     if ev.button == PointerEventButton.middle && root.sample.graphic.kind == 2 { root.counter-edit(); }
-                    else if ev.button == PointerEventButton.left || ev.button == PointerEventButton.right { root.pointer(ev.button == PointerEventButton.right, self.mouse-x / 1px, self.width / 1px, root.sample.icon-size / 1px, false); }
-                } else if ev.kind == PointerEventKind.up { root.left-dragging = false; }
+                    else if ev.button == PointerEventButton.left || ev.button == PointerEventButton.right || (root.left-dragging && root.sample.graphic.kind == 1) { root.pointer(ev.button == PointerEventButton.right && !(root.left-dragging && root.sample.graphic.kind == 1), self.mouse-x / 1px, self.width / 1px, root.sample.icon-size / 1px, false); }
+                } else if ev.kind == PointerEventKind.up && ev.button == PointerEventButton.left { root.left-dragging = false; }
+                else if ev.kind == PointerEventKind.cancel { root.left-dragging = false; }
+                else if ev.kind == PointerEventKind.move && self.pressed && root.left-dragging && root.sample.graphic.kind == 1 { root.pointer(false, self.mouse-x / 1px, self.width / 1px, root.sample.icon-size / 1px, true); }
             }
-            moved => { if self.pressed && root.left-dragging && root.sample.graphic.kind == 1 { root.pointer(false, self.mouse-x / 1px, self.width / 1px, root.sample.icon-size / 1px, true); } }
         }
     }
 }
