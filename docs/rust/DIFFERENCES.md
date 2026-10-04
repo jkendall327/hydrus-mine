@@ -947,9 +947,14 @@ window rather than a separate popup job. Removing rows refreshes filenames
 immediately; the reference retains cached paths until the phrase or directory
 changes.
 
-The imported export phrase and filename limits are reused. Legacy manual export
-destination, trash preference and default sidecar routes are not yet mapped
-into the new manual settings; choices made in this window are persisted.
+The imported export phrase, filename limits and default export directory are
+reused. The exporting option supplies the starting manual directory; changing
+one manual window does not change that option. Native settings keep resolved
+paths rather than Qt's portable text, with imported relative paths resolved
+against the source database and native relative input against its database.
+The blank preference uses the home `hydrus_export` folder, including Windows
+USERPROFILE when HOME is absent. Legacy manual trash preference and default
+sidecar routes are not yet mapped; choices for these made in the window persist.
 
 ## Tag relationship editors
 

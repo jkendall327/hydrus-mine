@@ -984,7 +984,14 @@ thumbnails or the viewer's file (`ui/export_files.slint`,
 `src/export_files_window.rs`, `hydrus-gui-model::export_files`). It previews
 number, filetype and destination using the export folders' filename machinery,
 adds ` (1)` suffixes for selected files whose names collide, remembers the
-export phrase and destination, and removes selected rows after asking. The
+export phrase, and removes selected rows after asking. New panels open at the
+**exporting > export folder > Default export directory** option. Its path and
+browse control wait for options Apply; Cancel discards them. Empty or whitespace
+uses `hydrus_export` in the home directory, and a one-off manual destination does
+not replace this default. Legacy portable paths resolve against the source
+database; native relative entries resolve against its database directory.
+`oracle/record_export_default_directory.py` records these option and consumer
+boundaries. The
 existing sidecar routers editor supplies tags, notes, URLs and timestamps.
 Copies overwrite existing destinations; links are optional. Export runs on a
 worker with progress and cancellation between files. Trashing asks the
