@@ -368,7 +368,7 @@
   "nativeComponents": [
     {
       "name": "MainWindow",
-      "existingNativeId": "window.main",
+      "existingNativeId": "catalog.mainwindow",
       "file": "crates/hydrus-gui/ui/main.slint",
       "newExportedWindows": 0,
       "controls": [
@@ -408,7 +408,7 @@
     },
     {
       "name": "OptionsWindow",
-      "existingNativeId": "dialog.options",
+      "existingNativeId": "catalog.optionswindow",
       "file": "crates/hydrus-gui/ui/options.slint",
       "newExportedWindows": 0,
       "controls": [
