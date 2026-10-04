@@ -111,8 +111,18 @@ fn export_filename(
     {
         name = stripped.to_owned();
     }
-    let (subdirs, true_name) = match name.rfind(sep) {
-        Some(i) => (name[..i].to_owned(), name[i + 1..].to_owned()),
+    // Python's os.path.split accepts both slash styles on Windows. Keep the
+    // subdirectories' spelling for the reference's later filename sanitization.
+    let (subdirs, true_name) = match name.rfind(std::path::is_separator) {
+        Some(i) => {
+            let head = &name[..=i];
+            let head = if head.chars().any(|c| !std::path::is_separator(c)) {
+                head.trim_end_matches(std::path::is_separator)
+            } else {
+                head
+            };
+            (head.to_owned(), name[i + 1..].to_owned())
+        }
         None => (String::new(), name.clone()),
     };
     let true_name = if true_name.is_empty() {
