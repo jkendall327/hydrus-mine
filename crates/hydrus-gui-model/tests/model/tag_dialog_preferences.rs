@@ -181,7 +181,19 @@ fn storage_rows_and_service_topologies_replay_all_reference_combinations() {
         .unwrap()
         .label
         .clone();
-    assert_eq!(expected_parent, "parity:amber old → parity:amber");
+    let recorded_label = activation["rows_after_activation"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|row| row["tag"] == logical_tag)
+        .unwrap()["rows"][0]
+        .as_str()
+        .unwrap();
+    assert_eq!(expected_parent, recorded_label);
+    assert_eq!(
+        rows(&after),
+        fixture::canonical(activation["rows_after_activation"].clone())
+    );
     assert!(
         !after
             .display_rows()

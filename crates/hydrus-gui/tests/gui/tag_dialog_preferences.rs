@@ -237,11 +237,11 @@ fn expanded_parent_rows_keep_colour_and_activate_their_originating_tag() {
     reopened.invoke_apply();
     ui.invoke_manage_tags_selected();
     let persisted = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
-    assert!(
-        persisted
-            .get_tags()
-            .iter()
-            .any(|row| row.text == "parity:amber old → parity:amber")
+    assert_eq!(
+        rows(&persisted),
+        fixture::canonical(
+            recorded["cases"][15]["parent_activation"]["rows_after_activation"].clone()
+        )
     );
     assert!(
         !persisted

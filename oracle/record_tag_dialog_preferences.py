@@ -5,6 +5,8 @@ Synthetic raw mappings, sibling and transitive parent relationships use the real
 DB. The actual storage-list decorator worker/publisher is run synchronously to
 capture real Qt rows without worker timing changing the snapshot. Options-page
 staging/cancel and UpdateOptions are recorded separately from runtime consumers.
+Inherited-row activation invokes the real enter callback and recorded add action,
+then captures the updated current counts and inherited storage decorations.
 """
 import itertools, json, os, sys, tempfile, time
 HERE=os.path.dirname(os.path.abspath(__file__))
@@ -18,6 +20,7 @@ FIELDS={
 }
 def record(session):
     from hydrus.client import ClientConstants as CC,ClientLocation
+    from hydrus.client.gui import ClientGUIDialogsQuick
     from hydrus.client.gui.panels.options.TagEditingPanel import TagEditingPanel
     from hydrus.client.gui.metadata.ClientGUIManageTags import ManageTagsPanel
     from hydrus.client.gui.metadata.ClientGUIManageTagSiblings import ManageTagSiblings
@@ -77,12 +80,25 @@ def record(session):
             physical=box._terms_to_positional_indices[term]+1
             logical,_=box._GetLogicalIndicesFromPositionalIndex(physical)
             box._selected_terms.clear();box._Select(logical)
-            entered=[];old_enter=box._enter_func
+            entered=[];asked=[];old_enter=box._enter_func;old_select=ClientGUIDialogsQuick.SelectFromListButtons
+            def enter(tags):
+                entered.extend(sorted(tags))
+                old_enter(tags)
+            def select(parent,title,choices,**kwargs):
+                chosen=next(choice for choice in choices if choice[1][0]==HC.CONTENT_UPDATE_ADD)
+                asked.append({'title':title,'message':kwargs.get('message'),'choices':[choice[0] for choice in choices],'chosen':chosen[0]})
+                return chosen[1]
             try:
-                box._enter_func=lambda tags:entered.extend(sorted(tags))
+                box._enter_func=enter
+                ClientGUIDialogsQuick.SelectFromListButtons=select
                 activated=box._Activate(False,False)
-            finally:box._enter_func=old_enter
-            result['parent_activation']={'physical_row':physical,'logical_tag':term.GetTag(),'passed_tags':entered,'activated':activated}
+                with box._async_text_info_lock:box._pending_async_text_info_terms.update(box._ordered_terms)
+                updater._publish_callable(updater._work_callable(updater._pre_work_callable()))
+                after_rows=[{'tag':term.GetTag(),'rows':[''.join(text for text,_colour in row) for row in box._GetRowsOfTextsAndColours(term)]} for term in box._ordered_terms if term.GetTag().startswith('parity:')]
+            finally:
+                box._enter_func=old_enter
+                ClientGUIDialogsQuick.SelectFromListButtons=old_select
+            result['parent_activation']={'physical_row':physical,'logical_tag':term.GetTag(),'passed_tags':entered,'activated':activated,'asked':asked,'rows_after_activation':after_rows}
         panel.deleteLater();return result
     try:
         for bits in itertools.product((False,True),repeat=4):
