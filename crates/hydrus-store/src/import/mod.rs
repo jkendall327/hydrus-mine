@@ -2923,3 +2923,29 @@ mod network_tests {
         }
     }
 }
+
+/// Restore complete subscription history using the database importer's seed
+/// conversions. Validate every seed before writing either history.
+pub fn restore_subscription_log(
+    conn: &Connection,
+    queue: i64,
+    log: &hydrus_legacy::objects::subscriptions::QueryLog,
+) -> Result<()> {
+    let mut warnings = Vec::new();
+    let files = log
+        .file_seeds
+        .iter()
+        .filter_map(|s| decode::file_seed(s, None, &mut warnings))
+        .collect::<Vec<_>>();
+    let galleries = log
+        .gallery_seeds
+        .iter()
+        .map(|s| decode::gallery_seed(s, &mut warnings))
+        .collect::<Vec<_>>();
+    if !warnings.is_empty() {
+        return Err(StoreError::Invalid(warnings.join("; ")));
+    }
+    queues::restore_file_seeds(conn, queue, &files)?;
+    queues::restore_gallery_seeds(conn, queue, &galleries)?;
+    Ok(())
+}

@@ -870,3 +870,132 @@ fn add_uses_a_separate_gallery_list_then_the_editor() {
     warning.invoke_accept_clicked();
     assert!(bound.edit_subscription.borrow().is_none());
 }
+
+#[test]
+fn full_subscription_exchange_is_staged_cancellable_and_reopens_with_complete_histories() {
+    use hydrus_downloader_exchange::subscriptions as exchange;
+    let reference = hydrus_testkit::fixture_json("subscription_exchange.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_exchange(true);
+    let child = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(dialog.get_exchange_open());
+    dialog.invoke_add();
+    dialog.invoke_edit();
+    assert!(bound.subscription_gallery.borrow().is_none());
+    assert!(bound.edit_subscription.borrow().is_none());
+    child.set_text("not JSON".into());
+    child.invoke_action("review".into());
+    assert!(!child.get_error().is_empty());
+    assert!(rows(&dialog).is_empty());
+    child.set_text(reference["single"].to_string().into());
+    child.invoke_action("review".into());
+    assert!(child.get_error().is_empty(), "{}", child.get_error());
+    dialog.invoke_apply();
+    assert!(
+        bound.subscriptions.borrow().is_some(),
+        "Apply is blocked while a descendant owns its draft"
+    );
+    child.invoke_action("accept".into());
+    assert_eq!(rows(&dialog)[0].0[0], "Artist");
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    dialog.invoke_cancel();
+    child.invoke_action("accept".into());
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    // Parent cancellation also invalidates an unaccepted exchange child.
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_exchange(true);
+    let stale = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    stale.set_text(reference["single"].to_string().into());
+    stale.invoke_action("review".into());
+    dialog.invoke_cancel();
+    stale.invoke_action("accept".into());
+    assert!(!bound.subscription_exchange.has_open());
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_exchange(true);
+    let child = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let path = tempfile::Builder::new().suffix(".json").tempfile().unwrap();
+    std::fs::write(path.path(), reference["single"].to_string()).unwrap();
+    child.set_path(path.path().to_string_lossy().as_ref().into());
+    child.invoke_action("open".into());
+    assert!(child.get_error().is_empty(), "{}", child.get_error());
+    child.invoke_action("accept".into());
+    dialog.invoke_apply();
+    let saved = store.read(subscriptions::subscriptions).unwrap();
+    assert_eq!(saved.len(), 1);
+    let id = saved[0].id;
+    let queries = store
+        .read(move |conn| subscriptions::queries(conn, id))
+        .unwrap();
+    let queue = queries[0].queue_id;
+    let seeds = store
+        .read(move |conn| queues::file_seeds(conn, queue))
+        .unwrap();
+    assert_eq!(seeds[0].note, "ignored\nrecorded reason");
+    assert_eq!(
+        seeds[0].meta.notes,
+        [("note".into(), "first\n\nsecond".into())]
+    );
+    let galleries = store
+        .read(move |conn| queues::gallery_seeds(conn, queue))
+        .unwrap();
+    assert_eq!(galleries[0].note, "gallery failure");
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_row_clicked(0, false, false);
+    dialog.invoke_exchange(false);
+    let child = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let exported = exchange::decode_text(child.get_text().as_str()).unwrap();
+    assert_eq!(exported[0].settings, saved[0].settings);
+    assert_eq!(exported[0].queries[0].state, queries[0].state);
+    assert_eq!(
+        exported[0].queries[0]
+            .log
+            .as_ref()
+            .unwrap()
+            .file_seeds
+            .len(),
+        1
+    );
+    assert_eq!(
+        exported[0].queries[0]
+            .log
+            .as_ref()
+            .unwrap()
+            .gallery_seeds
+            .len(),
+        1
+    );
+    assert_eq!(
+        exported[0].queries[0].reference_header.as_ref().unwrap()[2][15],
+        reference["single"][2][0][3][1][0][2][15]
+    );
+    dialog.invoke_cancel();
+}

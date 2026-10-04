@@ -644,15 +644,17 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   `hydrus serve` within five minutes.**
 - **Full subscription exchange transport** supports modern reference container 90
   JSON and PNG without dropping query history or cached header metadata. Legacy
-  subscription type 3 and the subscription list controls remain pending; this
-  codec alone does not complete the original subscriptions-exchange GUI leaf.
+  subscription type 3, exact menu/file-picker modes and original missing-history
+  confirmation remain pending. The list owner now stages modern imports and
+  persists both histories, but this slice does not complete subscriptions-exchange.
 - **The manage subscriptions dialog is a first pass.** It lists the
   subscriptions and can delete, pause/resume, scrub delays, check
   queries now and select by query text, add and edit subscriptions,
   merge, separate, lowercase, retry, reset, and overwrite downloader and
   checker options, and deduplicate. Import options can be copied as the
   reference JSON container, pasted and cleared within the dialog's draft.
-  Subscription "export"/"import" buttons remain absent. "merge" merges each group
+  Subscription export/import opens a staged modern-container child (remaining
+  exchange modes are noted above). "merge" merges each group
   as its questions are answered (cancelling a later group's questions
   leaves the earlier merged, where the reference merges none). It doesn't reckon bandwidth waits (the
   error/delay column is empty unless the subscription is delayed). It

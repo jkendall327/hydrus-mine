@@ -7,7 +7,13 @@ use hydrus_legacy::{
     objects::subscriptions as legacy,
     serialisable::{Body, Meta, SerialisableObject},
 };
+pub use legacy::QueryLog;
 use serde_json::{Value, json};
+
+/// Decode one complete reference history container.
+pub fn decode_log(value: &Value) -> Result<QueryLog> {
+    legacy::query_log(&object(value)?).map_err(|e| Error::Unsupported(e.to_string()))
+}
 
 /// A selected subscription and all its query histories, frozen for exchange.
 #[derive(Debug, Clone, PartialEq)]
@@ -166,6 +172,19 @@ fn decode_container(value: &Value) -> Result<Subscription> {
         orphaned_logs,
     })
 }
+fn collect(value: &Value, depth: usize, out: &mut Vec<Subscription>) -> Result<()> {
+    if depth > 32 || out.len() >= MAX_OBJECTS {
+        return Err(Error::Limit);
+    }
+    if object(value)?.kind.code() == 26 {
+        for value in values(value)? {
+            collect(&value, depth + 1, out)?;
+        }
+    } else {
+        out.push(decode_container(value)?);
+    }
+    Ok(())
+}
 /// Decode the complete selection before staging any changes in its list owner.
 pub fn decode_text(text: &str) -> Result<Vec<Subscription>> {
     if text.len() > MAX_BYTES {
@@ -173,19 +192,6 @@ pub fn decode_text(text: &str) -> Result<Vec<Subscription>> {
     }
     let value: Value = serde_json::from_str(text).map_err(|e| Error::Invalid(e.to_string()))?;
     let mut out = Vec::new();
-    fn collect(value: &Value, depth: usize, out: &mut Vec<Subscription>) -> Result<()> {
-        if depth > 32 || out.len() >= MAX_OBJECTS {
-            return Err(Error::Limit);
-        }
-        if object(value)?.kind.code() == 26 {
-            for value in values(value)? {
-                collect(&value, depth + 1, out)?;
-            }
-        } else {
-            out.push(decode_container(value)?);
-        }
-        Ok(())
-    }
     collect(&value, 0, &mut out)?;
     if out.is_empty() {
         return Err(Error::Invalid(
@@ -263,7 +269,8 @@ pub fn log_tuple(log: &legacy::QueryLog) -> Value {
         ]
     ])
 }
-fn query_tuple(query: &Query) -> Result<Value> {
+/// Encode native query fields while preserving cached reference header data.
+pub fn query_header_tuple(query: &Query) -> Result<Value> {
     let s = &query.state;
     let options = import_options::tuple(&ImportOptionsSlice {
         tags: Some(s.tag_import_options.clone()),
@@ -310,7 +317,7 @@ pub fn tuple(subscription: &Subscription) -> Result<Value> {
     let headers = subscription
         .queries
         .iter()
-        .map(query_tuple)
+        .map(query_header_tuple)
         .collect::<Result<Vec<_>>>()?;
     let checker = &s.checker;
     let intended: Value = serde_json::from_str(&checker.intended_files_per_check.to_string())

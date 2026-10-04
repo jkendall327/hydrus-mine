@@ -79,6 +79,58 @@ pub fn open(
     )
 }
 
+/// Import/export complete subscriptions from their owning list draft.
+pub fn open_subscriptions(
+    store: &Arc<Store>,
+    slots: &Slots,
+    importing: bool,
+    subscriptions: Vec<hydrus_downloader_exchange::subscriptions::Subscription>,
+    preview: Preview<hydrus_downloader_exchange::subscriptions::Subscription>,
+    applied: Apply<hydrus_downloader_exchange::subscriptions::Subscription>,
+) -> Result<DownloaderExchangeWindow, String> {
+    use hydrus_downloader_exchange::subscriptions;
+    let payload = if importing {
+        None
+    } else {
+        Some((
+            subscriptions::encode_text(&subscriptions).map_err(|e| e.to_string())?,
+            subscriptions.len(),
+        ))
+    };
+    let window = open_objects(
+        slots,
+        importing,
+        subscriptions,
+        preview,
+        applied,
+        Codec {
+            encode_text: subscriptions::encode_text,
+            decode_text: subscriptions::decode_text,
+            encode_png: subscriptions::encode_png,
+            decode_png: subscriptions::decode_png,
+            processing: false,
+        },
+    )?;
+    window.set_window_title(
+        if importing {
+            "import subscriptions"
+        } else {
+            "export subscriptions"
+        }
+        .into(),
+    );
+    window.set_instructions("Complete subscriptions include query settings and file/gallery histories. Import stays staged until manage subscriptions is applied.".into());
+    if let Some((payload, count)) = payload {
+        let summary = hydrus_gui_model::png_export::object_payload_description(
+            &payload,
+            "Subscription Container",
+            count,
+        );
+        attach_png(store, slots, &window, payload, summary);
+    }
+    Ok(window)
+}
+
 struct Codec<T> {
     encode_text: fn(&[T]) -> hydrus_downloader_exchange::Result<String>,
     decode_text: fn(&str) -> hydrus_downloader_exchange::Result<Vec<T>>,

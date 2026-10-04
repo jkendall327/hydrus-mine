@@ -260,6 +260,8 @@ pub struct Bound {
     pub tab_name_dialog: Rc<RefCell<Option<SessionDialog>>>,
     /// The manage subscriptions dialog while it is open.
     pub subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>>,
+    /// Serialized full subscription list exchange child.
+    pub subscription_exchange: downloader_interchange_window::Slots,
     /// The subscriptions gallery chooser, before adding or overwriting.
     pub subscription_gallery: Rc<RefCell<Option<SubscriptionGalleryWindow>>>,
     /// URL class and gallery URL generator definition editors.
@@ -1508,6 +1510,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let network_data = network_data_window::Slots::default();
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
+    let subscription_exchange = downloader_interchange_window::Slots::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
     let subscription_gallery: Rc<RefCell<Option<SubscriptionGalleryWindow>>> = Rc::default();
     let downloader_definitions = downloader_definitions_window::Slots::default();
@@ -1786,6 +1789,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let pages = pages.clone();
                 let slot = subscriptions.clone();
                 let edit_slot = edit_subscription.clone();
+                let exchange = subscription_exchange.clone();
                 let gallery_slot = subscription_gallery.clone();
                 let checker_slot = checker_options.clone();
                 let log_slot = folders.log.clone();
@@ -1797,6 +1801,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                     let store = pages.borrow().store().clone();
                     let slots = edit_subscription_window::Slots {
+                        exchange: exchange.clone(),
                         edit: edit_slot.clone(),
                         checker: checker_slot.clone(),
                         log: log_slot.clone(),
@@ -3510,6 +3515,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         tab_name_dialog,
         subscriptions,
         subscription_gallery,
+        subscription_exchange,
         downloader_definitions,
         login_workflows,
         parser_editors,
