@@ -49,7 +49,7 @@ fn main() -> Result<()> {
                 move |pages: hydrus_store::Result<Pages>| {
                     match pages
                         .map_err(anyhow::Error::from)
-                        .and_then(|pages| Client::open(store.clone(), pages))
+                        .and_then(|pages| Client::open(&store, pages))
                     {
                         Ok(opened) => *client.borrow_mut() = Some(opened),
                         Err(error) => {
@@ -115,8 +115,8 @@ struct Client {
 }
 
 impl Client {
-    fn open(store: Arc<Store>, pages: Pages) -> Result<Self> {
-        hydrus_store::settings::apply_network_boot_pause(&store)
+    fn open(store: &Arc<Store>, pages: Pages) -> Result<Self> {
+        hydrus_store::settings::apply_network_boot_pause(store)
             .context("applying the network boot pause")?;
         let window = MainWindow::new()?;
         // the daemon, run while none does (and, as the reference's work

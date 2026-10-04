@@ -728,7 +728,7 @@ fn router_examples_follow_reference_source_tabs_and_processor_children_without_e
     let saved = accepted.borrow().clone().unwrap();
     assert_ne!(saved.processor, original.processor);
     let persisted: hydrus_gui_model::export_files::Preferences = store.read(settings::get).unwrap();
-    assert_eq!(persisted.routers, [saved.clone()]);
+    assert_eq!(persisted.routers.as_slice(), std::slice::from_ref(&saved));
     let inputs = hydrus_gui_model::sidecar_editors::router_test_strings(
         &store,
         &saved,

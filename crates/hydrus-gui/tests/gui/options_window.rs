@@ -2268,7 +2268,7 @@ fn hover_options_apply_to_actual_mouseover_panels_and_passive_index_text() {
     let move_to = |x: f32, y: f32| {
         viewer.window().dispatch_event(WindowEvent::PointerMoved {
             position: LogicalPosition::new(x, y),
-        })
+        });
     };
     for event in fixture["events"].as_array().unwrap() {
         open(&ui);
@@ -2479,7 +2479,7 @@ fn pointer_options_change_real_drag_acceptance_and_cursor_transitions() {
         let moved = |dx, dy| {
             viewer.window().dispatch_event(WindowEvent::PointerMoved {
                 position: at(dx, dy),
-            })
+            });
         };
         moved(0.0, 0.0);
         let before = (viewer.get_media_x(), viewer.get_media_y());

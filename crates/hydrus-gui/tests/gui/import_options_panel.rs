@@ -122,11 +122,7 @@ fn options_drafts_replay_clear_reset_simple_mode_and_cancel_without_store_change
     )
     .unwrap();
     for step in fixture["steps"].as_array().unwrap().iter().take(10) {
-        let list = if step["action"] == "_SeeDefaultStack" {
-            0
-        } else {
-            1
-        };
+        let list = i32::from(step["action"] != "_SeeDefaultStack");
         let names = step["selection"][if list == 0 { "defaults" } else { "urls" }]
             .as_array()
             .unwrap();

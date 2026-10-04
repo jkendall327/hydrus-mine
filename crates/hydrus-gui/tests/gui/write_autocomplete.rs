@@ -465,7 +465,7 @@ fn shared_tag_menu_favourites_questions_copy_launch_and_owner_lifetime() {
         move |location, context, predicates, duplicate| {
             launched
                 .borrow_mut()
-                .push((location, context, predicates, duplicate))
+                .push((location, context, predicates, duplicate));
         }
     }));
     let w = hydrus_gui::write_tag_window::open(

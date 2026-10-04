@@ -133,7 +133,7 @@ fn clicked_notebook_saving_replays_names_overwrite_invalid_and_cancellation() {
                     }
                 }
                 "warning" => {
-                    assert_eq!(dialog.get_warning(), question["message"].as_str().unwrap())
+                    assert_eq!(dialog.get_warning(), question["message"].as_str().unwrap());
                 }
                 _ => {
                     assert!(!dialog.get_asking_name());

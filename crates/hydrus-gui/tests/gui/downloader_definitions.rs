@@ -789,6 +789,20 @@ fn domain_mask_modes_tester_and_selectable_previews_apply_cancel_and_reopen() {
 
 #[test]
 fn full_domain_mask_owned_entries_questions_and_favourites_reach_persisted_consumers() {
+    fn rows(model: &slint::ModelRc<hydrus_gui::TableRow>) -> serde_json::Value {
+        serde_json::json!(
+            (0..model.row_count())
+                .map(|i| model
+                    .row_data(i)
+                    .unwrap()
+                    .cells
+                    .row_data(0)
+                    .unwrap()
+                    .to_string())
+                .collect::<Vec<_>>()
+        )
+    }
+
     use hydrus_gui_model::regex_favourites::RegexFavourites;
     let _windows = headless::init();
     let fixture = hydrus_testkit::fixture_json("domain_mask_queue.json");
@@ -818,19 +832,6 @@ fn full_domain_mask_owned_entries_questions_and_favourites_reach_persisted_consu
     list.invoke_action("edit".into());
     let edit = child(&slots.class_edit);
     edit.invoke_choice_edited(30, 1);
-    fn rows(model: &slint::ModelRc<hydrus_gui::TableRow>) -> serde_json::Value {
-        serde_json::json!(
-            (0..model.row_count())
-                .map(|i| model
-                    .row_data(i)
-                    .unwrap()
-                    .cells
-                    .row_data(0)
-                    .unwrap()
-                    .to_string())
-                .collect::<Vec<_>>()
-        )
-    }
     for step in fixture["steps"].as_array().unwrap() {
         if step["action"] != "initial" {
             let regex = step["regex"].as_bool().unwrap();

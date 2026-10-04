@@ -257,7 +257,7 @@ fn exchange_confirmations_png_objects_and_owner_cancel_reach_the_persisted_queue
     assert_eq!(saved[0], before[0]);
     assert!(!saved[1].can_generate_more_pages);
     assert!(!saved[1].meta.run_token.is_empty());
-    assert!(store.read(|c| queues::any_nudged(c)).unwrap());
+    assert!(store.read(queues::any_nudged).unwrap());
     assert_eq!(cells(&log).len(), 2);
     *pasted.borrow_mut() = Ok(Some("https://gallery-exchange.example/c".into()));
     exchange(&log, "ADVANCED: import new urls", "from clipboard");

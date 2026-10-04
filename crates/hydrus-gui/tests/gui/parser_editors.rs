@@ -1652,6 +1652,19 @@ fn subsidiary_export_uses_owned_reference_png_parameters_and_discards_stale_expo
 
 #[test]
 fn links_auto_fill_and_api_review_reproduce_reference_and_preserve_installed_consumers() {
+    fn rows(model: &slint::ModelRc<hydrus_gui::TableRow>) -> serde_json::Value {
+        serde_json::json!(
+            (0..model.row_count())
+                .map(|i| {
+                    let cells = model.row_data(i).unwrap().cells;
+                    (0..cells.row_count())
+                        .map(|j| cells.row_data(j).unwrap().to_string())
+                        .collect::<Vec<_>>()
+                })
+                .collect::<Vec<_>>()
+        )
+    }
+
     use hydrus_legacy::{
         objects::{domain, parsers},
         serialisable::SerialisableObject,
@@ -1678,18 +1691,6 @@ fn links_auto_fill_and_api_review_reproduce_reference_and_preserve_installed_con
         .collect::<Vec<_>>();
     let directory = tempfile::tempdir().unwrap();
     let store = Store::open(directory.path()).unwrap();
-    fn rows(model: &slint::ModelRc<hydrus_gui::TableRow>) -> serde_json::Value {
-        serde_json::json!(
-            (0..model.row_count())
-                .map(|i| {
-                    let cells = model.row_data(i).unwrap().cells;
-                    (0..cells.row_count())
-                        .map(|j| cells.row_data(j).unwrap().to_string())
-                        .collect::<Vec<_>>()
-                })
-                .collect::<Vec<_>>()
-        )
-    }
     for case in fixture["cases"].as_array().unwrap() {
         let settings = UrlClassSettings {
             url_classes: classes.clone(),
