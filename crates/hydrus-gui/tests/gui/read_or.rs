@@ -307,14 +307,46 @@ fn actual_basic_and_advanced_children_apply_cancel_reopen_and_reject_stale_owner
     ui.invoke_search_or_action(3);
     let outer = bound.search_or.borrow().as_ref().unwrap().clone_strong();
     outer.invoke_or_action(4);
-    let nested = hydrus_gui::search_or_window::last_opened().unwrap();
+    let nested_slot = bound.search_or.child().unwrap();
+    let nested = nested_slot.borrow().as_ref().unwrap().clone_strong();
     assert!(outer.get_blocked());
     nested.invoke_edited("parity:or nested".into());
     let before = bound.current.borrow().borrow().predicates();
     outer.invoke_cancel();
     assert!(!nested.window().is_visible());
+    assert!(bound.search_or.child().is_none());
+    assert!(nested_slot.borrow().is_none());
     nested.invoke_apply();
     assert_eq!(bound.current.borrow().borrow().predicates(), before);
+    // The shared system child is inspected through this owner, not a registry.
+    let recent: hydrus_core::search::recent::RecentPredicates = store.read(settings::get).unwrap();
+    ui.invoke_search_or_action(3);
+    let outer = bound.search_or.borrow().as_ref().unwrap().clone_strong();
+    let limit = outer
+        .get_suggestions()
+        .iter()
+        .position(|row| row.text == "system:limit")
+        .unwrap();
+    outer.invoke_chosen(i32::try_from(limit).unwrap());
+    let system = bound
+        .search_or
+        .system
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(system.window().is_visible());
+    outer.invoke_cancel();
+    assert!(!system.window().is_visible());
+    assert!(bound.search_or.system.borrow().is_none());
+    system.invoke_ok(0);
+    assert_eq!(bound.current.borrow().borrow().predicates(), before);
+    assert_eq!(
+        store
+            .read::<hydrus_core::search::recent::RecentPredicates>(settings::get)
+            .unwrap(),
+        recent
+    );
     // A hidden caller invalidates an otherwise still-visible child.
     ui.invoke_search_or_action(4);
     let child = bound.search_or.borrow().as_ref().unwrap().clone_strong();
