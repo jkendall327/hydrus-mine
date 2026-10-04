@@ -590,6 +590,12 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   only an existing folder's fields editor. The manager still lacks the Qt
   application-wide pause/wait lease while editing folders, so an independently
   running folder worker can make progress during a native manager's draft.
+  `oracle/record_folder_manager_lifecycle.py` records the real Qt manager's
+  temporary pause, wait message and completion, and restoration of an already
+  paused or unpaused state after Apply, Cancel and exceptions. Export management
+  also notifies its scheduler in `finally`; import management notifies only on
+  Apply. These 24 recorded cases describe a remaining native boundary, rather
+  than completed manager/worker coordination.
   Shared file-log menu parity (including all bulk-action questions and ignored
   retry regex filtering) remains independently incomplete.
   its simple tag lists use an owned shared autocomplete editor plus direct
