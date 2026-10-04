@@ -107,10 +107,9 @@ fn python_parse_phrase(
             if let Ok(local) = jiff::civil::date(current.year(), month, 1)
                 .at(0, 0, 0, 0)
                 .to_zoned(current.time_zone().clone())
+                && let Ok(name) = strtime::format("%Z", &local)
             {
-                if let Ok(name) = strtime::format("%Z", &local) {
-                    names.push(name);
-                }
+                names.push(name);
             }
         }
         if !names
@@ -264,16 +263,15 @@ fn encode_phrase(phrase: &str) -> String {
 }
 
 pub(super) fn parse(text: &str) -> Result<String, String> {
-    parse_at(text, Zoned::now()).map(|t| t.to_string())
+    parse_at(text, &Zoned::now()).map(|t| t.to_string())
 }
 
-fn parse_at(text: &str, now: Zoned) -> Result<i64, String> {
+fn parse_at(text: &str, now: &Zoned) -> Result<i64, String> {
     let text = text.trim();
     let lower = text.to_ascii_lowercase();
     let failure = || "Sorry, could not parse that date!".to_owned();
     let relative = match lower.as_str() {
-        "now" => Some(now.clone()),
-        "today" => Some(now.clone()),
+        "now" | "today" => Some(now.clone()),
         "yesterday" => Some(now.checked_sub(Span::new().days(1)).map_err(err)?),
         "tomorrow" => Some(now.checked_add(Span::new().days(1)).map_err(err)?),
         _ => None,
@@ -327,7 +325,10 @@ fn parse_at(text: &str, now: Zoned) -> Result<i64, String> {
     ] {
         if let Ok((dt, offset)) = datetime(text, phrase, now.time_zone()) {
             return match offset {
-                Some(offset) => offset.to_timestamp(dt).map(|t| t.as_second()).map_err(err),
+                Some(offset) => offset
+                    .to_timestamp(dt)
+                    .map(Timestamp::as_second)
+                    .map_err(err),
                 None => dt
                     .to_zoned(now.time_zone().clone())
                     .map(|dt| dt.timestamp().as_second())
@@ -366,7 +367,7 @@ mod tests {
                     timezone: DateTimezone::from_code(data[1].as_i64().unwrap()).unwrap(),
                 },
                 14 => {
-                    let actual = parse_at(text, now.clone());
+                    let actual = parse_at(text, &now);
                     if case["error"] == true {
                         assert_eq!(actual.unwrap_err(), "Sorry, could not parse that date!");
                     } else {
