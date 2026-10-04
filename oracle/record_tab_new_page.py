@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Record actual notebook popup chooser insertion before a clicked tab, default
-append and chooser cancellation. The real _ChooseNewPage receives a pages choice
+"""Record actual notebook popup chooser insertion before a clicked tab, all four default
+insertion positions and chooser cancellation. The real _ChooseNewPage receives a pages choice
 while another sibling is selected; outputs include order, selection and children.
 """
 import json

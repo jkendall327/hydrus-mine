@@ -196,9 +196,19 @@
         }
       ],
       "referenceRecording": {
-        "recorder": "oracle/record_tab_refresh.py",
-        "fixture": "oracle/fixtures/tab_refresh.json",
-        "commit": "5720be94534067a39a2c793865901193c03ef0a5"
+        "recorder": {
+          "path": "oracle/record_tab_refresh.py",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_refresh.json",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_fixture"
+        },
+        "observed": "Recursive initialized-page dispatch and search states, per-leaf and notebook weights, advanced visibility and clipboard output."
       }
     },
     {
@@ -234,9 +244,19 @@
         }
       ],
       "referenceRecording": {
-        "recorder": "oracle/record_tab_refresh.py",
-        "fixture": "oracle/fixtures/tab_refresh.json",
-        "commit": "5720be94534067a39a2c793865901193c03ef0a5"
+        "recorder": {
+          "path": "oracle/record_tab_refresh.py",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_refresh.json",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_fixture"
+        },
+        "observed": "Recursive initialized-page dispatch and search states, per-leaf and notebook weights, advanced visibility and clipboard output."
       }
     },
     {
@@ -272,13 +292,199 @@
         }
       ],
       "referenceRecording": {
-        "recorder": "oracle/record_tab_refresh.py",
-        "fixture": "oracle/fixtures/tab_refresh.json",
-        "commit": "5720be94534067a39a2c793865901193c03ef0a5"
+        "recorder": {
+          "path": "oracle/record_tab_refresh.py",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_refresh.json",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_fixture"
+        },
+        "observed": "Recursive initialized-page dispatch and search states, per-leaf and notebook weights, advanced visibility and clipboard output."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2164-new-page",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Open real page chooser in frozen clicked row notebook; use current configured insertion position, preserve destination through selection changes, include unused-space right-click action, retain blank child when choosing page-of-pages.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 789,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "consumer"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 166,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "typed_setting"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1446,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "option_registration"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_new_page.rs",
+          "line": 70,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_control_comparison"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_new_page.py",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_new_page.json",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _ChooseNewPage11 cases: four default positions, explicit here overriding each position, cancellation, names/order/selection/blank children. Exact GUI Pages dropdown labels/default additionally from options_dialog.json."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2168-new-page-here",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Open chooser with frozen parent and clicked sibling anchor; insert immediately before that sibling independently of default placement; cancellation changes no tree or selection and clears pending position; reject removed/moved destination before importer queue creation.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+      "limits": [
+        "Native cancellation clears the pending position, unlike reference retained _next_new_page_index, preventing stale placement on later creation."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 789,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "consumer"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 166,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "typed_setting"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1446,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "option_registration"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_new_page.rs",
+          "line": 143,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_control_comparison"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_new_page.py",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_new_page.json",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _ChooseNewPage11 cases: four default positions, explicit here overriding each position, cancellation, names/order/selection/blank children. Exact GUI Pages dropdown labels/default additionally from options_dialog.json."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-opening-and-closing-put-new-page-tabs-on",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Exact GUI Pages choice labels/order/value import for four insertion positions; cancelled edits and invalid choice leave persisted setting unchanged; apply changes real creation immediately and survives reopen, with explicit here anchor taking precedence.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1435,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "consumer"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 166,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "typed_setting"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1446,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "option_registration"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_new_page.rs",
+          "line": 225,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_control_comparison"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_new_page.py",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_new_page.json",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _ChooseNewPage11 cases: four default positions, explicit here overriding each position, cancellation, names/order/selection/blank children. Exact GUI Pages dropdown labels/default additionally from options_dialog.json."
       }
     }
   ],
-  "completedOriginalLeafCount": 6,
+  "completedOriginalLeafCount": 9,
   "validation": {
     "reference": "Real-client recorder completed cleanly.",
     "local": [
