@@ -1,4 +1,144 @@
 {
+  "tabs": [
+    {
+      "tab": "favourites",
+      "service": "my tags",
+      "tags": [
+        "parity:root",
+        "parity:amber old",
+        "parity:favorite new"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old → parity:amber",
+            "    parity:root",
+            "    parity:colour"
+          ]
+        },
+        {
+          "tag": "parity:favorite new",
+          "rows": [
+            "parity:favorite new"
+          ]
+        },
+        {
+          "tag": "parity:root",
+          "rows": [
+            "parity:root"
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "favourites",
+      "service": "all known tags",
+      "tags": [
+        "parity:root",
+        "parity:amber old",
+        "parity:favorite new"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old"
+          ]
+        },
+        {
+          "tag": "parity:favorite new",
+          "rows": [
+            "parity:favorite new"
+          ]
+        },
+        {
+          "tag": "parity:root",
+          "rows": [
+            "parity:root"
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "children",
+      "context": [
+        "parity:root"
+      ],
+      "limit": 40,
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber"
+          ]
+        },
+        {
+          "tag": "parity:colour",
+          "rows": [
+            "parity:colour"
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "children",
+      "context": [
+        "parity:root"
+      ],
+      "limit": 1,
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber"
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "children",
+      "context": [
+        "parity:root"
+      ],
+      "limit": null,
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber"
+          ]
+        },
+        {
+          "tag": "parity:colour",
+          "rows": [
+            "parity:colour"
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "children",
+      "context": [
+        "parity:root",
+        "parity:colour"
+      ],
+      "limit": 40,
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber"
+          ]
+        }
+      ]
+    }
+  ],
+  "children_control": {
+    "value": 40,
+    "min": 1,
+    "max": 1000000
+  },
   "detached_inputs": [
     {
       "kind": "additional",
@@ -272,8 +412,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         },
         {
@@ -281,8 +421,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         }
       ],
@@ -310,8 +450,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         },
         {
@@ -319,8 +459,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         }
       ],
@@ -446,7 +586,7 @@
       "consumed": false,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:amber\nparity:new",
           "title": "Want to paste everything?"
         }
       ],
@@ -460,7 +600,7 @@
       "consumed": true,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:amber\nparity:new",
           "title": "Want to paste everything?"
         }
       ],

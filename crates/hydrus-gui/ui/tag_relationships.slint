@@ -16,6 +16,8 @@ export component TagRelationshipsWindow inherits Window {
     in property <[ListText]> right-tags;
     in property <[ListText]> left-suggestions;
     in property <[ListText]> right-suggestions;
+    in property <int> left-tab;
+    in property <int> right-tab;
     in property <int> left-highlighted: -1;
     in property <int> right-highlighted: -1;
     in property <int> autocomplete-height: 11;
@@ -40,6 +42,7 @@ export component TagRelationshipsWindow inherits Window {
     callback enter-tags(bool, string);
     callback autocomplete-edited(bool, string);
     callback autocomplete-fetch(bool);
+    callback autocomplete-tab(bool, int);
     callback autocomplete-move(bool, int);
     callback autocomplete-chosen(bool, int);
     callback autocomplete-paste(bool, bool) -> bool;
@@ -132,6 +135,8 @@ export component TagRelationshipsWindow inherits Window {
                         text <=> root.left-input;
                         suggestions: root.left-suggestions;
                         highlighted: root.left-highlighted;
+                        tab-index: root.left-tab;
+                        tab-chosen(i) => { root.autocomplete-tab(false, i); }
                         list-height: root.autocomplete-height;
                         edited(text) => { root.autocomplete-edited(false, text); }
                         entered => { root.enter-tags(false, self.text); }
@@ -158,6 +163,8 @@ export component TagRelationshipsWindow inherits Window {
                         text <=> root.right-input;
                         suggestions: root.right-suggestions;
                         highlighted: root.right-highlighted;
+                        tab-index: root.right-tab;
+                        tab-chosen(i) => { root.autocomplete-tab(true, i); }
                         list-height: root.autocomplete-height;
                         edited(text) => { root.autocomplete-edited(true, text); }
                         entered => { root.enter-tags(true, self.text); }

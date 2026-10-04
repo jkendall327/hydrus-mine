@@ -29,6 +29,25 @@ impl Setting for FavouriteTags {
     const KEY: &'static str = "favourite_tags";
 }
 
+/// Shared tag-autocomplete tabs: the children result cap and service-specific most-used tags.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct TagAutocompleteTabs {
+    pub children_limit: Option<usize>,
+    pub most_used: std::collections::BTreeMap<String, Vec<String>>,
+}
+impl Default for TagAutocompleteTabs {
+    fn default() -> Self {
+        Self {
+            children_limit: Some(40),
+            most_used: std::collections::BTreeMap::new(),
+        }
+    }
+}
+impl Setting for TagAutocompleteTabs {
+    const KEY: &'static str = "tag_autocomplete_tabs";
+}
+
 /// File viewing statistics: whether they are recorded, and which viewers'
 /// statistics count as "views" and "view time" when a search or sort does
 /// not name viewers (the reference's `file_viewing_statistics_active` and

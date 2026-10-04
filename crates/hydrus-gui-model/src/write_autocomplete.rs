@@ -16,6 +16,7 @@ use hydrus_store::{
 pub struct Suggestion {
     pub tag: String,
     pub label: String,
+    pub colour_tag: String,
     pub counted: bool,
     /// Expanded parent rows belong to their originating tag, as in the Qt list.
     pub parent_row: bool,
@@ -61,6 +62,30 @@ pub fn paste(text: &str, button: bool, options: &TagEditingSettings) -> Paste {
     }
 }
 
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub enum Tab {
+    #[default]
+    Tags,
+    Favourites,
+    Children,
+}
+impl Tab {
+    pub fn index(self) -> usize {
+        match self {
+            Self::Tags => 0,
+            Self::Favourites => 1,
+            Self::Children => 2,
+        }
+    }
+    pub fn from_index(index: usize) -> Self {
+        match index {
+            1 => Self::Favourites,
+            2 => Self::Children,
+            _ => Self::Tags,
+        }
+    }
+}
+
 pub struct WriteAutocomplete {
     store: Arc<Store>,
     service: ServiceKey,
@@ -69,6 +94,8 @@ pub struct WriteAutocomplete {
     rows: Vec<Suggestion>,
     suggestions: Vec<(String, String)>,
     highlighted: usize,
+    tab: Tab,
+    context_tags: std::collections::BTreeSet<String>,
 }
 impl std::fmt::Debug for WriteAutocomplete {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -89,6 +116,8 @@ impl WriteAutocomplete {
             rows: Vec::new(),
             suggestions: Vec::new(),
             highlighted: 0,
+            tab: Tab::Tags,
+            context_tags: std::collections::BTreeSet::new(),
         }
     }
     pub fn options(&self) -> TagEditingSettings {
@@ -98,6 +127,22 @@ impl WriteAutocomplete {
         self.service = service;
         self.location = location;
         self.refresh(false);
+    }
+    pub fn tab(&self) -> Tab {
+        self.tab
+    }
+    pub fn set_tab(&mut self, tab: Tab) {
+        self.tab = tab;
+        self.refresh(false);
+    }
+    pub fn set_context_tags(&mut self, tags: impl IntoIterator<Item = String>) {
+        let context = tags.into_iter().collect();
+        if self.context_tags != context {
+            self.context_tags = context;
+            if self.tab == Tab::Children {
+                self.refresh(false);
+            }
+        }
     }
     pub fn text(&self) -> &str {
         &self.text
@@ -150,7 +195,7 @@ impl WriteAutocomplete {
             .collect();
     }
     fn search(&self, manual: bool) -> Option<Vec<Suggestion>> {
-        if self.text.trim().is_empty() {
+        if self.tab == Tab::Tags && self.text.trim().is_empty() {
             return Some(Vec::new());
         }
         let input = AutocompleteInput::parse(&self.text);
@@ -188,35 +233,99 @@ impl WriteAutocomplete {
             include_current: true,
             include_pending: true,
         };
-        let mut matches = self
-            .store
-            .read(|conn| {
-                let rules = settings::get::<AutocompleteSettings>(conn)?.rules(&self.service);
-                let Some(query) = options.query(&input, &rules, manual) else {
-                    return Ok(Vec::new());
-                };
-                autocomplete::search_tags_for_write(
-                    conn,
-                    registry,
-                    &snapshot.display,
-                    &scope,
-                    &query,
-                    service,
-                )
-            })
-            .ok()?;
-        matches.sort_by(|a, b| {
-            b.count
-                .min_total()
-                .cmp(&a.count.min_total())
-                .then(a.tag.cmp(&b.tag))
-        });
-        let graph = snapshot.display.get(service);
-        let typed = if self.text.contains('*') || self.text.starts_with("system:") {
-            None
-        } else {
-            Tag::new(&self.text)
+        let mut matches = match self.tab {
+            Tab::Tags => self
+                .store
+                .read(|conn| {
+                    let rules = settings::get::<AutocompleteSettings>(conn)?.rules(&self.service);
+                    let Some(query) = options.query(&input, &rules, manual) else {
+                        return Ok(Vec::new());
+                    };
+                    autocomplete::search_tags_for_write(
+                        conn,
+                        registry,
+                        &snapshot.display,
+                        &scope,
+                        &query,
+                        service,
+                    )
+                })
+                .ok()?,
+            Tab::Favourites => {
+                let favourites: settings::FavouriteTags = self.store.read(settings::get).ok()?;
+                let mut tags = pasted_tags(&favourites.0.join("\n"));
+                tags.sort();
+                tags.into_iter()
+                    .map(|tag| TagMatch {
+                        tag,
+                        count: CountRange::default(),
+                    })
+                    .collect()
+            }
+            Tab::Children => self
+                .store
+                .read(|conn| {
+                    let sources: Vec<_> = scope.tag_service.map_or_else(
+                        || registry.tag_services().map(|s| s.id).collect(),
+                        |id| vec![id],
+                    );
+                    let tags: Vec<_> = self
+                        .context_tags
+                        .iter()
+                        .filter_map(|t| Tag::new(t))
+                        .collect();
+                    let context = hydrus_store::master::tag_ids(conn, &tags)?;
+                    let mut children = std::collections::BTreeSet::new();
+                    for source in sources {
+                        let graph = snapshot.display.get(source);
+                        for id in context.values() {
+                            children.extend(graph.descendants(*id).iter().copied());
+                        }
+                    }
+                    children.retain(|id| !context.values().any(|c| c == id));
+                    let mut display_scope = scope.clone();
+                    display_scope.display = TagDisplayType::Display;
+                    let mut children = autocomplete::count_tags(
+                        conn,
+                        registry,
+                        &display_scope,
+                        &children.into_iter().collect::<Vec<_>>(),
+                    )?;
+                    let options: settings::TagAutocompleteTabs = settings::get(conn)?;
+                    if let Some(limit) = options.children_limit {
+                        children.truncate(limit);
+                    }
+                    Ok(children
+                        .into_iter()
+                        .map(|m| TagMatch {
+                            tag: m.tag,
+                            count: CountRange::default(),
+                        })
+                        .collect())
+                })
+                .ok()?,
         };
+        if self.tab == Tab::Tags {
+            matches.sort_by_cached_key(|m| {
+                (
+                    std::cmp::Reverse(m.count.min_total()),
+                    format!("{} {}", m.tag, m.count.suffix()),
+                )
+            });
+        }
+        let graph_service = if self.tab == Tab::Favourites {
+            registry.by_key(&options.write_tag_service).ok()?.id
+        } else {
+            service
+        };
+        let graph = snapshot.display.get(graph_service);
+        let typed =
+            if self.tab != Tab::Tags || self.text.contains('*') || self.text.starts_with("system:")
+            {
+                None
+            } else {
+                Tag::new(&self.text)
+            };
         if let Some(typed) = &typed {
             let at = matches.iter().position(|m| m.tag == typed.as_str());
             let exact = at.map_or_else(
@@ -260,6 +369,16 @@ impl WriteAutocomplete {
         let prefs = self.options();
         let mut rows = Vec::new();
         for m in matches {
+            if self.tab == Tab::Children {
+                rows.push(Suggestion {
+                    colour_tag: m.tag.clone(),
+                    label: presentation.render(&m.tag),
+                    tag: m.tag,
+                    counted: false,
+                    parent_row: false,
+                });
+                continue;
+            }
             let tag = Tag::new(&m.tag)?;
             let (ideal, parents) = self
                 .store
@@ -301,6 +420,7 @@ impl WriteAutocomplete {
             }
             rows.push(Suggestion {
                 tag: m.tag.clone(),
+                colour_tag: m.tag.clone(),
                 label,
                 counted: m.count.max_current > 0 || m.count.max_pending > 0,
                 parent_row: false,
@@ -309,6 +429,7 @@ impl WriteAutocomplete {
                 rows.extend(parents.into_iter().map(|parent| Suggestion {
                     tag: m.tag.clone(),
                     label: format!("    {}", presentation.render(&parent)),
+                    colour_tag: parent,
                     counted: m.count.max_current > 0 || m.count.max_pending > 0,
                     parent_row: true,
                 }));
@@ -325,7 +446,8 @@ pub struct TagEntry {
     tags: std::collections::BTreeSet<String>,
 }
 impl TagEntry {
-    pub fn new(input: WriteAutocomplete, initial: &[String]) -> Self {
+    pub fn new(mut input: WriteAutocomplete, initial: &[String]) -> Self {
+        input.set_context_tags(initial.iter().cloned());
         Self {
             input,
             tags: initial
@@ -343,6 +465,7 @@ impl TagEntry {
             if !self.tags.remove(&tag) {
                 self.tags.insert(tag);
             }
+            self.input.set_context_tags(self.tags.iter().cloned());
             self.input.clear();
         }
     }
@@ -352,11 +475,13 @@ impl TagEntry {
                 .filter_map(|t| Tag::new(t))
                 .map(|t| t.as_str().to_owned()),
         );
+        self.input.set_context_tags(self.tags.iter().cloned());
         self.input.clear();
     }
     pub fn remove(&mut self, index: usize) {
         if let Some(tag) = self.tags.iter().nth(index).cloned() {
             self.tags.remove(&tag);
+            self.input.set_context_tags(self.tags.iter().cloned());
         }
     }
 }

@@ -423,6 +423,52 @@ fn chained_in_namespaces(
     Ok(with_sibling_chains(graph, &in_namespaces))
 }
 
+/// Count an explicit set of tag IDs, retaining zero-count tags for children tabs.
+pub fn count_tags(
+    conn: &Connection,
+    services: &ServiceRegistry,
+    scope: &TagSearchScope,
+    tags: &[TagId],
+) -> Result<Vec<TagMatch>> {
+    let mut merged: HashMap<TagId, CountRange> =
+        tags.iter().map(|id| (*id, CountRange::default())).collect();
+    let tag_services: Vec<_> = scope.tag_service.map_or_else(
+        || services.tag_services().map(|s| s.id).collect(),
+        |id| vec![id],
+    );
+    for service in tag_services {
+        let tables = MappingTables::new(service);
+        let table = match scope.display {
+            TagDisplayType::Storage => tables.counts,
+            TagDisplayType::Display => tables.display_counts,
+        };
+        for &domain in &scope.domains {
+            let counts = DomainCounts {
+                conn,
+                table: &table,
+                domain,
+                include_current: scope.include_current,
+                include_pending: scope.include_pending,
+            };
+            for (tag, range) in counts.for_tags(tags)? {
+                merged.entry(tag).or_default().merge(range);
+            }
+        }
+    }
+    let texts = master::tags(conn, tags)?;
+    let mut matches: Vec<_> = merged
+        .into_iter()
+        .filter_map(|(id, count)| {
+            texts.get(&id).map(|t| TagMatch {
+                tag: t.as_str().to_owned(),
+                count,
+            })
+        })
+        .collect();
+    sort_matches(&mut matches);
+    Ok(matches)
+}
+
 /// Run an autocomplete search.
 ///
 /// Results are sorted by count, largest first, then by their text as the

@@ -51,10 +51,12 @@ pub(crate) fn open(
                 .map(|(tag, row)| list_text(row, colours.tag(tag)))
                 .collect();
             window.set_tags(ModelRc::new(VecModel::from(tags)));
+            window
+                .set_autocomplete_tab(i32::try_from(model.autocomplete_tab().index()).unwrap_or(0));
             let suggestions: Vec<ListText> = model
-                .suggestions()
+                .suggestion_rows()
                 .iter()
-                .map(|(tag, label)| list_text(label, colours.tag(tag)))
+                .map(|r| list_text(&r.label, colours.tag(&r.colour_tag)))
                 .collect();
             window.set_suggestions(ModelRc::new(VecModel::from(suggestions)));
             window.set_highlighted(
@@ -176,6 +178,23 @@ pub(crate) fn open(
             let text = model.text().to_owned();
             model.set_text(&text);
             drop(model);
+            refresh();
+        }
+    });
+    window.on_tab_chosen({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let pending = pending_paste.clone();
+        move |i| {
+            if !active.get() || pending.borrow().is_some() {
+                return;
+            }
+            model.borrow_mut().choose_autocomplete_tab(
+                hydrus_gui_model::write_autocomplete::Tab::from_index(
+                    usize::try_from(i).unwrap_or(0),
+                ),
+            );
             refresh();
         }
     });
