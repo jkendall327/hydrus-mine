@@ -100,3 +100,4 @@ pub mod gallery_source;
 pub mod viewer_closing;
 
 pub mod viewer_cursor;
+pub mod namespace_sorts;

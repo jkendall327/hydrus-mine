@@ -92,3 +92,4 @@ mod subscription_quality;
 mod viewer_closing;
 
 mod viewer_cursor;
+mod namespace_sorts;
