@@ -231,7 +231,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
                         let Some(script)=editor.draft.script(login) else { continue; };
                         match hydrus_net::login::logged_in(&store,script,&domain) {
                             Ok(true)=>continue,
-                            Err(error)=>{window.set_error(error.to_string().into());return;},
+                            Err(error)=>{window.set_error(error.into());return;},
                             Ok(false)=>{}
                         }
                         eligible.push(crate::login_test_window::Input { source:store.clone(),script:script.clone(),domain,credentials:login.credentials.clone(),test:false });
@@ -247,14 +247,13 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
             "back-login"=>{attempts.borrow_mut().clear();window.set_confirming_login(false);window.set_question("".into());},
             "confirm-login"=>{
                 if attempts.borrow().is_empty(){return;}
-                match editor.borrow().save(&store) {
-                    Err(error)=>window.set_error(error.to_string().into()),
-                    Ok(())=>{
-                        let inputs=std::mem::take(&mut *attempts.borrow_mut());
-                        close();
-                        *status.borrow_mut()="starting login attempts".into();
-                        start_next(&run,Rc::new(RefCell::new(inputs.into())),status.clone());
-                    }
+                if let Err(error) = editor.borrow().save(&store) {
+                    window.set_error(error.to_string().into());
+                } else {
+                    let inputs=std::mem::take(&mut *attempts.borrow_mut());
+                    close();
+                    *status.borrow_mut()="starting login attempts".into();
+                    start_next(&run,Rc::new(RefCell::new(inputs.into())),status.clone());
                 }
             },
             "credentials"=>{
@@ -267,7 +266,14 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
         if activate{window.set_question("Activate this login script for this domain?".into());}}Ok(())}});
                 match crate::login_credential_window::open_credentials(&definitions,&values,&credentials,applied){Ok(child)=>{window.set_child_open(true);let weak=weak.clone();child.on_closed(move||{if let Some(window)=weak.upgrade(){window.set_child_open(false);}});},Err(error)=>window.set_error(error.to_string().into())}
             },
-            "activate"|"leave-inactive"=>{if let Some(domain)=pending.borrow_mut().take(){if action=="activate" && let Some(login)=editor.borrow_mut().draft.domains.get_mut(&domain){login.active=true;}}window.set_question("".into());show(&window,&editor.borrow());},
+            "activate"|"leave-inactive"=>{
+                let domain = pending.borrow_mut().take();
+                if let Some(domain) = domain && action == "activate"
+                    && let Some(login) = editor.borrow_mut().draft.domains.get_mut(&domain) {
+                    login.active = true;
+                }
+                window.set_question("".into());show(&window,&editor.borrow());
+            },
             "flip-active"|"scrub-delays"|"scrub-invalidity"=>{let mut editor=editor.borrow_mut();let selected=editor.selected_domains();for domain in selected{
                 if action=="scrub-invalidity"{let login=&editor.draft.domains[&domain];
         if !login.active||login.validity!=Validity::Invalid{continue;}let Some(script)=editor.draft.script(login)else{continue;};let result=script.check_credentials_for_entry(&login.credentials);let login=editor.draft.domains.get_mut(&domain).expect("selected domain");match result{Ok(())=>{login.validity=Validity::Untested;login.validity_error.clear();},Err(error)=>{login.validity_error=error;}}}
