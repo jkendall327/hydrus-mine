@@ -2873,9 +2873,18 @@ mod tests {
         let pages = pages(&before);
         let mut values = values(&pages, &before);
         let viewer = pages.iter().position(|p| p.name == "media viewer").unwrap();
+        let option_index = |page: usize, label: &str| {
+            pages[page]
+                .options()
+                .iter()
+                .position(|option| option.label == label)
+                .unwrap()
+        };
+        let durations = option_index(viewer, "Slideshow durations:");
+        let once = option_index(viewer, "Always play media once through before moving on:");
         // (the rest is set regardless)
-        values[viewer][0] = Value::Text("1.0,soon".into());
-        values[viewer][1] = Value::Check(true);
+        values[viewer][durations] = Value::Text("1.0,soon".into());
+        values[viewer][once] = Value::Check(true);
         let (after, problems) = applied(&pages, &before, &values);
         assert_eq!(
             problems,
@@ -2884,12 +2893,12 @@ mod tests {
         assert_eq!(after.slideshow.durations, before.slideshow.durations);
         assert!(after.slideshow.once_through);
         // those above zero are kept; with none, they are left
-        values[viewer][0] = Value::Text("2.5, 7, 0".into());
+        values[viewer][durations] = Value::Text("2.5, 7, 0".into());
         assert_eq!(
             applied(&pages, &before, &values).0.slideshow.durations,
             [2.5, 7.0]
         );
-        values[viewer][0] = Value::Text("0".into());
+        values[viewer][durations] = Value::Text("0".into());
         assert_eq!(
             applied(&pages, &before, &values).0.slideshow.durations,
             before.slideshow.durations
@@ -2899,19 +2908,24 @@ mod tests {
             .iter()
             .position(|p| p.name == "media playback")
             .unwrap();
-        values[playback][1] = Value::Text("0.5,big".into());
+        let zooms = option_index(playback, "Media zooms:");
+        values[playback][zooms] = Value::Text("0.5,big".into());
         assert_eq!(
             applied(&pages, &before, &values).1,
             ["Could not parse those zooms, so they were not saved!"]
         );
-        values[playback][1] = Value::Text("0.5, 2".into());
+        values[playback][zooms] = Value::Text("0.5, 2".into());
         assert_eq!(
             applied(&pages, &before, &values).0.media_viewer.media_zooms,
             [0.5, 2.0]
         );
         let ratings = pages.iter().position(|p| p.name == "ratings").unwrap();
+        let rating_size = option_index(
+            ratings,
+            "Media viewer like/dislike and numerical rating icon size:",
+        );
         for bad in ["big", "300"] {
-            values[ratings][0] = Value::Float(bad.into());
+            values[ratings][rating_size] = Value::Float(bad.into());
             let (after, problems) = applied(&pages, &before, &values);
             assert_eq!(problems.len(), 1, "{bad}");
             assert_eq!(
@@ -2919,7 +2933,7 @@ mod tests {
                 before.media_viewer.rating_icon_size
             );
         }
-        values[ratings][0] = Value::Float("16.5".into());
+        values[ratings][rating_size] = Value::Float("16.5".into());
         assert_eq!(
             applied(&pages, &before, &values)
                 .0
