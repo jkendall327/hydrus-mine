@@ -2077,3 +2077,13 @@ the canvas edge, underneath the media. All four checkboxes default enabled, as i
 hydrus; Apply updates the current viewer, while Cancel retains its settings.
 The reference recording `viewer_hover_options.json` covers the actual hover
 layout gates and background draw calls, including independent combinations.
+The shared suggestion menu also shows sibling ideals and parent/child lookups
+from all real tag services, grouped by common service membership with the
+reference's ten-item display cap. Add siblings/parents opens an owned relationship
+editor seeded on every service tab. Those dialogs now select the configured
+default service and remember real tab changes immediately, including after
+Cancel; disabling memory preserves the configured default. Closing the write-tag
+owner cancels its relationship child and prevents stale Apply. The reference
+recorder runs the actual relationship lookup and initialization workers and
+records all service seeds and preference changes; model and native child tests
+check graph publication, cancellation and owner lifetimes.

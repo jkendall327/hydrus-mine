@@ -428,8 +428,12 @@ pub(crate) fn open(
             let previous = b.model.service();
             b.inputs[previous].0.set_text(w.get_left_input().as_str());
             b.inputs[previous].1.set_text(w.get_right_input().as_str());
-            b.model
-                .choose_service(usize::try_from(i).unwrap_or(usize::MAX));
+            if let Err(e) = b
+                .model
+                .choose_service_remembered(usize::try_from(i).unwrap_or(usize::MAX))
+            {
+                w.set_error(format!("could not remember tag service: {e}").into());
+            }
             drop(b);
             refresh();
         }

@@ -20,6 +20,10 @@ pub enum Decoration {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Action {
     Copy(String),
+    Relationship {
+        kind: hydrus_store::display::RelationKind,
+        tags: Vec<String>,
+    },
     Launch {
         location: LocationContext,
         context: TagContext,
@@ -192,6 +196,7 @@ impl WriteAutocomplete {
             }
         }
         entries.push(Entry::Menu("copy".into(), copy_entries));
+        entries.extend(relationship_entries(self.store(), &selected.tag).unwrap_or_default());
         let tag = &selected.tag;
         let store = self.store();
         let defaults: settings::SearchDefaults = store.read(settings::get).unwrap_or_default();
@@ -271,4 +276,200 @@ impl WriteAutocomplete {
         entries.push(Entry::Menu("favourites".into(), favourite_entries));
         entries
     }
+}
+
+fn spam(entries: &mut Vec<Entry>, labels: &[(String, String)]) {
+    let count = if labels.len() > 10 { 9 } else { labels.len() };
+    entries.extend(
+        labels
+            .iter()
+            .take(count)
+            .map(|(label, text)| copy(label, text)),
+    );
+    if labels.len() > count {
+        let label = format!("{} more...", labels.len() - count);
+        entries.push(copy(&label, &label));
+    }
+}
+fn sorted_tags(tags: &mut [String]) {
+    use hydrus_core::tag_sort::{TagGroupBy, TagSort, TagSortType, sort_tags};
+    sort_tags(
+        &TagSort {
+            sort_type: TagSortType::Tag,
+            ascending: true,
+            group_by: TagGroupBy::Nothing,
+        },
+        tags,
+        String::as_str,
+        |_| 0,
+        &[],
+    );
+}
+fn relationship_entries(store: &Store, tag: &str) -> hydrus_store::Result<Vec<Entry>> {
+    use hydrus_store::display::RelationKind;
+    use std::collections::{BTreeMap, BTreeSet};
+    let snapshot = store.snapshot();
+    let mut services: Vec<_> = [
+        hydrus_core::ServiceType::LocalTag,
+        hydrus_core::ServiceType::TagRepository,
+    ]
+    .into_iter()
+    .flat_map(|ty| snapshot.services.of_type(ty))
+    .collect();
+    services.sort_by_cached_key(|s| {
+        (
+            usize::from(s.service_type() != hydrus_core::ServiceType::LocalTag),
+            s.name.to_lowercase(),
+        )
+    });
+    let selected = Tag::new(tag).expect("cleaned suggestion");
+    let id = store.read(|conn| hydrus_store::master::tag_id(conn, &selected))?;
+    let mut ideals: BTreeMap<String, BTreeSet<usize>> = BTreeMap::new();
+    let mut siblings: BTreeMap<String, BTreeSet<usize>> = BTreeMap::new();
+    let mut parents: BTreeMap<String, BTreeSet<usize>> = BTreeMap::new();
+    let mut children: BTreeMap<String, BTreeSet<usize>> = BTreeMap::new();
+    let mut all_siblings = BTreeSet::new();
+    if let Some(id) = id {
+        for (index, service) in services.iter().enumerate() {
+            let graph = snapshot.display.get(service.id);
+            let chain = graph.chain(id);
+            let ancestors = graph.ancestors(id);
+            let descendants = graph.descendants(id);
+            let ids: Vec<_> = chain
+                .iter()
+                .chain(ancestors)
+                .chain(descendants)
+                .copied()
+                .collect();
+            let texts = store.read(|conn| hydrus_store::master::tags(conn, &ids))?;
+            for sibling in &chain {
+                let text = texts[sibling].as_str().to_owned();
+                if text != tag {
+                    all_siblings.insert(text.clone());
+                }
+                if *sibling == graph.ideal(id) {
+                    ideals.entry(text).or_default().insert(index);
+                } else if text != tag {
+                    siblings.entry(text).or_default().insert(index);
+                }
+            }
+            for parent in ancestors {
+                parents
+                    .entry(texts[parent].as_str().to_owned())
+                    .or_default()
+                    .insert(index);
+            }
+            for child in descendants {
+                children
+                    .entry(texts[child].as_str().to_owned())
+                    .or_default()
+                    .insert(index);
+            }
+        }
+    }
+    let names = |group: &BTreeSet<usize>| {
+        if group.len() == services.len() {
+            "all services".to_owned()
+        } else {
+            group
+                .iter()
+                .map(|i| services[*i].name.clone())
+                .collect::<Vec<_>>()
+                .join(", ")
+        }
+    };
+    let mut sibling_entries = vec![item(
+        format!("add siblings to {tag}"),
+        Action::Relationship {
+            kind: RelationKind::Siblings,
+            tags: vec![tag.to_owned()],
+        },
+    )];
+    for (ideal, group) in ideals {
+        if ideal != tag {
+            sibling_entries.push(copy(
+                format!("ideal is \"{ideal}\" on: {}", names(&group)),
+                ideal,
+            ));
+        }
+    }
+    type Groups = BTreeMap<BTreeSet<usize>, (Vec<String>, Vec<String>)>;
+    let mut groups: Groups = BTreeMap::new();
+    for (sibling, group) in siblings {
+        groups.entry(group).or_default().0.push(sibling);
+    }
+    let mut sibling_groups: Vec<_> = groups.into_iter().collect();
+    sibling_groups.sort_by_key(|(group, _)| (std::cmp::Reverse(group.len()), names(group)));
+    for (group, (mut tags, _)) in sibling_groups {
+        if group.len() != services.len() {
+            let label = format!("--{}--", names(&group));
+            sibling_entries.push(copy(&label, &label));
+        }
+        sorted_tags(&mut tags);
+        spam(
+            &mut sibling_entries,
+            &tags
+                .into_iter()
+                .map(|tag| (tag.clone(), tag))
+                .collect::<Vec<_>>(),
+        );
+    }
+    let num_parents = parents.len();
+    let num_children = children.len();
+    let mut parent_entries = vec![item(
+        format!("add parents to {tag}"),
+        Action::Relationship {
+            kind: RelationKind::Parents,
+            tags: vec![tag.to_owned()],
+        },
+    )];
+    let mut groups: Groups = BTreeMap::new();
+    for (tag, group) in parents {
+        groups.entry(group).or_default().0.push(tag);
+    }
+    for (tag, group) in children {
+        groups.entry(group).or_default().1.push(tag);
+    }
+    let mut parent_groups: Vec<_> = groups.into_iter().collect();
+    parent_groups.sort_by_key(|(group, _)| (std::cmp::Reverse(group.len()), names(group)));
+    for (group, (mut parents, mut children)) in parent_groups {
+        if group.len() != services.len() {
+            let label = format!("--{}--", names(&group));
+            parent_entries.push(copy(&label, &label));
+        }
+        sorted_tags(&mut parents);
+        sorted_tags(&mut children);
+        spam(
+            &mut parent_entries,
+            &parents
+                .into_iter()
+                .map(|tag| (format!("parent: {tag}"), tag))
+                .collect::<Vec<_>>(),
+        );
+        spam(
+            &mut parent_entries,
+            &children
+                .into_iter()
+                .map(|tag| (format!("child: {tag}"), tag))
+                .collect::<Vec<_>>(),
+        );
+    }
+    Ok(vec![
+        Entry::Menu(
+            if all_siblings.is_empty() {
+                "no siblings".into()
+            } else {
+                format!("{} siblings", all_siblings.len())
+            },
+            sibling_entries,
+        ),
+        Entry::Menu(
+            if num_parents + num_children == 0 {
+                "no parents".into()
+            } else {
+                format!("{num_parents} parents, {num_children} children")
+            },
+            parent_entries,
+        ),
+    ])
 }
