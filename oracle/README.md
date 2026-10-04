@@ -34,6 +34,12 @@ export QT_QPA_PLATFORM=offscreen
 | `dump_note_merges.py` | `fixtures/note_merges.json`: note merging ("merge cleverly") on duplicate decisions |
 | `dump_media.py` | `fixtures/media.json`: a generated media corpus and the reference's view of it |
 | `dump_bandwidth.py` | `fixtures/bandwidth.json`: bandwidth trackers, rules and the manager stepped through time |
+| `record_network_data.py` | `fixtures/network_data.json`: real Qt bandwidth/context/rule rows, current-job rows and reset questions |
+| `record_network_sessions.py` | `fixtures/network_sessions.json`: real Qt session/cookie/header rows, editor validation and clear/delete questions |
+| `record_clipboard_urls.py` | `fixtures/clipboard_urls.json`: real Qt clipboard watcher changes, independent switches, recognition and failure behavior on synthetic domains |
+| `record_tag_migration.py` | `fixtures/tag_migration.json`: real Qt migration controls/questions and reference mapping/pair destination changes |
+| `record_downloader_interchange.py` | `fixtures/downloader_interchange.json` and `.png`: reference definition formats, recent version upgrades and Rust JSON/PNG exports loaded by Python |
+| `record_subscription_add.py` | `fixtures/subscription_add.json`: real Qt separate gallery chooser and subscription editor acceptance/cancellation chain |
 | `dump_metadata_flags.py` | `fixtures/metadata_flags.json`: the XMP, IPTC and software/source flags of the corpus and of `fixtures/metadata/` (images carrying those) |
 | `dump_delete_lock.py` | `fixtures/delete_lock.json`: Client API deletes, duplicate deletes and trash emptying with the archived-file delete lock on, and each file's inbox state and domains after each |
 | `dump_tag_rendering.py` | `fixtures/tag_rendering.json`: awkward tags as `RenderTag` shows them to the user under several presentation options |
