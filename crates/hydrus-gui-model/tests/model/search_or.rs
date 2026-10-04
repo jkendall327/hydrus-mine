@@ -4,8 +4,7 @@ use serde_json::{Value, json};
 
 #[test]
 fn staged_or_replays_actual_read_broadcasts_rewind_cancel_and_single_unwrap() {
-    let fixture: Value =
-        serde_json::from_str(include_str!("../../../../../oracle/fixtures/read_or.json")).unwrap();
+    let fixture: Value = hydrus_testkit::fixture_json("read_or.json");
     let text = TextContext::default();
     let mut draft = Construction::default();
     let mut search = Vec::new();
