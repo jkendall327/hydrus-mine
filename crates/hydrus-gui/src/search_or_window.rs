@@ -10,14 +10,30 @@ use std::{
     sync::Arc,
 };
 
-pub type Slot = Rc<RefCell<Option<SearchOrWindow>>>;
+/// Inspection belongs to the same explicit owner as the dialog and its children.
+#[derive(Clone, Default)]
+pub struct Slot {
+    window: Rc<RefCell<Option<SearchOrWindow>>>,
+    nested: Rc<RefCell<Option<Self>>>,
+    pub system: Rc<RefCell<Option<PredicateEditorWindow>>>,
+}
+impl std::ops::Deref for Slot {
+    type Target = RefCell<Option<SearchOrWindow>>;
+    fn deref(&self) -> &Self::Target {
+        &self.window
+    }
+}
+impl Slot {
+    /// The currently open recursive child of this owner, if any.
+    pub fn child(&self) -> Option<Self> {
+        self.nested
+            .borrow()
+            .clone()
+            .filter(|child| child.borrow().is_some())
+    }
+}
 pub type Applied = Rc<dyn Fn(Vec<Predicate>)>;
 pub type ValidOwner = Rc<dyn Fn() -> bool>;
-thread_local! { static LAST: RefCell<Option<slint::Weak<SearchOrWindow>>> = const { RefCell::new(None) }; }
-pub fn last_opened() -> Option<SearchOrWindow> {
-    LAST.with(|last| last.borrow().as_ref().and_then(slint::Weak::upgrade))
-        .filter(|window| window.window().is_visible())
-}
 pub fn cancel(slot: &Slot) {
     let window = slot
         .borrow()
@@ -171,12 +187,14 @@ pub fn open(
         active: Cell::new(true),
         owner,
         nested: Slot::default(),
-        system: Rc::default(),
+        system: slot.system.clone(),
         watch_owner: slint::Timer::default(),
     });
+    *slot.nested.borrow_mut() = Some(state.nested.clone());
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
-        let slot = Rc::downgrade(slot);
+        let slot = Rc::downgrade(&slot.window);
+        let nested = Rc::downgrade(&slot.nested);
         let state = state.clone();
         move || {
             state.watch_owner.stop();
@@ -194,6 +212,9 @@ pub fn open(
             }
             if let Some(slot) = slot.upgrade() {
                 slot.borrow_mut().take();
+            }
+            if let Some(nested) = nested.upgrade() {
+                nested.borrow_mut().take();
             }
         }
     });
@@ -449,7 +470,6 @@ pub fn open(
     );
     show(&window, &state);
     *slot.borrow_mut() = Some(window.clone_strong());
-    LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));
     window.show()?;
     Ok(window)
 }
