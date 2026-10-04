@@ -8,10 +8,10 @@ use std::rc::Rc;
 type Slot = Rc<RefCell<Option<SessionDialog>>>;
 
 /// Bind page naming and retain the child window until acceptance/cancellation.
-pub(crate) fn bind(window: &MainWindow, pages: Rc<RefCell<Pages>>, change: ChangePages) -> Slot {
+pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>, change: ChangePages) -> Slot {
     let slot: Slot = Rc::default();
     window.on_tab_rename_requested({
-        let pages = pages.clone();
+        let pages = Rc::clone(pages);
         let change = change.clone();
         let slot = slot.clone();
         move |depth, index| {

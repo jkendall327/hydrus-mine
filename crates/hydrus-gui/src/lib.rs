@@ -1288,8 +1288,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
-    let tab_name_dialog =
-        tab_context_window::bind(window, pages.clone(), Rc::new(change_pages.clone()));
+    let tab_name_dialog = tab_context_window::bind(window, &pages, Rc::new(change_pages.clone()));
     // the menu bar, its titles shown again as what they say changes
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();

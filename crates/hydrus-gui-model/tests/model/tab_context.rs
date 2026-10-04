@@ -86,7 +86,6 @@ fn menus_expose_six_sorts_and_only_possible_moves() {
 #[test]
 fn dynamic_close_select_move_and_sort_menus_match_real_reference() {
     use hydrus_gui_model::main_menu::Entry;
-    let fixture = hydrus_testkit::fixture_json("tab_actions.json");
     fn subtree(entries: &[Entry], label: &str) -> serde_json::Value {
         let Entry::Menu { entries, .. } = entries.iter().find(|e| e.label() == label).unwrap()
         else {
@@ -94,6 +93,7 @@ fn dynamic_close_select_move_and_sort_menus_match_real_reference() {
         };
         serde_json::json!(entries.iter().map(Entry::label).collect::<Vec<_>>())
     }
+    let fixture = hydrus_testkit::fixture_json("tab_actions.json");
     for recorded in fixture["menus"].as_array().unwrap() {
         let clicked = recorded["clicked"].as_u64().unwrap() as usize;
         let selected = recorded["selected"].as_u64().unwrap() as usize;

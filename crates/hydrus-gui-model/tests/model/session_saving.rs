@@ -123,22 +123,6 @@ fn clear_and_load_asks_as_the_references_does() {
 
 #[test]
 fn backup_menu_labels_match_the_reference() {
-    let fixture = hydrus_testkit::fixture_json("session_backups.json");
-    assert_eq!(
-        hydrus_gui_model::session_saving::backup_timestamp(
-            fixture["timestamp"].as_i64().unwrap(),
-            &jiff::tz::TimeZone::UTC
-        ),
-        fixture["label_utc"].as_str().unwrap()
-    );
-    let facts = hydrus_gui_model::main_menu::Facts {
-        session_backups: vec![(
-            "backup test".into(),
-            vec![fixture["timestamp"].as_i64().unwrap()],
-        )],
-        ..hydrus_gui_model::main_menu::Facts::default()
-    };
-    let pages = hydrus_gui_model::main_menu::menubar(&facts);
     fn find<'a>(
         entries: &'a [hydrus_gui_model::main_menu::Entry],
         label: &str,
@@ -155,6 +139,22 @@ fn backup_menu_labels_match_the_reference() {
             })
             .unwrap()
     }
+    let fixture = hydrus_testkit::fixture_json("session_backups.json");
+    assert_eq!(
+        hydrus_gui_model::session_saving::backup_timestamp(
+            fixture["timestamp"].as_i64().unwrap(),
+            &jiff::tz::TimeZone::UTC
+        ),
+        fixture["label_utc"].as_str().unwrap()
+    );
+    let facts = hydrus_gui_model::main_menu::Facts {
+        session_backups: vec![(
+            "backup test".into(),
+            vec![fixture["timestamp"].as_i64().unwrap()],
+        )],
+        ..hydrus_gui_model::main_menu::Facts::default()
+    };
+    let pages = hydrus_gui_model::main_menu::menubar(&facts);
     let sessions = find(find(&pages, "&pages"), "sessions");
     let names = find(sessions, "append backup");
     let timestamps = find(names, "backup test");

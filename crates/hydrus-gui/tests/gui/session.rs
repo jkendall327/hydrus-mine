@@ -1976,6 +1976,13 @@ fn tab_close_focus_settings_and_context_navigation_reach_consumers() {
 
 #[test]
 fn tab_popup_bulk_close_cancellation_and_acceptance_are_wired() {
+    fn choose(ui: &MainWindow, pane: i32, label: &str) {
+        let lines = ui.get_menu_panes().row_data(pane as usize).unwrap().lines;
+        let index = (0..lines.row_count())
+            .find(|&i| lines.row_data(i).unwrap().label == label)
+            .unwrap();
+        ui.invoke_menu_line_clicked(pane, index as i32, 200.0, 100.0, 10.0);
+    }
     let windows = headless::init();
     let (_dirs, store) = store();
     let original: Vec<_> = (0..3)
@@ -2006,13 +2013,6 @@ fn tab_popup_bulk_close_cancellation_and_acceptance_are_wired() {
         .unwrap();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store).unwrap());
-    fn choose(ui: &MainWindow, pane: i32, label: &str) {
-        let lines = ui.get_menu_panes().row_data(pane as usize).unwrap().lines;
-        let index = (0..lines.row_count())
-            .find(|&i| lines.row_data(i).unwrap().label == label)
-            .unwrap();
-        ui.invoke_menu_line_clicked(pane, index as i32, 200.0, 100.0, 10.0);
-    }
     ui.invoke_tab_menu_requested(0, 0, 30.0, 55.0);
     choose(&ui, 0, "close other pages");
     assert_eq!(ui.get_question(), "Close 2 other pages?");
@@ -2038,6 +2038,25 @@ fn tab_popup_bulk_close_cancellation_and_acceptance_are_wired() {
 
 #[test]
 fn send_down_and_rename_prompts_match_reference_including_cancellation() {
+    fn tree(pages: &[Page]) -> serde_json::Value {
+        serde_json::json!(
+            pages
+                .iter()
+                .map(|page| match &page.content {
+                    PageContent::Pages(children) =>
+                        serde_json::json!({"name": page.name, "children": tree(children)}),
+                    _ => serde_json::json!({"name": page.name}),
+                })
+                .collect::<Vec<_>>()
+        )
+    }
+    fn choose(ui: &MainWindow, pane: i32, label: &str) {
+        let lines = ui.get_menu_panes().row_data(pane as usize).unwrap().lines;
+        let index = (0..lines.row_count())
+            .find(|&i| lines.row_data(i).unwrap().label == label)
+            .unwrap();
+        ui.invoke_menu_line_clicked(pane, index as i32, 200.0, 100.0, 10.0);
+    }
     use hydrus_gui::tab_context::NotebookSettings;
     let _windows = headless::init();
     let (_dirs, store) = store();
@@ -2056,25 +2075,6 @@ fn send_down_and_rename_prompts_match_reference_including_cancellation() {
             )
         })
         .collect();
-    fn choose(ui: &MainWindow, pane: i32, label: &str) {
-        let lines = ui.get_menu_panes().row_data(pane as usize).unwrap().lines;
-        let index = (0..lines.row_count())
-            .find(|&i| lines.row_data(i).unwrap().label == label)
-            .unwrap();
-        ui.invoke_menu_line_clicked(pane, index as i32, 200.0, 100.0, 10.0);
-    }
-    fn tree(pages: &[Page]) -> serde_json::Value {
-        serde_json::json!(
-            pages
-                .iter()
-                .map(|page| match &page.content {
-                    PageContent::Pages(children) =>
-                        serde_json::json!({"name": page.name, "children": tree(children)}),
-                    _ => serde_json::json!({"name": page.name}),
-                })
-                .collect::<Vec<_>>()
-        )
-    }
     for step in fixture["send"].as_array().unwrap() {
         store
             .write(|ctx| {
@@ -2471,9 +2471,6 @@ fn harvest_tree(store: &Store, rows: &[Page]) -> serde_json::Value {
 
 #[test]
 fn duplicate_and_collapse_menus_replay_real_ordered_media_and_cancellation() {
-    let _windows = headless::init();
-    let (_dirs, store) = store();
-    let fixture = hydrus_testkit::fixture_json("tab_harvest.json");
     fn choose(ui: &MainWindow, pane: i32, label: &str) {
         let lines = ui.get_menu_panes().row_data(pane as usize).unwrap().lines;
         let index = (0..lines.row_count())
@@ -2481,6 +2478,9 @@ fn duplicate_and_collapse_menus_replay_real_ordered_media_and_cancellation() {
             .unwrap();
         ui.invoke_menu_line_clicked(pane, index as i32, 200.0, 100.0, 10.0);
     }
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("tab_harvest.json");
     for (action, steps) in [
         ("collapse", &fixture["collapse"]),
         ("duplicate", &fixture["duplicate"]),

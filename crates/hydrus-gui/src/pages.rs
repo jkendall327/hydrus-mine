@@ -94,6 +94,9 @@ pub struct Tabs {
     pub selected: usize,
 }
 
+/// Frozen source keys, ordered media and warning for a tab collapse.
+pub type TabHarvest = (Vec<PageKey>, Vec<HashId>, String);
+
 pub struct Pages {
     store: Arc<Store>,
     session: Session,
@@ -1593,18 +1596,18 @@ impl Pages {
         index: usize,
         side: crate::tab_context::Close,
     ) -> Option<(Vec<PageKey>, String)> {
-        let pages = self.notebook_at(depth)?;
-        let indices = crate::tab_context::close_indices(index, pages.len(), side);
-        let targets: Vec<Page> = indices.into_iter().map(|i| pages[i].clone()).collect();
-        if targets.is_empty() {
-            return None;
-        }
         fn count(page: &Page) -> usize {
             1 + if let PageContent::Pages(children) = &page.content {
                 children.iter().map(count).sum()
             } else {
                 0
             }
+        }
+        let pages = self.notebook_at(depth)?;
+        let indices = crate::tab_context::close_indices(index, pages.len(), side);
+        let targets: Vec<Page> = indices.into_iter().map(|i| pages[i].clone()).collect();
+        if targets.is_empty() {
+            return None;
         }
         let held = targets.iter().map(count).sum();
         let keys = targets.iter().map(|p| p.key).collect();
@@ -1739,7 +1742,7 @@ impl Pages {
         depth: usize,
         index: usize,
         scope: crate::tab_context::Send,
-    ) -> Result<Option<(Vec<PageKey>, Vec<HashId>, String)>, String> {
+    ) -> Result<Option<TabHarvest>, String> {
         let keys = self.send_tab_targets(depth, index, scope);
         if keys.is_empty() {
             return Ok(None);

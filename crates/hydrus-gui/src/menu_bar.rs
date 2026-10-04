@@ -602,7 +602,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::ClearHistory => hooks.pages.borrow_mut().clear_history(),
         Command::Refresh => window.invoke_refresh_page(),
         Command::AppendSessionBackup { name, timestamp } => {
-            change_pages(&|pages| pages.append_session_backup(&name, timestamp))
+            change_pages(&|pages| pages.append_session_backup(&name, timestamp));
         }
         Command::AppendSession(name) => change_pages(&|pages| pages.append_session(&name)),
         // asked first, then (any page objecting) asked again, as the
