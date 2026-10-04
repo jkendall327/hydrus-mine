@@ -1,5 +1,6 @@
 // One write-tag input for editors. State, fetching and paste decisions live in Rust.
-import { Button, LineEdit, ScrollView } from "std-widgets.slint";
+import { Button, LineEdit, ScrollView, ListView } from "std-widgets.slint";
+import { Question } from "favourites.slint";
 import { ListText, Theme } from "theme.slint";
 
 export component WriteTagInput inherits FocusScope {
@@ -61,6 +62,73 @@ export component WriteTagInput inherits FocusScope {
                         TouchArea { enabled: root.enabled; clicked => { root.chosen(i); } }
                     }
                 }
+            }
+        }
+    }
+}
+
+
+export component WriteTagsWindow inherits Window {
+    in property <string> window-title: "edit tags";
+    title: root.window-title;
+    preferred-width: 460px;
+    preferred-height: 600px;
+    background: Theme.window;
+    in-out property <string> text;
+    in property <[ListText]> tags;
+    in property <[ListText]> suggestions;
+    in property <int> highlighted: -1;
+    in property <int> list-height: 11;
+    in property <string> question;
+    in property <string> error;
+    callback edited(string);
+    callback entered();
+    callback fetch();
+    callback move-highlight(int);
+    callback chosen(int);
+    callback paste(bool) -> bool;
+    callback answered(bool);
+    callback remove(int);
+    callback apply();
+    callback cancel();
+    forward-focus: input;
+    FocusScope {
+        capture-key-pressed(event) => {
+            if event.text == Key.Escape { root.cancel(); return accept; }
+            reject
+        }
+        VerticalLayout {
+            padding: 10px;
+            spacing: 6px;
+            ListView {
+                vertical-stretch: 1;
+                for tag[i] in root.tags: Rectangle {
+                    height: 22px;
+                    Text { text: tag.text; color: tag.colour; x: 4px; vertical-alignment: center; }
+                    TouchArea { enabled: root.question == ""; double-clicked => { root.remove(i); } }
+                }
+            }
+            input := WriteTagInput {
+                enabled: root.question == "";
+                text <=> root.text;
+                suggestions: root.suggestions;
+                highlighted: root.highlighted;
+                list-height: root.list-height;
+                edited(text) => { root.edited(text); }
+                entered => { root.entered(); }
+                fetch => { root.fetch(); }
+                move-highlight(by) => { root.move-highlight(by); }
+                chosen(i) => { root.chosen(i); }
+                paste(button) => { root.paste(button) }
+            }
+            if root.question != "": Text { text: "Want to paste everything?"; color: Theme.text; }
+            if root.question != "": Question { text: root.question; answered(yes) => { root.answered(yes); } }
+            if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Button { enabled: root.question == ""; text: "apply"; clicked => { root.apply(); } }
+                Button { text: "cancel"; clicked => { root.cancel(); } }
             }
         }
     }

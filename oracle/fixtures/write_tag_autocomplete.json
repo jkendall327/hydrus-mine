@@ -1,4 +1,110 @@
 {
+  "detached_inputs": [
+    {
+      "kind": "additional",
+      "action": "initial",
+      "tags": [
+        "parity:caller initial"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "additional",
+      "action": "paste",
+      "tags": [
+        "parity:caller initial",
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "additional",
+      "action": "repeat_paste",
+      "tags": [
+        "parity:caller initial",
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "additional",
+      "action": "typed_toggle",
+      "tags": [
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "additional",
+      "action": "cancel",
+      "tags": [
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "initial",
+      "tags": [
+        "parity:caller initial"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "paste",
+      "tags": [
+        "parity:caller initial",
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "repeat_paste",
+      "tags": [
+        "parity:caller initial",
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "typed_toggle",
+      "tags": [
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "cancel",
+      "tags": [
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    }
+  ],
   "relationship_inputs": [
     {
       "kind": "siblings",
@@ -166,8 +272,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:root",
-            "    parity:colour"
+            "    parity:colour",
+            "    parity:root"
           ]
         },
         {
@@ -175,8 +281,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:root",
-            "    parity:colour"
+            "    parity:colour",
+            "    parity:root"
           ]
         }
       ],
@@ -204,8 +310,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:root",
-            "    parity:colour"
+            "    parity:colour",
+            "    parity:root"
           ]
         },
         {
@@ -213,8 +319,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:root",
-            "    parity:colour"
+            "    parity:colour",
+            "    parity:root"
           ]
         }
       ],
@@ -340,7 +446,7 @@
       "consumed": false,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:amber\nparity:new",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
           "title": "Want to paste everything?"
         }
       ],
@@ -354,7 +460,7 @@
       "consumed": true,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:amber\nparity:new",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
           "title": "Want to paste everything?"
         }
       ],

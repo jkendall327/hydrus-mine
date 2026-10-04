@@ -316,3 +316,40 @@ fn relationship_inputs_replay_real_add_only_paste_and_opposite_side_removal() {
         assert_eq!(reopened.inputs(), (Vec::new(), Vec::new()));
     }
 }
+
+#[test]
+fn detached_import_tag_lists_replay_reference_and_never_mutate_caller() {
+    use hydrus_gui_model::write_autocomplete::TagEntry;
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let (_dir, store) = seeded(&fixture);
+    for (kind, name) in [("additional", "my tags"), ("whitelist", "all known tags")] {
+        let key = store.snapshot().services.by_name(name).unwrap().key.clone();
+        let caller = vec!["parity:caller initial".to_owned()];
+        let mut model = TagEntry::new(
+            WriteAutocomplete::new(store.clone(), key, LocationContext::default()),
+            &caller,
+        );
+        for event in fixture["detached_inputs"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|v| v["kind"] == kind)
+        {
+            match event["action"].as_str().unwrap() {
+                "initial" | "cancel" => {}
+                "paste" | "repeat_paste" => {
+                    model.paste(&["parity:caller initial".into(), "parity:child new".into()])
+                }
+                "typed_toggle" => {
+                    model.input.set_text("parity:caller initial");
+                    model.enter(None);
+                }
+                action => panic!("unknown action {action}"),
+            }
+            assert_eq!(json!(model.tags()), event["tags"]);
+            assert_eq!(json!(caller), event["caller"]);
+        }
+        drop(model);
+        assert_eq!(caller, ["parity:caller initial"]);
+    }
+}

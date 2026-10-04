@@ -1226,7 +1226,7 @@ parent and sibling rows, manual fetch, a scrollable suggestions list, multiline
 paste and all six Tag Editing autocomplete preferences. The reference's
 favourite/children suggestion tabs and tag context menus are still absent.
 Declining a multiline paste leaves the existing text draft intact; Qt returns
-that event to its line editor's normal paste handling. The import-options text inputs have not yet adopted this shared widget. Expanded
+that event to its line editor's normal paste handling. Import additional-tags and whitelist fields now open a detached shared write-tag editor; their raw multiline fields remain available as well. Expanded
 parent rows enter their originating child, matching Qt's logical-list selection.
 
 File Search list heights and floating policy reach new-page presentation;
@@ -1248,3 +1248,10 @@ shared search engine and native search pages. Sort-refresh eligibility matches
 the reference's supported system sorts and excludes all-known-file searches;
 namespace/rating sorts and the other unsupported system sorts only reorder the
 current subset. The executor's existing explicit-limit semantics are preserved.
+
+The import tag child uses the shared write-input behavior and detached Apply/
+Cancel transaction. Its lists and button layout differ from Qt's input-tags
+modal dialog, and the parent still offers its existing raw multiline fields.
+Full autocomplete context menus, favourite and child tabs remain outstanding
+across the write inputs. Expanded-row viewport height uses native fixed row
+pixels rather than Qt's font-metric character height.

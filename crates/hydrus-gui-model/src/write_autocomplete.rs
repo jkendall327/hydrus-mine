@@ -298,18 +298,61 @@ impl WriteAutocomplete {
             rows.push(Suggestion {
                 tag: m.tag.clone(),
                 label,
-                counted: m.count.min_total() > 0,
+                counted: m.count.max_current > 0 || m.count.max_pending > 0,
                 parent_row: false,
             });
             if prefs.autocomplete_expand_parents {
                 rows.extend(parents.into_iter().map(|parent| Suggestion {
                     tag: m.tag.clone(),
                     label: format!("    {}", presentation.render(&parent)),
-                    counted: m.count.min_total() > 0,
+                    counted: m.count.max_current > 0 || m.count.max_pending > 0,
                     parent_row: true,
                 }));
             }
         }
         Some(rows)
+    }
+}
+
+/// A detached list of tags: Apply returns it to the caller; Cancel discards it.
+#[derive(Debug)]
+pub struct TagEntry {
+    pub input: WriteAutocomplete,
+    tags: std::collections::BTreeSet<String>,
+}
+impl TagEntry {
+    pub fn new(input: WriteAutocomplete, initial: &[String]) -> Self {
+        Self {
+            input,
+            tags: initial
+                .iter()
+                .filter_map(|t| Tag::new(t))
+                .map(|t| t.as_str().to_owned())
+                .collect(),
+        }
+    }
+    pub fn tags(&self) -> Vec<String> {
+        self.tags.iter().cloned().collect()
+    }
+    pub fn enter(&mut self, index: Option<usize>) {
+        if let Some(tag) = self.input.chosen(index) {
+            if !self.tags.remove(&tag) {
+                self.tags.insert(tag);
+            }
+            self.input.clear();
+        }
+    }
+    pub fn paste(&mut self, tags: &[String]) {
+        self.tags.extend(
+            tags.iter()
+                .filter_map(|t| Tag::new(t))
+                .map(|t| t.as_str().to_owned()),
+        );
+        self.input.clear();
+    }
+    pub fn remove(&mut self, index: usize) {
+        if let Some(tag) = self.tags.iter().nth(index).cloned() {
+            self.tags.remove(&tag);
+        }
     }
 }

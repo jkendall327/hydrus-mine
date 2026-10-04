@@ -120,6 +120,9 @@ export component ImportOptionsWindow inherits Window {
     // a tag service's "get tags" filter button clicked
     callback edit-get-tags-filter(int);
     in-out property <string> tag-whitelist;
+    in property <bool> tag-child-open;
+    callback edit-whitelist();
+    callback edit-additional-tags(int);
     // tags
     in property <[TagServiceRow]> tag-services;
     in property <bool> gets-no-tags;
@@ -429,6 +432,7 @@ export component ImportOptionsWindow inherits Window {
                             }
                         }
                         Label { text: "file whitelist (a file must have one of these tags, if any are set; a tag a line): "; }
+                        Button { text: "edit whitelist tags…"; enabled: !root.tag-child-open; clicked => { root.edit-whitelist(); } }
                         TextEdit {
                             height: 100px;
                             text <=> root.tag-whitelist;
@@ -468,6 +472,7 @@ export component ImportOptionsWindow inherits Window {
                                     }
                                 }
                                 Label { text: "additional tags, one a line: "; }
+                                Button { text: "edit additional tags…"; enabled: !root.tag-child-open; clicked => { root.edit-additional-tags(i); } }
                                 TextEdit {
                                     height: 60px;
                                     text: service.additional;

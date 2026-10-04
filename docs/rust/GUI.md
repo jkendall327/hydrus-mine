@@ -1897,3 +1897,10 @@ explicit larger limit overrides it. The sort-refresh preference defaults on:
 changing a supported database sort reruns a synchronized, explicitly limited
 local search to choose its new sorted subset. Paused searches, implicit-only
 limits, all-known-file locations, and unsupported sorts keep the current subset.
+
+Import options' additional-tags and file whitelist lists can also be edited in
+a detached shared write-tag window. It uses the additional-tags service or all
+known tags for whitelist suggestions. Typed entry toggles a listed tag, paste
+only adds, and Apply returns the accepted list to the parent options draft.
+Child Cancel/native close preserves the caller's list, unlocks the parent, and
+parent closure cancels the child and invalidates its pending answers.

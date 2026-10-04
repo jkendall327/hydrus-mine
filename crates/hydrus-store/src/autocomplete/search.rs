@@ -571,7 +571,7 @@ fn search_tags_inner(
         if let Some(service) = write_display_service {
             let graph = graphs.get(service);
             return if graph.in_sibling_chain(tag) {
-                graph.chain(tag).to_vec()
+                graph.chain(tag)
             } else {
                 Vec::new()
             };
