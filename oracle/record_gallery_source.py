@@ -75,6 +75,17 @@ def record(session):
                 except HydrusExceptions.CancelledException: value = None; cancelled = True
                 assert not answers
                 cases.append({'case': name, 'dialogs': list(dialogs), 'value': value, 'cancelled': cancelled})
+            from hydrus.client.gui.panels.options.DownloadingPanel import DownloadingPanel
+            manager.SetDefaultGUGKeyAndName(gugs[0].GetGUGKeyAndName())
+            options_panel = DownloadingPanel(session.controller.gui, session.controller.new_options)
+            options_states = [{'caption': options_panel._default_gug.text(), 'saved': pair(manager.GetDefaultGUGKeyAndName())}]
+            for scripted in [[None], [4, 0]]:
+                answers[:] = scripted
+                options_panel._default_gug._Edit()
+                options_states.append({'caption': options_panel._default_gug.text(), 'saved': pair(manager.GetDefaultGUGKeyAndName())})
+            options_panel.UpdateOptions()
+            options_states.append({'caption': options_panel._default_gug.text(), 'saved': pair(manager.GetDefaultGUGKeyAndName())})
+            options_panel.deleteLater()
             manager.SetGUGs([])
             for for_sub in [False, True]:
                 warnings.clear()
@@ -83,7 +94,7 @@ def record(session):
                 cases.append({'case': 'empty subscription' if for_sub else 'empty', 'warnings': list(warnings)})
         finally: W.DialogEdit.exec = original_exec; M.ShowWarning = original_warning
         return {'gugs': [g.GetSerialisableTuple() for g in gugs], 'classes': [c.GetSerialisableTuple() for c in classes], 'parser': parser.GetSerialisableTuple(),
-            'display': [g.GetGUGKey().hex() for g in gugs if g.GetName() != 'beta hidden'], 'labels': labels, 'functional': functional, 'cases': cases}
+            'options_states': options_states, 'display': [g.GetGUGKey().hex() for g in gugs if g.GetName() != 'beta hidden'], 'labels': labels, 'functional': functional, 'cases': cases}
     return session.controller.CallBlockingToQt(session.controller.gui, qt)
 
 

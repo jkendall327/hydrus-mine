@@ -207,6 +207,16 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     out.kind = 17;
                     out.text = "edit favourite tags".into();
                 }
+                (Kind::GallerySource, Value::GallerySource(current)) => {
+                    out.kind = 19;
+                    let downloaders: hydrus_parse::Downloaders =
+                        store.read(hydrus_store::settings::get).unwrap_or_default();
+                    out.text = hydrus_gui_model::gallery_source::caption(
+                        &downloaders.gugs,
+                        current.as_ref(),
+                    )
+                    .into();
+                }
                 (Kind::RegexFavourites, Value::RegexFavourites(_)) => {
                     out.kind = 14;
                     out.text = "edit regex favourites".into();
@@ -259,8 +269,16 @@ pub(crate) fn open(
     let mut editor = Editor::new(settings);
     editor.set_local_location(resolved);
     editor.resolve_tag_services(store);
+    let downloaders: hydrus_parse::Downloaders =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let current = hydrus_gui_model::gallery_source::resolve(
+        &downloaders.gugs,
+        editor.edited_gallery_source(),
+    );
+    editor.set_gallery_source(current);
     let editor = Rc::new(RefCell::new(editor));
     let regex_slot: crate::regex_favourites_window::Slot = Rc::default();
+    let gallery_slot: crate::gallery_source_window::Slot = Rc::default();
     let location_slot: Rc<RefCell<Option<crate::LocationsWindow>>> = Rc::default();
     let tag_slot: crate::write_tag_window::Slot = Rc::default();
     let active = Rc::new(Cell::new(true));
@@ -312,6 +330,7 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let slot = slot.clone();
         let regex_slot = regex_slot.clone();
+        let gallery_slot = gallery_slot.clone();
         let location_slot = location_slot.clone();
         let tag_slot = tag_slot.clone();
         let active = active.clone();
@@ -328,6 +347,7 @@ pub(crate) fn open(
             }
             crate::locations_window::cancel(&location_slot);
             crate::regex_favourites_window::cancel(&regex_slot);
+            crate::gallery_source_window::cancel(&gallery_slot);
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -446,6 +466,37 @@ pub(crate) fn open(
                 crate::write_tag_window::open_favourites(&store, &initial.0, &tag_slot, accepted)
             {
                 eprintln!("could not open favourite tags: {error}");
+            }
+        }
+    });
+    window.on_gallery_source_clicked({
+        let editor = editor.clone();
+        let gallery_slot = gallery_slot.clone();
+        let store = store.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        move || {
+            if !active.get() {
+                return;
+            }
+            let current = editor.borrow().edited_gallery_source();
+            let applied: crate::gallery_source_window::Applied = Rc::new({
+                let editor = editor.clone();
+                let active = active.clone();
+                let show_page = show_page.clone();
+                move |value| {
+                    if !active.get() {
+                        return Err("The options window has closed.".into());
+                    }
+                    editor.borrow_mut().set_gallery_source(Some(value));
+                    show_page();
+                    Ok(())
+                }
+            });
+            if let Err(error) =
+                crate::gallery_source_window::open(&store, current, false, &gallery_slot, applied)
+            {
+                eprintln!("could not open gallery source: {error}");
             }
         }
     });

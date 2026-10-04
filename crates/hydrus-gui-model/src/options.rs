@@ -131,6 +131,7 @@ pub enum Value {
     /// The index of the item chosen.
     Choice(usize),
     SavedSession(Option<String>),
+    GallerySource(Option<crate::gallery_source::KeyAndName>),
     Text(String),
     /// Text, or none (the reference's `NoneableTextCtrl`); the text is
     /// kept while none, as its text box keeps it.
@@ -182,6 +183,7 @@ pub enum Kind {
     Choice(&'static [&'static str]),
     /// Named GUI sessions plus the blank-page startup choice.
     SavedSession,
+    GallerySource,
     Text,
     NoneableText {
         none_phrase: &'static str,
@@ -1071,6 +1073,18 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "gallery downloader",
                     vec![
+                        opt(
+                            "Default download source:",
+                            Kind::GallerySource,
+                            Rc::new(|s| Value::GallerySource(s.gallery.gug.clone())),
+                            Rc::new(|s, v| match v {
+                                Value::GallerySource(value) => {
+                                    s.gallery.gug.clone_from(value);
+                                    Ok(())
+                                }
+                                _ => Err("expected a gallery source".into()),
+                            }),
+                        ),
                         int(
                             "Additional fixed time (in seconds) to wait between gallery page fetches:",
                             (1, 3600),
@@ -2893,6 +2907,27 @@ impl Editor {
             && matches!(self.values[self.page][i], Value::Checker(_))
         {
             self.values[self.page][i] = Value::Checker(options);
+        }
+    }
+
+    /// The staged default downloader pair, independent of the selected page.
+    pub fn edited_gallery_source(&self) -> Option<crate::gallery_source::KeyAndName> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| match value {
+                Value::GallerySource(current) => Some(current.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.gallery.gug.clone())
+    }
+
+    pub fn set_gallery_source(&mut self, current: Option<crate::gallery_source::KeyAndName>) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::GallerySource(_)) {
+                *value = Value::GallerySource(current);
+                return;
+            }
         }
     }
 

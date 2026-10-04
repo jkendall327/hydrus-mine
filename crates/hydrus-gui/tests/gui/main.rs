@@ -108,3 +108,5 @@ mod tag_dialog_preferences;
 mod write_autocomplete;
 
 mod network_job_control;
+
+mod gallery_source;

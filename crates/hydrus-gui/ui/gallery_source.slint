@@ -1,0 +1,53 @@
+// Reference SelectGUGKeyAndName: functional main choices, then a category list.
+import { Button, ScrollView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export component GallerySourceWindow inherits Window {
+    in property <string> window-title: "select gallery";
+    title: root.window-title;
+    preferred-width: 720px;
+    preferred-height: root.message == "" ? 340px : 190px;
+    background: Theme.window;
+    in property <[string]> galleries;
+    in-out property <int> selected: -1;
+    in property <string> message;
+    in property <string> error;
+    callback accept-clicked();
+    callback cancel();
+    forward-focus: keys;
+    keys := FocusScope {
+        capture-key-pressed(event) => {
+            if event.text == Key.Escape { root.cancel(); return accept; }
+            if event.text == Key.Return { root.accept-clicked(); return accept; }
+            if event.text == Key.DownArrow { root.selected = min(root.galleries.length - 1, root.selected + 1); return accept; }
+            if event.text == Key.UpArrow { root.selected = max(0, root.selected - 1); return accept; }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            if root.message != "": Text { text: root.message; wrap: word-wrap; color: Theme.text; }
+            if root.message == "": ScrollView {
+                vertical-stretch: 1;
+                VerticalLayout {
+                    alignment: start;
+                    for gallery[index] in root.galleries: Rectangle {
+                        min-height: 32px;
+                        background: index == root.selected ? Theme.highlight : Theme.panel;
+                        Text { x: 6px; text: gallery; wrap: word-wrap; vertical-alignment: center; color: index == root.selected ? Theme.highlight-text : Theme.text; }
+                        TouchArea {
+                            clicked => { root.selected = index; }
+                            double-clicked => { root.selected = index; root.accept-clicked(); }
+                        }
+                    }
+                }
+            }
+            if root.error != "": Text { text: root.error; wrap: word-wrap; color: Theme.text; }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Button { text: "ok"; enabled: root.message != "" || root.selected >= 0; clicked => { root.accept-clicked(); } }
+                if root.message == "": Button { text: "cancel"; clicked => { root.cancel(); } }
+            }
+        }
+    }
+}

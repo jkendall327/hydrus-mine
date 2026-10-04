@@ -46,6 +46,7 @@ mod folders_window;
 mod force_filetype_window;
 pub mod formula_window;
 mod gallery;
+pub mod gallery_source_window;
 mod grid;
 pub mod headless;
 pub mod import_options_favourites_window;

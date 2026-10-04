@@ -378,6 +378,36 @@
       }
     ]
   ],
+  "options_states": [
+    {
+      "caption": "zeta visible",
+      "saved": [
+        "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
+        "zeta visible"
+      ]
+    },
+    {
+      "caption": "zeta visible",
+      "saved": [
+        "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
+        "zeta visible"
+      ]
+    },
+    {
+      "caption": "beta hidden",
+      "saved": [
+        "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
+        "zeta visible"
+      ]
+    },
+    {
+      "caption": "beta hidden",
+      "saved": [
+        "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+        "beta hidden"
+      ]
+    }
+  ],
   "display": [
     "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
     "0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c",

@@ -357,8 +357,11 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
     for (boxes, item) in mine {
         let Item::Opt(option) = item else { continue };
         // This reference page embeds the list; native opens the same transaction
-        // in a child window, covered by dedicated regex/write-tag recordings.
-        if matches!(option.kind, Kind::RegexFavourites | Kind::FavouriteTags) {
+        // in a child window, covered by dedicated regex/write-tag/gallery-source recordings.
+        if matches!(
+            option.kind,
+            Kind::RegexFavourites | Kind::FavouriteTags | Kind::GallerySource
+        ) {
             continue;
         }
         let found = rows

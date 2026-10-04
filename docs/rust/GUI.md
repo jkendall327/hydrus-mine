@@ -2291,3 +2291,12 @@ activate the originating stored tag. Cancelling either Options or Manage Tags
 preserves saved preferences and mappings; reopening uses the saved defaults.
 The real Qt `tag_dialog_preferences.json` recording covers all sixteen flag
 combinations and inherited-row activation.
+
+Options > downloading now includes Default download source. Its button resolves
+saved downloaders by key and then name, shows renamed entries, and preserves a
+missing-entry caption. The owned gallery chooser lists functional displayed
+sources alphabetically, then separate other-gallery and non-functional groups;
+broken entries explain their real URL-class/parser/template error and remain
+selectable. Empty clients receive the reference warning. Child OK updates only
+the Options draft; Cancel, window close and parent Cancel discard it. Apply saves
+the default for newly created gallery pages and the subscription Add chooser.

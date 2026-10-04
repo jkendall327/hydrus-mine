@@ -1501,3 +1501,12 @@ selected file has the tag, multiple stored-tag selection and its full context
 menu are not implemented, and remote service petition dialogs are outside this
 local-service slice. The four preference leaves do not claim those parent
 workflow gaps complete.
+
+The default gallery-source Options control checks the installed URL classes,
+API conversions and actual parser definitions. As in the reference, nested GUGs
+skip missing members and an empty nested source is functional. Native additionally
+rejects cyclic imported nesting to keep selection bounded. Category selection
+reuses one owned chooser window for the second list; the reference opens a second
+quick dialog. Existing gallery-page and subscription source controls retain their
+previous presentation; this slice implements the Options default and verifies its
+saved value reaches those consumers.
