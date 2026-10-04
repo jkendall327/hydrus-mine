@@ -78,7 +78,18 @@ jobs:
         # Slint's GUI library and test target together exceeded 16 GiB locally.
         env:
           CARGO_BUILD_JOBS: 1
-        run: cargo test --workspace --locked --no-fail-fast
+        run: |
+          set -o pipefail
+          cargo test --workspace --locked --no-fail-fast 2>&1 | tee /tmp/hydrus-tests.log
+      - name: save immediate test diagnostics
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/hydrus-tests.log
+          if-no-files-found: ignore
+          retention-days: 3
       - name: parity ratchet
         run: cargo xtask ratchet --check
       - name: save native GUI renders
