@@ -17,7 +17,7 @@ use hydrus_core::ServiceId;
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
 const MIGRATIONS: &[&str] = &[
-    V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15,
+    V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15, V16,
 ];
 
 /// The schema version this build writes.
@@ -729,6 +729,15 @@ CREATE TABLE popups (
     key BLOB NOT NULL UNIQUE,
     -- a popups::Job, as JSON
     job TEXT NOT NULL
+) STRICT;
+";
+
+/// Empty sessions created explicitly in the network session browser.
+const V16: &str = r"
+CREATE TABLE network_sessions (
+    context_type INTEGER NOT NULL,
+    context_key TEXT NOT NULL,
+    PRIMARY KEY (context_type, context_key)
 ) STRICT;
 ";
 

@@ -132,11 +132,65 @@ pub fn session_for(conn: &Connection, context: &NetworkContext) -> Result<Networ
 fn session_exists(conn: &Connection, session: &NetworkContext) -> Result<bool> {
     Ok(conn
         .prepare_cached(
-            "SELECT 1 FROM network_cookies WHERE session_type = ? AND session_key = ? LIMIT 1",
+            "SELECT 1 FROM network_cookies WHERE session_type = ?1 AND session_key = ?2
+             UNION SELECT 1 FROM network_sessions WHERE context_type = ?1 AND context_key = ?2 LIMIT 1",
         )?
         .query_row(params![session.kind, session.data], |_| Ok(()))
         .optional()?
         .is_some())
+}
+
+/// All persisted sessions, including explicitly created empty ones.
+pub fn sessions(conn: &Connection) -> Result<Vec<NetworkContext>> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT context_type, context_key FROM network_sessions
+         UNION SELECT session_type, session_key FROM network_cookies ORDER BY 1, 2",
+    )?;
+    Ok(stmt
+        .query_map([], |r| {
+            Ok(NetworkContext {
+                kind: r.get(0)?,
+                data: r.get(1)?,
+            })
+        })?
+        .collect::<rusqlite::Result<Vec<_>>>()?)
+}
+
+/// Retain an empty session until the user explicitly clears it.
+pub fn create_session(conn: &Connection, session: &NetworkContext) -> Result<()> {
+    conn.execute(
+        "INSERT OR IGNORE INTO network_sessions VALUES (?, ?)",
+        params![session.kind, session.data],
+    )?;
+    Ok(())
+}
+
+/// Delete the selected session and all its cookies.
+pub fn clear_session(conn: &Connection, session: &NetworkContext) -> Result<()> {
+    conn.execute(
+        "DELETE FROM network_cookies WHERE session_type = ? AND session_key = ?",
+        params![session.kind, session.data],
+    )?;
+    conn.execute(
+        "DELETE FROM network_sessions WHERE context_type = ? AND context_key = ?",
+        params![session.kind, session.data],
+    )?;
+    Ok(())
+}
+
+/// Every context with custom HTTP headers.
+pub fn header_contexts(conn: &Connection) -> Result<Vec<NetworkContext>> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT DISTINCT context_type, context_key FROM network_headers ORDER BY 1, 2",
+    )?;
+    Ok(stmt
+        .query_map([], |r| {
+            Ok(NetworkContext {
+                kind: r.get(0)?,
+                data: r.get(1)?,
+            })
+        })?
+        .collect::<rusqlite::Result<Vec<_>>>()?)
 }
 
 /// A session's cookies, in the order Python's cookie jar would list them:
@@ -198,6 +252,7 @@ pub fn cookies(conn: &Connection, session: &NetworkContext) -> Result<Vec<Cookie
 /// Add a cookie to a session, replacing one with the same domain, path and
 /// name.
 pub fn set_cookie(conn: &Connection, session: &NetworkContext, cookie: &Cookie) -> Result<()> {
+    create_session(conn, session)?;
     let rest = serde_json::to_string(&cookie.rest).expect("strings serialise");
     let updated = conn
         .prepare_cached(
