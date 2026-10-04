@@ -233,7 +233,7 @@ pub fn run_pausable(
     mut progress: impl FnMut(Progress),
 ) -> Result<Progress> {
     run_timed(store, request, cancel, paused, batch_size, |p, _| {
-        progress(p)
+        progress(p);
     })
 }
 pub(super) fn run_timed(
