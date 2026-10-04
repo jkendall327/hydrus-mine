@@ -4,8 +4,9 @@
 Real QAction checks invert real global options; actual NotesPanel UpdateOptions,
 serialization and reopen are recorded. Existing editor cursors survive cog flips
 and tab switches while future note controls use the new initial position. Real
-copy buttons and middle mouse events on NotePanel emit clipboard outputs. Only
-clipboard publication/notifications are observed and cancellation is answered;
+copy buttons and middle mouse events on NotePanel emit clipboard outputs. Real
+cog mouse buttons record supported opening routes and fresh live checks. Only
+popup presentation, clipboard publication/notifications and cancellation are observed;
 no note handlers or registered media content are replaced or committed.
 """
 import json
@@ -26,7 +27,7 @@ def record(session):
     def work():
         from qtpy import QtCore as QC, QtGui as QG, QtWidgets as QW, QtTest as QT
         from hydrus.core import HydrusSerialisable
-        from hydrus.client.gui import ClientGUIDialogsQuick, ClientGUIMenus, ClientGUITopLevelWindowsPanels
+        from hydrus.client.gui import ClientGUICore, ClientGUIDialogsQuick, ClientGUIMenus, ClientGUITopLevelWindowsPanels
         from hydrus.client.gui.widgets import ClientGUICommon, ClientGUIMenuButton
         from hydrus.client.gui.panels import ClientGUIScrolledPanelsEdit
         from hydrus.client.gui.panels.options.NotesPanel import NotesPanel
@@ -113,6 +114,30 @@ def record(session):
             dialog, panel = make_dialog()
             dialogs.append(dialog)
             initial_menu = menu_state(panel)
+            core = ClientGUICore.core()
+            old_popup = core.PopupMenu
+            opened = []
+            def popup(widget, result):
+                assert widget is panel._cog_button
+                opened.append([a.isChecked() for a in result.actions() if a.isCheckable()])
+                result.deleteLater()
+            core.PopupMenu = popup
+            cog_openings = []
+            try:
+                for button, changed in ((QC.Qt.MouseButton.RightButton, False),
+                                        (QC.Qt.MouseButton.LeftButton, False),
+                                        (QC.Qt.MouseButton.RightButton, True),
+                                        (QC.Qt.MouseButton.LeftButton, True)):
+                    # Simulate another preference owner writing after this editor opened.
+                    c.new_options.SetBoolean(KEYS[2], not initial[2] if changed else initial[2])
+                    start = len(opened)
+                    QT.QTest.mouseClick(panel._cog_button, button)
+                    settle()
+                    cog_openings.append(dict(button='right' if button == QC.Qt.MouseButton.RightButton else 'left',
+                                             changed=changed, preferences=preferences(), menus=opened[start:]))
+            finally:
+                core.PopupMenu = old_popup
+                c.new_options.SetBoolean(KEYS[2], initial[2])
             initial_cursors = cursor_state(panel)
             control = panel._notebook.currentWidget()
             cursor = control.textCursor()
@@ -178,6 +203,7 @@ def record(session):
             hover.deleteLater()
             return dict(keys=KEYS, initial=initial, labels=labels, options=option_events,
                         options_cancelled=options_cancelled, notes=NOTES, menu=initial_menu,
+                        cog_openings=cog_openings,
                         initial_cursors=initial_cursors, switched_cursors=switched_cursors,
                         cursors_after_flip=cursors_after_flip, future_cursor=future_cursor,
                         inserted=inserted, future_paste=future_paste, paste_notice=paste_notice,

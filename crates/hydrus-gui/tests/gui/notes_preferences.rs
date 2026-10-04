@@ -163,6 +163,74 @@ fn options_cog_cursor_copy_and_live_hover_replay_with_owned_cancel_and_reopen() 
         cancel(&shown);
     }
     let dialog = open(&ui, &bound, 0);
+    // Replay actual cog mouse routes after another owner changes saved options.
+    // Right-click must leave the rendered window unchanged; left-click reads
+    // the current store before showing the menu, rather than its opening snapshot.
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    let _ = headless::render(&drawn, 640, 420);
+    for event in fixture["cog_openings"].as_array().unwrap() {
+        let start_at_end = event["preferences"][2].as_bool().unwrap();
+        store
+            .write(move |writer| {
+                let mut preferences: NotePreferences = settings::get(writer.conn())?;
+                preferences.start_at_end = start_at_end;
+                settings::set(writer.conn(), &preferences)
+            })
+            .unwrap();
+        let position =
+            slint::LogicalPosition::new(dialog.get_cog_x() + 16.0, dialog.get_cog_y() + 14.0);
+        dialog
+            .window()
+            .dispatch_event(WindowEvent::PointerMoved { position });
+        let before = headless::render(&drawn, 640, 420);
+        let before_windows = windows.count();
+        let button = match event["button"].as_str().unwrap() {
+            "right" => PointerEventButton::Right,
+            "left" => PointerEventButton::Left,
+            other => panic!("unrecorded cog button: {other}"),
+        };
+        dialog
+            .window()
+            .dispatch_event(WindowEvent::PointerPressed { position, button });
+        dialog
+            .window()
+            .dispatch_event(WindowEvent::PointerReleased { position, button });
+        if event["menus"].as_array().unwrap().is_empty() {
+            assert_eq!(
+                windows.count(),
+                before_windows,
+                "no right-click popup window"
+            );
+            assert_eq!(
+                headless::render_snapshot(&drawn, 640, 420),
+                before,
+                "no right-click popup overlay"
+            );
+        } else {
+            assert_eq!(
+                serde_json::json!(dialog.get_cog_checks().iter().collect::<Vec<_>>()),
+                event["menus"][0]
+            );
+            dialog.window().dispatch_event(WindowEvent::KeyPressed {
+                text: slint::platform::Key::Escape.into(),
+            });
+            dialog.window().dispatch_event(WindowEvent::KeyReleased {
+                text: slint::platform::Key::Escape.into(),
+            });
+        }
+        assert_eq!(
+            values(&store.read(settings::get::<NotePreferences>).unwrap()),
+            event["preferences"]
+        );
+    }
+    store
+        .write(|writer| {
+            let mut preferences: NotePreferences = settings::get(writer.conn())?;
+            preferences.start_at_end = true;
+            settings::set(writer.conn(), &preferences)
+        })
+        .unwrap();
+    dialog.invoke_cog_opened();
     for recorded in fixture["initial_cursors"].as_array().unwrap() {
         select(&dialog, recorded["name"].as_str().unwrap());
         assert_eq!(dialog.get_text(), recorded["text"].as_str().unwrap());
@@ -191,7 +259,6 @@ fn options_cog_cursor_copy_and_live_hover_replay_with_owned_cancel_and_reopen() 
         fixture["future_cursor"]["text"].as_str().unwrap()
     );
     assert_eq!(dialog.get_cursor(), 0);
-    let drawn = windows.get(windows.count() - 1).unwrap();
     let _ = headless::render(&drawn, 640, 420);
     dialog.invoke_focus_note();
     dialog

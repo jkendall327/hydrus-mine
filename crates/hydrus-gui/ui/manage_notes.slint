@@ -55,6 +55,8 @@ export component ManageNotesWindow inherits Window {
     in property <[bool]> cog-checks;
     callback cog-opened();
     callback cog-chosen(int);
+    out property <length> cog-x: cog.absolute-position.x;
+    out property <length> cog-y: cog.absolute-position.y;
     out property <int> cursor: note-editor.cursor;
     out property <int> anchor: note-editor.anchor;
     public function select-text(anchor: int, cursor: int) { note-editor.select-text(anchor, cursor); }
@@ -133,7 +135,10 @@ export component ManageNotesWindow inherits Window {
             }
             cog := ContextMenuArea {
                 width: 32px; height: 28px;
-                enabled: !root.asking;
+                // Qt's CogIconButton opens through its normal button activation.
+                // Disable automatic right-click/Menu-key opening, which bypasses
+                // the live preference refresh below. Explicit show remains enabled.
+                enabled: false;
                 Menu {
                     MenuItem { title: "copy all notes"; checkable: true; checked: root.cog-checks[0]; activated => { root.cog-chosen(0); } }
                     MenuItem { title: "copy as JSON"; checkable: true; checked: root.cog-checks[1]; activated => { root.cog-chosen(1); } }

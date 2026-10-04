@@ -1108,8 +1108,10 @@ if a note has it), "edit current name" (or double-clicking a tab) asks
 a new one, and "delete current note" asks first. The cog chooses all/current
 note copying and JSON/human text, starting new editors at the beginning/end,
 and viewer middle-click body-only/title-and-body copying. These four live
-preferences persist immediately, including after note-editor Cancel. "paste"
-merges JSON notes in as the
+preferences persist immediately, including after note-editor Cancel.
+The cog opens through normal button activation, refreshing checks from saved
+preferences each time; right-click does not open it, as in Qt.
+"paste" merges JSON notes in as the
 reference does (extending a note a pasted one extends, renaming on a
 clash; text it can't read is said so), and "copy URLs" copies the URLs
 in the note in view. "apply" writes the notes (each cleaned, empty ones
