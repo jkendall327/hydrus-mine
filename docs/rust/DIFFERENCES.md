@@ -1713,6 +1713,10 @@ The page-level sort cog remains a separate, unclaimed workflow.
 
 Command-palette preferences and snapshot-based provider/queue models are now
 present, with fresh Qt recordings. The Options editor now stages and persists these
-settings and migrates legacy preferences. The native Ctrl+P window, calculator
-provider and action dispatch remain pending;
-no command-palette completion is claimed by the model alone.
+settings and migrates legacy preferences. The native Ctrl+P window now queries
+and launches pages, history, favourites and the supported native main/media menu
+actions. Media results carry an action snapshot and refuse to mutate a different
+page or changed selection. The palette closes on native focus loss through the
+shared focus observer. Calculator parsing remains pending, and native menus
+retain their existing unavailable commands. No whole-palette completion is
+claimed by these first slices.

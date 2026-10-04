@@ -327,6 +327,80 @@ impl Pages {
         rows
     }
 
+    /// Snapshot real page menu labels without opening unopened pages or altering history.
+    pub fn command_palette_pages(&self) -> Vec<hydrus_gui_model::command_palette::OpenPage> {
+        fn walk(
+            owner: &Pages,
+            pages: &[Page],
+            parent: Option<&str>,
+            out: &mut Vec<hydrus_gui_model::command_palette::OpenPage>,
+        ) {
+            for page in pages {
+                let (files, progress) = owner.file_summary(page);
+                out.push(hydrus_gui_model::command_palette::OpenPage {
+                    key: page.key,
+                    name: hydrus_core::pages::name_for_menu(&page.name, files, progress, false),
+                    parent_name: parent.map(str::to_owned),
+                    notebook: matches!(page.content, PageContent::Pages(_)),
+                });
+                if let PageContent::Pages(children) = &page.content {
+                    walk(owner, children, Some(&page.name), out);
+                }
+            }
+        }
+        let mut out = Vec::new();
+        walk(self, &self.session.pages, None, &mut out);
+        out
+    }
+
+    /// Launch a palette favourite on a new named search page or the current
+    /// supported search. Stable keys and existing load_favourite consumers retain
+    /// the full search, synchronisation, sort and collect payload.
+    pub fn command_palette_favourite(
+        &mut self,
+        favourite: &hydrus_core::pages::FavouriteSearch,
+        new_page: bool,
+    ) {
+        if new_page {
+            let mut page = new_search_page_on(&self.store, favourite.search.location.clone());
+            page.name = favourite.name.clone();
+            if let PageContent::Search {
+                search,
+                synchronised,
+                sort,
+                collect,
+                ..
+            } = &mut page.content
+            {
+                *search = favourite.search.clone();
+                *synchronised = favourite.synchronised;
+                sort.clone_from(&favourite.sort);
+                collect.clone_from(&favourite.collect);
+            }
+            let initial_sync = self
+                .store
+                .read(hydrus_store::settings::get::<hydrus_store::settings::FileSearchSettings>)
+                .unwrap_or_default()
+                .search_immediately;
+            let mut opened = SearchPage::restored(
+                self.store.clone(),
+                favourite.search.clone(),
+                initial_sync,
+                favourite.sort.as_ref(),
+                Vec::new(),
+            )
+            .with_collect(favourite.collect.clone());
+            if initial_sync {
+                opened.refresh();
+            }
+            opened.load_favourite(favourite);
+            self.open.insert(page.key, Rc::new(RefCell::new(opened)));
+            self.add(page);
+        } else if matches!(self.shown().content, PageContent::Search { .. }) {
+            self.current().borrow_mut().load_favourite(favourite);
+        }
+    }
+
     /// The tabs' names, as the reference writes them, for each notebook
     /// on the way to the page shown (as [`Pages::tabs`]): each page's name
     /// with its number of files and import progress.

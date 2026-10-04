@@ -121,3 +121,5 @@ mod namespace_sorts;
 mod tag_list_display_types;
 
 mod sort_cog;
+
+mod command_palette;

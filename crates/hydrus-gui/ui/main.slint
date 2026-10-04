@@ -53,6 +53,7 @@ export { FormulaWindow, FormulaRuleWindow } from "formula_editors.slint";
 export { ConversionWindow, StringConverterWindow, StringProcessorWindow, StringStepWindow } from "string_processor.slint";
 export { AutoResolutionReviewWindow, PairRow } from "auto_resolution_review.slint";
 export { DurationField, OptionRow, OptionsWindow, SortCogItem } from "options.slint";
+export { CommandPaletteWindow, PaletteRow } from "command_palette.slint";
 export { CheckerOptionsWindow, CheckerTexts } from "checker_options.slint";
 export { SessionDialog } from "session_dialog.slint";
 export { TableColumn, TableRow }
@@ -722,6 +723,7 @@ export component MainWindow inherits Window {
     callback close-tab(int, int);
     // the reference's main window shortcuts: ctrl+t and F9 open a page,
     // ctrl+w closes the page shown
+    callback command-palette-requested();
     callback new-page();
     callback session-user-activity();
     callback session-mouse-activity();
@@ -865,6 +867,7 @@ export component MainWindow inherits Window {
                 }
                 return accept;
             }
+            if (event.modifiers.control && (event.text == "p" || event.text == "P")) { root.command-palette-requested(); return accept; }
             if (event.text == Key.F9 || (event.modifiers.control && (event.text == "t" || event.text == "T"))) {
                 root.new-page();
                 return accept;

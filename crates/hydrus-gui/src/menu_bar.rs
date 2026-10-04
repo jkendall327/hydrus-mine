@@ -76,7 +76,7 @@ pub(crate) struct Hooks {
 }
 
 /// What the menus show now: the store's facts and the pages'.
-fn facts(pages: &RefCell<Pages>, weigh: bool) -> Facts {
+pub(crate) fn facts(pages: &RefCell<Pages>, weigh: bool) -> Facts {
     let mut pages = pages.borrow_mut();
     let mut facts = match Facts::from_store(pages.store()) {
         Ok(facts) => facts,
@@ -97,7 +97,11 @@ fn facts(pages: &RefCell<Pages>, weigh: bool) -> Facts {
 
 /// Bind the menu bar; returns what shows its titles again (as what they
 /// say changes: the undo menu with pages to reopen, the pending menu).
-pub(crate) fn bind(window: &MainWindow, hooks: Hooks) -> Rc<dyn Fn()> {
+pub(crate) fn bind(
+    window: &MainWindow,
+    hooks: Hooks,
+    palette_dispatcher: &crate::command_palette_window::MainDispatcher,
+) -> Rc<dyn Fn()> {
     let hooks = Rc::new(hooks);
     let open: Rc<RefCell<OpenMenus>> = Rc::default();
     // where the bar's titles are, for menus opened by key
@@ -224,6 +228,14 @@ pub(crate) fn bind(window: &MainWindow, hooks: Hooks) -> Rc<dyn Fn()> {
             }
         }
     };
+    *palette_dispatcher.borrow_mut() = Some(Rc::new({
+        let chosen = chosen.clone();
+        let open = open.clone();
+        move |command| {
+            open.borrow_mut().close();
+            chosen(Some(command));
+        }
+    }));
     window.on_menu_title_pressed({
         let open = open.clone();
         let open_menu = open_menu.clone();

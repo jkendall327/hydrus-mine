@@ -67,6 +67,21 @@ def record(session):
         p,rows=query(1,'Palette Launch');p.resultSelected(rows[0].id);selected['menu_calls']=calls
         p,rows=query(5,'Favourite Alpha');before=notebook.count();p.resultSelected(rows[0].id)
         selected['favourite']={'name':notebook.GetCurrentMediaPage().GetName(),'new_pages':notebook.count()-before}
+        from hydrus.client import ClientApplicationCommand as CAC
+        widget=gui._locator_widget;widget.updateOptions()
+        gui.ProcessApplicationCommand(CAC.ApplicationCommand.STATICCreateSimpleCommand(CAC.SIMPLE_OPEN_COMMAND_PALETTE))
+        QW.QApplication.processEvents();QW.QApplication.processEvents()
+        widget.searchEdit.setText('Palette Alpha');widget.searchEdit.textEdited.emit('Palette Alpha')
+        QW.QApplication.processEvents();QW.QApplication.processEvents()
+        window_route={'visible':widget.isVisible(),'query':widget.searchEdit.text(),'selected_before':widget.selectedLayoutItemIndex}
+        widget.handleEditorDown()
+        chosen=widget.resultLayout.itemAt(widget.selectedLayoutItemIndex).widget()
+        window_route['selected_text']=chosen.mainTextLabel.text()
+        chosen.activate();QW.QApplication.processEvents()
+        window_route['closed_after_launch']=not widget.isVisible()
+        window_route['page']=notebook.GetCurrentMediaPage().GetName()
+        options.SetBoolean('command_palette_show_media_menu',True)
+        media_events=[snap(2,'refresh'),snap(2,'select')]
         queue=panel._command_palette_provider_order;queue_events=[];questions=[]
         queue._listbox.item(0).setSelected(True);queue._Down();queue_events.append(queue.GetData())
         old_yesno=ClientGUIDialogsQuick.GetYesNo;old_select=ClientGUIDialogsQuick.SelectFromListButtons
@@ -83,7 +98,7 @@ def record(session):
             ClientGUIDialogsQuick.GetYesNo=old_yesno;ClientGUIDialogsQuick.SelectFromListButtons=old_select
             session.controller.favourite_search_manager.SetFavouriteSearchRows(old_favourites)
             gui._menubar.removeAction(menu.menuAction());menu.deleteLater();panel.deleteLater()
-        return {'initial':initial,'events':events,'selected':selected,'queue_events':queue_events,'questions':questions,'persisted':persisted}
+        return {'initial':initial,'events':events,'selected':selected,'window_route':window_route,'media_events':media_events,'queue_events':queue_events,'questions':questions,'persisted':persisted}
     return session.controller.CallBlockingToQt(session.controller.gui,qt)
 
 def main():

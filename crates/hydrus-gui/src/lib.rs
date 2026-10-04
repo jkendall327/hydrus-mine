@@ -29,6 +29,7 @@ mod auto_resolution_rules_window;
 mod checker_options_window;
 mod client_exit;
 pub mod clipboard_monitor;
+pub mod command_palette_window;
 pub mod daemon;
 pub mod domain_mask_entry;
 pub mod downloader_definitions_window;
@@ -244,6 +245,8 @@ pub struct Bound {
     pub manage_urls: Rc<RefCell<Option<ManageUrlsWindow>>>,
     /// The options window while it is open.
     pub options: Rc<RefCell<Option<OptionsWindow>>>,
+    /// The Ctrl+P command palette while open.
+    pub command_palette: command_palette_window::Slot,
     /// The about window while it is open.
     pub about: Rc<RefCell<Option<AboutWindow>>>,
     /// Live network reviews and their detached rules editor.
@@ -1537,6 +1540,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     );
     let header_approval =
         network_header_approval::Monitor::bind(window, pages.borrow().store().clone());
+    let command_palette: command_palette_window::Slot = Rc::default();
+    let palette_dispatcher: command_palette_window::MainDispatcher = Rc::default();
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
@@ -2046,6 +2051,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 })
             },
         },
+        &palette_dispatcher,
     );
     *after_change.borrow_mut() = Some(menu_titles_shown.clone());
     // (and the status bar's network part, from the daemon's word)
@@ -3126,10 +3132,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // the right-click menu: built for the file clicked (selecting it, as
     // a click would), and its entries done
     let menu_state: MenuState = Rc::default();
+    let palette_media_items: Rc<RefCell<Vec<hydrus_gui_model::command_palette::MenuItem>>> =
+        Rc::default();
     window.on_thumbnail_menu_requested({
         let page = page.clone();
         let reselect = reselect.clone();
         let menu_state = menu_state.clone();
+        let palette_media_items = palette_media_items.clone();
         let weak = window.as_weak();
         move |index| {
             if let Ok(index) = usize::try_from(index) {
@@ -3199,6 +3208,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let slots = thumbnail_menu::Slots::new(&entries);
             let mut actions = Vec::new();
             let window_menu = thumbnail_menu_rows(&slots, &mut actions);
+            *palette_media_items.borrow_mut() =
+                command_palette_window::media_menu_items(&entries, &actions);
             *menu_state.borrow_mut() = (actions, files, url_facts);
             if let Some(window) = weak.upgrade() {
                 window.set_thumbnail_menu(window_menu);
@@ -3207,6 +3218,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     window.on_menu_chosen({
         let page = page.clone();
+        let menu_state = menu_state.clone();
         let weak = window.as_weak();
         let change_pages = change_pages.clone();
         let shown = shown.clone();
@@ -3374,6 +3386,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    command_palette_window::bind(
+        window,
+        &command_palette,
+        &pages,
+        &current,
+        &change_pages,
+        &palette_dispatcher,
+        &menu_state,
+        &palette_media_items,
+    );
     // what the Client API asked of the pages, done, and the pages and media
     // viewer as they are, kept in the store for it
     let sync: Rc<dyn Fn()> = Rc::new({
@@ -3508,6 +3530,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         embedded_metadata,
         manage_urls,
         options,
+        command_palette,
         about,
         services_review,
         network_data,

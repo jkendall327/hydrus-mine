@@ -372,6 +372,35 @@
       "new_pages": 1
     }
   },
+  "window_route": {
+    "visible": true,
+    "query": "Palette Alpha",
+    "selected_before": 0,
+    "selected_text": "<b>Palette Alpha</b>",
+    "closed_after_launch": true,
+    "page": "Palette Alpha"
+  },
+  "media_events": [
+    {
+      "provider": 2,
+      "query": "refresh",
+      "rows": [
+        {
+          "text": [
+            "<b>refresh</b>",
+            ""
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 2,
+      "query": "select",
+      "rows": []
+    }
+  ],
   "queue_events": [
     [
       1,

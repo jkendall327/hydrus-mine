@@ -2596,8 +2596,13 @@ late results cannot revive a closed palette or replace a newer query. Options
 now exposes the reference boolean controls, typed-query threshold, noneable
 limits and inline provider queue. Queue movement, confirmation, re-addition and
 all other preference edits remain in the parent draft until Apply; Cancel and
-stale callbacks preserve saved preferences. Native palette window and launch
-wiring is still being added.
+stale callbacks preserve saved preferences. Ctrl+P opens an owned frameless
+palette. Page and history results focus actual pages; favourites restore their
+full domain, predicate, sync, sort and collect context; menu/media results invoke
+existing native dispatchers. Queries run on one worker per palette and stale
+results/callbacks cannot affect a reopened owner. Arrow/Page/Home/End navigation,
+mouse activation, Escape and native focus loss are wired. The calculator
+provider is the remaining part of this palette slice.
 
 System viewing-time predicates retain the millisecond field, including when
 importing stored Python predicates or reopening recent entries. The labels and

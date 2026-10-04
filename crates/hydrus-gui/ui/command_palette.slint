@@ -1,0 +1,76 @@
+// Owner-bound command palette: fixed-height provider headings and suggestions.
+import { LineEdit, ScrollView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export struct PaletteRow { primary:string, secondary:string, heading:bool, enabled:bool, checked:int }
+export component CommandPaletteWindow inherits Window {
+    title:"command palette";
+    no-frame:true;
+    always-on-top:true;
+    preferred-width:800px;
+    preferred-height:44px + min(root.rows.length,16)*36px;
+    background:Theme.window;
+    in property <[PaletteRow]> rows;
+    in-out property <string> query;
+    in property <int> selected:-1;
+    callback query-edited(string);
+    callback move-selection(string);
+    callback activate(int);
+    callback hover(int);
+    callback poll();
+    callback native-focus(bool);
+    callback cancel();
+    forward-focus:search;
+    changed selected=>{if root.selected<0 {search.focus();}}
+    keys:=FocusScope {
+        capture-key-pressed(event)=>{
+            if event.text==Key.Escape {root.cancel();return accept;}
+            if event.text==Key.UpArrow {root.move-selection("up");return accept;}
+            if event.text==Key.DownArrow {root.move-selection("down");return accept;}
+            if event.text==Key.PageUp {root.move-selection("page-up");return accept;}
+            if event.text==Key.PageDown {root.move-selection("page-down");return accept;}
+            if event.text==Key.Home && root.selected>=0 {root.move-selection("home");return accept;}
+            if event.text==Key.End && root.selected>=0 {root.move-selection("end");return accept;}
+            if event.text==Key.Return {root.activate(root.selected);return accept;}
+            reject
+        }
+        VerticalLayout {
+            padding:4px;
+            spacing:0px;
+            search:=LineEdit {
+                text<=>root.query;
+                edited=>{root.query-edited(self.text);}
+                accepted=>{root.activate(root.selected);}
+            }
+            result-list:=ScrollView {
+                visible:root.rows.length>0;
+                height:min(root.rows.length,16)*36px;
+                property <int> selected-row:root.selected;
+                changed selected-row=>{
+                    if self.selected-row>=0 {
+                        let top=self.selected-row*36px;
+                        if top < -self.content-y {self.content-y=-top;}
+                        else if top+36px > -self.content-y+self.visible-height {self.content-y=-(top+36px-self.visible-height);}
+                    }
+                }
+                VerticalLayout {
+                    spacing:0px;
+                    for row[i] in root.rows:Rectangle {
+                        height:36px;
+                        background:root.selected==i && !row.heading ? Theme.highlight : row.heading ? Theme.panel : Theme.window;
+                        HorizontalLayout {
+                            padding:4px;
+                            spacing:6px;
+                            if row.checked>=0:Text {text:row.checked==1 ? "☑":"☐";color:Theme.text;}
+                            Text {text:row.primary;font-weight:row.heading ? 700:400;color:row.enabled || row.heading ? Theme.text:Theme.muted;overflow:elide;horizontal-stretch:1;vertical-alignment:center;}
+                            Text {text:row.secondary;color:Theme.muted;overflow:elide;preferred-width:280px;vertical-alignment:center;}
+                        }
+                        if !row.heading:TouchArea {
+                            clicked=>{root.activate(i);}
+                            changed has-hover=>{if self.has-hover {root.hover(i);}}
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
