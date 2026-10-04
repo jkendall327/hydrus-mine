@@ -1281,3 +1281,7 @@ importer editors. Their clipboard errors use the native inline error presentatio
 Favourite naming and overwrite semantics have reference recordings and model
 replays; the favourites popup and durable save/edit/delete GUI remain pending,
 so the broad favourites item is not yet complete.
+
+Page-parser network error popups use native Rust failure diagnostics and response
+text instead of Python traceback frames. Error ownership, show/copy, completion
+retention and clearing on the next example request match the recorded Qt owner.

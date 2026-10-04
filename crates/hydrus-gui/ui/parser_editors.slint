@@ -76,6 +76,8 @@ export component ParserEditWindow inherits Window {
     in-out property <string> referral-url;
     in property <bool> fetching;
     in property <string> fetch-status;
+    in property <bool> fetch-has-error;
+    callback fetch-error-action(int);
     in-out property <string> post-index: "0";
     in-out property <string> variables;
     in property <string> preview;
@@ -173,6 +175,17 @@ export component ParserEditWindow inherits Window {
                     Text { text: "referral URL"; color: Theme.text; vertical-alignment: center; }
                     LineEdit { text <=> root.referral-url; enabled: !root.child-open; }
                     Button { text: "fetch example data"; enabled: !root.child-open; clicked => { root.fetch(); } }
+                    if root.fetch-has-error: fetch-errors := ContextMenuArea {
+                        width: 30px;
+                        Menu {
+                            MenuItem { title: "show error"; activated => { root.fetch-error-action(8); } }
+                            MenuItem { title: "copy error"; activated => { root.fetch-error-action(9); } }
+                        }
+                        Button {
+                            width: 30px; icon: @image-url("../../../static/dump_fail.png");
+                            clicked => { fetch-errors.show({ x: 0px, y: self.height }); }
+                        }
+                    }
                 }
                 if root.fetch-status != "": Text { text: root.fetch-status; color: Theme.text; wrap: word-wrap; }
                 Text { text: "context variables (one key=value per line)"; color: Theme.text; }

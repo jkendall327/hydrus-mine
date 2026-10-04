@@ -1957,3 +1957,9 @@ The current-network-jobs review shows the same selected-job control, including
 context rules, applicable retry/wait actions, and show/copy for a failure retained
 after the selected request disappears. Its automatic policy has an independent
 owner, so unchecking a page control does not disable the review's policy.
+
+Page parser example-data fetching retains its network failure after the job ends.
+The error menu shows the full native diagnostic or copies it unchanged; the next
+validated example request clears the retained failure. Closing the parser also
+closes its error popup and invalidates retained callbacks. Raw formula/content
+URL fetching uses its own test text, as in the reference.
