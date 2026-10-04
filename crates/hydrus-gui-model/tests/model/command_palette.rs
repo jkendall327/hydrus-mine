@@ -318,3 +318,42 @@ fn calculator_matches_qt_precedence_integer_types_errors_and_special_values() {
         .retain(|p| *p != Provider::Calculator);
     assert!(palette::query(Provider::Calculator, "2+2", &removed, &Snapshot::default()).is_empty());
 }
+
+#[test]
+fn unicode_casefold_expands_before_provider_and_menu_thresholds() {
+    let name = "Unicode Straße ffi ff";
+    let data = Snapshot {
+        pages: vec![OpenPage {
+            key: key(1),
+            name: name.into(),
+            parent_name: None,
+            notebook: false,
+        }],
+        history: vec![(key(1), name.into())],
+        favourites: vec![favourite(None, name)],
+        main_menu: vec![MenuItem {
+            label: name.into(),
+            parent: "Palette Synthetic".into(),
+            checked: None,
+            action: None,
+        }],
+        ..Default::default()
+    };
+    for event in fixture()["unicode_events"].as_array().unwrap() {
+        let settings = CommandPaletteSettings {
+            threshold: event["threshold"].as_u64().unwrap() as usize,
+            show_main_menu: true,
+            ..Default::default()
+        };
+        let provider = Provider::from_code(event["provider"].as_u64().unwrap() as usize).unwrap();
+        let rows = palette::query(provider, event["query"].as_str().unwrap(), &settings, &data);
+        let ours: Vec<_> = rows.iter().map(|row| row.primary.as_str()).collect();
+        let theirs: Vec<_> = event["rows"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|row| plain(row["text"][0].as_str().unwrap()))
+            .collect();
+        assert_eq!(ours, theirs, "{event}");
+    }
+}

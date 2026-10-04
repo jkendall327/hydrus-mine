@@ -92,12 +92,12 @@ pub fn query(
     settings: &CommandPaletteSettings,
     data: &Snapshot,
 ) -> Vec<Suggestion> {
+    let folded = casefold(text);
     if !settings.provider_order.contains(&provider)
-        || (provider != Provider::Calculator && !typed_enough(text, settings))
+        || (provider != Provider::Calculator && !typed_enough(&folded, settings))
     {
         return Vec::new();
     }
-    let folded = casefold(text);
     let mut rows = Vec::new();
     match provider {
         Provider::Pages => {
@@ -167,7 +167,7 @@ pub fn query(
             } else {
                 settings.show_media_menu
             };
-            if !enabled || data.history.is_empty() || text.chars().count() < 3 {
+            if !enabled || data.history.is_empty() || folded.chars().count() < 3 {
                 return rows;
             }
             let menu = if provider == Provider::MainMenu {

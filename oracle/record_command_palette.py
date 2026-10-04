@@ -3,7 +3,8 @@
 
 Record initial option controls and bounds, each provider's actual rich-text
 results, filtered history, menu threshold/action invocation, provider queue
-movement/removal/add cancellation and actual page/favourite activation.
+movement/removal/add cancellation, actual page/favourite activation, and Unicode
+casefold expansion before application-provider and menu character thresholds.
 """
 import json, os, sys, tempfile
 HERE=os.path.dirname(os.path.abspath(__file__))
@@ -110,6 +111,19 @@ def record(session):
         window_route['page']=notebook.GetCurrentMediaPage().GetName()
         options.SetBoolean('command_palette_show_media_menu',True)
         media_events=[snap(2,'refresh'),snap(2,'select')]
+        unicode_name='Unicode Straße ffi ff'
+        unicode_page=notebook.NewPageQuery(location,page_name=unicode_name,select_page=True)
+        gui.ShowPage(unicode_page.GetPageKey());QW.QApplication.processEvents()
+        session.controller.favourite_search_manager.SetFavouriteSearchRows([(None,unicode_name,ClientSearchFileSearchContext.FileSearchContext(location_context=location),True,None,None)])
+        menu.addAction(unicode_name)
+        unicode_events=[]
+        for threshold in (2,3):
+            options.SetInteger('command_palette_num_chars_for_results_threshold',threshold)
+            for code in (3,4,5,1):
+                for text in ('ß','ﬀ','ﬃ'):
+                    event=snap(code,text);event['threshold']=threshold
+                    event['rows']=[row for row in event['rows'] if unicode_name in ''.join(row['text']).replace('<b>','').replace('</b>','')]
+                    unicode_events.append(event)
         queue=panel._command_palette_provider_order;queue_events=[];questions=[]
         queue._listbox.item(0).setSelected(True);queue._Down();queue_events.append(queue.GetData())
         old_yesno=ClientGUIDialogsQuick.GetYesNo;old_select=ClientGUIDialogsQuick.SelectFromListButtons
@@ -126,7 +140,7 @@ def record(session):
             ClientGUIDialogsQuick.GetYesNo=old_yesno;ClientGUIDialogsQuick.SelectFromListButtons=old_select
             session.controller.favourite_search_manager.SetFavouriteSearchRows(old_favourites)
             gui._menubar.removeAction(menu.menuAction());menu.deleteLater();panel.deleteLater()
-        return {'initial':initial,'events':events,'selected':selected,'window_route':window_route,'media_events':media_events,'calculator_events':calculator_events,'queue_events':queue_events,'questions':questions,'persisted':persisted}
+        return {'initial':initial,'events':events,'selected':selected,'window_route':window_route,'media_events':media_events,'calculator_events':calculator_events,'unicode_events':unicode_events,'queue_events':queue_events,'questions':questions,'persisted':persisted}
     return session.controller.CallBlockingToQt(session.controller.gui,qt)
 
 def main():

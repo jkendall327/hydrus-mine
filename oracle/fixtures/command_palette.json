@@ -1230,7 +1230,7 @@
       "rows": [
         {
           "text": [
-            "0.3479392500907158",
+            "0.020734499299199016",
             "Calculator"
           ],
           "toggled": false,
@@ -1479,6 +1479,278 @@
       "provider": 0,
       "query": "   ",
       "rows": []
+    }
+  ],
+  "unicode_events": [
+    {
+      "provider": 3,
+      "query": "\u00df",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra<b>\u00df</b>e ffi ff",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 3,
+      "query": "\ufb00",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ff</b>i <b>ff</b>",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 3,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 4,
+      "query": "\u00df",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra<b>\u00df</b>e ffi ff",
+            "1st result in history"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 4,
+      "query": "\ufb00",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ff</b>i <b>ff</b>",
+            "1st result in history"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 4,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            "1st result in history"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 5,
+      "query": "\u00df",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra<b>\u00df</b>e ffi ff",
+            ""
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 5,
+      "query": "\ufb00",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ff</b>i <b>ff</b>",
+            ""
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 5,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            ""
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 1,
+      "query": "\u00df",
+      "rows": [],
+      "threshold": 2
+    },
+    {
+      "provider": 1,
+      "query": "\ufb00",
+      "rows": [],
+      "threshold": 2
+    },
+    {
+      "provider": 1,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            "Palette Synthetic"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 3,
+      "query": "\u00df",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 3,
+      "query": "\ufb00",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 3,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 3
+    },
+    {
+      "provider": 4,
+      "query": "\u00df",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 4,
+      "query": "\ufb00",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 4,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            "1st result in history"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 3
+    },
+    {
+      "provider": 5,
+      "query": "\u00df",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 5,
+      "query": "\ufb00",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 5,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            ""
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 3
+    },
+    {
+      "provider": 1,
+      "query": "\u00df",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 1,
+      "query": "\ufb00",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 1,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            "Palette Synthetic"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 3
     }
   ],
   "queue_events": [

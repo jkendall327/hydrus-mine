@@ -421,3 +421,42 @@ fn saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palet
     assert_eq!(names(&reopened), ["Favourite Beta", "Palette Alpha"]);
     reopened.invoke_cancel();
 }
+
+#[test]
+fn persisted_unicode_thresholds_reach_the_async_palette_after_reopening() {
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let name = "Unicode Straße ffi ff";
+    bound.pages.borrow_mut().rename_shown(name);
+    let page = bound.pages.borrow().shown().key;
+    for (threshold, query) in [(2, "ß"), (2, "ﬀ"), (3, "ﬃ")] {
+        store
+            .write(|ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &CommandPaletteSettings {
+                        threshold,
+                        provider_order: vec![Provider::Pages],
+                        ..Default::default()
+                    },
+                )
+            })
+            .unwrap();
+        ui.invoke_command_palette_requested();
+        let palette = bound
+            .command_palette
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        palette.invoke_query_edited(query.into());
+        wait(&palette, name);
+        assert_eq!(names(&palette), [name]);
+        activate(&palette, name);
+        assert!(bound.command_palette.borrow().is_none());
+        assert_eq!(bound.pages.borrow().shown().key, page);
+    }
+}
