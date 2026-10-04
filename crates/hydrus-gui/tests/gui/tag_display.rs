@@ -248,6 +248,8 @@ fn dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer() {
     .unwrap();
     // Refresh a locked page even while another page is shown.
     bound.pages.borrow_mut().new_search_page();
+    ui.invoke_tab_chosen(0, 1);
+    assert!(!std::rc::Rc::ptr_eq(&bound.current.borrow(), &page));
     w4.invoke_apply();
     assert!(
         page.borrow()
