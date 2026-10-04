@@ -67,6 +67,7 @@ mod playback;
 mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
+pub mod regex_favourites_window;
 mod search_log_window;
 pub mod services_editor_window;
 pub mod services_review_window;

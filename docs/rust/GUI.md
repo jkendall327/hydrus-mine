@@ -372,6 +372,16 @@ per-step/final previews in the draft; parent Cancel closes and invalidates the
 exchange child. `oracle/record_processing_exchange.py` records real Qt single/
 multiple selection exports, clipboard append, invalid input and a reference PNG.
 
+Regex match and sorter controls offer saved favourite descriptions and copy the
+chosen phrase to the clipboard, as the reference menu does. Manage favourites
+opens a sorted phrase/description list with add, edit, extended selection and
+confirmed delete. Invalid expressions are advisory and can be saved as fragments;
+Add rejects an exact duplicate pair. Shared regex controls save accepted favourites
+immediately, while the standalone editor returns a draft to its owner. Native
+preferences override imported YAML, including an explicitly empty list.
+`oracle/record_regex_favourites.py` records real Qt rows, duplicate and cancel
+boundaries, advisory validity, defaults and favourite menu copy behavior.
+
 Help > about opens the about window (`ui/about.slint`,
 `src/about_window.rs`, `hydrus-gui-model/src/about.rs`), as the
 reference's "about hydrus": the name, version and site link over the

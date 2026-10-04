@@ -467,6 +467,12 @@ export component StringStepWindow inherits Window {
                     edited => { root.changed(); }
                 }
             }
+            if root.show-match-regex || root.kind == 3: HorizontalLayout {
+                spacing: 6px;
+                ComboBox { horizontal-stretch: 1; model: root.favourites; current-index: -1; enabled: !root.child-open; selected(_) => { root.favourite-copied(self.current-index); } }
+                Button { text: "manage favourites"; enabled: !root.child-open; clicked => { root.manage-favourites(); } }
+            }
+            if (root.show-match-regex || root.kind == 3) && root.favourite-status != "": Label { text: root.favourite-status; }
             if root.show-character-set: HorizontalLayout {
                 spacing: 6px;
                 Label { text: "character set: "; }
@@ -630,6 +636,10 @@ export component StringConverterWindow inherits Window {
     in property <string> asking-title;
     in property <string> asking-message;
     in property <[string]> asking-choices;
+    in property <[string]> favourites;
+    in property <string> favourite-status;
+    callback favourite-copied(int);
+    callback manage-favourites();
     callback row-clicked(int, bool, bool);
     callback row-activated(int);
     callback add();

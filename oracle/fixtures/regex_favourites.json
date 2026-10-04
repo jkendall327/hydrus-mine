@@ -1,0 +1,678 @@
+{
+ "initial": [
+  [
+   "z+",
+   "last"
+  ],
+  [
+   "a+",
+   "letters"
+  ]
+ ],
+ "defaults": [
+  [
+   "[1-9]+\\d*(?=.{4}$)",
+   "…0074.jpg -> 74"
+  ],
+  [
+   "[^/]+(?=\\s-)",
+   "E:\\my collection\\author name - v4c1p0074.jpg -> author name"
+  ]
+ ],
+ "steps": [
+  {
+   "state": {
+    "rows": [
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "value": [
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "selected": []
+   }
+  },
+  {
+   "do": [
+    "add",
+    "\\d+",
+    "numbers",
+    true
+   ],
+   "said": [
+    {
+     "dialog": "Enter regex"
+    },
+    {
+     "asked": "Enter description.",
+     "default": null
+    }
+   ],
+   "opened": [
+    {
+     "before": "",
+     "phrase": "\\d+",
+     "valid": true
+    }
+   ],
+   "state": {
+    "rows": [
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "value": [
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "selected": [
+     0
+    ]
+   }
+  },
+  {
+   "do": [
+    "add",
+    "\\d+",
+    "numbers",
+    true
+   ],
+   "said": [
+    {
+     "dialog": "Enter regex"
+    },
+    {
+     "asked": "Enter description.",
+     "default": null
+    },
+    {
+     "warning": "That regex and description are already in the list!"
+    }
+   ],
+   "opened": [
+    {
+     "before": "",
+     "phrase": "\\d+",
+     "valid": true
+    }
+   ],
+   "state": {
+    "rows": [
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "value": [
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "selected": [
+     0
+    ]
+   }
+  },
+  {
+   "do": [
+    "add",
+    "[",
+    "fragment",
+    true
+   ],
+   "said": [
+    {
+     "dialog": "Enter regex"
+    },
+    {
+     "asked": "Enter description.",
+     "default": null
+    }
+   ],
+   "opened": [
+    {
+     "before": "",
+     "phrase": "[",
+     "valid": false
+    }
+   ],
+   "state": {
+    "rows": [
+     [
+      "[",
+      "fragment"
+     ],
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "value": [
+     [
+      "[",
+      "fragment"
+     ],
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "selected": [
+     0
+    ]
+   }
+  },
+  {
+   "do": [
+    "add",
+    "discarded",
+    "unused",
+    false
+   ],
+   "said": [
+    {
+     "dialog": "Enter regex"
+    }
+   ],
+   "opened": [
+    {
+     "before": "",
+     "phrase": "discarded",
+     "valid": true
+    }
+   ],
+   "state": {
+    "rows": [
+     [
+      "[",
+      "fragment"
+     ],
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "value": [
+     [
+      "[",
+      "fragment"
+     ],
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "selected": [
+     0
+    ]
+   }
+  },
+  {
+   "do": [
+    "add",
+    "temporary",
+    null,
+    true
+   ],
+   "said": [
+    {
+     "dialog": "Enter regex"
+    },
+    {
+     "asked": "Enter description.",
+     "default": null
+    }
+   ],
+   "opened": [
+    {
+     "before": "",
+     "phrase": "temporary",
+     "valid": true
+    }
+   ],
+   "state": {
+    "rows": [
+     [
+      "[",
+      "fragment"
+     ],
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "value": [
+     [
+      "[",
+      "fragment"
+     ],
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "selected": [
+     0
+    ]
+   }
+  },
+  {
+   "do": [
+    "edit",
+    [
+     "[",
+     "fragment"
+    ],
+    "^a+$",
+    "letters only",
+    true
+   ],
+   "said": [
+    {
+     "dialog": "edit regex"
+    },
+    {
+     "asked": "Edit description.",
+     "default": "fragment"
+    }
+   ],
+   "opened": [
+    {
+     "before": "[",
+     "phrase": "^a+$",
+     "valid": true
+    }
+   ],
+   "state": {
+    "rows": [
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "^a+$",
+      "letters only"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "value": [
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "^a+$",
+      "letters only"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "selected": [
+     1
+    ]
+   }
+  },
+  {
+   "do": [
+    "edit",
+    [
+     "^a+$",
+     "letters only"
+    ],
+    "discarded",
+    "unused",
+    false
+   ],
+   "said": [
+    {
+     "dialog": "edit regex"
+    }
+   ],
+   "opened": [
+    {
+     "before": "^a+$",
+     "phrase": "discarded",
+     "valid": true
+    }
+   ],
+   "state": {
+    "rows": [
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "^a+$",
+      "letters only"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "value": [
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "^a+$",
+      "letters only"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "selected": [
+     1
+    ]
+   }
+  },
+  {
+   "do": [
+    "edit",
+    [
+     "^a+$",
+     "letters only"
+    ],
+    "temporary",
+    null,
+    true
+   ],
+   "said": [
+    {
+     "dialog": "edit regex"
+    },
+    {
+     "asked": "Edit description.",
+     "default": "letters only"
+    }
+   ],
+   "opened": [
+    {
+     "before": "^a+$",
+     "phrase": "temporary",
+     "valid": true
+    }
+   ],
+   "state": {
+    "rows": [
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "^a+$",
+      "letters only"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "value": [
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "^a+$",
+      "letters only"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "selected": [
+     1
+    ]
+   }
+  },
+  {
+   "do": [
+    "delete",
+    [
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    false
+   ],
+   "said": [
+    {
+     "asked": "Remove all selected?"
+    }
+   ],
+   "opened": [],
+   "state": {
+    "rows": [
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "^a+$",
+      "letters only"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "value": [
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "^a+$",
+      "letters only"
+     ],
+     [
+      "a+",
+      "letters"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    "selected": [
+     0,
+     3
+    ]
+   }
+  },
+  {
+   "do": [
+    "delete",
+    [
+     [
+      "\\d+",
+      "numbers"
+     ],
+     [
+      "z+",
+      "last"
+     ]
+    ],
+    true
+   ],
+   "said": [
+    {
+     "asked": "Remove all selected?"
+    }
+   ],
+   "opened": [],
+   "state": {
+    "rows": [
+     [
+      "^a+$",
+      "letters only"
+     ],
+     [
+      "a+",
+      "letters"
+     ]
+    ],
+    "value": [
+     [
+      "^a+$",
+      "letters only"
+     ],
+     [
+      "a+",
+      "letters"
+     ]
+    ],
+    "selected": []
+   }
+  }
+ ],
+ "menu_rows": [
+  "click below to copy to clipboard",
+  "letters only",
+  "letters"
+ ],
+ "copied": [
+  "^a+$",
+  "a+"
+ ]
+}

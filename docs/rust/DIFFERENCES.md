@@ -682,8 +682,10 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   "add" lists its kinds' descriptions in
   its question. A sorter's or match's error for a regex that won't
   compile is in hydrus-rs's words, not Python's ("That regex did not
-  work! ..."); the match editor's regex box has no menu of favourite
-  regexes.
+  work! ..."). Match and sorter regex favourites use a description chooser
+  that copies the phrase to the clipboard, plus a shared manager. Regex help and
+  component menus remain absent. Favourite phrase and description are edited
+  together in a row form, where the reference uses sequential dialogs.
 - **The string converter editor** keeps the last conversion used (which
   "add" starts from) while hydrus-rs runs, where the reference keeps it
   in its options. Its conversion editor's date phrase link is shown as

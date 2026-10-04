@@ -27,6 +27,7 @@ pub mod paths;
 pub mod pending;
 pub mod popups;
 pub mod queues;
+pub mod regex_favourites;
 pub mod schema;
 pub mod services;
 pub mod services_management;

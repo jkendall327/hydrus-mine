@@ -66,3 +66,4 @@ mod network_data;
 mod tag_migration;
 
 mod tab_context;
+mod regex_favourites;

@@ -40,6 +40,7 @@ pub struct Slots {
     pub converter: Rc<RefCell<Option<StringConverterWindow>>>,
     pub conversion: Rc<RefCell<Option<ConversionWindow>>>,
     pub exchange: crate::downloader_interchange_window::Slots,
+    pub favourites: crate::regex_favourites_window::Slot,
 }
 
 impl std::fmt::Debug for Slots {
@@ -69,10 +70,12 @@ impl Slots {
     /// Whether a converter has an unfinished conversion.
     pub fn has_converter_children(&self) -> bool {
         self.conversion.borrow().is_some()
+            || crate::regex_favourites_window::has_open(&self.favourites)
     }
     /// Whether a step has an unfinished tag filter.
     pub fn has_step_children(&self) -> bool {
         self.tag_filter.borrow().is_some()
+            || crate::regex_favourites_window::has_open(&self.favourites)
     }
     /// Cancel the whole family when its owning dialog is discarded.
     pub fn cancel_all(&self) {
@@ -89,10 +92,12 @@ impl Slots {
     }
     /// Discard a converter's unfinished conversion.
     pub fn cancel_converter_children(&self) {
+        crate::regex_favourites_window::cancel(&self.favourites);
         cancel_slot(&self.conversion, ConversionWindow::invoke_cancel);
     }
     /// Discard a step's unfinished tag filter.
     pub fn cancel_step_children(&self) {
+        crate::regex_favourites_window::cancel(&self.favourites);
         cancel_slot(&self.tag_filter, crate::TagFilterWindow::invoke_cancel);
     }
 }
@@ -697,6 +702,95 @@ fn read_step(window: &StringStepWindow, editor: &mut StepEditor) {
     }
 }
 
+fn bind_step_favourites(
+    window: &StringStepWindow,
+    store: &Arc<Store>,
+    slots: &Slots,
+    active: &Rc<Cell<bool>>,
+) {
+    let favourites = match store.read(hydrus_store::regex_favourites::load) {
+        Ok(value) => value,
+        Err(error) => {
+            window.set_veto(error.to_string().into());
+            return;
+        }
+    };
+    let favourites = Rc::new(RefCell::new(favourites));
+    window.set_favourites(strings(
+        favourites.borrow().0.iter().map(|row| row.1.clone()),
+    ));
+    window.on_favourite_copied({
+        let favourites = favourites.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        move |index| {
+            if !active.get() {
+                return;
+            }
+            if let Ok(index) = usize::try_from(index)
+                && let Some((phrase, _)) = favourites.borrow().0.get(index)
+            {
+                crate::copy_to_clipboard(phrase);
+                if let Some(window) = weak.upgrade() {
+                    window.set_favourite_status("Copied regex phrase to clipboard.".into());
+                }
+            }
+        }
+    });
+    window.on_manage_favourites({
+        let weak = window.as_weak();
+        let store = store.clone();
+        let slots = slots.clone();
+        let active = active.clone();
+        move || {
+            if !active.get() || slots.has_step_children() {
+                return;
+            }
+            let applied: crate::regex_favourites_window::Applied = Rc::new({
+                let store = store.clone();
+                let favourites = favourites.clone();
+                let weak = weak.clone();
+                let active = active.clone();
+                move |value| {
+                    if !active.get() {
+                        return Err("The regex input has closed.".into());
+                    }
+                    let saved = value.clone();
+                    store
+                        .write_and_refresh(move |ctx| {
+                            hydrus_store::settings::set(ctx.conn(), &saved)
+                        })
+                        .map_err(|e| e.to_string())?;
+                    if let Some(window) = weak.upgrade() {
+                        window.set_favourites(strings(value.0.iter().map(|row| row.1.clone())));
+                    }
+                    *favourites.borrow_mut() = value;
+                    Ok(())
+                }
+            });
+            let result = crate::regex_favourites_window::open(
+                &favourites.borrow(),
+                &slots.favourites,
+                applied,
+            );
+            if let Some(window) = weak.upgrade() {
+                match result {
+                    Ok(child) => {
+                        window.set_child_open(true);
+                        let weak = weak.clone();
+                        child.on_closed(move || {
+                            if let Some(window) = weak.upgrade() {
+                                window.set_child_open(false);
+                            }
+                        });
+                    }
+                    Err(error) => window.set_veto(error.to_string().into()),
+                }
+            }
+        }
+    });
+}
+
 /// Open a step's editor: a new step (`index` none) or the one at `index`;
 /// "apply" gives it to `put`.
 fn open_step(
@@ -777,6 +871,7 @@ fn open_step(
     window.set_window_title(STEP_TITLE.into());
     let state = Rc::new(RefCell::new(step_editor));
     show_step(&window, &state.borrow());
+    bind_step_favourites(&window, store, slots, &active);
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slot = slots.step.clone();
