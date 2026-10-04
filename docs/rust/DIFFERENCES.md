@@ -1949,5 +1949,7 @@ star-count changes repaint the stored fraction; the allow-zero checkbox changes
 the saved service configuration, without changing the opening preview conversion.
 This includes the one-star boundary: the preview keeps its opening nonzero scale,
 while the saved one-star configuration separately normalizes to allow zero.
+Numerical samples currently respond to presses on the star graphics; Qt's
+drag-to-rate input and clicks on the adjacent fraction text remain unavailable.
 This implements the local example-panel leaf; broader service management and
 rating sizing/preferences remain partial.
