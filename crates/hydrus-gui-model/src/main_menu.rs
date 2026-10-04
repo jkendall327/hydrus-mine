@@ -307,6 +307,7 @@ pub struct Facts {
     pub session_weight: u64,
     /// The pages shown, the latest last; none before any has been.
     pub history: Option<Vec<(PageKey, String)>>,
+    pub page_navigation: hydrus_store::settings::PageNavigationSettings,
     /// The saved sessions' names, a-z.
     pub sessions: Vec<String>,
     /// Historical snapshots grouped by saved-session name.
@@ -377,6 +378,7 @@ impl Facts {
                     .map(|(name, _)| name)
                     .collect(),
                 session_backups: hydrus_store::session_backups::names(conn)?,
+                page_navigation: settings::get(conn)?,
                 search_domains,
                 maintenance: settings::get(conn)?,
                 pauses: settings::get(conn)?,
@@ -627,7 +629,9 @@ fn pages_menu(facts: &Facts) -> Entry {
                 .rev()
                 .enumerate()
                 // (page_nav_history_max_entries)
-                .take(20)
+                .take(usize::from(
+                    facts.page_navigation.history_entries.clamp(1, 1000),
+                ))
                 .map(|(i, (key, name))| item(format!("{}: {name}", i + 1), Command::ShowPage(*key)))
                 .collect();
             entries.push(SEP);
@@ -1624,6 +1628,7 @@ mod tests {
     #[test]
     fn the_history_is_numbered_latest_first_and_kept_to_twenty() {
         let mut facts = facts();
+        facts.page_navigation.history_entries = 20;
         let keys: Vec<PageKey> = (0..25).map(|_| PageKey::random()).collect();
         facts.history = Some(
             keys.iter()

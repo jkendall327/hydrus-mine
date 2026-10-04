@@ -1726,26 +1726,53 @@ impl Pages {
         if matches!(page.content, PageContent::Pages(_)) {
             let vetoes = self.close_vetoes(std::slice::from_ref(&page));
             return crate::session_saving::close_all_question(&vetoes)
-                .map(|question| question.replacen("top page notebook", &page.name, 1));
+                .map(|question| question.replacen("top page notebook", &page.name, 1))
+                .or_else(|| self.basic_close_question(&page));
         }
-        if !matches!(
-            page.content,
-            PageContent::Downloader {
-                kind: DownloaderKind::Urls
-                    | DownloaderKind::Gallery
-                    | DownloaderKind::Watchers
-                    | DownloaderKind::Local
-                    | DownloaderKind::Simple,
-                ..
+        if matches!(page.content, PageContent::Downloader { .. }) {
+            let opened = self.page(&page.key)?;
+            if let Some(veto) = opened
+                .borrow()
+                .close_veto(self.downloader_options.confirm_non_empty_close)
+            {
+                return Some(format!("Close \"{}\"?\n\n{veto}", page.name));
             }
-        ) {
+        }
+        self.basic_close_question(&page)
+    }
+
+    fn basic_close_question(&self, page: &Page) -> Option<String> {
+        fn held(pages: &[Page]) -> usize {
+            pages
+                .iter()
+                .map(|page| {
+                    1 + match &page.content {
+                        PageContent::Pages(children) => held(children),
+                        _ => 0,
+                    }
+                })
+                .sum()
+        }
+        let settings: hydrus_store::settings::PageNavigationSettings = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        if !settings.confirm_all_closes {
             return None;
         }
-        let opened = self.page(&page.key)?;
-        let veto = opened
-            .borrow()
-            .close_veto(self.downloader_options.confirm_non_empty_close)?;
-        Some(format!("Close \"{}\"?\n\n{veto}", page.name))
+        let mut question = format!("Close \"{}\"?", page.name);
+        if let PageContent::Pages(children) = &page.content {
+            let count = held(children);
+            if count == 0 {
+                question.push_str("\n\nIt is empty.");
+            } else {
+                question.push_str(&format!(
+                    "\n\nIt is holding {} pages.",
+                    hydrus_core::numbers::human_int(u64::try_from(count).unwrap_or(u64::MAX))
+                ));
+            }
+        }
+        Some(question)
     }
 
     /// The pages of the notebook at `depth` on the way to the page shown

@@ -252,6 +252,23 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &page_chooser)?;
+    let mut navigation = crate::settings::PageNavigationSettings::default();
+    if let Some(options) = &options {
+        navigation.confirm_all_closes = options
+            .booleans
+            .get("confirm_all_page_closes")
+            .copied()
+            .unwrap_or(false);
+        navigation.focus_search_on_change = options
+            .booleans
+            .get("set_search_focus_on_page_change")
+            .copied()
+            .unwrap_or(false);
+        if let Some(&value) = options.integers.get("page_nav_history_max_entries") {
+            navigation.history_entries = u16::try_from(value.clamp(1, 1000)).unwrap_or(100);
+        }
+    }
+    insert_setting(&mut input, &navigation)?;
     let import_ui = crate::settings::ImportOptionsUiSettings {
         simple: options
             .as_ref()

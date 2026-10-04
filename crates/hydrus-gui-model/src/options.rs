@@ -95,6 +95,7 @@ settings! {
     notebook_creation: NotebookCreationSettings,
     page_insertion: hydrus_store::settings::PageInsertion,
     page_chooser: hydrus_store::settings::PageChooserSettings,
+    page_navigation: hydrus_store::settings::PageNavigationSettings,
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
@@ -1634,9 +1635,32 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s, value| s.notebooks.close_focus_left = value == 0,
                         ),
                         check(
+                            "Confirm when closing any page: ",
+                            |s| s.page_navigation.confirm_all_closes,
+                            |s, v| s.page_navigation.confirm_all_closes = v,
+                        ),
+                        check(
                             "Confirm when closing a non-empty importer page: ",
                             |s| s.downloader_pages.confirm_non_empty_close,
                             |s, v| s.downloader_pages.confirm_non_empty_close = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "navigation and drag and drop",
+                    vec![
+                        int(
+                            "Maximum entries to show in page navigation history: ",
+                            (1, 1000),
+                            |s| i64::from(s.page_navigation.history_entries),
+                            |s, v| {
+                                s.page_navigation.history_entries = u16::try_from(v).unwrap_or(100)
+                            },
+                        ),
+                        check(
+                            "When switching to pages, move keyboard focus to any text input field: ",
+                            |s| s.page_navigation.focus_search_on_change,
+                            |s, v| s.page_navigation.focus_search_on_change = v,
                         ),
                     ],
                 ),

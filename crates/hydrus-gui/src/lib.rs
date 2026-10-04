@@ -475,6 +475,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         let after_change = after_change.clone();
         move |change: &dyn Fn(&mut Pages) -> Result<(), String>| {
+            let previous = pages.borrow().shown().key;
             if let Some(window) = weak.upgrade() {
                 let key = pages.borrow().shown().key;
                 scrolls.borrow_mut().insert(key, window.get_grid_scroll());
@@ -498,6 +499,22 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 window.set_grid_scroll(scroll);
             }
             shown(false);
+            if previous != key {
+                let settings: hydrus_store::settings::PageNavigationSettings = pages
+                    .borrow()
+                    .store()
+                    .read(hydrus_store::settings::get)
+                    .unwrap_or_default();
+                if settings.focus_search_on_change
+                    && let Some(window) = weak.upgrade()
+                    && window.get_note().is_empty()
+                    && !window.get_search_locked()
+                {
+                    window.set_search_focus_requests(
+                        window.get_search_focus_requests().wrapping_add(1),
+                    );
+                }
+            }
             if let Some(file) = viewer_exit_scrolls.borrow_mut().remove(&key) {
                 let page = opened.borrow();
                 let index = page

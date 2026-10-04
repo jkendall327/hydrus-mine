@@ -266,6 +266,27 @@ impl Setting for PageChooserSettings {
     const KEY: &'static str = "gui_page_chooser";
 }
 
+/// Confirmation and navigation preferences from GUI Pages.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct PageNavigationSettings {
+    pub confirm_all_closes: bool,
+    pub focus_search_on_change: bool,
+    pub history_entries: u16,
+}
+impl Default for PageNavigationSettings {
+    fn default() -> Self {
+        Self {
+            confirm_all_closes: false,
+            focus_search_on_change: false,
+            history_entries: 100,
+        }
+    }
+}
+impl Setting for PageNavigationSettings {
+    const KEY: &'static str = "gui_page_navigation";
+}
+
 /// Whether import-options editors hide inappropriate options for each caller.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

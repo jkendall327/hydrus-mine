@@ -47,6 +47,7 @@ mod notebook_refresh;
 mod notebook_sessions;
 mod options_window;
 mod page_chooser_options;
+mod page_navigation_options;
 mod page_scroll;
 mod popups;
 mod predicate_editors;
