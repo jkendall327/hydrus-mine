@@ -7,7 +7,7 @@ use hydrus_gui::{
     MainWindow, Pages, bind, formula_editors::new_formula, formula_window, headless,
     sidecars_window,
 };
-use hydrus_parse::formula::{FormulaKind, HtmlContent, JsonRule};
+use hydrus_parse::formula::{FormulaKind, HtmlContent, JsonRule, ParsingContext};
 use hydrus_store::settings::{self, SimpleDownloaderFormulae};
 use slint::{ComponentHandle as _, Model as _};
 use std::{cell::RefCell, rc::Rc};
@@ -1210,11 +1210,13 @@ fn recursive_zipper_queue_matches_reference_and_blocks_parent_mutations() {
     w.invoke_apply();
     let saved = accepted.borrow_mut().take().unwrap();
     assert_eq!(
-        saved.parse(&Default::default(), "", true).unwrap(),
+        saved.parse(&ParsingContext::default(), "", true).unwrap(),
         ["prefix first"]
     );
     assert_eq!(
-        original.parse(&Default::default(), "", true).unwrap(),
+        original
+            .parse(&ParsingContext::default(), "", true)
+            .unwrap(),
         ["first"]
     );
     let w = formula_window::open(

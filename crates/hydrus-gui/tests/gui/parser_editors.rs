@@ -8,7 +8,7 @@ use hydrus_gui_model::parser_editors::{new_content, new_page};
 use hydrus_parse::{
     Downloaders,
     content::{ContentKind, SubsidiaryPageParser},
-    formula::FormulaKind,
+    formula::{FormulaKind, ParsingContext},
 };
 use hydrus_store::{Store, settings};
 use slint::{ComponentHandle as _, Model as _};
@@ -703,7 +703,7 @@ fn recursive_formula_edits_reach_saved_page_parser_and_consumer() {
     ));
     assert_eq!(saved.parsers[0].subsidiary, original.parsers[0].subsidiary);
     let consumer = &saved.parsers[0].content_parsers[0];
-    let context = Default::default();
+    let context = ParsingContext::default();
     let parsed = consumer.parse(&context, "unused").unwrap();
     assert_eq!(
         parsed.tags().into_iter().collect::<Vec<_>>(),
@@ -837,7 +837,7 @@ fn subsidiary_separator_uses_converted_data_preserves_newlines_and_saves() {
         original.parsers[0].subsidiary[0].parser
     );
     assert!(!saved.parsers[0].subsidiary[0].sort_by_source_time);
-    let mut context = Default::default();
+    let mut context = ParsingContext::default();
     let posts = saved.parsers[0]
         .parse(&mut context, before["raw"].as_str().unwrap())
         .unwrap();
