@@ -1450,9 +1450,21 @@ Child editors block parent changes and Apply; cancellation or owner closure
 invalidates all child callbacks. GUI/store regressions include rendered page
 and note-content screenshots through HYDRUS_PARSER_SCREENSHOTS.
 
-Client API administration groundwork now shares native typed permission records
-between the HTTP server and desktop models. The detached keys model covers the
-reference list columns, 14 basic permissions, full access, search restrictions,
-key rotation/collision rejection, duplicate names and staged deletion. Actual Qt
-review/editor controls and questions are recorded in `client_api_admin.json`.
-The new desktop windows and listener setting controls are still being wired.
+Service review now opens a native Client API access-key list with the reference
+columns, extended selection, sorting, add/edit/duplicate/delete, copy-key and
+local base-URL opening. Permission editors expose all 14 basic permissions,
+full access, the reusable permitted-search-tags filter and explicit key rotation
+with validation/collision refusal. List and nested edits remain detached until
+Apply; Cancel and closing service review cancel their descendants. Real Qt
+controls/questions are recorded in `client_api_admin.json`; actual native-store
+GUI regressions render `client_api_keys.png`, `client_api_permissions.png` and
+`client_api_service.png` during the GUI test batch.
+
+Manage services narrowly permits editing the built-in API service's enabled
+state, port, local/network binding, CORS and anonymous request logging. Other
+imported flags remain preserved. Imported HTTPS can be disabled; enabling it
+is unsupported. The daemon notices configuration changes within one second and
+restarts only the API listener, keeping downloads, queues and authentication
+sessions alive. A bind failure reports its cause and recovers after settings
+are corrected; HTTPS reports a failure instead of silently serving HTTP.
+Explicit CLI `--port` and `--bind` overrides retain precedence.

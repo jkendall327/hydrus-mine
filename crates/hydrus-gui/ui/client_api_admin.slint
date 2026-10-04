@@ -1,0 +1,113 @@
+import { Button, CheckBox, LineEdit, ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
+import { ListTable, TableColumn, TableRow } from "list_table.slint";
+import { Theme } from "theme.slint";
+export struct ApiPermissionRow { code:int, label:string, checked:bool }
+export component ClientApiKeysWindow inherits Window {
+    title: "client api access keys"; width: 1000px; height: 560px; background: Theme.window;
+    in property <[TableColumn]> columns;
+    in property <[TableRow]> rows;
+    in property <int> sort-column;
+    in property <bool> ascending: true;
+    in property <bool> can-edit;
+    in property <bool> can-delete;
+    in property <bool> editing;
+    in property <string> status;
+    in property <string> error;
+    in property <string> question;
+    callback row-clicked(int,bool,bool);
+    callback sort(int,bool);
+    callback add-clicked();
+    callback edit-clicked();
+    callback duplicate-clicked();
+    callback delete-clicked();
+    callback copy-key();
+    callback open-base-url();
+    callback answered(bool);
+    callback apply-clicked();
+    callback cancel-clicked();
+    VerticalBox { padding: 12px; spacing: 8px;
+        Text { text: "Manage your Client API's different access key permissions here."; color: Theme.text; }
+        Text { text: root.status; color: Theme.text; wrap: word-wrap; }
+        ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
+            row-clicked(i,c,s) => { if root.question == "" && !root.editing { root.row-clicked(i,c,s); } }
+            row-activated(i) => { if root.question == "" && !root.editing { root.row-clicked(i,false,false); root.edit-clicked(); } }
+            sort(i,a) => { if root.question == "" && !root.editing { root.sort(i,a); } }
+            delete-pressed => { if root.question == "" && !root.editing { root.delete-clicked(); } }
+        }
+        HorizontalBox {
+            Button { text: "add manually"; enabled: root.question == "" && !root.editing; clicked => { root.add-clicked(); } }
+            Button { text: "edit"; enabled: root.can-edit && root.question == "" && !root.editing; clicked => { root.edit-clicked(); } }
+            Button { text: "duplicate"; enabled: root.can-delete && root.question == "" && !root.editing; clicked => { root.duplicate-clicked(); } }
+            Button { text: "delete"; enabled: root.can-delete && root.question == "" && !root.editing; clicked => { root.delete-clicked(); } }
+            Rectangle { horizontal-stretch: 1; }
+            Button { text: "open client api base url"; clicked => { root.open-base-url(); } }
+            Button { text: "copy api access key"; enabled: root.can-edit; clicked => { root.copy-key(); } }
+        }
+        Text { text: "Changes are saved when you apply. API request registration is available through hydrus api-keys listen."; color: Theme.muted; wrap: word-wrap; }
+        Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        if root.question != "": VerticalBox {
+            Text { text: root.question; color: Theme.text; wrap: word-wrap; }
+            HorizontalBox { Button { text: "yes"; clicked => { root.answered(true); } } Button { text: "no"; clicked => { root.answered(false); } } }
+        }
+        HorizontalBox { Rectangle { horizontal-stretch: 1; }
+            Button { text: "apply"; enabled: root.question == "" && !root.editing; clicked => { root.apply-clicked(); } }
+            Button { text: "cancel"; clicked => { root.cancel-clicked(); } }
+        }
+    }
+}
+export component EditApiPermissionsWindow inherits Window {
+    title: "edit api access permissions"; width: 720px; height: 740px; background: Theme.window;
+    in-out property <string> access-key;
+    in-out property <string> name;
+    in-out property <bool> permits-everything;
+    in property <[ApiPermissionRow]> permissions;
+    in property <bool> can-check-all;
+    in property <bool> can-filter;
+    in property <string> filter-description;
+    in property <string> error;
+    in property <bool> changing-key;
+    in property <string> key-warning;
+    in-out property <string> new-key;
+    in property <bool> filtering;
+    callback change-key();
+    callback generate-key();
+    callback accept-key();
+    callback cancel-key();
+    callback permission-toggled(int,bool);
+    callback full-toggled();
+    callback check-all();
+    callback edit-filter();
+    callback apply-clicked();
+    callback cancel-clicked();
+    callback closed();
+    VerticalBox { padding: 12px; spacing: 8px;
+        ScrollView { vertical-stretch: 1; VerticalBox { spacing: 8px;
+            Text { text: "access key: " + root.access-key; color: Theme.text; wrap: word-wrap; }
+            Button { text: "I want to change the Access Key"; enabled: !root.filtering; clicked => { root.change-key(); } }
+            if root.changing-key: VerticalBox {
+                Text { text: root.key-warning; color: Theme.text; wrap: word-wrap; }
+                LineEdit { text <=> root.new-key; }
+                HorizontalBox {
+                    Button { text: "random key"; clicked => { root.generate-key(); } }
+                    Button { text: "ok"; clicked => { root.accept-key(); } }
+                    Button { text: "cancel key change"; clicked => { root.cancel-key(); } }
+                }
+            }
+            Text { text: "name:"; color: Theme.text; }
+            LineEdit { text <=> root.name; }
+            Text { text: "permissions"; color: Theme.text; font-weight: 700; }
+            CheckBox { text: "permits everything"; checked <=> root.permits-everything; enabled: !root.filtering; toggled => { root.full-toggled(); } }
+            for p in root.permissions: CheckBox { text: p.label; checked: p.checked; enabled: !root.permits-everything && !root.filtering;
+                toggled => { root.permission-toggled(p.code,self.checked); }
+            }
+            Button { text: "check all permissions"; enabled: root.can-check-all && !root.filtering; clicked => { root.check-all(); } }
+            Text { text: "tag search permissions: " + root.filter-description; color: Theme.text; wrap: word-wrap; }
+            Button { text: "edit permitted tags"; enabled: root.can-filter && !root.filtering; clicked => { root.edit-filter(); } }
+        } }
+        Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        HorizontalBox { Rectangle { horizontal-stretch: 1; }
+            Button { text: "apply"; enabled: !root.filtering && !root.changing-key; clicked => { root.apply-clicked(); } }
+            Button { text: "cancel"; clicked => { root.cancel-clicked(); } }
+        }
+    }
+}

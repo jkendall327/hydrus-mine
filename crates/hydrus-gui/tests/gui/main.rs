@@ -78,5 +78,6 @@ mod tag_relationships;
 
 mod services_editor;
 
+mod client_api_admin;
 mod parser_editors;
 mod tag_display;

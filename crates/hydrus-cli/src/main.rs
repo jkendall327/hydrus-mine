@@ -1,6 +1,6 @@
 //! `hydrus`: import a hydrus install, serve the Client API, run maintenance.
 
-use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+use std::net::IpAddr;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
@@ -8,15 +8,13 @@ use anyhow::{Context, Result, bail};
 use clap::{Parser, Subcommand, ValueEnum};
 
 use hydrus_api::AppState;
-use hydrus_api::server::{ServerOptions, bind as bind_api, serve_on};
-use hydrus_core::ServiceType;
 use hydrus_store::Store;
-use hydrus_store::services::{ServerConfig, ServiceKind};
 use hydrus_store::settings::{ClientApiState, ClientApiStatus};
 use hydrus_store::store::DB_FILE_NAME;
 use hydrus_store::transfer::{TransferMode, transfer_media};
 
 mod api_keys;
+mod client_api_listener;
 mod duplicates;
 mod folders;
 mod gallery;
@@ -493,32 +491,6 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
             list.join("\n")
         );
     }
-    let (api_name, config) = snap
-        .services
-        .of_type(ServiceType::ClientApiService)
-        .find_map(|s| match &s.kind {
-            ServiceKind::ClientApi(config) => Some((s.name.clone(), config.clone())),
-            _ => None,
-        })
-        .unwrap_or_else(|| ("client api".to_owned(), ServerConfig::default()));
-    // as the reference: a service with no port has no Client API (`--port`
-    // serves it anyway)
-    let options = port.or(config.port).map(|port| {
-        let ip = bind.unwrap_or(if config.allow_non_local_connections {
-            IpAddr::V4(Ipv4Addr::UNSPECIFIED)
-        } else {
-            IpAddr::V4(Ipv4Addr::LOCALHOST)
-        });
-        if config.use_https {
-            tracing::warn!(
-                "the Client API service asks for https, which hydrus-rs does not serve yet; serving http"
-            );
-        }
-        ServerOptions {
-            addr: SocketAddr::new(ip, port),
-            cors: config.support_cors,
-        }
-    });
     // what the Client API is doing, for the desktop client to show
     let say = {
         let store = store.clone();
@@ -952,30 +924,7 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         });
         // the Client API, if it is on: one that can't start stops nothing
         // else, as in the reference
-        let served = match options {
-            None => {
-                say(ClientApiState::Off);
-                println!("The Client API is off: \"{api_name}\" has no port (--port serves it anyway)");
-                until(stopped).await;
-                Ok(())
-            }
-            Some(options) => match bind_api(&options).await {
-                Ok(listener) => {
-                    let addr = listener.local_addr().unwrap_or(options.addr);
-                    say(ClientApiState::Listening(addr.to_string()));
-                    println!("Client API at http://{addr}");
-                    serve_on(listener, state, &options, until(stopped)).await
-                }
-                Err(e) => {
-                    let why = format!("Could not start \"{api_name}\": {e}");
-                    tracing::error!("{why}; everything else runs on");
-                    println!("Client API couldn't start ({why}); everything else runs on");
-                    say(ClientApiState::Failed(why));
-                    until(stopped).await;
-                    Ok(())
-                }
-            },
-        };
+        let served = client_api_listener::run(state, port, bind, stopped, say).await;
         // (the queues' live state stops being kept before it is cleared,
         // so it isn't kept again after)
         if let Some(publisher) = publisher {

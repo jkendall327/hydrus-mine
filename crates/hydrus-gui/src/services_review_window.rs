@@ -7,6 +7,8 @@ use std::{cell::RefCell, rc::Rc, sync::Arc};
 
 fn show(window: &ServicesReviewWindow, rows: &[Row], index: usize) {
     if let Some(row) = rows.get(index) {
+        window
+            .set_client_api(row.service_type == hydrus_core::ServiceType::ClientApiService.name());
         window.set_selected(i32::try_from(index).unwrap_or(0));
         window.set_name_and_type(format!("{} - {}", row.name, row.service_type).into());
         window.set_statistics(row.statistics.as_str().into());
@@ -18,6 +20,7 @@ fn show(window: &ServicesReviewWindow, rows: &[Row], index: usize) {
 /// Open service review over a native store; refresh retains the selected service key.
 pub fn open(store: Arc<Store>) -> Result<ServicesReviewWindow, String> {
     let window = ServicesReviewWindow::new().map_err(|e| e.to_string())?;
+    let slots = crate::client_api_admin_window::Slots::default();
     let rows = Rc::new(RefCell::new(
         services_review::rows(&store).map_err(|e| e.to_string())?,
     ));
@@ -42,6 +45,7 @@ pub fn open(store: Arc<Store>) -> Result<ServicesReviewWindow, String> {
     window.on_refresh_clicked({
         let rows = rows.clone();
         let weak = window.as_weak();
+        let store = store.clone();
         move || {
             let Some(w) = weak.upgrade() else { return };
             let key = usize::try_from(w.get_selected())
@@ -75,6 +79,7 @@ pub fn open(store: Arc<Store>) -> Result<ServicesReviewWindow, String> {
         }
     });
     window.on_show_id({
+        let rows = rows.clone();
         let weak = window.as_weak();
         move || {
             if let Some(w) = weak.upgrade()
@@ -85,13 +90,38 @@ pub fn open(store: Arc<Store>) -> Result<ServicesReviewWindow, String> {
             }
         }
     });
+    window.on_manage_api_keys({
+        let weak = window.as_weak();
+        let rows = rows.clone();
+        let slots = slots.clone();
+        let store = store.clone();
+        move || {
+            if let Some(w) = weak.upgrade()
+                && w.get_client_api()
+                && let Ok(i) = usize::try_from(w.get_selected())
+                && let Some(row) = rows.borrow().get(i)
+            {
+                if let Err(e) =
+                    crate::client_api_admin_window::open(store.clone(), row.key.clone(), &slots)
+                {
+                    w.set_error(e.into());
+                }
+            }
+        }
+    });
     window.on_close_clicked({
+        let slots = slots.clone();
         let weak = window.as_weak();
         move || {
             if let Some(w) = weak.upgrade() {
+                slots.close();
                 let _ = w.hide();
             }
         }
+    });
+    window.window().on_close_requested(move || {
+        slots.close();
+        slint::CloseRequestResponse::HideWindow
     });
     window.show().map_err(|e| e.to_string())?;
     Ok(window)

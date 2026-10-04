@@ -16,6 +16,8 @@ pub struct ServerOptions {
     /// Answer cross-origin requests from any site, as the reference does when
     /// its "support CORS" option is on.
     pub cors: bool,
+    /// Log anonymous request method/path, status and duration, omitting keys and query strings.
+    pub log_requests: bool,
 }
 
 /// Serve until `shutdown` resolves.
@@ -41,6 +43,9 @@ pub async fn serve_on(
     shutdown: impl Future<Output = ()> + Send + 'static,
 ) -> std::io::Result<()> {
     let mut app = crate::router(state);
+    if options.log_requests {
+        app = app.layer(axum::middleware::from_fn(log_request));
+    }
     if options.cors {
         app = app.layer(
             CorsLayer::new()
@@ -61,4 +66,16 @@ pub async fn serve_on(
     axum::serve(listener, app)
         .with_graceful_shutdown(shutdown)
         .await
+}
+
+async fn log_request(
+    request: axum::extract::Request,
+    next: axum::middleware::Next,
+) -> axum::response::Response {
+    let method = request.method().clone();
+    let path = request.uri().path().to_owned();
+    let started = std::time::Instant::now();
+    let response = next.run(request).await;
+    tracing::info!(%method,%path,status=response.status().as_u16(),elapsed_ms=started.elapsed().as_millis(),"Client API request");
+    response
 }

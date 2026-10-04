@@ -58,6 +58,15 @@ export component EditServiceWindow inherits Window {
     width: 640px; height: 640px; background: Theme.window;
     in-out property <string> service-name;
     in property <string> service-type;
+    in property <bool> client-api;
+    in-out property <bool> api-running;
+    in-out property <int> api-port: 45869;
+    in-out property <bool> api-non-local;
+    in-out property <bool> api-cors;
+    in-out property <bool> api-logs;
+    in property <bool> api-https;
+    in-out property <bool> api-disable-https;
+    in property <string> api-unsupported;
     in property <bool> rating;
     in property <bool> star-rating;
     in property <bool> numerical;
@@ -82,7 +91,18 @@ export component EditServiceWindow inherits Window {
                 Text { text: root.service-type; color: Theme.text; }
                 Text { text: "name"; color: Theme.text; }
                 LineEdit { text <=> root.service-name; }
-                if !root.rating: Text { text: "There are no additional options for this local service."; color: Theme.muted; wrap: word-wrap; }
+                if !root.rating && !root.client-api: Text { text: "There are no additional options for this local service."; color: Theme.muted; wrap: word-wrap; }
+                if root.client-api: VerticalBox {
+                    Text { text: "client api options"; color: Theme.text; font-weight: 700; }
+                    CheckBox { text: "run the service"; checked <=> root.api-running; }
+                    HorizontalBox { Text { text: "port:"; color: Theme.text; } SpinBox { minimum: 1; maximum: 65535; value <=> root.api-port; enabled: root.api-running; } }
+                    CheckBox { text: "allow non-local connections"; checked <=> root.api-non-local; enabled: root.api-running; }
+                    CheckBox { text: "support CORS"; checked <=> root.api-cors; enabled: root.api-running; }
+                    CheckBox { text: "log requests"; checked <=> root.api-logs; enabled: root.api-running; }
+                    if root.api-https: CheckBox { text: "disable imported HTTPS (unsupported)"; checked <=> root.api-disable-https; }
+                    Text { text: root.api-unsupported; color: Theme.muted; wrap: word-wrap; }
+                    Text { text: "Apply in the parent services list saves these settings. The daemon restarts only the API listener; downloads and other work continue. Explicit --port/--bind CLI overrides take precedence."; color: Theme.muted; wrap: word-wrap; }
+                }
                 if root.rating: VerticalBox {
                     Text { text: "rating display"; color: Theme.text; font-weight: 700; }
                     CheckBox { text: "show in thumbnails"; checked <=> root.show-thumbnail; }

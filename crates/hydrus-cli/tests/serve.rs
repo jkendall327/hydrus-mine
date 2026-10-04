@@ -609,3 +609,161 @@ fn changed_options_apply_without_a_restart() {
     drop(serving.0.stdin.take());
     exited_within(&mut serving.0, Duration::from_secs(30)).expect("stopped");
 }
+
+#[test]
+fn client_api_listener_reconfigures_recovers_and_preserves_daemon_state() {
+    use hydrus_store::services::{ServiceKind, update_config};
+    use std::io::{Read as _, Write as _};
+    let (_parent, dir) = store();
+    let editor = hydrus_store::Store::open(&dir).unwrap();
+    let api = editor
+        .snapshot()
+        .services
+        .of_type(hydrus_core::ServiceType::ClientApiService)
+        .next()
+        .unwrap()
+        .clone();
+    let ServiceKind::ClientApi(mut config) = api.kind.clone() else {
+        panic!("API")
+    };
+    config.port = None;
+    let update = {
+        let editor = editor.clone();
+        move |config: hydrus_store::services::ServerConfig| {
+            let id = api.id;
+            editor
+                .write(move |ctx| update_config(ctx.conn(), id, &ServiceKind::ClientApi(config)))
+                .unwrap();
+        }
+    };
+    update(config.clone());
+    let logs = dir.join("listener-test.log");
+    let output = std::fs::File::create(&logs).unwrap();
+    let mut serving = Serving(
+        Command::new(HYDRUS)
+            .arg("serve")
+            .arg(&dir)
+            .arg("--attached")
+            .stdin(Stdio::piped())
+            .stdout(output.try_clone().unwrap())
+            .stderr(output)
+            .spawn()
+            .unwrap(),
+    );
+    let pid = serving.0.id();
+    let wait = {
+        let editor = editor.clone();
+        move |predicate: &dyn Fn(&ClientApiState) -> bool| {
+            let deadline = Instant::now() + Duration::from_secs(12);
+            loop {
+                let status: ClientApiStatus = editor.read(settings::get).unwrap();
+                if status.pid == pid && predicate(&status.state) {
+                    return status.state;
+                }
+                assert!(Instant::now() < deadline, "listener state: {status:?}");
+                std::thread::sleep(Duration::from_millis(40));
+            }
+        }
+    };
+    wait(&|state| matches!(state, ClientApiState::Off));
+    let queue = editor
+        .write(|ctx| {
+            hydrus_store::queues::create_queue(
+                ctx.conn(),
+                hydrus_store::queues::QueueKind::Urls,
+                "keep this queue",
+                None,
+                &hydrus_core::import_options::ImportOptionsSlice::default(),
+                0,
+            )
+        })
+        .unwrap();
+    let unused_port = || {
+        std::net::TcpListener::bind("127.0.0.1:0")
+            .unwrap()
+            .local_addr()
+            .unwrap()
+            .port()
+    };
+    config.port = Some(unused_port());
+    config.support_cors = true;
+    config.log_requests = true;
+    update(config.clone());
+    let ClientApiState::Listening(first) =
+        wait(&|state| matches!(state, ClientApiState::Listening(_)))
+    else {
+        panic!("listening")
+    };
+    let request = |address: &str, path: &str| {
+        let mut stream = std::net::TcpStream::connect(address).unwrap();
+        stream
+            .set_read_timeout(Some(Duration::from_secs(3)))
+            .unwrap();
+        write!(stream,"GET {path} HTTP/1.1\r\nHost: {address}\r\nOrigin: https://test.example\r\nConnection: close\r\n\r\n").unwrap();
+        let mut response = String::new();
+        stream.read_to_string(&mut response).unwrap();
+        response
+    };
+    assert!(
+        request(&first, "/api_version?private-query-value=never-log-this")
+            .to_lowercase()
+            .contains("access-control-allow-origin: *")
+    );
+    let occupied = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    config.port = Some(occupied.local_addr().unwrap().port());
+    update(config.clone());
+    wait(&|state| matches!(state, ClientApiState::Failed(_)));
+    assert!(
+        std::net::TcpStream::connect(&first).is_err(),
+        "previous listener was stopped"
+    );
+    assert!(
+        serving.0.try_wait().unwrap().is_none(),
+        "daemon jobs continue after bind failure"
+    );
+    config.port = Some(unused_port());
+    config.support_cors = false;
+    update(config.clone());
+    let ClientApiState::Listening(second) =
+        wait(&|state| matches!(state, ClientApiState::Listening(_)))
+    else {
+        panic!("listening")
+    };
+    assert!(
+        !request(&second, "/api_version")
+            .to_lowercase()
+            .contains("access-control-allow-origin")
+    );
+    assert_eq!(
+        editor
+            .read(move |conn| Ok(hydrus_store::queues::queue(conn, queue)?.unwrap().name))
+            .unwrap(),
+        "keep this queue"
+    );
+    assert_eq!(
+        api_status(&dir).pid,
+        pid,
+        "listener correction keeps daemon process"
+    );
+    config.use_https = true;
+    update(config.clone());
+    wait(&|state| matches!(state,ClientApiState::Failed(why) if why.contains("HTTPS")));
+    config.use_https = false;
+    update(config.clone());
+    wait(&|state| matches!(state, ClientApiState::Listening(_)));
+    config.port = None;
+    update(config);
+    wait(&|state| matches!(state, ClientApiState::Off));
+    drop(serving.0.stdin.take());
+    assert!(
+        exited_within(&mut serving.0, Duration::from_secs(15))
+            .unwrap()
+            .success()
+    );
+    let logged = std::fs::read_to_string(logs).unwrap();
+    assert!(logged.contains("Client API request"));
+    assert!(
+        !logged.contains("never-log-this"),
+        "request logging omits query secrets"
+    );
+}
