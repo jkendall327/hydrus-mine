@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Drive actual MigrationJob and Qt PopupMessage pause/resume/cancel controls.
 
-A two-batch scripted source isolates the post-commit pause boundary; all job
+An eleven-entry scripted source with three-entry batches isolates the post-commit pause boundary; all job
 status and cleanup behavior is performed by the unmodified reference classes.
 """
 import json
@@ -23,16 +23,18 @@ def record(session):
     records = []
     for action in ('resume', 'cancel'):
         entered = threading.Event()
-        state = {'batches': 0, 'cleanup': []}
+        state = {'batches': 0, 'accepted': [], 'cleanup': []}
 
         class Source:
             def Prepare(self): pass
-            def StillWorkToDo(self): return state['batches'] < 2
+            def StillWorkToDo(self): return len(state['accepted']) < 11
+            def GetSomeData(self): return list(range(len(state['accepted']), min(len(state['accepted']) + 3, 11)))
             def CleanUp(self): state['cleanup'].append('source')
 
         class Destination:
             def Prepare(self): pass
             def DoSomeWork(self, source):
+                state['accepted'].extend(source.GetSomeData())
                 state['batches'] += 1
                 if state['batches'] == 1:
                     controller.CallBlockingToQt(controller.gui, popup[0].PausePlay)
@@ -51,11 +53,11 @@ def record(session):
         assert entered.wait(10)
         time.sleep(0.25)
         status = state['status']
-        paused = {'pausable': status.IsPausable(), 'paused': status.IsPaused(), 'batches': state['batches']}
+        paused = {'pausable': status.IsPausable(), 'paused': status.IsPaused(), 'batches': state['batches'], 'accepted': list(state['accepted'])}
         controller.CallBlockingToQt(controller.gui, popup[0].PausePlay if action == 'resume' else popup[0].Cancel)
         thread.join(10)
         assert not thread.is_alive()
-        records.append({'action': action, 'paused': paused, 'batches': state['batches'], 'cancelled': status.IsCancelled(), 'done': status.IsDone(), 'cleanup': state['cleanup'], 'text': status.GetStatusText()})
+        records.append({'action': action, 'paused': paused, 'batches': state['batches'], 'accepted': state['accepted'], 'cancelled': status.IsCancelled(), 'done': status.IsDone(), 'cleanup': state['cleanup'], 'text': status.GetStatusText()})
         controller.CallBlockingToQt(controller.gui, popup[0].deleteLater)
     with open(os.path.join(HERE, 'fixtures/tag_migration_pause.json'), 'w') as stream:
         json.dump(records, stream, indent=2)

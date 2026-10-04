@@ -4,9 +4,27 @@
     "paused": {
       "pausable": true,
       "paused": true,
-      "batches": 1
+      "batches": 1,
+      "accepted": [
+        0,
+        1,
+        2
+      ]
     },
-    "batches": 2,
+    "batches": 4,
+    "accepted": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
     "cancelled": false,
     "done": true,
     "cleanup": [
@@ -20,9 +38,19 @@
     "paused": {
       "pausable": true,
       "paused": true,
-      "batches": 1
+      "batches": 1,
+      "accepted": [
+        0,
+        1,
+        2
+      ]
     },
     "batches": 1,
+    "accepted": [
+      0,
+      1,
+      2
+    ],
     "cancelled": true,
     "done": true,
     "cleanup": [

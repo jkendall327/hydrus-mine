@@ -413,19 +413,30 @@ fn pause_waits_after_commit_resume_continues_and_cancel_wakes_without_next_batch
             let paused = paused.clone();
             let cancel = cancel.clone();
             std::thread::spawn(move || {
-                tag_migration::run_pausable(&store, &request, &cancel, &paused, 3, |p| {
-                    if p.scanned == 3 {
-                        paused.store(true, Ordering::Release);
-                    }
-                    send.send(p).unwrap();
-                })
-                .unwrap()
+                let mut batches = 0;
+                let mut last_scanned = 0;
+                let done =
+                    tag_migration::run_pausable(&store, &request, &cancel, &paused, 3, |p| {
+                        if p.scanned > last_scanned {
+                            batches += 1;
+                            last_scanned = p.scanned;
+                        }
+                        if p.scanned == 3 {
+                            paused.store(true, Ordering::Release);
+                        }
+                        send.send(p).unwrap();
+                    })
+                    .unwrap();
+                (done, batches)
             })
         };
         let first = receive
             .recv_timeout(std::time::Duration::from_secs(5))
             .unwrap();
-        assert_eq!(first.accepted, 3);
+        assert_eq!(
+            first.accepted,
+            case["paused"]["accepted"].as_array().unwrap().len()
+        );
         assert_eq!(count(&store, &request.destination, false), 3);
         assert!(
             receive
@@ -444,12 +455,55 @@ fn pause_waits_after_commit_resume_continues_and_cancel_wakes_without_next_batch
             std::thread::sleep(std::time::Duration::from_millis(10));
         }
         assert!(worker.is_finished());
-        let done = worker.join().unwrap();
+        let (done, batches) = worker.join().unwrap();
+        assert_eq!(batches, case["batches"].as_u64().unwrap());
         assert_eq!(done.cancelled, case["cancelled"].as_bool().unwrap());
-        assert_eq!(done.accepted, if done.cancelled { 3 } else { 11 });
+        assert_eq!(done.accepted, case["accepted"].as_array().unwrap().len());
+        assert_eq!(done.scanned, done.accepted);
+        assert!(case["done"].as_bool().unwrap());
         assert_eq!(
-            count(&store, &request.destination, false),
-            i64::try_from(done.accepted).unwrap()
+            case["cleanup"],
+            serde_json::json!(["source", "destination"])
+        );
+        assert_eq!(case["text"], "done!");
+        let source = store
+            .snapshot()
+            .services
+            .by_key(&request.source)
+            .unwrap()
+            .id;
+        let key = request.destination.clone();
+        let dest = store.snapshot().services.by_key(&key).unwrap().id;
+        let expected = case["accepted"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|value| HashId(u32::try_from(value.as_u64().unwrap()).unwrap() + 1))
+            .collect::<Vec<_>>();
+        let actual = store
+            .read(|conn| {
+                Ok(conn
+                    .prepare(&format!(
+                        "SELECT hash_id FROM {} ORDER BY hash_id",
+                        hydrus_store::schema::MappingTables::new(dest).current
+                    ))?
+                    .query_map([], |row| row.get::<_, HashId>(0))?
+                    .collect::<rusqlite::Result<Vec<_>>>()?)
+            })
+            .unwrap();
+        assert_eq!(actual, expected);
+        // Releasing the reservation is the native cleanup observable. The next
+        // job succeeds and completes the missing prefix without changing source.
+        tag_migration::run(&store, &request, &AtomicBool::new(false), 3, |_| {}).unwrap();
+        assert_eq!(count(&store, &request.destination, false), 11);
+        assert_eq!(
+            source,
+            store
+                .snapshot()
+                .services
+                .by_key(&request.source)
+                .unwrap()
+                .id
         );
     }
 }
