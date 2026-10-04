@@ -30,9 +30,11 @@ use hydrus_store::session_backups::SessionBackupSettings;
 use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FileHandlingSettings, FileViewingStatistics, FolderSettings,
-    GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings, ThumbnailLayout,
+    GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings, SearchDefaults,
+    ThumbnailLayout,
 };
 use hydrus_store::similar::SimilarFilesSettings;
+use hydrus_store::tag_editing::TagEditingSettings;
 use hydrus_store::trash::TrashSettings;
 use rusqlite::Connection;
 
@@ -91,6 +93,8 @@ settings! {
     page_settings: PageSettings,
     regex_favourites: RegexFavourites => hydrus_store::regex_favourites::load,
     session_backups: SessionBackupSettings,
+    search_defaults: SearchDefaults,
+    tag_editing: TagEditingSettings,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
     sorts: SortSettings,
@@ -136,6 +140,7 @@ pub enum Value {
     Checker(CheckerOptions),
     /// The editable regular expression/description pairs.
     RegexFavourites(RegexFavourites),
+    TagService(hydrus_core::ServiceKey),
 }
 
 /// What kind of control an option has.
@@ -187,6 +192,10 @@ pub enum Kind {
     Checker,
     /// A button opening the transactional favourites list editor.
     RegexFavourites,
+    /// Real tag services, optionally including all known tags.
+    TagService {
+        combined: bool,
+    },
 }
 
 /// A tag sort's types, as the reference's control names them
@@ -341,6 +350,7 @@ pub struct Opt {
     pub kind: Kind,
     pub get: Get,
     pub set: Set,
+    pub enabled: fn(&Settings) -> bool,
 }
 
 impl std::fmt::Debug for Opt {
@@ -392,6 +402,53 @@ fn opt(label: &'static str, kind: Kind, get: Get, set: Set) -> Item {
         kind,
         get,
         set,
+        enabled: |_| true,
+    })
+}
+
+/// Tag service choices in reference order: all known tags first when offered,
+/// then local tags and repositories, each ordered by lowercase name.
+pub fn tag_service_choices(
+    store: &hydrus_store::Store,
+    combined: bool,
+) -> Vec<(hydrus_core::ServiceKey, String)> {
+    use hydrus_core::service::{ServiceType, builtin_keys};
+    let snapshot = store.snapshot();
+    let mut choices = Vec::new();
+    if combined && let Ok(service) = snapshot.services.builtin(builtin_keys::COMBINED_TAG) {
+        choices.push((service.key.clone(), service.name.clone()));
+    }
+    for kind in [ServiceType::LocalTag, ServiceType::TagRepository] {
+        let mut services = snapshot.services.of_type(kind).collect::<Vec<_>>();
+        services.sort_by_key(|service| service.name.to_lowercase());
+        choices.extend(
+            services
+                .into_iter()
+                .map(|service| (service.key.clone(), service.name.clone())),
+        );
+    }
+    choices
+}
+
+fn tag_service(
+    label: &'static str,
+    combined: bool,
+    get: fn(&Settings) -> hydrus_core::ServiceKey,
+    set: fn(&mut Settings, hydrus_core::ServiceKey),
+    enabled: fn(&Settings) -> bool,
+) -> Item {
+    Item::Opt(Opt {
+        label,
+        kind: Kind::TagService { combined },
+        get: Rc::new(move |settings| Value::TagService(get(settings))),
+        set: Rc::new(move |settings, value| match value {
+            Value::TagService(service) => {
+                set(settings, service.clone());
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+        enabled,
     })
 }
 
@@ -1217,6 +1274,19 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             )],
         ),
         page(
+            "file search",
+            vec![boxed(
+                "file search autocomplete",
+                vec![tag_service(
+                    "Default tag service in search pages:",
+                    true,
+                    |settings| settings.search_defaults.tag_service.clone(),
+                    |settings, service| settings.search_defaults.tag_service = service,
+                    |_| true,
+                )],
+            )],
+        ),
+        page(
             "file sort/collect",
             vec![boxed(
                 "file sort",
@@ -1764,6 +1834,26 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             )],
         ),
         page(
+            "tag editing",
+            vec![boxed(
+                "tag dialogs",
+                vec![
+                    check(
+                        "Remember last used default tag service in manage tag dialogs: ",
+                        |settings| settings.tag_editing.remember_service,
+                        |settings, value| settings.tag_editing.remember_service = value,
+                    ),
+                    tag_service(
+                        "Default tag service in tag dialogs: ",
+                        false,
+                        |settings| settings.tag_editing.default_service.clone(),
+                        |settings, service| settings.tag_editing.default_service = service,
+                        |settings| !settings.tag_editing.remember_service,
+                    ),
+                ],
+            )],
+        ),
+        page(
             "tag presentation",
             vec![
                 boxed(
@@ -2061,6 +2151,7 @@ pub enum Row<'a> {
         value: &'a Value,
         /// For a number that may be none, the number it shows.
         number: i64,
+        enabled: bool,
     },
 }
 
@@ -2174,6 +2265,7 @@ impl Editor {
             depth: usize,
             values: &'a [Value],
             numbers: &[i64],
+            settings: &Settings,
             next: &mut usize,
             out: &mut Vec<Row<'a>>,
         ) {
@@ -2181,7 +2273,7 @@ impl Editor {
                 match item {
                     Item::Box(title, items) => {
                         out.push(Row::Title { title, depth });
-                        walk(items, depth + 1, values, numbers, next, out);
+                        walk(items, depth + 1, values, numbers, settings, next, out);
                     }
                     Item::Opt(option) => {
                         out.push(Row::Opt {
@@ -2189,6 +2281,7 @@ impl Editor {
                             depth,
                             value: &values[*next],
                             number: numbers[*next],
+                            enabled: (option.enabled)(settings),
                         });
                         *next += 1;
                     }
@@ -2201,6 +2294,7 @@ impl Editor {
             0,
             &self.values[self.page],
             &self.numbers[self.page],
+            &self.applied().0,
             &mut 0,
             &mut out,
         );
@@ -2307,6 +2401,18 @@ impl Editor {
     pub fn choose(&mut self, row: usize, index: usize) {
         if let Some(i) = self.option_at(row) {
             self.values[self.page][i] = Value::Choice(index);
+        }
+    }
+
+    /// A service key chosen from the current editable dropdown.
+    pub fn tag_service(&mut self, row: usize, service: hydrus_core::ServiceKey) {
+        if !matches!(self.rows().get(row), Some(Row::Opt { enabled: true, .. })) {
+            return;
+        }
+        if let Some(index) = self.option_at(row)
+            && matches!(self.kind(index), Kind::TagService { .. })
+        {
+            self.values[self.page][index] = Value::TagService(service);
         }
     }
 

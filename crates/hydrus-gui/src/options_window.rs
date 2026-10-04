@@ -55,7 +55,9 @@ fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
             depth,
             value,
             number,
+            enabled,
         } => {
+            out.enabled = *enabled;
             out.label = option.label.into();
             out.depth = int(*depth as i64);
             match (&option.kind, value) {
@@ -90,6 +92,20 @@ fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
                 (Kind::Float { .. }, Value::Float(text)) => {
                     out.kind = 4;
                     out.text = text.as_str().into();
+                }
+                (Kind::TagService { combined }, Value::TagService(service)) => {
+                    let choices = crate::options::tag_service_choices(store, *combined);
+                    out.kind = 15;
+                    out.items = ModelRc::new(VecModel::from(
+                        choices
+                            .iter()
+                            .map(|(_, name)| SharedString::from(name.as_str()))
+                            .collect::<Vec<_>>(),
+                    ));
+                    out.index = choices
+                        .iter()
+                        .position(|(key, _)| key == service)
+                        .map_or(-1, |index| int(index as i64));
                 }
                 (Kind::Choice(items), Value::Choice(i)) => {
                     out.kind = 5;
@@ -361,7 +377,23 @@ pub(crate) fn open(
     });
     window.on_check_toggled({
         let editor = editor.clone();
-        move |i, checked| editor.borrow_mut().check(at(i), checked)
+        let weak = window.as_weak();
+        move |i, checked| {
+            editor.borrow_mut().check(at(i), checked);
+            if let Some(window) = weak.upgrade() {
+                for (index, row) in editor.borrow().rows().iter().enumerate() {
+                    if let Row::Opt {
+                        option, enabled, ..
+                    } = row
+                        && matches!(option.kind, Kind::TagService { .. })
+                        && let Some(mut shown) = window.get_rows().row_data(index)
+                    {
+                        shown.enabled = *enabled;
+                        window.get_rows().set_row_data(index, shown);
+                    }
+                }
+            }
+        }
     });
     window.on_number_edited({
         let editor = editor.clone();
@@ -429,7 +461,26 @@ pub(crate) fn open(
     });
     window.on_choice_chosen({
         let editor = editor.clone();
-        move |i, index| editor.borrow_mut().choose(at(i), at(index))
+        let store = store.clone();
+        move |i, index| {
+            let mut editor = editor.borrow_mut();
+            let combined = match editor.rows().get(at(i)) {
+                Some(Row::Opt { option, .. }) => match option.kind {
+                    Kind::TagService { combined } => Some(combined),
+                    _ => None,
+                },
+                _ => None,
+            };
+            if let Some(combined) = combined {
+                if let Some((service, _)) =
+                    crate::options::tag_service_choices(&store, combined).get(at(index))
+                {
+                    editor.tag_service(at(i), service.clone());
+                }
+            } else {
+                editor.choose(at(i), at(index));
+            }
+        }
     });
     // a sort's type (in its default order, as the reference's control
     // sets it), or its order; the row shows the type's orders

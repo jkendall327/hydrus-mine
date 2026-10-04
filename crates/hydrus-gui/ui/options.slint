@@ -26,6 +26,7 @@ export struct OptionRow {
     // how many boxes it is in
     depth: int,
     checked: bool,
+    enabled: bool,
     number: int,
     minimum: int,
     maximum: int,
@@ -289,7 +290,8 @@ export component OptionsWindow inherits Window {
                                     clicked => { root.checker-clicked(i); }
                                 }
                             }
-                            if row.kind == 5: ComboBox {
+                            if row.kind == 5 || row.kind == 15: ComboBox {
+                                enabled: row.enabled;
                                 width: 260px;
                                 model: row.items;
                                 current-index: row.index;

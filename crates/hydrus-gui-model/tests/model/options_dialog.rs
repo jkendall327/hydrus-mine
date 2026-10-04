@@ -165,6 +165,25 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
             (theirs_items != *items || theirs["choice"] != items[*i])
                 .then(|| format!("choice {:?} of {items:?}", items[*i]))
         }
+        (Kind::TagService { combined }, Value::TagService(key)) => {
+            let choices = hydrus_gui_model::options::tag_service_choices(store, *combined);
+            let names = choices
+                .iter()
+                .map(|(_, name)| name.as_str())
+                .collect::<Vec<_>>();
+            let theirs_names = theirs["items"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter_map(Json::as_str)
+                .collect::<Vec<_>>();
+            let chosen = choices
+                .iter()
+                .find(|(service, _)| service == key)
+                .map(|(_, name)| name.as_str());
+            (names != theirs_names || chosen != theirs["choice"].as_str())
+                .then(|| format!("service {chosen:?} of {names:?}"))
+        }
         (Kind::Text, Value::Text(t)) => (theirs["text"] != *t).then(|| format!("text {t:?}")),
         (Kind::NoneableText { none_phrase }, Value::NoneableText { none, text }) => {
             let ours = (!none).then_some(text.as_str());
@@ -805,5 +824,61 @@ fn hash_prefix_control_matches_reference_default_and_checkbox() {
     for prefix in [true, false] {
         (option.set)(&mut settings, &Value::Check(prefix)).unwrap();
         assert_eq!(settings.file_handling.prefix_hash_when_copying, prefix);
+    }
+}
+
+#[test]
+fn tag_service_controls_match_reference_and_remember_interlock() {
+    use hydrus_gui_model::options::{Editor, Row, tag_service_choices};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    let pages = pages(&settings);
+    for name in ["file search", "tag editing"] {
+        let page = pages.iter().find(|page| page.name == name).unwrap();
+        let reference = recorded["pages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|page| page["page"] == name)
+            .unwrap();
+        assert!(page_problems(page, &reference["items"], &settings, &store).is_empty());
+    }
+    let fixture = hydrus_testkit::fixture_json("tag_dialog_defaults.json");
+    let mut editor = Editor::new(settings);
+    let page = editor
+        .page_names()
+        .iter()
+        .position(|name| name == "tag editing")
+        .unwrap();
+    editor.show_page(page);
+    let row = |editor: &Editor, label: &str| {
+        editor
+            .rows()
+            .iter()
+            .position(|row| matches!(row, Row::Opt { option, .. } if option.label == label))
+            .unwrap()
+    };
+    let checkbox = row(
+        &editor,
+        "Remember last used default tag service in manage tag dialogs: ",
+    );
+    let chooser = row(&editor, "Default tag service in tag dialogs: ");
+    let choices = tag_service_choices(&store, false);
+    for control in fixture["controls"].as_array().unwrap() {
+        editor.check(checkbox, control["remember"].as_bool().unwrap());
+        assert!(
+            matches!(editor.rows()[chooser], Row::Opt { enabled, .. } if enabled == control["default_enabled"].as_bool().unwrap())
+        );
+        let previous = editor.applied().0.tag_editing.default_service;
+        editor.tag_service(chooser, choices[0].0.clone());
+        assert_eq!(
+            editor.applied().0.tag_editing.default_service,
+            if control["default_enabled"] == true {
+                choices[0].0.clone()
+            } else {
+                previous
+            }
+        );
     }
 }

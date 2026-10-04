@@ -128,6 +128,19 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &notebooks)?;
+    let mut tag_editing = crate::tag_editing::TagEditingSettings::default();
+    if let Some(options) = &options {
+        if let Some(&value) = options
+            .booleans
+            .get("save_default_tag_service_tab_on_change")
+        {
+            tag_editing.remember_service = value;
+        }
+        if let Some(key) = options.keys.get("default_tag_service_tab") {
+            tag_editing.default_service = ServiceKey::new(key.clone());
+        }
+    }
+    insert_setting(&mut input, &tag_editing)?;
     let notebook_creation = crate::settings::NotebookCreationSettings {
         rename_new_notebooks: options.as_ref().is_some_and(|options| {
             options.booleans.get("rename_page_of_pages_on_pick_new") == Some(&true)

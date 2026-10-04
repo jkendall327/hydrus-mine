@@ -281,7 +281,7 @@ search.
   aren't there, and the optional libraries tab lists ffmpeg alone. The
   boot time is in UTC, and there is no hydrus icon over the name.
 - **The options window has only the options hydrus-rs honours** (so far
-  those on twenty-three pages; the others, and pages with none, aren't there:
+  those on twenty-five pages; the others, and pages with none, aren't there:
   on the connection page, the CA bundle and curl_cffi test; on the
   downloading page, the default download source, the
   number of subscriptions syncing at once and the failed-imports limit; on
@@ -289,8 +289,7 @@ search.
   deferred delete and idle work settings; on the duplicates page, the
   preparation tab's notification and the filter's colours; on the file
   viewing statistics page, the filters' own switches and the menus'
-  stats; most of the gui page; gui pages still omits the independent prompt
-  for renaming notebooks created from the new-page chooser; on the importing page, dropped URLs and
+  stats; most of the gui page; on the importing page, dropped URLs and
   the work slots; and on the media playback page, the preview's zoom,
   re-centring, the checkerboard, animations, mpv, Qt's player and the
   system settings; the system page omits filesystem wake waiting, and the GUI
@@ -1173,3 +1172,7 @@ The tag-dialog default service and remembering preference are consumed by native
 manage-tags windows. Their service tabs are limited to local tag services; the
 reference also offers repository tag services. Missing or unsupported saved
 services fall back to the first local service by name.
+- The file-search options page exposes the default tag service; its other
+  autocomplete and search-limit controls are absent. Tag-editing exposes only
+  service memory and the default service; ManageTags currently has local tag
+  service tabs, so a repository default falls back to its first local tab.

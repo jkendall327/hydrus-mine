@@ -404,7 +404,7 @@ hydrus lists them (by name, "advanced" last), the page chosen on the
 right, each option its label and then its control, in the page's titled
 boxes, as the reference's dialog lays them out (checked against the
 running reference's dialog, recorded by `oracle/record_options_dialog.py`).
-It has the options hydrus-rs honours, so far on twenty-three pages: audio,
+It has the options hydrus-rs honours, so far on twenty-five pages: audio,
 connection (retries, timeouts, job limits, the halt on a domain's errors,
 HTTPS checks and proxies), downloading (gallery, subscription and watcher
 waits, the default file limit, highlighting, the pause and stop
@@ -412,7 +412,7 @@ characters, short summaries' counts, the waits after errors, two
 debug switches, and the default subscription and watcher checker
 options), duplicates (the duplicate filter's batches and its
 comparison score weights, and the duplicates page opened on files),
-exporting, file sort/collect (the default and secondary sorts, each a
+exporting, file search (the default tag service for new searches), file sort/collect (the default and secondary sorts, each a
 page's sort types and then the type's orders, whether a sort chosen on
 a page becomes the default, and the default collect, as a page's
 collect control offers it), file viewing statistics (whether they
@@ -426,7 +426,7 @@ viewer's default zoom, and what counts as transparency), media viewer
 (slideshows), media viewer hovers (the top hover's
 file summary), ratings (the media viewer's rating sizes, and the
 thumbnails': their sizes, which go up to the thumbnails' width as the
-dialog opens, their box, and numerical ratings always collapsed), system (wake detection and its network grace period), tag presentation, tag sort (the search pages' and
+dialog opens, their box, and numerical ratings always collapsed), system (wake detection and its network grace period), tag editing (remembered or fixed tag-dialog service), tag presentation, tag sort (the search pages' and
 the media viewer's default tag sorts: a type, its orders, and its
 grouping where the type groups), thumbnails (their size and how
 they fit it, their border and margin, the UI-scale supersampling, how far
@@ -1789,3 +1789,8 @@ opens a name prompt after creation; accepting changes that notebook's name,
 cancelling retains it as "pages", and selecting another page while the prompt
 is open keeps naming tied to the created notebook. The actual chooser action is
 recorded by `oracle/record_notebook_creation.py` and replayed in GUI regressions.
+The tag-dialog service choice disables while remembering the last used service.
+Changes to these options stay staged until Apply; selecting a service tab in
+a manage-tags dialog remembers it immediately when enabled, even if the tag
+edits are later cancelled. New notebooks can separately prompt for a name after
+the page chooser creates them.

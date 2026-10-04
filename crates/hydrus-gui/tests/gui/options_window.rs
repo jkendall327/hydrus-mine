@@ -82,6 +82,7 @@ fn the_options_window_applies_its_changes() {
             "downloading",
             "duplicates",
             "exporting",
+            "file search",
             "file sort/collect",
             "file viewing statistics",
             "files and trash",
@@ -96,6 +97,7 @@ fn the_options_window_applies_its_changes() {
             "ratings",
             "regex favourites",
             "system",
+            "tag editing",
             "tag presentation",
             "tag sort",
             "thumbnails",
@@ -1236,4 +1238,120 @@ fn hash_prefix_option_reaches_selected_and_focused_clipboard_hashes() {
     window.invoke_check_toggled(index, !before.prefix_hash_when_copying);
     window.invoke_cancel();
     assert_eq!(store.read(get::<FileHandlingSettings>).unwrap(), before);
+}
+
+#[test]
+fn tag_dialog_service_dropdown_tracks_remember_checkbox_and_parent_transaction() {
+    use hydrus_store::settings::get;
+    use hydrus_store::tag_editing::TagEditingSettings;
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("tag_dialog_defaults.json");
+    for control in fixture["controls"].as_array().unwrap() {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "tag editing");
+        let (remember, _) = row(
+            &window,
+            "Remember last used default tag service in manage tag dialogs: ",
+        );
+        window.invoke_check_toggled(remember, control["remember"].as_bool().unwrap());
+        let (service_row, service) = row(&window, "Default tag service in tag dialogs: ");
+        assert_eq!(
+            service.enabled,
+            control["default_enabled"].as_bool().unwrap()
+        );
+        let names = (0..service.items.row_count())
+            .map(|index| service.items.row_data(index).unwrap().to_string())
+            .collect::<Vec<_>>();
+        assert_eq!(serde_json::json!(names), control["choices"]);
+        if service.enabled {
+            let at = names
+                .iter()
+                .position(|name| name == control["service"].as_str().unwrap())
+                .unwrap();
+            window.invoke_choice_chosen(service_row, at as i32);
+        }
+        window.invoke_apply();
+        let saved = store.read(get::<TagEditingSettings>).unwrap();
+        assert_eq!(
+            saved.remember_service,
+            control["remember"].as_bool().unwrap()
+        );
+        assert_eq!(
+            store
+                .snapshot()
+                .services
+                .by_key(&saved.default_service)
+                .unwrap()
+                .name,
+            control["service"].as_str().unwrap()
+        );
+    }
+    let before = store.read(get::<TagEditingSettings>).unwrap();
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "tag editing");
+    let (remember, _) = row(
+        &window,
+        "Remember last used default tag service in manage tag dialogs: ",
+    );
+    window.invoke_check_toggled(remember, !before.remember_service);
+    window.invoke_cancel();
+    assert_eq!(store.read(get::<TagEditingSettings>).unwrap(), before);
+}
+
+#[test]
+fn default_search_service_option_changes_new_pages_and_missing_keys_fall_back() {
+    use hydrus_core::service::builtin_keys;
+    use hydrus_gui::page_chooser::NewPage;
+    use hydrus_store::settings::{SearchDefaults, get};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("search_default_service.json");
+    for (index, event) in fixture["events"].as_array().unwrap().iter().enumerate() {
+        if index < fixture["choices"].as_array().unwrap().len() {
+            open(&ui);
+            let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+            show_page(&window, "file search");
+            let (service_row, service) = row(&window, "Default tag service in search pages:");
+            let names = (0..service.items.row_count())
+                .map(|index| service.items.row_data(index).unwrap().to_string())
+                .collect::<Vec<_>>();
+            let reference = fixture["choices"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|choice| choice["name"].as_str().unwrap())
+                .collect::<Vec<_>>();
+            assert_eq!(names, reference);
+            window.invoke_choice_chosen(service_row, index as i32);
+            window.invoke_apply();
+        } else {
+            let key = event["saved"].as_str().unwrap().parse().unwrap();
+            store
+                .write(move |ctx| {
+                    let mut defaults = get::<SearchDefaults>(ctx.conn())?;
+                    defaults.tag_service = key;
+                    hydrus_store::settings::set(ctx.conn(), &defaults)
+                })
+                .unwrap();
+        }
+        bound
+            .pages
+            .borrow_mut()
+            .new_page(&NewPage::Search {
+                domain: hydrus_core::ServiceKey::new(builtin_keys::MY_FILES.to_vec()),
+                name: "option default search".into(),
+            })
+            .unwrap();
+        assert_eq!(
+            bound.pages.borrow().shown().tag_context().service.to_hex(),
+            event["page_service"].as_str().unwrap()
+        );
+    }
 }
