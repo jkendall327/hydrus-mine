@@ -104,7 +104,7 @@ def inputs(commit):
 
 def masked(text):
     """Keep offsets/newlines while hiding comments and quoted strings."""
-    pattern = r'//[^\n]*|/\*[\s\S]*?\*/|"(?:\\.|[^"\\])*"'
+    pattern = r'//[^\n]*|/\*[\s\S]*?\*/|"(?:\\[\s\S]|[^"\\])*"'
     return re.sub(pattern, lambda m: ''.join('\n' if c == '\n' else ' ' for c in m[0]), text)
 
 

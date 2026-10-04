@@ -44,6 +44,14 @@ class PublicationTests(unittest.TestCase):
         self.assertEqual(len(self.baseline['reference']), 1812)
         self.assertEqual(publication.BEFORE, self.prior['before'])
 
+    def test_source_mask_preserves_following_code_after_escaped_newline(self):
+        source = 'Text { text: "question \\\n continued { quoted }"; }\ncallback answer();'
+        masked = publication.masked(source)
+        self.assertEqual(len(source), len(masked))
+        self.assertEqual(source.count('\n'), masked.count('\n'))
+        self.assertIn('callback answer();', masked)
+        self.assertNotIn('quoted', masked)
+
     def test_census_matches_source_audit_and_finds_shared_star_controls(self):
         source = publication.census(self.commit, self.cv, self.snapshots['native'])
         pinned = copy.deepcopy(self.snapshots['native'])
