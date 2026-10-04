@@ -20,7 +20,7 @@ use hydrus_core::url::functions::{check_full_url, ensure_url_is_encoded};
 use hydrus_core::url::pyurl::urljoin;
 use hydrus_core::url::{UrlType, psl};
 use hydrus_store::Store;
-use hydrus_store::bandwidth::BandwidthSettings;
+use hydrus_store::bandwidth::{BandwidthSettings, HistoryResets};
 use hydrus_store::network::{self, Approval, NetworkContext};
 use hydrus_store::network_runtime::{self, WaitReason};
 
@@ -354,7 +354,7 @@ pub struct NetEngine {
     slots: RwLock<Arc<Semaphore>>,
     domain_slots: Mutex<std::collections::HashMap<String, Arc<Semaphore>>>,
     /// The bandwidth rules and usage, and when the usage was last saved.
-    bandwidth: Mutex<(Manager, i64)>,
+    bandwidth: Mutex<(Manager, i64, HistoryResets)>,
     bandwidth_settings: RwLock<BandwidthSettings>,
     /// When each domain last had serious errors (`DomainOK`).
     domain_errors: Mutex<std::collections::HashMap<String, Vec<i64>>>,
@@ -527,14 +527,39 @@ impl NetEngine {
     /// Publish a heartbeat and consume GUI commands through local store IPC.
     /// Call from a blocking worker at most a few times per second.
     pub fn publish_runtime(&self) -> Result<(), NetError> {
-        let snapshot = self.runtime_snapshot();
-        let commands = self
+        let seen = self.bandwidth.lock().2.clone();
+        let mut snapshot = self.runtime_snapshot();
+        let (commands, resets) = self
             .store
             .write(move |ctx| {
+                let resets = hydrus_store::settings::get::<HistoryResets>(ctx.conn())?;
+                snapshot
+                    .usage
+                    .retain(|(c, _)| resets.generation(c) == seen.generation(c));
                 hydrus_store::settings::set(ctx.conn(), &snapshot)?;
-                network_runtime::take_commands(ctx.conn())
+                Ok((network_runtime::take_commands(ctx.conn())?, resets))
             })
             .map_err(|e| NetError::Io(e.to_string()))?;
+        let reset_usage = {
+            let mut bandwidth = self.bandwidth.lock();
+            let changed = resets.changed_since(&bandwidth.2);
+            let reset_usage = !changed.is_empty();
+            bandwidth.0.delete_history(&changed);
+            // Never regress a generation when concurrent heartbeat calls overlap.
+            for context in changed {
+                bandwidth.2.0.retain(|(c, _)| c != &context);
+                bandwidth
+                    .2
+                    .0
+                    .push((context.clone(), resets.generation(&context)));
+            }
+            reset_usage
+        };
+        if reset_usage {
+            for (job, _) in self.jobs.lock().values() {
+                job.wake.notify_one();
+            }
+        }
         for command in commands {
             self.runtime_command(&command);
         }
@@ -544,11 +569,12 @@ impl NetEngine {
     pub fn new(store: Arc<Store>, options: NetOptions) -> Result<Self, NetError> {
         let client = http_client(&options)?;
         let now = now();
-        let (bandwidth_settings, usage) = store
+        let (bandwidth_settings, usage, history_resets) = store
             .read(|conn| {
                 Ok((
                     hydrus_store::settings::get::<BandwidthSettings>(conn)?,
                     hydrus_store::bandwidth::usage(conn, now)?,
+                    hydrus_store::settings::get::<HistoryResets>(conn)?,
                 ))
             })
             .map_err(|e| NetError::Io(e.to_string()))?;
@@ -559,7 +585,7 @@ impl NetEngine {
             store,
             slots: RwLock::new(Arc::new(Semaphore::new(options.max_jobs.max(1)))),
             domain_slots: Mutex::default(),
-            bandwidth: Mutex::new((manager, now)),
+            bandwidth: Mutex::new((manager, now, history_resets)),
             bandwidth_settings: RwLock::new(bandwidth_settings),
             domain_errors: Mutex::default(),
             wake: Mutex::default(),
@@ -763,16 +789,18 @@ impl NetEngine {
     /// Keep the bandwidth usage that changed (done every minute as it
     /// changes; call it when stopping).
     pub fn save_bandwidth(&self) -> Result<(), NetError> {
-        let dirty = {
+        let (dirty, seen) = {
             let mut b = self.bandwidth.lock();
             b.1 = now();
-            b.0.take_dirty()
+            (b.0.take_dirty(), b.2.clone())
         };
         if dirty.is_empty() {
             return Ok(());
         }
         self.store
-            .write(move |ctx| hydrus_store::bandwidth::save_usage(ctx.conn(), &dirty))
+            .write(move |ctx| {
+                hydrus_store::bandwidth::save_usage_after_resets(ctx.conn(), &dirty, &seen)
+            })
             .map_err(|e| NetError::Io(e.to_string()))
     }
 

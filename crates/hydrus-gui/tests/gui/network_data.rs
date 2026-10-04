@@ -49,7 +49,7 @@ fn bandwidth_rules_cancel_apply_reopen_and_render() {
         })
         .unwrap();
     let review = windows::open_bandwidth(store.clone(), &slots).unwrap();
-    until(|| review.get_rows().row_count() == 2);
+    until(|| review.get_rows().row_count() == 1);
     assert!(review.get_status().contains("offline"));
     review.set_domain("example.com".into());
     review.invoke_domain_clicked();
@@ -126,7 +126,7 @@ fn bandwidth_rules_cancel_apply_reopen_and_render() {
     assert!(!abandoned.window().is_visible());
     abandoned.invoke_apply_clicked();
     let reopened = windows::open_bandwidth(store.clone(), &slots).unwrap();
-    until(|| reopened.get_rows().row_count() == 2);
+    until(|| reopened.get_rows().row_count() == 1);
     assert_eq!(
         store
             .read(settings::get::<hydrus_store::bandwidth::BandwidthSettings>)
@@ -262,4 +262,159 @@ fn jobs_live_progress_commands_and_offline_expiry() {
             .unwrap()
             .is_empty()
     );
+}
+
+#[test]
+fn bandwidth_filters_chart_multiselect_delete_cancel_live_reset_and_saved_age() {
+    use hydrus_core::bandwidth::{Rule, Rules};
+    use hydrus_store::bandwidth::{self, BandwidthSettings};
+    let rendered = headless::init();
+    let slots = windows::Slots::default();
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let now = TimestampMs::now().millis() / 1000;
+    let context = |name: &str| NetworkContext::domain(format!("{name}.example.com"));
+    let mut recent = Tracker::new(now);
+    recent.report_data(1024, now - 70 * 86400);
+    recent.report_requests(1, now - 70 * 86400);
+    recent.report_data(2048, now - 35 * 86400);
+    recent.report_requests(1, now - 35 * 86400);
+    recent.report_data(4096, now);
+    recent.report_requests(1, now);
+    let mut old = Tracker::new(now);
+    old.report_data(512, now - 10 * 86400);
+    old.report_requests(1, now - 10 * 86400);
+    let mut bytes = Tracker::new(now);
+    bytes.report_data(123, now);
+    let usage = vec![
+        (context("recent"), recent),
+        (context("old"), old),
+        (context("bytes"), bytes),
+    ];
+    store
+        .write({
+            let usage = usage.clone();
+            move |ctx| {
+                bandwidth::save_usage(ctx.conn(), &usage)?;
+                settings::set(
+                    ctx.conn(),
+                    &Snapshot {
+                        epoch: "live review".into(),
+                        at: now,
+                        usage,
+                        jobs: Vec::new(),
+                    },
+                )?;
+                let mut settings = settings::get::<BandwidthSettings>(ctx.conn())?;
+                settings.rules.push((
+                    NetworkContext::domain("rules.example.com"),
+                    Rules::new([Rule::new(BandwidthType::Data, Some(86400), 100_000)]),
+                ));
+                settings::set(ctx.conn(), &settings)
+            }
+        })
+        .unwrap();
+    let review = windows::open_bandwidth(store.clone(), &slots).unwrap();
+    until(|| review.get_rows().row_count() == 1);
+    review.invoke_row_clicked(0, false, false);
+    assert_eq!(review.get_monthly_bars().row_count(), 3);
+    assert!(
+        review.get_monthly_bars().row_data(2).unwrap().fraction
+            > review.get_monthly_bars().row_data(0).unwrap().fraction
+    );
+    assert_eq!(review.get_monthly_bars().row_data(2).unwrap().usage, "4 KB");
+    capture(&rendered, 0, "bandwidth-monthly-chart.png", 1120, 720);
+    review.set_include_rules(true);
+    review.invoke_refresh();
+    until(|| review.get_rows().row_count() == 2);
+    review.set_include_rules(false);
+    review.set_history(4);
+    review.set_history_seconds("1209600".into());
+    review.invoke_refresh();
+    until(|| review.get_rows().row_count() == 2);
+    review.set_history_seconds("0".into());
+    review.invoke_refresh();
+    assert!(review.get_status().contains("positive history"));
+    review.set_history_seconds("1209600".into());
+    review.set_show_all(true);
+    review.invoke_refresh();
+    until(|| review.get_rows().row_count() == 4);
+    let locate = |name: &str| {
+        review
+            .get_rows()
+            .iter()
+            .position(|r| r.cells.row_data(0).unwrap().contains(name))
+            .unwrap()
+    };
+    let recent = locate("recent.example.com");
+    let rules = locate("rules.example.com");
+    review.invoke_row_clicked(i32::try_from(recent).unwrap(), false, false);
+    review.invoke_row_clicked(i32::try_from(rules).unwrap(), true, false);
+    assert!(review.get_can_delete());
+    assert!(!review.get_can_edit());
+    assert_eq!(
+        review.get_rows().iter().filter(|row| row.selected).count(),
+        2
+    );
+    review.invoke_delete_history_clicked();
+    let fixture = hydrus_testkit::fixture_json("bandwidth_history.json");
+    assert_eq!(
+        review.get_question(),
+        fixture["questions"][0].as_str().unwrap()
+    );
+    review.invoke_answer(false);
+    assert_eq!(store.read(|c| bandwidth::usage(c, now)).unwrap().len(), 3);
+    review.invoke_delete_history_clicked();
+    review.invoke_answer(true);
+    until(|| !review.get_busy() && review.get_rows().row_count() == 3);
+    assert_eq!(store.read(|c| bandwidth::usage(c, now)).unwrap().len(), 2);
+    assert_eq!(
+        store.read(settings::get::<Snapshot>).unwrap().usage.len(),
+        2
+    );
+    assert!(
+        store
+            .read(settings::get::<BandwidthSettings>)
+            .unwrap()
+            .rules
+            .iter()
+            .any(|(c, _)| c == &context("rules"))
+    );
+    assert!(
+        !review.get_rows().iter().any(|r| r
+            .cells
+            .row_data(0)
+            .unwrap()
+            .contains("recent.example.com"))
+    );
+    let rules = locate("rules.example.com");
+    review.invoke_row_clicked(i32::try_from(rules).unwrap(), false, false);
+    assert_eq!(review.get_monthly_bars().row_count(), 0);
+    assert!(review.get_chart_context().contains("rules.example.com"));
+    review.set_show_all(false);
+    review.invoke_refresh();
+    until(|| {
+        store
+            .read(settings::get::<hydrus_gui_model::network_data::BandwidthReviewPreferences>)
+            .unwrap()
+            .history
+            == Some(1_209_600)
+    });
+    review.invoke_close_clicked();
+    let reopened = windows::open_bandwidth(store.clone(), &slots).unwrap();
+    assert_eq!(reopened.get_history(), 4);
+    assert_eq!(reopened.get_history_seconds(), "1209600");
+    until(|| reopened.get_rows().row_count() == 1);
+    reopened.invoke_sort(4, false);
+    assert!(
+        reopened
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(0)
+            .unwrap()
+            .contains("old.example.com")
+    );
+    reopened.invoke_close_clicked();
 }

@@ -1050,11 +1050,17 @@ local database fields, as in the reference.
 
 Native bandwidth review uses numeric bytes/requests and seconds with a monthly
 switch in one detached rules window, rather than the reference's nested amount
-and time widgets. Rule usage is textual; monthly history charts and deleting
-selected history are deferred. The review lists known contexts and specific
-rules together, with selectable history spans, rather than Qt's usage/rules
-filters. New explicit contexts can be added by domain; existing subscription
-and service contexts remain editable through their usage rows.
+and time widgets. Rule usage and monthly charts are inline in the all-context
+window, rather than Qt's separate per-context window. Monthly bars display each
+month's exact byte label with proportional height instead of QtCharts axes.
+Usage-age filters use request counts like Qt, exclude ephemeral usage contexts,
+and offer custom seconds plus show-all and optional specific rules. The native
+last-age preference is stored separately from imported Python options. History
+deletion is transactional; per-context reset generations prevent old engine
+flushes/snapshots from restoring deleted usage. An active daemon resets those
+trackers and wakes bandwidth waiters at its next heartbeat. New explicit contexts
+can be added by domain; existing subscription and service contexts remain editable
+through their usage rows.
 
 Current network-job review refreshes live by default (Qt starts with manual
 snapshots). Native typed wait reasons distinguish pauses, header approval, wake,

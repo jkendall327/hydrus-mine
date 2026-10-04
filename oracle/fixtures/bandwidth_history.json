@@ -1,0 +1,127 @@
+{
+  "now": 1770000000,
+  "events": [
+    [
+      1735689600,
+      "recent",
+      1024,
+      1
+    ],
+    [
+      1767225600,
+      "recent",
+      2048,
+      1
+    ],
+    [
+      1769136000,
+      "old",
+      512,
+      1
+    ],
+    [
+      1770000000,
+      "recent",
+      4096,
+      1
+    ],
+    [
+      1770000000,
+      "bytes",
+      123,
+      0
+    ],
+    [
+      1770000000,
+      "page",
+      55,
+      1
+    ]
+  ],
+  "filters": [
+    {
+      "span": 86400,
+      "include_rules": false,
+      "contexts": [
+        "web domain: recent.example.com"
+      ]
+    },
+    {
+      "span": 86400,
+      "include_rules": true,
+      "contexts": [
+        "web domain: recent.example.com",
+        "web domain: rules.example.com"
+      ]
+    },
+    {
+      "span": 1209600,
+      "include_rules": false,
+      "contexts": [
+        "web domain: old.example.com",
+        "web domain: recent.example.com"
+      ]
+    },
+    {
+      "span": null,
+      "include_rules": false,
+      "contexts": [
+        "web domain: bytes.example.com",
+        "web domain: old.example.com",
+        "web domain: recent.example.com",
+        "web domain: rules.example.com"
+      ]
+    }
+  ],
+  "questions": [
+    "Are you sure? This will delete all bandwidth record for the selected network contexts."
+  ],
+  "months": [
+    [
+      "2025-01",
+      1024
+    ],
+    [
+      "2026-01",
+      2048
+    ],
+    [
+      "2026-02",
+      4096
+    ]
+  ],
+  "rules_before": [
+    [
+      0,
+      86400,
+      100000
+    ]
+  ],
+  "months_after_cancel": [
+    [
+      "2025-01",
+      1024
+    ],
+    [
+      "2026-01",
+      2048
+    ],
+    [
+      "2026-02",
+      4096
+    ]
+  ],
+  "months_after_delete": [],
+  "rules_after_delete": [
+    [
+      0,
+      86400,
+      100000
+    ]
+  ],
+  "contexts_after_delete": [
+    "web domain: bytes.example.com",
+    "web domain: old.example.com",
+    "web domain: rules.example.com"
+  ]
+}

@@ -1595,9 +1595,17 @@ writes and actual outgoing cookie/header values through an existing NetEngine.
 ## Bandwidth and current network jobs
 
 Network > data opens native bandwidth usage/rule and current network-job reviews.
-Bandwidth review shows global and known contexts, current speed, day/history/month
-usage, specific-rule ownership and blocked time; selecting a context shows its
-all-time total and usage against each rule. Detached rule editors add, replace
+Bandwidth review filters contexts by recent request usage, with custom seconds,
+show-all, and an option to include anything with specific rules. The last age or
+show-all choice persists when reopened. Rows show current speed, day/history/month
+usage, specific-rule ownership and blocked time. Selecting one context shows its
+all-time total, usage against each rule and a scrollable monthly byte-history bar
+chart with UTC month labels; unused contexts show the reference's empty-history
+message. Extended selection supports confirmed deletion of all selected history.
+Deletion retains their rules, clears durable/live usage and reaches the running
+engine on its next heartbeat, waking bandwidth waiters. Old engine saves cannot
+restore deleted counts. The real Qt filter, chart totals and deletion paths are
+recorded by `oracle/record_bandwidth_history.py`. Detached rule editors add, replace
 and delete data/request limits with rolling-second or calendar-month periods.
 Apply preserves unrelated context edits and pacing settings; Cancel leaves them
 untouched. Default/global rules can be edited by kind or reset with the reference

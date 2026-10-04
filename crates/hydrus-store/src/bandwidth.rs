@@ -80,3 +80,65 @@ pub fn save_usage(conn: &Connection, usage: &[(NetworkContext, Tracker)]) -> Res
     }
     Ok(())
 }
+
+/// Per-context reset generations prevent an already-running engine's stale saves
+/// from restoring history the user deleted. Rules are independent of this record.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct HistoryResets(pub Vec<(NetworkContext, u64)>);
+impl Setting for HistoryResets {
+    const KEY: &'static str = "bandwidth_history_resets";
+}
+impl HistoryResets {
+    /// The context's generation, zero until its first deletion.
+    pub fn generation(&self, context: &NetworkContext) -> u64 {
+        self.0
+            .iter()
+            .find(|(c, _)| c == context)
+            .map_or(0, |(_, n)| *n)
+    }
+    /// Contexts whose trackers must be discarded before accepting new usage.
+    pub fn changed_since(&self, old: &Self) -> Vec<NetworkContext> {
+        self.0
+            .iter()
+            .filter(|(c, n)| *n > old.generation(c))
+            .map(|(c, _)| c.clone())
+            .collect()
+    }
+}
+
+/// Delete all usage for these contexts and mark their live trackers for reset.
+/// Snapshot and persisted usage are changed in the same writer transaction.
+pub fn delete_history(conn: &Connection, contexts: &[NetworkContext]) -> Result<()> {
+    let mut resets = crate::settings::get::<HistoryResets>(conn)?;
+    for context in contexts {
+        let generation = resets
+            .generation(context)
+            .checked_add(1)
+            .ok_or_else(|| StoreError::Invalid("Bandwidth history generation exhausted.".into()))?;
+        resets.0.retain(|(c, _)| c != context);
+        resets.0.push((context.clone(), generation));
+        conn.execute(
+            "DELETE FROM bandwidth_usage WHERE context_kind = ?1 AND context_data = ?2",
+            params![context.kind, context.data],
+        )?;
+    }
+    crate::settings::set(conn, &resets)?;
+    let mut snapshot = crate::settings::get::<crate::network_runtime::Snapshot>(conn)?;
+    snapshot.usage.retain(|(c, _)| !contexts.contains(c));
+    crate::settings::set(conn, &snapshot)
+}
+
+/// Save only usage counted after the most recent deletion, in the writer transaction.
+pub fn save_usage_after_resets(
+    conn: &Connection,
+    usage: &[(NetworkContext, Tracker)],
+    seen: &HistoryResets,
+) -> Result<()> {
+    let current = crate::settings::get::<HistoryResets>(conn)?;
+    let fresh: Vec<_> = usage
+        .iter()
+        .filter(|(c, _)| current.generation(c) == seen.generation(c))
+        .cloned()
+        .collect();
+    save_usage(conn, &fresh)
+}

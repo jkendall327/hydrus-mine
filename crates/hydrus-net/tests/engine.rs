@@ -896,3 +896,102 @@ async fn a_header_awaiting_approval_holds_its_requests() {
         .text();
     assert!(text.contains("x-new: yes"), "{text}");
 }
+
+#[tokio::test]
+async fn deleting_history_discards_stale_flushes_resets_live_limits_and_wakes_waiters() {
+    use hydrus_core::bandwidth::{BandwidthType, Rule, Rules};
+    use hydrus_store::{
+        bandwidth::{self, BandwidthSettings},
+        settings,
+    };
+    let s = setup(|_| Vec::new()).await;
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &BandwidthSettings {
+                    rules: vec![(
+                        NetworkContext::global(),
+                        Rules::new([Rule::new(BandwidthType::Requests, Some(3600), 1)]),
+                    )],
+                    ..BandwidthSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let engine = NetEngine::new(
+        s.store.clone(),
+        NetOptions {
+            obey_bandwidth: true,
+            ..s.engine.options()
+        },
+    )
+    .unwrap();
+    let request = Request::get(format!("{}/echo", s.base));
+    engine.fetch(&request, &Job::new()).await.unwrap();
+    engine.publish_runtime().unwrap();
+    let job = Job::new();
+    let mut pending = Box::pin(engine.fetch(&request, &job));
+    tokio::select! { _ = &mut pending => panic!("request must wait for bandwidth"), () = tokio::time::sleep(std::time::Duration::from_millis(30)) => {} }
+    s.store
+        .write(|ctx| bandwidth::delete_history(ctx.conn(), &[NetworkContext::global()]))
+        .unwrap();
+    engine.save_bandwidth().unwrap();
+    let now = engine.runtime_snapshot().at;
+    assert!(
+        !s.store
+            .read(|c| bandwidth::usage(c, now))
+            .unwrap()
+            .iter()
+            .any(|(c, _)| c == &NetworkContext::global())
+    );
+    engine.publish_runtime().unwrap();
+    assert!(
+        !s.store
+            .read(settings::get::<hydrus_store::network_runtime::Snapshot>)
+            .unwrap()
+            .usage
+            .iter()
+            .any(|(c, _)| c == &NetworkContext::global())
+    );
+    tokio::time::timeout(std::time::Duration::from_secs(1), pending)
+        .await
+        .unwrap()
+        .unwrap();
+    engine.save_bandwidth().unwrap();
+    let mut tracker = s
+        .store
+        .read(|c| bandwidth::usage(c, now))
+        .unwrap()
+        .into_iter()
+        .find(|(c, _)| c == &NetworkContext::global())
+        .unwrap()
+        .1;
+    assert_eq!(tracker.usage(BandwidthType::Requests, None, now), 1);
+    assert_eq!(
+        s.store
+            .read(settings::get::<BandwidthSettings>)
+            .unwrap()
+            .rules[0]
+            .1
+            .rules()[0]
+            .max_allowed,
+        1
+    );
+    let reopened = NetEngine::new(
+        s.store.clone(),
+        NetOptions {
+            obey_bandwidth: true,
+            ..s.engine.options()
+        },
+    )
+    .unwrap();
+    let mut tracker = reopened
+        .runtime_snapshot()
+        .usage
+        .into_iter()
+        .find(|(c, _)| c == &NetworkContext::global())
+        .unwrap()
+        .1;
+    assert_eq!(tracker.usage(BandwidthType::Requests, None, now), 1);
+}

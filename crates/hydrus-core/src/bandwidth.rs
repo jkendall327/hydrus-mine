@@ -518,6 +518,14 @@ impl Manager {
         self.dirty.clear();
     }
 
+    /// Forget selected usage trackers while retaining their configured rules.
+    pub fn delete_history(&mut self, contexts: &[NetworkContext]) {
+        for context in contexts {
+            self.trackers.remove(context);
+            self.dirty.remove(context);
+        }
+    }
+
     /// Current context trackers, including ephemeral page contexts, for live review.
     pub fn all_trackers(&self) -> Vec<(NetworkContext, Tracker)> {
         let mut trackers: Vec<_> = self
