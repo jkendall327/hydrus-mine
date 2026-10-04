@@ -1519,6 +1519,19 @@ changes, session or UTC expiry, a time delta from now, and HTTPS-only cookies.
 Other attributes, including HttpOnly and SameSite, survive an edit. Cancel closes
 child editors and discards the draft. Empty sessions persist across reopen.
 
+Both the browser and cookie list export selected cookies as the reference's
+five-field JSON and import clipboard JSON through a separate confirmation window.
+A session import offers matching-domain cookies, everything, or cancellation when
+other domains appear. Matching identities are replaced; cookie-list imports remain
+staged until Apply, while browser imports save directly into the domain silos.
+The cookies.txt picker accepts Netscape/Mozilla files and preserves domain/path,
+HTTPS-only and HttpOnly attributes, including session and expired cookies. It
+reports unreadable or malformed files without importing a partial batch.
+`oracle/record_cookie_exchange.py` records exports, choices, confirmation text,
+replacement semantics and Netscape fields; widget tests exercise these controls,
+cancellation and errors. An existing engine test sends imported cookies on its
+next request and suppresses expired, wrong-path and HTTPS-only cookies on HTTP.
+
 Network > data > manage http headers stages global and domain header names,
 values, approval and reasons, with filter, sorting, duplicate and confirmed
 delete. Pending headers keep jobs waiting until approved or denied; approved

@@ -1,0 +1,216 @@
+{
+  "netscape_text": "# Netscape HTTP Cookie File\n#HttpOnly_.example.com\tTRUE\t/private\tTRUE\t4102444800\tsid\tsecret\nexample.com\tFALSE\t/\tFALSE\t0\tsession\tvalue\n.example.com\tTRUE\t/\tFALSE\t1\texpired\told\nexample.com\tFALSE\t/\tFALSE\t\t\tvalueless\n",
+  "questions": [
+    {
+      "text": "Of the 2 cookies in your clipboard, 1 match this domain. What do you want to import?",
+      "yes": "import only the matching cookies",
+      "no": "import everything--I intend to rename the domains"
+    },
+    {
+      "text": "About to import 1 cookies for the domains  \".example.com\". Is that ok?",
+      "yes": null,
+      "no": null
+    },
+    {
+      "text": "Of the 2 cookies in your clipboard, 1 match this domain. What do you want to import?",
+      "yes": "import only the matching cookies",
+      "no": "import everything--I intend to rename the domains"
+    },
+    {
+      "text": "About to import 2 cookies for the domains \n\n.example.com\n.other.example. Is that ok?",
+      "yes": null,
+      "no": null
+    },
+    {
+      "text": "About to import 2 cookies for the domains \n\n.sub.example.com\nother.example\n\n Is that ok?",
+      "yes": null,
+      "no": null
+    }
+  ],
+  "messages": [
+    "Added 4 cookies!",
+    "Added 1 cookies!",
+    "Added 2 cookies!",
+    "There were no cookies in the clipboard for this domain!",
+    [
+      "Did not understand what was in the clipboard!",
+      "Expecting value: line 1 column 1 (char 0)"
+    ],
+    "Added 2 cookies!"
+  ],
+  "exports": [
+    [
+      [
+        "session",
+        "value",
+        "example.com",
+        "/",
+        null
+      ],
+      [
+        "sid",
+        "secret",
+        ".example.com",
+        "/private",
+        4102444800
+      ],
+      [
+        "valueless",
+        null,
+        "example.com",
+        "/",
+        null
+      ]
+    ],
+    [
+      [
+        "elsewhere",
+        null,
+        "other.example",
+        "/",
+        null
+      ],
+      [
+        "sid",
+        "replacement",
+        ".example.com",
+        "/private",
+        null
+      ],
+      [
+        "session",
+        "value",
+        "example.com",
+        "/",
+        null
+      ],
+      [
+        "valueless",
+        null,
+        "example.com",
+        "/",
+        null
+      ],
+      [
+        "other",
+        "different",
+        ".other.example",
+        "/",
+        null
+      ],
+      [
+        "browser",
+        "v",
+        ".sub.example.com",
+        "/",
+        null
+      ]
+    ]
+  ],
+  "netscape_cookies": [
+    {
+      "name": "session",
+      "value": "value",
+      "domain": "example.com",
+      "path": "/",
+      "expires": null,
+      "secure": false,
+      "rest": []
+    },
+    {
+      "name": "sid",
+      "value": "secret",
+      "domain": ".example.com",
+      "path": "/private",
+      "expires": 4102444800,
+      "secure": true,
+      "rest": [
+        [
+          "HTTPOnly",
+          ""
+        ]
+      ]
+    },
+    {
+      "name": "valueless",
+      "value": null,
+      "domain": "example.com",
+      "path": "/",
+      "expires": null,
+      "secure": false,
+      "rest": []
+    }
+  ],
+  "clipboard_text": "[[\"sid\", \"replacement\", \".example.com\", \"/private\", 0], [\"other\", \"different\", \".other.example\", \"/\", null]]",
+  "after_matching_import": [
+    {
+      "name": "session",
+      "value": "value",
+      "domain": "example.com",
+      "path": "/",
+      "expires": null,
+      "secure": false,
+      "rest": []
+    },
+    {
+      "name": "sid",
+      "value": "replacement",
+      "domain": ".example.com",
+      "path": "/private",
+      "expires": null,
+      "secure": false,
+      "rest": []
+    },
+    {
+      "name": "valueless",
+      "value": null,
+      "domain": "example.com",
+      "path": "/",
+      "expires": null,
+      "secure": false,
+      "rest": []
+    }
+  ],
+  "after_all_import": [
+    {
+      "name": "other",
+      "value": "different",
+      "domain": ".other.example",
+      "path": "/",
+      "expires": null,
+      "secure": false,
+      "rest": []
+    },
+    {
+      "name": "session",
+      "value": "value",
+      "domain": "example.com",
+      "path": "/",
+      "expires": null,
+      "secure": false,
+      "rest": []
+    },
+    {
+      "name": "sid",
+      "value": "replacement",
+      "domain": ".example.com",
+      "path": "/private",
+      "expires": null,
+      "secure": false,
+      "rest": []
+    },
+    {
+      "name": "valueless",
+      "value": null,
+      "domain": "example.com",
+      "path": "/",
+      "expires": null,
+      "secure": false,
+      "rest": []
+    }
+  ],
+  "browser_contexts": [
+    "web domain: ",
+    "web domain: example.com"
+  ]
+}

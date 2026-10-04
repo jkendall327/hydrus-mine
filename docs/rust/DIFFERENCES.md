@@ -1021,8 +1021,16 @@ Qt's human-name suffixes containing spaces. Pending approval still waits for
 a manual approval change; its automatic question popup is not implemented.
 
 The browser can inspect imported service sessions and create domain sessions;
-creating new service sessions, cookie clipboard/Netscape cookies.txt import and
-export, and drag/drop cookie imports remain deferred. Empty sessions are
+creating new service sessions and drag/drop cookie imports remain deferred.
+Clipboard export uses the same five-field format as Qt, so secure and other
+attributes are omitted and clipboard imports reset them; Netscape imports preserve
+secure/HttpOnly instead. Cookie-list imports use the existing Apply/Cancel draft.
+Native imports validate every cookie before changing any draft or store and reject
+an entire malformed multi-file selection; Qt can leave earlier accepted files or
+cookies in place when a later item fails. Imports are bounded to 8 MiB per input
+and 10,000 cookie identities per file/clipboard; UTF-8 is required for files.
+Netscape expired cookies remain visible but are never sent. Confirmation text uses
+plain domain lines for large lists rather than Qt's compact summary layout. Empty sessions are
 explicitly persisted in the native store. Refresh preserves a cookie/header
 draft; reopen reloads committed changes. Browser create and confirmed clear
 actions take effect immediately. Passwords and cookie values remain ordinary

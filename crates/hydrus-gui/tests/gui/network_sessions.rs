@@ -248,15 +248,11 @@ fn applied_widgets_change_existing_engines_outgoing_requests() {
     browser.invoke_row_clicked(0, false, false);
     browser.invoke_edit_clicked();
     let cookies = slots.cookies.borrow().as_ref().unwrap().clone_strong();
-    cookies.invoke_add_clicked();
-    let edit = windows::last_edit_opened().unwrap();
-    edit.set_name("sid".into());
-    edit.set_value("from-gui".into());
-    edit.set_domain("127.0.0.1".into());
-    edit.set_session_cookie(true);
-    edit.set_secure(false);
-    edit.invoke_apply_clicked();
-    assert!(edit.get_error().is_empty());
+    let cookie_path = dir.path().join("cookies.txt");
+    std::fs::write(&cookie_path, "# Netscape HTTP Cookie File\n#HttpOnly_127.0.0.1\tFALSE\t/\tFALSE\t0\tsid\tfrom-gui\n127.0.0.1\tFALSE\t/private\tFALSE\t0\tprivate\thidden\n127.0.0.1\tFALSE\t/\tFALSE\t1\texpired\thidden\n").unwrap();
+    hydrus_gui::set_picker(move |_, _| vec![cookie_path.clone()]);
+    cookies.invoke_import_file_clicked();
+    assert!(cookies.get_error().is_empty(), "{}", cookies.get_error());
     cookies.invoke_apply_clicked();
     let headers = windows::open(&store, &slots, true).unwrap();
     headers.invoke_add_clicked();
@@ -273,10 +269,19 @@ fn applied_widgets_change_existing_engines_outgoing_requests() {
         .text()
         .to_lowercase();
     assert!(text.contains("cookie: sid=from-gui"), "{text}");
+    assert!(
+        !text.contains("hidden"),
+        "expired and wrong-path imports must not be sent: {text}"
+    );
     assert!(text.contains("x-gui: approved"), "{text}");
     browser.invoke_edit_clicked();
     let cookies = slots.cookies.borrow().as_ref().unwrap().clone_strong();
-    cookies.invoke_row_clicked(0, false, false);
+    let index = cookies
+        .get_rows()
+        .iter()
+        .position(|row| row.cells.row_data(0).unwrap() == "sid")
+        .unwrap();
+    cookies.invoke_row_clicked(i32::try_from(index).unwrap(), false, false);
     cookies.invoke_edit_clicked();
     let edit = windows::last_edit_opened().unwrap();
     edit.set_secure(true);
@@ -385,4 +390,162 @@ fn dropping_final_owner_cancels_open_drafts_and_invalidates_child_callbacks() {
             .unwrap()
             .is_empty()
     );
+}
+
+#[test]
+fn cookie_exchange_widgets_confirm_filter_cancel_import_export_and_report_errors() {
+    use std::{cell::RefCell, rc::Rc};
+    let f: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../../oracle/fixtures/cookie_exchange.json"
+    ))
+    .unwrap();
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let rendered = headless::init();
+    let slots = Slots::default();
+    let browser = windows::open(&store, &slots, false).unwrap();
+    let text = Rc::new(RefCell::new(
+        f["clipboard_text"].as_str().unwrap().to_owned(),
+    ));
+    hydrus_gui::set_paster({
+        let text = text.clone();
+        move || text.borrow().clone()
+    });
+    browser.invoke_import_clipboard_clicked();
+    let import = windows::last_import_opened().unwrap();
+    assert!(!import.get_choosing());
+    import.invoke_action("cancel".into());
+    assert!(store.read(network::sessions).unwrap().is_empty());
+    browser.invoke_add_clicked();
+    let edit = windows::last_edit_opened().unwrap();
+    edit.set_domain("example.com".into());
+    edit.invoke_apply_clicked();
+    browser.invoke_row_clicked(0, false, false);
+    browser.invoke_edit_clicked();
+    let cookies = slots.cookies.borrow().as_ref().unwrap().clone_strong();
+    cookies.invoke_import_clipboard_clicked();
+    let import = windows::last_import_opened().unwrap();
+    assert!(import.get_choosing());
+    assert_eq!(
+        import.get_message(),
+        f["questions"][0]["text"].as_str().unwrap()
+    );
+    assert_eq!(
+        import.get_matching_label(),
+        f["questions"][0]["yes"].as_str().unwrap()
+    );
+    import.invoke_action("matching".into());
+    assert_eq!(
+        import.get_message(),
+        f["questions"][1]["text"].as_str().unwrap()
+    );
+    screenshot(
+        &rendered,
+        rendered.count() - 1,
+        "cookie-import-confirmation.png",
+        700,
+        350,
+    );
+    import.invoke_action("cancel".into());
+    assert_eq!(cookies.get_rows().row_count(), 0);
+    cookies.invoke_import_clipboard_clicked();
+    let import = windows::last_import_opened().unwrap();
+    import.invoke_action("matching".into());
+    import.invoke_action("import".into());
+    assert_eq!(cookies.get_rows().row_count(), 1);
+    assert_eq!(cookies.get_message(), "Added 1 cookies!");
+    assert!(
+        store
+            .read(|c| network::cookies(c, &NetworkContext::domain("example.com")))
+            .unwrap()
+            .is_empty()
+    );
+    cookies.invoke_import_clipboard_clicked();
+    let import = windows::last_import_opened().unwrap();
+    import.invoke_action("all".into());
+    assert_eq!(
+        import.get_message(),
+        f["questions"][3]["text"].as_str().unwrap()
+    );
+    import.invoke_action("import".into());
+    assert_eq!(cookies.get_rows().row_count(), 2);
+    let copied = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| copied.borrow_mut().push(clip.clone())
+    });
+    cookies.invoke_row_clicked(0, false, false);
+    cookies.invoke_export_clicked();
+    let hydrus_gui::Clip::Text(export) = copied.borrow()[0].clone() else {
+        panic!("cookie export must be text");
+    };
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(&export)
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
+    cookies.invoke_cancel_clicked();
+    browser.invoke_edit_clicked();
+    let cookies = slots.cookies.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(cookies.get_rows().row_count(), 0);
+    let path = dir.path().join("cookies.txt");
+    std::fs::write(&path, f["netscape_text"].as_str().unwrap()).unwrap();
+    hydrus_gui::set_picker({
+        let path = path.clone();
+        move |kind, title| {
+            assert_eq!(kind, hydrus_gui::Pick::Files);
+            assert_eq!(title, "select cookies.txt");
+            vec![path.clone()]
+        }
+    });
+    cookies.invoke_import_file_clicked();
+    assert!(cookies.get_error().is_empty(), "{}", cookies.get_error());
+    assert_eq!(cookies.get_rows().row_count(), 4);
+    assert_eq!(cookies.get_message(), f["messages"][0].as_str().unwrap());
+    std::fs::write(&path, "# Netscape HTTP Cookie File\nmalformed").unwrap();
+    cookies.invoke_import_file_clicked();
+    assert!(cookies.get_error().contains("line 2"));
+    assert_eq!(cookies.get_rows().row_count(), 4);
+    *text.borrow_mut() = "not json".into();
+    cookies.invoke_import_clipboard_clicked();
+    assert!(cookies.get_error().contains("Did not understand"));
+    *text.borrow_mut() = "[]".into();
+    cookies.invoke_import_clipboard_clicked();
+    assert_eq!(cookies.get_message(), f["messages"][3].as_str().unwrap());
+    hydrus_gui::set_picker(|_, _| Vec::new());
+    cookies.invoke_import_file_clicked();
+    assert_eq!(cookies.get_rows().row_count(), 4);
+    cookies.invoke_apply_clicked();
+    let stored = store
+        .read(|c| network::cookies(c, &NetworkContext::domain("example.com")))
+        .unwrap();
+    assert!(
+        stored
+            .iter()
+            .any(|c| c.secure && c.rest == vec![("HTTPOnly".into(), Some(String::new()))])
+    );
+    // Browser clipboard imports commit immediately after their separate confirmation.
+    *text.borrow_mut() = "[[\"new\",\"token\",\".sub.example.com\",\"/\",0]]".into();
+    browser.invoke_import_clipboard_clicked();
+    let import = windows::last_import_opened().unwrap();
+    import.invoke_action("import".into());
+    assert!(
+        store
+            .read(|c| network::cookies(c, &NetworkContext::domain("example.com")))
+            .unwrap()
+            .iter()
+            .any(|c| c.name == "new")
+    );
+    browser.invoke_row_clicked(0, false, false);
+    browser.invoke_export_clicked();
+    assert_eq!(copied.borrow().len(), 2);
+    // Dropping the browser while a confirmation is open invalidates stale child actions.
+    browser.invoke_import_clipboard_clicked();
+    let import = windows::last_import_opened().unwrap();
+    browser.invoke_cancel_clicked();
+    assert!(!import.window().is_visible());
+    import.invoke_action("import".into());
 }

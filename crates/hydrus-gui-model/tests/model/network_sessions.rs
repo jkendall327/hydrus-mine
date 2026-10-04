@@ -337,3 +337,136 @@ fn header_case_groups_delete_exact_rows_and_reject_concurrent_variant_insertions
     assert_eq!(headers[0].name, "x-Token");
     assert_eq!(headers[0].value, "resolved");
 }
+
+#[test]
+fn cookie_exchange_replays_reference_fields_questions_and_collisions() {
+    let f: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../../oracle/fixtures/cookie_exchange.json"
+    ))
+    .unwrap();
+    let imported = model::import_netscape_cookies(f["netscape_text"].as_str().unwrap()).unwrap();
+    assert_eq!(imported.len(), 4);
+    // Qt clears expired cookies during its list refresh; native drafts retain them.
+    let mut live = imported
+        .iter()
+        .filter(|c| c.expires.is_none_or(|e| e > 1_700_000_000))
+        .map(|c| {
+            serde_json::json!({"name": c.name, "value": c.value, "domain": c.domain,
+            "path": c.path, "expires": c.expires, "secure": c.secure, "rest": c.rest})
+        })
+        .collect::<Vec<_>>();
+    live.sort_by(|a, b| a["name"].as_str().cmp(&b["name"].as_str()));
+    assert_eq!(serde_json::json!(live), f["netscape_cookies"]);
+    let mut exported: Vec<serde_json::Value> = serde_json::from_str(
+        &model::export_cookies(
+            &imported
+                .iter()
+                .filter(|c| c.expires != Some(1))
+                .cloned()
+                .collect::<Vec<_>>(),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    let mut reference = f["exports"][0].as_array().unwrap().clone();
+    exported.sort_by_key(ToString::to_string);
+    reference.sort_by_key(ToString::to_string);
+    assert_eq!(exported, reference);
+    let cookies = model::import_cookie_clipboard(f["clipboard_text"].as_str().unwrap()).unwrap();
+    let session = NetworkContext::domain("example.com");
+    let matching = model::matching_cookies(&cookies, &session);
+    assert_eq!(matching.len(), 1);
+    assert_eq!(
+        model::cookie_import_question(&matching, false),
+        f["questions"][1]["text"]
+    );
+    assert_eq!(
+        model::cookie_import_question(&cookies, false),
+        f["questions"][3]["text"]
+    );
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let mut draft = CookieDraft::new(&store, session.clone()).unwrap();
+    draft.import(imported).unwrap();
+    draft.import(matching).unwrap();
+    let sid = draft.cookies.iter().find(|c| c.name == "sid").unwrap();
+    assert_eq!(sid.value.as_deref(), Some("replacement"));
+    assert_eq!(sid.expires, None);
+    assert!(!sid.secure);
+    assert!(sid.rest.is_empty());
+    assert_eq!(draft.cookies.iter().filter(|c| c.name == "sid").count(), 1);
+    assert!(
+        store
+            .read(|c| network::cookies(c, &session))
+            .unwrap()
+            .is_empty()
+    );
+    draft.apply(&store).unwrap();
+    let mut stale = CookieDraft::new(&store, session.clone()).unwrap();
+    stale.import(cookies).unwrap();
+    store
+        .write(move |ctx| {
+            let mut c = cookie("sid");
+            c.path = "/private".into();
+            c.value = Some("website-response".into());
+            network::set_cookie(ctx.conn(), &session, &c)
+        })
+        .unwrap();
+    assert!(stale.apply(&store).is_err());
+    let reloaded = CookieDraft::new(&store, NetworkContext::domain("example.com")).unwrap();
+    assert!(!reloaded.cookies.iter().any(|c| c.name == "other"));
+}
+
+#[test]
+fn malformed_cookie_batches_never_partially_change_the_draft_and_browser_routes_silos() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let mut draft = CookieDraft::new(&store, NetworkContext::domain("example.com")).unwrap();
+    draft.import(vec![cookie("original")]).unwrap();
+    let original = draft.cookies.clone();
+    let mut bad = cookie("bad");
+    bad.path = "relative".into();
+    assert!(draft.import(vec![cookie("first"), bad]).is_err());
+    assert_eq!(draft.cookies, original);
+    for text in [
+        "not json",
+        "{}",
+        "[[\"n\",\"v\",\"example.com\",\"/\"]]",
+        "[[\"n\",\"v\",\"example.com\",\"/\",null],[1,2,3,4,5]]",
+    ] {
+        assert!(model::import_cookie_clipboard(text).is_err(), "{text}");
+    }
+    assert!(model::import_cookie_clipboard(&" ".repeat(model::COOKIE_EXCHANGE_LIMIT + 1)).is_err());
+    for text in [
+        "example.com\tFALSE\t/\tFALSE\t0\tn\tv",
+        "# Netscape HTTP Cookie File\n.example.com\tFALSE\t/\tTRUE\t0\tn\tv",
+        "# Netscape HTTP Cookie File\nexample.com\tFALSE\t/\tFALSE\twrong\tn\tv",
+    ] {
+        assert!(model::import_netscape_cookies(text).is_err(), "{text}");
+    }
+    let mut cookies = model::import_cookie_clipboard(
+        "[[\"a\",\" v \",\".sub.example.com\",\"/\",0],[\"b\",null,\"other.example.test\",\"/\",null]]"
+    ).unwrap();
+    assert_eq!(cookies[0].value.as_deref(), Some(" v "));
+    let mut replacement = cookies[0].clone();
+    replacement.value = Some("last".into());
+    cookies.push(replacement);
+    model::import_cookie_sessions(&store, cookies).unwrap();
+    let sessions = store.read(network::sessions).unwrap();
+    assert!(sessions.contains(&NetworkContext::domain("example.com")));
+    let routed = store
+        .read(|c| network::session_for(c, &NetworkContext::domain("other.example.test")))
+        .unwrap();
+    assert!(sessions.contains(&routed));
+    assert_eq!(
+        store
+            .read(|c| network::cookies(c, &NetworkContext::domain("example.com")))
+            .unwrap()[0]
+            .value
+            .as_deref(),
+        Some("last")
+    );
+    drop(store);
+    let store = Store::open(dir.path()).unwrap();
+    assert_eq!(store.read(network::sessions).unwrap().len(), 2);
+}

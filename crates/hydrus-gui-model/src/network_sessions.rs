@@ -154,6 +154,192 @@ pub fn header_cells(row: &HeaderRow) -> Vec<String> {
         row.header.reason.clone(),
     ]
 }
+/// Keep clipboard/file imports bounded before decoding or changing a draft.
+pub const COOKIE_EXCHANGE_LIMIT: usize = 8 * 1024 * 1024;
+const COOKIE_COUNT_LIMIT: usize = 10_000;
+type FlatCookie = (String, Option<String>, String, String, Option<i64>);
+
+/// The reference clipboard format deliberately carries five fields only.
+/// Secure and other attributes belong to Netscape file exchange instead.
+pub fn export_cookies(cookies: &[Cookie]) -> Result<String, String> {
+    let flat: Vec<FlatCookie> = cookies
+        .iter()
+        .map(|c| {
+            (
+                c.name.clone(),
+                c.value.clone(),
+                c.domain.clone(),
+                c.path.clone(),
+                c.expires,
+            )
+        })
+        .collect();
+    serde_json::to_string(&flat).map_err(|e| e.to_string())
+}
+
+fn check_exchange_size(text: &str) -> Result<(), String> {
+    if text.len() > COOKIE_EXCHANGE_LIMIT {
+        return Err("Cookie imports are limited to 8 MiB.".into());
+    }
+    Ok(())
+}
+fn check_import_cookie(cookie: Cookie) -> Result<Cookie, String> {
+    // Check raw fields before trimming so a leading/trailing control cannot hide.
+    if [
+        cookie.name.as_str(),
+        cookie.value.as_deref().unwrap_or_default(),
+        cookie.domain.as_str(),
+        cookie.path.as_str(),
+    ]
+    .iter()
+    .any(|field| field.chars().any(char::is_control))
+    {
+        return Err("Cookie fields cannot contain control characters.".into());
+    }
+    let mut checked = validate_cookie(cookie.clone())?;
+    // Imported values may contain intentional leading/trailing spaces.
+    checked.value = cookie.value;
+    Ok(checked)
+}
+
+/// Decode the actual reference five-field JSON, rejecting the entire malformed batch.
+/// An expiry of zero means a session cookie, as in the reference import handlers.
+pub fn import_cookie_clipboard(text: &str) -> Result<Vec<Cookie>, String> {
+    check_exchange_size(text)?;
+    let flat: Vec<FlatCookie> = serde_json::from_str(text)
+        .map_err(|e| format!("Did not understand what was in the clipboard: {e}"))?;
+    if flat.len() > COOKIE_COUNT_LIMIT {
+        return Err("Cookie imports are limited to 10,000 cookies.".into());
+    }
+    flat.into_iter()
+        .map(|(name, value, domain, path, expires)| {
+            check_import_cookie(Cookie {
+                name,
+                value,
+                domain: domain.to_ascii_lowercase(),
+                path,
+                expires: expires.filter(|&e| e != 0),
+                secure: false,
+                rest: Vec::new(),
+            })
+        })
+        .collect()
+}
+
+/// Load Netscape/Mozilla cookies.txt including expired, session and HttpOnly cookies.
+/// The leading dot and TRUE/FALSE domain flag must agree, as MozillaCookieJar requires.
+pub fn import_netscape_cookies(text: &str) -> Result<Vec<Cookie>, String> {
+    check_exchange_size(text)?;
+    let mut lines = text.lines();
+    let first = lines.next().unwrap_or_default();
+    if !(first.starts_with("# Netscape HTTP Cookie File")
+        || first.starts_with("# HTTP Cookie File"))
+    {
+        return Err("It looks like that cookies.txt failed to load. Unfortunately, not all formats are supported.".into());
+    }
+    let mut cookies = Vec::new();
+    for (line_number, line) in lines.enumerate() {
+        let (line, http_only) = line
+            .strip_prefix("#HttpOnly_")
+            .map_or((line, false), |line| (line, true));
+        if line.trim().is_empty() || line.starts_with(['#', '$']) {
+            continue;
+        }
+        let fields: Vec<_> = line.split('\t').collect();
+        let invalid = || format!("Invalid Netscape cookie on line {}.", line_number + 2);
+        if fields.len() != 7
+            || !["TRUE", "FALSE"].contains(&fields[1])
+            || !["TRUE", "FALSE"].contains(&fields[3])
+            || fields[0].starts_with('.') != (fields[1] == "TRUE")
+        {
+            return Err(invalid());
+        }
+        let expires = if fields[4].is_empty() || fields[4] == "0" {
+            None
+        } else {
+            Some(fields[4].parse::<i64>().map_err(|_| invalid())?)
+        };
+        let (name, value) = if fields[5].is_empty() {
+            (fields[6].to_owned(), None)
+        } else {
+            (fields[5].to_owned(), Some(fields[6].to_owned()))
+        };
+        let cookie = check_import_cookie(Cookie {
+            name,
+            value,
+            domain: fields[0].to_ascii_lowercase(),
+            path: fields[2].into(),
+            expires,
+            secure: fields[3] == "TRUE",
+            rest: if http_only {
+                vec![("HTTPOnly".into(), Some(String::new()))]
+            } else {
+                Vec::new()
+            },
+        })
+        .map_err(|e| format!("{} {e}", invalid()))?;
+        // MozillaCookieJar resolves duplicate identities to the last value in a file.
+        if let Some(index) = cookies
+            .iter()
+            .position(|c| cookie_key(c) == cookie_key(&cookie))
+        {
+            cookies[index] = cookie;
+        } else {
+            cookies.push(cookie);
+        }
+        if cookies.len() > COOKIE_COUNT_LIMIT {
+            return Err("Cookie imports are limited to 10,000 cookies.".into());
+        }
+    }
+    Ok(cookies)
+}
+
+/// The domain suffix filter used by the reference session clipboard import choice.
+pub fn matching_cookies(cookies: &[Cookie], session: &NetworkContext) -> Vec<Cookie> {
+    cookies
+        .iter()
+        .filter(|c| session.kind != network::CONTEXT_DOMAIN || c.domain.ends_with(&session.data))
+        .cloned()
+        .collect()
+}
+
+/// Describe the exact import batch before changing any cookies.
+pub fn cookie_import_question(cookies: &[Cookie], browser: bool) -> String {
+    let domains: BTreeSet<_> = cookies.iter().map(|c| c.domain.as_str()).collect();
+    let summary = if domains.len() == 1 {
+        format!(
+            " \"{}\"{}",
+            domains.first().copied().unwrap_or_default(),
+            if browser { " " } else { "" }
+        )
+    } else {
+        format!(
+            "\n\n{}{}",
+            domains.into_iter().collect::<Vec<_>>().join("\n"),
+            if browser { "\n\n" } else { "" }
+        )
+    };
+    format!(
+        "About to import {} cookies for the domains {summary}{} Is that ok?",
+        cookies.len(),
+        if browser { "" } else { "." }
+    )
+}
+
+/// Import cookies into their domain silos in one transaction, replacing matching identities.
+pub fn import_cookie_sessions(store: &Store, cookies: Vec<Cookie>) -> hydrus_store::Result<()> {
+    store.write(move |ctx| {
+        for cookie in cookies {
+            let session = network::session_for(
+                ctx.conn(),
+                &NetworkContext::domain(cookie.domain.trim_start_matches('.')),
+            )?;
+            network::set_cookie(ctx.conn(), &session, &cookie)?;
+        }
+        Ok(())
+    })
+}
+
 /// Cookies staged for one session; dropping the draft cancels every change.
 #[derive(Debug, Clone)]
 pub struct CookieDraft {
@@ -195,6 +381,27 @@ impl CookieDraft {
             self.cookies.push(cookie);
         }
         Ok(())
+    }
+    /// Stage a validated import batch; the last matching identity replaces the old value.
+    /// Cancelling this editor still cancels all imported cookies.
+    pub fn import(&mut self, cookies: Vec<Cookie>) -> Result<usize, String> {
+        let cookies = cookies
+            .into_iter()
+            .map(check_import_cookie)
+            .collect::<Result<Vec<_>, _>>()?;
+        let count = cookies.len();
+        for cookie in cookies {
+            if let Some(index) = self
+                .cookies
+                .iter()
+                .position(|c| cookie_key(c) == cookie_key(&cookie))
+            {
+                self.cookies[index] = cookie;
+            } else {
+                self.cookies.push(cookie);
+            }
+        }
+        Ok(count)
     }
     /// Apply changed identities atomically without replacing cookies arriving meanwhile.
     pub fn apply(&self, store: &Store) -> hydrus_store::Result<()> {
