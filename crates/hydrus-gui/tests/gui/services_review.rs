@@ -237,7 +237,7 @@ fn local_bulk_review_replays_confirmations_store_changes_and_reopens() {
             window.get_trash_nonempty(),
             event["after"]["clear_enabled"].as_bool().unwrap()
         );
-        let remaining: usize = store
+        let remaining: i64 = store
             .read(|conn| {
                 Ok(conn.query_row(
                     "SELECT count(*) FROM file_domain_current WHERE service_id = ?",
@@ -248,7 +248,7 @@ fn local_bulk_review_replays_confirmations_store_changes_and_reopens() {
             .unwrap();
         assert_eq!(
             remaining,
-            event["after"]["hashes"].as_array().unwrap().len()
+            i64::try_from(event["after"]["hashes"].as_array().unwrap().len()).unwrap()
         );
     }
     assert_eq!(changed.get(), 2);
