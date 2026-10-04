@@ -2053,3 +2053,10 @@ persist immediately, preserving other owners' defaults. Custom load and profile
 editing lock the parent draft; Cancel or owner closure invalidates retained child
 callbacks. The real Qt menu tree, prompts, editor outputs and acceptance/cancel
 paths are recorded in `subscription_import_options.json`.
+
+GUI Sessions also selects the default session on startup: a blank page, last
+session or any saved name. Choices remain fixed while the options window is
+open, and Cancel leaves the startup preference unchanged. A missing session
+name falls back to a blank page. Named sessions restore their saved tree, ordered
+media, selection and independent importer state before the main window opens;
+`oracle/record_session_startup.py` records the four ordinary startup outcomes.

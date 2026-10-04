@@ -124,7 +124,7 @@ impl Client {
                 say(state);
             }
         });
-        let pages = Pages::open(store).context("opening the last session")?;
+        let pages = Pages::open_startup(store).context("opening the startup session")?;
         let bound = bind(&window, pages);
         // the last session kept as it changes (the reference saves it every
         // five minutes), and what the Client API asks of the pages done

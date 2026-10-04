@@ -42,7 +42,7 @@ fn int(n: i64) -> i32 {
 const UNMATCHED: [&str; 2] = ["collect into one group", "leave separate"];
 
 /// A row as the window shows it (a sort's types are the store's).
-fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
+fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)]) -> OptionRow {
     let mut out = OptionRow::default();
     match row {
         Row::Title { title, depth } => {
@@ -112,6 +112,19 @@ fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
                     let items: Vec<SharedString> = items.iter().map(|&s| s.into()).collect();
                     out.items = ModelRc::new(VecModel::from(items));
                     out.index = int(*i as i64);
+                }
+                (Kind::SavedSession, Value::SavedSession(name)) => {
+                    out.kind = 5;
+                    out.items = ModelRc::new(VecModel::from(
+                        sessions
+                            .iter()
+                            .map(|(_, label)| SharedString::from(label.as_str()))
+                            .collect::<Vec<_>>(),
+                    ));
+                    out.index = sessions
+                        .iter()
+                        .position(|(value, _)| value == name)
+                        .map_or(-1, |index| int(index as i64));
                 }
                 (Kind::Text, Value::Text(text)) => {
                     out.kind = 6;
@@ -234,6 +247,7 @@ pub(crate) fn open(
         .read(Settings::load)
         .map_err(|e| format!("could not read the options: {e}"))?;
     let window = OptionsWindow::new().map_err(|e| e.to_string())?;
+    let session_choices = Rc::new(crate::options::session_choices(store));
     window.set_search_at_top(settings.options_preferences.search_at_top);
     let resolved = settings
         .search_defaults
@@ -254,6 +268,7 @@ pub(crate) fn open(
     // (the rows are made anew only as the page changes: an edit leaves its
     // control as the user left it)
     let show_page = {
+        let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak = window.as_weak();
@@ -266,7 +281,7 @@ pub(crate) fn open(
                 .enumerate()
                 .map(|(i, row)| OptionRow {
                     found: editor.found(i),
-                    ..option_row(row, &store)
+                    ..option_row(row, &store, &session_choices)
                 })
                 .collect();
             window.set_page(int(editor.page() as i64));
@@ -505,10 +520,15 @@ pub(crate) fn open(
         }
     });
     window.on_choice_chosen({
+        let session_choices=session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         move |i, index| {
             let mut editor = editor.borrow_mut();
+            if matches!(editor.rows().get(at(i)),Some(Row::Opt {option,..}) if matches!(option.kind,Kind::SavedSession)) {
+                if let Some((name,_))=session_choices.get(at(index)) {editor.saved_session(at(i),name.clone());}
+                return;
+            }
             let combined = match editor.rows().get(at(i)) {
                 Some(Row::Opt { option, .. }) => match option.kind {
                     Kind::TagService { combined } => Some(combined),

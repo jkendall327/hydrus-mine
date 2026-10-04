@@ -169,6 +169,35 @@ impl std::fmt::Debug for Pages {
 }
 
 impl Pages {
+    /// Boot using the configured startup session; a missing name falls back to
+    /// the default-domain blank page. Ordinary reopen keeps the live session.
+    pub fn open_startup(store: Arc<Store>) -> hydrus_store::Result<Self> {
+        let settings: hydrus_store::settings::GuiSessionSettings =
+            store.read(hydrus_store::settings::get)?;
+        let mut pages = Self::open(store)?;
+        if settings.startup.as_deref() == Some(LAST_SESSION) {
+            return Ok(pages);
+        }
+        if let Some(name) = settings.startup
+            && pages
+                .store
+                .read(|conn| sessions::load(conn, &name))?
+                .is_some()
+        {
+            pages
+                .clear_and_load(&name)
+                .map_err(hydrus_store::StoreError::Corrupt)?;
+            return Ok(pages);
+        }
+        for index in (0..pages.session.pages.len()).rev() {
+            pages
+                .close(0, index)
+                .map_err(hydrus_store::StoreError::Corrupt)?;
+        }
+        pages.forget_closed();
+        Ok(pages)
+    }
+
     /// The last session, as the reference starts with it; with none (or an
     /// empty one), a single empty search page.
     pub fn open(store: Arc<Store>) -> hydrus_store::Result<Self> {

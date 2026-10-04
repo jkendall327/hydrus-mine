@@ -123,6 +123,7 @@ pub enum Value {
     Float(String),
     /// The index of the item chosen.
     Choice(usize),
+    SavedSession(Option<String>),
     Text(String),
     /// Text, or none (the reference's `NoneableTextCtrl`); the text is
     /// kept while none, as its text box keeps it.
@@ -170,6 +171,8 @@ pub enum Kind {
         max: f64,
     },
     Choice(&'static [&'static str]),
+    /// Named GUI sessions plus the blank-page startup choice.
+    SavedSession,
     Text,
     NoneableText {
         none_phrase: &'static str,
@@ -909,6 +912,25 @@ fn signed(n: Option<u64>) -> Option<i64> {
     n.map(|n| i64::try_from(n).unwrap_or(i64::MAX))
 }
 
+/// Choice order from GUISessionsPanel: blank first, ensure last session exists.
+pub fn session_choices(store: &hydrus_store::Store) -> Vec<(Option<String>, String)> {
+    let mut names = store
+        .read(hydrus_store::sessions::names)
+        .unwrap_or_default()
+        .into_iter()
+        .map(|(name, _)| name)
+        .collect::<Vec<_>>();
+    if !names
+        .iter()
+        .any(|name| name == hydrus_store::sessions::LAST_SESSION)
+    {
+        names.insert(0, hydrus_store::sessions::LAST_SESSION.into());
+    }
+    let mut choices = vec![(None, "just a blank page".into())];
+    choices.extend(names.into_iter().map(|name| (Some(name.clone()), name)));
+    choices
+}
+
 fn unsigned(n: Option<i64>) -> Option<u64> {
     n.map(|n| u64::try_from(n).unwrap_or(0))
 }
@@ -1610,6 +1632,18 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             vec![boxed(
                 "sessions",
                 vec![
+                    opt(
+                        "Default session on startup: ",
+                        Kind::SavedSession,
+                        Rc::new(|s| Value::SavedSession(s.gui_sessions.startup.clone())),
+                        Rc::new(|s, value| match value {
+                            Value::SavedSession(name) => {
+                                s.gui_sessions.startup.clone_from(name);
+                                Ok(())
+                            }
+                            _ => Err(wrong("Default session on startup: ")),
+                        }),
+                    ),
                     int(
                         "If 'last session' above, autosave it how often (minutes)?",
                         (1, 1440),
@@ -2322,6 +2356,9 @@ pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Sug
                         labels.push(*text);
                     }
                 }
+                (Kind::SavedSession, Value::SavedSession(name)) => {
+                    labels.push(name.as_deref().unwrap_or("just a blank page"))
+                }
                 (
                     Kind::Noneable {
                         none_phrase, unit, ..
@@ -2660,6 +2697,14 @@ impl Editor {
                 *value = Value::Location(location);
                 return;
             }
+        }
+    }
+
+    pub fn saved_session(&mut self, row: usize, name: Option<String>) {
+        if let Some(index) = self.option_at(row)
+            && matches!(self.kind(index), Kind::SavedSession)
+        {
+            self.values[self.page][index] = Value::SavedSession(name);
         }
     }
 

@@ -165,6 +165,19 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
             (theirs_items != *items || theirs["choice"] != items[*i])
                 .then(|| format!("choice {:?} of {items:?}", items[*i]))
         }
+        (Kind::SavedSession, Value::SavedSession(name)) => {
+            let choices = hydrus_gui_model::options::session_choices(store);
+            let ours: Vec<_> = choices.iter().map(|(_, label)| label.as_str()).collect();
+            let theirs_items: Vec<_> = theirs["items"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|item| item.as_str().unwrap())
+                .collect();
+            (ours != theirs_items
+                || theirs["choice"] != name.as_deref().unwrap_or("just a blank page"))
+            .then(|| format!("session {name:?} of {ours:?}"))
+        }
         (Kind::TagService { combined }, Value::TagService(key)) => {
             let choices = hydrus_gui_model::options::tag_service_choices(store, *combined);
             let names = choices

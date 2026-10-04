@@ -1343,3 +1343,11 @@ coverage. The earlier pending favourites-popup limitation is resolved for these
 editors. Subscription copy-options menus and the standalone defaults manager
 still need the same favourites integration before the broad shared feature is
 complete. External-program editing remains its separate existing gap.
+Historical GUI-session autosaves now run alongside the manual notebook menus.
+Legacy historical snapshot import remains deferred.
+
+Startup sessions load before showing the native main window; the reference
+defers its initial load by a quarter second. Ordinary blank, missing, last and
+named-session outcomes match the recorded reference. The reference's bad-shutdown
+recovery question and large-session warning are still deferred. Loading an empty
+saved tree retains the native single blank search page.
