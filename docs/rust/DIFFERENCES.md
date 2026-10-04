@@ -314,7 +314,9 @@ search.
   the options it has, and their boxes (the reference's also suggests other
   text on its pages, such as units and dropdowns' choices), and is always
   at the top (the reference's "Put the options search bar at the" isn't
-  an option yet); two options with the same label each go to their own
+  an option yet). Connection/error-delay ranges follow the saved advanced mode
+  when opening the window; changing that mode takes effect on reopening, as in
+  the reference. Two options with the same label each go to their own
   row (the reference's both go to the last). The checker options editor
   has no help button, and raises a time below its least value to it when
   "apply" is pressed, where the reference's does as the focus leaves the

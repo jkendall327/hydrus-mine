@@ -840,6 +840,10 @@ fn unsigned(n: Option<i64>) -> Option<u64> {
 pub fn pages(settings: &Settings) -> Vec<Page> {
     // (the thumbnails' rating sizes go up to their width)
     let thumbnail_width = f64::from(settings.thumbnails.bounding_width);
+    let advanced = settings.advanced.0;
+    let timeout_range = if advanced { (1, 30 * 86400) } else { (3, 600) };
+    let retry_range = if advanced { (1, 30 * 86400) } else { (3, 1800) };
+    let error_delay_min = if advanced { 1.0 } else { 600.0 };
     let page = |name, items| Page { name, items };
     vec![
         page(
@@ -873,19 +877,19 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                         int(
                             "network timeout (seconds): ",
-                            (3, 600),
+                            timeout_range,
                             |s| s.network.network_timeout as i64,
                             |s, v| s.network.network_timeout = v as u64,
                         ),
                         int(
                             "connection error retry wait (seconds): ",
-                            (3, 1800),
+                            retry_range,
                             |s| s.network.connection_error_wait_time as i64,
                             |s, v| s.network.connection_error_wait_time = v as u64,
                         ),
                         int(
                             "serverside bandwidth retry wait (seconds): ",
-                            (3, 1800),
+                            retry_range,
                             |s| s.network.serverside_bandwidth_wait_time as i64,
                             |s, v| s.network.serverside_bandwidth_wait_time = v as u64,
                         ),
@@ -906,13 +910,13 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                         int(
                             "max number of simultaneous active network jobs: ",
-                            (1, 30),
+                            (1, if advanced { 1000 } else { 30 }),
                             |s| s.network.max_jobs as i64,
                             |s, v| s.network.max_jobs = v as usize,
                         ),
                         int(
                             "max number of simultaneous active network jobs per domain: ",
-                            (1, 5),
+                            (1, if advanced { 100 } else { 5 }),
                             |s| s.network.max_jobs_per_domain as i64,
                             |s, v| s.network.max_jobs_per_domain = v as usize,
                         ),
@@ -1051,19 +1055,19 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                         duration(
                             "Delay time on a gallery/watcher network error:",
-                            time(ERROR_DELAY, 600.0),
+                            time(ERROR_DELAY, error_delay_min),
                             |s| s.network.downloader_network_error_delay as f64,
                             |s, v| s.network.downloader_network_error_delay = whole(v),
                         ),
                         duration(
                             "Delay time on a subscription network error:",
-                            time(ERROR_DELAY, 600.0),
+                            time(ERROR_DELAY, error_delay_min),
                             |s| s.network.subscription_network_error_delay as f64,
                             |s, v| s.network.subscription_network_error_delay = whole(v) as i64,
                         ),
                         duration(
                             "Delay time on a subscription other error:",
-                            time(ERROR_DELAY, 600.0),
+                            time(ERROR_DELAY, error_delay_min),
                             |s| s.network.subscription_other_error_delay as f64,
                             |s, v| s.network.subscription_other_error_delay = whole(v) as i64,
                         ),

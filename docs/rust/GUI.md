@@ -403,7 +403,10 @@ was typed in it (ignoring case), as "text (page)", ten at a time; the
 arrows, enter or a click choose one, which shows its page with that row
 highlighted, as the reference's does (and the page list brought round to
 it). The daemon picks up the connection, downloading, maintenance and
-thumbnail options within a second of "apply". A "checker options"
+thumbnail options within a second of "apply". Connection limits and the three
+downloader error delays use the reference’s normal or advanced ranges when the
+window opens (`oracle/record_options_ranges.py` records both modes and clamps).
+A "checker options"
 button opens the checker options editor (`hydrus-gui-model/src/checker_options.rs`,
 checked against the reference's `EditCheckerOptions`, recorded by
 `oracle/record_checker_options.py`): its five reasonable defaults, the

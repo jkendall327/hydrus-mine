@@ -430,3 +430,63 @@ fn the_options_search_offers_what_the_references_does() {
     assert!(missing.is_empty(), "not the reference's: {missing:?}");
     assert!(ours.len() > 100, "{} suggestions", ours.len());
 }
+
+#[test]
+fn advanced_network_ranges_and_clamps_match_the_reference() {
+    let recorded = hydrus_testkit::fixture_json("options_ranges.json");
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let mut settings = store.read(Settings::load).unwrap();
+    let labels = [
+        "network timeout (seconds): ",
+        "connection error retry wait (seconds): ",
+        "serverside bandwidth retry wait (seconds): ",
+        "max number of simultaneous active network jobs: ",
+        "max number of simultaneous active network jobs per domain: ",
+        "Delay time on a gallery/watcher network error:",
+        "Delay time on a subscription network error:",
+        "Delay time on a subscription other error:",
+    ];
+    for mode in recorded.as_array().unwrap() {
+        settings.advanced.0 = mode["advanced"].as_bool().unwrap();
+        let pages = pages(&settings);
+        for (label, control) in labels.iter().zip(mode["controls"].as_array().unwrap()) {
+            let option = pages
+                .iter()
+                .flat_map(Page::options)
+                .find(|o| o.label == *label)
+                .unwrap();
+            match option.kind {
+                Kind::Int { min, max } => {
+                    assert_eq!(min, control["min"].as_i64().unwrap(), "{label}");
+                    assert_eq!(max, control["max"].as_i64().unwrap(), "{label}");
+                    for (input, expected) in [(0, "below"), (4_000_000, "above")] {
+                        let mut changed = settings.clone();
+                        (option.set)(&mut changed, &Value::Int(input)).unwrap();
+                        assert_eq!(
+                            (option.get)(&changed),
+                            Value::Int(control[expected].as_i64().unwrap()),
+                            "{label}"
+                        );
+                    }
+                }
+                Kind::Duration { min, .. } => {
+                    assert!(
+                        (min - control["min"].as_f64().unwrap()).abs() < f64::EPSILON,
+                        "{label}"
+                    );
+                    let mut changed = settings.clone();
+                    (option.set)(&mut changed, &Value::Duration(0.0)).unwrap();
+                    assert_eq!((option.get)(&changed), Value::Duration(min), "{label}");
+                    (option.set)(&mut changed, &Value::Duration(61.0)).unwrap();
+                    assert_eq!(
+                        (option.get)(&changed),
+                        Value::Duration(61.0_f64.max(min)),
+                        "{label}"
+                    );
+                }
+                _ => panic!("unexpected control {label}"),
+            }
+        }
+    }
+}
