@@ -27,6 +27,7 @@ fn recorded_content_kinds_and_runtime_previews() {
                     .values(),
                 text: format!("<p>{}</p>", case["text"].as_str().unwrap()),
                 collapse_newlines: case["collapse_newlines"].as_bool().unwrap(),
+                ..FormulaTestData::default()
             },
         );
         assert!(!editor.changed());

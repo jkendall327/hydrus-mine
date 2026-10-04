@@ -425,7 +425,7 @@ fn open_editor(
             } else {
                 raw
             };
-            if let Err(error) = hydrus_core::url::check_full_url(&url) {
+            if let Err(error) = hydrus_core::url::functions::check_full_url(&url) {
                 w.set_error(error.to_string().into());
                 return;
             }

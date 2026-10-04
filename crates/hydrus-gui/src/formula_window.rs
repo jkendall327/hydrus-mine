@@ -271,7 +271,7 @@ pub fn open(
             if url.is_empty() {
                 return;
             }
-            if let Err(error) = hydrus_core::url::check_full_url(&url) {
+            if let Err(error) = hydrus_core::url::functions::check_full_url(&url) {
                 w.set_veto(error.to_string().into());
                 return;
             }
