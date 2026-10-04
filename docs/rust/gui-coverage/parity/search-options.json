@@ -52,10 +52,38 @@
         "executed": true
       },
       "implementationCommit": "d9dd265d19ba01011623471e12a15890c5f3b713"
+    },
+    {
+      "id": "audit-options-file-search-file-search-autocomplete-default-fallback-local-file-search-location",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Transactional current-importable-domain selector supports empty/single/multiple locations. Options Apply persists, Cancel invalidates child callbacks. Blank pages and new notebooks use the default; all-known-files\u2192all-known-tags falls back to it. Missing domains are removed; empty contexts resolve to combined local file domains.",
+      "limits": [
+        "Native button opens the importable-domain tick selector directly; the reference additionally offers a menu of single-domain shortcuts before its multiple-location editor."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::Kind::LocalLocation/pages/Editor::set_local_location",
+        "crates/hydrus-gui/src/options_window.rs::open",
+        "crates/hydrus-gui/src/locations_window.rs::open_importable/cancel",
+        "crates/hydrus-store/src/settings.rs::SearchDefaults::resolved_local_location",
+        "crates/hydrus-gui/src/pages.rs::new_search_page",
+        "crates/hydrus-gui/src/page.rs::SearchPage::new/choose_tag_service"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::local_location_option_matches_reference_and_keeps_child_changes_staged",
+        "crates/hydrus-gui/tests/gui/options_window.rs::default_local_location_child_draft_drives_blank_pages_and_tag_fallback",
+        "crates/hydrus-store/src/import/decode.rs::the_search_defaults_convert"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_default_search_location.py",
+        "fixture": "oracle/fixtures/default_search_location.json",
+        "executed": true
+      },
+      "implementationCommit": "6f73f6253918b7f52312b56555e3e9415f95aa3b"
     }
   ],
   "summary": {
-    "concrete_existing_reference_controls_completed": 2,
+    "concrete_existing_reference_controls_completed": 3,
     "parent_or_alias_completions": 0
   },
   "validation": "Formatting, diff checks and Python compile pass. Rust validation delegated to root GitHub CI; no local Cargo builds."
