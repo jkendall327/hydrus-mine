@@ -1566,3 +1566,62 @@ fn raw_content_preview_preserves_clipboard_context_and_detects_fetched_png_bytes
     formula.invoke_raw_action("paste".into());
     assert_eq!(formula.get_document(), raw);
 }
+
+#[test]
+fn subsidiary_export_uses_owned_reference_png_parameters_and_discards_stale_export() {
+    let (_dir, store, slots) = setup();
+    headless::init();
+    let reference = hydrus_testkit::fixture_json("parser_png_export.json");
+    let original = definitions(&store);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.invoke_action("import-subsidiary".into());
+    let import = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    let case = reference
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["case"] == "subsidiary_queue")
+        .unwrap();
+    import.set_text(case["payload"].to_string().into());
+    import.invoke_action("review".into());
+    import.invoke_action("accept".into());
+    page.invoke_action("export-subsidiary".into());
+    let exchange = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    assert!(exchange.get_png_enabled());
+    exchange.invoke_export_png();
+    let png = slots.exchange.1.window().unwrap();
+    assert_eq!(png.get_png_title(), case["default_title"].as_str().unwrap());
+    assert_eq!(
+        png.get_payload_description(),
+        case["summary"].as_str().unwrap()
+    );
+    assert_eq!(png.get_png_width(), 512);
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("subsidiaries.png");
+    png.set_path(path.to_string_lossy().into_owned().into());
+    png.set_png_width(300);
+    png.set_png_title("recorded queue 日本".into());
+    png.set_description("synthetic typed export".into());
+    png.invoke_action("export".into());
+    assert!(png.get_done(), "{}", png.get_error());
+    let bytes = std::fs::read(path).unwrap();
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(
+            &hydrus_downloader_exchange::text_png::decode(&bytes).unwrap()
+        )
+        .unwrap(),
+        case["loaded"]
+    );
+    let stale = dir.path().join("stale.png");
+    png.set_path(stale.to_string_lossy().into_owned().into());
+    slots.cancel();
+    assert!(slots.exchange.1.window().is_none());
+    assert!(!exchange.get_active());
+    png.invoke_action("export".into());
+    exchange.invoke_export_png();
+    assert!(!stale.exists());
+    assert_eq!(definitions(&store), original);
+}

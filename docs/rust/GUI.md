@@ -345,6 +345,10 @@ editor; Cancel closes recursive source, formula, processor and exchange children
 `oracle/record_router_exchange.py` records both queue contexts, all six node kinds,
 exact rejection messages and duplication selection. The accepted URL-to-TXT router
 is also exercised through the native manual-export worker and its written sidecar.
+Router and subsidiary queue PNG exports open the reusable owned **export to png**
+panel. Its type/count/size summary and default title match the reference object,
+and title, optional description and width reach the readable PNG header. Closing
+the queue or parser closes that child and invalidates retained export callbacks.
 
 A router's or source's processing button (its steps, a line each) opens
 the string processor editor (`ui/string_processor.slint`,
