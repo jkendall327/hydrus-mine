@@ -5278,6 +5278,39 @@ fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer(
         640,
     )
     .unwrap();
+    // Passive information belongs behind opaque media; the top hover raises it above.
+    let focus = hydrus_gui::viewer_focus::NativeFocus::new(&viewer);
+    let identity = slint::winit_030::winit::window::WindowId::from(98_001);
+    focus.watch_id(identity);
+    hydrus_gui::session_autosave::observe_native_focus(identity, true);
+    viewer
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::PointerMoved {
+            position: slint::LogicalPosition::new(450.0, 10.0),
+        });
+    assert!(
+        viewer.get_info_showing(),
+        "saved banner's top hover is raised"
+    );
+    assert_eq!(
+        viewer.get_tag_banner(),
+        fixture["consumers"]["viewer_title"].as_str().unwrap()
+    );
+    // Keep asynchronous media/timers still so only the raised overlay changes paint.
+    let raised_pixels = headless::render_snapshot(&viewer_adapter, 900, 640);
+    assert_ne!(
+        &raised_pixels[..900 * 90 * 4],
+        &viewer_pixels[..900 * 90 * 4],
+        "the raised title and information paint over the real opaque media"
+    );
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("tag_banner_viewer_raised_hover.png"),
+        &raised_pixels,
+        900,
+        640,
+    )
+    .unwrap();
     let main_pixels = headless::render(&windows.get(0).unwrap(), 900, 640);
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("tag_banner_thumbnails.png"),
