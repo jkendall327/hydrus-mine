@@ -16,7 +16,8 @@
     "34ee5bd0",
     "7b978489",
     "5a08521d",
-    "d23d2bd4"
+    "d23d2bd4",
+    "f73ea634"
   ],
   "claims": [
     {
@@ -471,7 +472,7 @@
   "lifecycleFollowup": {
     "change_kind": "implementation",
     "countAsCompletedLeaf": false,
-    "exactBehavior": "Coordinate existing import/export managers with actual workers across processes sharing a store. A crash-safe edit request pauses new work and stops active work at import seed/export query/copy boundaries. An activity lease delays private draft acquisition until the active worker commits, then excludes workers through all owned child closures and manager Apply/Cancel. The existing manager window polls asynchronously with exact reference wait messages and supports Cancel/window close. User pause settings stay intact, including later changes by a separate live consumer. Actual CLI scheduler rests wake on acquire/release; successful import manager Apply separately resets the due cache, while Cancel/failed saves do not publish that notification. Stale unlocked files never pause workers.",
+    "exactBehavior": "Coordinate existing import/export managers with actual workers across processes sharing a store. A crash-safe edit request pauses new work and stops active work at import seed/export query/copy boundaries. An activity lease delays private draft acquisition until the active worker commits, then excludes workers through all owned child closures and manager Apply/Cancel. The existing manager window polls asynchronously with exact reference wait messages and supports Cancel/window close. User pause settings stay intact, including later changes by a separate live consumer. Actual CLI scheduler rests wake on acquire/release; successful import manager Apply separately resets the due cache, while Cancel/failed saves do not publish that notification. Stale unlocked files never pause workers. Both schedulers retain a marker captured before worker execution through their subsequent wait, so manager completion between work and rest cannot lose its notification. An already observed active request retains bounded retry rest.",
     "limits": [
       "Native file-lock requests replace Qt global running flags and transient Boolean overwrites. The native manager has a cancellable waiting state, whereas the reference publishes a non-cancellable wait job. Scheduler wakeups poll at one-second intervals rather than Qt publications.",
       "An individual import, file copy or database query finishes before the next safe boundary. Filesystem marker modification times are wakeup hints; live OS leases determine whether work may run.",
@@ -571,6 +572,20 @@
         "commit": "b7a7034c",
         "kind": "test",
         "symbol": "async fn manager_acquisition_and_release_interrupt_the_real_scheduler_rest"
+      },
+      {
+        "path": "crates/hydrus-cli/src/folder_wait.rs",
+        "line": 86,
+        "commit": "f73ea634",
+        "kind": "test",
+        "symbol": "async fn manager_finishing_between_worker_and_wait_cannot_lose_its_wakeup"
+      },
+      {
+        "path": "crates/hydrus-cli/src/folder_wait.rs",
+        "line": 113,
+        "commit": "f73ea634",
+        "kind": "test",
+        "symbol": "async fn an_already_seen_active_request_does_not_spin_the_scheduler"
       }
     ],
     "referenceRecording": {
