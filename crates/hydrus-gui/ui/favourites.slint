@@ -321,14 +321,14 @@ export component FavouriteEditWindow inherits Window {
                     model: root.location-choices;
                     current-index: root.location-index;
                     enabled: root.can-edit;
-                    selected(i) => { root.location-chosen(i); }
+                    selected(_) => { root.location-chosen(self.current-index); }
                 }
                 ComboBox {
                     horizontal-stretch: 1;
                     model: root.tag-choices;
                     current-index: root.tag-index;
                     enabled: root.can-edit;
-                    selected(i) => { root.tag-chosen(i); }
+                    selected(_) => { root.tag-chosen(self.current-index); }
                 }
                 CheckBox { text: "include current tags"; checked: root.include-current; enabled: root.can-edit; toggled => { root.tag-status-ticked(false, self.checked); } }
                 CheckBox { text: "include pending tags"; checked: root.include-pending; enabled: root.can-edit; toggled => { root.tag-status-ticked(true, self.checked); } }
@@ -399,8 +399,8 @@ export component FavouriteEditWindow inherits Window {
                         color: Theme.text;
                     }
                     HorizontalLayout {
-                        ComboBox { horizontal-stretch: 1; model: root.sort-choices; current-index: root.sort-index; enabled: root.save-sort && root.can-edit; selected(i) => { root.sort-chosen(i); } }
-                        ComboBox { model: root.sort-orders; current-index: root.sort-order; enabled: root.save-sort && root.can-edit; selected(i) => { root.sort-order-chosen(i); } }
+                        ComboBox { horizontal-stretch: 1; model: root.sort-choices; current-index: root.sort-index; enabled: root.save-sort && root.can-edit; selected(_) => { root.sort-chosen(self.current-index); } }
+                        ComboBox { model: root.sort-orders; current-index: root.sort-order; enabled: root.save-sort && root.can-edit; selected(_) => { root.sort-order-chosen(self.current-index); } }
                     }
                 }
                 Row {
@@ -432,7 +432,7 @@ export component FavouriteEditWindow inherits Window {
                                 for tick[i] in root.collect-choices: CheckBox { text: tick.label; checked: tick.on; enabled: root.save-collect && root.can-edit; toggled => { root.collect-ticked(i, self.checked); } }
                             }
                         }
-                        ComboBox { model: root.tag-choices; current-index: root.collect-tag-index; enabled: root.save-collect && root.can-edit; selected(i) => { root.collect-tag-chosen(i); } }
+                        ComboBox { model: root.tag-choices; current-index: root.collect-tag-index; enabled: root.save-collect && root.can-edit; selected(_) => { root.collect-tag-chosen(self.current-index); } }
                         CheckBox { text: "collect unmatched files"; checked: root.collect-unmatched; enabled: root.save-collect && root.can-edit; toggled => { root.collect-unmatched-ticked(self.checked); } }
                     }
                 }
