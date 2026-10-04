@@ -11,7 +11,7 @@ fn rules(filter: &TagFilter) -> Value {
     json!(
         filter
             .rules()
-            .map(|(s, r)| (s, if r == FilterRule::Blacklist { 1 } else { 0 }))
+            .map(|(s, r)| (s, i32::from(r == FilterRule::Blacklist)))
             .collect::<Vec<_>>()
     )
 }

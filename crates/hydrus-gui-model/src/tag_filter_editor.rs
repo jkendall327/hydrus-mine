@@ -711,9 +711,7 @@ impl FavouriteTagFilters {
 pub fn export_favourite(filter: &TagFilter) -> String {
     let rules: Vec<_> = filter
         .rules()
-        .map(|(slice, rule)| {
-            serde_json::json!([slice, if rule == FilterRule::Blacklist { 1 } else { 0 }])
-        })
+        .map(|(slice, rule)| serde_json::json!([slice, i32::from(rule == FilterRule::Blacklist)]))
         .collect();
     hydrus_core::pyjson::PyJson::parse(&serde_json::json!([44, 1, rules]).to_string())
         .expect("a tag filter tuple is valid JSON")

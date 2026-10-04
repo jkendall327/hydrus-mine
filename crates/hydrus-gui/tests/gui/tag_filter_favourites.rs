@@ -233,7 +233,7 @@ fn blacklist_extra_panels_and_all_four_paste_controls_follow_the_recording() {
         let rules = serde_json::json!(
             filter
                 .rules()
-                .map(|(s, r)| (s, if r == FilterRule::Blacklist { 1 } else { 0 }))
+                .map(|(s, r)| (s, i32::from(r == FilterRule::Blacklist)))
                 .collect::<Vec<_>>()
         );
         assert_eq!(case["rules"], rules, "paste list {list}");
