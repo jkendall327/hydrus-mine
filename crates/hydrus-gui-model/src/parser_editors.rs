@@ -128,13 +128,17 @@ impl ContentEditor {
             _ => &self.inactive_namespace,
         }
     }
-    /// Apply reference normalization for an empty note name.
+    /// Apply reference normalization for an empty note name and the only
+    /// supported timestamp choice, including imported unset/obsolete types.
     pub fn value(&self) -> ContentParser {
         let mut parser = self.parser.clone();
         if let ContentKind::Note { name } = &mut parser.kind
             && name.is_empty()
         {
             *name = "note".into();
+        }
+        if let ContentKind::Timestamp { timestamp_type } = &mut parser.kind {
+            *timestamp_type = Some(hydrus_parse::content::TIMESTAMP_MODIFIED_DOMAIN);
         }
         parser
     }

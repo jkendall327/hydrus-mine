@@ -201,11 +201,9 @@ fn fields(value: &Value, permitted_types: &[usize]) -> Vec<DefinitionField> {
                         usize::from(encoding == "base64"),
                     ));
                 }
-                ContentKind::Timestamp { timestamp_type } => fields.push(text(
-                    8,
-                    "timestamp type (0 = source time)",
-                    &timestamp_type.map_or(String::new(), |t| t.to_string()),
-                )),
+                ContentKind::Timestamp { .. } => {
+                    fields.push(choice(8, "timestamp type", &["source time"], 0))
+                }
                 ContentKind::Title { priority } => {
                     fields.push(text(3, "priority (0–100)", &priority.to_string()));
                 }
@@ -356,19 +354,7 @@ fn edit_text(value: &mut Value, id: i32, value_text: String) -> Result<(), Strin
                 | ContentKind::Variable { name } => *name = value_text,
                 _ => (),
             },
-            8 => {
-                if let ContentKind::Timestamp { timestamp_type } = &mut e.parser.kind {
-                    *timestamp_type = if value_text.is_empty() {
-                        None
-                    } else {
-                        Some(
-                            value_text
-                                .parse()
-                                .map_err(|_| "Timestamp type must be an integer.".to_owned())?,
-                        )
-                    };
-                }
-            }
+
             _ => (),
         },
     }
@@ -395,6 +381,13 @@ fn edit_choice(value: &mut Value, id: i32, index: usize) {
             7 => {
                 if let ContentKind::Hash { encoding, .. } = &mut e.parser.kind {
                     *encoding = if index == 1 { "base64" } else { "hex" }.into();
+                }
+            }
+            8 => {
+                if index == 0
+                    && let ContentKind::Timestamp { timestamp_type } = &mut e.parser.kind
+                {
+                    *timestamp_type = Some(hydrus_parse::content::TIMESTAMP_MODIFIED_DOMAIN);
                 }
             }
             _ => (),

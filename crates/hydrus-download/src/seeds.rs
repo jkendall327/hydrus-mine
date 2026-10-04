@@ -704,3 +704,73 @@ pub(crate) fn set_status(seed: &mut FileSeed, status: SeedStatus, note: String) 
     }
     seed.modified = now();
 }
+
+#[cfg(test)]
+mod timestamp_editor_tests {
+    use super::{now, seeds_from_posts};
+    use hydrus_core::{url::UrlClasses, url::strings::StringProcessor};
+    use hydrus_parse::{
+        content::{ContentKind, ContentParser},
+        formula::{Formula, FormulaKind, ParsingContext},
+    };
+
+    #[test]
+    fn recorded_saved_timestamp_parser_and_date_conversion_reach_actual_file_seeds() {
+        let reference = hydrus_testkit::fixture_json("content_time.json");
+        let file = ContentParser {
+            name: "download".into(),
+            kind: ContentKind::Url {
+                url_type: 7,
+                priority: 50,
+            },
+            formula: Formula {
+                reference_auxiliary: None,
+                name: String::new(),
+                kind: FormulaKind::Static {
+                    text: "https://source-time.example/image.png".into(),
+                    count: 1,
+                },
+                processor: StringProcessor::default(),
+            },
+        };
+        let classes = UrlClasses::default();
+        let mut context = ParsingContext::new();
+        context.insert("url".into(), "https://source-time.example/post/1".into());
+        for case in reference["cases"].as_array().unwrap() {
+            let decoded =
+                hydrus_downloader_exchange::decode_text(&case["tuple"].to_string()).unwrap();
+            let hydrus_downloader_exchange::Native::Content(parser) = &decoded[0].native else {
+                panic!("saved timestamp content parser");
+            };
+            for parsed in case["cases"].as_array().unwrap() {
+                let mut post = parser
+                    .parse(&context, parsed["document"].as_str().unwrap())
+                    .unwrap();
+                post.contents
+                    .extend(file.parse(&context, "").unwrap().contents);
+                let before = now();
+                let seeds =
+                    seeds_from_posts(&classes, &[post], "https://source-time.example/post/1");
+                let after = now();
+                assert_eq!(seeds.len(), 1);
+                assert_eq!(seeds[0].data, "https://source-time.example/image.png");
+                assert_eq!(
+                    seeds[0].referral_url.as_deref(),
+                    Some("https://source-time.example/post/1")
+                );
+                match parsed["source_time"].as_i64() {
+                    None | Some(-1 | 0) => {
+                        assert_eq!(seeds[0].source_time, None);
+                    }
+                    Some(time) if time < reference["now"].as_i64().unwrap() - 5 => {
+                        assert_eq!(seeds[0].source_time, Some(time));
+                    }
+                    Some(_) => {
+                        let time = seeds[0].source_time.unwrap();
+                        assert!((before - 30..=after - 30).contains(&time));
+                    }
+                }
+            }
+        }
+    }
+}

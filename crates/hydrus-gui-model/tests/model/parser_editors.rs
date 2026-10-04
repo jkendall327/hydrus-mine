@@ -321,3 +321,79 @@ fn recorded_subsidiary_queue_import_and_duplicate_preserve_keys_and_select_new_r
         );
     }
 }
+
+#[test]
+fn timestamp_editor_normalises_recorded_source_choice_and_preserves_converted_metadata() {
+    let reference = hydrus_testkit::fixture_json("content_time.json");
+    let now = reference["now"].as_i64().unwrap();
+    for case in reference["cases"].as_array().unwrap() {
+        let object = SerialisableObject::from_tuple_str(&case["tuple"].to_string()).unwrap();
+        let mut original = parsers::content_parser(&object).unwrap();
+        if case["input_type"] != "datestring" {
+            original.kind = ContentKind::Timestamp {
+                timestamp_type: case["input_type"].as_i64(),
+            };
+        }
+        let mut editor = ContentEditor::new(&original, FormulaTestData::default());
+        assert_eq!(editor.kind_index(), 4);
+        assert_eq!(
+            editor.value().kind,
+            ContentKind::Timestamp {
+                timestamp_type: Some(reference["timestamp_type"].as_i64().unwrap())
+            }
+        );
+        assert_eq!(
+            editor.changed(),
+            case["input_type"].is_null() || case["input_type"] == 7
+        );
+        assert_eq!(editor.value().formula, original.formula);
+        for parsed in case["cases"].as_array().unwrap() {
+            editor.test.text = parsed["document"].as_str().unwrap().into();
+            editor
+                .test
+                .context
+                .insert("url".into(), "https://source-time.example/post/1".into());
+            let post = editor.preview().unwrap();
+            assert_eq!(
+                serde_json::json!(
+                    post.contents
+                        .iter()
+                        .map(|c| c.text.as_str())
+                        .collect::<Vec<_>>()
+                ),
+                parsed["texts"]
+            );
+            for (content, metadata) in post
+                .contents
+                .iter()
+                .zip(parsed["metadata"].as_array().unwrap())
+            {
+                assert_eq!(content.name, metadata["name"]);
+                assert_eq!(
+                    content.kind,
+                    ContentKind::Timestamp {
+                        timestamp_type: metadata["timestamp_type"].as_i64()
+                    }
+                );
+            }
+            assert_eq!(
+                serde_json::json!(
+                    post.timestamp(hydrus_parse::content::TIMESTAMP_MODIFIED_DOMAIN, now)
+                ),
+                parsed["source_time"]
+            );
+        }
+        assert_eq!(
+            original.kind,
+            if case["input_type"] == "datestring" {
+                ContentKind::Timestamp {
+                    timestamp_type: Some(0),
+                }
+            } else {
+                ContentKind::Timestamp {
+                    timestamp_type: case["input_type"].as_i64(),
+                }
+            }
+        );
+    }
+}
