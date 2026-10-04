@@ -188,4 +188,41 @@ fn frame_options_table_child_staging_and_saved_viewer_geometry_match_reference()
     // MinimalSoftwareWindow has no native-position adapter; persisted coordinates
     // are asserted above, while this actual owner verifies size/state placement.
     viewer.invoke_close_requested();
+
+    let window = options(&ui, &bound);
+    for name in ["main_gui", "media_viewer"] {
+        window.invoke_frame_clicked(index(&window, name), name == "media_viewer", false);
+    }
+    for action in ["flip-size", "flip-position", "reset-size", "reset-position"] {
+        window.invoke_frame_action(action.into());
+    }
+    window.invoke_apply();
+    let reset = kept();
+    for frame in [&reset.main_gui, &reset.media_viewer] {
+        assert!(!frame.remember_size && !frame.remember_position);
+        assert!(frame.last_size.is_none() && frame.last_position.is_none());
+    }
+    ui.invoke_thumbnail_activated(0);
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert_ne!(
+        viewer
+            .window()
+            .size()
+            .to_logical(viewer.window().scale_factor()),
+        slint::LogicalSize::new(912.0, 678.0),
+        "reset remembered size must not reopen with the previously saved dimensions"
+    );
+    viewer.invoke_close_requested();
+    let window = options(&ui, &bound);
+    window.invoke_frame_clicked(index(&window, "media_viewer"), false, false);
+    window.invoke_frame_action("edit".into());
+    let geometry = child(&bound);
+    assert!(geometry.get_size_none() && geometry.get_position_none());
+    assert!(!geometry.get_remember_size() && !geometry.get_remember_position());
+    assert_eq!(
+        (geometry.get_last_width(), geometry.get_last_height()),
+        (640, 480)
+    );
+    assert_eq!((geometry.get_last_x(), geometry.get_last_y()), (20, 20));
+    window.invoke_cancel();
 }
