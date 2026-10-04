@@ -32,7 +32,7 @@ enum Operation {
     Stop,
 }
 enum Event {
-    Review(Result<Review, String>),
+    Review(Result<Box<Review>, String>),
     Written(Result<(), String>),
 }
 struct Worker {
@@ -79,7 +79,7 @@ impl Worker {
                     let _ = events.send(Event::Written(result));
                 }
                 // A closing view can still have an owner-release command queued.
-                let _ = events.send(Event::Review(Review::load(&store, now())));
+                let _ = events.send(Event::Review(Review::load(&store, now()).map(Box::new)));
             }
         });
         let _ = send.send(Operation::Refresh);
@@ -370,7 +370,7 @@ impl Bandwidth {
         for event in self.worker.receive.try_iter() {
             match event {
                 Event::Review(Ok(review)) => {
-                    *self.review.borrow_mut() = Some(review);
+                    *self.review.borrow_mut() = Some(*review);
                     self.show();
                     let requested = self.requested_edit.borrow_mut().take();
                     if let Some(context) = requested {
@@ -1092,7 +1092,7 @@ impl Jobs {
                         {
                             self.selection.borrow_mut().select_only(None);
                         }
-                        *self.review.borrow_mut() = Some(review);
+                        *self.review.borrow_mut() = Some(*review);
                         self.show();
                     }
                 }

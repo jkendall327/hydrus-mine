@@ -248,9 +248,8 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
         if action=="cancel"{close();return;}
         if action=="cancel-login"{
             if run.busy(){run.cancel();}
-            else if let Some((epoch, id))=process.borrow().clone(){
-                if let Err(error)=hydrus_store::login_runtime::cancel(&store, epoch, id){window.set_error(error.to_string().into());}
-            }
+            else if let Some((epoch, id))=process.borrow().clone()
+                && let Err(error)=hydrus_store::login_runtime::cancel(&store, epoch, id){window.set_error(error.to_string().into());}
             return;
         }
         if window.get_running(){return;}
@@ -291,9 +290,8 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
             },
             "confirm-reset"|"back-reset"=>{
                 let domains=std::mem::take(&mut *resetting.borrow_mut());
-                if action=="confirm-reset"&&!domains.is_empty(){
-                    if let Err(error)=hydrus_net::login::clear_sessions(&store,&domains){window.set_error(error.into());}
-                }
+                if action=="confirm-reset"&&!domains.is_empty()
+                    && let Err(error)=hydrus_net::login::clear_sessions(&store,&domains){window.set_error(error.into());}
                 window.set_confirming_reset(false);window.set_question("".into());
                 show(&window,&editor.borrow(),&store);
             },
