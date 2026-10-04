@@ -555,11 +555,15 @@ export component MainWindow inherits Window {
     in property <int> autocomplete-rows: 22;
     in property <bool> float-autocomplete: true;
     in-out property <bool> search-focused;
-    out property <length> search-tags-y: search-tags.absolute-position.y;
-    out property <length> active-predicate-list-height: active-predicate-list.height;
+    // Geometry is published from within the conditional search sidebar.
+    out property <length> search-tags-y;
+    out property <length> active-predicate-list-height;
+    property <length> autocomplete-anchor-x;
+    property <length> autocomplete-anchor-y;
+    property <length> autocomplete-anchor-width;
     out property <length> active-predicate-preferred-height: max(1, min(128, root.active-predicate-rows)) * 22px + 6px;
     out property <length> autocomplete-preferred-height: max(1, min(128, root.autocomplete-rows)) * 22px + 4px;
-    out property <bool> autocomplete-overlay-visible: root.float-autocomplete && root.search-focused && !root.search-locked && root.note == "" && root.question == "" && root.suggestions.length > 0 && root.menu-panes.length == 0 && root.chooser-labels.length == 0;
+    out property <bool> autocomplete-overlay-visible: root.float-autocomplete && root.search-focused && root.autocomplete-anchor-width > 0px && !root.search-locked && root.note == "" && root.question == "" && root.suggestions.length > 0 && root.menu-panes.length == 0 && root.chooser-labels.length == 0;
     in property <int> highlighted: -1;
     in property <[ThumbnailRow]> thumbnail-rows;
     // a thumbnail's cell: the thumbnail bounding box and its border; and
@@ -1245,6 +1249,8 @@ export component MainWindow inherits Window {
                         }
                     }
                     active-predicate-list := Rectangle {
+                        property <length> measured-height: self.height;
+                        changed measured-height => { root.active-predicate-list-height = self.measured-height; }
                         visible: !root.search-locked;
                         border-width: 1px;
                         border-color: Theme.border;
@@ -1269,6 +1275,17 @@ export component MainWindow inherits Window {
                         }
                     }
                     search-anchor := FocusScope {
+                        property <Point> measured-position: self.absolute-position;
+                        property <length> measured-height: self.height;
+                        property <length> measured-width: self.width;
+                        changed measured-position => {
+                            root.autocomplete-anchor-x = self.measured-position.x;
+                            root.autocomplete-anchor-y = self.measured-position.y + self.height;
+                        }
+                        changed measured-height => {
+                            root.autocomplete-anchor-y = self.absolute-position.y + self.measured-height;
+                        }
+                        changed measured-width => { root.autocomplete-anchor-width = self.measured-width; }
                         visible: !root.search-locked;
                         height: root.search-locked ? 0px : search-row.preferred-height;
                         property <int> focus-requests: root.search-focus-requests;
@@ -1372,6 +1389,8 @@ export component MainWindow inherits Window {
                         wrap: word-wrap;
                     }
                     search-tags := TagList {
+                        property <length> measured-top: self.absolute-position.y;
+                        changed measured-top => { root.search-tags-y = self.measured-top; }
                         tags: root.tags;
                         activated(i) => { root.tag-activated(i); }
                     }
@@ -1880,9 +1899,9 @@ export component MainWindow inherits Window {
             }
         }
         if root.autocomplete-overlay-visible: ReadSuggestions {
-            x: search-anchor.absolute-position.x;
-            y: search-anchor.absolute-position.y + search-anchor.height;
-            width: search-anchor.width;
+            x: root.autocomplete-anchor-x;
+            y: root.autocomplete-anchor-y;
+            width: root.autocomplete-anchor-width;
             height: max(26px, min(root.autocomplete-preferred-height, root.height - self.y - 4px));
             suggestions: root.suggestions;
             highlighted: root.highlighted;
