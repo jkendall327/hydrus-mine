@@ -1,0 +1,542 @@
+{
+  "schema_version": 1,
+  "agent": "overnight-pages",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "commits": {
+    "tabs": "01f9a039",
+    "backups": "efc8b4fc",
+    "size_test": "26c435f7"
+  },
+  "completed_existing_leaf_count": 10,
+  "validation": {
+    "local": [
+      "cargo fmt --all",
+      "git diff --check",
+      "reference Qt notebook method recording",
+      "reference real-client session backup recording"
+    ],
+    "cargo_tests": "Deferred to root asynchronous CI by coordination instructions."
+  },
+  "claims": [
+    {
+      "reference_id": "audit-options-tabs-context-action-2209-by-most-files-first",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "01f9a039",
+      "implemented_behavior": "Sort siblings by descending file count, importer total then completed progress; stable equal keys. Right-click routes to the clicked notebook depth and retains the selected leaf across reorder.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 27,
+          "commit": "01f9a039",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 5,
+          "commit": "01f9a039",
+          "kind": "regression"
+        },
+        {
+          "path": "oracle/record_tab_context.py",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_context.json",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2210-by-fewest-files-first",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "01f9a039",
+      "implemented_behavior": "Sort siblings by ascending file count, importer total then completed progress; stable equal keys. Right-click routes to the clicked notebook depth and retains the selected leaf across reorder.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 27,
+          "commit": "01f9a039",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 5,
+          "commit": "01f9a039",
+          "kind": "regression"
+        },
+        {
+          "path": "oracle/record_tab_context.py",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_context.json",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2211-by-largest-total-file-size-first",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "01f9a039",
+      "implemented_behavior": "Sort siblings by descending sum of initialized descendant file sizes, counting files once per page; stable equal-size ties. Right-click routes to the clicked notebook depth and retains the selected leaf across reorder.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 27,
+          "commit": "01f9a039",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 5,
+          "commit": "01f9a039",
+          "kind": "regression"
+        },
+        {
+          "path": "oracle/record_tab_context.py",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_context.json",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_fixture"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 1757,
+          "commit": "26c435f7",
+          "kind": "integration_regression"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2212-by-smallest-total-file-size-first",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "01f9a039",
+      "implemented_behavior": "Sort siblings by ascending sum of initialized descendant file sizes; unopened pages contribute zero like reference. Right-click routes to the clicked notebook depth and retains the selected leaf across reorder.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 27,
+          "commit": "01f9a039",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 5,
+          "commit": "01f9a039",
+          "kind": "regression"
+        },
+        {
+          "path": "oracle/record_tab_context.py",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_context.json",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_fixture"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 1757,
+          "commit": "26c435f7",
+          "kind": "integration_regression"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2213-by-name-a-z",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "01f9a039",
+      "implemented_behavior": "Sort siblings by exact case-sensitive lexical name ascending; same-name pages use descending file count/progress secondary key. Right-click routes to the clicked notebook depth and retains the selected leaf across reorder.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 27,
+          "commit": "01f9a039",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 5,
+          "commit": "01f9a039",
+          "kind": "regression"
+        },
+        {
+          "path": "oracle/record_tab_context.py",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_context.json",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2214-by-name-z-a",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "01f9a039",
+      "implemented_behavior": "Sort siblings by exact case-sensitive lexical name descending; same-name pages keep descending count/progress secondary key. Right-click routes to the clicked notebook depth and retains the selected leaf across reorder.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 27,
+          "commit": "01f9a039",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 5,
+          "commit": "01f9a039",
+          "kind": "regression"
+        },
+        {
+          "path": "oracle/record_tab_context.py",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_context.json",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2178-to-left-end",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "01f9a039",
+      "implemented_behavior": "Move clicked tab to first sibling position. Boundary destinations are omitted; selected and unselected tabs retain the shown leaf, including containing notebooks.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 58,
+          "commit": "01f9a039",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 5,
+          "commit": "01f9a039",
+          "kind": "regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 1639,
+          "commit": "01f9a039",
+          "kind": "nested_regression"
+        },
+        {
+          "path": "oracle/record_tab_context.py",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_recorder"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2183-left",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "01f9a039",
+      "implemented_behavior": "Move clicked tab one sibling to the left. Boundary destinations are omitted; selected and unselected tabs retain the shown leaf, including containing notebooks.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 58,
+          "commit": "01f9a039",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 5,
+          "commit": "01f9a039",
+          "kind": "regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 1639,
+          "commit": "01f9a039",
+          "kind": "nested_regression"
+        },
+        {
+          "path": "oracle/record_tab_context.py",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_recorder"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2188-right",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "01f9a039",
+      "implemented_behavior": "Move clicked tab one sibling to the right. Boundary destinations are omitted; selected and unselected tabs retain the shown leaf, including containing notebooks.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 58,
+          "commit": "01f9a039",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 5,
+          "commit": "01f9a039",
+          "kind": "regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 1639,
+          "commit": "01f9a039",
+          "kind": "nested_regression"
+        },
+        {
+          "path": "oracle/record_tab_context.py",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_recorder"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2193-to-right-end",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "01f9a039",
+      "implemented_behavior": "Move clicked tab to last sibling position. Boundary destinations are omitted; selected and unselected tabs retain the shown leaf, including containing notebooks.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 58,
+          "commit": "01f9a039",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
+          "line": 5,
+          "commit": "01f9a039",
+          "kind": "regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 1639,
+          "commit": "01f9a039",
+          "kind": "nested_regression"
+        },
+        {
+          "path": "oracle/record_tab_context.py",
+          "line": 1,
+          "commit": "01f9a039",
+          "kind": "reference_recorder"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-session-backups",
+      "previous_status": "missing",
+      "proposed_status": "partial",
+      "count_as_completed_leaf": false,
+      "implementation_commit": "efc8b4fc",
+      "implemented_behavior": "Rolling immutable snapshots are retained on named saves; grouped append menu reads stored snapshots.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 45,
+          "commit": "efc8b4fc",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1170,
+          "commit": "efc8b4fc",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_saving.rs",
+          "line": 125,
+          "commit": "efc8b4fc",
+          "kind": "menu_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 1692,
+          "commit": "efc8b4fc",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_session_backups.py",
+          "line": 1,
+          "commit": "efc8b4fc",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/session_backups.json",
+          "line": 1,
+          "commit": "efc8b4fc",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": [
+        "Snapshots retain downloader queue references; independent historical downloader-engine state remains deferred.",
+        "Legacy historical snapshots are not imported.",
+        "Live last-session synchronization and startup/autosave lifecycle settings do not create snapshot history."
+      ]
+    },
+    {
+      "reference_id": "audit-options-session-backups-name",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": false,
+      "implementation_commit": "efc8b4fc",
+      "implemented_behavior": "Append-backup menu groups snapshots by saved-session name, oldest timestamp first.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 45,
+          "commit": "efc8b4fc",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1170,
+          "commit": "efc8b4fc",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_saving.rs",
+          "line": 125,
+          "commit": "efc8b4fc",
+          "kind": "menu_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 1692,
+          "commit": "efc8b4fc",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_session_backups.py",
+          "line": 1,
+          "commit": "efc8b4fc",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/session_backups.json",
+          "line": 1,
+          "commit": "efc8b4fc",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": [
+        "Snapshots retain downloader queue references; independent historical downloader-engine state remains deferred.",
+        "Legacy historical snapshots are not imported.",
+        "Live last-session synchronization and startup/autosave lifecycle settings do not create snapshot history."
+      ]
+    },
+    {
+      "reference_id": "audit-options-session-backups-timestamp",
+      "previous_status": "missing",
+      "proposed_status": "partial",
+      "count_as_completed_leaf": false,
+      "implementation_commit": "efc8b4fc",
+      "implemented_behavior": "Timestamp action appends exact archived tree at top level with new keys and independent files/selection; timestamp display, retention, clock reversal and collision follow real reference recording.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 45,
+          "commit": "efc8b4fc",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1170,
+          "commit": "efc8b4fc",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_saving.rs",
+          "line": 125,
+          "commit": "efc8b4fc",
+          "kind": "menu_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 1692,
+          "commit": "efc8b4fc",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_session_backups.py",
+          "line": 1,
+          "commit": "efc8b4fc",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/session_backups.json",
+          "line": 1,
+          "commit": "efc8b4fc",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": [
+        "Snapshots retain downloader queue references; independent historical downloader-engine state remains deferred.",
+        "Legacy historical snapshots are not imported.",
+        "Live last-session synchronization and startup/autosave lifecycle settings do not create snapshot history."
+      ]
+    }
+  ],
+  "overall_limitations": [
+    "Other reference tab-context submenus remain unimplemented; tab-context parent must remain partial.",
+    "No lifecycle-settings completion is claimed.",
+    "Backup workflow improvements are conservatively partial for downloader state; submenu container is counted separately from the ten completed tab leaves."
+  ]
+}
