@@ -2494,13 +2494,13 @@
         "recorder": {
           "path": "oracle/record_namespace_sorts.py",
           "line": 1,
-          "commit": "e5ae30e0",
+          "commit": "1c844315",
           "kind": "reference_recorder"
         },
         "fixture": {
           "path": "oracle/fixtures/namespace_sorts.json",
           "line": 1,
-          "commit": "e5ae30e0",
+          "commit": "1c844315",
           "kind": "reference_fixture"
         },
         "observed": "Actual Qt queue initial defaults, 13 scripted Add/Edit/Up/Down/Delete actions, exact text defaults/messages and advanced view choices, escaped hyphen cleaning, cancellation/invalid input, first-selected editing, duplicate entries, queue selection/order, isolated draft and UpdateOptions/reopen output."
@@ -2566,13 +2566,13 @@
         "recorder": {
           "path": "oracle/record_namespace_sorts.py",
           "line": 1,
-          "commit": "e5ae30e0",
+          "commit": "1c844315",
           "kind": "reference_recorder"
         },
         "fixture": {
           "path": "oracle/fixtures/namespace_sorts.json",
           "line": 1,
-          "commit": "e5ae30e0",
+          "commit": "1c844315",
           "kind": "reference_fixture"
         },
         "observed": "Actual Qt queue initial defaults, 13 scripted Add/Edit/Up/Down/Delete actions, exact text defaults/messages and advanced view choices, escaped hyphen cleaning, cancellation/invalid input, first-selected editing, duplicate entries, queue selection/order, isolated draft and UpdateOptions/reopen output."
@@ -2638,16 +2638,188 @@
         "recorder": {
           "path": "oracle/record_namespace_sorts.py",
           "line": 1,
-          "commit": "e5ae30e0",
+          "commit": "1c844315",
           "kind": "reference_recorder"
         },
         "fixture": {
           "path": "oracle/fixtures/namespace_sorts.json",
           "line": 1,
-          "commit": "e5ae30e0",
+          "commit": "1c844315",
           "kind": "reference_fixture"
         },
         "observed": "Actual Qt queue initial defaults, 13 scripted Add/Edit/Up/Down/Delete actions, exact text defaults/messages and advanced view choices, escaped hyphen cleaning, cancellation/invalid input, first-selected editing, duplicate entries, queue selection/order, isolated draft and UpdateOptions/reopen output."
+      }
+    },
+    {
+      "reference_id": "audit-options-nested-sort-collect-cog-default-file-sort",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": false,
+      "implementationCommit": "e4db4ad7",
+      "exactBehavior": "Expose the owned Options default sort cog only for namespace and number-of-tags sorts. Its tag-service submenu lists local services, repositories and all known tags with type separators and independent checked state; namespace sorts additionally expose display1/multiple-media3/single-media2 views. Clone the full existing context and change only the selected service or view, stage until outer Apply, cancel without persistence, invalidate rebuilt/closed-owner actions, reopen saved values and use this service independently of search, collect and the other sort for real file/collection keys.",
+      "limits": [
+        "These original inventory nodes are menus and are excluded from strict concrete-leaf completion totals.",
+        "The two-level native PopupWindow uses button rows with check marks rather than Qt QMenu items.",
+        "The separate page-level sort cog is unclaimed."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/sort_cog.rs",
+          "line": 1,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 785,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 351,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-core/src/pages.rs",
+          "line": 421,
+          "commit": "bb376ce2",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-search/src/exec/page_sort.rs",
+          "line": 124,
+          "commit": "bb376ce2",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/sort_cog.rs",
+          "line": 42,
+          "commit": "e4db4ad7",
+          "kind": "reference_menu_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/sort_cog.rs",
+          "line": 62,
+          "commit": "e4db4ad7",
+          "kind": "gui_staged_reopen_actual_media_consumer"
+        },
+        {
+          "path": "crates/hydrus-search/src/exec/tests.rs",
+          "line": 1143,
+          "commit": "bb376ce2",
+          "kind": "reference_media_keys_replay"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 2628,
+          "commit": "bb376ce2",
+          "kind": "legacy_context_import_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_sort_cogs.py",
+          "line": 1,
+          "commit": "bb376ce2",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/sort_cogs.json",
+          "line": 1,
+          "commit": "bb376ce2",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt default/secondary controls hide cogs for filesize, expose service groups with type separators for namespace/tag count, preserve complete context metadata, show namespace view checks in1/3/2 order, stage UpdateOptions and reopen.128 MediaList ordering cases cover independent default/fallback services,19 distinct plain orders, both directions, plain files and series collections with search-current/pending toggles off."
+      }
+    },
+    {
+      "reference_id": "audit-options-nested-sort-collect-cog-secondary-file-sort-when-primary-gives-two-equal-values",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": false,
+      "implementationCommit": "e4db4ad7",
+      "exactBehavior": "Expose the owned Options secondary/fallback sort cog only for namespace and number-of-tags sorts. Its tag-service submenu lists local services, repositories and all known tags with type separators and independent checked state; namespace sorts additionally expose display1/multiple-media3/single-media2 views. Clone the full existing context and change only the selected service or view, stage until outer Apply, cancel without persistence, invalidate rebuilt/closed-owner actions, reopen saved values and use this service independently of search, collect and the other sort for real file/collection keys.",
+      "limits": [
+        "These original inventory nodes are menus and are excluded from strict concrete-leaf completion totals.",
+        "The two-level native PopupWindow uses button rows with check marks rather than Qt QMenu items.",
+        "The separate page-level sort cog is unclaimed."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/sort_cog.rs",
+          "line": 1,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 785,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 351,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-core/src/pages.rs",
+          "line": 421,
+          "commit": "bb376ce2",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-search/src/exec/page_sort.rs",
+          "line": 124,
+          "commit": "bb376ce2",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/sort_cog.rs",
+          "line": 42,
+          "commit": "e4db4ad7",
+          "kind": "reference_menu_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/sort_cog.rs",
+          "line": 62,
+          "commit": "e4db4ad7",
+          "kind": "gui_staged_reopen_actual_media_consumer"
+        },
+        {
+          "path": "crates/hydrus-search/src/exec/tests.rs",
+          "line": 1143,
+          "commit": "bb376ce2",
+          "kind": "reference_media_keys_replay"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 2628,
+          "commit": "bb376ce2",
+          "kind": "legacy_context_import_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_sort_cogs.py",
+          "line": 1,
+          "commit": "bb376ce2",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/sort_cogs.json",
+          "line": 1,
+          "commit": "bb376ce2",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt default/secondary controls hide cogs for filesize, expose service groups with type separators for namespace/tag count, preserve complete context metadata, show namespace view checks in1/3/2 order, stage UpdateOptions and reopen.128 MediaList ordering cases cover independent default/fallback services,19 distinct plain orders, both directions, plain files and series collections with search-current/pending toggles off."
       }
     }
   ],
@@ -2932,11 +3104,48 @@
       "referenceRecording": {
         "recorder": "oracle/record_namespace_sorts.py",
         "fixture": "oracle/fixtures/namespace_sorts.json",
-        "commit": "e5ae30e0"
+        "commit": "1c844315"
       },
       "limits": [
         "The native queue is an Options-owned child window; text/tag-view/delete questions appear in that window instead of the reference embedded queue and separate Qt modal dialogs."
       ]
+    }
+  ],
+  "nativeMenus": [
+    {
+      "name": "Options default and secondary sort cogs",
+      "file": "crates/hydrus-gui/ui/options.slint",
+      "referenceRoots": [
+        "audit-options-nested-sort-collect-cog-default-file-sort",
+        "audit-options-nested-sort-collect-cog-secondary-file-sort-when-primary-gives-two-equal-values"
+      ],
+      "owner": "Transient PopupWindow per eligible compound sort row; frozen page/row and active Options owner, rebuilt page and cancel invalidate actions.",
+      "groups": [
+        "tag service",
+        "ADVANCED: tag display type (namespace sorts only)"
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 351,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 785,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        }
+      ],
+      "guiEvidence": "owned_cogs_stage_cancel_reopen_and_feed_independent_default_and_fallback_keys; hosted replay emits sort_cog_options.png.",
+      "referenceRecording": {
+        "recorder": "oracle/record_sort_cogs.py",
+        "fixture": "oracle/fixtures/sort_cogs.json",
+        "commit": "bb376ce2"
+      },
+      "newExportedWindows": 0,
+      "countAsCompletedLeaf": false
     }
   ]
 }
