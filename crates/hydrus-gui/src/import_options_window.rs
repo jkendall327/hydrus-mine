@@ -147,6 +147,8 @@ struct State {
     editor: Editor,
     manager: ImportOptionsManager,
     simple: bool,
+    defaults: bool,
+    url_classes: Vec<(String, UrlClassKind)>,
     services: Arc<hydrus_store::store::Snapshot>,
     /// The allowed filetypes' groups showing their filetypes.
     filetype_expanded: [bool; 7],
@@ -155,6 +157,22 @@ struct State {
     write_tags: crate::write_tag_window::Slot,
     overwrite: crate::import_options_overwrite_window::Slot,
     favourites: Option<Rc<crate::import_options_favourites_window::Controller>>,
+}
+
+impl State {
+    fn replace_options(&mut self, options: &ImportOptionsSlice) {
+        self.editor = if self.defaults {
+            Editor::new_for_defaults(
+                &self.manager,
+                self.editor.caller,
+                self.simple,
+                options,
+                &self.url_classes,
+            )
+        } else {
+            Editor::new(&self.manager, self.editor.caller, self.simple, options)
+        };
+    }
 }
 
 /// Show the editor whole: the list and the shown kind's page.
@@ -564,7 +582,7 @@ fn open_inner(
     closed: Rc<dyn Fn()>,
 ) -> Result<ImportOptionsWindow, String> {
     let caller = context.caller;
-    let _url_classes = &context.url_classes;
+    let defaults = context.manager.is_some();
     let manager: ImportOptionsManager = context.manager.as_ref().map_or_else(
         || {
             store
@@ -573,7 +591,11 @@ fn open_inner(
         },
         |manager| Ok(manager.borrow().clone()),
     )?;
-    let editor = Editor::new(&manager, caller, context.simple, own);
+    let editor = if defaults {
+        Editor::new_for_defaults(&manager, caller, context.simple, own, &context.url_classes)
+    } else {
+        Editor::new(&manager, caller, context.simple, own)
+    };
     let active = Rc::new(Cell::new(true));
     let window = ImportOptionsWindow::new().map_err(|e| e.to_string())?;
     window.set_favourite_editor(caller == CallerType::Favourites);
@@ -592,6 +614,8 @@ fn open_inner(
         editor,
         manager,
         simple: context.simple,
+        defaults,
+        url_classes: context.url_classes,
         services: store.snapshot(),
         filetype_expanded: [false; 7],
         tag_filter: Rc::default(),
@@ -1049,8 +1073,7 @@ fn open_inner(
                     return;
                 };
                 let mut state = state.borrow_mut();
-                let caller = state.editor.caller;
-                state.editor = Editor::new(&state.manager, caller, state.simple, &options);
+                state.replace_options(&options);
                 if let Some(window) = weak.upgrade() {
                     show(&window, &state);
                     show_tag_services(&window, &state);
@@ -1139,8 +1162,7 @@ fn open_inner(
                 Rc::new(move |options| {
                     if !active.get() { return; }
                     let mut state = state.borrow_mut();
-                    let caller = state.editor.caller;
-                    state.editor = Editor::new(&state.manager, caller, state.simple, &options);
+                    state.replace_options(&options);
                     if let Some(window) = weak.upgrade() { show(&window, &state); show_tag_services(&window, &state); }
                 })
             };
