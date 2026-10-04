@@ -8,7 +8,8 @@
     "33e9b58f6226f10d8122313c5333c8f0d302df4f",
     "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
     "bf003dbe43e0c2f3682256849988f63dfb4502ec",
-    "faec4a823f506e89bebed4e26e54354d3a3de66c"
+    "faec4a823f506e89bebed4e26e54354d3a3de66c",
+    "e9efa49e803e02168ae878bdb5a3364afc00d48c"
   ],
   "implementation_leaf_count": 7,
   "partial_improvements": 4,
@@ -110,7 +111,8 @@
         "33e9b58f6226f10d8122313c5333c8f0d302df4f",
         "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
         "bf003dbe43e0c2f3682256849988f63dfb4502ec",
-        "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        "faec4a823f506e89bebed4e26e54354d3a3de66c",
+        "e9efa49e803e02168ae878bdb5a3364afc00d48c"
       ]
     },
     {
@@ -209,7 +211,8 @@
         "33e9b58f6226f10d8122313c5333c8f0d302df4f",
         "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
         "bf003dbe43e0c2f3682256849988f63dfb4502ec",
-        "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        "faec4a823f506e89bebed4e26e54354d3a3de66c",
+        "e9efa49e803e02168ae878bdb5a3364afc00d48c"
       ]
     },
     {
@@ -308,7 +311,8 @@
         "33e9b58f6226f10d8122313c5333c8f0d302df4f",
         "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
         "bf003dbe43e0c2f3682256849988f63dfb4502ec",
-        "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        "faec4a823f506e89bebed4e26e54354d3a3de66c",
+        "e9efa49e803e02168ae878bdb5a3364afc00d48c"
       ]
     },
     {
@@ -407,7 +411,8 @@
         "33e9b58f6226f10d8122313c5333c8f0d302df4f",
         "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
         "bf003dbe43e0c2f3682256849988f63dfb4502ec",
-        "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        "faec4a823f506e89bebed4e26e54354d3a3de66c",
+        "e9efa49e803e02168ae878bdb5a3364afc00d48c"
       ]
     },
     {
@@ -506,7 +511,8 @@
         "33e9b58f6226f10d8122313c5333c8f0d302df4f",
         "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
         "bf003dbe43e0c2f3682256849988f63dfb4502ec",
-        "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        "faec4a823f506e89bebed4e26e54354d3a3de66c",
+        "e9efa49e803e02168ae878bdb5a3364afc00d48c"
       ]
     },
     {
@@ -605,7 +611,8 @@
         "33e9b58f6226f10d8122313c5333c8f0d302df4f",
         "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
         "bf003dbe43e0c2f3682256849988f63dfb4502ec",
-        "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        "faec4a823f506e89bebed4e26e54354d3a3de66c",
+        "e9efa49e803e02168ae878bdb5a3364afc00d48c"
       ]
     },
     {
@@ -613,8 +620,8 @@
       "previous_status": "partial",
       "proposed_status": "partial",
       "change_kind": "implementation",
-      "exact_behavior": "Replaced capped storage suggestions with shared zero-count aware, domain/service aware write search; raw/ideal elevation, counts, parent/sibling decorations, click/highlight entry, manual fetch, multiline/add-only clipboard questions and height controls. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks. Menus now query all real service display graphs for grouped siblings/ideal/parent/child entries and open owned relationship editors seeded on every service tab; owner close cancels child. Relationship dialogs consume configured default/remember preferences and preserve staged cancellation separately from immediate service memory.",
-      "limits": "Full reference maintenance/admin actions, multiple-tag selection menus and per-widget file/tag domain buttons remain outstanding. Native tab dropdown/layout differs from Qt. Existing parent leaf remains partial.",
+      "exact_behavior": "Replaced capped storage suggestions with shared zero-count aware, domain/service aware write search; raw/ideal elevation, counts, parent/sibling decorations, click/highlight entry, manual fetch, multiline/add-only clipboard questions and height controls. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks. Menus now query all real service display graphs for grouped siblings/ideal/parent/child entries and open owned relationship editors seeded on every service tab; owner close cancels child. Relationship dialogs consume configured default/remember preferences and preserve staged cancellation separately from immediate service memory. Per-widget file/tag-domain buttons now have checked menus and exact all-known interlocks, preserve independent service drafts, feed real query/count/decorator/children consumers and use an owned staged multiple/deleted selector; cancelling does not write options or damage input domains.",
+      "limits": "Maintenance/admin actions and multiple-tag selection menus remain outstanding. Native tab dropdown/layout differs from Qt; multiple/deleted selector exposes existing native advanced domain ticks to preserve combined-domain choices. Existing parent leaf remains partial.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -688,6 +695,30 @@
           "line": 193,
           "symbol": "fn seeded_relationship_child_apply",
           "commit": "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 162,
+          "symbol": "pub fn domains",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+          "line": 127,
+          "symbol": "pub fn domain_menu",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 808,
+          "symbol": "fn write_domain_menus",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 591,
+          "symbol": "fn write_domain_buttons",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
         }
       ],
       "reference_recording": [
@@ -708,12 +739,19 @@
           "line": 201,
           "symbol": "def seeded_relationship_dialogs",
           "commit": "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        },
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 174,
+          "symbol": "def write_domains",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
         }
       ],
       "consumer_commits": [
         "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
         "bf003dbe43e0c2f3682256849988f63dfb4502ec",
-        "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        "faec4a823f506e89bebed4e26e54354d3a3de66c",
+        "e9efa49e803e02168ae878bdb5a3364afc00d48c"
       ]
     },
     {
@@ -721,8 +759,8 @@
       "previous_status": "missing",
       "proposed_status": "partial",
       "change_kind": "implementation",
-      "exact_behavior": "Both sides now use real count/domain/service-aware write autocomplete, typed/ideal elevation, parent and sibling decorations, visible-height preference, keyboard highlight/selected/click entry, manual fetch, confirmed or skipped multiline paste. Paste only adds and removes the entered tag from the opposite side; each service preserves independent input drafts. Closing owner invalidates pending paste answers and stale Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks. Menus now query all real service display graphs for grouped siblings/ideal/parent/child entries and open owned relationship editors seeded on every service tab; owner close cancels child. Relationship dialogs consume configured default/remember preferences and preserve staged cancellation separately from immediate service memory.",
-      "limits": "Full reference maintenance/admin actions, multiple-tag selection menus and per-widget file/tag domain buttons remain outstanding. Native tab dropdown/layout differs from Qt. Existing parent leaf remains partial.",
+      "exact_behavior": "Both sides now use real count/domain/service-aware write autocomplete, typed/ideal elevation, parent and sibling decorations, visible-height preference, keyboard highlight/selected/click entry, manual fetch, confirmed or skipped multiline paste. Paste only adds and removes the entered tag from the opposite side; each service preserves independent input drafts. Closing owner invalidates pending paste answers and stale Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks. Menus now query all real service display graphs for grouped siblings/ideal/parent/child entries and open owned relationship editors seeded on every service tab; owner close cancels child. Relationship dialogs consume configured default/remember preferences and preserve staged cancellation separately from immediate service memory. Per-widget file/tag-domain buttons now have checked menus and exact all-known interlocks, preserve independent service drafts, feed real query/count/decorator/children consumers and use an owned staged multiple/deleted selector; cancelling does not write options or damage input domains.",
+      "limits": "Maintenance/admin actions and multiple-tag selection menus remain outstanding. Native tab dropdown/layout differs from Qt; multiple/deleted selector exposes existing native advanced domain ticks to preserve combined-domain choices. Existing parent leaf remains partial.",
       "implementation_commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
       "anchors": [
         {
@@ -808,6 +846,30 @@
           "line": 193,
           "symbol": "fn seeded_relationship_child_apply",
           "commit": "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 162,
+          "symbol": "pub fn domains",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+          "line": 127,
+          "symbol": "pub fn domain_menu",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 808,
+          "symbol": "fn write_domain_menus",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 591,
+          "symbol": "fn write_domain_buttons",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
         }
       ],
       "reference_recording": [
@@ -834,12 +896,19 @@
           "line": 201,
           "symbol": "def seeded_relationship_dialogs",
           "commit": "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        },
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 174,
+          "symbol": "def write_domains",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
         }
       ],
       "consumer_commits": [
         "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
         "bf003dbe43e0c2f3682256849988f63dfb4502ec",
-        "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        "faec4a823f506e89bebed4e26e54354d3a3de66c",
+        "e9efa49e803e02168ae878bdb5a3364afc00d48c"
       ]
     },
     {
@@ -847,8 +916,8 @@
       "previous_status": "missing",
       "proposed_status": "partial",
       "change_kind": "implementation",
-      "exact_behavior": "Both sides now use real count/domain/service-aware write autocomplete, typed/ideal elevation, parent and sibling decorations, visible-height preference, keyboard highlight/selected/click entry, manual fetch, confirmed or skipped multiline paste. Paste only adds and removes the entered tag from the opposite side; each service preserves independent input drafts. Closing owner invalidates pending paste answers and stale Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks. Menus now query all real service display graphs for grouped siblings/ideal/parent/child entries and open owned relationship editors seeded on every service tab; owner close cancels child. Relationship dialogs consume configured default/remember preferences and preserve staged cancellation separately from immediate service memory.",
-      "limits": "Full reference maintenance/admin actions, multiple-tag selection menus and per-widget file/tag domain buttons remain outstanding. Native tab dropdown/layout differs from Qt. Existing parent leaf remains partial.",
+      "exact_behavior": "Both sides now use real count/domain/service-aware write autocomplete, typed/ideal elevation, parent and sibling decorations, visible-height preference, keyboard highlight/selected/click entry, manual fetch, confirmed or skipped multiline paste. Paste only adds and removes the entered tag from the opposite side; each service preserves independent input drafts. Closing owner invalidates pending paste answers and stale Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks. Menus now query all real service display graphs for grouped siblings/ideal/parent/child entries and open owned relationship editors seeded on every service tab; owner close cancels child. Relationship dialogs consume configured default/remember preferences and preserve staged cancellation separately from immediate service memory. Per-widget file/tag-domain buttons now have checked menus and exact all-known interlocks, preserve independent service drafts, feed real query/count/decorator/children consumers and use an owned staged multiple/deleted selector; cancelling does not write options or damage input domains.",
+      "limits": "Maintenance/admin actions and multiple-tag selection menus remain outstanding. Native tab dropdown/layout differs from Qt; multiple/deleted selector exposes existing native advanced domain ticks to preserve combined-domain choices. Existing parent leaf remains partial.",
       "implementation_commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
       "anchors": [
         {
@@ -934,6 +1003,30 @@
           "line": 193,
           "symbol": "fn seeded_relationship_child_apply",
           "commit": "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 162,
+          "symbol": "pub fn domains",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+          "line": 127,
+          "symbol": "pub fn domain_menu",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 808,
+          "symbol": "fn write_domain_menus",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 591,
+          "symbol": "fn write_domain_buttons",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
         }
       ],
       "reference_recording": [
@@ -960,12 +1053,19 @@
           "line": 201,
           "symbol": "def seeded_relationship_dialogs",
           "commit": "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        },
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 174,
+          "symbol": "def write_domains",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
         }
       ],
       "consumer_commits": [
         "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
         "bf003dbe43e0c2f3682256849988f63dfb4502ec",
-        "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        "faec4a823f506e89bebed4e26e54354d3a3de66c",
+        "e9efa49e803e02168ae878bdb5a3364afc00d48c"
       ]
     },
     {
@@ -973,8 +1073,8 @@
       "previous_status": "partial",
       "proposed_status": "partial",
       "change_kind": "implementation",
-      "exact_behavior": "Per-service import additional tags open a detached write-tag child using that service; whitelist uses all known tags. Typed entry toggles, paste only adds, duplicate pastes retain existing tags. Accepted lists update only the captured parent draft field; cancelling child or owner discards edits, native child close unlocks parent, pending child blocks parent Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks. Menus now query all real service display graphs for grouped siblings/ideal/parent/child entries and open owned relationship editors seeded on every service tab; owner close cancels child. Relationship dialogs consume configured default/remember preferences and preserve staged cancellation separately from immediate service memory.",
-      "limits": "Full reference maintenance/admin actions, multiple-tag selection menus and per-widget file/tag domain buttons remain outstanding. Native tab dropdown/layout differs from Qt. Existing parent leaf remains partial.",
+      "exact_behavior": "Per-service import additional tags open a detached write-tag child using that service; whitelist uses all known tags. Typed entry toggles, paste only adds, duplicate pastes retain existing tags. Accepted lists update only the captured parent draft field; cancelling child or owner discards edits, native child close unlocks parent, pending child blocks parent Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks. Menus now query all real service display graphs for grouped siblings/ideal/parent/child entries and open owned relationship editors seeded on every service tab; owner close cancels child. Relationship dialogs consume configured default/remember preferences and preserve staged cancellation separately from immediate service memory. Per-widget file/tag-domain buttons now have checked menus and exact all-known interlocks, preserve independent service drafts, feed real query/count/decorator/children consumers and use an owned staged multiple/deleted selector; cancelling does not write options or damage input domains.",
+      "limits": "Maintenance/admin actions and multiple-tag selection menus remain outstanding. Native tab dropdown/layout differs from Qt; multiple/deleted selector exposes existing native advanced domain ticks to preserve combined-domain choices. Existing parent leaf remains partial.",
       "implementation_commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
       "anchors": [
         {
@@ -1054,6 +1154,30 @@
           "line": 193,
           "symbol": "fn seeded_relationship_child_apply",
           "commit": "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 162,
+          "symbol": "pub fn domains",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+          "line": 127,
+          "symbol": "pub fn domain_menu",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 808,
+          "symbol": "fn write_domain_menus",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 591,
+          "symbol": "fn write_domain_buttons",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
         }
       ],
       "reference_recording": [
@@ -1080,12 +1204,19 @@
           "line": 201,
           "symbol": "def seeded_relationship_dialogs",
           "commit": "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        },
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 174,
+          "symbol": "def write_domains",
+          "commit": "e9efa49e803e02168ae878bdb5a3364afc00d48c"
         }
       ],
       "consumer_commits": [
         "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
         "bf003dbe43e0c2f3682256849988f63dfb4502ec",
-        "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        "faec4a823f506e89bebed4e26e54354d3a3de66c",
+        "e9efa49e803e02168ae878bdb5a3364afc00d48c"
       ]
     },
     {
@@ -1162,7 +1293,8 @@
       ],
       "consumer_commits": [
         "bf003dbe43e0c2f3682256849988f63dfb4502ec",
-        "faec4a823f506e89bebed4e26e54354d3a3de66c"
+        "faec4a823f506e89bebed4e26e54354d3a3de66c",
+        "e9efa49e803e02168ae878bdb5a3364afc00d48c"
       ]
     }
   ]
