@@ -711,7 +711,7 @@ fn rating_size(
                     .ok_or_else(|| format!("{} \"{text}\" is not a number", label.trim_end()))?;
                 set(
                     s,
-                    ((value.clamp(min, max) * 100.0).round() / 100.0).clamp(min, max),
+                    crate::rating_sizes::round_hundredths(value.clamp(min, max)).clamp(min, max),
                 );
                 Ok(())
             }

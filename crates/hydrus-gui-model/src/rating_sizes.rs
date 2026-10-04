@@ -11,3 +11,19 @@ pub fn counter_width(height: f64, value: i64) -> f64 {
         })
     .trunc()
 }
+
+/// Round a finite rating pixel size in 1–255 to two decimals as Qt does.
+///
+/// Multiplying the binary input by 100 in floating point can erase which side
+/// of a decimal half it lies on. Scale its exact mantissa instead, then round
+/// halves away from zero. The validated positive bounds keep the integer
+/// numerator and denominator within u64.
+pub fn round_hundredths(value: f64) -> f64 {
+    debug_assert!((1.0..=255.0).contains(&value));
+    let bits = value.to_bits();
+    let mantissa = (bits & ((1_u64 << 52) - 1)) | (1_u64 << 52);
+    let exponent = (bits >> 52) & 0x7ff;
+    let denominator = 1_u64 << (1075 - exponent);
+    let numerator = mantissa * 100;
+    ((numerator + denominator / 2) / denominator) as f64 / 100.0
+}

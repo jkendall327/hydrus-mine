@@ -2921,7 +2921,8 @@ samples and unapplied configuration behind. The actual three-kind Qt replay is
 
 Options → ratings now stages independent Preview Window and Dialog square-icon
 sizes and counter heights. The four controls retain Qt's separate bounds, two
-decimal places and clamping; Apply persists them, Cancel discards them, and
+decimal places and clamping, including Qt’s 31.755 → 31.75 rounding boundary;
+Apply persists them, Cancel discards them, and
 legacy import preserves the saved fractions. Newly opened Manage Ratings uses
 the Dialog preferences for like/numerical graphics, their outlines and counter
 height, with counter width expanding for long values. Held right-button movement

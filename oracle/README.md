@@ -162,12 +162,13 @@ are saved beside `service_rating_preview.json`; no fixture service edits commit.
 
 `record_rating_context_sizes.py` drives the four real RatingsPanel double-spin
 boxes, their editingFinished consumers, UpdateOptions, reopened controls and
-actual option serialization. Five cases cover defaults, independent fractional
-values and both bounds. Real RatingLike/Numerical/IncDec dialog and preview
+actual option serialization. Six cases cover defaults, independent fractional
+values, both bounds and binary half boundaries: 31.755 → 31.75, 6.125 → 6.13
+and 12.125 → 12.13. Real RatingLike/Numerical/IncDec dialog and preview
 controls capture pixel sizes, including five-digit counter widths; the actual
 Manage Ratings dialog captures all three sizes and held-right/left mouse moves.
 An abandoned detached Options draft preserves saved values. Executed successfully
-2026-10-04 22:36:53–22:36:55 UTC via the serialized `with-oracle` helper, on a
+2026-10-04 23:04:43–23:04:45 UTC via the serialized `with-oracle` helper, on a
 freshly unpacked basic fixture with clean reference shutdown. The fixture and
 inspected PNG are `rating_context_sizes.json` and `rating_context_sizes.png`. No
 rating handlers or registered services were replaced; the dialog was cancelled.
