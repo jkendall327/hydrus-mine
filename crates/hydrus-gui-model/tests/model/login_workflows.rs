@@ -547,3 +547,119 @@ fn login_domain_rows_replay_cookie_expiry_and_pretty_delay_reference() {
     assert_eq!(cells[1], "login script not found");
     assert!(cells[6].is_empty());
 }
+
+fn domain_reference_manager(fixture: &Value, domains: &Value) -> hydrus_parse::login::LoginManager {
+    use hydrus_parse::login::{Access, DomainLogin, LoginManager, Validity};
+    LoginManager {
+        scripts: fixture["scripts"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|row| {
+                legacy::login_script(&SerialisableObject::from_tuple_str(&row.to_string()).unwrap())
+                    .unwrap()
+            })
+            .collect(),
+        domains: domains
+            .as_object()
+            .unwrap()
+            .iter()
+            .map(|(name, row)| {
+                (
+                    name.clone(),
+                    DomainLogin {
+                        script_key: row[0][0].as_str().unwrap().into(),
+                        script_name: row[0][1].as_str().unwrap().into(),
+                        credentials: serde_json::from_value(row[1].clone()).unwrap(),
+                        access: Access::from_code(row[2].as_i64().unwrap()).unwrap(),
+                        description: row[3].as_str().unwrap().into(),
+                        active: row[4].as_bool().unwrap(),
+                        validity: Validity::from_code(row[5].as_i64().unwrap()).unwrap(),
+                        validity_error: row[6].as_str().unwrap().into(),
+                        no_work_until: row[7].as_i64().unwrap(),
+                        delay_reason: row[8].as_str().unwrap().into(),
+                    },
+                )
+            })
+            .collect(),
+    }
+}
+#[test]
+fn domain_add_change_and_delete_replay_all_recorded_prompt_chains() {
+    use hydrus_gui_model::login_workflows::{
+        DomainEntry, DomainEntryStage as Stage, DomainsEditor,
+    };
+    let fixture = hydrus_testkit::fixture_json("login_domains.json");
+    for case in fixture["cases"].as_array().unwrap() {
+        let mut manager = domain_reference_manager(&fixture, &case["before"]);
+        let expected = domain_reference_manager(&fixture, &case["after"]);
+        if case["name"] == "no-scripts" {
+            manager.scripts.clear();
+        }
+        let mut editor = DomainsEditor::new(manager.clone());
+        let action = case["action"].as_str().unwrap();
+        if action == "delete" {
+            editor.selection.select_only(Some(0));
+            if case["answers"][0] == true {
+                editor.delete();
+            }
+        } else {
+            let mut errors = Vec::<String>::new();
+            match DomainEntry::new(
+                &manager,
+                action.starts_with("change").then_some("login.example"),
+            ) {
+                Err(error) => errors.push(error),
+                Ok(mut entry) => {
+                    for prompt in case["prompts"].as_array().unwrap() {
+                        let answer = &prompt["answer"];
+                        if answer.is_null() {
+                            entry.cancel();
+                            continue;
+                        }
+                        match prompt["kind"].as_str().unwrap() {
+                            "select" => {
+                                assert_eq!(
+                                    json!(
+                                        entry
+                                            .choices()
+                                            .into_iter()
+                                            .map(|choice| choice.label)
+                                            .collect::<Vec<_>>()
+                                    ),
+                                    prompt["choices"],
+                                    "{}",
+                                    case["name"]
+                                );
+                                entry.choose(usize::try_from(answer.as_u64().unwrap()).unwrap());
+                            }
+                            "text" => {
+                                if entry.stage == Stage::Description {
+                                    assert_eq!(
+                                        entry.description,
+                                        prompt["default"].as_str().unwrap()
+                                    );
+                                }
+                                if let Err(error) = entry.enter_text(answer.as_str().unwrap()) {
+                                    errors.push(error);
+                                }
+                            }
+                            "question" => {
+                                assert_eq!(entry.stage, Stage::Activate);
+                                entry.activate(answer.as_bool().unwrap());
+                            }
+                            "credentials" => entry
+                                .set_credentials(serde_json::from_value(answer.clone()).unwrap()),
+                            _ => panic!("unknown reference prompt"),
+                        }
+                    }
+                    if let Some((domain, login)) = entry.value() {
+                        editor.put(domain, login);
+                    }
+                }
+            }
+            assert_eq!(json!(errors), case["warnings"], "{}", case["name"]);
+        }
+        assert_eq!(editor.draft.domains, expected.domains, "{}", case["name"]);
+    }
+}

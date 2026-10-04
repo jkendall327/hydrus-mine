@@ -1,0 +1,1391 @@
+{
+ "scripts": [
+  [
+   73,
+   "a matching",
+   2,
+   [
+    "0101010101010101010101010101010101010101010101010101010101010101",
+    [
+     21,
+     2,
+     []
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        74,
+        "synthetic request",
+        2,
+        [
+         "http",
+         "GET",
+         null,
+         "/",
+         {},
+         {},
+         {},
+         [
+          21,
+          2,
+          []
+         ],
+         [
+          26,
+          3,
+          []
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     [
+      "login.example",
+      0,
+      "original access"
+     ],
+     [
+      "unused.example",
+      2,
+      "example access"
+     ]
+    ]
+   ]
+  ],
+  [
+   73,
+   "b matching",
+   2,
+   [
+    "0202020202020202020202020202020202020202020202020202020202020202",
+    [
+     21,
+     2,
+     []
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        74,
+        "synthetic request",
+        2,
+        [
+         "http",
+         "GET",
+         null,
+         "/",
+         {},
+         {},
+         {},
+         [
+          21,
+          2,
+          []
+         ],
+         [
+          26,
+          3,
+          []
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     [
+      "login.example",
+      1,
+      "matched access"
+     ]
+    ]
+   ]
+  ],
+  [
+   73,
+   "c other",
+   2,
+   [
+    "0303030303030303030303030303030303030303030303030303030303030303",
+    [
+     21,
+     2,
+     []
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        74,
+        "synthetic request",
+        2,
+        [
+         "http",
+         "GET",
+         null,
+         "/",
+         {},
+         {},
+         {},
+         [
+          21,
+          2,
+          []
+         ],
+         [
+          26,
+          3,
+          []
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     [
+      "other.example",
+      3,
+      "other access"
+     ]
+    ]
+   ]
+  ],
+  [
+   73,
+   "d credentials",
+   2,
+   [
+    "0404040404040404040404040404040404040404040404040404040404040404",
+    [
+     21,
+     2,
+     []
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        72,
+        "username",
+        1,
+        [
+         0,
+         [
+          51,
+          1,
+          [
+           0,
+           "alice",
+           null,
+           null,
+           "alice"
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        74,
+        "synthetic request",
+        2,
+        [
+         "http",
+         "GET",
+         null,
+         "/",
+         {
+          "username": "user"
+         },
+         {},
+         {},
+         [
+          21,
+          2,
+          []
+         ],
+         [
+          26,
+          3,
+          []
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    []
+   ]
+  ]
+ ],
+ "cases": [
+  {
+   "name": "no-scripts",
+   "action": "add",
+   "answers": [],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "prompts": [],
+   "warnings": [
+    "You have no login scripts, so you cannot add a new login!"
+   ]
+  },
+  {
+   "name": "cancel-script",
+   "action": "add",
+   "answers": [
+    null
+   ],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "prompts": [
+    {
+     "kind": "select",
+     "title": "select the login script to use",
+     "choices": [
+      "a matching",
+      "b matching",
+      "c other",
+      "d credentials"
+     ],
+     "selected": null,
+     "sort": true,
+     "answer": null
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "example-add",
+   "action": "add",
+   "answers": [
+    0,
+    0,
+    true
+   ],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ],
+    "unused.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {},
+     2,
+     "example access",
+     true,
+     1,
+     "",
+     0,
+     ""
+    ]
+   },
+   "prompts": [
+    {
+     "kind": "select",
+     "title": "select the login script to use",
+     "choices": [
+      "a matching",
+      "b matching",
+      "c other",
+      "d credentials"
+     ],
+     "selected": null,
+     "sort": true,
+     "answer": 0
+    },
+    {
+     "kind": "select",
+     "title": "select the domain to use",
+     "choices": [
+      "unused.example",
+      "use other domain"
+     ],
+     "selected": null,
+     "sort": false,
+     "answer": 0
+    },
+    {
+     "kind": "question",
+     "message": "Activate this login script for this domain?",
+     "answer": true
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "custom-description-cancel",
+   "action": "add",
+   "answers": [
+    0,
+    1,
+    "custom.example",
+    3,
+    null,
+    false
+   ],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {
+    "custom.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {},
+     3,
+     "Login only required to access user preferences.",
+     false,
+     1,
+     "",
+     0,
+     ""
+    ],
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "prompts": [
+    {
+     "kind": "select",
+     "title": "select the login script to use",
+     "choices": [
+      "a matching",
+      "b matching",
+      "c other",
+      "d credentials"
+     ],
+     "selected": null,
+     "sort": true,
+     "answer": 0
+    },
+    {
+     "kind": "select",
+     "title": "select the domain to use",
+     "choices": [
+      "unused.example",
+      "use other domain"
+     ],
+     "selected": null,
+     "sort": false,
+     "answer": 1
+    },
+    {
+     "kind": "text",
+     "message": "Enter the domain.",
+     "default": "",
+     "placeholder": "example.com",
+     "answer": "custom.example"
+    },
+    {
+     "kind": "select",
+     "title": "select what type of access the login gives to this domain",
+     "choices": [
+      "Everything",
+      "NSFW",
+      "Special",
+      "User prefs"
+     ],
+     "selected": null,
+     "sort": false,
+     "answer": 3
+    },
+    {
+     "kind": "text",
+     "message": "Edit the access description, if needed.",
+     "default": "Login only required to access user preferences.",
+     "placeholder": null,
+     "answer": null
+    },
+    {
+     "kind": "question",
+     "message": "Activate this login script for this domain?",
+     "answer": false
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "duplicate",
+   "action": "add",
+   "answers": [
+    0,
+    1,
+    "login.example"
+   ],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "prompts": [
+    {
+     "kind": "select",
+     "title": "select the login script to use",
+     "choices": [
+      "a matching",
+      "b matching",
+      "c other",
+      "d credentials"
+     ],
+     "selected": null,
+     "sort": true,
+     "answer": 0
+    },
+    {
+     "kind": "select",
+     "title": "select the domain to use",
+     "choices": [
+      "unused.example",
+      "use other domain"
+     ],
+     "selected": null,
+     "sort": false,
+     "answer": 1
+    },
+    {
+     "kind": "text",
+     "message": "Enter the domain.",
+     "default": "",
+     "placeholder": "example.com",
+     "answer": "login.example"
+    }
+   ],
+   "warnings": [
+    "That domain is already in use!"
+   ]
+  },
+  {
+   "name": "credentials-cancel",
+   "action": "add",
+   "answers": [
+    3,
+    "creds.example",
+    0,
+    null,
+    null
+   ],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "prompts": [
+    {
+     "kind": "select",
+     "title": "select the login script to use",
+     "choices": [
+      "a matching",
+      "b matching",
+      "c other",
+      "d credentials"
+     ],
+     "selected": null,
+     "sort": true,
+     "answer": 3
+    },
+    {
+     "kind": "text",
+     "message": "Enter the domain.",
+     "default": "",
+     "placeholder": "example.com",
+     "answer": "creds.example"
+    },
+    {
+     "kind": "select",
+     "title": "select what type of access the login gives to this domain",
+     "choices": [
+      "Everything",
+      "NSFW",
+      "Special",
+      "User prefs"
+     ],
+     "selected": null,
+     "sort": false,
+     "answer": 0
+    },
+    {
+     "kind": "text",
+     "message": "Edit the access description, if needed.",
+     "default": "Login required to access any content.",
+     "placeholder": null,
+     "answer": null
+    },
+    {
+     "kind": "credentials",
+     "answer": null,
+     "names": [
+      "username"
+     ]
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "credentials-invalid",
+   "action": "add",
+   "answers": [
+    3,
+    "creds.example",
+    0,
+    "dummy access",
+    {
+     "username": "bad"
+    }
+   ],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {
+    "creds.example": [
+     [
+      "0404040404040404040404040404040404040404040404040404040404040404",
+      "d credentials"
+     ],
+     {
+      "username": "bad"
+     },
+     0,
+     "dummy access",
+     false,
+     2,
+     "Could not validate \"username\" credential: \"bad\" did not exactly match \"alice\"",
+     0,
+     ""
+    ],
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "prompts": [
+    {
+     "kind": "select",
+     "title": "select the login script to use",
+     "choices": [
+      "a matching",
+      "b matching",
+      "c other",
+      "d credentials"
+     ],
+     "selected": null,
+     "sort": true,
+     "answer": 3
+    },
+    {
+     "kind": "text",
+     "message": "Enter the domain.",
+     "default": "",
+     "placeholder": "example.com",
+     "answer": "creds.example"
+    },
+    {
+     "kind": "select",
+     "title": "select what type of access the login gives to this domain",
+     "choices": [
+      "Everything",
+      "NSFW",
+      "Special",
+      "User prefs"
+     ],
+     "selected": null,
+     "sort": false,
+     "answer": 0
+    },
+    {
+     "kind": "text",
+     "message": "Edit the access description, if needed.",
+     "default": "Login required to access any content.",
+     "placeholder": null,
+     "answer": "dummy access"
+    },
+    {
+     "kind": "credentials",
+     "answer": {
+      "username": "bad"
+     },
+     "names": [
+      "username"
+     ]
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "change-matching",
+   "action": "change",
+   "answers": [
+    1
+   ],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {
+    "login.example": [
+     [
+      "0202020202020202020202020202020202020202020202020202020202020202",
+      "b matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     1,
+     "matched access",
+     true,
+     1,
+     "",
+     0,
+     ""
+    ]
+   },
+   "prompts": [
+    {
+     "kind": "select",
+     "title": "select the login script to use",
+     "choices": [
+      "a matching",
+      "b matching",
+      "------",
+      "c other",
+      "d credentials"
+     ],
+     "selected": "a matching",
+     "sort": false,
+     "answer": 1
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "change-separator",
+   "action": "change",
+   "answers": [
+    2
+   ],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "prompts": [
+    {
+     "kind": "select",
+     "title": "select the login script to use",
+     "choices": [
+      "a matching",
+      "b matching",
+      "------",
+      "c other",
+      "d credentials"
+     ],
+     "selected": "a matching",
+     "sort": false,
+     "answer": 2
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "change-current",
+   "action": "change",
+   "answers": [
+    0
+   ],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "prompts": [
+    {
+     "kind": "select",
+     "title": "select the login script to use",
+     "choices": [
+      "a matching",
+      "b matching",
+      "------",
+      "c other",
+      "d credentials"
+     ],
+     "selected": "a matching",
+     "sort": false,
+     "answer": 0
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "change-cancel",
+   "action": "change",
+   "answers": [
+    null
+   ],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "prompts": [
+    {
+     "kind": "select",
+     "title": "select the login script to use",
+     "choices": [
+      "a matching",
+      "b matching",
+      "------",
+      "c other",
+      "d credentials"
+     ],
+     "selected": "a matching",
+     "sort": false,
+     "answer": null
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "change-unmatched-description-cancel",
+   "action": "change",
+   "answers": [
+    3,
+    2,
+    null
+   ],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {
+    "login.example": [
+     [
+      "0303030303030303030303030303030303030303030303030303030303030303",
+      "c other"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     2,
+     "Login required to access special content.",
+     true,
+     1,
+     "",
+     0,
+     ""
+    ]
+   },
+   "prompts": [
+    {
+     "kind": "select",
+     "title": "select the login script to use",
+     "choices": [
+      "a matching",
+      "b matching",
+      "------",
+      "c other",
+      "d credentials"
+     ],
+     "selected": "a matching",
+     "sort": false,
+     "answer": 3
+    },
+    {
+     "kind": "select",
+     "title": "select what type of access the login gives to this domain",
+     "choices": [
+      "Everything",
+      "NSFW",
+      "Special",
+      "User prefs"
+     ],
+     "selected": null,
+     "sort": false,
+     "answer": 2
+    },
+    {
+     "kind": "text",
+     "message": "Edit the access description, if needed.",
+     "default": "Login required to access special content.",
+     "placeholder": null,
+     "answer": null
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "change-invalid-credentials",
+   "action": "change-invalid",
+   "answers": [
+    4,
+    0,
+    null
+   ],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "bad",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {
+    "login.example": [
+     [
+      "0404040404040404040404040404040404040404040404040404040404040404",
+      "d credentials"
+     ],
+     {
+      "username": "bad",
+      "legacy": "keep"
+     },
+     0,
+     "Login required to access any content.",
+     false,
+     2,
+     "Could not validate \"username\" credential: \"bad\" did not exactly match \"alice\"",
+     0,
+     ""
+    ]
+   },
+   "prompts": [
+    {
+     "kind": "select",
+     "title": "select the login script to use",
+     "choices": [
+      "a matching",
+      "b matching",
+      "------",
+      "c other",
+      "d credentials"
+     ],
+     "selected": "a matching",
+     "sort": false,
+     "answer": 4
+    },
+    {
+     "kind": "select",
+     "title": "select what type of access the login gives to this domain",
+     "choices": [
+      "Everything",
+      "NSFW",
+      "Special",
+      "User prefs"
+     ],
+     "selected": null,
+     "sort": false,
+     "answer": 0
+    },
+    {
+     "kind": "text",
+     "message": "Edit the access description, if needed.",
+     "default": "Login required to access any content.",
+     "placeholder": null,
+     "answer": null
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "delete-decline",
+   "action": "delete",
+   "answers": [
+    false
+   ],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "prompts": [
+    {
+     "kind": "question",
+     "message": "Remove all selected?",
+     "answer": false
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "delete-confirm",
+   "action": "delete",
+   "answers": [
+    true
+   ],
+   "before": {
+    "login.example": [
+     [
+      "0101010101010101010101010101010101010101010101010101010101010101",
+      "a matching"
+     ],
+     {
+      "username": "alice",
+      "legacy": "keep"
+     },
+     0,
+     "original access",
+     true,
+     2,
+     "old failure",
+     1900003600,
+     "old delay"
+    ]
+   },
+   "after": {},
+   "prompts": [
+    {
+     "kind": "question",
+     "message": "Remove all selected?",
+     "answer": true
+    }
+   ],
+   "warnings": []
+  }
+ ]
+}

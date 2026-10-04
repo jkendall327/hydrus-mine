@@ -1388,6 +1388,11 @@ The manager now shows required-cookie login status and session/earliest-cookie
 expiry, refreshes it from the shared store, and resets selected resolved sessions
 after the reference confirmation. This reset is immediate and survives parent
 Cancel, matching Qt ownership; configuration edits still wait for Apply.
+Domain Add/change-script now uses an owned sequential native prompt window for
+script, available example/custom domain, access, description and activation, with
+the existing credential child. Its final description Cancel keeps the default,
+while owner cancellation discards it. Reference no-op separator/current-script
+choices, duplicate warnings, validity/delay resets and staged Delete are retained.
 Login requests bypass bandwidth
 waiting while using ordinary cookies, custom headers, redirect and retry behavior.
 The executor waits the reference two seconds after successful steps and observes

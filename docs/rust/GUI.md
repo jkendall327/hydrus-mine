@@ -2082,7 +2082,12 @@ Reset login asks the recorded irreversible-delete question, then clears the
 selected domains’ resolved sessions immediately, even if the manager is later
 canceled. Other sessions remain intact and existing HTTP engines see the reset
 on their next request. Cookie rows and action eligibility refresh while open.
-Adding domains and changing scripts remain absent. Do login now filters
+Add offers available example domains or the recorded custom-domain/access/description
+chain, then credential entry and optional activation. Change login script groups
+matching examples first with a selectable no-op separator/current-script entry,
+preserves credentials and valid activation, and resets invalidity/delays. The final
+description Cancel retains its default; parent Cancel discards unfinished children.
+Delete confirms “Remove all selected?” and stages removal until Apply. Do login now filters
 selected active, non-invalid, existing-script domains whose required cookies are
 missing, asks the recorded confirmation, saves the domain draft and closes the
 manager before attempting its sorted queue. Attempts use the existing cookie store;

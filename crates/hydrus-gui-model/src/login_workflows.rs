@@ -351,7 +351,7 @@ impl DomainsEditor {
         self.draft.domains.keys().nth(index).cloned()
     }
     pub fn selected_domain(&self) -> Option<String> {
-        self.selection.one().and_then(|i| self.domain_at(i))
+        self.selected_domains().into_iter().next()
     }
     pub fn selected_domains(&self) -> Vec<String> {
         self.selection
@@ -634,5 +634,344 @@ impl ExampleDraft {
             access: self.access,
             description: description.unwrap_or(&self.description).to_owned(),
         })
+    }
+}
+
+/// Current prompt in the reference's Add/change-login-script chain.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DomainEntryStage {
+    Script,
+    Example,
+    Domain,
+    Access,
+    Description,
+    Credentials,
+    Activate,
+    Done,
+    Canceled,
+}
+/// One reference choice; the separator deliberately carries no script.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DomainChoice {
+    pub label: String,
+    pub value: Option<usize>,
+}
+/// Isolated domain entry: no manager mutation until the entire prompt chain accepts.
+#[derive(Debug, Clone)]
+pub struct DomainEntry {
+    manager: LoginManager,
+    editing: Option<String>,
+    script_index: Option<usize>,
+    pub stage: DomainEntryStage,
+    pub domain: String,
+    pub access: hydrus_parse::login::Access,
+    pub description: String,
+    pub credentials: BTreeMap<String, String>,
+    active: bool,
+    validity: hydrus_parse::login::Validity,
+    validity_error: String,
+}
+impl DomainEntry {
+    pub fn new(manager: &LoginManager, editing: Option<&str>) -> Result<Self, String> {
+        if manager.scripts.is_empty() && editing.is_none() {
+            return Err("You have no login scripts, so you cannot add a new login!".into());
+        }
+        let old = editing.and_then(|domain| manager.domains.get(domain));
+        Ok(Self {
+            manager: manager.clone(),
+            editing: editing.map(str::to_owned),
+            script_index: None,
+            stage: DomainEntryStage::Script,
+            domain: editing.unwrap_or_default().into(),
+            access: hydrus_parse::login::Access::Everything,
+            description: String::new(),
+            credentials: old.map_or_else(BTreeMap::new, |old| old.credentials.clone()),
+            active: old.is_some_and(|old| old.active),
+            validity: hydrus_parse::login::Validity::Untested,
+            validity_error: String::new(),
+        })
+    }
+    pub fn script(&self) -> Option<&LoginScript> {
+        self.script_index.and_then(|i| self.manager.scripts.get(i))
+    }
+    pub fn choices(&self) -> Vec<DomainChoice> {
+        match self.stage {
+            DomainEntryStage::Script => {
+                let mut indices = (0..self.manager.scripts.len()).collect::<Vec<_>>();
+                indices.sort_by(|&a, &b| {
+                    self.manager.scripts[a]
+                        .name
+                        .cmp(&self.manager.scripts[b].name)
+                });
+                let choice = |i: usize| DomainChoice {
+                    label: self.manager.scripts[i].name.clone(),
+                    value: Some(i),
+                };
+                if self.editing.is_none() {
+                    return indices.into_iter().map(choice).collect();
+                }
+                let matches = |i: &usize| {
+                    self.manager.scripts[*i]
+                        .examples
+                        .iter()
+                        .any(|example| example.domain == self.domain)
+                };
+                let mut rows = indices
+                    .iter()
+                    .copied()
+                    .filter(matches)
+                    .map(choice)
+                    .collect::<Vec<_>>();
+                let other = indices
+                    .into_iter()
+                    .filter(|i| !matches(i))
+                    .map(choice)
+                    .collect::<Vec<_>>();
+                if !rows.is_empty() && !other.is_empty() {
+                    rows.push(DomainChoice {
+                        label: "------".into(),
+                        value: None,
+                    });
+                }
+                rows.extend(other);
+                rows
+            }
+            DomainEntryStage::Example => {
+                let mut domains = self
+                    .script()
+                    .into_iter()
+                    .flat_map(|script| &script.examples)
+                    .filter(|example| !self.manager.domains.contains_key(&example.domain))
+                    .map(|example| example.domain.clone())
+                    .collect::<Vec<_>>();
+                domains.sort();
+                domains.dedup();
+                let mut rows = domains
+                    .into_iter()
+                    .enumerate()
+                    .map(|(i, label)| DomainChoice {
+                        label,
+                        value: Some(i),
+                    })
+                    .collect::<Vec<_>>();
+                rows.push(DomainChoice {
+                    label: "use other domain".into(),
+                    value: None,
+                });
+                rows
+            }
+            DomainEntryStage::Access => (0..4)
+                .map(|i| DomainChoice {
+                    label: hydrus_parse::login::Access::from_code(i as i64)
+                        .expect("access code")
+                        .label()
+                        .into(),
+                    value: Some(i),
+                })
+                .collect(),
+            _ => Vec::new(),
+        }
+    }
+    pub fn selected_choice(&self) -> Option<usize> {
+        if self.stage == DomainEntryStage::Script
+            && let Some(domain) = &self.editing
+        {
+            let old = self
+                .manager
+                .domains
+                .get(domain)
+                .and_then(|login| self.manager.script(login));
+            return self.choices().iter().position(|row| {
+                row.value
+                    .and_then(|i| self.manager.scripts.get(i))
+                    .zip(old)
+                    .is_some_and(|(a, b)| a.key == b.key)
+            });
+        }
+        (!self.choices().is_empty()).then_some(0)
+    }
+    pub fn choose(&mut self, row: usize) {
+        let Some(choice) = self.choices().get(row).cloned() else {
+            return;
+        };
+        match self.stage {
+            DomainEntryStage::Script => {
+                let Some(index) = choice.value else {
+                    self.stage = DomainEntryStage::Canceled;
+                    return;
+                };
+                self.script_index = Some(index);
+                if let Some(domain) = &self.editing {
+                    let old = self
+                        .manager
+                        .domains
+                        .get(domain)
+                        .and_then(|login| self.manager.script(login));
+                    if old.is_some_and(|old| old.key == self.manager.scripts[index].key) {
+                        self.stage = DomainEntryStage::Canceled;
+                        return;
+                    }
+                    if self.use_example() {
+                        self.finish_credentials();
+                    } else {
+                        self.stage = DomainEntryStage::Access;
+                    }
+                } else {
+                    self.stage = DomainEntryStage::Example;
+                    if self.choices().len() == 1 {
+                        self.stage = DomainEntryStage::Domain;
+                    }
+                }
+            }
+            DomainEntryStage::Example => {
+                if choice.value.is_some() {
+                    self.domain = choice.label;
+                    self.use_example();
+                    self.after_access();
+                } else {
+                    self.stage = DomainEntryStage::Domain;
+                }
+            }
+            DomainEntryStage::Access => {
+                self.access =
+                    hydrus_parse::login::Access::from_code(choice.value.unwrap_or_default() as i64)
+                        .expect("access choice");
+                self.description = self.access.description().into();
+                self.stage = DomainEntryStage::Description;
+            }
+            _ => {}
+        }
+    }
+    fn use_example(&mut self) -> bool {
+        let example = self
+            .script()
+            .and_then(|script| {
+                script
+                    .examples
+                    .iter()
+                    .find(|example| example.domain == self.domain)
+            })
+            .cloned();
+        if let Some(example) = example {
+            self.access = example.access;
+            self.description = example.description;
+            true
+        } else {
+            false
+        }
+    }
+    pub fn enter_text(&mut self, text: &str) -> Result<(), String> {
+        if text.is_empty() {
+            return Ok(());
+        }
+        match self.stage {
+            DomainEntryStage::Domain => {
+                if self.manager.domains.contains_key(text) {
+                    self.stage = DomainEntryStage::Canceled;
+                    return Err("That domain is already in use!".into());
+                }
+                self.domain = text.into();
+                self.stage = DomainEntryStage::Access;
+            }
+            DomainEntryStage::Description => {
+                self.description = text.into();
+                self.after_access();
+            }
+            _ => {}
+        }
+        Ok(())
+    }
+    /// Only the final description prompt's cancellation accepts its default.
+    pub fn cancel(&mut self) {
+        if self.stage == DomainEntryStage::Description {
+            self.after_access();
+        } else {
+            self.stage = DomainEntryStage::Canceled;
+        }
+    }
+    fn after_access(&mut self) {
+        if self.editing.is_none()
+            && self
+                .script()
+                .is_some_and(|script| !script.credentials.is_empty())
+        {
+            self.stage = DomainEntryStage::Credentials;
+        } else {
+            self.finish_credentials();
+        }
+    }
+    pub fn set_credentials(&mut self, values: BTreeMap<String, String>) {
+        if self.stage == DomainEntryStage::Credentials {
+            self.credentials = values;
+            self.finish_credentials();
+        }
+    }
+    fn finish_credentials(&mut self) {
+        let result = self
+            .script()
+            .expect("chosen script")
+            .check_credentials_for_entry(&self.credentials);
+        let good = result.is_ok()
+            && (self.editing.is_some()
+                || self.credentials.is_empty()
+                || self.credentials.values().any(|value| !value.is_empty()));
+        match result {
+            Ok(()) => {
+                self.validity = hydrus_parse::login::Validity::Untested;
+                self.validity_error.clear();
+            }
+            Err(error) => {
+                self.validity = hydrus_parse::login::Validity::Invalid;
+                self.validity_error = error;
+            }
+        }
+        if !good {
+            self.active = false;
+        }
+        self.stage = if self.editing.is_none() && good {
+            DomainEntryStage::Activate
+        } else {
+            DomainEntryStage::Done
+        };
+    }
+    pub fn activate(&mut self, active: bool) {
+        if self.stage == DomainEntryStage::Activate {
+            self.active = active;
+            self.stage = DomainEntryStage::Done;
+        }
+    }
+    pub fn value(&self) -> Option<(String, hydrus_parse::login::DomainLogin)> {
+        if self.stage != DomainEntryStage::Done {
+            return None;
+        }
+        let script = self.script()?;
+        Some((
+            self.domain.clone(),
+            hydrus_parse::login::DomainLogin {
+                script_key: script.key.clone(),
+                script_name: script.name.clone(),
+                credentials: self.credentials.clone(),
+                access: self.access,
+                description: self.description.clone(),
+                active: self.active,
+                validity: self.validity,
+                validity_error: self.validity_error.clone(),
+                no_work_until: 0,
+                delay_reason: String::new(),
+            },
+        ))
+    }
+}
+impl DomainsEditor {
+    pub fn put(&mut self, domain: String, login: hydrus_parse::login::DomainLogin) {
+        self.draft.domains.insert(domain.clone(), login);
+        self.selection
+            .select_only(self.draft.domains.keys().position(|key| key == &domain));
+    }
+    pub fn delete(&mut self) {
+        for domain in self.selected_domains() {
+            self.draft.domains.remove(&domain);
+        }
+        self.selection.select_only(None);
     }
 }

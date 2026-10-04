@@ -15,6 +15,7 @@ pub struct Slots {
     pub domains: Rc<RefCell<Option<LoginDomainsWindow>>>,
     pub credentials: crate::login_credential_window::CredentialsSlot,
     pub run: crate::login_test_window::RunSlot,
+    pub entry: crate::login_domain_entry::Slots,
     pub status: Rc<RefCell<String>>,
 }
 impl std::fmt::Debug for Slots {
@@ -185,6 +186,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
         let weak = window.as_weak();
         let slot = Rc::downgrade(&slots.domains);
         let credentials = slots.credentials.clone();
+        let entry = slots.entry.clone();
         let active = active.clone();
         let timer = timer.clone();
         move || {
@@ -193,6 +195,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
                 return;
             }
             crate::login_credential_window::cancel_credentials(&credentials);
+            entry.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -227,14 +230,39 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
             }
         }
     });
-    window.on_action({let weak=window.as_weak();let editor=editor.clone();let store=store.clone();let credentials=slots.credentials.clone();let active=active.clone();let close=close.clone();let pending=pending.clone();let attempts=attempts.clone();let resetting=resetting.clone();let run=slots.run.clone();let status=slots.status.clone();move|action|{
+    window.on_action({let weak=window.as_weak();let editor=editor.clone();let store=store.clone();let credentials=slots.credentials.clone();let active=active.clone();let close=close.clone();let pending=pending.clone();let attempts=attempts.clone();let resetting=resetting.clone();let run=slots.run.clone();let status=slots.status.clone();let entry=slots.entry.clone();move|action|{
         if !active.get(){return;}let Some(window)=weak.upgrade()else{return;};
         if action=="cancel"{close();return;}
         if action=="cancel-login"{run.cancel();return;}
         if run.busy(){return;}
         if window.get_child_open(){return;}
-        if !window.get_question().is_empty()&&!matches!(action.as_str(),"activate"|"leave-inactive"|"confirm-login"|"back-login"|"confirm-reset"|"back-reset"){return;}
+        if !window.get_question().is_empty()&&!matches!(action.as_str(),"activate"|"leave-inactive"|"confirm-login"|"back-login"|"confirm-reset"|"back-reset"|"confirm-delete"|"back-delete"){return;}
         match action.as_str(){
+            "add"|"change-script"=>{
+                let editing=if action=="change-script"{editor.borrow().selected_domains().into_iter().next()}else{None};
+                if action=="change-script"&&editing.is_none(){return;}
+                let applied:crate::login_domain_entry::Applied=Rc::new({let editor=editor.clone();let active=active.clone();let weak=weak.clone();let store=store.clone();move|domain,login|{
+                    if !active.get(){return Err("The domain login editor has closed.".into());}
+                    editor.borrow_mut().put(domain,login);
+                    if let Some(window)=weak.upgrade(){show(&window,&editor.borrow(),&store);}
+                    Ok(())
+                }});
+                let report:crate::login_domain_entry::Report=Rc::new({let weak=weak.clone();let active=active.clone();move|error|{if active.get()&&let Some(window)=weak.upgrade(){window.set_error(error.into());}}});
+                let manager=editor.borrow().draft.clone();
+                match crate::login_domain_entry::open(&manager,editing.as_deref(),&entry,applied,report){
+                    Ok(child)=>{window.set_child_open(true);let weak=weak.clone();child.on_closed(move||{if let Some(window)=weak.upgrade(){window.set_child_open(false);}});},
+                    Err(error)=>window.set_error(error.into()),
+                }
+            },
+            "delete"=>{
+                if editor.borrow().selected_domains().is_empty(){return;}
+                window.set_confirming_delete(true);window.set_question("Remove all selected?".into());
+            },
+            "confirm-delete"|"back-delete"=>{
+                if !window.get_confirming_delete(){return;}
+                if action=="confirm-delete"{editor.borrow_mut().delete();}
+                window.set_confirming_delete(false);window.set_question("".into());show(&window,&editor.borrow(),&store);
+            },
             "reset-login"=>{
                 let domains=editor.borrow().selected_domains();
                 if domains.is_empty(){return;}
