@@ -234,7 +234,9 @@ search.
   A recent predicate is forgotten with a "forget" button where the
   reference has a trash icon. The star menu now saves/resets typed defaults
   immediately, surviving owner Cancel and keeping current fields unchanged on
-  reset. Its date/relative, views/viewtime, URL-type and cross-service rating
+  reset. Star Save can retain an invalid regex, as the reference's Save path
+  bypasses its separate acceptance check; OK still reports the invalid regex.
+  Its date/relative, views/viewtime, URL-type and cross-service rating
   comparability follows the actual reference. Per-service rating panels preserve
   the reference's omission of custom-default initialization; advanced rating uses
   it. Legacy defaults are imported into the same canonical typed store setting;

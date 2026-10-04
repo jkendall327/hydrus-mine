@@ -1116,7 +1116,7 @@ fn predicate_star_save_and_reset_survive_cancel_and_reach_future_searches() {
 }
 
 #[test]
-fn invalid_default_does_not_replace_saved_family_and_viewtime_keeps_milliseconds() {
+fn regex_star_save_is_immediate_but_acceptance_checks_and_viewtime_keeps_milliseconds() {
     use hydrus_gui::predicate_editors::defaults::CustomDefaults;
     use slint::ComponentHandle as _;
     let (_dirs, store) = store();
@@ -1133,17 +1133,59 @@ fn invalid_default_does_not_replace_saved_family_and_viewtime_keeps_milliseconds
         .clone_strong();
     window.invoke_text_edited(2, 3, "predicate-defaults\\.example".into());
     window.invoke_defaults_action(2, "set this as new default".into());
+    window.invoke_text_edited(2, 3, "[".into());
+    window.invoke_defaults_action(2, "set this as new default".into());
+    assert!(window.get_error().is_empty());
     let kept = store
         .read(hydrus_store::settings::get::<CustomDefaults>)
         .unwrap();
-    window.invoke_text_edited(2, 3, "[".into());
-    window.invoke_defaults_action(2, "set this as new default".into());
+    assert_eq!(
+        kept.predicates,
+        vec![Predicate::System(
+            hydrus_search::SystemPredicate::KnownUrl {
+                rule: hydrus_core::search::predicate::UrlRule::Regex("[".into()),
+                has: true,
+            }
+        )]
+    );
+    window.invoke_ok(2);
     assert!(window.get_error().contains("regex"));
+    assert!(shown_predicates(&ui).is_empty());
+    window.invoke_cancel();
     assert_eq!(
         store
             .read(hydrus_store::settings::get::<CustomDefaults>)
             .unwrap(),
         kept
+    );
+    ui.invoke_search_edited("".into());
+    ui.invoke_suggestion_chosen(suggestion(&ui, "system:urls"));
+    let window = bound
+        .predicate_editor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        window
+            .get_panels()
+            .row_data(2)
+            .unwrap()
+            .fields
+            .row_data(3)
+            .unwrap()
+            .text,
+        "["
+    );
+    window.invoke_defaults_menu(2);
+    let recording = hydrus_testkit::fixture_json("predicate_custom_defaults.json");
+    assert_eq!(
+        window
+            .get_defaults_actions()
+            .iter()
+            .map(|a| a.to_string())
+            .collect::<Vec<_>>(),
+        strings(&recording["invalid_regex"]["menu_after_save"])
     );
     window.invoke_cancel();
     ui.invoke_search_edited("".into());

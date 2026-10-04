@@ -539,7 +539,7 @@ pub(crate) fn open(
                 return;
             };
             let made = match action.as_str() {
-                "set this as new default" => match panel.predicates(&state.context) {
+                "set this as new default" => match panel.predicates_for_default(&state.context) {
                     Ok(predicates) => Some(predicates),
                     Err(e) => {
                         window.set_error(e.into());

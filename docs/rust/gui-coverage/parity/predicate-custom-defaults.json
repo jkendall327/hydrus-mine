@@ -2,7 +2,7 @@
   "schema_version": 1,
   "agent": "follow-predicate-defaults",
   "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
-  "validation": "Actual Qt recorder rerun successfully on 2026-10-04 at 18:55:51 UTC via shared /workspace/parallel/with-oracle; 40 valid panel families, 1,600 actual IsUIEditable pairs, immediate lifecycle, real ClientOptions serialization of 38 sequentially saved defaults including 3/5 numerical rating. Python syntax, cargo fmt, git diff --check and warning-aware cached Slint pass. Authored Rust legacy/import/model/native regressions await hosted CI; no local Cargo suites or native render executed.",
+  "validation": "Actual Qt recorder rerun successfully on 2026-10-04 at 19:06:24 UTC via shared /workspace/parallel/with-oracle; 40 valid panel families, 1,600 actual IsUIEditable pairs, immediate lifecycle, real ClientOptions serialization of 38 sequentially saved defaults including 3/5 numerical rating. Python syntax, cargo fmt, git diff --check and warning-aware cached Slint pass. Authored Rust legacy/import/model/native regressions await hosted CI; no local Cargo suites or native render executed.",
   "claims": [
     {
       "reference_id": "audit-options-predicate-custom-defaults",
@@ -10,7 +10,7 @@
       "proposedStatus": "partial",
       "countAsCompletedLeaf": false,
       "change_kind": "implementation",
-      "exactBehavior": "Native star menu offers actual reference save/reset labels. Saving validates current controls and immediately persists canonical typed predicates independently of accepting or cancelling the editor. Reset removes only comparable defaults and affects future panels, leaving current fields intact. All 40 valid reference panel families have typed reverse initialization, explicit compatible predicate precedence, canonical serde and recorded custom-default outputs, including date/delta, views/viewtime milliseconds, URL rule subtypes, stable rating/file service keys, cross-service rating comparability and reference per-service rating constructors that intentionally ignore saved defaults. Empty results do not overwrite defaults; namespace shortcuts retain the actual reference nonmatching-family behavior. Save/reset do not add search or recent predicates; normal acceptance adds the same typed value to those consumers. Legacy imports activate the same canonical typed store setting with actual numerical rating scales; clearing imported defaults remains durable across reopening. Unsupported future records stay lossless in the imported raw options and remain inactive.",
+      "exactBehavior": "Native star menu offers actual reference save/reset labels. Saving immediately persists canonical typed predicates from GetPredicates independently of accepting or cancelling the editor. Reset removes only comparable defaults and affects future panels, leaving current fields intact. All 40 valid reference panel families have typed reverse initialization, explicit compatible predicate precedence, canonical serde and recorded custom-default outputs, including date/delta, views/viewtime milliseconds, URL rule subtypes, stable rating/file service keys, cross-service rating comparability and reference per-service rating constructors that intentionally ignore saved defaults. Regex star Save deliberately bypasses the separate acceptance validation like the actual reference: invalid expressions persist and initialize future fields, while normal OK rejects them. Empty results do not overwrite defaults; namespace shortcuts retain the actual reference nonmatching-family behavior. Save/reset do not add search or recent predicates; normal acceptance adds the same typed value to those consumers. Legacy imports activate the same canonical typed store setting with actual numerical rating scales; clearing imported defaults remains durable across reopening. Unsupported future records stay lossless in the imported raw options and remain inactive.",
       "limits": [
         "URL-class typed predicates currently retain class names, inheriting the existing native editor limit rather than the reference stable class object identity across rename.",
         "Native menu presentation uses a popup and visible star; Qt tooltip/separator styling and the authored native render have not been observed locally.",
@@ -101,7 +101,7 @@
         {
           "path": "crates/hydrus-gui/tests/gui/predicate_editors.rs",
           "line": 1119,
-          "symbol": "invalid_default_does_not_replace_saved_family_and_viewtime_keeps_milliseconds",
+          "symbol": "regex_star_save_is_immediate_but_acceptance_checks_and_viewtime_keeps_milliseconds",
           "kind": "authored_native_regression"
         },
         {
@@ -121,6 +121,12 @@
           "line": 1212,
           "symbol": "fn imported_predicate_defaults_reach_panels_and_reset_never_resurrects_legacy_values",
           "kind": "authored_native_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/predicate_editors/defaults.rs",
+          "line": 459,
+          "symbol": "star_regex_save_skips_accept_validation_like_the_actual_reference",
+          "kind": "authored_model_regression"
         }
       ],
       "referenceRecording": [
@@ -146,6 +152,7 @@
     }
   ],
   "implementationCommits": [
-    "dad84dc3"
+    "dad84dc3",
+    "a5889bbb"
   ]
 }

@@ -204,6 +204,18 @@ impl Kind {
     }
 }
 impl Panel {
+    /// The reference star calls GetPredicates without CheckValid. Its regex
+    /// panel therefore saves even invalid expressions; normal OK still checks.
+    pub fn predicates_for_default(&self, context: &Context) -> Result<Vec<Predicate>, String> {
+        if self.kind == Kind::UrlRegex {
+            Ok(vec![Predicate::System(SystemPredicate::KnownUrl {
+                rule: UrlRule::Regex(self.text_of(3).to_owned()),
+                has: self.chosen(1) == 0,
+            })])
+        } else {
+            self.predicates(context)
+        }
+    }
     /// Explicit compatible input wins over custom defaults. The reference's
     /// per-service rating constructors do not consult custom defaults.
     pub fn initialise(
@@ -441,6 +453,42 @@ mod tests {
             assert_eq!(roundtrip.predicates, saved);
         }
     }
+    #[test]
+    fn star_regex_save_skips_accept_validation_like_the_actual_reference() {
+        let recording = hydrus_testkit::fixture_json("predicate_custom_defaults.json");
+        let context = context(&recording);
+        let edge = &recording["invalid_regex"];
+        let mut defaults = CustomDefaults::default();
+        defaults.save(values(&edge["saved"]));
+        let mut editor = Editor::new(Blank::Urls, &context);
+        editor.apply_defaults(&defaults, &context);
+        let panel = editor
+            .pages
+            .iter()
+            .flat_map(|page| &page.panels)
+            .find(|panel| panel.kind == Kind::UrlRegex)
+            .unwrap();
+        assert_eq!(
+            panel.predicates_for_default(&context).unwrap(),
+            values(&edge["fresh"]["serialised"])
+        );
+        assert!(
+            panel
+                .predicates(&context)
+                .unwrap_err()
+                .contains("Cannot compile that regex")
+        );
+        assert!(
+            edge["accept_validation_error"]
+                .as_str()
+                .unwrap()
+                .starts_with("Cannot compile that regex")
+        );
+        assert!(defaults.uses(Kind::UrlRegex));
+        defaults.reset(Kind::UrlRegex);
+        assert!(defaults.predicates.is_empty());
+    }
+
     #[test]
     fn comparability_replays_all_reference_subtypes_and_rating_services() {
         let recording = hydrus_testkit::fixture_json("predicate_custom_defaults.json");

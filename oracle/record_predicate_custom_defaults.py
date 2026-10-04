@@ -165,6 +165,29 @@ def record(session):
             restored=H.CreateFromSerialisableTuple(json.loads(json.dumps(options.GetSerialisableTuple())))
             durable=[p.GetSerialisableTuple() for p in restored.GetCustomDefaultSystemPredicates(predicate_type=limit_blank.GetType())]
             owner.deleteLater()
+            # Star Save calls GetPredicates directly. Regex validation happens
+            # only on accepting the panel, so even an invalid regex is durable.
+            options._dictionary['custom_default_predicates']=H.SerialisableList()
+            urls_blank=next(p for p in offered if p.ToString()=='system:urls')
+            owner=S.FleshOutPredicatePanel(controller.gui,urls_blank)
+            owner.show()
+            wrapper=next(w for w in owner.findChildren(S.FleshOutPredicatePanel._PredOKPanel) if type(w._predicate_panel).__name__=='PanelPredicateSystemKnownURLsRegex')
+            panel=wrapper._predicate_panel
+            panel._regex.SetValue('[')
+            trigger(wrapper,'set this as new default')
+            fresh=type(panel)(controller.gui,urls_blank)
+            m,regex_menu=menu(wrapper)
+            m.deleteLater()
+            try:
+                panel.CheckValid()
+                validation_error=None
+            except Exception as error:
+                validation_error=str(error)
+            invalid_regex={'saved':[p.GetSerialisableTuple() for p in options._dictionary['custom_default_predicates']],'fresh':snapshot(fresh),'menu_after_save':regex_menu,'accept_validation_error':validation_error}
+            assert validation_error is not None
+            fresh.deleteLater()
+            owner.close()
+            owner.deleteLater()
             # A namespaced zero/any number-of-tags panel emits a namespace
             # predicate. It is saved but is not comparable to this panel's
             # normal number-of-tags default, so its own menu has no reset.
@@ -188,7 +211,7 @@ def record(session):
             for service in controller.services_manager.GetServices():
                 d=service.GetSerialisableDictionary()
                 services.append({'name':service.GetName(),'key':service.GetServiceKey().hex(),'type':service.GetServiceType(),'num_stars':d.get('num_stars',5),'allow_zero':d.get('allow_zero',False)})
-            return {'options_saved_families':saved_families,'cases':cases,'comparability':comparability,'owner_cancel_saved':kept,'options_roundtrip':durable,'namespace_edge':namespace_edge,'services':services,'url_classes':[c.GetName() for c in manager.GetURLClasses() if c.ShouldAssociateWithFiles()],'today':QC.QDate.currentDate().toString('yyyy-MM-dd')}
+            return {'invalid_regex':invalid_regex,'options_saved_families':saved_families,'cases':cases,'comparability':comparability,'owner_cancel_saved':kept,'options_roundtrip':durable,'namespace_edge':namespace_edge,'services':services,'url_classes':[c.GetName() for c in manager.GetURLClasses() if c.ShouldAssociateWithFiles()],'today':QC.QDate.currentDate().toString('yyyy-MM-dd')}
         finally:
             options._dictionary['custom_default_predicates']=original
             manager.SetURLClasses(classes)

@@ -1,4 +1,48 @@
 {
+  "invalid_regex": {
+    "saved": [
+      [
+        14,
+        8,
+        [
+          28,
+          [
+            true,
+            "regex",
+            "[",
+            "has url matching regex ["
+          ],
+          true
+        ]
+      ]
+    ],
+    "fresh": {
+      "text": [
+        "system:has url matching regex ["
+      ],
+      "serialised": [
+        [
+          14,
+          8,
+          [
+            28,
+            [
+              true,
+              "regex",
+              "[",
+              "has url matching regex ["
+            ],
+            true
+          ]
+        ]
+      ]
+    },
+    "menu_after_save": [
+      "set this as new default",
+      "reset to original default"
+    ],
+    "accept_validation_error": "Cannot compile that regex: unterminated character set at position 0"
+  },
   "options_saved_families": [
     22,
     8,

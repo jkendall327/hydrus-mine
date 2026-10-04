@@ -840,7 +840,9 @@ or, with "forget", forgotten. Yours come across from hydrus. Each panel's star
 opens "set this as new default", with "reset to original default" when its
 comparable family has a saved value. Saving stores canonical typed predicates
 immediately and affects future editors; closing or cancelling the current owner
-keeps that change. Reset also commits immediately and leaves current fields
+keeps that change. As in the reference, star Save bypasses the regex panel's
+acceptance validation; an invalid saved regex initializes future fields but OK
+rejects it until corrected. Reset also commits immediately and leaves current fields
 untouched. Explicit compatible typed input takes precedence. Date/relative time,
 views/viewtime and the four URL-rule types have independent defaults. Rating
 comparability spans service keys, as the reference does; per-service rating
