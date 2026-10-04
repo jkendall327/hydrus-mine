@@ -1812,3 +1812,13 @@ File Search options can start new search pages paused or searching immediately,
 and show or hide `system:everything` in read autocomplete. Apply persists both
 preferences; Cancel discards edits. Existing pages retain their pause state, and
 resuming a paused page executes the query it has accumulated.
+
+Tab context menus now append a saved session inside the clicked tab row's
+notebook. Clicking a page of pages also offers saving its contents to an existing
+non-reserved session or creating a new one, with that notebook's name suggested.
+The overwrite, duplicate-name, reserved-name and cancellation steps follow the
+actual reference dialog recording in `oracle/record_notebook_sessions.py`.
+Saving targets the clicked notebook's key, independently of the selected sibling;
+its wrapper is omitted from the saved tree. Copies retain independent page media,
+selection and importer snapshots. Appending into a background notebook remembers
+its new child selection while preserving the visible sibling, and survives reopen.

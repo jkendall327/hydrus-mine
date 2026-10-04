@@ -1133,8 +1133,8 @@ standalone formulas/content nodes belong in their matching native editors.
 Login scripts and domain metadata packages are explicitly unsupported here.
 
 Tab context menus expose close, select, move-page, sort-pages and send-down submenus,
-rename, duplicate, collapse and grouped close actions. Per-notebook session
-append/save and the remaining page-selector child workflows are deferred. As in
+rename, duplicate, collapse, grouped close and per-notebook saved-session
+append/save actions. The remaining page-selector child workflows are deferred. As in
 the reference, a page not opened/initialised contributes zero to the size sort;
 kept file counts and persisted importer progress still participate in count sorts.
 
@@ -1156,8 +1156,7 @@ the native question offers yes/no. Other context submenus remain deferred.
 
 Duplicate and collapse tab actions now work on native page trees; collapse uses
 the native default local search domain (my files). The broader reference default
-local-location preference is still deferred. Session-per-notebook menus remain
-unimplemented. An accepted collapse freezes the media shown when its confirmation
+local-location preference is still deferred. An accepted collapse freezes the media shown when its confirmation
 opened; if its source keys have left their shared notebook, it does nothing.
 
 ## Downloader and URL display
@@ -1177,7 +1176,8 @@ The tag-dialog default service and remembering preference are consumed by native
 manage-tags windows. Their service tabs are limited to local tag services; the
 reference also offers repository tag services. Missing or unsupported saved
 services fall back to the first local service by name.
-- The file-search options page exposes the default tag service; its other
+- The file-search options page exposes the default tag service, initial search
+  synchronization and `system:everything` visibility; its remaining
   autocomplete and search-limit controls are absent. Tag-editing exposes only
   service memory and the default service; ManageTags currently has local tag
   service tabs, so a repository default falls back to its first local tab.
@@ -1186,3 +1186,10 @@ The File Search initial synchronization and `system:everything` controls now
 reach new-page creation and read autocomplete. Hiding the suggestion does not
 prevent entering that predicate manually. Other File Search presentation and
 location controls are still assessed separately.
+
+Notebook session save dialogs use the existing native text/warning/question
+window: reserved-name warnings appear inline rather than as a second Qt warning
+window. Append reports a missing destination/session as an error without creating
+a notebook; saving a source notebook removed before acceptance reports an error.
+Automatic GUI-session lifecycle history and legacy historical snapshot import
+remain outside the manual notebook session menu implementation.

@@ -1592,11 +1592,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             save_session: {
                 let pages = pages.clone();
                 let slot = session_dialog.clone();
-                Rc::new(move |name| {
+                Rc::new(move |name, scope| {
                     if slot.borrow().is_some() {
                         return;
                     }
-                    match session_dialog::open(&pages, name.as_deref(), &slot) {
+                    match session_dialog::open(&pages, name.as_deref(), scope, &slot) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not save the session: {e}"),
                     }

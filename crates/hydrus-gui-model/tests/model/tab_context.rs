@@ -139,3 +139,63 @@ fn dynamic_close_select_move_and_sort_menus_match_real_reference() {
         fixture["default_rename_sent"].as_bool().unwrap()
     );
 }
+
+#[test]
+fn notebook_session_submenus_match_actual_tab_popup_reserved_name_rules() {
+    use hydrus_gui_model::main_menu::{Command, Entry};
+    let fixture = hydrus_testkit::fixture_json("notebook_sessions.json");
+    let menu = fixture["menus"][0].as_array().unwrap();
+    let recorded =
+        |label: &str| menu.iter().find(|e| e["menu"] == label).unwrap()["entries"].clone();
+    let names: Vec<String> = recorded("append session")
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|name| name.as_str().unwrap().into())
+        .collect();
+    let parent = hydrus_core::pages::PageKey::random();
+    let clicked = hydrus_core::pages::PageKey::random();
+    let entries =
+        tab_context::session_entries(Some(parent), Some((clicked, "source notebook")), &names);
+    for label in ["append session", "save this page of pages to a session"] {
+        let Entry::Menu { entries, .. } =
+            entries.iter().find(|entry| entry.label() == label).unwrap()
+        else {
+            panic!("session menu")
+        };
+        assert_eq!(
+            serde_json::json!(entries.iter().map(Entry::label).collect::<Vec<_>>()),
+            recorded(label)
+        );
+        for entry in entries {
+            let Entry::Item {
+                command: Some(command),
+                ..
+            } = entry
+            else {
+                panic!("session action")
+            };
+            match command {
+                Command::AppendNotebookSession { notebook, .. } => {
+                    assert_eq!(*notebook, Some(parent))
+                }
+                Command::SaveNotebookSession {
+                    key,
+                    suggested_name,
+                    ..
+                } => {
+                    assert_eq!(*key, clicked);
+                    assert_eq!(suggested_name, "source notebook");
+                }
+                _ => panic!("notebook session command"),
+            }
+        }
+    }
+    let leaf_entries = tab_context::session_entries(Some(parent), None, &names);
+    assert!(
+        leaf_entries
+            .iter()
+            .all(|entry| entry.label() != "save this page of pages to a session")
+    );
+    assert!(tab_context::session_entries(None, None, &[]).is_empty());
+}

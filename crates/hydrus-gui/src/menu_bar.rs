@@ -48,7 +48,7 @@ pub(crate) struct Hooks {
     /// Open the "review files to import" window.
     pub import_files: Rc<dyn Fn()>,
     /// Save the open pages as this session, or a new one (asking).
-    pub save_session: Rc<dyn Fn(Option<String>)>,
+    pub save_session: Rc<dyn Fn(Option<String>, crate::session_saving::Scope)>,
     /// The page shown's file (0) or tag (1) domain button's menu: none
     /// for a page without a search.
     pub domain_menu: Rc<dyn Fn(i32) -> Vec<main_menu::Entry>>,
@@ -627,7 +627,23 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
                 }),
             );
         }
-        Command::SaveSession(name) => (hooks.save_session)(name),
+        Command::SaveSession(name) => (hooks.save_session)(name, crate::session_saving::Scope::All),
+        Command::SaveNotebookSession {
+            key,
+            name,
+            suggested_name,
+        } => {
+            (hooks.save_session)(
+                name,
+                crate::session_saving::Scope::Notebook {
+                    key,
+                    suggested_name,
+                },
+            );
+        }
+        Command::AppendNotebookSession { notebook, name } => {
+            change_pages(&|pages| pages.append_session_to_notebook(notebook, &name));
+        }
         Command::DeleteSession(name) => {
             let store = store.clone();
             let deleted = name.clone();

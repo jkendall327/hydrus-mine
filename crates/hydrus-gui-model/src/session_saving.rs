@@ -39,6 +39,16 @@ pub enum Step {
     Stop,
 }
 
+/// The page tree whose contents a save dialog targets.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Scope {
+    All,
+    Notebook {
+        key: hydrus_core::pages::PageKey,
+        suggested_name: String,
+    },
+}
+
 /// A session being saved.
 #[derive(Debug, Clone)]
 pub struct Saving {

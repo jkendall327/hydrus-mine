@@ -40,6 +40,7 @@ mod media_sort;
 mod menu_bar;
 mod merge_options;
 mod mpv;
+mod notebook_sessions;
 mod options_window;
 mod page_scroll;
 mod popups;
