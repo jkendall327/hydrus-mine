@@ -653,7 +653,7 @@ fn selectable_preview_values_use_recorded_api_referral_and_gallery_consumers() {
             assert!(preview.request.is_empty());
             assert!(preview.api.is_empty());
         }
-        assert_eq!(step["readonly"], json!([true; 5]));
+        assert_eq!(step["readonly"], json!(vec![true; 5]));
     }
 }
 
