@@ -139,8 +139,9 @@ fn reference_rows_previews_and_vetoes_are_replayed() {
     );
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
+    let initial_downloaders = downloaders.clone();
     store
-        .write(|ctx| settings::set(ctx.conn(), &downloaders))
+        .write(move |ctx| settings::set(ctx.conn(), &initial_downloaders))
         .unwrap();
     actions.save(&store).unwrap();
     let saved: Downloaders = store.read(settings::get).unwrap();
@@ -333,7 +334,7 @@ fn generator_copies_nested_repair_and_delete_are_staged() {
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
     store
-        .write(|ctx| settings::set(ctx.conn(), &downloaders))
+        .write(move |ctx| settings::set(ctx.conn(), &downloaders))
         .unwrap();
     store
         .write(|ctx| {
