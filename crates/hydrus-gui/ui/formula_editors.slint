@@ -39,7 +39,7 @@ export component FormulaWindow inherits Window {
     callback row-activated(int); callback add(); callback edit(); callback delete(); callback shift(bool);
     callback edit-processing(); callback test(); callback apply(); callback cancel();
     callback closed(bool);
-    callback exchange(bool); callback member-exchange(bool); callback edit-child(bool); callback example-chosen();
+    callback exchange(bool); callback member-exchange(bool); callback edit-child(bool); callback example-chosen(); callback add-example(); callback remove-example();
     VerticalLayout {
         padding: 10px; spacing: 6px;
         HorizontalLayout {
@@ -104,7 +104,11 @@ export component FormulaWindow inherits Window {
             VerticalLayout {
                 horizontal-stretch: 1; spacing: 6px;
                 Text { text: "test — example document"; font-weight: 700; color: Theme.text; }
-                if root.examples.length > 1: ComboBox { model: root.examples; current-index <=> root.example; enabled: !root.child-open; selected => { root.example-chosen(); } }
+                HorizontalLayout {
+                    ComboBox { model: root.examples; current-index <=> root.example; enabled: !root.child-open; selected => { root.example-chosen(); } }
+                    Button { text: "add example"; enabled: !root.child-open; clicked => { root.add-example(); } }
+                    Button { text: "remove example"; enabled: root.examples.length > 1 && !root.child-open; clicked => { root.remove-example(); } }
+                }
                 TextEdit { vertical-stretch: 1; text <=> root.document; enabled: !root.child-open; edited(t) => { root.document = t; root.changed(); } }
                 Text { text: "parsing context (one key=value per line)"; color: Theme.text; }
                 TextEdit { height: 65px; text <=> root.context; enabled: !root.child-open; edited(t) => { root.context = t; root.changed(); } }

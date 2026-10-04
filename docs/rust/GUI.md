@@ -1523,8 +1523,12 @@ draft and preserve each subsidiary's child parser. Content editors support URLs,
 titles, headers, temporary variables and vetoes, reusing the six-kind formula
 and string-match editors. Test panels accept the document, page URL, post
 index and validated key=value context variables, and run the live parser engine.
-Child editors block parent changes and Apply; cancellation or owner closure
-invalidates all child callbacks. GUI/store regressions include rendered page
+Parser and formula test panels keep multiple editable examples, with add/remove
+and selection controls. Switching documents restores their source URL. Page
+children receive every converted example with the selected document first;
+formula children preserve all inherited texts and sources. Child editors block
+parent changes and Apply; cancellation or owner closure invalidates all child
+callbacks. GUI/store regressions include rendered page
 and note-content screenshots through HYDRUS_PARSER_SCREENSHOTS.
 
 Parser deletion confirms a snapshot of stable parser keys; selection, sorting

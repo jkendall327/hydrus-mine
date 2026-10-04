@@ -179,10 +179,6 @@ fn read(w: &FormulaWindow, e: &mut FormulaEditor) {
             FormulaKind::Nested { .. } => {}
         }
     }
-    e.test.text = w.get_document().to_string();
-    if let Some(text) = e.test.examples.get_mut(e.example) {
-        text.clone_from(&e.test.text);
-    }
     e.test.context = w
         .get_context()
         .lines()
@@ -191,6 +187,8 @@ fn read(w: &FormulaWindow, e: &mut FormulaEditor) {
                 .map(|(k, v)| (k.to_owned(), v.to_owned()))
         })
         .collect();
+    e.test
+        .remember_example(e.example, w.get_document().to_string());
 }
 /// Edit a formula in isolation. Apply returns the typed draft; Cancel leaves
 /// the original unchanged. Recursive children use separate slots at each depth.
@@ -309,6 +307,44 @@ pub fn open(
             refresh();
         }
     });
+    let change_examples: Rc<dyn Fn(bool)> = Rc::new({
+        let weak = w.as_weak();
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move |adding| {
+            if blocked() {
+                return;
+            }
+            if let Some(w) = weak.upgrade() {
+                let mut e = state.borrow_mut();
+                read(&w, &mut e);
+                e.example = if adding {
+                    let url = e.test.context.get("url").cloned();
+                    e.test.add_example(String::new(), url)
+                } else {
+                    let old = e.example;
+                    e.test.remove_example(old)
+                };
+                w.set_document(e.test.text.as_str().into());
+                w.set_context(
+                    e.test
+                        .context
+                        .iter()
+                        .map(|(k, v)| format!("{k}={v}"))
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                        .into(),
+                );
+            }
+            refresh();
+        }
+    });
+    w.on_add_example({
+        let change = change_examples.clone();
+        move || change(true)
+    });
+    w.on_remove_example(move || change_examples(false));
     w.on_example_chosen({
         let weak = w.as_weak();
         let state = state.clone();
@@ -324,6 +360,15 @@ pub fn open(
                 read(&w, &mut e);
                 e.choose_example(usize::try_from(w.get_example()).unwrap_or(0));
                 w.set_document(e.test.text.as_str().into());
+                w.set_context(
+                    e.test
+                        .context
+                        .iter()
+                        .map(|(k, v)| format!("{k}={v}"))
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                        .into(),
+                );
             }
             refresh();
         }

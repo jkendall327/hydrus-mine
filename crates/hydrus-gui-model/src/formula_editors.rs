@@ -15,6 +15,8 @@ pub struct FormulaTestData {
     pub text: String,
     /// All inherited documents, when a parent produced multiple examples.
     pub examples: Vec<String>,
+    /// Source URL for each example; selection restores its parsing context URL.
+    pub source_urls: Vec<Option<String>>,
     pub collapse_newlines: bool,
 }
 impl Default for FormulaTestData {
@@ -23,8 +25,84 @@ impl Default for FormulaTestData {
             context: ParsingContext::new(),
             text: String::new(),
             examples: Vec::new(),
+            source_urls: Vec::new(),
             collapse_newlines: true,
         }
+    }
+}
+impl FormulaTestData {
+    /// Prepare inherited documents for a selectable test panel.
+    pub fn prepare_examples(&mut self) {
+        if self.examples.is_empty() {
+            self.examples.push(self.text.clone());
+        }
+        self.source_urls
+            .resize(self.examples.len(), self.context.get("url").cloned());
+        self.choose_example(0);
+    }
+    /// Keep edits to the active document and its current source URL.
+    pub fn remember_example(&mut self, index: usize, text: String) {
+        self.text = text;
+        if self.examples.is_empty() {
+            self.examples.push(self.text.clone());
+        }
+        self.source_urls
+            .resize(self.examples.len(), self.context.get("url").cloned());
+        if let Some(example) = self.examples.get_mut(index) {
+            example.clone_from(&self.text);
+        }
+        if let Some(url) = self.source_urls.get_mut(index) {
+            *url = self.context.get("url").cloned();
+        }
+    }
+    /// Select a document, restoring its source URL without changing other variables.
+    pub fn choose_example(&mut self, index: usize) -> bool {
+        let Some(text) = self.examples.get(index) else {
+            return false;
+        };
+        self.text.clone_from(text);
+        if let Some(url) = self.source_urls.get(index) {
+            if let Some(url) = url {
+                self.context.insert("url".into(), url.clone());
+            } else {
+                self.context.remove("url");
+            }
+        }
+        true
+    }
+    /// Append a blank, pasted or fetched example and select it.
+    pub fn add_example(&mut self, text: String, url: Option<String>) -> usize {
+        if self.examples.is_empty() {
+            self.prepare_examples();
+        }
+        self.examples.push(text);
+        self.source_urls.push(url);
+        let index = self.examples.len() - 1;
+        self.choose_example(index);
+        index
+    }
+    /// Remove an example while retaining at least one test document.
+    pub fn remove_example(&mut self, index: usize) -> usize {
+        if self.examples.len() > 1 && index < self.examples.len() {
+            self.examples.remove(index);
+            if index < self.source_urls.len() {
+                self.source_urls.remove(index);
+            }
+        }
+        let selected = index.min(self.examples.len().saturating_sub(1));
+        self.choose_example(selected);
+        selected
+    }
+    /// Put the selected document first for a recursive child, retaining all others.
+    pub fn selected_first(&self, index: usize) -> Self {
+        let mut test = self.clone();
+        if index < test.examples.len() {
+            test.examples.rotate_left(index);
+        }
+        if index < test.source_urls.len() {
+            test.source_urls.rotate_left(index);
+        }
+        test
     }
 }
 /// One editable rule; HTML and JSON rules cannot be mixed in a formula.
@@ -148,9 +226,7 @@ pub struct FormulaEditor {
 impl FormulaEditor {
     /// Start an isolated edit, preserving recursive fields and auxiliary data.
     pub fn new(formula: &Formula, mut test: FormulaTestData) -> Self {
-        if let Some(first) = test.examples.first() {
-            test.text.clone_from(first);
-        }
+        test.prepare_examples();
         Self {
             formula: formula.clone(),
             test,
@@ -208,10 +284,7 @@ impl FormulaEditor {
     /// Inherit context/documents, transforming them through a nested main formula
     /// for the second editor. A parse error yields one empty example, as the reference does.
     pub fn child_test_data(&self, address: FormulaChild) -> FormulaTestData {
-        let mut test = self.test.clone();
-        if self.example < test.examples.len() {
-            test.examples.rotate_left(self.example);
-        }
+        let mut test = self.test.selected_first(self.example);
         if let (FormulaKind::Nested { main, .. }, FormulaChild::Sub) = (&self.formula.kind, address)
         {
             let inputs = if test.examples.is_empty() {
@@ -232,14 +305,14 @@ impl FormulaEditor {
                 }
             }
             test.text = texts.first().cloned().unwrap_or_default();
+            test.source_urls = vec![test.context.get("url").cloned(); texts.len()];
             test.examples = texts;
         }
         test
     }
     /// Switch the test panel between inherited examples without discarding edits.
     pub fn choose_example(&mut self, index: usize) {
-        if let Some(text) = self.test.examples.get(index) {
-            self.test.text.clone_from(text);
+        if self.test.choose_example(index) {
             self.example = index;
         }
     }

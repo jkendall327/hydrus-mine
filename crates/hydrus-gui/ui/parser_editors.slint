@@ -66,6 +66,8 @@ export component ParserEditWindow inherits Window {
     in property <bool> subsidiary-selected;
     in-out property <bool> subsidiary-sorted;
     in-out property <string> document;
+    in property <[string]> examples;
+    in-out property <int> example;
     in-out property <string> test-url;
     in-out property <string> post-index: "0";
     in-out property <string> variables;
@@ -81,6 +83,7 @@ export component ParserEditWindow inherits Window {
     callback answered(bool);
     callback closed();
     callback force-close();
+    callback example-chosen();
     callback subsidiary-clicked(int); callback subsidiary-sort-changed(bool);
     VerticalLayout {
         height: root.height - 52px; padding: 10px; spacing: 8px;
@@ -132,6 +135,11 @@ export component ParserEditWindow inherits Window {
                 }
                 if root.subsidiary-note != "": Text { text: root.subsidiary-note; color: Theme.text; wrap: word-wrap; }
                 Text { text: "test document"; color: Theme.text; }
+                HorizontalLayout {
+                    ComboBox { model: root.examples; current-index <=> root.example; enabled: !root.child-open; selected => { root.example-chosen(); } }
+                    Button { text: "add example"; enabled: !root.child-open; clicked => { root.action("add-example"); } }
+                    Button { text: "remove example"; enabled: root.examples.length > 1 && !root.child-open; clicked => { root.action("remove-example"); } }
+                }
                 TextEdit { height: 130px; text <=> root.document; enabled: !root.child-open; }
                 HorizontalLayout {
                     Text { text: "page URL"; color: Theme.text; vertical-alignment: center; }

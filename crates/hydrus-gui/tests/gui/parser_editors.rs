@@ -614,3 +614,111 @@ fn formula_results(formula: &hydrus_gui::FormulaWindow) -> Vec<String> {
         })
         .collect()
 }
+
+#[test]
+fn multiple_examples_restore_sources_and_propagate_converted_selected_child_data() {
+    use hydrus_core::url::strings::{Conversion, StringConverter};
+    use hydrus_gui_model::formula_editors::new_formula;
+    use hydrus_parse::formula::HtmlContent;
+    let (_dir, store, slots) = setup();
+    let _rendered = headless::init();
+    let cases: Vec<serde_json::Value> =
+        serde_json::from_value(hydrus_testkit::fixture_json("parser_test_data.json")).unwrap();
+    let first = cases
+        .iter()
+        .find(|c| c["case"] == "converted_example" && c["sequence"] == 0)
+        .unwrap();
+    let second = cases
+        .iter()
+        .find(|c| c["case"] == "converted_example" && c["sequence"] == 1)
+        .unwrap();
+    let mut initial = definitions(&store);
+    initial.parsers[0].converter = StringConverter {
+        conversions: vec![Conversion::Append("<!-- converted -->".into())],
+        example: String::new(),
+    };
+    let content = &mut initial.parsers[0].content_parsers[0];
+    content.kind = ContentKind::Note {
+        name: "note".into(),
+    };
+    content.formula = new_formula(false);
+    let FormulaKind::Html { rules, content } = &mut content.formula.kind else {
+        panic!()
+    };
+    rules[0].tag_name = Some("p".into());
+    *content = HtmlContent::Text;
+    let original = initial.clone();
+    store
+        .write_and_refresh(move |ctx| settings::set(ctx.conn(), &initial))
+        .unwrap();
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.set_document(first["raw"].as_str().unwrap().into());
+    page.set_test_url(first["context"]["url"].as_str().unwrap().into());
+    page.set_variables("token=preserved".into());
+    page.invoke_action("add-example".into());
+    assert_eq!(page.get_examples().row_count(), 2);
+    assert_eq!(page.get_document(), "");
+    page.set_document(second["raw"].as_str().unwrap().into());
+    page.set_test_url("https://test-docs.example/second".into());
+    page.set_example(0);
+    page.invoke_example_chosen();
+    assert_eq!(page.get_document(), first["raw"].as_str().unwrap());
+    assert_eq!(
+        page.get_test_url(),
+        first["context"]["url"].as_str().unwrap()
+    );
+    page.set_example(1);
+    page.invoke_example_chosen();
+    assert_eq!(page.get_document(), second["raw"].as_str().unwrap());
+    assert_eq!(page.get_test_url(), "https://test-docs.example/second");
+    page.invoke_row_clicked(0, false, false);
+    page.invoke_action("edit-content".into());
+    let content = child(&slots.content);
+    assert_eq!(
+        content.get_document(),
+        second["child_texts"][0].as_str().unwrap()
+    );
+    assert_eq!(content.get_examples().row_count(), 2);
+    assert_eq!(content.get_test_url(), "https://test-docs.example/second");
+    content.invoke_action("formula".into());
+    let formula = slots
+        .formula
+        .formula
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        formula.get_document(),
+        second["child_texts"][0].as_str().unwrap()
+    );
+    assert_eq!(formula_results(&formula), ["second"]);
+    assert_eq!(formula.get_examples().row_count(), 2);
+    assert!(formula.get_context().contains("token=preserved"));
+    formula.set_example(1);
+    formula.invoke_example_chosen();
+    assert_eq!(
+        formula.get_document(),
+        first["child_texts"][0].as_str().unwrap()
+    );
+    assert_eq!(formula_results(&formula), ["first"]);
+    assert!(
+        formula
+            .get_context()
+            .contains(first["context"]["url"].as_str().unwrap())
+    );
+    page.set_example(0);
+    page.invoke_example_chosen();
+    assert_eq!(page.get_example(), 1);
+    formula.invoke_cancel();
+    content.invoke_action("cancel".into());
+    page.invoke_action("remove-example".into());
+    assert_eq!(page.get_examples().row_count(), 1);
+    assert_eq!(page.get_document(), first["raw"].as_str().unwrap());
+    page.invoke_action("cancel".into());
+    list.invoke_action("cancel".into());
+    assert_eq!(definitions(&store), original);
+}

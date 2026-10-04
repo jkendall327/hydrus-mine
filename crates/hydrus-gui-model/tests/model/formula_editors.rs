@@ -615,3 +615,54 @@ fn six_kind_chooser_defaults_match_reference() {
         }
     }
 }
+
+#[test]
+fn multiple_test_documents_retain_edits_sources_and_selected_child_order() {
+    let cases: Vec<Value> =
+        serde_json::from_value(hydrus_testkit::fixture_json("parser_test_data.json")).unwrap();
+    let first = cases
+        .iter()
+        .find(|c| c["case"] == "converted_example" && c["sequence"] == 0)
+        .unwrap();
+    let second = cases
+        .iter()
+        .find(|c| c["case"] == "converted_example" && c["sequence"] == 1)
+        .unwrap();
+    let mut test = FormulaTestData {
+        context: serde_json::from_value(first["context"].clone()).unwrap(),
+        text: first["raw"].as_str().unwrap().into(),
+        ..FormulaTestData::default()
+    };
+    test.prepare_examples();
+    let original_url = test.context["url"].clone();
+    let index = test.add_example(
+        second["raw"].as_str().unwrap().into(),
+        Some("https://test-docs.example/second".into()),
+    );
+    assert_eq!(index, 1);
+    assert_eq!(test.context["url"], "https://test-docs.example/second");
+    assert_eq!(test.context["token"], "preserved");
+    test.remember_example(1, "<p>edited second</p>".into());
+    assert!(test.choose_example(0));
+    assert_eq!(test.text, first["raw"].as_str().unwrap());
+    assert_eq!(test.context["url"], original_url);
+    assert!(test.choose_example(1));
+    assert_eq!(test.text, "<p>edited second</p>");
+    let child = test.selected_first(1);
+    assert_eq!(child.examples, ["<p>edited second</p>", "<p>first</p>"]);
+    assert_eq!(
+        child.source_urls,
+        [
+            Some("https://test-docs.example/second".into()),
+            Some(original_url.clone())
+        ]
+    );
+    assert_eq!(child.context, test.context);
+    assert!(!test.choose_example(usize::MAX));
+    assert_eq!(test.text, "<p>edited second</p>");
+    assert_eq!(test.remove_example(1), 0);
+    assert_eq!(test.text, first["raw"].as_str().unwrap());
+    assert_eq!(test.context["url"], original_url);
+    assert_eq!(test.remove_example(0), 0);
+    assert_eq!(test.examples.len(), 1);
+}
