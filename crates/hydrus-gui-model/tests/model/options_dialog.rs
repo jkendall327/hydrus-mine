@@ -764,3 +764,38 @@ fn system_sleep_controls_match_reference_and_clamp() {
         );
     }
 }
+
+#[test]
+fn hash_prefix_control_matches_reference_default_and_checkbox() {
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let copied = hydrus_testkit::fixture_json("hash_clipboard_options.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let mut settings = store.read(Settings::load).unwrap();
+    let pages = pages(&settings);
+    let page = pages
+        .iter()
+        .find(|page| page.name == "files and trash")
+        .unwrap();
+    let reference = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "files and trash")
+        .unwrap();
+    assert!(page_problems(page, &reference["items"], &settings, &store).is_empty());
+    let options = page.options();
+    let option = options
+        .iter()
+        .find(|option| {
+            option.label == "When copying file hashes, prefix with booru-friendly hash type: "
+        })
+        .unwrap();
+    assert_eq!(
+        (option.get)(&settings),
+        Value::Check(copied["default"].as_bool().unwrap())
+    );
+    for prefix in [true, false] {
+        (option.set)(&mut settings, &Value::Check(prefix)).unwrap();
+        assert_eq!(settings.file_handling.prefix_hash_when_copying, prefix);
+    }
+}

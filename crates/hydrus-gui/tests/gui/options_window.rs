@@ -1172,3 +1172,68 @@ fn sleep_options_apply_to_the_network_consumer_and_cancel_drafts() {
     );
     window.invoke_cancel();
 }
+
+#[test]
+fn hash_prefix_option_reaches_selected_and_focused_clipboard_hashes() {
+    use hydrus_gui::thumbnail_menu::{HashKind, hashes};
+    use hydrus_store::settings::{FileHandlingSettings, get};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("hash_clipboard_options.json");
+    for case in fixture["cases"].as_array().unwrap() {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "files and trash");
+        let (index, _) = row(
+            &window,
+            "When copying file hashes, prefix with booru-friendly hash type: ",
+        );
+        window.invoke_check_toggled(index, case["prefix"].as_bool().unwrap());
+        window.invoke_apply();
+        let files = case["hashes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|hash| {
+                store
+                    .read(|conn| {
+                        hydrus_store::master::hash_id(
+                            conn,
+                            &hash.as_str().unwrap().parse().unwrap(),
+                        )
+                    })
+                    .unwrap()
+                    .unwrap()
+            })
+            .collect::<Vec<_>>();
+        let kind = match case["kind"].as_str().unwrap() {
+            "sha256" => HashKind::Sha256,
+            "md5" => HashKind::Md5,
+            "sha1" => HashKind::Sha1,
+            "sha512" => HashKind::Sha512,
+            "blurhash" => HashKind::Blurhash,
+            "pixel_hash" => HashKind::PixelHash,
+            other => panic!("unrecorded hash type {other}"),
+        };
+        let lines = hashes(&store, &files, kind);
+        let publications = if lines.is_empty() {
+            Vec::new()
+        } else {
+            vec![lines.join("\n")]
+        };
+        assert_eq!(serde_json::json!(publications), case["clipboard"]);
+    }
+    let before = store.read(get::<FileHandlingSettings>).unwrap();
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "files and trash");
+    let (index, _) = row(
+        &window,
+        "When copying file hashes, prefix with booru-friendly hash type: ",
+    );
+    window.invoke_check_toggled(index, !before.prefix_hash_when_copying);
+    window.invoke_cancel();
+    assert_eq!(store.read(get::<FileHandlingSettings>).unwrap(), before);
+}

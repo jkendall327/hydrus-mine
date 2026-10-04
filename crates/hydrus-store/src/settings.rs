@@ -230,6 +230,8 @@ pub struct FileHandlingSettings {
     pub transparency_strictness: u8,
     /// Leave files' permissions alone (`do_not_do_chmod_mode`).
     pub do_not_chmod: bool,
+    /// Prefix clipboard hashes with their type (`prefix_hash_when_copying`).
+    pub prefix_hash_when_copying: bool,
 }
 
 impl Default for FileHandlingSettings {
@@ -238,6 +240,7 @@ impl Default for FileHandlingSettings {
             comic_book_detection: true,
             transparency_strictness: 2,
             do_not_chmod: false,
+            prefix_hash_when_copying: false,
         }
     }
 }

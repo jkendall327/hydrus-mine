@@ -1746,3 +1746,7 @@ source deletion, multiple copies, metadata/state and all native importer kinds.
 The system sleep controls enable the network engine’s clock-gap detector and set
 a zero-to-sixty-second grace period. The running downloader daemon reloads these
 settings; disabling detection clears its pending network wait at the next check.
+
+Files and trash can prefix copied hashes with their booru type. The preference
+applies to both the focused file and selected files, for digest, blurhash and
+pixel-hash clipboard actions; only hashes available in the store are copied.

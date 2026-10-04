@@ -302,6 +302,8 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         handling.comic_book_detection =
             boolean("allow_comic_book_archive_detection").unwrap_or(handling.comic_book_detection);
         handling.do_not_chmod = boolean("do_not_do_chmod_mode").unwrap_or(handling.do_not_chmod);
+        handling.prefix_hash_when_copying =
+            boolean("prefix_hash_when_copying").unwrap_or(handling.prefix_hash_when_copying);
         if let Some(level) = options
             .integers
             .get("file_has_transparency_strictness")

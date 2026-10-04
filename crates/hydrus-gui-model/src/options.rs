@@ -1255,6 +1255,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "files and trash",
             vec![
                 check(
+                    "When copying file hashes, prefix with booru-friendly hash type: ",
+                    |s| s.file_handling.prefix_hash_when_copying,
+                    |s, v| s.file_handling.prefix_hash_when_copying = v,
+                ),
+                check(
                     "When physically deleting files or folders, send them to the OS's recycle bin: ",
                     |s| s.folders.delete_to_recycle_bin,
                     |s, v| s.folders.delete_to_recycle_bin = v,

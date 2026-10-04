@@ -1146,3 +1146,6 @@ include that data.
 Bulk tab closing groups downloader objections in its confirmation. The reference's
 extra "no, but show me the pages" response on an objection dialog is not exposed;
 the native question offers yes/no. Other context submenus remain deferred.
+
+- Hash clipboard actions honour the booru prefix option, but do not show the
+  reference’s missing-digest warning or its transient hashes-copied notification.
