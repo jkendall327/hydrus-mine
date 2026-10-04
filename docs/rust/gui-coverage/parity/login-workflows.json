@@ -2,7 +2,7 @@
   "schema_version": 1,
   "agent": "login-workflows",
   "baseline_git_head": "d50df26b",
-  "implementation_git_head": "ba3d04b6",
+  "implementation_git_head": "b459569c",
   "implementation_commits": [
     "44840f22",
     "da3c06f2",
@@ -13,13 +13,18 @@
     "89ef38d6",
     "ad113880",
     "89334ad6",
-    "ba3d04b6"
+    "ba3d04b6",
+    "8ad97679",
+    "1aa947be",
+    "b477fe3f",
+    "2d14d685",
+    "b459569c"
   ],
   "validation": {
     "referenceRecording": "oracle/record_login_editors.py executed through shared with-oracle lock using the real Qt client; fixture oracle/fixtures/login_editors.json; oracle/record_login_execution.py executed actual reference HTTP jobs and real Qt result reviews on synthetic loopback, fixture oracle/fixtures/login_execution.json",
     "cargo_fmt": "passed",
     "rust_tests": "Root CI reports all four login HTTP test groups passed. New GUI/queue/type/lint checks remain root asynchronous CI; no local Cargo builds.",
-    "slint_syntax": "Cached source compiler passed twice after domain queue UI changes; no Cargo build."
+    "slint_syntax": "Cached source compiler passed after cookie UI and three independent argument lists/scrolling footer; no Cargo builds."
   },
   "claims": [
     {
@@ -68,7 +73,7 @@
       "proposedStatus": "partial",
       "exactBehavior": "Real network menu opens sorted list; CRUD/extended selection, unique imported names/new keys, preserved edit keys and staged scripts-only save retaining domain fields.",
       "limits": [
-        "Global/step cookie and example-domain editing incomplete; typed preserved steps are editable and executable in isolated tests."
+        "Nested script example-domain editing incomplete; typed steps, cookie rules and HTTP test results are editable/executable."
       ],
       "source": [
         "crates/hydrus-gui/src/login_credential_window.rs:42",
@@ -89,7 +94,7 @@
       "proposedStatus": "partial",
       "exactBehavior": "Script identity/credential definitions/step queue and response parsers editable, invalid-script advisory; real HTTP test consumer with credential entry, isolated cookie store, domain input, Run/Cancel/live job status, final results and review; staged fields preserved.",
       "limits": [
-        "Request argument/cookie/example-domain editors remain read-only. Results table populates on completed run, whereas reference streams step results. Broad parent remains partial."
+        "Example-domain editor remains absent; results table populates on completed run rather than streaming per-step. Native cookie list uses an owned child editor. Broad parent stays partial."
       ],
       "source": [
         "crates/hydrus-gui/src/login_credential_window.rs:42",
@@ -147,18 +152,24 @@
       "id": "login-step",
       "before": "missing",
       "proposedStatus": "partial",
-      "exactBehavior": "Script queue add/edit/delete/order and step identity scheme/method/subdomain/path controls, preserving and cleansing typed serialization. Full response content list route connected.",
+      "exactBehavior": "Script queue add/edit/delete/order, step scheme/method/subdomain/path with cleanup; three independently selectable credential/static/temp request dictionaries with unique/nonblank keys, blank values, rename/cancel/confirmed bulk deletion; editable cookie name/value matchers and complete VARIABLE/VETO content route. Edited arguments/cookie rules consumed by actual synthetic loopback HTTP.",
       "limits": [
-        "Request argument dictionaries and cookie matchers remain read-only; existing values are consumed by the real HTTP executor."
+        "Native row editing uses inline key/value fields; reference asks sequential text dialogs. Cookies use a shared child list with a staged row; reference embeds a list and asks sequential matcher dialogs. Broad completion proposal stays partial pending native CI validation/root review."
       ],
       "source": [
-        "crates/hydrus-gui/src/login_step_window.rs:74",
-        "crates/hydrus-gui/src/login_workflows_window.rs:406"
+        "crates/hydrus-gui/src/login_step_window.rs:116",
+        "crates/hydrus-gui/ui/login_step.slint:56",
+        "crates/hydrus-gui/src/login_cookies_window.rs:74",
+        "crates/hydrus-gui-model/src/login_workflows.rs:191"
       ],
       "testAnchors": [
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:284"
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:280",
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:396",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:822",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:923",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1083"
       ],
-      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json"
+      "referenceRecording": "Executed oracle/record_login_editors.py real Qt step fields/content, StringToStringDictControl rename/duplicate/blank/cancel and all three row models, StringMatchToStringMatchDictControl add/edit/cancel/duplicate-looking objects; login_editors.json step_states/argument_states/cookie_states. Executed live HTTP recorder login_execution.json plus actual native HTTP regression authored for root CI."
     },
     {
       "id": "logins",
