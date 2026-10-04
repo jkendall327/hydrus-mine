@@ -89,6 +89,25 @@ fn notebook_refresh_resumes_initialized_descendants_and_preserves_background_sel
             sessions::set_shown(ctx.conn(), sessions::LAST_SESSION, Some(&keys[3]))
         })
         .unwrap();
+    // The recorded skipped page had already queried before Qt marked its media
+    // panel uninitialized. Preserve that initial media without opening it here.
+    let initial = hydrus_testkit::fixture_json("media_collect.json");
+    let initial_files: Vec<HashId> = initial["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|hash| {
+            store
+                .read(|conn| {
+                    hydrus_store::master::hash_id(conn, &hash.as_str().unwrap().parse().unwrap())
+                })
+                .unwrap()
+                .unwrap()
+        })
+        .collect();
+    store
+        .write(move |ctx| sessions::set_page_files(ctx.conn(), &keys[2], &initial_files))
+        .unwrap();
     let mut pages = Pages::open(store.clone()).unwrap();
     for key in &keys[..2] {
         assert!(!pages.page(key).unwrap().borrow().synchronised());
@@ -105,7 +124,8 @@ fn notebook_refresh_resumes_initialized_descendants_and_preserves_background_sel
         );
         assert_eq!(
             page.borrow().files().len() as u64,
-            fixture["refresh"]["counts"][i].as_u64().unwrap()
+            fixture["refresh"]["counts"][i].as_u64().unwrap(),
+            "descendant {i}"
         );
     }
     assert_eq!(

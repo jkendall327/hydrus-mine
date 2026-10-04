@@ -701,10 +701,9 @@ fn options_profiles_share_the_parent_draft_without_persisting_children() {
         .prompt_window()
         .unwrap()
         .invoke_accepted("draft profile".into());
-    assert_eq!(
-        draft.borrow().favourites,
-        vec![("draft profile".into(), incoming.clone())]
-    );
+    let mut expected = persisted.favourites.clone();
+    expected.push(("draft profile".into(), incoming.clone()));
+    assert_eq!(draft.borrow().favourites, expected);
     assert_eq!(
         store.read(settings::get::<ImportOptionsManager>).unwrap(),
         persisted
@@ -720,22 +719,20 @@ fn options_profiles_share_the_parent_draft_without_persisting_children() {
     cancelled.invoke_paste_options(2);
     cancelled.invoke_cancel();
     cancelled.invoke_apply();
-    assert_eq!(draft.borrow().favourites.len(), 1);
+    assert_eq!(draft.borrow().favourites, expected);
 
     owner.choose(3, "draft profile");
     let editor = owner.editing_window().unwrap();
     editor.set_favourite_name("renamed".into());
     editor.invoke_apply();
-    assert_eq!(
-        draft.borrow().favourites,
-        vec![("renamed".into(), incoming)]
-    );
+    expected.last_mut().unwrap().0 = "renamed".into();
+    assert_eq!(draft.borrow().favourites, expected);
     owner.choose(6, "renamed");
     owner.prompt_window().unwrap().invoke_cancelled();
-    assert_eq!(draft.borrow().favourites.len(), 1);
+    assert_eq!(draft.borrow().favourites, expected);
     owner.choose(6, "renamed");
     owner.prompt_window().unwrap().invoke_accepted("".into());
-    assert!(draft.borrow().favourites.is_empty());
+    assert_eq!(draft.borrow().favourites, persisted.favourites);
     assert_eq!(
         store.read(settings::get::<ImportOptionsManager>).unwrap(),
         persisted
@@ -746,7 +743,7 @@ fn options_profiles_share_the_parent_draft_without_persisting_children() {
     stale.set_favourite_name("after owner closes".into());
     owner.close();
     stale.invoke_apply();
-    assert!(draft.borrow().favourites.is_empty());
+    assert_eq!(draft.borrow().favourites, persisted.favourites);
     let accepted = draft.borrow().clone();
     store
         .write(move |tx| settings::set(tx.conn(), &accepted))

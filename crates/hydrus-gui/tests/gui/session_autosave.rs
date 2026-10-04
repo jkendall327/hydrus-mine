@@ -74,7 +74,11 @@ fn applied_idle_and_period_controls_drive_real_archives_with_unchanged_suppressi
     window.invoke_apply();
     assert_eq!(
         store.read(settings::get::<GuiSessionSettings>).unwrap(),
-        before
+        GuiSessionSettings {
+            autosave_minutes: 1,
+            ..before.clone()
+        },
+        "the recorded SpinBox clamps its zero input to one minute"
     );
     let window = options(&ui, &bound);
     let period = row(&window, PERIOD);

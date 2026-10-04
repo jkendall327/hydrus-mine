@@ -133,6 +133,7 @@ fn popup_new_page_and_here_replay_real_reference_order_selection_and_cancellatio
         let tree = pages.session().pages.clone();
         let shown = pages.shown().key;
         drop(pages);
+        (bound.sync)();
         let reopened = Pages::open(store.clone()).unwrap();
         assert_eq!(reopened.session().pages, tree);
         assert_eq!(reopened.shown().key, shown);
@@ -189,6 +190,7 @@ fn nested_chooser_freezes_parent_and_anchor_and_cancel_clears_pending_position()
     assert_eq!(bound.pages.borrow().session().pages[2].name, "pages");
     assert_eq!(bound.pages.borrow().session().pages[0].key, parent_key);
 
+    (bound.sync)();
     let mut pages = Pages::open(store.clone()).unwrap();
     assert!(pages.new_page_at(Some(PageKey::random()), None).is_err());
     assert!(
@@ -272,6 +274,7 @@ fn insertion_option_imports_rejects_invalid_cancels_and_changes_real_chooser_con
     pick_notebook(&ui);
     assert_eq!(bound.pages.borrow().session().pages[0].name, "pages");
     assert_eq!(bound.pages.borrow().session().pages[3].key, selected);
+    (bound.sync)();
     let reopened = Pages::open(store.clone()).unwrap();
     assert_eq!(
         reopened.session().pages,
