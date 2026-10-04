@@ -75,6 +75,9 @@ export component FilenameTaggingWindow inherits Window {
     in-out property <string> tags-all;
     in-out property <string> tags-selected;
     in property <bool> has-selection;
+    in property <bool> tags-child-open;
+    callback edit-tags(bool);
+    callback paste-tags(bool);
     in property <[MiscRow]> misc;
     // advanced
     in-out property <string> quick;
@@ -125,7 +128,7 @@ export component FilenameTaggingWindow inherits Window {
     forward-focus: keys;
     keys := FocusScope {
         capture-key-pressed(event) => {
-            if root.regex-child-open { return accept; }
+            if root.regex-child-open || root.tags-child-open { return accept; }
             if event.text == Key.Escape {
                 if root.regex-panes.length > 0 { root.regex-dismissed(); return accept; }
                 if root.rule-child || root.rule-delete { root.rule-cancel(); }
@@ -214,22 +217,29 @@ export component FilenameTaggingWindow inherits Window {
             VerticalLayout {
                 spacing: 4px;
                 BoxTitle { text: "tags for all"; }
-                Label { text: "a tag a line"; }
                 TextEdit {
                     vertical-stretch: 1;
+                    read-only: true;
                     text <=> root.tags-all;
-                    edited => { root.changed(); }
+                }
+                HorizontalLayout {
+                    Button { text: "edit tags…"; clicked => { root.edit-tags(false); } }
+                    Button { text: "paste tags"; clicked => { root.paste-tags(false); } }
                 }
             }
             if !root.options-mode: VerticalLayout {
                 spacing: 4px;
                 BoxTitle { text: "tags just for selected files"; }
-                Label { text: root.has-selection ? "a tag a line" : "(select files above)"; }
+                if !root.has-selection: Label { text: "(select files above)"; }
                 TextEdit {
                     vertical-stretch: 1;
+                    read-only: true;
                     enabled: root.has-selection;
                     text <=> root.tags-selected;
-                    edited => { root.changed(); }
+                }
+                HorizontalLayout {
+                    Button { text: "edit tags…"; enabled: root.has-selection; clicked => { root.edit-tags(true); } }
+                    Button { text: "paste tags"; enabled: root.has-selection; clicked => { root.paste-tags(true); } }
                 }
             }
             VerticalLayout {
@@ -367,7 +377,7 @@ export component FilenameTaggingWindow inherits Window {
     }
     }
 
-    if root.regex-child-open: Rectangle {
+    if root.regex-child-open || root.tags-child-open: Rectangle {
         width: root.width; height: root.height;
         TouchArea { }
     }

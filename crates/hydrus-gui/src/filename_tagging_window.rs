@@ -29,6 +29,7 @@ struct State {
     rules: Vec<RuleEditor>,
     regex: Option<crate::filename_regex_menu::Controls>,
     closed: bool,
+    tags: crate::write_tag_window::Slot,
     /// (key hex, name, its tab's options)
     services: Vec<(String, String, ServiceTagging)>,
     /// Each tab's "misc" rows as shown: ticked, and the namespace typed
@@ -64,6 +65,7 @@ pub(crate) type Done = Rc<dyn Fn(PathTags, Vec<Router>)>;
 impl State {
     fn can_edit(&self) -> bool {
         !self.closed
+            && self.tags.borrow().is_none()
             && !self
                 .regex
                 .as_ref()
@@ -358,6 +360,124 @@ fn bind_rules(window: &FilenameTaggingWindow, state: &Rc<RefCell<State>>) {
     });
 }
 
+/// Additive autocomplete children and direct paste keep the owner's service
+/// and file selection frozen; only accepted tag deltas reach its draft.
+fn bind_tags(window: &FilenameTaggingWindow, state: &Rc<RefCell<State>>, store: &Arc<Store>) {
+    window.on_edit_tags({
+        let owner = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        move |single| {
+            let (current, selected, before, service, slot) = {
+                let state = state.borrow();
+                if !state.can_edit() || state.on_sidecars || (single && state.selection.is_empty())
+                {
+                    return;
+                }
+                let selected = state.selected();
+                let before = if single {
+                    state.tab().selected_single(&selected)
+                } else {
+                    state.tab().options.tags_for_all.iter().cloned().collect()
+                };
+                let Ok(service) =
+                    hydrus_core::ServiceKey::from_hex(&state.services[state.current].0)
+                else {
+                    return;
+                };
+                (state.current, selected, before, service, state.tags.clone())
+            };
+            let applied = Rc::new({
+                let owner = owner.clone();
+                let state = Rc::downgrade(&state);
+                let before = before.clone();
+                move |tags: Vec<String>, additions: Vec<String>| {
+                    let (Some(owner), Some(state)) = (owner.upgrade(), state.upgrade()) else {
+                        return;
+                    };
+                    let mut state = state.borrow_mut();
+                    if state.closed || state.current != current {
+                        return;
+                    }
+                    let tab = &mut state.services[current].2;
+                    if single {
+                        tab.apply_selected(&selected, &before, &tags, &additions);
+                    } else {
+                        tab.options.tags_for_all = tags.into_iter().collect();
+                    }
+                    state.errors.clear();
+                    show(&owner, &mut state);
+                }
+            });
+            let closed = Rc::new({
+                let owner = owner.clone();
+                move || {
+                    if let Some(owner) = owner.upgrade() {
+                        owner.set_tags_child_open(false);
+                    }
+                }
+            });
+            match crate::write_tag_window::open_additions(
+                &store,
+                service,
+                &before,
+                if single {
+                    "tags just for selected files"
+                } else {
+                    "tags for all"
+                },
+                &slot,
+                applied,
+                closed,
+            ) {
+                Ok(_) => {
+                    if let Some(owner) = owner.upgrade() {
+                        owner.set_tags_child_open(true);
+                    }
+                }
+                Err(error) => {
+                    if let Some(owner) = owner.upgrade() {
+                        owner.set_errors(error.to_string().into());
+                    }
+                }
+            }
+        }
+    });
+    window.on_paste_tags({
+        let owner = window.as_weak();
+        let state = state.clone();
+        move |single| {
+            let Some(owner) = owner.upgrade() else {
+                return;
+            };
+            let mut state = state.borrow_mut();
+            if !state.can_edit() || state.on_sidecars || (single && state.selection.is_empty()) {
+                return;
+            }
+            let raw = match crate::from_clipboard() {
+                Ok(text) => text,
+                Err(error) => {
+                    state.errors = vec![format!("Problem pasting!\n{error}")];
+                    show_rows(&owner, &state);
+                    return;
+                }
+            };
+            let tags: Vec<_> = raw
+                .lines()
+                .filter_map(hydrus_core::tag::clean_tag_checked)
+                .collect();
+            if single {
+                let selected = state.selected();
+                state.tab_mut().add_single(&selected, &tags);
+            } else {
+                state.tab_mut().options.tags_for_all.extend(tags);
+            }
+            state.errors.clear();
+            show(&owner, &mut state);
+        }
+    });
+}
+
 /// Show the tab whole: its fields too (only as a tab or the selection
 /// changes, so a field typed in is left be).
 fn show(window: &FilenameTaggingWindow, state: &mut State) {
@@ -578,6 +698,7 @@ fn build(
         rules: (0..count).map(|_| RuleEditor::default()).collect(),
         regex: None,
         closed: false,
+        tags: crate::write_tag_window::Slot::default(),
         misc: vec![misc; count],
         services: services
             .into_iter()
@@ -605,6 +726,15 @@ fn build(
                 return;
             }
             state.borrow_mut().closed = true;
+            let tags = state
+                .borrow()
+                .tags
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(tags) = tags {
+                tags.invoke_cancel();
+            }
             let regex = state.borrow().regex.clone();
             if let Some(regex) = regex {
                 regex.cancel();
@@ -783,7 +913,7 @@ fn build(
                 .ok()
                 .and_then(|i| state.misc[current].get_mut(i))
             {
-                namespace.trim().clone_into(&mut row.1);
+                namespace.as_str().clone_into(&mut row.1);
                 // (typing a namespace ticks its box, as the reference's
                 // does)
                 if !row.0 && !row.1.is_empty() {
@@ -851,6 +981,7 @@ fn build(
                 && state.upgrade().is_some_and(|state| {
                     let state = state.borrow();
                     !state.closed
+                        && state.tags.borrow().is_none()
                         && !state.on_sidecars
                         && !state
                             .sidecars
@@ -860,6 +991,7 @@ fn build(
         }
     });
     state.borrow_mut().regex = Some(crate::filename_regex_menu::bind(&window, store, alive));
+    bind_tags(&window, &state, store);
     bind_rules(&window, &state);
     show(&window, &mut state.borrow_mut());
     Ok((window, state))

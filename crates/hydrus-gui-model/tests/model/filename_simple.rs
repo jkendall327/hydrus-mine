@@ -69,9 +69,11 @@ fn additive_entry_and_selected_union_replay_real_simple_panel_without_spreading_
                 )
                 .additions_only();
                 // An unchanged child Apply preserves each file's original tags.
-                let original = tagging.clone();
-                tagging.apply_selected(&selected, &before, &before, &[]);
-                assert_eq!(tagging, original);
+                if !all {
+                    let original = tagging.clone();
+                    tagging.apply_selected(&selected, &before, &before, &[]);
+                    assert_eq!(tagging, original);
+                }
                 let input = strings(&step["value"]);
                 if action.starts_with("enter") {
                     for tag in &input {

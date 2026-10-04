@@ -663,6 +663,14 @@ series:metroid`, "2 notes: ...", "1 URL: ...", "archived time: ..."), as
 import folders below). "apply" imports the files with their tags, as
 `oracle/record_filename_tagging.py` recorded the reference's dialog
 giving them, and the import reads each file's sidecars as it goes in.
+The simple panel's tag lists open the shared write-tag editor on that real
+service and have direct paste buttons. Entry adds existing tags rather than
+toggling them; selected-file edits preserve each file's untouched tags and
+spread explicitly re-entered tags across the frozen selection. Autocomplete
+paste skips tags already in the selected union, while direct paste applies
+all pasted tags to each selected file. Child Apply updates the filename draft;
+child Cancel and owner closure discard it. The same all-files list edits and
+reopens in import-folder options (`oracle/record_filename_simple.py`).
 
 An import folder's dialog lists the tag services it tags files for by
 their paths, with "edit" and "delete" for each and "add" for another

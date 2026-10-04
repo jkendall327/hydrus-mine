@@ -584,8 +584,16 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   time); a router's rows go through its processor in the order the
   sidecars give them (the reference's go through a set, so a slice or
   rows the human sort ties come out in no set order);
-  its simple tags are typed a line each (the reference has a tags input with
-  autocomplete and paste buttons). Advanced quick namespaces and regexes now
+  its simple tag lists use an owned shared autocomplete editor plus direct
+  paste buttons, rather than Qt's inline autocomplete and tag list. The native
+  child has Apply/Cancel within the filename draft, and holds the service/file
+  selection fixed. Selected-file union edits preserve untouched per-file tags;
+  explicit entry, autocomplete paste, direct paste and removal follow the
+  recorded Qt distinctions. Unavailable clipboard text preserves the native
+  draft and displays an error; Qt shows a critical message then raises an
+  uncaught TypeError in this handler. The shared autocomplete's recent-tag
+  history and complete tag-list keyboard/context operations remain separately
+  incomplete. Advanced quick namespaces and regexes now
   use lists with the reference's accepted-rule actions and literal field values.
   The quick-namespace child and deletion question occupy the owning native
   window rather than separate Qt dialogs; namespace/regex header sorting is
