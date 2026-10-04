@@ -507,6 +507,17 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             boolean("default_search_synchronised").unwrap_or(file_search.search_immediately);
         file_search.show_system_everything =
             boolean("show_system_everything").unwrap_or(file_search.show_system_everything);
+        file_search.float_autocomplete =
+            boolean("autocomplete_float_main_gui").unwrap_or(file_search.float_autocomplete);
+        if let Some(rows) = options
+            .integers
+            .get("active_search_predicates_height_num_chars")
+        {
+            file_search.active_predicate_rows = (*rows).clamp(1, 128) as u32;
+        }
+        if let Some(rows) = options.integers.get("ac_read_list_height_num_chars") {
+            file_search.autocomplete_rows = (*rows).clamp(1, 128) as u32;
+        }
         insert_setting(&mut input, &file_search)?;
         let mut summaries = hydrus_core::tag_summary::TagSummaries::default();
         for (name, field) in [
@@ -2528,7 +2539,8 @@ mod tests {
             decoded(),
             FileSearchSettings {
                 search_immediately: false,
-                show_system_everything: false
+                show_system_everything: false,
+                ..FileSearchSettings::default()
             }
         );
     }

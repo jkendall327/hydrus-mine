@@ -1282,6 +1282,12 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             vec![boxed(
                 "file search autocomplete",
                 vec![
+                    int(
+                        "Active Search Predicates list height:",
+                        (1, 128),
+                        |settings| i64::from(settings.file_search.active_predicate_rows),
+                        |settings, value| settings.file_search.active_predicate_rows = value as u32,
+                    ),
                     opt(
                         "Default/Fallback local file search location:",
                         Kind::LocalLocation,
@@ -1302,6 +1308,17 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         |settings| settings.search_defaults.tag_service.clone(),
                         |settings, service| settings.search_defaults.tag_service = service,
                         |_| true,
+                    ),
+                    check(
+                        "Autocomplete dropdown floats over file search pages:",
+                        |settings| settings.file_search.float_autocomplete,
+                        |settings, value| settings.file_search.float_autocomplete = value,
+                    ),
+                    int(
+                        "Autocomplete list height:",
+                        (1, 128),
+                        |settings| i64::from(settings.file_search.autocomplete_rows),
+                        |settings, value| settings.file_search.autocomplete_rows = value as u32,
                     ),
                     check(
                         "Start new search pages in 'searching immediately':",

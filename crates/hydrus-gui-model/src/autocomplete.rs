@@ -34,6 +34,7 @@ pub struct Suggestion {
 
 pub struct Autocomplete {
     store: Arc<Store>,
+    presentation_settings: hydrus_store::settings::FileSearchSettings,
     /// The page's file domains and tag service, which the counts are for.
     context: (LocationContext, TagContext),
     text: String,
@@ -53,13 +54,26 @@ impl std::fmt::Debug for Autocomplete {
 
 impl Autocomplete {
     pub fn new(store: Arc<Store>) -> Self {
+        let mut presentation_settings: hydrus_store::settings::FileSearchSettings =
+            store.read(hydrus_store::settings::get).unwrap_or_default();
+        presentation_settings.active_predicate_rows =
+            presentation_settings.active_predicate_rows.clamp(1, 128);
+        presentation_settings.autocomplete_rows =
+            presentation_settings.autocomplete_rows.clamp(1, 128);
         Self {
             store,
+            presentation_settings,
             context: (LocationContext::default(), TagContext::default()),
             text: String::new(),
             suggestions: Vec::new(),
             highlighted: 0,
         }
+    }
+
+    /// Read lists capture their sizing and float policy when created, as the
+    /// reference's dropdown does; reopening/new pages use newly applied values.
+    pub fn presentation_settings(&self) -> &hydrus_store::settings::FileSearchSettings {
+        &self.presentation_settings
     }
 
     /// Count in these file domains and this tag service from now on.

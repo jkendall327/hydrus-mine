@@ -1816,3 +1816,9 @@ file domains in a child selector, including multiple domains. Its Apply stages
 the location in Options; Options Apply persists it. Blank search pages and new
 notebooks use it, as does switching an all-known-file search to all known tags.
 Missing services are removed; an empty default resolves to all local file domains.
+
+Read autocomplete now captures the File Search active-predicate height (6 rows
+by default), results height (22 rows), and floating policy when each page is
+created. Both heights accept 1–128 text rows and scroll additional entries. The
+active predicates appear above the search input. Floating results overlay the
+page while the input is focused; embedded results reserve sidebar space.

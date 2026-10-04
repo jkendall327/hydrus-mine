@@ -375,6 +375,9 @@ impl Setting for SearchDefaults {
 pub struct FileSearchSettings {
     pub search_immediately: bool,
     pub show_system_everything: bool,
+    pub active_predicate_rows: u32,
+    pub autocomplete_rows: u32,
+    pub float_autocomplete: bool,
 }
 
 impl Default for FileSearchSettings {
@@ -382,6 +385,9 @@ impl Default for FileSearchSettings {
         Self {
             search_immediately: true,
             show_system_everything: true,
+            active_predicate_rows: 6,
+            autocomplete_rows: 22,
+            float_autocomplete: true,
         }
     }
 }

@@ -5335,6 +5335,10 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
     window.set_can_filter(page.duplicates().is_some());
     window.set_can_lock_search(page.note().is_none());
     window.set_synchronised(page.synchronised());
+    let presentation = page.autocomplete().presentation_settings();
+    window.set_active_predicate_rows(presentation.active_predicate_rows as i32);
+    window.set_autocomplete_rows(presentation.autocomplete_rows as i32);
+    window.set_float_autocomplete(presentation.float_autocomplete);
     let snapshot = page.store().snapshot();
     window.set_location_label(domains::location_label(&snapshot.services, page.location()).into());
     let tags = page.tag_context();

@@ -1016,3 +1016,63 @@ fn local_location_option_matches_reference_and_keeps_child_changes_staged() {
         assert_eq!(store.read(Settings::load).unwrap(), settings);
     }
 }
+
+#[test]
+fn read_presentation_controls_match_reference_ranges_and_staged_values() {
+    use hydrus_gui_model::options::{Editor, Row};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    let fixture = hydrus_testkit::fixture_json("file_search_presentation.json");
+    let mut editor = Editor::new(settings.clone());
+    let index = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "file search")
+        .unwrap();
+    editor.show_page(index);
+    let find = |label: &str| {
+        editor
+            .rows()
+            .iter()
+            .position(|row| matches!(row, Row::Opt { option, .. } if option.label == label))
+            .unwrap()
+    };
+    let active = find("Active Search Predicates list height:");
+    let suggestions = find("Autocomplete list height:");
+    let float = find("Autocomplete dropdown floats over file search pages:");
+    for event in fixture["events"].as_array().unwrap() {
+        editor.number(active, event["active_rows"].as_i64().unwrap());
+        editor.number(suggestions, event["autocomplete_rows"].as_i64().unwrap());
+        editor.check(float, event["floating"].as_bool().unwrap());
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty());
+        assert_eq!(
+            applied.file_search.active_predicate_rows,
+            event["view"]["active"]["rows"].as_u64().unwrap() as u32
+        );
+        assert_eq!(
+            applied.file_search.autocomplete_rows,
+            event["view"]["autocomplete"]["rows"].as_u64().unwrap() as u32
+        );
+        assert_eq!(
+            applied.file_search.float_autocomplete,
+            event["view"]["floating"].as_bool().unwrap()
+        );
+        for view in ["active", "autocomplete"] {
+            let list = &event["view"][view];
+            assert_eq!(
+                list["hint"].as_i64().unwrap(),
+                list["rows"].as_i64().unwrap() * list["text_height"].as_i64().unwrap()
+                    + 2 * list["frame"].as_i64().unwrap()
+            );
+        }
+        assert_eq!(store.read(Settings::load).unwrap(), settings);
+    }
+    editor.number(active, 0);
+    editor.number(suggestions, 129);
+    let (applied, _, problems) = editor.applied();
+    assert!(problems.is_empty());
+    assert_eq!(applied.file_search.active_predicate_rows, 1);
+    assert_eq!(applied.file_search.autocomplete_rows, 128);
+}

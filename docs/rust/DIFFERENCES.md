@@ -1191,3 +1191,9 @@ The default/fallback local search location is editable and consumed by native
 blank-page creation and tag-domain fallback. Its native button opens the current
 importable-domain tick list directly; the reference offers single-domain menu
 shortcuts before that same multi-domain selector.
+
+File Search list heights and floating policy reach new-page presentation;
+existing pages retain the values captured at construction, as in the reference.
+Native list rows use the desktop client's 22-pixel text-row spacing rather than
+Qt's platform font-metric size hint. Floating results share their highlighting,
+scrolling and selection behavior with embedded results.
