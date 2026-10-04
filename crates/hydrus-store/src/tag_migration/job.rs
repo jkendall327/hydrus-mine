@@ -240,7 +240,7 @@ fn pair_ok(conn: &Connection, gate: &Gate, left: &str, right: &str) -> Result<bo
             return Ok(false);
         };
         if ideal && let Some(graph) = graph {
-            id = graph.ideal(id)
+            id = graph.ideal(id);
         }
         Ok(conn.query_row(&format!("SELECT EXISTS(SELECT 1 FROM {} WHERE tag_id=?1 UNION ALL SELECT 1 FROM {} WHERE tag_id=?1)",tables.current,tables.pending),[id],|r|r.get(0))?)
     };
@@ -436,7 +436,7 @@ pub fn run(
             }
             let accepted = batch.len();
             if let Some(archive) = &mut destination {
-                archive.write(&batch)?
+                archive.write(&batch)?;
             } else {
                 let settings = request.clone();
                 let options = options.clone();
