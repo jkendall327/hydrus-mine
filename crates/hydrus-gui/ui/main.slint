@@ -1125,9 +1125,20 @@ export component MainWindow inherits Window {
                         activated(i) => { root.tag-activated(i); }
                     }
                 }
-                if root.importing && !root.local-import && !root.simple-downloader && !root.gallery-page && !root.watcher-page: VerticalBox {
+                if root.importing && !root.local-import && !root.simple-downloader && !root.gallery-page && !root.watcher-page: url-sidebar := VerticalBox {
                     width: 300px;
                     alignment: start;
+                    property <bool> focus-pending: root.page-focus-on-show;
+                    property <int> focus-requests: root.page-focus-requests;
+                    changed focus-requests => { self.focus-pending = true; }
+                    Timer {
+                        interval: 0ms;
+                        running: url-sidebar.focus-pending;
+                        triggered => {
+                            url-sidebar.focus-pending = false;
+                            url-box.focus();
+                        }
+                    }
                     Text {
                         text: "url downloader";
                         font-weight: 700;
@@ -1153,9 +1164,6 @@ export component MainWindow inherits Window {
                     HorizontalLayout {
                         spacing: 4px;
                         url-box := LineEdit {
-                            property <int> focus-requests: root.page-focus-requests;
-                            init => { if root.page-focus-on-show { self.focus(); } }
-                            changed focus-requests => { self.focus(); }
                             changed has-focus => { root.page-input-focused = self.has-focus; }
                             horizontal-stretch: 1;
                             placeholder-text: "any url hydrus recognises, or a raw file url";
