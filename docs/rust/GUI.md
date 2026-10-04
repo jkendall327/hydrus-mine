@@ -1419,7 +1419,8 @@ cover the implementation.
 **Tag display/search** (`tags > display/search`) edits each tag service's single
 file and selection display filters with the native tag-filter editor, plus
 fetch-as-you-type, character threshold, query rules and write autocomplete
-file/tag domains. Domain changes use the native location selector. Ctrl+Space
+file/tag domains. Domain changes use the native location selector, including all
+known files and existing combined domains outside advanced mode. Ctrl+Space
 fetches search/manage-tags suggestions manually. The advanced `manage where tag
 siblings and parents apply` window edits ordered source queues in ListTable;
 empty queues disable that relationship kind. Both dialogs stage changes until

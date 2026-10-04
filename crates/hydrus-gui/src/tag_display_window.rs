@@ -292,7 +292,7 @@ pub(crate) fn open(
                     }
                 }
             });
-            if let Err(e) = crate::locations_window::open(
+            if let Err(e) = crate::locations_window::open_for_autocomplete(
                 &slot,
                 m.store().clone(),
                 &m.current().autocomplete.write_location,

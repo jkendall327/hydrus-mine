@@ -47,12 +47,33 @@ pub(crate) fn open(
     current: &LocationContext,
     chosen: Rc<dyn Fn(LocationContext)>,
 ) -> Result<(), String> {
+    let hydrus_store::settings::AdvancedMode(advanced) =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    open_with_domains(slot, store, current, chosen, advanced)
+}
+
+/// Autocomplete defaults can always select all known files, even outside
+/// advanced mode; their existing combined/advanced domain must stay selected.
+pub(crate) fn open_for_autocomplete(
+    slot: &Rc<RefCell<Option<LocationsWindow>>>,
+    store: Arc<Store>,
+    current: &LocationContext,
+    chosen: Rc<dyn Fn(LocationContext)>,
+) -> Result<(), String> {
+    open_with_domains(slot, store, current, chosen, true)
+}
+
+fn open_with_domains(
+    slot: &Rc<RefCell<Option<LocationsWindow>>>,
+    store: Arc<Store>,
+    current: &LocationContext,
+    chosen: Rc<dyn Fn(LocationContext)>,
+    advanced: bool,
+) -> Result<(), String> {
     if let Some(window) = slot.borrow().as_ref() {
         return window.show().map_err(|e| e.to_string());
     }
     let window = LocationsWindow::new().map_err(|e| e.to_string())?;
-    let hydrus_store::settings::AdvancedMode(advanced) =
-        store.read(hydrus_store::settings::get).unwrap_or_default();
     let ticks = domains::multiple_ticks(&store.snapshot().services, advanced);
     let ticked = Rc::new(RefCell::new(ticked_for(&ticks, current)));
     let ticks = Rc::new(ticks);

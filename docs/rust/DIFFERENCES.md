@@ -947,7 +947,9 @@ unknown JSON fields and unedited service settings. The application
 window uses ordered native lists and an inline source selector. Display/search
 uses a numeric zero for the reference's nullable "always autocomplete" threshold.
 Tag migration and manual/background sibling/parent sync remain unimplemented.
-Autocomplete configuration refresh preserves any open manage-tags draft.
+Autocomplete configuration refresh preserves any open manage-tags draft; its
+location editor always exposes the permitted file domains.
+
 
 The native parser editor model supports all nine content kinds and typed test
 context. Native page/content/parser-list and direct URL-class-link windows are available. Subsidiary parser editing,

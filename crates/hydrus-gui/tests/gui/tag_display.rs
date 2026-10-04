@@ -207,11 +207,24 @@ fn dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer() {
     assert_eq!(w3.get_threshold(), 0);
     assert!(w3.get_fetch_all());
     // Clearing a native filter must remove the persisted blacklist.
+    let before_location = w3.get_location_label();
     w3.invoke_location();
     let location = hydrus_gui::locations_window::last_opened().unwrap();
     assert!(w3.get_child_open());
     w3.invoke_apply();
     assert!(bound.tag_display.borrow().is_some());
+    assert!(location.get_ticks().iter().any(|t| t.checked));
+    assert!(
+        location
+            .get_ticks()
+            .iter()
+            .any(|t| t.label == "all known files")
+    );
+    location.invoke_apply();
+    assert_eq!(w3.get_location_label(), before_location);
+    assert!(!w3.get_child_open());
+    w3.invoke_location();
+    let location = hydrus_gui::locations_window::last_opened().unwrap();
     location.invoke_cancel();
     assert!(!w3.get_child_open());
     w3.invoke_filter(false);
