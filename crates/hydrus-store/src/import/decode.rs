@@ -1847,6 +1847,12 @@ fn tag_presentation(
     if let Some(connector) = options.strings.get("namespace_connector") {
         out.namespace_connector.clone_from(connector);
     }
+    if let Some(limit) = options
+        .noneable_integers
+        .get("number_of_unselected_medias_to_present_tags_for")
+    {
+        out.unselected_tag_limit = limit.map(|limit| limit.clamp(0, 10_000_000) as u32);
+    }
     if let Some(connector) = options.strings.get("sibling_connector") {
         out.sibling_connector.clone_from(connector);
     }
@@ -3123,6 +3129,28 @@ mod tests {
             }
         );
         assert_eq!(converted.media_viewer_sort, TagSort::DEFAULT);
+    }
+
+    #[test]
+    fn unselected_tag_limit_import_preserves_zero_none_and_presentation() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let db = LegacyDb::open(source.path()).unwrap();
+        let mut options = db.client_options().unwrap().unwrap();
+        let before = tag_presentation(&options);
+        assert_eq!(before.unselected_tag_limit, Some(4096));
+        for limit in [None, Some(0), Some(1), Some(10_000_000)] {
+            options.noneable_integers.insert(
+                "number_of_unselected_medias_to_present_tags_for".into(),
+                limit,
+            );
+            assert_eq!(
+                tag_presentation(&options),
+                hydrus_core::tag_presentation::TagPresentation {
+                    unselected_tag_limit: limit.map(|limit| limit as u32),
+                    ..before.clone()
+                }
+            );
+        }
     }
 
     /// The single media and selection list filters come across by service;

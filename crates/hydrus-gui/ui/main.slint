@@ -553,6 +553,7 @@ export component MainWindow inherits Window {
     in property <int> order-index;
     in property <[ListText]> predicates;
     in property <[ListText]> tags;
+    in property <string> selection-tags-title: "selection tags";
     in property <[ListText]> suggestions;
     in property <int> active-predicate-rows: 6;
     in property <int> autocomplete-rows: 22;
@@ -1430,6 +1431,7 @@ export component MainWindow inherits Window {
                         color: Theme.error;
                         wrap: word-wrap;
                     }
+                    Text { text: root.selection-tags-title; color: Theme.text; wrap: word-wrap; }
                     search-tags := TagList {
                         property <length> measured-top: self.absolute-position.y;
                         changed measured-top => { root.search-tags-y = self.measured-top; }

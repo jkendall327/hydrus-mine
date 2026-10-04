@@ -23,6 +23,8 @@ pub struct TagPresentation {
     pub namespace_connector: String,
     /// Between a raw alias and its ideal sibling (`sibling_connector`).
     pub sibling_connector: String,
+    /// Cap sorted thumbnail items counted when none are selected; `None` has no limit.
+    pub unselected_tag_limit: Option<u32>,
     /// `replace_tag_underscores_with_spaces`.
     pub replace_underscores: bool,
     /// `replace_tag_emojis_with_boxes`.
@@ -45,6 +47,7 @@ impl Default for TagPresentation {
             show_subtag_number_namespaces: true,
             namespace_connector: ":".into(),
             sibling_connector: " → ".into(),
+            unselected_tag_limit: Some(4096),
             replace_underscores: false,
             replace_emojis: false,
             user_namespaces: default_user_namespaces(),

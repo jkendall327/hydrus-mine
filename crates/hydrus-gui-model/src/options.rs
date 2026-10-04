@@ -2214,6 +2214,15 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "tag presentation",
             vec![
                 boxed(
+                    "selection tags",
+                    vec![noneable(
+                        "Max number of thumbnails to compute tags for when none are selected: ",
+                        none("no limit", 4096, (0, 10_000_000), None),
+                        |s| s.tag_presentation.unselected_tag_limit.map(i64::from),
+                        |s, n| s.tag_presentation.unselected_tag_limit = n.map(|n| n as u32),
+                    )],
+                ),
+                boxed(
                     "namespace rendering",
                     vec![
                         check(

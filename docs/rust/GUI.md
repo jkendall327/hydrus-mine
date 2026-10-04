@@ -2261,3 +2261,13 @@ consumer. Options changes remain staged until Apply; Cancel preserves existing
 labels and reopening reads the saved text. The real Qt `sibling_connector.json`
 recording uses actual storage and write-result widgets with unchanged raw tags
 and counts.
+
+Tag Presentation > selection tags now sets the maximum number of thumbnail
+items used to compute tags when nothing is selected. The default is 4,096;
+“no limit” and zero are preserved. The search sidebar counts the first sorted
+items, then includes every member of each collected item. Selected items bypass
+the cap. A capped list shows the reference's “for first N files” caption, with
+the chosen tag service when applicable. Apply refreshes the active page, and
+background pages refresh when activated; Cancel leaves saved values intact.
+The real Qt `unselected_tag_cap.json` recording covers twenty combinations of
+limits, sort direction, collections, selection and tag service.
