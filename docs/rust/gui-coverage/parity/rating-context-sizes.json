@@ -4,7 +4,7 @@
   "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
   "source_commit": "c3e84243e7080a91fa0e0f12488d18e9b03d6ca6",
   "validation": {
-    "reference": "Actual Qt recording executed successfully; resulting PNG inspected",
+    "reference": "Actual Qt six-case recording executed successfully; resulting PNG inspected",
     "source_checks": "cargo fmt --all, git diff --check, Python py_compile and cached warning-aware Slint compiler passed",
     "rust_tests": "Model/store/native regressions authored for hosted CI; not run locally"
   },
@@ -50,6 +50,12 @@
           "line": 486,
           "symbol": "let contexts =",
           "commit": "c3e84243e7080a91fa0e0f12488d18e9b03d6ca6"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/rating_sizes.rs",
+          "line": 21,
+          "symbol": "pub fn round_hundredths",
+          "commit": "a3fed38bd28f773ec54c378457f2f04e6e13e191"
         }
       ],
       "test_anchors": [
@@ -70,6 +76,12 @@
           "line": 2970,
           "symbol": "fn preview_and_dialog_rating_sizes",
           "commit": "c3e84243e7080a91fa0e0f12488d18e9b03d6ca6"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/rating_sizes.rs",
+          "line": 20,
+          "symbol": "let boundary =",
+          "commit": "a3fed38bd28f773ec54c378457f2f04e6e13e191"
         }
       ],
       "reference_recording": {
@@ -78,10 +90,10 @@
         "screenshots": [
           "oracle/fixtures/rating_context_sizes.png"
         ],
-        "commit": "c3e84243e7080a91fa0e0f12488d18e9b03d6ca6",
+        "commit": "a3fed38bd28f773ec54c378457f2f04e6e13e191",
         "executed": true,
-        "executed_at": "2026-10-04 22:36:53\u201322:36:55 UTC",
-        "result": "Passed actual offscreen Qt v688 on a fresh basic copy through serialized with-oracle; clean reference shutdown. Five real double-spin-box cases include defaults, independent fractions, crossed size/height extremes and low/high clamps. Actual editingFinished consumers, UpdateOptions, option serialization and reopened fields recorded, plus actual three-kind Manage Ratings geometry, five-digit counters and held-right/left mouse moves. Detached abandoned RatingsPanel draft retains saved preferences. No rating handlers or registered services replaced; actual Manage Ratings cancelled; PNG inspected."
+        "executed_at": "2026-10-04 23:04:43\u201323:04:45 UTC",
+        "result": "Passed actual offscreen Qt v688 on a fresh basic copy through serialized with-oracle; clean reference shutdown. Six real double-spin-box cases include defaults, independent fractions, crossed size/height extremes and low/high clamps, and exact binary rounding boundaries 31.755\u219231.75, 6.125\u21926.13 and 12.125\u219212.13. Actual editingFinished consumers, UpdateOptions, option serialization and reopened fields recorded, plus actual three-kind Manage Ratings geometry, five-digit counters and held-right/left mouse moves. Detached abandoned RatingsPanel draft retains saved preferences. No rating handlers or registered services replaced; actual Manage Ratings cancelled; PNG inspected."
       },
       "limits": [
         "Rust model/store/native tests are authored for hosted CI, not executed locally. Formatter, git diff --check, Python syntax and cached warning-aware Slint source compiler passed; no local Cargo builds or mutation tests.",
@@ -128,6 +140,12 @@
           "line": 486,
           "symbol": "let contexts =",
           "commit": "c3e84243e7080a91fa0e0f12488d18e9b03d6ca6"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/rating_sizes.rs",
+          "line": 21,
+          "symbol": "pub fn round_hundredths",
+          "commit": "a3fed38bd28f773ec54c378457f2f04e6e13e191"
         }
       ],
       "test_anchors": [
@@ -148,6 +166,12 @@
           "line": 2970,
           "symbol": "fn preview_and_dialog_rating_sizes",
           "commit": "c3e84243e7080a91fa0e0f12488d18e9b03d6ca6"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/rating_sizes.rs",
+          "line": 20,
+          "symbol": "let boundary =",
+          "commit": "a3fed38bd28f773ec54c378457f2f04e6e13e191"
         }
       ],
       "reference_recording": {
@@ -156,10 +180,10 @@
         "screenshots": [
           "oracle/fixtures/rating_context_sizes.png"
         ],
-        "commit": "c3e84243e7080a91fa0e0f12488d18e9b03d6ca6",
+        "commit": "a3fed38bd28f773ec54c378457f2f04e6e13e191",
         "executed": true,
-        "executed_at": "2026-10-04 22:36:53\u201322:36:55 UTC",
-        "result": "Passed actual offscreen Qt v688 on a fresh basic copy through serialized with-oracle; clean reference shutdown. Five real double-spin-box cases include defaults, independent fractions, crossed size/height extremes and low/high clamps. Actual editingFinished consumers, UpdateOptions, option serialization and reopened fields recorded, plus actual three-kind Manage Ratings geometry, five-digit counters and held-right/left mouse moves. Detached abandoned RatingsPanel draft retains saved preferences. No rating handlers or registered services replaced; actual Manage Ratings cancelled; PNG inspected."
+        "executed_at": "2026-10-04 23:04:43\u201323:04:45 UTC",
+        "result": "Passed actual offscreen Qt v688 on a fresh basic copy through serialized with-oracle; clean reference shutdown. Six real double-spin-box cases include defaults, independent fractions, crossed size/height extremes and low/high clamps, and exact binary rounding boundaries 31.755\u219231.75, 6.125\u21926.13 and 12.125\u219212.13. Actual editingFinished consumers, UpdateOptions, option serialization and reopened fields recorded, plus actual three-kind Manage Ratings geometry, five-digit counters and held-right/left mouse moves. Detached abandoned RatingsPanel draft retains saved preferences. No rating handlers or registered services replaced; actual Manage Ratings cancelled; PNG inspected."
       },
       "limits": [
         "Rust model/store/native tests are authored for hosted CI, not executed locally. Formatter, git diff --check, Python syntax and cached warning-aware Slint source compiler passed; no local Cargo builds or mutation tests.",
@@ -224,6 +248,12 @@
           "line": 20,
           "symbol": "in property <length> rating-size",
           "commit": "c3e84243e7080a91fa0e0f12488d18e9b03d6ca6"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/rating_sizes.rs",
+          "line": 21,
+          "symbol": "pub fn round_hundredths",
+          "commit": "a3fed38bd28f773ec54c378457f2f04e6e13e191"
         }
       ],
       "test_anchors": [
@@ -244,6 +274,12 @@
           "line": 2970,
           "symbol": "fn preview_and_dialog_rating_sizes",
           "commit": "c3e84243e7080a91fa0e0f12488d18e9b03d6ca6"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/rating_sizes.rs",
+          "line": 20,
+          "symbol": "let boundary =",
+          "commit": "a3fed38bd28f773ec54c378457f2f04e6e13e191"
         }
       ],
       "reference_recording": {
@@ -252,10 +288,10 @@
         "screenshots": [
           "oracle/fixtures/rating_context_sizes.png"
         ],
-        "commit": "c3e84243e7080a91fa0e0f12488d18e9b03d6ca6",
+        "commit": "a3fed38bd28f773ec54c378457f2f04e6e13e191",
         "executed": true,
-        "executed_at": "2026-10-04 22:36:53\u201322:36:55 UTC",
-        "result": "Passed actual offscreen Qt v688 on a fresh basic copy through serialized with-oracle; clean reference shutdown. Five real double-spin-box cases include defaults, independent fractions, crossed size/height extremes and low/high clamps. Actual editingFinished consumers, UpdateOptions, option serialization and reopened fields recorded, plus actual three-kind Manage Ratings geometry, five-digit counters and held-right/left mouse moves. Detached abandoned RatingsPanel draft retains saved preferences. No rating handlers or registered services replaced; actual Manage Ratings cancelled; PNG inspected."
+        "executed_at": "2026-10-04 23:04:43\u201323:04:45 UTC",
+        "result": "Passed actual offscreen Qt v688 on a fresh basic copy through serialized with-oracle; clean reference shutdown. Six real double-spin-box cases include defaults, independent fractions, crossed size/height extremes and low/high clamps, and exact binary rounding boundaries 31.755\u219231.75, 6.125\u21926.13 and 12.125\u219212.13. Actual editingFinished consumers, UpdateOptions, option serialization and reopened fields recorded, plus actual three-kind Manage Ratings geometry, five-digit counters and held-right/left mouse moves. Detached abandoned RatingsPanel draft retains saved preferences. No rating handlers or registered services replaced; actual Manage Ratings cancelled; PNG inspected."
       },
       "limits": [
         "Rust model/store/native tests are authored for hosted CI, not executed locally. Formatter, git diff --check, Python syntax and cached warning-aware Slint source compiler passed; no local Cargo builds or mutation tests.",
@@ -319,6 +355,12 @@
           "line": 20,
           "symbol": "in property <length> rating-size",
           "commit": "c3e84243e7080a91fa0e0f12488d18e9b03d6ca6"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/rating_sizes.rs",
+          "line": 21,
+          "symbol": "pub fn round_hundredths",
+          "commit": "a3fed38bd28f773ec54c378457f2f04e6e13e191"
         }
       ],
       "test_anchors": [
@@ -339,6 +381,12 @@
           "line": 2970,
           "symbol": "fn preview_and_dialog_rating_sizes",
           "commit": "c3e84243e7080a91fa0e0f12488d18e9b03d6ca6"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/rating_sizes.rs",
+          "line": 20,
+          "symbol": "let boundary =",
+          "commit": "a3fed38bd28f773ec54c378457f2f04e6e13e191"
         }
       ],
       "reference_recording": {
@@ -347,10 +395,10 @@
         "screenshots": [
           "oracle/fixtures/rating_context_sizes.png"
         ],
-        "commit": "c3e84243e7080a91fa0e0f12488d18e9b03d6ca6",
+        "commit": "a3fed38bd28f773ec54c378457f2f04e6e13e191",
         "executed": true,
-        "executed_at": "2026-10-04 22:36:53\u201322:36:55 UTC",
-        "result": "Passed actual offscreen Qt v688 on a fresh basic copy through serialized with-oracle; clean reference shutdown. Five real double-spin-box cases include defaults, independent fractions, crossed size/height extremes and low/high clamps. Actual editingFinished consumers, UpdateOptions, option serialization and reopened fields recorded, plus actual three-kind Manage Ratings geometry, five-digit counters and held-right/left mouse moves. Detached abandoned RatingsPanel draft retains saved preferences. No rating handlers or registered services replaced; actual Manage Ratings cancelled; PNG inspected."
+        "executed_at": "2026-10-04 23:04:43\u201323:04:45 UTC",
+        "result": "Passed actual offscreen Qt v688 on a fresh basic copy through serialized with-oracle; clean reference shutdown. Six real double-spin-box cases include defaults, independent fractions, crossed size/height extremes and low/high clamps, and exact binary rounding boundaries 31.755\u219231.75, 6.125\u21926.13 and 12.125\u219212.13. Actual editingFinished consumers, UpdateOptions, option serialization and reopened fields recorded, plus actual three-kind Manage Ratings geometry, five-digit counters and held-right/left mouse moves. Detached abandoned RatingsPanel draft retains saved preferences. No rating handlers or registered services replaced; actual Manage Ratings cancelled; PNG inspected."
       },
       "limits": [
         "Rust model/store/native tests are authored for hosted CI, not executed locally. Formatter, git diff --check, Python syntax and cached warning-aware Slint source compiler passed; no local Cargo builds or mutation tests.",
@@ -358,5 +406,6 @@
         "Reference icon/counter ratio-clamp connections are disabled, so each preference remains independent. Saved/imported floats are retained; consumers use actual integer pixel truncation. No remote/IPFS work or additional aliases/parent promotions."
       ]
     }
-  ]
+  ],
+  "rounding_repair_commit": "a3fed38bd28f773ec54c378457f2f04e6e13e191"
 }
