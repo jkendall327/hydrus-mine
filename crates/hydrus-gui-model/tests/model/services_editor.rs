@@ -599,8 +599,8 @@ fn rating_examples_replay_qt_samples_live_configuration_and_no_saved_values() {
             }
         }
         // Samples are deliberately absent from the ServiceKind serialization.
-        let saved = serde_json::to_value(&kind).unwrap();
-        assert!(!saved.to_string().contains("12345"));
+        let saved = kind.config_json().unwrap();
+        assert!(!saved.contains("12345"));
         let reopened = Example::new(&kind).unwrap();
         assert_ne!(reopened.samples(), example.samples());
     }
