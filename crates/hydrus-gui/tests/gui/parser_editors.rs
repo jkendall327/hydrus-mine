@@ -49,6 +49,10 @@ impl TestDocuments {
                         std::thread::sleep(std::time::Duration::from_millis(10));
                         continue;
                     };
+                    // Windows accepted sockets inherit the listener's nonblocking
+                    // mode. Wait for complete headers instead of closing a socket
+                    // whose client has not written its request yet.
+                    stream.set_nonblocking(false).unwrap();
                     stream
                         .set_read_timeout(Some(std::time::Duration::from_secs(2)))
                         .unwrap();
