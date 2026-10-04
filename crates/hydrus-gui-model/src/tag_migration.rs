@@ -1,8 +1,12 @@
 //! Migration choices and reviewable confirmations, independent of the window.
+use hydrus_core::HashKind;
 use hydrus_core::search::context::LocationContext;
 use hydrus_core::{HashId, ServiceKey, ServiceType, TagFilter};
-pub use hydrus_store::tag_migration::{Action, Content, Progress, Request, Scope, Status};
+pub use hydrus_store::tag_migration::{
+    Action, Content, Options, PairCounts, Progress, Request, Scope, Status,
+};
 use hydrus_store::{Result, Store};
+use std::path::Path;
 use std::sync::Arc;
 
 /// A selectable real tag service, retained by stable key.
@@ -16,6 +20,7 @@ pub struct Service {
 #[derive(Debug)]
 pub struct Migration {
     store: Arc<Store>,
+    default_service: usize,
     pub services: Vec<Service>,
     pub source: usize,
     pub destination: usize,
@@ -28,6 +33,12 @@ pub struct Migration {
     pub left_filter: TagFilter,
     pub right_filter: TagFilter,
     pub reason: String,
+    pub archives: Options,
+    pub count_service: usize,
+    pub count_left: bool,
+    pub count_right: bool,
+    pub count_either: bool,
+    pub destination_hash_locked: bool,
 }
 impl Migration {
     /// Open for a service, optionally limited to selected files by default.
@@ -56,6 +67,7 @@ impl Migration {
         let source = services.iter().position(|s| &s.key == key).unwrap_or(0);
         let mut model = Self {
             store: store.clone(),
+            default_service: source,
             services,
             source,
             destination: source,
@@ -70,13 +82,21 @@ impl Migration {
             left_filter: TagFilter::default(),
             right_filter: TagFilter::default(),
             reason: "Mass Migration Job".into(),
+            archives: Options::default(),
+            count_service: source,
+            count_left: false,
+            count_right: false,
+            count_either: false,
+            destination_hash_locked: false,
         };
         model.normalize();
         Ok(model)
     }
     /// Status choices permitted by this source kind.
     pub fn statuses(&self) -> Vec<Status> {
-        if self.services[self.source].local {
+        if self.source == self.services.len() {
+            vec![Status::Current]
+        } else if self.services[self.source].local {
             vec![Status::Current, Status::Deleted]
         } else {
             vec![
@@ -89,17 +109,20 @@ impl Migration {
     }
     /// Destination actions with redundant same-service choices suppressed.
     pub fn actions(&self) -> Vec<Action> {
+        if self.destination == self.services.len() {
+            return vec![Action::Add];
+        }
         hydrus_store::tag_migration::actions(
             self.services[self.destination].local,
-            self.source == self.destination,
+            self.source == self.destination && self.source < self.services.len(),
             self.content,
             self.status,
         )
     }
     /// Keep dependent choices valid after any source/content/destination change.
     pub fn normalize(&mut self) {
-        self.source = self.source.min(self.services.len() - 1);
-        self.destination = self.destination.min(self.services.len() - 1);
+        self.source = self.source.min(self.services.len());
+        self.destination = self.destination.min(self.services.len());
         if !self.statuses().contains(&self.status) {
             self.status = Status::Current;
         }
@@ -111,8 +134,12 @@ impl Migration {
     /// Freeze all settings used by the background worker.
     pub fn request(&self) -> Request {
         Request {
-            source: self.services[self.source].key.clone(),
-            destination: self.services[self.destination].key.clone(),
+            source: self.services[self.source.min(self.services.len() - 1)]
+                .key
+                .clone(),
+            destination: self.services[self.destination.min(self.services.len() - 1)]
+                .key
+                .clone(),
             content: self.content,
             status: self.status,
             action: self.action,
@@ -125,6 +152,114 @@ impl Migration {
             right_filter: self.right_filter.clone(),
             reason: self.reason.clone(),
         }
+    }
+    /// Freeze selected archive paths and optional pair-count gates.
+    pub fn job_options(&self) -> Result<Options> {
+        let mut options = self.archives.clone();
+        if self.source != self.services.len() {
+            options.source = None;
+        } else if options.source.is_none() {
+            return Err(hydrus_store::StoreError::Invalid(format!(
+                "Please set a path for the source {}.",
+                if self.content == Content::Mappings {
+                    "Hydrus Tag Archive"
+                } else {
+                    "Hydrus Tag Pair Archive"
+                }
+            )));
+        }
+        if self.destination != self.services.len() {
+            options.destination = None;
+        } else if options.destination.is_none() {
+            return Err(hydrus_store::StoreError::Invalid(format!(
+                "Please set a path for the destination {}.",
+                if self.content == Content::Mappings {
+                    "Hydrus Tag Archive"
+                } else {
+                    "Hydrus Tag Pair Archive"
+                }
+            )));
+        }
+        options.counts = if self.content != Content::Mappings
+            && (self.count_left || self.count_right || self.count_either)
+        {
+            Some(PairCounts {
+                service: self.services[self.count_service.min(self.services.len() - 1)]
+                    .key
+                    .clone(),
+                left: self.count_left && !self.count_either,
+                right: self.count_right && !self.count_either,
+                either: self.count_either,
+            })
+        } else {
+            None
+        };
+        Ok(options)
+    }
+    /// Inspect an accepted picker path before changing the current draft.
+    pub fn set_archive_path(&mut self, source: bool, path: &Path) -> Result<()> {
+        use hydrus_store::tag_migration::archive::{self, Metadata};
+        if source {
+            archive::inspect(path, self.content)?;
+            self.archives.source = Some(path.to_path_buf());
+        } else {
+            let metadata =
+                archive::inspect_destination(path, self.content, self.archives.hash_kind)?;
+            if let Metadata::Mappings(kind) = metadata {
+                self.archives.hash_kind = kind;
+            }
+            self.destination_hash_locked =
+                path.exists() && archive::inspect(path, self.content).is_ok();
+            self.archives.destination = Some(path.to_path_buf());
+        }
+        Ok(())
+    }
+    /// Names for the source/destination controls, including the matching archive.
+    pub fn endpoint_labels(&self) -> Vec<String> {
+        self.services
+            .iter()
+            .map(|s| s.name.clone())
+            .chain(std::iter::once(if self.content == Content::Mappings {
+                "Hydrus Tag Archive".into()
+            } else {
+                "Hydrus Tag Pair Archive".into()
+            }))
+            .collect()
+    }
+    fn endpoint_description(&self, source: bool) -> String {
+        let index = if source {
+            self.source
+        } else {
+            self.destination
+        };
+        if let Some(service) = self.services.get(index) {
+            return service.name.clone();
+        }
+        self.archive_path_label(source)
+    }
+    /// Path label displayed by the archive chooser button.
+    pub fn archive_path_label(&self, source: bool) -> String {
+        let path = if source {
+            &self.archives.source
+        } else {
+            &self.archives.destination
+        };
+        path.as_ref().map_or_else(
+            || "no path set".into(),
+            |p| {
+                p.file_name().map_or_else(
+                    || p.display().to_string(),
+                    |n| n.to_string_lossy().into_owned(),
+                )
+            },
+        )
+    }
+    /// Reset archive drafts when the primary content type changes.
+    pub fn reset_archives(&mut self) {
+        self.archives = Options::default();
+        self.destination_hash_locked = false;
+        self.source = self.default_service;
+        self.destination = self.default_service;
     }
     /// Human-readable current/deleted domain scope, also shown on its button.
     pub fn location_description(&self) -> String {
@@ -179,12 +314,47 @@ impl Migration {
                 self.right_filter.to_filter_string()
             )
         };
+        let filters = if self.content != Content::Mappings
+            && (self.count_left || self.count_right || self.count_either)
+        {
+            let service = &self.services[self.count_service.min(self.services.len() - 1)].name;
+            let (left, right) = if self.content == Content::Siblings {
+                ("worse", "ideal")
+            } else {
+                ("child", "parent")
+            };
+            let mut pieces = Vec::new();
+            if self.count_either {
+                pieces.push(format!(
+                    "where the {left} or {right} tag of each pair has count on \"{service}\""
+                ));
+            } else {
+                if self.count_left {
+                    pieces.push(format!(
+                        "where the {left} tag of each pair has count on \"{service}\""
+                    ));
+                }
+                if self.count_right {
+                    pieces.push(format!(
+                        "where the {right} tag of each pair{} has count on \"{service}\"",
+                        if self.content == Content::Siblings {
+                            "'s chain"
+                        } else {
+                            ""
+                        }
+                    ));
+                }
+            }
+            format!("{filters} and {}", pieces.join(" and "))
+        } else {
+            filters
+        };
         format!(
             "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking {} {} {filters} from \"{}\" and {action} \"{}\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens.",
             status_label(self.status),
             content_label(self.content),
-            self.services[self.source].name,
-            self.services[self.destination].name
+            self.endpoint_description(true),
+            self.endpoint_description(false)
         )
     }
 }
@@ -215,5 +385,15 @@ pub fn action_label(action: Action) -> &'static str {
         Action::ClearDeletion => "clear deletion record",
         Action::Pend => "pending",
         Action::Petition => "petition",
+    }
+}
+
+/// Hash labels offered for archive destinations.
+pub fn hash_label(kind: HashKind) -> &'static str {
+    match kind {
+        HashKind::Sha256 => "sha256",
+        HashKind::Md5 => "md5",
+        HashKind::Sha1 => "sha1",
+        HashKind::Sha512 => "sha512",
     }
 }

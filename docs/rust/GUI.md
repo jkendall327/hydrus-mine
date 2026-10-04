@@ -1800,7 +1800,7 @@ cover draft cancellation, owner closure, invalid values, Apply/reopen and local
 commands, and render the review, rules and current-jobs windows.
 
 
-## Service-to-service tag migration
+## Tag migration
 
 Tags > migrate, service review's local/repository tag pages and Manage Tags' selected files open
 "migrate tags…". The global entry uses the configured or remembered default
@@ -1811,7 +1811,16 @@ for repositories); and the actions available for the destination. Local services
 support add/delete, plus clear deletion records for mappings. Repository actions
 pend/petition local proposals, with an editable petition reason. Mapping scopes
 use selected files or the existing multiple/current/deleted file-domain selector.
-Mappings and each side of pairs use the reusable tag-filter editor.
+Mappings and each side of pairs use the reusable tag-filter editor. Sources and
+destinations also offer Hydrus Tag Archive (mappings) or Hydrus Tag Pair Archive
+(siblings/parents), with native file pickers and read-only path/type inspection.
+Existing destinations keep their hash/pair type and merge additions; new mapping
+archives offer SHA256, MD5, SHA1 and SHA512. Known alternate hashes convert through
+the stored digests; unavailable conversions are skipped. Selected-file and
+current/deleted domain scopes apply through SHA256 even between alternate archives.
+Pair filters can require real current or pending mappings on the left, right or
+either side in a chosen tag service. For siblings, the right test follows its
+chain to the terminal ideal; either-side mode disables the individual tests.
 
 The window shows the reference summary and its second confirmation outside
 advanced mode. Migration runs on a worker in bounded atomic batches, with live
@@ -1821,6 +1830,12 @@ running job requests cancellation and waits for its final committed progress.
 Services are resolved by key again on every batch. Graph/count publication occurs atomically per batch; displayed tags and review
 counts refresh after completion or cancellation. Reference controls, questions and actual DB mapping
 and pair destinations are recorded in `oracle/fixtures/tag_migration.json`.
+`oracle/fixtures/tag_archives.json` records actual Qt archive inspectors and
+confirmations, 32 all-known/selected hash-conversion combinations and eight
+current/deleted domain cases, current/pending count
+gates, and real Python → native SQLite archive codec → Python readback for all
+four mapping kinds and both pair kinds. Pause/resume/cancel uses the real Qt popup
+and MigrationJob in `oracle/fixtures/tag_migration_pause.json`.
 
 ## Downloader definition interchange
 

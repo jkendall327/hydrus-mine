@@ -930,7 +930,7 @@ Checked by the `popups` conformance scenario.
   `false` for a numerical or inc/dec rating service (Python counts a bool as
   an int, so the reference stores `true` as one star).
 
-- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, repository/IPFS account administration, archive tag migration and bulk clear/undelete maintenance actions remain unavailable and are described in the window.
+- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, repository/IPFS account administration, bulk clear/undelete maintenance actions remain unavailable and are described in the window.
 
 - **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields and there is no live rating preview; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available; HTTPS, normie Eris and external URL overrides are preserved imported values, with an explicit control to disable unsupported HTTPS. A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
 
@@ -992,8 +992,8 @@ warning (the display graph ignores such pairs anyway). Batches creating loops
 or conflicting sibling ideals are rejected with an explicit message; enter
 the pairs separately to perform the ordinary automatic repairs. Already corrupt
 reference graph cycles are traversed safely, but do not raise its detailed
-pre-existing-loop warning. Archive tag migration and
-manual background sibling/parent synchronization remain separate future work.
+pre-existing-loop warning. Manual background sibling/parent synchronization
+remains separate future work.
 
 ## Detailed embedded file metadata (`hydrus-gui`, `hydrus-media`)
 
@@ -1021,7 +1021,7 @@ from an explicit queue preserves its empty intent. Native settings preserve
 unknown JSON fields and unedited service settings. The application
 window uses ordered native lists and an inline source selector. Display/search
 uses a numeric zero for the reference's nullable "always autocomplete" threshold.
-Archive tag migration and manual/background sibling/parent sync remain unimplemented.
+Manual/background sibling/parent sync remains unimplemented.
 Autocomplete configuration refresh preserves any open manage-tags draft; its
 location editor always exposes the permitted file domains.
 Display/search edits merge unedited services and setting areas from the current
@@ -1154,7 +1154,7 @@ explicit buttons. Login-script waits remain outside the implemented engine.
 Local snapshots are published by the daemon without requiring its Client API;
 expiry disables stale controls and saved bandwidth history remains available.
 
-## Service-to-service tag migration
+## Tag migration
 
 Migration opens from Tags > migrate, service review or Manage Tags. The global
 entry uses the configured or remembered default tag-dialog service, without a
@@ -1173,9 +1173,24 @@ Display graph/count publication happens after each relationship batch, following
 the existing native immediate-sync design; large graph rebuilds occupy the writer
 but run outside the UI thread. Pause/resume waits after the current atomic batch,
 as the reference does; cancelling or closing also wakes a paused job.
-Hydrus Tag Archive/tag-pair archive import/export and non-SHA256 conversion remain
-unimplemented. Pair left/right filters are available; the reference's optional
-"side/ideal has mappings count" gates are deferred. Repository migration retains
+Hydrus Tag Archive/tag-pair archive sources are read-only snapshots, including
+hash-type inference, rather than opening the reference's writable archive job.
+Native archive output uses the actual Python SQLite schemas and commits atomic
+bounded batches; the reference commits its long archive transaction during job
+cleanup. Cancellation retains the committed prefix. Existing hash/pair metadata
+is revalidated and preserved. The reference's existing MD5 archive picker can
+leave its SHA256 dropdown selected while disabled; native pins the actual archive
+kind, avoiding relabeling its existing hashes. Source and destination must be
+different archive paths. Native output does not run the reference's optional
+post-job VACUUM/ANALYZE optimization.
+
+SHA256/MD5/SHA1/SHA512 conversion uses known stored digests; unknown conversions
+are skipped, while same-kind all-known archive copies retain unknown hashes.
+Selected-file/domain filtering converts through SHA256. Pair gates use actual
+current and pending storage mappings and the sibling terminal ideal, rather than
+implied display counts. Gates use the same frozen reader snapshot as the source,
+so concurrent service changes affect the next job rather than changing a running
+job's filter membership. Repository migration retains
 pending/petitioned content locally; uploading is outside this window's scope.
 The reference's fixed Mass Migration Job reason is offered as an editable petition
 reason in the native window. Progress reports scanned and accepted source entries,

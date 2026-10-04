@@ -112,7 +112,6 @@ pub fn rows(store: &Store) -> Result<Vec<Row>> {
         for service in registry.all() {
             let unavailable = match &service.kind {
                 ServiceKind::TagRepository(_) | ServiceKind::FileRepository(_) | ServiceKind::Ipfs(_) => "Repository synchronisation, IPFS and account administration are not available yet.",
-                ServiceKind::LocalTags => "Hydrus Tag Archive migration is not available yet.",
                 ServiceKind::Trash => "Bulk clear trash and undelete all are not available here yet.",
                 ServiceKind::RatingLike(_) | ServiceKind::RatingNumerical(_) | ServiceKind::RatingIncDec(_) => "Bulk clear ratings is not available here yet.",
                 ServiceKind::ClientApi(_) => "API request registration uses hydrus api-keys listen; remote account controls are not available yet.",

@@ -281,3 +281,114 @@ fn an_open_filter_child_cannot_broaden_a_confirmed_delete() {
     assert_eq!(tags, vec!["creator:retain"]);
     window.invoke_close_clicked();
 }
+
+#[test]
+fn archive_controls_inspect_reject_wrong_pair_types_and_freeze_confirmed_paths() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = hydrus_store::Store::open(dir.path()).unwrap();
+    let _windows = headless::init();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let slot = tag_migration_window::Slot::default();
+    let window =
+        tag_migration_window::open(&store, &key, vec![], &slot, std::rc::Rc::new(|| {})).unwrap();
+    let recording = hydrus_testkit::fixture_json("tag_archives.json");
+    for case in recording["qt"].as_array().unwrap() {
+        window.set_content(match case["kind"].as_str().unwrap() {
+            "sha256" | "md5" => 0,
+            "siblings" => 1,
+            _ => 2,
+        });
+        window.invoke_choices_changed();
+        let archive = i32::try_from(window.get_services().row_count() - 1).unwrap();
+        window.set_source(archive);
+        window.set_destination(archive);
+        window.invoke_choices_changed();
+        assert!(window.get_source_archive());
+        assert!(window.get_destination_archive());
+        window.invoke_go();
+        assert!(window.get_error().contains("Please set a path"));
+        assert!(window.get_question().is_empty());
+        let path = hydrus_testkit::fixture_path(case["source"].as_str().unwrap());
+        window.invoke_archive_path_chosen(true, path.to_string_lossy().as_ref().into());
+        let destination = dir
+            .path()
+            .join(format!("{}.db", case["kind"].as_str().unwrap()));
+        window.invoke_archive_path_chosen(false, destination.to_string_lossy().as_ref().into());
+        assert!(window.get_error().is_empty(), "{}", window.get_error());
+        assert_eq!(window.get_source_path(), case["source"].as_str().unwrap());
+        if window.get_content() == 0 {
+            assert_eq!(
+                window.get_source_hash(),
+                case["source_hash"].as_str().unwrap()
+            );
+        }
+        window.invoke_archive_path_chosen(true, "".into());
+        assert_eq!(window.get_source_path(), case["source"].as_str().unwrap());
+        window.invoke_go();
+        let confirmed = window.get_question();
+        assert!(confirmed.contains(case["source"].as_str().unwrap()));
+        window.invoke_archive_path_chosen(
+            false,
+            dir.path()
+                .join("stale.db")
+                .to_string_lossy()
+                .as_ref()
+                .into(),
+        );
+        assert_eq!(window.get_question(), confirmed);
+        window.invoke_answer(false);
+        assert!(
+            !destination.exists(),
+            "declining confirmation creates no archive"
+        );
+        if window.get_content() != 0 {
+            window.invoke_go();
+            window.invoke_answer(true);
+            window.invoke_answer(true);
+            let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+            while window.get_running() && std::time::Instant::now() < deadline {
+                std::thread::sleep(std::time::Duration::from_millis(50));
+                slint::platform::update_timers_and_animations();
+            }
+            assert!(!window.get_running());
+            assert!(window.get_error().is_empty(), "{}", window.get_error());
+            let conn = rusqlite::Connection::open(&destination).unwrap();
+            let pairs=conn.prepare("SELECT a.tag,b.tag FROM pairs p JOIN tags a ON p.tag_id_1=a.tag_id JOIN tags b ON p.tag_id_2=b.tag_id ORDER BY a.tag,b.tag").unwrap().query_map([],|r|Ok([r.get::<_,String>(0)?,r.get::<_,String>(1)?])).unwrap().collect::<rusqlite::Result<Vec<_>>>().unwrap();
+            let expected = recording["archives"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|row| row["kind"] == case["kind"])
+                .unwrap();
+            assert_eq!(serde_json::json!(pairs), expected["pairs"]);
+        }
+    }
+    window.invoke_archive_path_chosen(
+        true,
+        hydrus_testkit::fixture_path("tag_archive_siblings.db")
+            .to_string_lossy()
+            .as_ref()
+            .into(),
+    );
+    assert_eq!(
+        window.get_error(),
+        recording["qt_warnings"][0].as_str().unwrap()
+    );
+    assert_eq!(window.get_source_path(), "tag_archive_parents.db");
+    window.set_count_either(true);
+    window.invoke_choices_changed();
+    window.invoke_go();
+    assert!(
+        window
+            .get_question()
+            .contains("where the child or parent tag of each pair has count on")
+    );
+    window.invoke_answer(false);
+    window.invoke_close_clicked();
+}

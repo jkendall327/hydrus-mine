@@ -507,3 +507,499 @@ fn pause_waits_after_commit_resume_continues_and_cancel_wakes_without_next_batch
         );
     }
 }
+
+fn archive_hashes(store: &Store, recording: &serde_json::Value) -> Vec<HashId> {
+    let known = recording["known_sha256"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v.as_str().unwrap().parse::<Sha256>().unwrap())
+        .collect::<Vec<_>>();
+    let digests = (0..known.len())
+        .map(|i| {
+            ["md5", "sha1", "sha512"].map(|kind| {
+                let archive = recording["archives"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .find(|a| a["kind"] == kind)
+                    .unwrap();
+                let row = archive["mappings"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .find(|row| {
+                        row["tags"]
+                            .as_array()
+                            .unwrap()
+                            .contains(&serde_json::json!(format!("archive:known-{i}")))
+                    })
+                    .unwrap();
+                hex::decode(row["hash"].as_str().unwrap()).unwrap()
+            })
+        })
+        .collect::<Vec<_>>();
+    store.write(move|ctx| {
+        known.iter().zip(digests).map(|(sha,[md5,sha1,sha512])| {
+            let id=hydrus_store::master::intern_hash(ctx.conn(),sha)?;
+            ctx.conn().execute("INSERT OR REPLACE INTO hash_digests(hash_id,md5,sha1,sha512) VALUES(?1,?2,?3,?4)",rusqlite::params![id,md5,sha1,sha512])?;
+            Ok(id)
+        }).collect()
+    }).unwrap()
+}
+fn destination_rows(store: &Store, key: &ServiceKey) -> serde_json::Value {
+    let service = store.snapshot().services.by_key(key).unwrap().id;
+    let table = hydrus_store::schema::MappingTables::new(service).current;
+    let rows = store
+        .read(|conn| {
+            let ids = conn
+                .prepare(&format!("SELECT tag_id,hash_id FROM {table}"))?
+                .query_map([], |r| Ok((r.get::<_, TagId>(0)?, r.get::<_, HashId>(1)?)))?
+                .collect::<rusqlite::Result<Vec<_>>>()?;
+            let mut result = std::collections::BTreeMap::<String, Vec<String>>::new();
+            for (tag, hash) in ids {
+                result
+                    .entry(hydrus_store::master::hash(conn, hash)?.unwrap().to_hex())
+                    .or_default()
+                    .push(
+                        hydrus_store::master::tag(conn, tag)?
+                            .unwrap()
+                            .as_str()
+                            .to_owned(),
+                    );
+            }
+            Ok(result
+                .into_iter()
+                .map(|(hash, mut tags)| {
+                    tags.sort();
+                    serde_json::json!({"hash":hash,"tags":tags})
+                })
+                .collect::<Vec<_>>())
+        })
+        .unwrap();
+    serde_json::json!(rows)
+}
+fn archive_rows(path: &std::path::Path) -> serde_json::Value {
+    let conn = rusqlite::Connection::open(path).unwrap();
+    let mut grouped = std::collections::BTreeMap::<String, Vec<String>>::new();
+    for row in conn
+        .prepare("SELECT hash,tag FROM mappings JOIN hashes USING(hash_id) JOIN tags USING(tag_id)")
+        .unwrap()
+        .query_map([], |r| {
+            Ok((r.get::<_, Vec<u8>>(0)?, r.get::<_, String>(1)?))
+        })
+        .unwrap()
+    {
+        let (hash, tag) = row.unwrap();
+        grouped.entry(hex::encode(hash)).or_default().push(tag);
+    }
+    serde_json::json!(
+        grouped
+            .into_iter()
+            .map(|(hash, mut tags)| {
+                tags.sort();
+                serde_json::json!({"hash":hash,"tags":tags})
+            })
+            .collect::<Vec<_>>()
+    )
+}
+#[test]
+fn actual_python_archives_import_convert_scope_filter_and_reopen() {
+    let recording = hydrus_testkit::fixture_json("tag_archives.json");
+    for case in recording["conversion"].as_array().unwrap() {
+        let (dir, store, mut request) = setup();
+        let hashes = archive_hashes(&store, &recording);
+        if case["selected"].as_bool().unwrap() {
+            request.scope = Scope::Files(hashes[..1].to_vec());
+        }
+        if let Some(domain) = case.get("domain") {
+            let service_id = store.snapshot().services.by_name("my files").unwrap().id;
+            let membership = recording["domain_membership"].as_array().unwrap().clone();
+            store.write(move|ctx| {
+                for row in membership {
+                    let sha=row["hash"].as_str().unwrap().parse::<Sha256>().unwrap();
+                    let hash=hydrus_store::master::hash_id(ctx.conn(),&sha)?.unwrap();
+                    for (field,table) in [("current","file_domain_current"),("deleted","file_domain_deleted")] {
+                        if row[field].as_bool().unwrap() {ctx.conn().execute(&format!("INSERT OR IGNORE INTO {table}(service_id,hash_id) VALUES(?1,?2)"),rusqlite::params![service_id,hash])?;}
+                    }
+                }
+                Ok(())
+            }).unwrap();
+            let key = store
+                .snapshot()
+                .services
+                .by_name("my files")
+                .unwrap()
+                .key
+                .clone();
+            request.scope = Scope::Location(if domain == "current" {
+                hydrus_core::search::context::LocationContext::single(key)
+            } else {
+                hydrus_core::search::context::LocationContext::new(vec![], vec![key])
+            });
+        }
+        request.left_filter =
+            TagFilter::new().with_rule("creator:", hydrus_core::FilterRule::Blacklist);
+        let path = hydrus_testkit::fixture_path(format!(
+            "tag_archive_{}.db",
+            case["kind"].as_str().unwrap()
+        ));
+        let before = std::fs::read(&path).unwrap();
+        let kind = case["desired"]
+            .as_str()
+            .unwrap()
+            .parse::<hydrus_core::HashKind>()
+            .unwrap();
+        let output = dir.path().join("converted.db");
+        let options = tag_migration::Options {
+            source: Some(path.clone()),
+            destination: (kind != hydrus_core::HashKind::Sha256).then(|| output.clone()),
+            hash_kind: kind,
+            ..Default::default()
+        };
+        let done = tag_migration::run_job(
+            &store,
+            &request,
+            &options,
+            &AtomicBool::new(false),
+            &AtomicBool::new(false),
+            2,
+            |_| {},
+        )
+        .unwrap();
+        assert_eq!(
+            if options.destination.is_some() {
+                archive_rows(&output)
+            } else {
+                destination_rows(&store, &request.destination)
+            },
+            case["mappings"]
+        );
+        assert_eq!(
+            done.accepted,
+            case["mappings"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|row| row["tags"].as_array().unwrap().len())
+                .sum::<usize>()
+        );
+        assert_eq!(
+            std::fs::read(&path).unwrap(),
+            before,
+            "source archive is read-only"
+        );
+        drop(store);
+        let reopened = Store::open(dir.path()).unwrap();
+        assert_eq!(
+            if options.destination.is_some() {
+                archive_rows(&output)
+            } else {
+                destination_rows(&reopened, &request.destination)
+            },
+            case["mappings"]
+        );
+    }
+}
+#[test]
+fn archive_exports_preserve_metadata_merge_and_cancelled_committed_prefix() {
+    let recording = hydrus_testkit::fixture_json("tag_archives.json");
+    let (dir, store, mut request) = setup();
+    archive_hashes(&store, &recording);
+    let source = tag_migration::Options {
+        source: Some(hydrus_testkit::fixture_path("tag_archive_sha256.db")),
+        ..Default::default()
+    };
+    tag_migration::run_job(
+        &store,
+        &request,
+        &source,
+        &AtomicBool::new(false),
+        &AtomicBool::new(false),
+        2,
+        |_| {},
+    )
+    .unwrap();
+    request.source = request.destination.clone();
+    for kind in [
+        hydrus_core::HashKind::Sha256,
+        hydrus_core::HashKind::Md5,
+        hydrus_core::HashKind::Sha1,
+        hydrus_core::HashKind::Sha512,
+    ] {
+        let name = match kind {
+            hydrus_core::HashKind::Sha256 => "sha256",
+            hydrus_core::HashKind::Md5 => "md5",
+            hydrus_core::HashKind::Sha1 => "sha1",
+            hydrus_core::HashKind::Sha512 => "sha512",
+        };
+        let destination = dir.path().join(format!("export-{name}.db"));
+        let options = tag_migration::Options {
+            destination: Some(destination.clone()),
+            hash_kind: kind,
+            ..Default::default()
+        };
+        let cancel = AtomicBool::new(false);
+        let done = tag_migration::run_job(
+            &store,
+            &request,
+            &options,
+            &cancel,
+            &AtomicBool::new(false),
+            2,
+            |p| {
+                if p.scanned >= 2 {
+                    cancel.store(true, Ordering::Release);
+                }
+            },
+        )
+        .unwrap();
+        assert!(done.cancelled);
+        let conn = rusqlite::Connection::open(&destination).unwrap();
+        let prefix: usize = usize::try_from(
+            conn.query_row("SELECT count(*) FROM mappings", [], |r| r.get::<_, i64>(0))
+                .unwrap(),
+        )
+        .unwrap();
+        assert_eq!(prefix, done.accepted);
+        drop(conn);
+        // Existing metadata wins even if the caller requests a different kind.
+        let options = tag_migration::Options {
+            hash_kind: hydrus_core::HashKind::Sha512,
+            ..options
+        };
+        tag_migration::run_job(
+            &store,
+            &request,
+            &options,
+            &AtomicBool::new(false),
+            &AtomicBool::new(false),
+            3,
+            |_| {},
+        )
+        .unwrap();
+        assert_eq!(
+            tag_migration::archive::inspect(&destination, Content::Mappings).unwrap(),
+            tag_migration::archive::Metadata::Mappings(kind)
+        );
+        let conn = rusqlite::Connection::open(&destination).unwrap();
+        let mut grouped = std::collections::BTreeMap::<String, Vec<String>>::new();
+        for row in conn
+            .prepare(
+                "SELECT hash,tag FROM mappings JOIN hashes USING(hash_id) JOIN tags USING(tag_id)",
+            )
+            .unwrap()
+            .query_map([], |r| {
+                Ok((r.get::<_, Vec<u8>>(0)?, r.get::<_, String>(1)?))
+            })
+            .unwrap()
+        {
+            let (hash, tag) = row.unwrap();
+            grouped.entry(hex::encode(hash)).or_default().push(tag);
+        }
+        let actual = grouped
+            .into_iter()
+            .map(|(hash, mut tags)| {
+                tags.sort();
+                serde_json::json!({"hash":hash,"tags":tags})
+            })
+            .collect::<Vec<_>>();
+        let expected = recording["archives"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|a| a["kind"] == name)
+            .unwrap();
+        let expected = expected["mappings"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|row| {
+                kind == hydrus_core::HashKind::Sha256
+                    || !row["tags"]
+                        .as_array()
+                        .unwrap()
+                        .contains(&serde_json::json!("archive:unknown"))
+            })
+            .cloned()
+            .collect::<Vec<_>>();
+        assert_eq!(serde_json::json!(actual), serde_json::json!(expected));
+    }
+}
+#[test]
+fn pair_count_gates_replay_real_current_pending_and_terminal_ideal_counts() {
+    let recording = hydrus_testkit::fixture_json("tag_archives.json");
+    let (dir, store, mut request) = setup();
+    let local = request.source.clone();
+    let repo = ServiceKey::new(vec![66; 16]);
+    let key = repo.clone();
+    store
+        .write_and_refresh(move |ctx| {
+            services::insert(
+                ctx.conn(),
+                &key,
+                "count repository",
+                &ServiceKind::TagRepository(services::RepositoryConfig::default()),
+            )?;
+            Ok(())
+        })
+        .unwrap();
+    let sid = store.snapshot().services.by_key(&local).unwrap().id;
+    let rid = store.snapshot().services.by_key(&repo).unwrap().id;
+    store
+        .write_content(move |writer| {
+            for (service, action, text) in [
+                (sid, MappingAction::Add, "archive:left"),
+                (sid, MappingAction::Add, "archive:ideal"),
+                (rid, MappingAction::Pend, "archive:pending"),
+            ] {
+                let tag =
+                    hydrus_store::master::intern_tag(writer.conn(), &Tag::new(text).unwrap())?;
+                writer.update_mappings(service, &action, tag, &[HashId(1)])?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    hydrus_store::content::tag_relations::apply(
+        &store,
+        hydrus_store::display::RelationKind::Siblings,
+        vec![hydrus_store::content::tag_relations::RelationUpdate {
+            service: sid,
+            left: Tag::new("archive:right").unwrap(),
+            right: Tag::new("archive:ideal").unwrap(),
+            action: hydrus_store::content::tag_relations::RelationAction::Add,
+        }],
+    )
+    .unwrap();
+    for (content, kind) in [
+        ("siblings", hydrus_store::display::RelationKind::Siblings),
+        ("parents", hydrus_store::display::RelationKind::Parents),
+    ] {
+        let archive = recording["archives"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|value| value["kind"] == content)
+            .unwrap();
+        let updates = archive["pairs"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(
+                |pair| hydrus_store::content::tag_relations::RelationUpdate {
+                    service: sid,
+                    left: Tag::new(pair[0].as_str().unwrap()).unwrap(),
+                    right: Tag::new(pair[1].as_str().unwrap()).unwrap(),
+                    action: hydrus_store::content::tag_relations::RelationAction::Add,
+                },
+            )
+            .collect();
+        hydrus_store::content::tag_relations::apply(&store, kind, updates).unwrap();
+    }
+    for (index, case) in recording["counts"].as_array().unwrap().iter().enumerate() {
+        request.content = if case["content"] == "siblings" {
+            Content::Siblings
+        } else {
+            Content::Parents
+        };
+        for archive_source in [true, false] {
+            let destination = dir
+                .path()
+                .join(format!("counts-{index}-{archive_source}.db"));
+            let options = tag_migration::Options {
+                source: archive_source.then(|| {
+                    hydrus_testkit::fixture_path(format!(
+                        "tag_archive_{}.db",
+                        case["content"].as_str().unwrap()
+                    ))
+                }),
+                destination: Some(destination.clone()),
+                counts: Some(tag_migration::PairCounts {
+                    service: if case["service"] == "local" {
+                        local.clone()
+                    } else {
+                        repo.clone()
+                    },
+                    left: case["left"].as_bool().unwrap(),
+                    right: case["right"].as_bool().unwrap(),
+                    either: case["either"].as_bool().unwrap(),
+                }),
+                ..Default::default()
+            };
+            let done = tag_migration::run_job(
+                &store,
+                &request,
+                &options,
+                &AtomicBool::new(false),
+                &AtomicBool::new(false),
+                2,
+                |_| {},
+            )
+            .unwrap();
+            let conn = rusqlite::Connection::open(destination).unwrap();
+            let rows=conn.prepare("SELECT a.tag,b.tag FROM pairs p JOIN tags a ON p.tag_id_1=a.tag_id JOIN tags b ON p.tag_id_2=b.tag_id ORDER BY a.tag,b.tag").unwrap().query_map([],|r|Ok([r.get::<_,String>(0)?,r.get::<_,String>(1)?])).unwrap().collect::<rusqlite::Result<Vec<_>>>().unwrap();
+            assert_eq!(serde_json::json!(rows), case["pairs"]);
+            assert_eq!(done.accepted, rows.len());
+        }
+    }
+}
+#[test]
+fn archive_validation_rejects_wrong_types_and_unsupported_hashes_before_import() {
+    let (dir, store, mut request) = setup();
+    let mut options = tag_migration::Options {
+        source: Some(hydrus_testkit::fixture_path("tag_archive_siblings.db")),
+        ..Default::default()
+    };
+    request.content = Content::Parents;
+    assert!(
+        tag_migration::run_job(
+            &store,
+            &request,
+            &options,
+            &AtomicBool::new(false),
+            &AtomicBool::new(false),
+            2,
+            |_| {}
+        )
+        .unwrap_err()
+        .to_string()
+        .contains("not a tag parents archive")
+    );
+    request.content = Content::Mappings;
+    let path = dir.path().join("unsupported.db");
+    std::fs::copy(hydrus_testkit::fixture_path("tag_archive_sha256.db"), &path).unwrap();
+    let conn = rusqlite::Connection::open(&path).unwrap();
+    conn.execute("UPDATE hash_type SET hash_type=99", [])
+        .unwrap();
+    drop(conn);
+    options.source = Some(path);
+    assert!(
+        tag_migration::run_job(
+            &store,
+            &request,
+            &options,
+            &AtomicBool::new(false),
+            &AtomicBool::new(false),
+            2,
+            |_| {}
+        )
+        .unwrap_err()
+        .to_string()
+        .contains("unsupported archive hash type")
+    );
+    assert_eq!(count(&store, &request.destination, false), 0);
+    options.source = Some(dir.path().join("absent.db"));
+    assert!(
+        tag_migration::run_job(
+            &store,
+            &request,
+            &options,
+            &AtomicBool::new(false),
+            &AtomicBool::new(false),
+            2,
+            |_| {}
+        )
+        .is_err()
+    );
+    assert!(!options.source.unwrap().exists());
+}

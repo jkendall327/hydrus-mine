@@ -4,6 +4,10 @@
 //! committed prefix; a read transaction prevents same-service edits from moving
 //! the source beneath pagination. Service keys are resolved again on the writer.
 
+pub mod archive;
+mod job;
+pub use job::{Options, PairCounts, run as run_job};
+
 use crate::content::{ContentWriter, MappingAction};
 use crate::display::RelationKind;
 use crate::services::ServiceRegistry;

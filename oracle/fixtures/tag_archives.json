@@ -1,0 +1,1242 @@
+{
+  "archives": [
+    {
+      "kind": "sha256",
+      "file": "tag_archive_sha256.db",
+      "mappings": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "tags": [
+            "archive:known-0",
+            "creator:\u732b",
+            "plain"
+          ]
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "tags": [
+            "archive:known-1",
+            "creator:\u732b",
+            "plain"
+          ]
+        },
+        {
+          "hash": "f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0",
+          "tags": [
+            "archive:unknown"
+          ]
+        }
+      ],
+      "namespaces": [
+        "",
+        "archive",
+        "creator"
+      ],
+      "native_loaded_by_python": true
+    },
+    {
+      "kind": "md5",
+      "file": "tag_archive_md5.db",
+      "mappings": [
+        {
+          "hash": "474668a0a55f0bd72dac674ba8cfbda1",
+          "tags": [
+            "archive:known-1",
+            "creator:\u732b",
+            "plain"
+          ]
+        },
+        {
+          "hash": "9757493665f05cc8562c8ee5163f7970",
+          "tags": [
+            "archive:known-0",
+            "creator:\u732b",
+            "plain"
+          ]
+        },
+        {
+          "hash": "f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0",
+          "tags": [
+            "archive:unknown"
+          ]
+        }
+      ],
+      "namespaces": [
+        "",
+        "archive",
+        "creator"
+      ],
+      "native_loaded_by_python": true
+    },
+    {
+      "kind": "sha1",
+      "file": "tag_archive_sha1.db",
+      "mappings": [
+        {
+          "hash": "1e2fb68814dcb2e5dedd04363aee2f905d9b68f4",
+          "tags": [
+            "archive:known-0",
+            "creator:\u732b",
+            "plain"
+          ]
+        },
+        {
+          "hash": "7dd5c961a0472040aac2e90a9c7188f74762af00",
+          "tags": [
+            "archive:known-1",
+            "creator:\u732b",
+            "plain"
+          ]
+        },
+        {
+          "hash": "f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0",
+          "tags": [
+            "archive:unknown"
+          ]
+        }
+      ],
+      "namespaces": [
+        "",
+        "archive",
+        "creator"
+      ],
+      "native_loaded_by_python": true
+    },
+    {
+      "kind": "sha512",
+      "file": "tag_archive_sha512.db",
+      "mappings": [
+        {
+          "hash": "31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982",
+          "tags": [
+            "archive:known-0",
+            "creator:\u732b",
+            "plain"
+          ]
+        },
+        {
+          "hash": "924d150c9747913f3a8bb758a87c67d1b23145441cb21b2f94a24bfbf8e6323999dfc2273ed2ba694d2932c2c714dca60e9b49d3d9d3a8a7fd5e730efee704b5",
+          "tags": [
+            "archive:known-1",
+            "creator:\u732b",
+            "plain"
+          ]
+        },
+        {
+          "hash": "f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0",
+          "tags": [
+            "archive:unknown"
+          ]
+        }
+      ],
+      "namespaces": [
+        "",
+        "archive",
+        "creator"
+      ],
+      "native_loaded_by_python": true
+    },
+    {
+      "kind": "siblings",
+      "file": "tag_archive_siblings.db",
+      "pairs": [
+        [
+          "archive:empty",
+          "archive:none"
+        ],
+        [
+          "archive:left",
+          "archive:right"
+        ],
+        [
+          "archive:pending",
+          "archive:none"
+        ],
+        [
+          "archive:right",
+          "archive:ideal"
+        ]
+      ],
+      "native_loaded_by_python": true
+    },
+    {
+      "kind": "parents",
+      "file": "tag_archive_parents.db",
+      "pairs": [
+        [
+          "archive:empty",
+          "archive:none"
+        ],
+        [
+          "archive:left",
+          "archive:right"
+        ],
+        [
+          "archive:pending",
+          "archive:none"
+        ],
+        [
+          "archive:right",
+          "archive:ideal"
+        ]
+      ],
+      "native_loaded_by_python": true
+    }
+  ],
+  "conversion": [
+    {
+      "kind": "sha256",
+      "desired": "sha256",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        },
+        {
+          "hash": "f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0",
+          "tags": [
+            "archive:unknown"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha256",
+      "desired": "sha256",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha256",
+      "desired": "md5",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "474668a0a55f0bd72dac674ba8cfbda1",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        },
+        {
+          "hash": "9757493665f05cc8562c8ee5163f7970",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha256",
+      "desired": "md5",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "9757493665f05cc8562c8ee5163f7970",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha256",
+      "desired": "sha1",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "1e2fb68814dcb2e5dedd04363aee2f905d9b68f4",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        },
+        {
+          "hash": "7dd5c961a0472040aac2e90a9c7188f74762af00",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha256",
+      "desired": "sha1",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "1e2fb68814dcb2e5dedd04363aee2f905d9b68f4",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha256",
+      "desired": "sha512",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        },
+        {
+          "hash": "924d150c9747913f3a8bb758a87c67d1b23145441cb21b2f94a24bfbf8e6323999dfc2273ed2ba694d2932c2c714dca60e9b49d3d9d3a8a7fd5e730efee704b5",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha256",
+      "desired": "sha512",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "md5",
+      "desired": "sha256",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "md5",
+      "desired": "sha256",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "md5",
+      "desired": "md5",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "474668a0a55f0bd72dac674ba8cfbda1",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        },
+        {
+          "hash": "9757493665f05cc8562c8ee5163f7970",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        },
+        {
+          "hash": "f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0",
+          "tags": [
+            "archive:unknown"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "md5",
+      "desired": "md5",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "9757493665f05cc8562c8ee5163f7970",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "md5",
+      "desired": "sha1",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "1e2fb68814dcb2e5dedd04363aee2f905d9b68f4",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        },
+        {
+          "hash": "7dd5c961a0472040aac2e90a9c7188f74762af00",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "md5",
+      "desired": "sha1",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "1e2fb68814dcb2e5dedd04363aee2f905d9b68f4",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "md5",
+      "desired": "sha512",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        },
+        {
+          "hash": "924d150c9747913f3a8bb758a87c67d1b23145441cb21b2f94a24bfbf8e6323999dfc2273ed2ba694d2932c2c714dca60e9b49d3d9d3a8a7fd5e730efee704b5",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "md5",
+      "desired": "sha512",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha1",
+      "desired": "sha256",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha1",
+      "desired": "sha256",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha1",
+      "desired": "md5",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "474668a0a55f0bd72dac674ba8cfbda1",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        },
+        {
+          "hash": "9757493665f05cc8562c8ee5163f7970",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha1",
+      "desired": "md5",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "9757493665f05cc8562c8ee5163f7970",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha1",
+      "desired": "sha1",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "1e2fb68814dcb2e5dedd04363aee2f905d9b68f4",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        },
+        {
+          "hash": "7dd5c961a0472040aac2e90a9c7188f74762af00",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        },
+        {
+          "hash": "f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0",
+          "tags": [
+            "archive:unknown"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha1",
+      "desired": "sha1",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "1e2fb68814dcb2e5dedd04363aee2f905d9b68f4",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha1",
+      "desired": "sha512",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        },
+        {
+          "hash": "924d150c9747913f3a8bb758a87c67d1b23145441cb21b2f94a24bfbf8e6323999dfc2273ed2ba694d2932c2c714dca60e9b49d3d9d3a8a7fd5e730efee704b5",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha1",
+      "desired": "sha512",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha512",
+      "desired": "sha256",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha512",
+      "desired": "sha256",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha512",
+      "desired": "md5",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "474668a0a55f0bd72dac674ba8cfbda1",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        },
+        {
+          "hash": "9757493665f05cc8562c8ee5163f7970",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha512",
+      "desired": "md5",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "9757493665f05cc8562c8ee5163f7970",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha512",
+      "desired": "sha1",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "1e2fb68814dcb2e5dedd04363aee2f905d9b68f4",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        },
+        {
+          "hash": "7dd5c961a0472040aac2e90a9c7188f74762af00",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha512",
+      "desired": "sha1",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "1e2fb68814dcb2e5dedd04363aee2f905d9b68f4",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha512",
+      "desired": "sha512",
+      "selected": false,
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        },
+        {
+          "hash": "924d150c9747913f3a8bb758a87c67d1b23145441cb21b2f94a24bfbf8e6323999dfc2273ed2ba694d2932c2c714dca60e9b49d3d9d3a8a7fd5e730efee704b5",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        },
+        {
+          "hash": "f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0",
+          "tags": [
+            "archive:unknown"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha512",
+      "desired": "sha512",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ],
+      "mappings": [
+        {
+          "hash": "31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha256",
+      "desired": "sha256",
+      "selected": false,
+      "domain": "current",
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha256",
+      "desired": "sha256",
+      "selected": false,
+      "domain": "deleted",
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "md5",
+      "desired": "sha256",
+      "selected": false,
+      "domain": "current",
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "md5",
+      "desired": "sha256",
+      "selected": false,
+      "domain": "deleted",
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha1",
+      "desired": "sha256",
+      "selected": false,
+      "domain": "current",
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha1",
+      "desired": "sha256",
+      "selected": false,
+      "domain": "deleted",
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha512",
+      "desired": "sha256",
+      "selected": false,
+      "domain": "current",
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "tags": [
+            "archive:known-0",
+            "plain"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "sha512",
+      "desired": "sha256",
+      "selected": false,
+      "domain": "deleted",
+      "hashes": [],
+      "mappings": [
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "tags": [
+            "archive:known-1",
+            "plain"
+          ]
+        }
+      ]
+    }
+  ],
+  "counts": [
+    {
+      "content": "siblings",
+      "service": "local",
+      "left": true,
+      "right": false,
+      "either": false,
+      "pairs": [
+        [
+          "archive:left",
+          "archive:right"
+        ]
+      ]
+    },
+    {
+      "content": "siblings",
+      "service": "local",
+      "left": false,
+      "right": true,
+      "either": false,
+      "pairs": [
+        [
+          "archive:left",
+          "archive:right"
+        ],
+        [
+          "archive:right",
+          "archive:ideal"
+        ]
+      ]
+    },
+    {
+      "content": "siblings",
+      "service": "local",
+      "left": true,
+      "right": true,
+      "either": false,
+      "pairs": [
+        [
+          "archive:left",
+          "archive:right"
+        ]
+      ]
+    },
+    {
+      "content": "siblings",
+      "service": "local",
+      "left": false,
+      "right": false,
+      "either": true,
+      "pairs": [
+        [
+          "archive:left",
+          "archive:right"
+        ],
+        [
+          "archive:right",
+          "archive:ideal"
+        ]
+      ]
+    },
+    {
+      "content": "siblings",
+      "service": "repository",
+      "left": true,
+      "right": false,
+      "either": false,
+      "pairs": [
+        [
+          "archive:pending",
+          "archive:none"
+        ]
+      ]
+    },
+    {
+      "content": "siblings",
+      "service": "repository",
+      "left": false,
+      "right": true,
+      "either": false,
+      "pairs": []
+    },
+    {
+      "content": "siblings",
+      "service": "repository",
+      "left": true,
+      "right": true,
+      "either": false,
+      "pairs": []
+    },
+    {
+      "content": "siblings",
+      "service": "repository",
+      "left": false,
+      "right": false,
+      "either": true,
+      "pairs": [
+        [
+          "archive:pending",
+          "archive:none"
+        ]
+      ]
+    },
+    {
+      "content": "parents",
+      "service": "local",
+      "left": true,
+      "right": false,
+      "either": false,
+      "pairs": [
+        [
+          "archive:left",
+          "archive:right"
+        ]
+      ]
+    },
+    {
+      "content": "parents",
+      "service": "local",
+      "left": false,
+      "right": true,
+      "either": false,
+      "pairs": [
+        [
+          "archive:right",
+          "archive:ideal"
+        ]
+      ]
+    },
+    {
+      "content": "parents",
+      "service": "local",
+      "left": true,
+      "right": true,
+      "either": false,
+      "pairs": []
+    },
+    {
+      "content": "parents",
+      "service": "local",
+      "left": false,
+      "right": false,
+      "either": true,
+      "pairs": [
+        [
+          "archive:left",
+          "archive:right"
+        ],
+        [
+          "archive:right",
+          "archive:ideal"
+        ]
+      ]
+    },
+    {
+      "content": "parents",
+      "service": "repository",
+      "left": true,
+      "right": false,
+      "either": false,
+      "pairs": [
+        [
+          "archive:pending",
+          "archive:none"
+        ]
+      ]
+    },
+    {
+      "content": "parents",
+      "service": "repository",
+      "left": false,
+      "right": true,
+      "either": false,
+      "pairs": []
+    },
+    {
+      "content": "parents",
+      "service": "repository",
+      "left": true,
+      "right": true,
+      "either": false,
+      "pairs": []
+    },
+    {
+      "content": "parents",
+      "service": "repository",
+      "left": false,
+      "right": false,
+      "either": true,
+      "pairs": [
+        [
+          "archive:pending",
+          "archive:none"
+        ]
+      ]
+    }
+  ],
+  "qt": [
+    {
+      "kind": "sha256",
+      "source": "tag_archive_sha256.db",
+      "source_hash": "hash type: sha256",
+      "destination_hash": "sha256",
+      "destination_hash_enabled": false,
+      "statuses": [
+        "current"
+      ],
+      "actions": [
+        "add"
+      ],
+      "cancel_preserved": true,
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag mappings for all known files and for tags \"all tags\" from \"tag_archive_sha256.db\" and adding them to \"tag_archive_sha256.db\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    },
+    {
+      "kind": "md5",
+      "source": "tag_archive_md5.db",
+      "source_hash": "hash type: md5",
+      "destination_hash": "sha256",
+      "destination_hash_enabled": false,
+      "statuses": [
+        "current"
+      ],
+      "actions": [
+        "add"
+      ],
+      "cancel_preserved": true,
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag mappings for all known files and for tags \"all tags\" from \"tag_archive_md5.db\" and adding them to \"tag_archive_md5.db\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    },
+    {
+      "kind": "siblings",
+      "source": "tag_archive_siblings.db",
+      "source_hash": "hash type: unknown",
+      "destination_hash": "sha256",
+      "destination_hash_enabled": true,
+      "statuses": [
+        "current"
+      ],
+      "actions": [
+        "add"
+      ],
+      "cancel_preserved": true,
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag siblings for \"all tags\" on both sides from \"tag_archive_siblings.db\" and adding them to \"tag_archive_siblings.db\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    },
+    {
+      "kind": "parents",
+      "source": "tag_archive_parents.db",
+      "source_hash": "hash type: unknown",
+      "destination_hash": "sha256",
+      "destination_hash_enabled": true,
+      "statuses": [
+        "current"
+      ],
+      "actions": [
+        "add"
+      ],
+      "cancel_preserved": true,
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag parents for \"all tags\" on both sides from \"tag_archive_parents.db\" and adding them to \"tag_archive_parents.db\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    }
+  ],
+  "domain_membership": [
+    {
+      "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "current": true,
+      "deleted": false
+    },
+    {
+      "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+      "current": false,
+      "deleted": true
+    }
+  ],
+  "qt_warnings": [
+    "This Hydrus Tag Pair Archive is not a tag parents archive!"
+  ],
+  "known_sha256": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+  ]
+}

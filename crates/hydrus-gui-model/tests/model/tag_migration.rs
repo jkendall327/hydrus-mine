@@ -249,3 +249,94 @@ fn reference_database_pair_filters_and_destinations() {
         );
     }
 }
+
+#[test]
+fn archive_inspection_choices_cancellation_and_count_summaries_match_qt() {
+    let recording = hydrus_testkit::fixture_json("tag_archives.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let mut model = Migration::new(&store, &key, vec![]).unwrap();
+    model.location = hydrus_core::search::context::LocationContext::single(ServiceKey::new(
+        hydrus_core::service::builtin_keys::COMBINED_FILE.to_vec(),
+    ));
+    for case in recording["qt"].as_array().unwrap() {
+        model.content = match case["kind"].as_str().unwrap() {
+            "sha256" | "md5" => Content::Mappings,
+            "siblings" => Content::Siblings,
+            _ => Content::Parents,
+        };
+        model.reset_archives();
+        model.source = model.services.len();
+        model.destination = model.services.len();
+        model.normalize();
+        assert_eq!(
+            serde_json::json!(
+                model
+                    .statuses()
+                    .into_iter()
+                    .map(tag_migration::status_label)
+                    .collect::<Vec<_>>()
+            ),
+            case["statuses"]
+        );
+        assert_eq!(
+            serde_json::json!(
+                model
+                    .actions()
+                    .into_iter()
+                    .map(tag_migration::action_label)
+                    .collect::<Vec<_>>()
+            ),
+            case["actions"]
+        );
+        assert!(model.job_options().is_err());
+        let path = hydrus_testkit::fixture_path(case["source"].as_str().unwrap());
+        model.set_archive_path(true, &path).unwrap();
+        model.set_archive_path(false, &path).unwrap();
+        assert_eq!(
+            model.archive_path_label(true),
+            case["source"].as_str().unwrap()
+        );
+        let options = model.job_options().unwrap();
+        assert_eq!(options.source, Some(path.clone()));
+        assert_eq!(options.destination, Some(path));
+        if case["kind"] == "md5" {
+            assert_eq!(options.hash_kind, hydrus_core::HashKind::Md5);
+            assert!(model.destination_hash_locked);
+        }
+        assert_eq!(model.confirmation(), case["confirmation"].as_str().unwrap());
+    }
+    let previous = model.archives.source.clone();
+    let error = model
+        .set_archive_path(
+            true,
+            &hydrus_testkit::fixture_path("tag_archive_siblings.db"),
+        )
+        .unwrap_err();
+    assert_eq!(
+        error.to_string(),
+        recording["qt_warnings"][0].as_str().unwrap()
+    );
+    assert_eq!(model.archives.source, previous);
+    model.content = Content::Siblings;
+    model.count_right = true;
+    let summary = model.confirmation();
+    assert!(summary.contains("where the ideal tag of each pair's chain has count on"));
+    model.count_either = true;
+    let options = model.job_options().unwrap();
+    let counts = options.counts.unwrap();
+    assert!(counts.either);
+    assert!(!counts.left && !counts.right);
+    assert!(
+        model
+            .confirmation()
+            .contains("where the worse or ideal tag of each pair has count on")
+    );
+}

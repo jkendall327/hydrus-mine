@@ -1,6 +1,6 @@
 //! Service migration controls, confirmations and cancellable background work.
 use crate::TagMigrationWindow;
-use hydrus_core::{HashId, ServiceKey};
+use hydrus_core::{HashId, HashKind, ServiceKey};
 use hydrus_gui_model::tag_migration::{self as model, Action, Content, Migration, Progress};
 use hydrus_store::Store;
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
@@ -27,6 +27,35 @@ fn strings(labels: impl IntoIterator<Item = impl Into<SharedString>>) -> ModelRc
     ))
 }
 fn show(window: &TagMigrationWindow, model: &Migration) {
+    window.set_services(strings(model.endpoint_labels()));
+    window.set_count_services(strings(model.services.iter().map(|s| s.name.clone())));
+    window.set_count_service(i32::try_from(model.count_service).unwrap_or(0));
+    window.set_source_archive(model.source == model.services.len());
+    window.set_destination_archive(model.destination == model.services.len());
+    window.set_source_path(model.archive_path_label(true).into());
+    window.set_destination_path(model.archive_path_label(false).into());
+    window.set_hash_locked(model.destination_hash_locked);
+    window.set_hash_kind(match model.archives.hash_kind {
+        HashKind::Sha256 => 0,
+        HashKind::Md5 => 1,
+        HashKind::Sha1 => 2,
+        HashKind::Sha512 => 3,
+    });
+    let source_hash = model
+        .archives
+        .source
+        .as_ref()
+        .and_then(|p| hydrus_store::tag_migration::archive::inspect(p, model.content).ok())
+        .and_then(|m| {
+            if let hydrus_store::tag_migration::archive::Metadata::Mappings(k) = m {
+                Some(model::hash_label(k))
+            } else {
+                None
+            }
+        })
+        .unwrap_or("unknown");
+    window.set_source_hash(format!("hash type: {source_hash}").into());
+
     window.set_source(i32::try_from(model.source).unwrap_or(0));
     window.set_destination(i32::try_from(model.destination).unwrap_or(0));
     window.set_statuses(strings(
@@ -96,7 +125,7 @@ pub fn open(
     show(&window, &settings.borrow());
     let cancellation = Arc::new(AtomicBool::new(false));
     let paused = Arc::new(AtomicBool::new(false));
-    let confirmed: Rc<RefCell<Option<model::Request>>> = Rc::default();
+    let confirmed: Rc<RefCell<Option<(model::Request, model::Options)>>> = Rc::default();
     let close_requested = Rc::new(Cell::new(false));
     let timer = Rc::new(slint::Timer::default());
     let filter_slot = crate::tag_filter_window::Slot::default();
@@ -120,13 +149,35 @@ pub fn open(
                 .ok()
                 .and_then(|i| old_actions.get(i).copied())
                 .unwrap_or(m.action);
+            let old_source = m.source;
             m.source = usize::try_from(w.get_source()).unwrap_or(0);
             m.destination = usize::try_from(w.get_destination()).unwrap_or(0);
+            let old_content = m.content;
             m.content = match w.get_content() {
                 1 => Content::Siblings,
                 2 => Content::Parents,
                 _ => Content::Mappings,
             };
+            if old_content != m.content {
+                m.reset_archives();
+            }
+            m.count_service = usize::try_from(w.get_count_service())
+                .unwrap_or(0)
+                .min(m.services.len() - 1);
+            if old_source != m.source && m.source < m.services.len() {
+                m.count_service = m.source;
+            }
+            m.count_left = w.get_count_left();
+            m.count_right = w.get_count_right();
+            m.count_either = w.get_count_either();
+            if old_content == m.content && !m.destination_hash_locked {
+                m.archives.hash_kind = match w.get_hash_kind() {
+                    1 => HashKind::Md5,
+                    2 => HashKind::Sha1,
+                    3 => HashKind::Sha512,
+                    _ => HashKind::Sha256,
+                };
+            }
             m.selected_files = w.get_selected_files();
             m.normalize();
             show(&w, &m);
@@ -203,6 +254,48 @@ pub fn open(
             }
         }
     });
+    window.on_archive_path_chosen({
+        let settings = settings.clone();
+        let weak = window.as_weak();
+        move |source, path| {
+            let Some(w) = weak.upgrade() else { return };
+            if w.get_running() || !w.get_question().is_empty() || path.is_empty() {
+                return;
+            }
+            let mut m = settings.borrow_mut();
+            match m.set_archive_path(source, std::path::Path::new(path.as_str())) {
+                Ok(()) => {
+                    w.set_error(SharedString::new());
+                    show(&w, &m);
+                }
+                Err(e) => w.set_error(e.to_string().into()),
+            }
+        }
+    });
+    window.on_choose_archive({
+        let weak = window.as_weak();
+        move |source| {
+            let Some(w) = weak.upgrade() else { return };
+            if w.get_running() || !w.get_question().is_empty() {
+                return;
+            }
+            let dialog = rfd::FileDialog::new()
+                .set_title(if source {
+                    "Select the Archive to pull data from."
+                } else {
+                    "Select the Archive to push data to."
+                })
+                .add_filter("Hydrus Tag Archive", &["db"]);
+            let path = if source {
+                dialog.pick_file()
+            } else {
+                dialog.save_file()
+            };
+            if let Some(path) = path {
+                w.invoke_archive_path_chosen(source, path.to_string_lossy().as_ref().into());
+            }
+        }
+    });
     window.on_go({
         let settings = settings.clone();
         let confirmed = confirmed.clone();
@@ -219,10 +312,17 @@ pub fn open(
                     w.set_error("a petition reason is required".into());
                     return;
                 }
+                let options = match settings.borrow().job_options() {
+                    Ok(options) => options,
+                    Err(e) => {
+                        w.set_error(e.to_string().into());
+                        return;
+                    }
+                };
                 w.set_error(SharedString::new());
                 w.set_last_chance(false);
                 w.set_question(settings.borrow().confirmation().into());
-                *confirmed.borrow_mut() = Some(settings.borrow().request());
+                *confirmed.borrow_mut() = Some((settings.borrow().request(), options));
             }
         }
     });
@@ -253,7 +353,7 @@ pub fn open(
                 w.set_question(model::LAST_CHANCE.into());
                 return;
             }
-            let Some(request) = confirmed.borrow_mut().take() else {
+            let Some((request, options)) = confirmed.borrow_mut().take() else {
                 w.set_question(SharedString::new());
                 w.set_error("the migration confirmation expired; press Go again".into());
                 return;
@@ -269,9 +369,10 @@ pub fn open(
             let paused = paused.clone();
             let (send, receive) = std::sync::mpsc::channel::<Result<Progress, String>>();
             std::thread::spawn(move || {
-                let result = hydrus_store::tag_migration::run_pausable(
+                let result = hydrus_store::tag_migration::run_job(
                     &store,
                     &request,
+                    &options,
                     &cancel,
                     &paused,
                     512,
