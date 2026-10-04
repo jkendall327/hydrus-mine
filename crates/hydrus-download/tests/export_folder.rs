@@ -109,6 +109,28 @@ fn export_folders_do_what_the_reference_did() {
         .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &folders))
         .unwrap();
 
+    let before: ExportFolders = store.read(hydrus_store::settings::get).unwrap();
+    let request = hydrus_store::folder_activity::Edit::request(
+        store.dir(),
+        hydrus_store::folder_activity::Kind::Export,
+    )
+    .unwrap()
+    .unwrap();
+    assert!(
+        hydrus_download::export::work_export_folders(&store)
+            .unwrap()
+            .is_empty()
+    );
+    for folder in &before.0 {
+        assert!(
+            !hydrus_download::export::work_on_export_folder(&store, &folder.name)
+                .unwrap()
+                .ran
+        );
+    }
+    let unchanged: ExportFolders = store.read(hydrus_store::settings::get).unwrap();
+    assert_eq!(unchanged, before);
+    drop(request);
     let runs = hydrus_download::export::work_export_folders(&store).unwrap();
     assert_eq!(runs.len(), 3, "{runs:?}");
     for (name, run) in &runs {

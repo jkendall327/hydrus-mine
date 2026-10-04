@@ -14,6 +14,7 @@ pub mod domains;
 pub mod duplicates;
 pub mod error;
 pub mod file_maintenance;
+pub mod folder_activity;
 pub mod gallery;
 pub mod import;
 pub mod import_folders;

@@ -134,6 +134,36 @@ fn an_import_folder_does_what_the_reference_did() {
     );
     let importer = FileImporter::new(Arc::clone(&store), MediaTools::new());
     let downloader = Downloader::new(Arc::clone(&store), net, importer).unwrap();
+    let request = hydrus_store::folder_activity::Edit::request(
+        store.dir(),
+        hydrus_store::folder_activity::Kind::Import,
+    )
+    .unwrap()
+    .unwrap();
+    let before = store
+        .read(|conn| import_folders::import_folder(conn, id))
+        .unwrap()
+        .unwrap();
+    let before_seeds = store.read(|conn| queues::file_seeds(conn, id)).unwrap();
+    assert_eq!(
+        downloader.work_on_import_folder(id).unwrap(),
+        hydrus_download::folders::FolderRun::default()
+    );
+    let mut schedule = hydrus_download::folders::ImportFolderSchedule::new();
+    assert_eq!(
+        hydrus_download::folders::work_due_import_folders(&downloader, &mut schedule).unwrap(),
+        1800
+    );
+    let unchanged = store
+        .read(|conn| import_folders::import_folder(conn, id))
+        .unwrap()
+        .unwrap();
+    assert_eq!(unchanged.settings, before.settings);
+    assert_eq!(
+        store.read(|conn| queues::file_seeds(conn, id)).unwrap(),
+        before_seeds
+    );
+    drop(request);
     let run = downloader.work_on_import_folder(id).unwrap();
     assert!(run.checked, "{run:?}");
     assert_eq!(run.error, None, "{run:?}");

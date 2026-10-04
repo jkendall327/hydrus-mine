@@ -51,7 +51,7 @@ impl settings::Setting for SnapshotRevision {
 /// Take the lock in `name`, in the store directory `dir`: `None` if another
 /// process holds it. It is let go when the file returned is dropped (or the
 /// process ends, however it ends).
-fn lock(dir: &Path, name: &str) -> std::io::Result<Option<std::fs::File>> {
+pub(crate) fn lock(dir: &Path, name: &str) -> std::io::Result<Option<std::fs::File>> {
     let file = std::fs::OpenOptions::new()
         .create(true)
         .truncate(false)

@@ -510,11 +510,22 @@ impl Downloader {
     pub fn work_on_import_folder(&self, id: i64) -> Result<FolderRun, StoreError> {
         let mut run = FolderRun::default();
         let store = self.store().clone();
+        let Some(_activity) = hydrus_store::folder_activity::Activity::acquire(
+            store.dir(),
+            hydrus_store::folder_activity::Kind::Import,
+        )?
+        else {
+            return Ok(run);
+        };
         let Some(mut folder) = store.read(|conn| import_folders::import_folder(conn, id))? else {
             return Ok(run);
         };
         let global: FolderSettings = store.read(hydrus_store::settings::get)?;
-        if global.pause_import_folders || folder.paused() {
+        if hydrus_store::folder_activity::paused(
+            &store,
+            hydrus_store::folder_activity::Kind::Import,
+        )? || folder.paused()
+        {
             return Ok(run);
         }
         let now = now();
@@ -603,7 +614,14 @@ impl Downloader {
             else {
                 break;
             };
-            if *paused || popup.is_cancelled() {
+            if *paused
+                || popup.is_cancelled()
+                || hydrus_store::folder_activity::paused(
+                    &store,
+                    hydrus_store::folder_activity::Kind::Import,
+                )
+                .map_err(|e| e.to_string())?
+            {
                 break;
             }
             if previous == Some(seed.id) {
@@ -825,13 +843,25 @@ pub fn work_due_import_folders(
     schedule: &mut ImportFolderSchedule,
 ) -> Result<i64, StoreError> {
     let store = downloader.store().clone();
-    let global: FolderSettings = store.read(hydrus_store::settings::get)?;
-    if global.pause_import_folders {
+    if hydrus_store::folder_activity::paused(&store, hydrus_store::folder_activity::Kind::Import)? {
         return Ok(1800);
     }
     schedule.refresh(&store, now())?;
     while let Some(id) = schedule.next_due(now()) {
+        if hydrus_store::folder_activity::paused(
+            &store,
+            hydrus_store::folder_activity::Kind::Import,
+        )? {
+            return Ok(1800);
+        }
         let run = downloader.work_on_import_folder(id)?;
+        if hydrus_store::folder_activity::edit_requested(
+            store.dir(),
+            hydrus_store::folder_activity::Kind::Import,
+        )? {
+            // Keep this due item pending; the editor may accept changed timing.
+            return Ok(1800);
+        }
         if run.imported > 0 {
             tracing::info!("import folder {id} imported {} files", run.imported);
         }

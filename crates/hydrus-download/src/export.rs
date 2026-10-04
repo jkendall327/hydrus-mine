@@ -347,10 +347,8 @@ fn export(
         if popup.is_cancelled() {
             return Ok(());
         }
-        if store
-            .read(hydrus_store::settings::get::<FolderSettings>)
+        if hydrus_store::folder_activity::paused(store, hydrus_store::folder_activity::Kind::Export)
             .map_err(e)?
-            .pause_export_folders
         {
             return Ok(());
         }
@@ -367,6 +365,11 @@ fn export(
             value_range(i as u64 + 1, count)
         )));
         if popup.is_cancelled() {
+            return Ok(());
+        }
+        if hydrus_store::folder_activity::paused(store, hydrus_store::folder_activity::Kind::Export)
+            .map_err(e)?
+        {
             return Ok(());
         }
         let facts = NameFacts {
@@ -535,6 +538,16 @@ fn make_symlink(source: &str, dest: &str) -> Result<(), String> {
 /// save what happened.
 pub fn work_on_export_folder(store: &Arc<Store>, name: &str) -> Result<ExportRun, StoreError> {
     let mut run = ExportRun::default();
+    let Some(_activity) = hydrus_store::folder_activity::Activity::acquire(
+        store.dir(),
+        hydrus_store::folder_activity::Kind::Export,
+    )?
+    else {
+        return Ok(run);
+    };
+    if hydrus_store::folder_activity::paused(store, hydrus_store::folder_activity::Kind::Export)? {
+        return Ok(run);
+    }
     let folders: ExportFolders = store.read(hydrus_store::settings::get)?;
     let Some(mut folder) = folders.0.into_iter().find(|f| f.name == name) else {
         return Ok(run);
@@ -603,8 +616,7 @@ pub fn work_on_export_folder(store: &Arc<Store>, name: &str) -> Result<ExportRun
 
 /// `DAEMONCheckExportFolders`: give every export folder the chance to run.
 pub fn work_export_folders(store: &Arc<Store>) -> Result<Vec<(String, ExportRun)>, StoreError> {
-    let global: FolderSettings = store.read(hydrus_store::settings::get)?;
-    if global.pause_export_folders {
+    if hydrus_store::folder_activity::paused(store, hydrus_store::folder_activity::Kind::Export)? {
         return Ok(Vec::new());
     }
     let folders: ExportFolders = store.read(hydrus_store::settings::get)?;
@@ -612,8 +624,10 @@ pub fn work_export_folders(store: &Arc<Store>) -> Result<Vec<(String, ExportRun)
     names.sort();
     let mut runs = Vec::new();
     for name in names {
-        let paused: FolderSettings = store.read(hydrus_store::settings::get)?;
-        if paused.pause_export_folders {
+        if hydrus_store::folder_activity::paused(
+            store,
+            hydrus_store::folder_activity::Kind::Export,
+        )? {
             break;
         }
         let run = work_on_export_folder(store, &name)?;
