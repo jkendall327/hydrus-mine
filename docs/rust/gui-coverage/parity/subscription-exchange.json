@@ -1,0 +1,167 @@
+{
+  "agent": "follow_subscription_exchange",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "working_baseline": "2388372d",
+  "implementation_commits": [
+    "fd6551d7641cf36cbf213a29013cadfa2867e7cc",
+    "155db883697c23d5142509ee2d90bb2507f62e03",
+    "6637b490ef94dae95512dc25fd74038437dd2738",
+    "3a1ab359ae925ddd87f09e4dd3050f6748261300"
+  ],
+  "validation": {
+    "reference_recording": "Passed three actual Qt recorder executions using shared with-oracle lock, last includes JSON file exports/imports/cancel and exact overwrite rejection/acceptance; synthetic domains only; screenshot inspected.",
+    "formatting": "rustfmt --edition 2024, git diff --check and Python recorder syntax passed.",
+    "slint_source_check": "Passed cached Slint compiler with no Cargo builds.",
+    "rust_tests": "Authored full codec roundtrip, actual model/store consumers and GUI staging/persistence/cancel/invalid-file/overwrite/closed-owner regressions. Root hosted CI pending; no local Cargo or mutation tests."
+  },
+  "native_navigation": [
+    {
+      "parent": "SubscriptionsWindow",
+      "child": "DownloaderExchangeWindow",
+      "trigger": "serialized import/export",
+      "reuse_existing_component": true
+    },
+    {
+      "parent": "DownloaderExchangeWindow",
+      "child": "PngExportWindow",
+      "trigger": "export to png",
+      "reuse_existing_component": true
+    }
+  ],
+  "entries": [
+    {
+      "reference_id": "subscriptions-exchange",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "partial",
+      "proposedStatus": "partial",
+      "behavior": "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata.",
+      "exactBehavior": "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata.",
+      "limits": [
+        "Legacy subscription type3 conversion is still absent.",
+        "The original export/import popup placement and missing-history GetYesNo question are not yet reproduced; modern missing history is described in the explicit package review and initialised empty only after accepting it.",
+        "Native package/file selection review rejects an entire invalid selection atomically; the reference can retain earlier valid objects and show type warnings.",
+        "Clipboard PNG-image precedence and PNG drag/drop remain absent; PNG files are supported.",
+        "Native compiled model/GUI regressions and native screenshot capture are authored but await root hosted CI. No completion is claimed for this Partial step.",
+        "subscriptions-merge and subscription-options are not changed or claimed; import-options clipboard is not counted again."
+      ],
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/ClientGUISubscriptions.py",
+        "line": 2463,
+        "symbol": "EditSubscriptionsPanel._GetSelectedSubsAsExportableContainers"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/subscriptions.rs",
+          "line": 189,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "pub fn decode_text("
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/subscriptions.rs",
+          "line": 315,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "pub fn tuple("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/subscription_exchange.rs",
+          "line": 48,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "pub fn stage("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/subscription_exchange.rs",
+          "line": 128,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "pub fn selected("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/subscription_exchange.rs",
+          "line": 83,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "pub fn restore("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/subscriptions_window.rs",
+          "line": 1468,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "window.on_exchange({"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_interchange_window.rs",
+          "line": 83,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "pub fn open_subscriptions("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_interchange_window.rs",
+          "line": 620,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "fn save_json("
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/mod.rs",
+          "line": 2929,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "pub fn restore_subscription_log("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/tests/subscriptions.rs",
+          "line": 6,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "fn actual_subscription_clipboard_and_png_retain_settings_headers_and_both_histories("
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/tests/subscriptions.rs",
+          "line": 60,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "fn subscription_exchange_reports_missing_logs_and_rejects_invalid_packages_atomically("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/subscription_exchange.rs",
+          "line": 7,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "fn staged_full_subscription_import_resolves_names_and_persists_both_histories("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/subscriptions.rs",
+          "line": 875,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "fn full_subscription_exchange_is_staged_cancellable_and_reopens_with_complete_histories("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/subscriptions.rs",
+          "line": 1040,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "fn subscription_exchange_file_menus_load_selected_packages_and_cancel_invalid_batches("
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_subscription_exchange.py",
+          "line": 17,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "def record(session):"
+        },
+        {
+          "relativepath": "oracle/fixtures/subscription_exchange.json",
+          "line": 2,
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "symbol": "\"single\""
+        },
+        {
+          "relativepath": "oracle/fixtures/subscription_exchange.png",
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "description": "Actual Python ClientSerialisable.DumpToPNG/LoadFromPNG full selected container package"
+        },
+        {
+          "relativepath": "oracle/fixtures/subscription_exchange_editor.png",
+          "commit": "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+          "description": "Actual Qt list after imported collision and missing-history acceptance; inspected"
+        }
+      ]
+    }
+  ]
+}
