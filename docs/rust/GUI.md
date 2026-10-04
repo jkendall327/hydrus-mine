@@ -1641,7 +1641,7 @@ autocomplete options, sessions, shortcut sets, recent tags.
 - Slint is to be tried first (DECISIONS.md); the first milestone, a search
   page with a thumbnail grid over a real library, is where that is judged.
 
-Services → review opens the service registry with each local and built-in service's name, type, database id, service key copying and refresh. File-domain sizes and deleted counts, tag mapping/tag/file counts, and rated-file counts come from a consistent native store read and match `oracle/record_services.py`. Refresh retains the selected key. Bulk maintenance and remote administration actions show an explicit unavailable explanation.
+Services → review opens the service registry with each local and built-in service's name, type, database id, service key copying and refresh. File-domain sizes and deleted counts, tag mapping/tag/file counts, and rated-file counts come from a consistent native store read and match `oracle/record_services.py`. Refresh retains the selected key. Local trash review now offers confirmed clear/undelete actions and local rating review offers confirmed deleted/non-local/all-file clearing; unavailable remote administration actions retain an explicit explanation.
 
 Services → edit opens the manage services list (`services_editor`, `services_editor_window`, `services_editor.slint`). Add local file, local tag, like/dislike, numerical and inc/dec rating services; edit their names and rating display colours, shapes/SVG names, thumbnail flags, stars, zero, padding and fraction placement. Names acquire casefolded duplicate suffixes. Child editors and the list hold changes until their apply buttons; either cancel forgets its changes. Deletion asks before staging and again before Apply, rejects nonempty local file domains and the last local file/tag domain, and rechecks inside the atomic write. Apply republishes the registry/graphs, reconciles deleted-domain membership, rebuilds tag counts and invalidates visible thumbnails. It refreshes the current selection's tags even on a locked page and refreshes an open viewer's tags when deletion changes sibling or parent display. Concurrent service changes reject the stale editor without partial writes.
 
@@ -2820,3 +2820,65 @@ active search alone. `oracle/fixtures/system_or_activation.json` records 18
 actual Qt cases in the main read input and basic OR child, including accepted
 system recents surviving outer Cancel. Both callers use the original activation intent. Authored model replay and
 the native 18-case consumer replay await hosted CI; no native render is claimed.
+
+Manage Tags now reads deleted mappings separately for each selected local tag
+service. The count measures tag–file mappings, hides at zero, and follows staged
+deletions and re-additions. Show/hide is an immediately saved global preference
+that survives Cancel and reaches other open owners. Rows combine current `(n)`
+and deleted `(Xn)` counts, including current counts when every selected file has
+the tag. Apply commits the private mapping draft; Cancel and callbacks retained
+after closure cannot change it. The real Qt recording
+`manage_tag_counts_incremental.json` covers two local services and reopening.
+
+Manage Tags' ± Incremental Tagging button now opens an owned child for multi-file
+selections. Namespace, prefix and suffix remember each edit immediately, including
+Cancel; start defaults to the first file's first decimal subtag in the reference's numeric ordering,
+step defaults to one, and reverse numbers the original selection backwards.
+The preview reports the exact tag sequence and existing namespace conflicts.
+Child Apply adds one tag per original file to the selected service's private
+Manage Tags draft, preserving other namespace tags. Parent Apply commits it;
+child/parent Cancel and window closure discard pending mappings and invalidate
+retained callbacks. While the child is open, service changes, tag entry and
+parent Apply are blocked. Reopening an existing Manage Tags owner preserves its
+original selection and file-count title. Actual Qt recorded child/parent cancellation, negative
+steps, reverse order, remembered reopening and persisted per-file mappings.
+Additional Qt recordings cover initial-value and numeric-control clamp boundaries,
+long ASCII and Unicode leading-zero inputs, and reference initialization failures.
+Native safely clamps large initial values and accepts long decimal previews.
+
+
+Options > GUI now shows the reference's complete frame-locations table, including
+imported unknown frame names. Its edit child stages remember-size/position,
+optional size/coordinates, default gravity/position and maximised/fullscreen.
+Batch flip/reset and sorting retain selection. Child Apply changes the Options
+draft; Options Cancel discards it and closes/inactivates the child. Main-window
+and media-viewer remembered geometry/state use their existing placement consumers;
+the Options window also places itself from its `manage_options_dialog` frame.
+Its explicit frame-table edits persist on Apply; Cancel/X preserve the previous
+geometry. An accepted reset of its own size/position remains unset, matching the
+actual reference dialog's save-before-frame-table-commit order. Live main/viewer
+geometry saves merge inside a writer transaction, preserving other frame keys.
+
+Local service review bulk maintenance uses the exact questions and “do it” /
+“forget it” decisions from `oracle/fixtures/service_bulk.json`. Trash controls
+disable when empty. Undelete restores every former local domain and its import
+time; clear uses the normal physical-deletion queue and honours archived-file
+delete locks. Like/dislike, numerical and inc/dec rating services offer “for
+deleted files”, “for all non-local files”, and “for all files”. The first two
+use physical storage membership, so a file still in trash remains local.
+Counts refresh on acceptance and survive reopening. Each question captures its
+service/action, blocks replacement and selection, and retires with its owner.
+
+
+Options > tag presentation now opens a detached editor for each thumbnail and
+media-viewer tag banner. It edits enabled state, RGBA colours, separators, ordered
+namespace prefixes and separators, and cleaned example tags with live preview.
+Child Apply stages the generator; parent Apply saves all three and refreshes
+thumbnail banners and the title of an already-open viewer. Cancelling either
+owner discards its draft and invalidates retained child callbacks. The Qt oracle
+drives all three reference buttons, namespace CRUD/movement and live preview.
+
+The banner editor child is held explicitly by the main window's Options owner.
+Its slot clears on child or parent close; retained stale callbacks cannot clear
+a replacement slot or commit an old draft. No test-only global window registry
+is used for banner editing.

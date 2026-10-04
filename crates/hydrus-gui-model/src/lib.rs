@@ -115,3 +115,7 @@ mod palette_calculator;
 pub mod viewing_statistics;
 
 pub mod search_or;
+
+pub mod frame_locations;
+pub mod incremental_tagging;
+pub mod tag_banner;

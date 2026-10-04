@@ -7,6 +7,67 @@ use hydrus_store::services::{ServiceKind, ServiceRegistry};
 use hydrus_store::{Store, error::Result};
 use rusqlite::Connection;
 
+/// Immediate local maintenance choices, committed only after an owned confirmation.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Action {
+    ClearTrash,
+    UndeleteTrash,
+    ClearRatings(hydrus_store::content::RatingClearScope),
+}
+impl Action {
+    /// Exact reference confirmation for the selected service operation.
+    pub fn question(self) -> String {
+        match self {
+            Self::ClearTrash => "This will completely clear your trash of all its files, deleting them permanently from the client. This operation cannot be undone.\n\nIf you have many files in your trash, it will take some time to complete and for all the files to eventually be deleted.".into(),
+            Self::UndeleteTrash => "This will instruct your database to restore all files currently in the trash to all the local file domains they have been in.".into(),
+            Self::ClearRatings(scope) => {
+                let population = match scope {
+                    hydrus_store::content::RatingClearScope::Deleted => "deleted files",
+                    hydrus_store::content::RatingClearScope::NonLocal => "non-local files",
+                    hydrus_store::content::RatingClearScope::All => "ALL FILES",
+                };
+                format!("Delete any ratings on this service for {population}? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.")
+            }
+        }
+    }
+    /// Decode the native menu's fixed action values at its boundary.
+    pub fn from_index(index: i32) -> Option<Self> {
+        use hydrus_store::content::RatingClearScope;
+        match index {
+            0 => Some(Self::ClearTrash),
+            1 => Some(Self::UndeleteTrash),
+            2 => Some(Self::ClearRatings(RatingClearScope::Deleted)),
+            3 => Some(Self::ClearRatings(RatingClearScope::NonLocal)),
+            4 => Some(Self::ClearRatings(RatingClearScope::All)),
+            _ => None,
+        }
+    }
+}
+
+/// Recheck the selected service kind inside the content transaction before maintenance.
+pub fn apply(store: &Store, key: ServiceKey, action: Action) -> Result<()> {
+    store.write_content(move |writer| {
+        let service = writer.snapshot().services.by_key(&key)?;
+        let id = service.id;
+        match (&service.kind, action) {
+            (ServiceKind::Trash, Action::ClearTrash) => writer.clear_trash(),
+            (ServiceKind::Trash, Action::UndeleteTrash) => writer.undelete_trash(),
+            (
+                ServiceKind::RatingLike(_)
+                | ServiceKind::RatingNumerical(_)
+                | ServiceKind::RatingIncDec(_),
+                Action::ClearRatings(scope),
+            ) => {
+                writer.clear_ratings(id, scope)?;
+                Ok(())
+            }
+            _ => Err(hydrus_store::error::StoreError::Invalid(
+                "maintenance does not match this local service".into(),
+            )),
+        }
+    })
+}
+
 fn human_int(n: i64) -> String {
     hydrus_core::numbers::human_int(u64::try_from(n).unwrap_or(0))
 }
@@ -20,6 +81,7 @@ pub struct Row {
     pub service_type: String,
     pub statistics: String,
     pub unavailable: String,
+    pub actions: Vec<Action>,
 }
 
 fn count(conn: &Connection, table: &str, id: ServiceId) -> Result<i64> {
@@ -112,13 +174,16 @@ pub fn rows(store: &Store) -> Result<Vec<Row>> {
         for service in registry.all() {
             let unavailable = match &service.kind {
                 ServiceKind::TagRepository(_) | ServiceKind::FileRepository(_) | ServiceKind::Ipfs(_) => "Repository synchronisation, IPFS and account administration are not available yet.",
-                ServiceKind::Trash => "Bulk clear trash and undelete all are not available here yet.",
-                ServiceKind::RatingLike(_) | ServiceKind::RatingNumerical(_) | ServiceKind::RatingIncDec(_) => "Bulk clear ratings is not available here yet.",
                 ServiceKind::ClientApi(_) => "API request registration uses hydrus api-keys listen; remote account controls are not available yet.",
                 ServiceKind::LocalFileStorage => "Clear deleted files record is not available here yet.",
                 _ => "",
             };
-            rows.push(Row { id: service.id, key: service.key.clone(), name: service.name.clone(), service_type: service.service_type().name().into(), statistics: statistics(conn, service.id, &service.kind, &graphs.get(service.id))?, unavailable: unavailable.into() });
+            let actions = match service.kind {
+                ServiceKind::Trash if count(conn, "file_domain_current", service.id)? > 0 => vec![Action::ClearTrash, Action::UndeleteTrash],
+                ServiceKind::RatingLike(_) | ServiceKind::RatingNumerical(_) | ServiceKind::RatingIncDec(_) => (2..=4).filter_map(Action::from_index).collect(),
+                _ => Vec::new(),
+            };
+            rows.push(Row { actions, id: service.id, key: service.key.clone(), name: service.name.clone(), service_type: service.service_type().name().into(), statistics: statistics(conn, service.id, &service.kind, &graphs.get(service.id))?, unavailable: unavailable.into() });
         }
         rows.sort_by(|a,b| a.service_type.cmp(&b.service_type).then_with(|| a.name.cmp(&b.name)));
         Ok(rows)

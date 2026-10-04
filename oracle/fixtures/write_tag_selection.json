@@ -392,8 +392,8 @@
           ],
           "deleted": [],
           "predicates": [
-            "parity:multi beta",
             "parity:multi gamma",
+            "parity:multi beta",
             "parity:multi alpha"
           ]
         }
@@ -426,7 +426,7 @@
           ],
           "deleted": [],
           "predicates": [
-            "parity:multi beta"
+            "parity:multi gamma"
           ]
         },
         {
@@ -436,7 +436,7 @@
           ],
           "deleted": [],
           "predicates": [
-            "parity:multi gamma"
+            "parity:multi beta"
           ]
         },
         {
@@ -462,8 +462,8 @@
           ],
           "deleted": [],
           "predicates": [
-            "parity:multi beta",
             "parity:multi gamma",
+            "parity:multi beta",
             "parity:multi alpha"
           ]
         }
@@ -514,7 +514,7 @@
       "answer": false,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste two\nparity:paste one",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste one\nparity:paste two",
           "title": "Want to paste everything?"
         }
       ],
@@ -532,7 +532,7 @@
       "answer": false,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste two\nparity:paste one",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste one\nparity:paste two",
           "title": "Want to paste everything?"
         }
       ],
@@ -563,7 +563,7 @@
       "answer": true,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste two\nparity:paste one",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste one\nparity:paste two",
           "title": "Want to paste everything?"
         }
       ],
@@ -951,5 +951,18 @@
       "ctrl": false,
       "deselection": null
     }
-  ]
+  ],
+  "manage_clipboard": {
+    "text": "draft content",
+    "rows": [
+      {
+        "tag": "parity:paste one",
+        "label": "parity:paste one (1)"
+      },
+      {
+        "tag": "parity:paste two",
+        "label": "parity:paste two (1)"
+      }
+    ]
+  }
 }

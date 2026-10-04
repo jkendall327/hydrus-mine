@@ -35,6 +35,10 @@ export component ManageTagsWindow inherits Window {
     out property <float> service-content-offset: services.content-offset;
     in-out property <int> service-index;
     in property <[ListText]> tags;
+    in property <string> deleted-count-label;
+    in property <bool> deleted-count-visible;
+    in property <bool> show-deleted;
+    callback flip-show-deleted();
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
     in property <[bool]> suggestion-selected;
@@ -64,12 +68,16 @@ export component ManageTagsWindow inherits Window {
     callback navigate(int,bool,bool);
     callback results-action(int) -> bool;
     callback tag-activated(int);
+    in property <bool> incremental-available;
+    in property <bool> incremental-open;
+    callback incremental-tags();
     callback migrate-tags();
     callback apply();
     callback cancel();
 
     forward-focus: input;
     FocusScope {
+        enabled: !root.incremental-open;
         capture-key-pressed(event) => {
             if (event.text == Key.Escape) {
                 if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else if !input.escape-results() { root.cancel(); }
@@ -106,6 +114,17 @@ export component ManageTagsWindow inherits Window {
                                 double-clicked => { root.tag-activated(i); }
                             }
                         }
+                    }
+                }
+                if root.incremental-available: Button { text: "± Incremental Tagging"; enabled: root.question == ""; clicked => { root.incremental-tags(); } }
+                if root.deleted-count-visible: HorizontalLayout {
+                    alignment: end;
+                    spacing: 6px;
+                    Text { text: root.deleted-count-label; color: Theme.text; vertical-alignment: center; }
+                    Button {
+                        text: root.show-deleted ? "hide deleted mappings" : "show deleted mappings";
+                        enabled: root.question == "";
+                        clicked => { root.flip-show-deleted(); }
                     }
                 }
                 input := WriteTagInput {
@@ -165,4 +184,5 @@ export component ManageTagsWindow inherits Window {
             answered(yes) => { root.tag-menu-answered(yes); }
         }
     }
+    if root.incremental-open: Rectangle { width: root.width; height: root.height; background: transparent; TouchArea { } }
 }

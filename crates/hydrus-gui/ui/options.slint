@@ -1,3 +1,4 @@
+import { FrameLocationsTable } from "frame_locations.slint";
 // The options window (file > options, `src/options.rs`), as the
 // reference's "manage options" dialog: its pages listed on the left, the
 // page chosen on the right, each option its label then its control, in
@@ -103,6 +104,16 @@ export component OptionsWindow inherits Window {
     preferred-height: 640px;
     background: Theme.window;
 
+    in property <[TableRow]> frame-rows;
+    in property <bool> frame-selected;
+    in property <bool> frame-single;
+    in property <bool> frame-child-open;
+    in property <int> frame-sort-column;
+    in property <bool> frame-ascending;
+    callback frame-clicked(int,bool,bool);
+    callback frame-activated(int);
+    callback frame-sort(int,bool);
+    callback frame-action(string);
     in property <[TableRow]> reason-rows;
     in property <bool> reason-selected;
     in property <bool> reason-child-open;
@@ -151,6 +162,7 @@ export component OptionsWindow inherits Window {
     callback favourite-tags-clicked();
     callback import-options-clicked();
     callback namespace-sorts-clicked();
+    callback banner-clicked(int);
     in property <[TableRow]> provider-rows;
     in property <[string]> provider-missing;
     in property <bool> provider-has-selection;
@@ -338,6 +350,10 @@ export component OptionsWindow inherits Window {
                                 text: row.text;
                                 clicked => { root.favourite-tags-clicked(); }
                             }
+                            if row.kind == 27: Button {
+                                text: row.text;
+                                clicked => { root.banner-clicked(i); }
+                            }
                             if row.kind == 21: Button {
                                 text: row.text;
                                 clicked => { root.namespace-sorts-clicked(); }
@@ -466,6 +482,18 @@ export component OptionsWindow inherits Window {
                                 }
                             }
                           }
+                            if row.kind == 26: FrameLocationsTable {
+                                rows:root.frame-rows;
+                                selected:root.frame-selected;
+                                single:root.frame-single;
+                                child-open:root.frame-child-open;
+                                sort-column:root.frame-sort-column;
+                                ascending:root.frame-ascending;
+                                clicked(i,c,s)=>{root.frame-clicked(i,c,s);}
+                                activated(i)=>{root.frame-activated(i);}
+                                sort(i,a)=>{root.frame-sort(i,a);}
+                                action(a)=>{root.frame-action(a);}
+                            }
                             if row.kind == 25: DeletionReasonQueue {
                                 rows:root.reason-rows;
                                 enabled:row.enabled;

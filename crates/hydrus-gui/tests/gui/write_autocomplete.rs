@@ -21,6 +21,7 @@ fn paste_confirmation_skip_and_list_height_are_consumed_by_manage_tags() {
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     ui.invoke_select_all();
+    let selected_count = bound.current.borrow().borrow().selected_files().len();
     ui.invoke_manage_tags_selected();
     let w = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
     assert_eq!(w.get_autocomplete_height(), 11);
@@ -34,18 +35,34 @@ fn paste_confirmation_skip_and_list_height_are_consumed_by_manage_tags() {
     assert!(bound.manage_tags.borrow().is_some());
     w.invoke_paste_answered(false);
     assert_eq!(w.get_text(), "caller draft");
-    assert!(!w.get_tags().iter().any(|r| r.text == "parity:new"));
+    assert!(
+        !w.get_tags()
+            .iter()
+            .any(|r| r.text.starts_with("parity:new ("))
+    );
     assert!(w.invoke_paste_requested(false));
     w.invoke_paste_answered(true);
     assert!(w.get_question().is_empty());
-    assert!(w.get_tags().iter().any(|r| r.text == "parity:new"));
+    assert!(
+        w.get_tags()
+            .iter()
+            .any(|r| r.text == format!("parity:new ({selected_count})"))
+    );
     // Repeating a paste must retain a tag, rather than toggle it off.
     assert!(w.invoke_paste_requested(true));
-    assert!(w.get_tags().iter().any(|r| r.text == "parity:new"));
+    assert!(
+        w.get_tags()
+            .iter()
+            .any(|r| r.text == format!("parity:new ({selected_count})"))
+    );
     w.invoke_cancel();
     ui.invoke_manage_tags_selected();
     let w = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
-    assert!(!w.get_tags().iter().any(|r| r.text == "parity:new"));
+    assert!(
+        !w.get_tags()
+            .iter()
+            .any(|r| r.text.starts_with("parity:new ("))
+    );
     store
         .write(|ctx| {
             let mut options: TagEditingSettings = settings::get(ctx.conn())?;
@@ -58,7 +75,11 @@ fn paste_confirmation_skip_and_list_height_are_consumed_by_manage_tags() {
     assert!(w.invoke_paste_requested(false));
     assert!(w.get_question().is_empty());
     assert_eq!(w.get_autocomplete_height(), 3);
-    assert!(w.get_tags().iter().any(|r| r.text == "parity:skip a"));
+    assert!(
+        w.get_tags()
+            .iter()
+            .any(|r| r.text == format!("parity:skip a ({selected_count})"))
+    );
     // Closing a pending paste invalidates its answer and all stale write callbacks.
     store
         .write(|ctx| {
@@ -351,11 +372,12 @@ fn favourite_children_tabs_and_applied_cap_feed_manage_tags_and_import_tag_child
         w.get_suggestions().row_data(0).unwrap().text,
         "parity:gui favourite"
     );
+    let selected_count = bound.current.borrow().borrow().selected_files().len();
     w.invoke_suggestion_chosen(0);
     assert!(
         w.get_tags()
             .iter()
-            .any(|row| row.text == "parity:gui favourite")
+            .any(|row| row.text == format!("parity:gui favourite ({selected_count})"))
     );
     w.invoke_tab_chosen(2);
     assert_eq!(w.get_suggestions().row_count(), 3);

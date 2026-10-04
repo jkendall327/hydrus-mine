@@ -60,6 +60,7 @@ pub mod import_options_panel_window;
 mod import_options_window;
 mod import_window;
 mod importer_list_menu;
+pub mod incremental_tagging_window;
 pub mod locations_window;
 pub mod login_cookies_window;
 pub mod login_credential_window;
@@ -79,6 +80,7 @@ pub mod merge_options_window;
 pub mod mpv;
 pub mod network_header_approval;
 pub mod options_deletion;
+pub mod options_frames;
 mod options_palette;
 mod options_window;
 mod page;
@@ -107,6 +109,7 @@ pub mod string_processor_window;
 mod subscription_quality_control;
 mod subscriptions_window;
 mod tab_context_window;
+pub mod tag_banner_window;
 pub(crate) mod tag_display_window;
 pub mod tag_filter_window;
 pub mod tag_migration_window;
@@ -228,6 +231,7 @@ pub struct Bound {
     pub viewer_deletion: delete_files_window::Slot,
     /// The manage tags window while one is open.
     pub manage_tags: Rc<RefCell<Option<ManageTagsWindow>>>,
+    pub incremental_tags: incremental_tagging_window::Slot,
     /// Siblings or parents while the corresponding editor is open.
     pub tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     /// Display/search or relationship application configuration.
@@ -254,6 +258,10 @@ pub struct Bound {
     pub options: Rc<RefCell<Option<OptionsWindow>>>,
     /// Options-owned custom reason Enter Text/question child.
     pub options_reason_child: options_deletion::Slot,
+    /// Options-owned detached frame geometry editor.
+    pub options_frame_child: options_frames::Slot,
+    /// The Options-owned detached banner editor, while one is open.
+    pub options_banner_child: tag_banner_window::Slot,
     /// The Ctrl+P command palette while open.
     pub command_palette: command_palette_window::Slot,
     /// The about window while it is open.
@@ -1363,6 +1371,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     // F3: manage tags; once applied, the tags are counted again
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
+    let incremental_tags = incremental_tagging_window::Slot::default();
     let tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>> = Rc::default();
     let tag_display: Rc<RefCell<Option<TagDisplayWindow>>> = Rc::default();
     let tag_migration = tag_migration_window::Slot::default();
@@ -1386,13 +1395,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     let open_manage_tags = {
         let manage_tags = manage_tags.clone();
+        let incremental_tags = incremental_tags.clone();
         let page = page.clone();
         move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
+            if let Some(window) = manage_tags.borrow().as_ref() {
+                let _ = window.show();
+                return;
+            }
             let Some(mut model) = manage_tags::ManageTags::new(store, files) else {
                 return;
             };
             model.set_location(page().borrow().location().clone());
-            match manage_tags_window::open(model, &manage_tags, applied) {
+            match manage_tags_window::open(model, &manage_tags, &incremental_tags, applied) {
                 Ok(window) => *manage_tags.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage tags: {e}"),
             }
@@ -1501,6 +1515,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_manage_tags = open_manage_tags.clone();
         let tags_changed = tags_changed.clone();
         move || {
+            if let Some(window) = manage_tags.borrow().as_ref() {
+                let _ = window.show();
+                return;
+            }
             let page = page();
             let page = page.borrow();
             let files = page.selected_files();
@@ -1733,6 +1751,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // the menu bar, its titles shown again as what they say changes
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let options_reason_child: options_deletion::Slot = Rc::default();
+    let options_frame_child: options_frames::Slot = Rc::default();
+    let options_banner_child: tag_banner_window::Slot = Rc::default();
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
     let services_review: Rc<RefCell<Option<ServicesReviewWindow>>> = Rc::default();
     let services_editor = services_editor_window::Slots::default();
@@ -1901,6 +1921,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let pages = pages.clone();
                 let slot = options.clone();
                 let reason_slot = options_reason_child.clone();
+                let frame_slot = options_frame_child.clone();
+                let banner_slot = options_banner_child.clone();
                 let checker_slot = checker_options.clone();
                 let viewer = viewer.clone();
                 let change_pages = change_pages.clone();
@@ -1938,8 +1960,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             });
                         }
                     });
-                    match options_window::open(&store, &slot, &checker_slot, &reason_slot, applied)
-                    {
+                    match options_window::open(
+                        &store,
+                        &slot,
+                        &checker_slot,
+                        &reason_slot,
+                        &frame_slot,
+                        &banner_slot,
+                        applied,
+                    ) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not open the options: {e}"),
                     }
@@ -3749,6 +3778,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         viewer,
         viewer_deletion,
         manage_tags,
+        incremental_tags,
         tag_relationships,
         tag_display,
         tag_migration,
@@ -3762,6 +3792,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         manage_urls,
         options,
         options_reason_child,
+        options_frame_child,
+        options_banner_child,
         command_palette,
         about,
         services_review,
@@ -5709,12 +5741,7 @@ fn open_viewer(
             animator.stop();
             if let Some(window) = weak.upgrade() {
                 // its size and place, if hydrus's option says to keep them
-                let mut frames = windows::settings(&store);
-                if frames.save_media_viewer_on_close {
-                    frames.media_viewer =
-                        frames.media_viewer.saved(windows::state(window.window()));
-                    windows::keep(&store, frames);
-                }
+                windows::save_named(window.window(), &store, "media_viewer");
                 let _ = window.hide();
             }
             slot.borrow_mut().take();

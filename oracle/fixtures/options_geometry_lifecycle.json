@@ -1,0 +1,211 @@
+{
+  "frame_key": "manage_options_dialog",
+  "cases": [
+    {
+      "action": "cancel",
+      "before": [
+        true,
+        true,
+        [
+          800,
+          600
+        ],
+        [
+          20,
+          20
+        ],
+        [
+          -1,
+          -1
+        ],
+        "topleft",
+        false,
+        false
+      ],
+      "actual_window": {
+        "size": [
+          748,
+          748
+        ],
+        "position": [
+          25,
+          25
+        ]
+      },
+      "after": [
+        true,
+        true,
+        [
+          800,
+          600
+        ],
+        [
+          20,
+          20
+        ],
+        [
+          -1,
+          -1
+        ],
+        "topleft",
+        false,
+        false
+      ],
+      "result": 0,
+      "visible": false
+    },
+    {
+      "action": "window_close",
+      "before": [
+        true,
+        true,
+        [
+          800,
+          600
+        ],
+        [
+          20,
+          20
+        ],
+        [
+          -1,
+          -1
+        ],
+        "topleft",
+        false,
+        false
+      ],
+      "actual_window": {
+        "size": [
+          748,
+          748
+        ],
+        "position": [
+          25,
+          25
+        ]
+      },
+      "after": [
+        true,
+        true,
+        [
+          800,
+          600
+        ],
+        [
+          20,
+          20
+        ],
+        [
+          -1,
+          -1
+        ],
+        "topleft",
+        false,
+        false
+      ],
+      "result": 0,
+      "visible": false
+    },
+    {
+      "action": "apply_unchanged",
+      "before": [
+        true,
+        true,
+        [
+          800,
+          600
+        ],
+        [
+          20,
+          20
+        ],
+        [
+          -1,
+          -1
+        ],
+        "topleft",
+        false,
+        false
+      ],
+      "actual_window": {
+        "size": [
+          748,
+          748
+        ],
+        "position": [
+          25,
+          25
+        ]
+      },
+      "after": [
+        true,
+        true,
+        [
+          800,
+          600
+        ],
+        [
+          20,
+          20
+        ],
+        [
+          -1,
+          -1
+        ],
+        "topleft",
+        false,
+        false
+      ],
+      "result": 1,
+      "visible": false
+    },
+    {
+      "action": "apply_reset_self",
+      "before": [
+        true,
+        true,
+        [
+          800,
+          600
+        ],
+        [
+          20,
+          20
+        ],
+        [
+          -1,
+          -1
+        ],
+        "topleft",
+        false,
+        false
+      ],
+      "actual_window": {
+        "size": [
+          748,
+          748
+        ],
+        "position": [
+          25,
+          25
+        ]
+      },
+      "after": [
+        true,
+        true,
+        null,
+        null,
+        [
+          -1,
+          -1
+        ],
+        "topleft",
+        false,
+        false
+      ],
+      "result": 1,
+      "visible": false
+    }
+  ]
+}

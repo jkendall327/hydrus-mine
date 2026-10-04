@@ -13,7 +13,9 @@ record normal paste after declining the multiline-tag question. Real result-list
 key events also record logical wrap/range/navigation and selected clipboard
 output, with an explicit three-physical-row page size. Focused Escape events
 and actual mouse press/move/release handlers record deselection and reversible
-add/remove dragging, including an inherited parent row.
+add/remove dragging, including an inherited parent row. The actual tagsPasted
+signal is also consumed twice by a single-file Manage Tags child, recording its
+all-file storage counts and preserved input independently from suggestion labels.
 """
 import json,os,sys,tempfile
 HERE=os.path.dirname(os.path.abspath(__file__));sys.path.insert(0,HERE)
@@ -173,7 +175,21 @@ def record(session):
             if action=='drag':box.mouseMoveEvent(event)
             else:QtWidgets.QApplication.sendEvent(box.widget(),event)
             drag.append(snapshot(action,physical=physical,ctrl=ctrl,deselection=box._this_drag_is_a_deselection if action=='drag' else None))
-        return dict(tags=tags,rows=rows,steps=steps,menus=menus,normal_paste=paste_events,keyboard=dict(page_rows=3,steps=keyboard),escape=escape,drag=drag)
+        # Follow the actual tagsPasted signal into the single-file Manage Tags
+        # consumer, preserving the existing input while the paste only adds.
+        from hydrus.client.gui.metadata.ClientGUIManageTags import ManageTagsPanel
+        from hydrus.client.media import ClientMediaSingle
+        media=ClientMediaSingle.MediaSingle(c.Read('media_results',[hashes[0]])[0])
+        manage=ManageTagsPanel(c.gui,location,CC.TAG_PRESENTATION_SEARCH_PAGE_MANAGE_TAGS,[media])
+        managed=next(page for page in manage._tag_services.GetPages() if page.GetServiceKey()==service)
+        pasted=paste_events[-1]['pasted_tags'][0]
+        managed._add_tag_box._text_ctrl.setText(paste_events[-1]['text'])
+        managed._add_tag_box.tagsPasted.emit(pasted)
+        managed._add_tag_box.tagsPasted.emit(pasted)
+        clipboard_rows=[{'tag':term.GetTag(),'label':''.join(text for text,_ in managed._tags_box._GetRowsOfTextsAndColours(term)[0])} for term in managed._tags_box._ordered_terms if term.GetTag() in pasted]
+        manage_clipboard={'text':managed._add_tag_box._text_ctrl.text(),'rows':clipboard_rows}
+        manage.deleteLater()
+        return dict(tags=tags,rows=rows,steps=steps,menus=menus,normal_paste=paste_events,keyboard=dict(page_rows=3,steps=keyboard),escape=escape,drag=drag,manage_clipboard=manage_clipboard)
     try:out=qt(replay)
     finally:c.CallToThread=old_thread
     return dict(files=[h.hex() for h in hashes],corpus=[dict(tag=t,hashes=[h.hex() for h in fs]) for t,fs in corpus],siblings=siblings,parents=parents,**out)

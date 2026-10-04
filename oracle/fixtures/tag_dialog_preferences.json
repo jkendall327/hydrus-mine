@@ -301,7 +301,36 @@
         "passed_tags": [
           "parity:amber old"
         ],
-        "activated": true
+        "activated": true,
+        "asked": [
+          {
+            "title": "What would you like to do?",
+            "message": "Of the 3 files being managed, some have that tag, but not all of them do, so there are different things you can do.",
+            "choices": [
+              "add \"parity:amber old\" for 2 files",
+              "delete \"parity:amber old\" for 1 files"
+            ],
+            "chosen": "add \"parity:amber old\" for 2 files"
+          }
+        ],
+        "rows_after_activation": [
+          {
+            "tag": "parity:amber",
+            "rows": [
+              "parity:amber (2)",
+              "    category:colour",
+              "    series:root"
+            ]
+          },
+          {
+            "tag": "parity:amber old",
+            "rows": [
+              "parity:amber old (3)",
+              "    category:colour",
+              "    series:root"
+            ]
+          }
+        ]
       }
     },
     {
@@ -345,7 +374,36 @@
         "passed_tags": [
           "parity:amber old"
         ],
-        "activated": true
+        "activated": true,
+        "asked": [
+          {
+            "title": "What would you like to do?",
+            "message": "Of the 3 files being managed, some have that tag, but not all of them do, so there are different things you can do.",
+            "choices": [
+              "add \"parity:amber old\" for 2 files",
+              "delete \"parity:amber old\" for 1 files"
+            ],
+            "chosen": "add \"parity:amber old\" for 2 files"
+          }
+        ],
+        "rows_after_activation": [
+          {
+            "tag": "parity:amber",
+            "rows": [
+              "parity:amber (2)",
+              "    category:colour",
+              "    series:root"
+            ]
+          },
+          {
+            "tag": "parity:amber old",
+            "rows": [
+              "parity:amber old (3) → parity:amber",
+              "    category:colour",
+              "    series:root"
+            ]
+          }
+        ]
       }
     },
     {
@@ -581,7 +639,36 @@
         "passed_tags": [
           "parity:amber old"
         ],
-        "activated": true
+        "activated": true,
+        "asked": [
+          {
+            "title": "What would you like to do?",
+            "message": "Of the 3 files being managed, some have that tag, but not all of them do, so there are different things you can do.",
+            "choices": [
+              "add \"parity:amber old\" for 2 files",
+              "delete \"parity:amber old\" for 1 files"
+            ],
+            "chosen": "add \"parity:amber old\" for 2 files"
+          }
+        ],
+        "rows_after_activation": [
+          {
+            "tag": "parity:amber",
+            "rows": [
+              "parity:amber (2)",
+              "    category:colour",
+              "    series:root"
+            ]
+          },
+          {
+            "tag": "parity:amber old",
+            "rows": [
+              "parity:amber old (3)",
+              "    category:colour",
+              "    series:root"
+            ]
+          }
+        ]
       }
     },
     {
@@ -625,7 +712,36 @@
         "passed_tags": [
           "parity:amber old"
         ],
-        "activated": true
+        "activated": true,
+        "asked": [
+          {
+            "title": "What would you like to do?",
+            "message": "Of the 3 files being managed, some have that tag, but not all of them do, so there are different things you can do.",
+            "choices": [
+              "add \"parity:amber old\" for 2 files",
+              "delete \"parity:amber old\" for 1 files"
+            ],
+            "chosen": "add \"parity:amber old\" for 2 files"
+          }
+        ],
+        "rows_after_activation": [
+          {
+            "tag": "parity:amber",
+            "rows": [
+              "parity:amber (2)",
+              "    category:colour",
+              "    series:root"
+            ]
+          },
+          {
+            "tag": "parity:amber old",
+            "rows": [
+              "parity:amber old (3) → parity:amber",
+              "    category:colour",
+              "    series:root"
+            ]
+          }
+        ]
       }
     }
   ]

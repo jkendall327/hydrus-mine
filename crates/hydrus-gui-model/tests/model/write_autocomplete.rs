@@ -1368,12 +1368,23 @@ fn clipboard_additions_keep_existing_text_and_result_selection() {
     manage.paste_tags(&tags).unwrap();
     assert_eq!(manage.text(), case["after"].as_str().unwrap());
     manage.paste_tags(&tags).unwrap();
-    for tag in tags {
+    assert_eq!(
+        manage.text(),
+        fixture["manage_clipboard"]["text"].as_str().unwrap()
+    );
+    let recorded_rows = fixture["manage_clipboard"]["rows"].as_array().unwrap();
+    assert_eq!(recorded_rows.len(), tags.len());
+    for pasted_tag in tags {
+        let recorded = recorded_rows
+            .iter()
+            .find(|row| row["tag"].as_str().unwrap() == pasted_tag)
+            .unwrap();
         assert!(
             manage
                 .rows()
                 .iter()
-                .any(|(text, label)| text == &tag && label == &tag)
+                .any(|(tag, label)| tag == &pasted_tag
+                    && label == recorded["label"].as_str().unwrap())
         );
     }
     drop(manage);

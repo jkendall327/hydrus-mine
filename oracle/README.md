@@ -82,6 +82,8 @@ export QT_QPA_PLATFORM=offscreen
 | `record_search_undo_locked.py` | `fixtures/search_undo_locked.json`: actual populated lock keeps badge/media during synchronized Undo; hidden namespaces still have raw history menu names (executed 2026-10-04 19:56:17 UTC) |
 | `record_system_or_activation.py` | `fixtures/system_or_activation.json`: actual main/basic OR result activation, Shift/normal, seeded drafts, system accept/Cancel, outer Cancel, recents, global history and actual DB query counts (18 cases; executed 2026-10-04 20:22:54 UTC) |
 | `record_search_predicate_undo.py` | `fixtures/search_predicate_undo.json`: actual Qt frame-global histories, QAction visible-page toggles, OR, editor cancellation, close/restore, clear confirmations, hidden locked query and empty notebook (20 events; executed 2026-10-04 19:44:59 UTC) |
+| `record_incremental_number_boundaries.py` | `fixtures/incremental_number_boundaries.json`: actual IncrementalTaggingPanel initial/clamp boundaries, long ASCII/Unicode leading-zero inputs, Qt signed-integer overflow and Python raw-preview digit-limit failures (executed 2026-10-04 21:00:55 UTC) |
+| `record_options_geometry_lifecycle.py` | `fixtures/options_geometry_lifecycle.json`: actual DialogManage + all Options pages on Cancel/X/unchanged Apply/own-frame reset; accepted geometry is saved before the frame table commits |
 | `record_filename_simple_paths.py` | `fixtures/filename_simple_paths.json`: actual FilenameTaggingOptions.GetTags with Python posixpath/ntpath backends and real controller filtering; records preserved/dropped `srv` prefixes and mixed Windows separators (path-backend evidence, no Windows Qt execution) |
 | `record_similar_files.py` | `fixtures/similar_files.json`: the similar-files search on generated near-duplicates |
 | `record_auto_resolution.py` | `fixtures/auto_resolution_run.json` + `legacy_db/auto_resolution.tar.gz`: auto-resolution rules run on generated files |
@@ -128,3 +130,10 @@ recorded as sha256 + length.
 
 Where the reference is wrong (a bug users would not rely on), the Rust side
 does not copy it: the difference is recorded in `docs/rust/DIFFERENCES.md`.
+
+`record_service_bulk.py` records actual local trash clear/undelete and like,
+numerical and inc/dec rating-clear panels on a freshly unpacked basic fixture,
+including declined/accepted exact questions, enabled controls and reopened
+counts. Reference cached rating values intentionally remain recorded separately
+from database-backed service counts because bulk rating writes suppress media
+content publication. No remote service is exercised.

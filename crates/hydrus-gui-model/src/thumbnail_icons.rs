@@ -281,6 +281,42 @@ pub fn banners(
     files: &[HashId],
     summaries: &hydrus_core::tag_summary::TagSummaries,
 ) -> (String, String) {
+    let Some((tags, presentation)) = banner_tags(store, files) else {
+        return (String::new(), String::new());
+    };
+    let render = |subtag: &str| presentation.render(subtag);
+    (
+        summaries
+            .thumbnail_top
+            .summary(tags.iter().map(String::as_str), render),
+        summaries
+            .thumbnail_bottom_right
+            .summary(tags.iter().map(String::as_str), render),
+    )
+}
+
+/// The viewer title uses combined current/pending SingleMedia display tags,
+/// exactly like a thumbnail banner; generator colours only affect thumbnails.
+pub fn viewer_banner(store: &hydrus_store::Store, file: HashId) -> String {
+    let summaries: hydrus_core::tag_summary::TagSummaries =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let Some((tags, presentation)) = banner_tags(store, &[file]) else {
+        return String::new();
+    };
+    summaries
+        .media_viewer_top
+        .summary(tags.iter().map(String::as_str), |tag| {
+            presentation.render(tag)
+        })
+}
+
+fn banner_tags(
+    store: &hydrus_store::Store,
+    files: &[HashId],
+) -> Option<(
+    BTreeSet<String>,
+    hydrus_core::tag_presentation::TagPresentation,
+)> {
     use hydrus_core::tag_presentation::TagPresentation;
     use hydrus_store::tag_display::{TagDisplayFilters, TagView};
     let snapshot = store.snapshot();
@@ -305,16 +341,8 @@ pub fn banners(
         Ok((hydrus_store::master::tags(conn, &ids)?, presentation))
     });
     let Ok((names, presentation)) = read else {
-        return (String::new(), String::new());
+        return None;
     };
-    let tags: BTreeSet<&str> = names.values().map(hydrus_core::Tag::as_str).collect();
-    let render = |subtag: &str| presentation.render(subtag);
-    (
-        summaries
-            .thumbnail_top
-            .summary(tags.iter().copied(), render),
-        summaries
-            .thumbnail_bottom_right
-            .summary(tags.iter().copied(), render),
-    )
+    let tags = names.values().map(|tag| tag.as_str().to_owned()).collect();
+    Some((tags, presentation))
 }

@@ -1,0 +1,36 @@
+import { Button, CheckBox, LineEdit, SpinBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export component IncrementalTaggingWindow inherits Window {
+    title: "Incremental Tagging";
+    preferred-width: 640px; preferred-height: 420px;
+    background: Theme.window;
+    in-out property <string> namespace;
+    in-out property <string> prefix;
+    in-out property <string> suffix;
+    in-out property <int> start: 1;
+    in-out property <int> step: 1;
+    in-out property <bool> reverse;
+    in property <string> summary;
+    in property <string> error;
+    callback text-edited(int,string);
+    callback numbers-edited(int,int,bool);
+    callback apply(); callback cancel();
+    forward-focus: namespace-input;
+    FocusScope {
+        key-pressed(event) => { if event.text == Key.Escape { root.cancel(); return accept; } reject }
+        VerticalLayout {
+            padding: 12px; spacing: 8px;
+            Text { text: "Here you can add numerical tags incrementally to a selection of files, for instance adding page:1 -> page:20 to twenty files."; color: Theme.text; wrap: word-wrap; }
+            HorizontalLayout { Text { text: "namespace: "; color: Theme.text; vertical-alignment: center; } namespace-input := LineEdit { horizontal-stretch: 1; text <=> root.namespace; edited(text)=>{root.text-edited(0,text);} } }
+            HorizontalLayout { Text { text: "start: "; color: Theme.text; vertical-alignment: center; } SpinBox { minimum: -10000000; maximum: 10000000; value <=> root.start; edited=>{root.numbers-edited(root.start,root.step,root.reverse);} } }
+            HorizontalLayout { Text { text: "step: "; color: Theme.text; vertical-alignment: center; } SpinBox { minimum: -10000; maximum: 10000; value <=> root.step; edited=>{root.numbers-edited(root.start,root.step,root.reverse);} } }
+            HorizontalLayout { Text { text: "prefix: "; color: Theme.text; vertical-alignment: center; } LineEdit { horizontal-stretch: 1; text <=> root.prefix; edited(text)=>{root.text-edited(1,text);} } }
+            HorizontalLayout { Text { text: "suffix: "; color: Theme.text; vertical-alignment: center; } LineEdit { horizontal-stretch: 1; text <=> root.suffix; edited(text)=>{root.text-edited(2,text);} } }
+            CheckBox { text: "tag in reverse: "; checked <=> root.reverse; toggled=>{root.numbers-edited(root.start,root.step,root.reverse);} }
+            Text { text: root.summary; color: Theme.text; wrap: word-wrap; }
+            if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+            Rectangle { vertical-stretch: 1; }
+            HorizontalLayout { vertical-stretch: 0; height: 32px; alignment: end; spacing: 6px; Button { text: "apply"; clicked=>{root.apply();} } Button { text: "cancel"; clicked=>{root.cancel();} } }
+        }
+    }
+}

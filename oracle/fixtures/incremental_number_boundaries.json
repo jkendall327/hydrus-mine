@@ -1,0 +1,419 @@
+{
+  "python_int_digit_limit": 4300,
+  "cases": [
+    {
+      "input": {
+        "name": "zero",
+        "digits": "0"
+      },
+      "outcome": {
+        "start": 0,
+        "summary": "For the 2 files, you are setting page:0, page:1.\n\n1 files already have these tags."
+      },
+      "clamp_edits": [
+        {
+          "input": [
+            -10000001,
+            -10001
+          ],
+          "actual": [
+            -10000000,
+            -10000
+          ]
+        },
+        {
+          "input": [
+            -10000000,
+            -10000
+          ],
+          "actual": [
+            -10000000,
+            -10000
+          ]
+        },
+        {
+          "input": [
+            10000000,
+            10000
+          ],
+          "actual": [
+            10000000,
+            10000
+          ]
+        },
+        {
+          "input": [
+            10000001,
+            10001
+          ],
+          "actual": [
+            10000000,
+            10000
+          ]
+        }
+      ]
+    },
+    {
+      "input": {
+        "name": "below_clamp",
+        "digits": "9999999"
+      },
+      "outcome": {
+        "start": 9999999,
+        "summary": "For the 2 files, you are setting page:9999999, page:10000000.\n\n1 files already have these tags."
+      },
+      "clamp_edits": [
+        {
+          "input": [
+            -10000001,
+            -10001
+          ],
+          "actual": [
+            -10000000,
+            -10000
+          ]
+        },
+        {
+          "input": [
+            -10000000,
+            -10000
+          ],
+          "actual": [
+            -10000000,
+            -10000
+          ]
+        },
+        {
+          "input": [
+            10000000,
+            10000
+          ],
+          "actual": [
+            10000000,
+            10000
+          ]
+        },
+        {
+          "input": [
+            10000001,
+            10001
+          ],
+          "actual": [
+            10000000,
+            10000
+          ]
+        }
+      ]
+    },
+    {
+      "input": {
+        "name": "at_clamp",
+        "digits": "10000000"
+      },
+      "outcome": {
+        "start": 10000000,
+        "summary": "For the 2 files, you are setting page:10000000, page:10000001.\n\n1 files already have these tags."
+      },
+      "clamp_edits": [
+        {
+          "input": [
+            -10000001,
+            -10001
+          ],
+          "actual": [
+            -10000000,
+            -10000
+          ]
+        },
+        {
+          "input": [
+            -10000000,
+            -10000
+          ],
+          "actual": [
+            -10000000,
+            -10000
+          ]
+        },
+        {
+          "input": [
+            10000000,
+            10000
+          ],
+          "actual": [
+            10000000,
+            10000
+          ]
+        },
+        {
+          "input": [
+            10000001,
+            10001
+          ],
+          "actual": [
+            10000000,
+            10000
+          ]
+        }
+      ]
+    },
+    {
+      "input": {
+        "name": "above_clamp",
+        "digits": "10000001"
+      },
+      "outcome": {
+        "start": 10000000,
+        "summary": "For the 2 files, you are setting page:10000000, page:10000001.\n\n1 files already have different tags for this namespace. Are you sure you are lined up correct?"
+      },
+      "clamp_edits": [
+        {
+          "input": [
+            -10000001,
+            -10001
+          ],
+          "actual": [
+            -10000000,
+            -10000
+          ]
+        },
+        {
+          "input": [
+            -10000000,
+            -10000
+          ],
+          "actual": [
+            -10000000,
+            -10000
+          ]
+        },
+        {
+          "input": [
+            10000000,
+            10000
+          ],
+          "actual": [
+            10000000,
+            10000
+          ]
+        },
+        {
+          "input": [
+            10000001,
+            10001
+          ],
+          "actual": [
+            10000000,
+            10000
+          ]
+        }
+      ]
+    },
+    {
+      "input": {
+        "name": "qt_int_max",
+        "digits": "2147483647"
+      },
+      "outcome": {
+        "start": 10000000,
+        "summary": "For the 2 files, you are setting page:10000000, page:10000001.\n\n1 files already have different tags for this namespace. Are you sure you are lined up correct?"
+      },
+      "clamp_edits": [
+        {
+          "input": [
+            -10000001,
+            -10001
+          ],
+          "actual": [
+            -10000000,
+            -10000
+          ]
+        },
+        {
+          "input": [
+            -10000000,
+            -10000
+          ],
+          "actual": [
+            -10000000,
+            -10000
+          ]
+        },
+        {
+          "input": [
+            10000000,
+            10000
+          ],
+          "actual": [
+            10000000,
+            10000
+          ]
+        },
+        {
+          "input": [
+            10000001,
+            10001
+          ],
+          "actual": [
+            10000000,
+            10000
+          ]
+        }
+      ]
+    },
+    {
+      "input": {
+        "name": "above_qt_int",
+        "digits": "2147483648"
+      },
+      "outcome": {
+        "error_type": "OverflowError",
+        "error": ""
+      }
+    },
+    {
+      "input": {
+        "name": "long_large_ascii",
+        "repeat": "9",
+        "count": 512,
+        "tail": ""
+      },
+      "outcome": {
+        "error_type": "OverflowError",
+        "error": ""
+      }
+    },
+    {
+      "input": {
+        "name": "long_small_ascii",
+        "repeat": "0",
+        "count": 1024,
+        "tail": "7"
+      },
+      "outcome": {
+        "start": 7,
+        "summary": "For the 2 files, you are setting page:7, page:8.\n\n1 files already have different tags for this namespace. Are you sure you are lined up correct?"
+      },
+      "clamp_edits": [
+        {
+          "input": [
+            -10000001,
+            -10001
+          ],
+          "actual": [
+            -10000000,
+            -10000
+          ]
+        },
+        {
+          "input": [
+            -10000000,
+            -10000
+          ],
+          "actual": [
+            -10000000,
+            -10000
+          ]
+        },
+        {
+          "input": [
+            10000000,
+            10000
+          ],
+          "actual": [
+            10000000,
+            10000
+          ]
+        },
+        {
+          "input": [
+            10000001,
+            10001
+          ],
+          "actual": [
+            10000000,
+            10000
+          ]
+        }
+      ]
+    },
+    {
+      "input": {
+        "name": "long_small_unicode",
+        "repeat": "٠",
+        "count": 1024,
+        "tail": "٧"
+      },
+      "outcome": {
+        "start": 7,
+        "summary": "For the 2 files, you are setting page:7, page:8.\n\n1 files already have different tags for this namespace. Are you sure you are lined up correct?"
+      },
+      "clamp_edits": [
+        {
+          "input": [
+            -10000001,
+            -10001
+          ],
+          "actual": [
+            -10000000,
+            -10000
+          ]
+        },
+        {
+          "input": [
+            -10000000,
+            -10000
+          ],
+          "actual": [
+            -10000000,
+            -10000
+          ]
+        },
+        {
+          "input": [
+            10000000,
+            10000
+          ],
+          "actual": [
+            10000000,
+            10000
+          ]
+        },
+        {
+          "input": [
+            10000001,
+            10001
+          ],
+          "actual": [
+            10000000,
+            10000
+          ]
+        }
+      ]
+    },
+    {
+      "input": {
+        "name": "long_large_unicode",
+        "repeat": "٩",
+        "count": 512,
+        "tail": ""
+      },
+      "outcome": {
+        "error_type": "OverflowError",
+        "error": ""
+      }
+    },
+    {
+      "input": {
+        "name": "beyond_python_digit_limit",
+        "repeat": "0",
+        "count": 5000,
+        "tail": "7"
+      },
+      "outcome": {
+        "error_type": "ValueError",
+        "error": "Exceeds the limit (4300 digits) for integer string conversion: value has 5001 digits; use sys.set_int_max_str_digits() to increase the limit"
+      }
+    }
+  ]
+}

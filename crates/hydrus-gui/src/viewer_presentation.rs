@@ -10,6 +10,7 @@ use hydrus_store::{
 };
 
 pub(crate) fn refresh(window: &crate::MediaViewerWindow, store: &Store, file: HashId) {
+    window.set_tag_banner(hydrus_gui_model::thumbnail_icons::viewer_banner(store, file).into());
     let options: ViewerCanvasSettings = store.read(settings::get).unwrap_or_default();
     let focus: ViewerFocusSettings = store.read(settings::get).unwrap_or_default();
     window.set_seek_requires_focus(focus.seek_requires_focus);

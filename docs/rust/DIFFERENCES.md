@@ -989,7 +989,7 @@ Checked by the `popups` conformance scenario.
   `false` for a numerical or inc/dec rating service (Python counts a bool as
   an int, so the reference stores `true` as one star).
 
-- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, repository/IPFS account administration, bulk clear/undelete maintenance actions remain unavailable and are described in the window.
+- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, repository/IPFS account administration and clearing deleted-file records remain unavailable. Local trash clear/undelete and all three local rating-clear populations are implemented; bulk rating choices and confirmations use native inline controls rather than Qt popup menus/dialogs.
 
 - **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields and there is no live rating preview; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available; HTTPS, normie Eris and external URL overrides are preserved imported values, with an explicit control to disable unsupported HTTPS. A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
 
@@ -1629,9 +1629,8 @@ reach Manage Tags; the service navigator also reaches sibling and parent editors
 These are opening defaults independent of write-autocomplete decorations. Native
 service tabs and list rows use Slint geometry. Inherited parent ordering follows
 natural tag order; Qt's inherited-parent collection does not specify relative
-order. Existing Manage Tags differences remain: counts are omitted when every
-selected file has the tag, multiple stored-tag selection and its full context
-menu are not implemented, and remote service petition dialogs are outside this
+order. Existing Manage Tags differences remain: multiple stored-tag selection and its
+full context menu are not implemented, and remote service petition dialogs are outside this
 local-service slice. The four preference leaves do not claim those parent
 workflow gaps complete.
 
@@ -1877,3 +1876,58 @@ Shift and use the same OR construction broadcast as tags. The executed actual
 Qt activation recording covers both consumers, accepted recents after outer
 Cancel, history-free drafts and real query counts. Authored model/native
 regression execution remains pending hosted CI.
+
+Manage Tags deleted-mapping counts and the global show/hide preference now reach
+existing local-service panels, including staged changes and persisted reopening.
+Other open native owners observe a toggle within 200 ms, rather than Qt's queued
+notification. Native uses a labelled show/hide button instead of the reference
+eye icon. Repository Manage Tags panels and their petition/pend action choices
+remain an inherited gap; this checkpoint does not claim that parent complete.
+
+The native Incremental Tagging child uses the existing local-service Manage Tags
+consumer. Repository panels, repository pend/petition choices and parent-level
+uncommitted-change confirmation remain separate inherited Manage Tags gaps.
+Reference numeric controls and additive per-file behavior are retained; native
+rejects out-of-range callback values without changing the preview. Initial-start
+inference now uses the reference Unicode15.1 decimal values and ASCII-run numeric
+sort keys, including mixed-script digits and skipped negative subtags. The actual
+Qt panel fails to open when its initial integer exceeds signed 32-bit range,
+and Python rejects raw previews above its configured integer-digit limit. Native
+retains a usable value: it clamps large decimal values to 10,000,000 and correctly
+reads long leading-zero values. This intentional difference is recorded in
+`incremental_number_boundaries.json`; synthetic previews above the 1,024-character
+stored-tag limit are injected only into media tag managers, never written to DB.
+The ordinary tag-selection parent remains independently
+assessed; these two features do not complete it. Adding a fresh tag then removing
+it now retains a staged deleted mapping, matching Qt instead of treating that
+sequence as an unchanged draft.
+
+
+Frame locations: the complete imported table and geometry editor persist all
+fields, but placement consumers currently use remembered size/position and
+maximised/fullscreen for the main window, media viewer and Options window. Other
+named dialog owners have not yet been wired to their frame keys. Default gravity,
+parent/cursor positioning, screen fitting and offscreen-rescue preferences still
+lack native consumers; their parent/table/editor coverage remains Partial.
+The real Options lifecycle does not retain incidental resize/move geometry on
+Cancel/X or unchanged Apply: the accepted-dialog geometry save occurs before
+the GUI page commits its captured frame table. Native retains the same final
+Options-frame values, including explicit own-frame resets, as recorded in
+`options_geometry_lifecycle.json`.
+
+Service review trash deletion delegates physical unlinking to the existing
+deferred-delete worker and preserves its delete-lock behaviour. The recorded
+rating warning about restarting media views is retained: review counts reopen
+from the database immediately, while cached media ratings refresh through their
+existing viewer/page lifecycle. The service review parent remains partial;
+this slice covers only the two local bulk-maintenance leaves.
+
+
+Tag-banner editors use RGBA spin boxes with swatches instead of Qt's alpha-colour
+picker, and owned inline namespace questions instead of three separate text-entry
+dialogs. The colour-picker and deeper child-window hierarchy remain partial.
+Generator colours affect thumbnails only, as in Qt; the viewer title uses its
+normal information text colour. Repeated namespace rows retain their existing
+summary semantics; Unicode decimal numeric collapse is now supported. Authored
+native owner/consumer regressions and rendered PNGs await hosted CI.
+

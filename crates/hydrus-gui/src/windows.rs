@@ -42,6 +42,24 @@ pub fn place(window: &slint::Window, frame: &FrameLocation) {
     }
 }
 
+/// Place an implemented owner from its editable reference frame key.
+pub fn place_named(window: &slint::Window, store: &Store, name: &str) {
+    if let Some(frame) = settings(store).frame(name) {
+        place(window, frame);
+    }
+}
+
+/// Save only the closing owner's current geometry, preserving other frames.
+pub fn save_named(window: &slint::Window, store: &Store, name: &str) {
+    let state = state(window);
+    let name = name.to_owned();
+    if let Err(error) = store.write(move |ctx| {
+        hydrus_gui_model::frame_locations::save_window_state(ctx.conn(), &name, state)
+    }) {
+        eprintln!("could not keep the window's size and place: {error}");
+    }
+}
+
 /// A window's size and place now, and whether it is maximised or
 /// fullscreen.
 pub fn state(window: &slint::Window) -> WindowState {

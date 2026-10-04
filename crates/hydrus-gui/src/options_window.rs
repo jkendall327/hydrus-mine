@@ -261,6 +261,13 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 (Kind::ProviderOrder, Value::ProviderOrder(_)) => {
                     out.kind = 22;
                 }
+                (Kind::TagBanner(_), Value::TagBanner(value)) => {
+                    out.kind = 27;
+                    let presentation = store.read(hydrus_store::settings::get).unwrap_or_default();
+                    out.text = hydrus_gui_model::tag_banner::Editor::new(value, presentation)
+                        .preview()
+                        .into();
+                }
                 (Kind::NamespaceSorts, Value::NamespaceSorts(_)) => {
                     out.kind = 21;
                     out.text = "edit namespace sorting schemes".into();
@@ -271,6 +278,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 }
                 (Kind::DeletionReasons, Value::DeletionReasons(_)) => {
                     out.kind = 25;
+                }
+                (Kind::FrameLocations, Value::FrameLocations(_)) => {
+                    out.kind = 26;
                 }
                 (Kind::RegexFavourites, Value::RegexFavourites(_)) => {
                     out.kind = 14;
@@ -311,6 +321,8 @@ pub(crate) fn open(
     slot: &Rc<RefCell<Option<OptionsWindow>>>,
     checker_slot: &Rc<RefCell<Option<CheckerOptionsWindow>>>,
     reason_slot: &crate::options_deletion::Slot,
+    frame_slot: &crate::options_frames::Slot,
+    banner_slot: &crate::tag_banner_window::Slot,
     applied: Rc<dyn Fn()>,
 ) -> Result<OptionsWindow, String> {
     let settings = store
@@ -350,6 +362,7 @@ pub(crate) fn open(
     window.set_pages(ModelRc::new(VecModel::from(names)));
     let show_providers = crate::options_palette::bind(&window, &editor, &active);
     let reason_queue = crate::options_deletion::bind(&window, &editor, &active, reason_slot);
+    let frame_table = crate::options_frames::bind(&window, &editor, &active, frame_slot);
     // (the rows are made anew only as the page changes: an edit leaves its
     // control as the user left it)
     let show_page = {
@@ -391,17 +404,20 @@ pub(crate) fn open(
     };
     show_page();
     (reason_queue.show)();
+    (frame_table.show)();
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
         let import_slot = import_slot.clone();
         let namespace_slot = namespace_slot.clone();
+        let banner_slot = banner_slot.clone();
         let regex_slot = regex_slot.clone();
         let gallery_slot = gallery_slot.clone();
         let location_slot = location_slot.clone();
         let tag_slot = tag_slot.clone();
         let active = active.clone();
         let cancel_reasons = reason_queue.cancel.clone();
+        let cancel_frames = frame_table.cancel.clone();
         move || {
             if !active.replace(false) {
                 return;
@@ -414,8 +430,10 @@ pub(crate) fn open(
                 child.invoke_cancel();
             }
             cancel_reasons();
+            cancel_frames();
             crate::import_options_panel_window::cancel(&import_slot);
             crate::namespace_sorts_window::cancel(&namespace_slot);
+            crate::tag_banner_window::cancel(&banner_slot);
             crate::locations_window::cancel(&location_slot);
             crate::regex_favourites_window::cancel(&regex_slot);
             crate::gallery_source_window::cancel(&gallery_slot);
@@ -598,6 +616,40 @@ pub(crate) fn open(
             }
         }
     });
+    window.on_banner_clicked({
+        let editor = editor.clone();
+        let slot = banner_slot.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        let store = store.clone();
+        move |row| {
+            if !active.get() || slot.borrow().is_some() {
+                return;
+            }
+            let Some((target, value)) = usize::try_from(row)
+                .ok()
+                .and_then(|row| editor.borrow().edited_banner(row))
+            else {
+                return;
+            };
+            let presentation = store.read(hydrus_store::settings::get).unwrap_or_default();
+            let applied = Rc::new({
+                let editor = editor.clone();
+                let active = active.clone();
+                let show_page = show_page.clone();
+                move |value| {
+                    if active.get() {
+                        editor.borrow_mut().set_banner(target, value);
+                        show_page();
+                    }
+                }
+            });
+            if let Err(error) = crate::tag_banner_window::open(&value, presentation, &slot, applied)
+            {
+                eprintln!("could not open tag banner: {error}");
+            }
+        }
+    });
     window.on_namespace_sorts_clicked({
         let editor = editor.clone();
         let slot = namespace_slot.clone();
@@ -672,9 +724,11 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let active = active.clone();
         let reasons_open = reason_queue.has_open.clone();
+        let frames_open = frame_table.has_open.clone();
         move |i, checked| {
             if !active.get()
                 || reasons_open()
+                || frames_open()
                 || !matches!(
                     editor.borrow().rows().get(at(i)),
                     Some(Row::Opt { enabled: true, .. })
@@ -1042,8 +1096,10 @@ pub(crate) fn open(
     });
     window.on_apply({
         let reasons_open = reason_queue.has_open.clone();
+        let frames_open = frame_table.has_open.clone();
         let import_slot = import_slot.clone();
         let namespace_slot = namespace_slot.clone();
+        let banner_slot = banner_slot.clone();
         let active = active.clone();
         let tag_slot = tag_slot.clone();
         let editor = editor.clone();
@@ -1052,9 +1108,11 @@ pub(crate) fn open(
         move || {
             if !active.get()
                 || reasons_open()
+                || frames_open()
                 || tag_slot.borrow().is_some()
                 || import_slot.borrow().is_some()
                 || namespace_slot.borrow().is_some()
+                || banner_slot.borrow().is_some()
             {
                 return;
             }
@@ -1101,6 +1159,7 @@ pub(crate) fn open(
             slint::CloseRequestResponse::HideWindow
         }
     });
+    crate::windows::place_named(window.window(), store, "manage_options_dialog");
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }
