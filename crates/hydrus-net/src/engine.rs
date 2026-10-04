@@ -278,16 +278,23 @@ impl Job {
     }
 
     pub fn state(&self) -> JobState {
+        self.state_at(now())
+    }
+
+    fn state_at(&self, at: i64) -> JobState {
         let mut state = self.state.lock().clone();
         if let Some(tracker) = self.tracker.lock().as_mut() {
-            state.speed = tracker.usage(BandwidthType::Data, Some(1), now());
+            state.speed = tracker.usage(BandwidthType::Data, Some(1), at);
         }
         state
     }
 
     /// Count `bytes` read towards the job's speed.
     fn report_read(&self, bytes: u64) {
-        let now = now();
+        self.report_read_at(bytes, now());
+    }
+
+    fn report_read_at(&self, bytes: u64, now: i64) {
         self.tracker
             .lock()
             .get_or_insert_with(|| Tracker::new(now))
@@ -1973,6 +1980,18 @@ fn parse_last_modified(value: &str) -> Option<i64> {
 mod reload_tests {
     use super::*;
     use hydrus_store::network::NetworkSettings;
+
+    #[test]
+    fn job_speed_samples_the_current_second_and_expires_at_rollover() {
+        let job = Job::new();
+        job.report_read_at(400, 100);
+        job.report_read_at(600, 101);
+        job.state.lock().bytes_read = 1000;
+        assert_eq!(job.state_at(100).speed, 400);
+        assert_eq!(job.state_at(101).speed, 600);
+        assert_eq!(job.state_at(102).speed, 0);
+        assert_eq!(job.state_at(102).bytes_read, 1000);
+    }
 
     fn engine() -> (tempfile::TempDir, Arc<Store>, NetEngine) {
         let dir = tempfile::tempdir().unwrap();
