@@ -4,7 +4,8 @@
   "baseline": "d92abea9",
   "implementation_commits": [
     "be626af1a79553028d8ba9ec1f685670e07019bf",
-    "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+    "5fb75bc9c9f0c461cb205df266e0e7da6689b467",
+    "efe8fe605d685d6e3db70b5aeb4369f198af4352"
   ],
   "claims": [
     {
@@ -75,7 +76,7 @@
       "previous_status": "missing",
       "proposedStatus": "first_pass",
       "proposed_status": "first_pass",
-      "exactBehavior": "Local like/dislike, numerical and inc/dec service configuration has four independent interactive examples labelled Thumbnails, Media Viewer, Preview Window and Dialog (Default). Staged colour/shape/star-count/padding/fraction changes repaint actual graphics. Like left/right toggles; numerical left chooses and right clears; counter left/right changes and middle value Accept/Cancel affects only its sample. Owned counter prompt blocks child Apply until answered. Samples never enter ServiceKind or file ratings. Child Apply stages actual service configuration, parent Apply persists it, reopen initializes fresh samples from saved configuration; child/parent Cancel and retained closed-child callbacks cannot commit or clear a successor. Numerical samples retain the recorded opening click conversion while live count changes repaint the stored fraction.",
+      "exactBehavior": "Local like/dislike, numerical and inc/dec service configuration has four independent interactive examples labelled Thumbnails, Media Viewer, Preview Window and Dialog (Default). Staged colour/shape/star-count/padding/fraction changes repaint actual graphics. Like left/right toggles; numerical left chooses and right clears; counter left/right changes and middle value Accept/Cancel affects only its sample. Owned counter prompt blocks child Apply until answered. Samples never enter ServiceKind or file ratings. Child Apply stages actual service configuration, parent Apply persists it, reopen initializes fresh samples from saved configuration; child/parent Cancel and retained closed-child callbacks cannot commit or clear a successor. Numerical samples retain the recorded opening click conversion while live count changes repaint the stored fraction. Whole-widget numerical pointer routing includes painted fraction text and blank space, updates only while the left button is held, preserves last valid value when dragging outside, clears on outside press/right press, and ignores post-release hover. Opening fraction-side/count/allow-zero conversion and saved one-star normalization remain distinct, as recorded.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/rating_example.rs",
@@ -106,6 +107,24 @@
           "line": 61,
           "symbol": "export component RatingGraphic",
           "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/rating_example.rs",
+          "line": 75,
+          "symbol": "pub fn pointer(",
+          "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/services_editor_window.rs",
+          "line": 367,
+          "symbol": "window.on_preview_pointer",
+          "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/services_editor.slint",
+          "line": 8,
+          "symbol": "component RatingSampleControl",
+          "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352"
         }
       ],
       "test_anchors": [
@@ -120,6 +139,18 @@
           "line": 396,
           "symbol": "fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners",
           "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/services_editor.rs",
+          "line": 650,
+          "symbol": "fn rating_example_whole_widget_pointer_routes_replay_qt",
+          "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/services_editor.rs",
+          "line": 819,
+          "symbol": "fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area",
+          "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352"
         }
       ],
       "referenceRecording": {
@@ -141,7 +172,17 @@
         "Service management and rating preferences parents stay partial; no remote/IPFS/account/listener scope, aliases or parent promotions.",
         "Rust model/native/store-consumer regressions authored for root hosted CI; no local Cargo build/test or mutation test."
       ],
-      "native_png": "service-rating-examples.png (hosted CARGO_TARGET_TMPDIR)"
+      "native_png": "service-rating-examples.png (hosted CARGO_TARGET_TMPDIR)",
+      "continuationRecordings": [
+        {
+          "script": "oracle/record_rating_preview_pointer.py",
+          "fixture": "oracle/fixtures/rating_preview_pointer.json",
+          "screenshot": "oracle/fixtures/rating_preview_pointer.png",
+          "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352",
+          "executed_at": "2026-10-04 22:30:01\u201322:30:02 UTC",
+          "result": "Passed actual Qt numerical example press, held move, outside move/press, release, ordinary hover, fraction text click and right click for all three opening fraction sides. Whole-widget x/width/icon dimensions and exact rating/state/fractions captured; original service dictionary unchanged, other sample unrated, example persistence contribution empty. Real mouse events dispatched through Qt, no handlers/conversion/paint patched. Populated drag PNG inspected."
+        }
+      ]
     }
   ],
   "implementation_leaf_count": 2,
@@ -205,11 +246,39 @@
             "Media Viewer sample",
             "Preview Window sample",
             "Dialog (Default) sample",
-            "counter middle-click value prompt with Accept/Cancel"
+            "counter middle-click value prompt with Accept/Cancel",
+            "whole-widget numerical hit area including fraction text",
+            "held-left drag",
+            "outside press/drag and released-hover boundaries"
           ],
           "ownership": "Four per-child samples and pending counter index, all retired with child or parent; no global preview registry"
         }
       ]
+    }
+  ],
+  "review_dependencies": [
+    "5004e159a6061220db4183f41ce678d667f023ab",
+    "5117ecef6cb7dfa3345d5a5cc1e3e7fc89719f07"
+  ],
+  "continuation_evidence": [
+    {
+      "reference_ids": [
+        "audit-media-services-missing-rating-preview"
+      ],
+      "kind": "implementation_extension",
+      "implementation_commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352",
+      "additional_original_leaf_count": 0,
+      "behavior": "Close reviewed drag/fraction pointer gaps while preserving opening conversion and saved one-star normalization",
+      "referenceRecording": {
+        "script": "oracle/record_rating_preview_pointer.py",
+        "fixture": "oracle/fixtures/rating_preview_pointer.json",
+        "screenshot": "oracle/fixtures/rating_preview_pointer.png",
+        "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352",
+        "executed_at": "2026-10-04 22:30:01\u201322:30:02 UTC",
+        "result": "Passed actual Qt numerical example press, held move, outside move/press, release, ordinary hover, fraction text click and right click for all three opening fraction sides. Whole-widget x/width/icon dimensions and exact rating/state/fractions captured; original service dictionary unchanged, other sample unrated, example persistence contribution empty. Real mouse events dispatched through Qt, no handlers/conversion/paint patched. Populated drag PNG inspected."
+      },
+      "native_png": "service-rating-pointer.png (hosted CARGO_TARGET_TMPDIR)",
+      "validation": "fmt/diff/Python/cached Slint passed; native/model regressions authored, root hosted CI pending; no local Cargo or mutation tests"
     }
   ]
 }
