@@ -1,0 +1,1859 @@
+{
+  "paths": [
+    "/srv/import/artist/0012 - page 3.jpg",
+    "/srv/import/artist/0001.png",
+    "/srv/import/Some_File (v2).webm"
+  ],
+  "initial": {
+    "all": [],
+    "selected": [],
+    "single": [],
+    "enabled": false,
+    "tags": [
+      [],
+      [],
+      []
+    ],
+    "filename": [
+      false,
+      "filename"
+    ],
+    "directories": {
+      "0": [
+        false,
+        ""
+      ],
+      "1": [
+        false,
+        ""
+      ],
+      "2": [
+        false,
+        ""
+      ],
+      "-3": [
+        false,
+        ""
+      ],
+      "-2": [
+        false,
+        ""
+      ],
+      "-1": [
+        false,
+        ""
+      ]
+    }
+  },
+  "steps": [
+    {
+      "action": "enter_all",
+      "value": [
+        "Imported",
+        " Creator:Someone ",
+        " : ",
+        "Imported"
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "creator:someone",
+          "imported"
+        ],
+        "selected": [],
+        "single": [],
+        "enabled": false,
+        "tags": [
+          [
+            "creator:someone",
+            "imported"
+          ],
+          [
+            "creator:someone",
+            "imported"
+          ],
+          [
+            "creator:someone",
+            "imported"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "enter_all",
+      "value": [
+        "Imported"
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "creator:someone",
+          "imported"
+        ],
+        "selected": [],
+        "single": [],
+        "enabled": false,
+        "tags": [
+          [
+            "creator:someone",
+            "imported"
+          ],
+          [
+            "creator:someone",
+            "imported"
+          ],
+          [
+            "creator:someone",
+            "imported"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "paste_all",
+      "value": " SHARED\nCreator:Someone\n\n: \n Imported ",
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "creator:someone",
+          "imported",
+          "shared"
+        ],
+        "selected": [],
+        "single": [],
+        "enabled": false,
+        "tags": [
+          [
+            "creator:someone",
+            "imported",
+            "shared"
+          ],
+          [
+            "creator:someone",
+            "imported",
+            "shared"
+          ],
+          [
+            "creator:someone",
+            "imported",
+            "shared"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "remove_all",
+      "value": [
+        "creator:someone"
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [],
+        "single": [],
+        "enabled": false,
+        "tags": [
+          [
+            "imported",
+            "shared"
+          ],
+          [
+            "imported",
+            "shared"
+          ],
+          [
+            "imported",
+            "shared"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "select",
+      "value": [
+        0
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [
+          0
+        ],
+        "single": [],
+        "enabled": true,
+        "tags": [
+          [
+            "imported",
+            "shared"
+          ],
+          [
+            "imported",
+            "shared"
+          ],
+          [
+            "imported",
+            "shared"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "enter_single",
+      "value": [
+        "First Only",
+        "Shared"
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [
+          0
+        ],
+        "single": [
+          "first only",
+          "shared"
+        ],
+        "enabled": true,
+        "tags": [
+          [
+            "first only",
+            "imported",
+            "shared"
+          ],
+          [
+            "imported",
+            "shared"
+          ],
+          [
+            "imported",
+            "shared"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "select",
+      "value": [
+        2
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [
+          2
+        ],
+        "single": [],
+        "enabled": true,
+        "tags": [
+          [
+            "first only",
+            "imported",
+            "shared"
+          ],
+          [
+            "imported",
+            "shared"
+          ],
+          [
+            "imported",
+            "shared"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "enter_single",
+      "value": [
+        "Third Only",
+        "Shared"
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [
+          2
+        ],
+        "single": [
+          "shared",
+          "third only"
+        ],
+        "enabled": true,
+        "tags": [
+          [
+            "first only",
+            "imported",
+            "shared"
+          ],
+          [
+            "imported",
+            "shared"
+          ],
+          [
+            "imported",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "select",
+      "value": [
+        0,
+        2
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [
+          0,
+          2
+        ],
+        "single": [
+          "first only",
+          "shared",
+          "third only"
+        ],
+        "enabled": true,
+        "tags": [
+          [
+            "first only",
+            "imported",
+            "shared"
+          ],
+          [
+            "imported",
+            "shared"
+          ],
+          [
+            "imported",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "enter_single",
+      "value": [
+        "First Only"
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [
+          0,
+          2
+        ],
+        "single": [
+          "first only",
+          "shared",
+          "third only"
+        ],
+        "enabled": true,
+        "tags": [
+          [
+            "first only",
+            "imported",
+            "shared"
+          ],
+          [
+            "imported",
+            "shared"
+          ],
+          [
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "autocomplete_paste_single",
+      "value": [
+        "Third Only",
+        "Autocomplete New"
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [
+          0,
+          2
+        ],
+        "single": [
+          "autocomplete new",
+          "first only",
+          "shared",
+          "third only"
+        ],
+        "enabled": true,
+        "tags": [
+          [
+            "autocomplete new",
+            "first only",
+            "imported",
+            "shared"
+          ],
+          [
+            "imported",
+            "shared"
+          ],
+          [
+            "autocomplete new",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "paste_single",
+      "value": "Third Only\n Direct Paste\n : \n",
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [
+          0,
+          2
+        ],
+        "single": [
+          "autocomplete new",
+          "direct paste",
+          "first only",
+          "shared",
+          "third only"
+        ],
+        "enabled": true,
+        "tags": [
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ],
+          [
+            "imported",
+            "shared"
+          ],
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "remove_single",
+      "value": [
+        "shared"
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [
+          0,
+          2
+        ],
+        "single": [
+          "autocomplete new",
+          "direct paste",
+          "first only",
+          "third only"
+        ],
+        "enabled": true,
+        "tags": [
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ],
+          [
+            "imported",
+            "shared"
+          ],
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "select",
+      "value": [
+        1
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [
+          1
+        ],
+        "single": [],
+        "enabled": true,
+        "tags": [
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ],
+          [
+            "imported",
+            "shared"
+          ],
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "enter_single",
+      "value": [
+        "Middle Only"
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [
+          1
+        ],
+        "single": [
+          "middle only"
+        ],
+        "enabled": true,
+        "tags": [
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ],
+          [
+            "imported",
+            "middle only",
+            "shared"
+          ],
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "select",
+      "value": [],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [],
+        "single": [],
+        "enabled": false,
+        "tags": [
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ],
+          [
+            "imported",
+            "middle only",
+            "shared"
+          ],
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "paste_all",
+      "value": "\n : \n",
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [],
+        "single": [],
+        "enabled": false,
+        "tags": [
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ],
+          [
+            "imported",
+            "middle only",
+            "shared"
+          ],
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          "filename"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "filename_text",
+      "value": "title",
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [],
+        "single": [],
+        "enabled": false,
+        "tags": [
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only",
+            "title:0012 - page 3"
+          ],
+          [
+            "imported",
+            "middle only",
+            "shared",
+            "title:0001"
+          ],
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only",
+            "title:some_file (v2)"
+          ]
+        ],
+        "filename": [
+          true,
+          "title"
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "filename_text",
+      "value": "",
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [],
+        "single": [],
+        "enabled": false,
+        "tags": [
+          [
+            "0012 - page 3",
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ],
+          [
+            "0001",
+            "imported",
+            "middle only",
+            "shared"
+          ],
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "some_file (v2)",
+            "third only"
+          ]
+        ],
+        "filename": [
+          true,
+          ""
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "filename_check",
+      "value": false,
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [],
+        "single": [],
+        "enabled": false,
+        "tags": [
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ],
+          [
+            "imported",
+            "middle only",
+            "shared"
+          ],
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          ""
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            false,
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "directory_text",
+      "value": [
+        -1,
+        "series"
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [],
+        "single": [],
+        "enabled": false,
+        "tags": [
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "series:artist",
+            "shared",
+            "third only"
+          ],
+          [
+            "imported",
+            "middle only",
+            "series:artist",
+            "shared"
+          ],
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "series:import",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          ""
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            ""
+          ],
+          "-1": [
+            true,
+            "series"
+          ]
+        }
+      }
+    },
+    {
+      "action": "directory_text",
+      "value": [
+        -2,
+        "creator"
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [],
+        "single": [],
+        "enabled": false,
+        "tags": [
+          [
+            "autocomplete new",
+            "creator:import",
+            "direct paste",
+            "first only",
+            "imported",
+            "series:artist",
+            "shared",
+            "third only"
+          ],
+          [
+            "creator:import",
+            "imported",
+            "middle only",
+            "series:artist",
+            "shared"
+          ],
+          [
+            "autocomplete new",
+            "creator:srv",
+            "direct paste",
+            "first only",
+            "imported",
+            "series:import",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          ""
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            true,
+            "creator"
+          ],
+          "-1": [
+            true,
+            "series"
+          ]
+        }
+      }
+    },
+    {
+      "action": "directory_check",
+      "value": [
+        -2,
+        false
+      ],
+      "calls": [],
+      "error": null,
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [],
+        "single": [],
+        "enabled": false,
+        "tags": [
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "series:artist",
+            "shared",
+            "third only"
+          ],
+          [
+            "imported",
+            "middle only",
+            "series:artist",
+            "shared"
+          ],
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "series:import",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          ""
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            "creator"
+          ],
+          "-1": [
+            true,
+            "series"
+          ]
+        }
+      }
+    },
+    {
+      "action": "clipboard_missing",
+      "value": null,
+      "calls": [
+        {
+          "title": "Problem pasting!",
+          "text": "clipboard has no text"
+        }
+      ],
+      "error": "TypeError: object of type 'NoneType' has no len()",
+      "state": {
+        "all": [
+          "imported",
+          "shared"
+        ],
+        "selected": [],
+        "single": [],
+        "enabled": false,
+        "tags": [
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "series:artist",
+            "shared",
+            "third only"
+          ],
+          [
+            "imported",
+            "middle only",
+            "series:artist",
+            "shared"
+          ],
+          [
+            "autocomplete new",
+            "direct paste",
+            "first only",
+            "imported",
+            "series:import",
+            "shared",
+            "third only"
+          ]
+        ],
+        "filename": [
+          false,
+          ""
+        ],
+        "directories": {
+          "0": [
+            false,
+            ""
+          ],
+          "1": [
+            false,
+            ""
+          ],
+          "2": [
+            false,
+            ""
+          ],
+          "-3": [
+            false,
+            ""
+          ],
+          "-2": [
+            false,
+            "creator"
+          ],
+          "-1": [
+            true,
+            "series"
+          ]
+        }
+      }
+    }
+  ],
+  "applied": {
+    "all": [
+      "imported",
+      "shared"
+    ],
+    "selected": [],
+    "single": [],
+    "enabled": false,
+    "tags": [
+      [
+        "autocomplete new",
+        "direct paste",
+        "first only",
+        "imported",
+        "series:artist",
+        "shared",
+        "third only"
+      ],
+      [
+        "imported",
+        "middle only",
+        "series:artist",
+        "shared"
+      ],
+      [
+        "autocomplete new",
+        "direct paste",
+        "first only",
+        "imported",
+        "series:import",
+        "shared",
+        "third only"
+      ]
+    ],
+    "filename": [
+      false,
+      ""
+    ],
+    "directories": {
+      "0": [
+        false,
+        ""
+      ],
+      "1": [
+        false,
+        ""
+      ],
+      "2": [
+        false,
+        ""
+      ],
+      "-3": [
+        false,
+        ""
+      ],
+      "-2": [
+        false,
+        "creator"
+      ],
+      "-1": [
+        true,
+        "series"
+      ]
+    }
+  },
+  "value": {
+    "/srv/import/artist/0012 - page 3.jpg": {
+      "my tags": [
+        "autocomplete new",
+        "direct paste",
+        "first only",
+        "imported",
+        "series:artist",
+        "shared",
+        "third only"
+      ]
+    },
+    "/srv/import/artist/0001.png": {
+      "my tags": [
+        "imported",
+        "middle only",
+        "series:artist",
+        "shared"
+      ]
+    },
+    "/srv/import/Some_File (v2).webm": {
+      "my tags": [
+        "autocomplete new",
+        "direct paste",
+        "first only",
+        "imported",
+        "series:import",
+        "shared",
+        "third only"
+      ]
+    }
+  },
+  "reopened": {
+    "all": [
+      "imported",
+      "shared"
+    ],
+    "filename": [
+      false,
+      ""
+    ],
+    "directories": {
+      "0": [
+        false,
+        ""
+      ],
+      "1": [
+        false,
+        ""
+      ],
+      "2": [
+        false,
+        ""
+      ],
+      "-3": [
+        false,
+        ""
+      ],
+      "-2": [
+        false,
+        "creator"
+      ],
+      "-1": [
+        true,
+        "series"
+      ]
+    },
+    "selected_visible": false
+  }
+}

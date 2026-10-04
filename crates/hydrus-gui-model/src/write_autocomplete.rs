@@ -667,6 +667,7 @@ pub struct TagEntry {
     pub input: WriteAutocomplete,
     tags: std::collections::BTreeSet<String>,
     add_only: bool,
+    additions: std::collections::BTreeSet<String>,
 }
 impl TagEntry {
     pub fn new(mut input: WriteAutocomplete, initial: &[String]) -> Self {
@@ -674,6 +675,7 @@ impl TagEntry {
         Self {
             input,
             add_only: false,
+            additions: std::collections::BTreeSet::new(),
             tags: initial
                 .iter()
                 .filter_map(|t| Tag::new(t))
@@ -694,11 +696,18 @@ impl TagEntry {
         }
         tags
     }
+    /// Explicit additive choices, retained only while present in the final list.
+    /// A selected-files owner uses these to distinguish re-entering an existing
+    /// union tag from applying an unchanged heterogeneous selection.
+    pub fn additions(&self) -> Vec<String> {
+        self.additions.intersection(&self.tags).cloned().collect()
+    }
     pub fn enter(&mut self, index: Option<usize>) {
         let tags = self.input.chosen_tags(index);
         if !tags.is_empty() {
             for tag in tags {
                 if self.add_only || !self.tags.remove(&tag) {
+                    self.additions.insert(tag.clone());
                     self.tags.insert(tag);
                 }
             }
@@ -707,16 +716,20 @@ impl TagEntry {
         }
     }
     pub fn paste(&mut self, tags: &[String]) {
-        self.tags.extend(
-            tags.iter()
-                .filter_map(|t| Tag::new(t))
-                .map(|t| t.as_str().to_owned()),
-        );
+        for tag in tags.iter().filter_map(|t| Tag::new(t)) {
+            let tag = tag.as_str().to_owned();
+            // Autocomplete paste is "only add": existing union members are
+            // not an explicit choice to spread across the selected files.
+            if self.tags.insert(tag.clone()) {
+                self.additions.insert(tag);
+            }
+        }
         self.input.set_context_tags(self.tags.iter().cloned());
     }
     pub fn remove(&mut self, index: usize) {
         if let Some(tag) = self.tags().get(index).cloned() {
             self.tags.remove(&tag);
+            self.additions.remove(&tag);
             self.input.set_context_tags(self.tags.iter().cloned());
         }
     }

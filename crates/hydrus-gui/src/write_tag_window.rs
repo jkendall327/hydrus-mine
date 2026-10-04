@@ -36,6 +36,28 @@ pub fn open(
         initial,
         title,
         slot,
+        Rc::new(move |tags, _| applied(tags)),
+        closed,
+    )
+}
+
+/// Additive filename-tagging choices, with explicit additions for a per-file
+/// owner. An unchanged selected union must not spread existing tags to all files.
+pub fn open_additions(
+    store: &Arc<Store>,
+    service: ServiceKey,
+    initial: &[String],
+    title: &str,
+    slot: &Slot,
+    applied: Rc<dyn Fn(Vec<String>, Vec<String>)>,
+    closed: Rc<dyn Fn()>,
+) -> Result<WriteTagsWindow, slint::PlatformError> {
+    open_internal(
+        store,
+        (service, true),
+        initial,
+        title,
+        slot,
         applied,
         closed,
     )
@@ -57,7 +79,7 @@ pub fn open_favourites(
         initial,
         "edit favourite tags",
         slot,
-        applied,
+        Rc::new(move |tags, _| applied(tags)),
         Rc::new(|| {}),
     )
 }
@@ -68,7 +90,7 @@ fn open_internal(
     initial: &[String],
     title: &str,
     slot: &Slot,
-    applied: Rc<dyn Fn(Vec<String>)>,
+    applied: Rc<dyn Fn(Vec<String>, Vec<String>)>,
     closed: Rc<dyn Fn()>,
 ) -> Result<WriteTagsWindow, slint::PlatformError> {
     if let Some(existing) = slot.borrow().as_ref() {
@@ -413,7 +435,8 @@ fn open_internal(
             if !editable() {
                 return;
             }
-            applied(model.borrow().tags());
+            let model = model.borrow();
+            applied(model.tags(), model.additions());
             close();
         }
     });

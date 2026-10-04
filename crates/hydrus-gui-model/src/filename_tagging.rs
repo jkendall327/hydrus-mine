@@ -81,6 +81,30 @@ impl ServiceTagging {
         tags.into_iter().cloned().collect()
     }
 
+    /// Apply an owned additive editor to a frozen file selection. Untouched
+    /// union tags remain attached to their original files; explicit entry of
+    /// an existing union tag spreads it to every selected file, as Qt does.
+    pub fn apply_selected(
+        &mut self,
+        selected: &[usize],
+        before: &[String],
+        after: &[String],
+        additions: &[String],
+    ) {
+        let removed: Vec<_> = before
+            .iter()
+            .filter(|tag| !after.contains(tag))
+            .cloned()
+            .collect();
+        self.remove_single(selected, &removed);
+        let added: Vec<_> = additions
+            .iter()
+            .filter(|tag| after.contains(tag))
+            .cloned()
+            .collect();
+        self.add_single(selected, &added);
+    }
+
     /// Tags taken out of the selected files' box: none of them keeps them.
     pub fn remove_single(&mut self, selected: &[usize], tags: &[String]) {
         for i in selected {
