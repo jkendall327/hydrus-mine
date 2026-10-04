@@ -281,19 +281,23 @@ fn change_log(
             queues::remove_file_seeds(conn, queue, &all)?;
         }
         LogChange::RetryFailed => {
-            queues::retry_file_seeds(conn, queue, &[SeedStatus::Error], now)?;
+            let ids = queues::file_seeds(conn, queue)?
+                .into_iter()
+                .filter(|seed| seed.status == SeedStatus::Error)
+                .map(|seed| seed.id)
+                .collect::<Vec<_>>();
+            queues::set_file_seed_statuses(conn, &ids, SeedStatus::Unknown, now)?;
         }
         LogChange::RetryIgnored(which) => {
-            for mut seed in queues::file_seeds(conn, queue)? {
-                if seed.status == SeedStatus::Vetoed && which.matches(&seed.note) {
-                    seed.status = SeedStatus::Unknown;
-                    seed.note.clear();
-                    seed.modified = now;
-                    queues::update_file_seed(conn, &seed)?;
-                }
-            }
+            let ids = queues::file_seeds(conn, queue)?
+                .into_iter()
+                .filter(|seed| seed.status == SeedStatus::Vetoed && which.matches(&seed.note))
+                .map(|seed| seed.id)
+                .collect::<Vec<_>>();
+            queues::set_file_seed_statuses(conn, &ids, SeedStatus::Unknown, now)?;
         }
     }
+    hydrus_gui_model::subscription_exchange::update_file_status(conn, queue, now)?;
     Ok(())
 }
 
