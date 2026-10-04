@@ -270,9 +270,35 @@ fn selected_url_search_opens_a_local_or_search_and_reaches_matching_files() {
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
-    bound.current.borrow().borrow_mut().refresh();
-    let files = bound.current.borrow().borrow().files().clone();
-    assert!(files.len() >= 2);
+    // Seed URL associations from an explicit local-files query. A restored
+    // blank/locked page is not a fixture catalogue, and Refresh correctly
+    // returns no files when that page has no search predicates.
+    let snapshot = store.snapshot();
+    let all_local = hydrus_search::FileSearchContext {
+        location: hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+            hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+        )),
+        predicates: vec![hydrus_search::Predicate::System(
+            hydrus_search::SystemPredicate::Everything,
+        )],
+        ..hydrus_search::FileSearchContext::default()
+    };
+    let files = store
+        .read(|conn| {
+            Ok(hydrus_search::search_files(
+                conn,
+                &snapshot,
+                &all_local,
+                hydrus_search::FileSort::default(),
+                &hydrus_search::Clock::system(),
+            ))
+        })
+        .unwrap()
+        .unwrap();
+    assert!(
+        files.len() >= 2,
+        "basic fixture contains two distinct local files"
+    );
     let first = files[0];
     let second = files[1];
     let urls = vec![
