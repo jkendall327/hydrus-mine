@@ -115,6 +115,7 @@ pub(crate) mod tag_display_window;
 pub mod tag_filter_window;
 pub mod tag_migration_window;
 pub(crate) mod tag_relationships_window;
+pub mod tag_suggestions_window;
 pub mod thumbnail_menu;
 mod thumbnails;
 mod unlock;
@@ -265,6 +266,7 @@ pub struct Bound {
     pub options_frame_child: options_frames::Slot,
     /// The Options-owned detached banner editor, while one is open.
     pub options_banner_child: tag_banner_window::Slot,
+    pub options_suggested_tags_slot: tag_suggestions_window::Slots,
     /// The Ctrl+P command palette while open.
     pub command_palette: command_palette_window::Slot,
     /// The about window while it is open.
@@ -1769,6 +1771,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let options_reason_child: options_deletion::Slot = Rc::default();
     let options_frame_child: options_frames::Slot = Rc::default();
     let options_banner_child: tag_banner_window::Slot = Rc::default();
+    let options_suggested_tags_slot = tag_suggestions_window::Slots::default();
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
     let services_review: Rc<RefCell<Option<ServicesReviewWindow>>> = Rc::default();
     let services_editor = services_editor_window::Slots::default();
@@ -1939,6 +1942,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let reason_slot = options_reason_child.clone();
                 let frame_slot = options_frame_child.clone();
                 let banner_slot = options_banner_child.clone();
+                let suggested_slot = options_suggested_tags_slot.clone();
                 let checker_slot = checker_options.clone();
                 let viewer = viewer.clone();
                 let change_pages = change_pages.clone();
@@ -1983,6 +1987,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         &reason_slot,
                         &frame_slot,
                         &banner_slot,
+                        &suggested_slot,
                         applied,
                     ) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
@@ -3816,6 +3821,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         options_reason_child,
         options_frame_child,
         options_banner_child,
+        options_suggested_tags_slot,
         command_palette,
         about,
         services_review,

@@ -185,3 +185,13 @@ Right release with Left still held, continuing/outside/re-entered Left motion,
 Left release, and right-only dragging. It captures the reference's Left-priority
 press routing. Native delivered in-widget chord movement is covered; Slint's
 loss of capture after Right release remains a documented cross-edge limitation.
+
+
+`record_tag_suggestions.py` records the real Options tag-suggestions controls and
+per-service most-used list handlers, then the real SuggestedTagsPanel for both
+layouts and all four default choices with related/lookup disabled. It captures
+two-service retained edits/removal, Apply/reopen/cancel, filtered current tags,
+add-only selected activation, recent data and a populated PNG. Recent worker
+scheduling alone is made synchronous; real reads/publishers and all parsing,
+sorting, list, options and activation handlers remain intact. Run with the shared
+oracle lock on a fresh basic fixture.

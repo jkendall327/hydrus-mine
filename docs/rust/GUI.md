@@ -2971,3 +2971,24 @@ Numerical rating examples also continue a held Left drag across a Right
 press/release while the pointer remains in the sample; a right-only drag does not
 set a rating. The actual Qt chord sequence extends `rating_preview_pointer.json`.
 The cross-edge chord capture boundary is documented separately in DIFFERENCES.
+
+
+Options > tag suggestions now stages the suggested-column width, notebook or
+side-by-side layout, the original four default-page choices, and independent
+most-used tag lists for each real tag service. The owned list editor reuses
+write autocomplete, paste and selected-tag removal; its child Apply accepts a
+list, its own Apply accepts the service drafts, and Options Apply persists them.
+Cancel at any level discards that level and closes its descendants. Saved
+per-service edits merge without replacing concurrently changed other services
+or the children-tab cap.
+
+Manage Tags shows functional most-used and recent suggestion lists. Most-used
+rows follow the search-page tag sort and omit current/pending tags already on
+every selected file. Activating a selected batch only adds missing mappings;
+these additions remain staged until Manage Tags Apply. Existing most-used
+panels refresh immediate shared-menu/Options changes within 200 ms. Recent rows
+read the imported/native history, and accepted tag additions update that history.
+Opening captures width, layout, panel availability and default tab; reopening
+uses saved settings. The actual Qt replay is `tag_suggestions.json`, including
+two service drafts, removed tags, cancellation, all eight recorded available
+layout/default combinations and add-only activation.

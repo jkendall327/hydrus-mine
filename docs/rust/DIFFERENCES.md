@@ -2024,3 +2024,22 @@ so leaving the sample after the extra Right release cancels its capture: native
 cannot resume that chord drag upon re-entry while Left remains held. Ordinary
 single-button captured drags retain the previously recorded outside behavior.
 This framework boundary remains explicit; full chord capture parity is not claimed.
+
+
+Suggested tags have real local-service most-used and recent consumers, per-service
+Options list drafts and width/layout controls. Related-tag searching, its weights
+and duration controls, and file-lookup scripts are still absent, so suggestion
+families and the default-notebook-page leaf remain partial. All four reference
+page choices are retained and saved; unavailable choices fall back to the first
+available native page, as recorded with those Qt panels disabled. This does not
+claim normal Qt Related/File Lookup availability. Opening captures existing
+most-used panel availability, matching Qt; updates refresh an already-existing
+panel without inventing a new tab. Native service-list editing uses owned child
+windows instead of embedding the write input directly in Options.
+
+The recent panel provides real history and add-only activation, but its Clear
+question, read-time decay and the full suggestion-list keyboard/context-menu
+interactions remain outside this slice. No recent/children/related/global
+favourite-list aliases are promoted. Native most-used updates poll persisted
+settings every 200 ms instead of Qt's publication subscription. New local
+consumers preserve staged tag cancellation and retire their callbacks/timers.

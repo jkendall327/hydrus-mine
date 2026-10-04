@@ -59,6 +59,30 @@ impl Setting for TagAutocompleteTabs {
     const KEY: &'static str = "tag_autocomplete_tabs";
 }
 
+/// Presentation and recent-history limit for manage-tags suggestion panels.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct TagSuggestionSettings {
+    pub width: u32,
+    pub columns: bool,
+    /// Reference page keys, including its legacy `favourites` spelling.
+    pub default_page: String,
+    pub recent_limit: Option<usize>,
+}
+impl Default for TagSuggestionSettings {
+    fn default() -> Self {
+        Self {
+            width: 300,
+            columns: false,
+            default_page: "related".into(),
+            recent_limit: Some(20),
+        }
+    }
+}
+impl Setting for TagSuggestionSettings {
+    const KEY: &'static str = "tag_suggestions";
+}
+
 /// How selected viewing canvases are presented in media context menus.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]

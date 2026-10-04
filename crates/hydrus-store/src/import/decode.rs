@@ -315,6 +315,22 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .collect();
     }
     insert_setting(&mut input, &autocomplete_tabs)?;
+    let mut suggestions = crate::settings::TagSuggestionSettings::default();
+    if let Some(options) = &options {
+        if let Some(width) = options.integers.get("suggested_tags_width") {
+            suggestions.width = u32::try_from(*width).unwrap_or(300).clamp(20, 65535);
+        }
+        if let Some(Some(layout)) = options.noneable_strings.get("suggested_tags_layout") {
+            suggestions.columns = layout == "columns";
+        }
+        if let Some(page) = options.strings.get("default_suggested_tags_notebook_page") {
+            suggestions.default_page.clone_from(page);
+        }
+        if let Some(limit) = options.noneable_integers.get("num_recent_tags") {
+            suggestions.recent_limit = limit.map(|n| usize::try_from(n).unwrap_or(20).max(1));
+        }
+    }
+    insert_setting(&mut input, &suggestions)?;
     let notebook_creation = crate::settings::NotebookCreationSettings {
         rename_new_notebooks: options.as_ref().is_some_and(|options| {
             options.booleans.get("rename_page_of_pages_on_pick_new") == Some(&true)

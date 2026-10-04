@@ -42,6 +42,20 @@ use hydrus_store::trash::TrashSettings;
 use rusqlite::Connection;
 
 macro_rules! settings {
+    (@save $conn:ident, $after:ident, $before:ident, tag_autocomplete_tabs) => {
+        if $after.tag_autocomplete_tabs != $before.tag_autocomplete_tabs {
+            let mut current: TagAutocompleteTabs = hydrus_store::settings::get($conn)?;
+            if $after.tag_autocomplete_tabs.children_limit != $before.tag_autocomplete_tabs.children_limit {
+                current.children_limit = $after.tag_autocomplete_tabs.children_limit;
+            }
+            for (key, tags) in &$after.tag_autocomplete_tabs.most_used {
+                if $before.tag_autocomplete_tabs.most_used.get(key) != Some(tags) {
+                    current.most_used.insert(key.clone(), tags.clone());
+                }
+            }
+            hydrus_store::settings::set($conn, &current)?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, windows) => {
         if $after.windows != $before.windows {
             let mut windows: WindowSettings = hydrus_store::settings::get($conn)?;
@@ -143,6 +157,7 @@ settings! {
     file_search: FileSearchSettings,
     tag_editing: TagEditingSettings,
     tag_autocomplete_tabs: TagAutocompleteTabs,
+    tag_suggestions: hydrus_store::settings::TagSuggestionSettings,
     favourite_tags: FavouriteTags,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
@@ -214,6 +229,7 @@ pub enum Value {
     FrameLocations(std::collections::BTreeMap<String, hydrus_core::windows::FrameLocation>),
     /// Shared favourite tags, staged until the parent options dialog applies.
     FavouriteTags(FavouriteTags),
+    MostUsedTags(std::collections::BTreeMap<String, Vec<String>>),
     ImportOptions(crate::import_options_panel::Value),
     NamespaceSorts(Vec<PageSort>),
     TagBanner(hydrus_core::tag_summary::TagSummaryGenerator),
@@ -292,6 +308,7 @@ pub enum Kind {
     LocalLocation,
     /// A detached tag list editor sharing write autocomplete.
     FavouriteTags,
+    MostUsedTags,
     /// The transactional manager page, including simple-mode presentation.
     ImportOptions,
     NamespaceSorts,
@@ -3082,6 +3099,53 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             )],
         ),
         page(
+            "tag suggestions",
+            vec![boxed(
+                "suggested tags",
+                vec![
+                    int(
+                        "Width of suggested tags columns: ",
+                        (20, 65535),
+                        |s| i64::from(s.tag_suggestions.width),
+                        |s, v| s.tag_suggestions.width = v as u32,
+                    ),
+                    choice(
+                        "Column layout: ",
+                        &["notebook", "side-by-side"],
+                        |s| usize::from(s.tag_suggestions.columns),
+                        |s, v| s.tag_suggestions.columns = v == 1,
+                    ),
+                    choice(
+                        "Default notebook page: ",
+                        &["most used", "related", "file_lookup_scripts", "recent"],
+                        |s| {
+                            ["favourites", "related", "file_lookup_scripts", "recent"]
+                                .iter()
+                                .position(|v| *v == s.tag_suggestions.default_page)
+                                .unwrap_or(0)
+                        },
+                        |s, v| {
+                            s.tag_suggestions.default_page =
+                                ["favourites", "related", "file_lookup_scripts", "recent"][v].into()
+                        },
+                    ),
+                    opt(
+                        "Add your most used tags for each particular service here, and then you can just double-click to add, rather than typing every time.",
+                        Kind::MostUsedTags,
+                        Rc::new(|s| Value::MostUsedTags(s.tag_autocomplete_tabs.most_used.clone())),
+                        Rc::new(|s, v| {
+                            if let Value::MostUsedTags(tags) = v {
+                                s.tag_autocomplete_tabs.most_used.clone_from(tags);
+                                Ok(())
+                            } else {
+                                Err(wrong("most used tags"))
+                            }
+                        }),
+                    ),
+                ],
+            )],
+        ),
+        page(
             "thumbnails",
             vec![
                 boxed(
@@ -3927,6 +3991,30 @@ impl Editor {
                 }
             })
             .unwrap_or_else(|| self.before.favourite_tags.clone())
+    }
+
+    /// Per-service most-used draft; accepting a child never writes preferences.
+    pub fn edited_most_used_tags(&self) -> std::collections::BTreeMap<String, Vec<String>> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|v| {
+                if let Value::MostUsedTags(tags) = v {
+                    Some(tags.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| self.before.tag_autocomplete_tabs.most_used.clone())
+    }
+    /// Replace only the staged most-used map; its writer merges changed services.
+    pub fn set_most_used_tags(&mut self, tags: std::collections::BTreeMap<String, Vec<String>>) {
+        for v in self.values.iter_mut().flatten() {
+            if matches!(v, Value::MostUsedTags(_)) {
+                *v = Value::MostUsedTags(tags);
+                return;
+            }
+        }
     }
 
     /// Accept the child draft; only the parent Apply writes these tags.

@@ -31,6 +31,133 @@ fn tags_of(store: &Store, file: HashId, service: &str) -> BTreeSet<String> {
 }
 
 #[test]
+#[allow(clippy::float_cmp)] // Whole-pixel authored width.
+fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers() {
+    let (_dirs, store) = crate::subscriptions::store();
+    let f = hydrus_testkit::fixture_json("tag_suggestions.json");
+    headless::init();
+    let mut page = SearchPage::new(store.clone());
+    page.enter();
+    let files = page.results().to_vec();
+    let mut model = ManageTags::new(store.clone(), files.clone()).unwrap();
+    let mine = model
+        .service_names()
+        .iter()
+        .position(|s| s == "my tags")
+        .unwrap();
+    model.choose_service(mine).unwrap();
+    model.add_side_suggestions(&["parity:present".into()]);
+    model.apply().unwrap();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .to_hex();
+    let tags: Vec<String> = serde_json::from_value(f["edited"]["tags"].clone()).unwrap();
+    let own = key.clone();
+    store
+        .write(move |ctx| {
+            let mut tabs: hydrus_store::settings::TagAutocompleteTabs =
+                hydrus_store::settings::get(ctx.conn())?;
+            tabs.most_used.insert(own, tags);
+            hydrus_store::settings::set(ctx.conn(), &tabs)?;
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::settings::TagSuggestionSettings {
+                    width: 240,
+                    columns: true,
+                    default_page: "recent".into(),
+                    ..hydrus_store::settings::TagSuggestionSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_search_accepted();
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    let mine = manage
+        .get_service_names()
+        .iter()
+        .position(|s| s == "my tags")
+        .unwrap();
+    manage.invoke_service_chosen(i32::try_from(mine).unwrap());
+    assert!(manage.get_suggested_columns());
+    assert_eq!(manage.get_suggested_width(), 240.0);
+    assert_eq!(manage.get_suggested_page(), 1);
+    let rows = manage.get_most_used_rows();
+    assert_eq!(rows.row_count(), 3);
+    assert_eq!(
+        rows.row_data(0).unwrap().cells.row_data(0).unwrap(),
+        "parity:new2"
+    );
+    manage.invoke_side_clicked(0, 0, false, false);
+    manage.invoke_side_activated(0, 0);
+    manage.invoke_side_activated(0, 0);
+    assert!(
+        files
+            .iter()
+            .all(|file| !tags_of(&store, *file, "my tags").contains("parity:new2")),
+        "side suggestions are staged"
+    );
+    assert!(
+        !manage
+            .get_most_used_rows()
+            .iter()
+            .any(|row| row.cells.row_data(0).unwrap() == "parity:new2")
+    );
+    let own = key.clone();
+    store
+        .write(move |ctx| {
+            let mut tabs: hydrus_store::settings::TagAutocompleteTabs =
+                hydrus_store::settings::get(ctx.conn())?;
+            tabs.most_used
+                .get_mut(&own)
+                .unwrap()
+                .push("parity:broadcast".into());
+            hydrus_store::settings::set(ctx.conn(), &tabs)
+        })
+        .unwrap();
+    std::thread::sleep(std::time::Duration::from_millis(220));
+    slint::platform::update_timers_and_animations();
+    assert!(
+        manage
+            .get_most_used_rows()
+            .iter()
+            .any(|row| row.cells.row_data(0).unwrap() == "parity:broadcast")
+    );
+    manage.invoke_apply();
+    assert!(
+        files
+            .iter()
+            .all(|file| tags_of(&store, *file, "my tags").contains("parity:new2"))
+    );
+    manage.invoke_side_clicked(0, 0, false, false);
+    manage.invoke_side_activated(0, 0);
+    manage.invoke_apply();
+    assert!(
+        files
+            .iter()
+            .all(|file| !tags_of(&store, *file, "my tags").contains("parity:broadcast")),
+        "retired side callbacks cannot write"
+    );
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<hydrus_store::settings::TagAutocompleteTabs>)
+            .unwrap()
+            .most_used[&key]
+            .len(),
+        5
+    );
+    ui.hide().unwrap();
+}
+
+#[test]
 fn tags_are_added_and_removed_as_the_reference_does() {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();

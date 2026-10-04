@@ -1,0 +1,191 @@
+use hydrus_gui_model::{
+    manage_tags::ManageTags,
+    options::{Editor, Settings},
+    tag_suggestions,
+};
+use hydrus_store::{
+    Store,
+    settings::{self, TagAutocompleteTabs, TagSuggestionSettings},
+};
+use std::collections::BTreeMap;
+
+fn control(editor: &Editor, label: &str) -> usize {
+    editor
+        .rows()
+        .iter()
+        .position(
+            |r| matches!(r,hydrus_gui_model::options::Row::Opt{option,..} if option.label==label),
+        )
+        .unwrap()
+}
+
+#[test]
+fn layout_and_default_choices_replay_all_recorded_available_pages_without_eager_writes() {
+    let f = hydrus_testkit::fixture_json("tag_suggestions.json");
+    let (_dirs, store) =
+        super::options_dialog::fixture_store(&hydrus_testkit::fixture_json("options_dialog.json"));
+    for case in f["cases"].as_array().unwrap() {
+        let before = store.read(Settings::load).unwrap();
+        let mut editor = Editor::new(before.clone());
+        let page = editor
+            .page_names()
+            .iter()
+            .position(|name| *name == "tag suggestions")
+            .unwrap();
+        editor.show_page(page);
+        let width = control(&editor, "Width of suggested tags columns: ");
+        editor.number(width, case["minimum_width"].as_i64().unwrap());
+        let layout = control(&editor, "Column layout: ");
+        editor.choose(layout, usize::from(case["layout"] == "columns"));
+        let index = ["favourites", "related", "file_lookup_scripts", "recent"]
+            .iter()
+            .position(|key| Some(*key) == case["default"].as_str())
+            .unwrap();
+        let default = control(&editor, "Default notebook page: ");
+        editor.choose(default, index);
+        let (after, original, problems) = editor.applied();
+        assert!(problems.is_empty());
+        assert_eq!(
+            store.read(settings::get::<TagSuggestionSettings>).unwrap(),
+            original.tag_suggestions,
+            "staged edits/cancel never write"
+        );
+        assert_eq!(
+            serde_json::json!(after.tag_suggestions.default_page),
+            case["default"]
+        );
+        assert_eq!(after.tag_suggestions.columns, case["layout"] == "columns");
+        let original = original.clone();
+        store
+            .write(move |ctx| after.save(ctx.conn(), &original))
+            .unwrap();
+        let reopened = Store::open(store.dir()).unwrap();
+        assert_eq!(
+            serde_json::json!(
+                reopened
+                    .read(settings::get::<TagSuggestionSettings>)
+                    .unwrap()
+                    .default_page
+            ),
+            case["default"]
+        );
+    }
+}
+
+#[test]
+fn most_used_options_merge_per_service_and_reach_filtered_add_only_media() {
+    let f = hydrus_testkit::fixture_json("tag_suggestions.json");
+    let (_dirs, store) =
+        super::options_dialog::fixture_store(&hydrus_testkit::fixture_json("options_dialog.json"));
+    let snapshot = store.snapshot();
+    let mine = snapshot.services.by_name("my tags").unwrap();
+    let other = snapshot
+        .services
+        .by_name("second tags")
+        .unwrap()
+        .key
+        .to_hex();
+    let key = mine.key.to_hex();
+    let service = mine.id;
+    let tags: Vec<String> = serde_json::from_value(f["edited"]["tags"].clone()).unwrap();
+    let before = store.read(Settings::load).unwrap();
+    let mut editor = Editor::new(before);
+    editor.set_most_used_tags(BTreeMap::from([(key.clone(), tags)]));
+    assert_eq!(
+        store
+            .read(settings::get::<TagAutocompleteTabs>)
+            .unwrap()
+            .most_used
+            .get(&key),
+        None
+    );
+    let preserved = other.clone();
+    store
+        .write(move |ctx| {
+            let mut live: TagAutocompleteTabs = settings::get(ctx.conn())?;
+            live.children_limit = Some(11);
+            live.most_used
+                .insert(preserved, vec!["parity:concurrent".into()]);
+            settings::set(ctx.conn(), &live)
+        })
+        .unwrap();
+    let (after, before, problems) = editor.applied();
+    assert!(problems.is_empty());
+    let before = before.clone();
+    store
+        .write(move |ctx| after.save(ctx.conn(), &before))
+        .unwrap();
+    let saved: TagAutocompleteTabs = store.read(settings::get).unwrap();
+    assert_eq!(saved.children_limit, Some(11));
+    assert_eq!(saved.most_used[&other], ["parity:concurrent"]);
+    let files: Vec<hydrus_core::HashId> = store
+        .read(|conn| {
+            Ok(conn
+                .prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 2")?
+                .query_map([], |row| row.get(0))?
+                .collect::<rusqlite::Result<_>>()?)
+        })
+        .unwrap();
+    let mut model = ManageTags::new(store.clone(), files.clone()).unwrap();
+    let index = model
+        .service_names()
+        .iter()
+        .position(|s| s == "my tags")
+        .unwrap();
+    model.choose_service(index).unwrap();
+    model.add_side_suggestions(&["parity:present".into()]);
+    model.apply().unwrap();
+    assert_eq!(
+        serde_json::json!(model.side_suggestions(false)),
+        f["cases"][0]["favourites"]
+    );
+    let activated: Vec<String> =
+        serde_json::from_value(f["cases"][0]["activated"][0]["tags"].clone()).unwrap();
+    model.add_side_suggestions(&activated);
+    model.add_side_suggestions(&activated);
+    assert!(
+        !model.side_suggestions(false).contains(&activated[0]),
+        "repeated suggestion activation never removes an existing tag"
+    );
+    model.apply().unwrap();
+    let mut reopened = ManageTags::new(Store::open(store.dir()).unwrap(), files).unwrap();
+    reopened.choose_service(index).unwrap();
+    assert_eq!(reopened.tags().get(&activated[0]), Some(&2));
+    assert!(
+        tag_suggestions::recent(&store, service, 20)
+            .unwrap()
+            .contains(&activated[0])
+    );
+    assert_eq!(
+        store
+            .read(settings::get::<TagSuggestionSettings>)
+            .unwrap()
+            .default_page,
+        "related"
+    );
+}
+
+#[test]
+fn broadcast_keeps_selected_tag_identity_but_switching_services_retires_selection() {
+    let key = hydrus_core::ServiceKey::new(b"synthetic tags".to_vec());
+    let mut list = tag_suggestions::List::default();
+    list.update(
+        Some(key.clone()),
+        vec!["parity:new2".into(), "parity:new10".into()],
+    );
+    list.click(1, false, false);
+    list.update(
+        Some(key),
+        vec![
+            "parity:inserted".into(),
+            "parity:new2".into(),
+            "parity:new10".into(),
+        ],
+    );
+    assert_eq!(list.selected(), ["parity:new10"]);
+    list.update(
+        Some(hydrus_core::ServiceKey::new(b"other tags".to_vec())),
+        list.tags.clone(),
+    );
+    assert!(list.selected().is_empty());
+}
