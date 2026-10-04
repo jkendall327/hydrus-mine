@@ -154,6 +154,20 @@ fn shared_favourites_exchange_and_cancel_preserve_the_owner_and_persist_on_reope
             .is_none()
     );
     deleted.invoke_cancel();
+    // Closing the owner while a name is pending invalidates that child too.
+    let closing = open();
+    closing.invoke_favourite("import".into());
+    closing.invoke_exchange_action("import".into());
+    assert!(closing.get_favourite_naming());
+    let before = FavouriteTagFilters::load(&store).unwrap();
+    closing
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(slot.borrow().is_none());
+    closing.invoke_favourite_named("after owner closure".into());
+    closing.invoke_apply();
+    assert_eq!(FavouriteTagFilters::load(&store).unwrap(), before);
+    assert_eq!(applied.borrow().len(), 1);
 }
 
 #[test]
