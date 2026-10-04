@@ -49,7 +49,7 @@ fn history_limit_replays_actual_menu_without_discarding_backing_history() {
 }
 
 #[test]
-fn imported_defaults_and_options_invalid_limits_preserve_previous_values() {
+fn imported_defaults_and_options_limits_replay_reference_spinbox_clamping() {
     let fixture = hydrus_testkit::fixture_json("page_navigation_options.json");
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let dir = tempfile::tempdir().unwrap();
@@ -76,11 +76,14 @@ fn imported_defaults_and_options_invalid_limits_preserve_previous_values() {
         .unwrap();
     editor.show_page(index);
     let row=editor.rows().iter().position(|row| matches!(row,Row::Opt {option,..} if option.label=="Maximum entries to show in page navigation history: ")).unwrap();
-    for bad in [0, 1001] {
-        editor.number(row, bad);
+    for step in fixture["history"].as_array().unwrap() {
+        editor.number(row, step["input"].as_i64().unwrap());
         let (after, _, problems) = editor.applied();
-        assert_eq!(after.page_navigation.history_entries, 100);
-        assert!(!problems.is_empty());
+        assert_eq!(
+            u64::from(after.page_navigation.history_entries),
+            step["value"].as_u64().unwrap()
+        );
+        assert!(problems.is_empty());
     }
     editor.number(row, 2);
     let (after, _, problems) = editor.applied();

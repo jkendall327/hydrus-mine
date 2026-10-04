@@ -1649,7 +1649,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     ],
                 ),
                 boxed(
-                    "navigation and drag and drop",
+                    "navigation and drag-and-drop",
                     vec![
                         int(
                             "Maximum entries to show in page navigation history: ",

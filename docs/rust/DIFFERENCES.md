@@ -1592,3 +1592,7 @@ immediately after closing. Native hover and
 volume controls remain eligible for the ordinary pointer instead of hiding it
 while their popup content is being used. Backend-specific MPV widget dragging
 and cursor anchoring remain separate gaps.
+
+existing common item styling. Out-of-range values supplied to the
+native options model are clamped to 1–1000 when applied, matching the reference
+spinbox's clamping and keeping the stored limit inside the visible bounds.

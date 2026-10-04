@@ -2294,7 +2294,7 @@
       "proposedStatus": "first_pass",
       "countAsCompletedLeaf": true,
       "implementationCommit": "aa5290f5",
-      "exactBehavior": "Staged integer control defaults to 100 with limits 1\u20131000. Apply caps Pages History visible entries, numbered newest-first, retaining all backing history and Clear History. Cancel leaves the stored value unchanged; legacy import/reopening preserve it; invalid raw model input leaves the prior valid setting and reports a problem.",
+      "exactBehavior": "Staged integer control defaults to 100 with limits 1\u20131000. Apply caps Pages History visible entries, numbered newest-first, retaining all backing history and Clear History. Cancel leaves the stored value unchanged; legacy import/reopening preserve it; out-of-range model input clamps to the same 1–1000 bounds as the recorded Qt spinbox.",
       "limits": [],
       "sourceAnchors": [
         {
