@@ -166,7 +166,7 @@ fn real_simple_actions_replay_selection_paste_and_removal_then_reach_manual_impo
                 dialog.invoke_paste_tags(action == "paste_single");
             }
             "filename_text" => {
-                dialog.invoke_misc_namespace(0, step["value"].as_str().unwrap().into())
+                dialog.invoke_misc_namespace(0, step["value"].as_str().unwrap().into());
             }
             "filename_check" => dialog.invoke_misc_toggled(0, step["value"].as_bool().unwrap()),
             "directory_text" | "directory_check" => {

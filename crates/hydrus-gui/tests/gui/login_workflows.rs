@@ -1147,7 +1147,7 @@ fn sequential_cookie_matchers_replay_reference_titles_defaults_cancel_and_distin
             let child = slots.strings.step.borrow().as_ref().unwrap().clone_strong();
             assert_eq!(child.get_window_title(), title.as_str().unwrap());
             let initial = &state["initial"][index][2];
-            assert_eq!(child.get_match_type(), if initial[0] == 3 { 0 } else { 1 });
+            assert_eq!(child.get_match_type(), i32::from(initial[0] != 3));
             assert_eq!(child.get_fixed(), initial[1].as_str().unwrap());
             assert_eq!(child.get_match_example(), initial[4].as_str().unwrap());
             assert!(window.get_child_open());
@@ -2252,7 +2252,7 @@ fn delayed_manual_completion_cannot_overwrite_a_successor_login_outcome() {
             .run_login_with_results(
                 &successor,
                 &site.domain,
-                &Default::default(),
+                &std::collections::BTreeMap::default(),
                 &hydrus_net::Job::new(),
                 |_| {},
             )
