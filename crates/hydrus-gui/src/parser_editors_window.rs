@@ -119,6 +119,7 @@ struct Editor {
     subsidiary_selection: ListSelection<usize>,
     pending_subsidiary_delete: Option<Vec<(usize, hydrus_parse::content::SubsidiaryPageParser)>>,
     test: FormulaTestData,
+    raw_mimes: hydrus_gui_model::parser_test_data::ExampleMimes,
     example: usize,
     permitted_types: Vec<usize>,
     subsidiary: Option<Rc<RefCell<model::SubsidiaryEditor>>>,
@@ -241,6 +242,13 @@ fn show_editor(w: &ParserEditWindow, e: &Editor) {
         |(i, text)| format!("example {} ({} characters)", i + 1, text.chars().count()),
     )));
     w.set_example(i32::try_from(e.example).unwrap_or(0));
+    let raw = hydrus_gui_model::parser_test_data::preview(
+        &e.test.text,
+        e.raw_mimes.get(e.example, &e.test.text),
+    );
+    w.set_raw_description(raw.description.into());
+    w.set_raw_preview(raw.text.into());
+    w.set_parse_enabled(raw.parse_enabled);
     let mut editor_fields = fields(&e.value, &e.permitted_types);
     if e.subsidiary.is_some() {
         editor_fields.retain(|field| field.id != 1);
@@ -471,6 +479,7 @@ fn open_editor(
     let state = Rc::new(RefCell::new(Editor {
         errors: std::collections::BTreeMap::new(),
         fetch_control: hydrus_gui_model::network_job_control::Control::default(),
+        raw_mimes: hydrus_gui_model::parser_test_data::ExampleMimes::default(),
         original: value.clone(),
         value,
         selected: None,
@@ -517,6 +526,39 @@ fn open_editor(
                 || child_open(&slots, page)
                 || fetch.busy()
                 || weak.upgrade().is_none_or(|w| !w.get_question().is_empty())
+        }
+    });
+    w.on_raw_action({
+        let weak = w.as_weak();
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move |action| {
+            if blocked() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else {
+                return;
+            };
+            match action.as_str() {
+                "copy" => crate::copy_to_clipboard(w.get_document().as_str()),
+                "paste" => match crate::from_clipboard() {
+                    Ok(text) => {
+                        let mut e = state.borrow_mut();
+                        let index = e.example;
+                        e.test.remember_example(index, text.clone());
+                        e.raw_mimes.remember(index, &text, None);
+                        w.set_document(text.into());
+                        w.set_fetch_status("Pasted!".into());
+                        drop(e);
+                        refresh();
+                    }
+                    Err(error) => {
+                        w.set_error(format!("Problem loading!\n\n{error}").into());
+                    }
+                },
+                _ => {}
+            }
         }
     });
     w.on_fetch_error_action({
@@ -649,6 +691,9 @@ fn open_editor(
                         editor
                             .test
                             .fetched(url.clone(), outcome.document, example_url);
+                    let index = editor.example;
+                    let text = editor.test.text.clone();
+                    editor.raw_mimes.remember(index, &text, outcome.mime);
                     w.set_document(editor.test.text.as_str().into());
                     w.set_test_url(url.as_str().into());
                     w.set_post_index("0".into());
@@ -956,7 +1001,7 @@ fn open_editor(
                     let applied=Rc::new({let state=state.clone();let refresh=refresh.clone();move |mut definitions:Vec<Definition>| {let definition=definitions.pop().ok_or("No parser to import.")?;let mut e=state.borrow_mut();match (page,definition.native){(true,Native::Page(p))=>e.value=Value::Page(Box::new(p)),(false,Native::Content(c))=>{let test=if let Value::Content(old)=&e.value{old.test.clone()}else{FormulaTestData::default()};e.value=Value::Content(Box::new(ContentEditor::new(&c,test)));},_=>return Err("Import one matching parser.".into())}e.errors.clear();e.selected=None;e.subsidiary_selected=None;e.subsidiary_selection=ListSelection::default();drop(e);refresh();Ok(())}});
                     let child=crate::downloader_interchange_window::open(&slots.exchange,action=="import",vec![Definition::new(native)],preview,applied)?; let refresh=refresh.clone(); child.on_closed(move||refresh());
                 }
-                "test" => { let mut test = test_data(&w,&state.borrow(),true)?; let mut e = state.borrow_mut();let subsidiary=e.subsidiary.clone();let parsed = match &mut e.value { Value::Page(p) => {if let Some(details)=subsidiary {test.context.insert("post_index".into(),"0".into());details.borrow().preview(p,&mut test.context,&test.text)}else{p.parse(&mut test.context,&test.text)}}, Value::Content(c) => { c.test = test; c.preview().map(|p| vec![p]) } }; w.set_preview(match parsed { Ok(posts) => model::preview_text(&posts), Err(error) => error.to_string() }.into()); }
+                "test" => { if state.borrow().raw_mimes.get(state.borrow().example,w.get_document().as_str()).is_some() {return Ok(());} let mut test = test_data(&w,&state.borrow(),true)?; let mut e = state.borrow_mut();let subsidiary=e.subsidiary.clone();let parsed = match &mut e.value { Value::Page(p) => {if let Some(details)=subsidiary {test.context.insert("post_index".into(),"0".into());details.borrow().preview(p,&mut test.context,&test.text)}else{p.parse(&mut test.context,&test.text)}}, Value::Content(c) => { c.test = test; c.preview().map(|p| vec![p]) } }; w.set_preview(match parsed { Ok(posts) => model::preview_text(&posts), Err(error) => error.to_string() }.into()); }
                 "delete-content" => { let mut e = state.borrow_mut(); if let Some(index) = e.selected.take() && let Value::Page(p) = &mut e.value && index < p.content_parsers.len() { p.content_parsers.remove(index); } }
                 "add-content"|"edit-content" => {
                     let test = child_test_data(&w,&state.borrow(),true)?;
@@ -971,7 +1016,7 @@ fn open_editor(
                     let mut e = state.borrow_mut();
                     e.test.context.insert("url".into(),w.get_test_url().to_string());
                     let old = e.example;e.test.remember_example(old,w.get_document().to_string());
-                    e.example = if action == "add-example" { let url = e.test.context.get("url").cloned();e.test.add_example(String::new(),url) } else { e.test.remove_example(old) };
+                    e.example = if action == "add-example" { let url = e.test.context.get("url").cloned();e.test.add_example(String::new(),url) } else { if e.test.examples.len()>1 {e.raw_mimes.remove(old);} e.test.remove_example(old) };
                     w.set_document(e.test.text.as_str().into());
                     w.set_test_url(e.test.context.get("url").cloned().unwrap_or_default().into());
                 }

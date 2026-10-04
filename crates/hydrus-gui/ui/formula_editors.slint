@@ -25,6 +25,10 @@ export component FormulaWindow inherits Window {
     in property <[string]> examples;
     in-out property <int> example;
     in-out property <string> document;
+    in property <string> raw-description;
+    in property <string> raw-preview;
+    in property <bool> parse-enabled;
+    callback raw-action(string);
     in-out property <string> context;
     in-out property <string> fetch-url;
     in property <bool> fetching;
@@ -119,10 +123,15 @@ export component FormulaWindow inherits Window {
                     Button { text: "add example"; enabled: !root.child-open; clicked => { root.add-example(); } }
                     Button { text: "remove example"; enabled: root.examples.length > 1 && !root.child-open; clicked => { root.remove-example(); } }
                 }
-                TextEdit { vertical-stretch: 1; text <=> root.document; enabled: !root.child-open; edited(t) => { root.document = t; root.changed(); } }
+                HorizontalLayout {
+                    Button { text: "copy data"; enabled: !root.child-open; clicked => { root.raw-action("copy"); } }
+                    Button { text: "paste data"; enabled: !root.child-open; clicked => { root.raw-action("paste"); } }
+                }
+                Text { text: root.raw-description; color: Theme.text; wrap: word-wrap; }
+                TextEdit { vertical-stretch: 1; text: root.raw-preview; read-only: true; }
                 Text { text: "parsing context (one key=value per line)"; color: Theme.text; }
                 TextEdit { height: 65px; text <=> root.context; enabled: !root.child-open; edited(t) => { root.context = t; root.changed(); } }
-                Button { text: "test parse"; enabled: !root.child-open; clicked => { root.test(); } }
+                Button { text: "test parse"; enabled: root.parse-enabled && !root.child-open; clicked => { root.test(); } }
                 Text { text: root.status; wrap: word-wrap; color: Theme.text; }
                 ListTable { vertical-stretch: 1; columns: [{title: "parsed strings", width: 430px, stretch: true}]; rows: root.results; }
             }

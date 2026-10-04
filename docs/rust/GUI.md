@@ -1980,6 +1980,16 @@ validated example request clears the retained failure. Closing the parser also
 closes its error popup and invalidates retained callbacks. Raw formula/content
 URL fetching uses its own test text, as in the reference.
 
+Parser and formula raw-data panels copy the complete document and paste into the
+current example while retaining its context. Read-only previews format JSON with
+the reference's four-space indentation, describe JSON/HTML character counts and
+clip display text at 500,000 characters without clipping parser input. Fetches
+inspect response bytes through the existing media engine; recognized media shows
+its type and **no preview**, with test parse disabled. Changing examples restores
+their detected type, while a pasted replacement clears it. Recursive children
+inherit the document and context, matching Qt's text-only child data contract.
+`oracle/record_parser_raw_preview.py` records these controls and exact wording.
+
 
 Network > logins > logins opens preserved or saved domain entries. Edit credentials
 uses the script's definition order and masks passwords, with the recorded live
