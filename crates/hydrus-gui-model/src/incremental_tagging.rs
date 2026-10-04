@@ -76,7 +76,7 @@ impl IncrementalTagging {
                     1 => settings.incremental_prefix = text,
                     2 => settings.incremental_suffix = text,
                     _ => unreachable!(),
-                };
+                }
                 hydrus_store::settings::set(ctx.conn(), &settings)
             })
             .map_err(|error| error.to_string())

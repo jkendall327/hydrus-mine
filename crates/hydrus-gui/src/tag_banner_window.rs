@@ -43,7 +43,7 @@ fn show(window: &TagBannerWindow, editor: &Editor) {
     window.set_text_channels(ModelRc::new(VecModel::from(
         editor.text.into_iter().map(i32::from).collect::<Vec<_>>(),
     )));
-    let colour = |[r, g, b, a]| slint::Color::from_argb_u8(a, r, g, b);
+    let colour = |[r, g, b, a]: [u8; 4]| slint::Color::from_argb_u8(a, r, g, b);
     window.set_background_colour(colour(editor.background));
     window.set_text_colour(colour(editor.text));
 }
