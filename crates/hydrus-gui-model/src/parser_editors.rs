@@ -5,9 +5,13 @@ use crate::formula_editors::{FormulaTestData, new_formula};
 use hydrus_core::pages::PageKey;
 use hydrus_core::url::strings::{StringConverter, StringMatch};
 use hydrus_core::url::{UrlClass, UrlClassSettings, UrlType};
-use hydrus_parse::content::{ContentKind, ContentParser, PageParser, ParseFailure, ParsedPost};
+use hydrus_parse::content::{
+    ContentKind, ContentParser, PageParser, ParseFailure, ParsedPost, SubsidiaryPageParser,
+};
 use hydrus_parse::downloaders::Downloaders;
-use hydrus_parse::formula::ParsingContext;
+use hydrus_parse::formula::{
+    Formula, FormulaKind, HtmlContent, HtmlRule, HtmlWalk, ParsingContext, TagSearch,
+};
 use hydrus_store::{Store, StoreError, settings};
 
 /// Reference content choices, including existing temporary variables.
@@ -208,6 +212,97 @@ pub fn new_page() -> PageParser {
         subsidiary: Vec::new(),
         content_parsers: Vec::new(),
         example_urls: Vec::new(),
+    }
+}
+/// Reference defaults for a newly added recursive subsidiary page parser.
+pub fn new_subsidiary() -> SubsidiaryPageParser {
+    let mut parser = new_page();
+    parser.name = "new sub page parser".into();
+    let mut formula = new_formula(false);
+    formula.kind = FormulaKind::Html {
+        rules: vec![HtmlRule {
+            walk: HtmlWalk::Descendants(TagSearch {
+                attrs: vec![("class".into(), "thumb".into())],
+                ..TagSearch::default()
+            }),
+            tag_name: Some("div".into()),
+            text_match: None,
+        }],
+        content: HtmlContent::Html,
+    };
+    SubsidiaryPageParser {
+        formula,
+        sort_by_source_time: false,
+        parser,
+    }
+}
+/// Separation controls accompany the ordinary reusable child page draft.
+#[derive(Debug, Clone)]
+pub struct SubsidiaryEditor {
+    pub formula: Formula,
+    pub sort_by_source_time: bool,
+}
+impl SubsidiaryEditor {
+    /// Copy the child separation and source-time controls into an isolated draft.
+    #[must_use]
+    pub fn new(parser: &SubsidiaryPageParser) -> Self {
+        Self {
+            formula: parser.formula.clone(),
+            sort_by_source_time: parser.sort_by_source_time,
+        }
+    }
+    /// Preserve the edited page's key, recursive definitions and auxiliary data.
+    pub fn value(&self, parser: PageParser) -> SubsidiaryPageParser {
+        SubsidiaryPageParser {
+            formula: self.formula.clone(),
+            sort_by_source_time: self.sort_by_source_time,
+            parser,
+        }
+    }
+    /// Reference child previews convert the raw document, then separate posts.
+    pub fn child_test_data(
+        &self,
+        parser: &PageParser,
+        test: &FormulaTestData,
+    ) -> Result<FormulaTestData, String> {
+        let mut input = test.clone();
+        input.prepare_examples();
+        let mut child = input.clone();
+        child.examples.clear();
+        child.source_urls.clear();
+        for (i, text) in input.examples.iter().enumerate() {
+            let converted = parser.converter.convert(text).map_err(|e| e.to_string())?;
+            let texts = self
+                .formula
+                .parse(&test.context, &converted, false)
+                .map_err(|e| e.to_string())?;
+            let url = test
+                .source_urls
+                .get(i)
+                .cloned()
+                .unwrap_or_else(|| test.context.get("url").cloned());
+            for text in texts {
+                child.examples.push(text);
+                child.source_urls.push(url.clone());
+            }
+        }
+        if child.examples.is_empty() {
+            child.examples.push(String::new());
+            child.source_urls.push(test.context.get("url").cloned());
+        }
+        child.prepare_examples();
+        Ok(child)
+    }
+    /// Run the complete subsidiary with the same parser engine used by downloads.
+    pub fn preview(
+        &self,
+        parser: &PageParser,
+        context: &mut ParsingContext,
+        text: &str,
+    ) -> Result<Vec<ParsedPost>, ParseFailure> {
+        let mut parent = new_page();
+        parent.subsidiary.push(self.value(parser.clone()));
+        parent.parse(context, text)
     }
 }
 /// Staged parser list and class links loaded together from the native store.

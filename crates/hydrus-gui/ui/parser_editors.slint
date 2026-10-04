@@ -54,7 +54,10 @@ export component ParserListWindow inherits Window {
 }
 export component ParserEditWindow inherits Window {
     in property <bool> page;
-    title: root.page ? "edit page parser" : "edit content parser";
+    in property <bool> subsidiary;
+    in property <string> own-separator;
+    in-out property <bool> own-sorted;
+    title: root.subsidiary ? "edit sub page parser" : root.page ? "edit page parser" : "edit content parser";
     preferred-width: 1000px; preferred-height: 780px;
     background: Theme.window;
     in property <[DefinitionField]> fields;
@@ -90,6 +93,7 @@ export component ParserEditWindow inherits Window {
     callback fetch(); callback fetch-from-url(); callback cancel-fetch();
     callback example-chosen();
     callback subsidiary-clicked(int); callback subsidiary-sort-changed(bool);
+    callback own-sort-changed(bool);
     VerticalLayout {
         height: root.height - 52px; padding: 10px; spacing: 8px;
         ScrollView {
@@ -111,6 +115,11 @@ export component ParserEditWindow inherits Window {
                     row-activated(i) => { root.row-clicked(i,false,false); root.action("edit-content"); }
                     delete-pressed => { root.action("delete-content"); }
                 }
+                if root.subsidiary: HorizontalLayout {
+                    Text { text: root.own-separator; color: Theme.text; wrap: word-wrap; }
+                    Button { text: "edit this separation formula"; enabled: !root.child-open; clicked => { root.action("own-separator"); } }
+                    CheckBox { text: "sort posts by source time"; checked <=> root.own-sorted; enabled: !root.child-open; toggled => { root.own-sort-changed(self.checked); } }
+                }
                 HorizontalLayout {
                     spacing: 6px; alignment: start;
                     if root.page: Button { text: "add content parser"; enabled: !root.child-open; clicked => { root.action("add-content"); } }
@@ -130,10 +139,13 @@ export component ParserEditWindow inherits Window {
                         columns: [{ title: "name",width: 350px },{ title: "separation formula",width: 420px,stretch: true }];
                         rows: root.subsidiaries;
                         row-clicked(i,c,s) => { root.subsidiary-clicked(i); }
-                        row-activated(i) => { root.subsidiary-clicked(i);root.action("separator"); }
+                        row-activated(i) => { root.subsidiary-clicked(i);root.action("edit-subsidiary"); }
                     }
                     HorizontalLayout {
                         spacing: 6px;
+                        Button { text: "add subsidiary parser"; enabled: !root.child-open; clicked => { root.action("add-subsidiary"); } }
+                        Button { text: "edit subsidiary parser"; enabled: root.subsidiary-selected && !root.child-open; clicked => { root.action("edit-subsidiary"); } }
+                        Button { text: "delete subsidiary parser"; enabled: root.subsidiary-selected && !root.child-open; clicked => { root.action("delete-subsidiary"); } }
                         Button { text: "edit separation formula"; enabled: root.subsidiary-selected && !root.child-open; clicked => { root.action("separator"); } }
                         CheckBox { text: "sort posts by source time"; checked <=> root.subsidiary-sorted; enabled: root.subsidiary-selected && !root.child-open; toggled => { root.subsidiary-sort-changed(self.checked); } }
                     }
@@ -157,7 +169,7 @@ export component ParserEditWindow inherits Window {
                     Text { text: "post index"; color: Theme.text; vertical-alignment: center; }
                     LineEdit { width: 90px; text <=> root.post-index; enabled: !root.child-open; }
                 }
-                if root.page: HorizontalLayout {
+                if root.page && !root.subsidiary: HorizontalLayout {
                     Text { text: "referral URL"; color: Theme.text; vertical-alignment: center; }
                     LineEdit { text <=> root.referral-url; enabled: !root.child-open; }
                     Button { text: "fetch example data"; enabled: !root.child-open; clicked => { root.fetch(); } }

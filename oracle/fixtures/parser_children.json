@@ -1,0 +1,2029 @@
+[
+  {
+    "case": "defaults",
+    "name": "new sub page parser",
+    "sort": false,
+    "formula": [
+      27,
+      8,
+      [
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                62,
+                3,
+                [
+                  0,
+                  "div",
+                  {
+                    "class": "thumb"
+                  },
+                  null,
+                  null,
+                  false,
+                  [
+                    51,
+                    1,
+                    [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        2,
+        "href",
+        "",
+        [
+          84,
+          1,
+          [
+            26,
+            3,
+            []
+          ]
+        ]
+      ]
+    ],
+    "separated": [
+      "<div class=\"thumb\"><p>first\n\nnote</p></div>",
+      "<div class=\"thumb\"><p>second note</p></div>"
+    ]
+  },
+  {
+    "case": "open_child",
+    "name": "new sub page parser",
+    "sort": false,
+    "collapse": false,
+    "formula": [
+      27,
+      8,
+      [
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                62,
+                3,
+                [
+                  0,
+                  "div",
+                  {
+                    "class": "thumb"
+                  },
+                  null,
+                  null,
+                  false,
+                  [
+                    51,
+                    1,
+                    [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        2,
+        "href",
+        "",
+        [
+          84,
+          1,
+          [
+            26,
+            3,
+            []
+          ]
+        ]
+      ]
+    ],
+    "texts": [
+      "<div class=\"thumb\"><p>first\n\nnote</p></div><div class=\"thumb\"><p>second note</p></div><!-- parent converted -->"
+    ],
+    "context": {
+      "url": "https://children.example/post",
+      "post_index": "7",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "parent_action",
+    "action": "cancel_add",
+    "names": [],
+    "outputs": [],
+    "tuple": [
+      58,
+      "parent",
+      3,
+      [
+        "parent",
+        "ac3a384ec6137a802fb386daee53927ded5ba41d3a2b20a02be1af80d8863886",
+        [
+          55,
+          2,
+          [
+            [
+              [
+                3,
+                "<!-- parent converted -->"
+              ]
+            ],
+            "example string"
+          ]
+        ],
+        [
+          26,
+          3,
+          []
+        ],
+        [
+          26,
+          3,
+          []
+        ],
+        [],
+        {
+          "url": "https://children.example/post",
+          "post_index": "7",
+          "token": "preserved"
+        }
+      ]
+    ]
+  },
+  {
+    "case": "open_child",
+    "name": "new sub page parser",
+    "sort": false,
+    "collapse": false,
+    "formula": [
+      27,
+      8,
+      [
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                62,
+                3,
+                [
+                  0,
+                  "div",
+                  {
+                    "class": "thumb"
+                  },
+                  null,
+                  null,
+                  false,
+                  [
+                    51,
+                    1,
+                    [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        2,
+        "href",
+        "",
+        [
+          84,
+          1,
+          [
+            26,
+            3,
+            []
+          ]
+        ]
+      ]
+    ],
+    "texts": [
+      "<div class=\"thumb\"><p>first\n\nnote</p></div><div class=\"thumb\"><p>second note</p></div><!-- parent converted -->"
+    ],
+    "context": {
+      "url": "https://children.example/post",
+      "post_index": "7",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "child_data",
+    "name": "notes",
+    "texts": [
+      "<div class=\"thumb\"><p>first\n\nnote</p></div>",
+      "<div class=\"thumb\"><p>second note</p></div>"
+    ],
+    "context": {
+      "url": "https://children.example/post",
+      "post_index": "7",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "parent_action",
+    "action": "add",
+    "names": [
+      "notes"
+    ],
+    "outputs": [
+      [
+        "first\n\nnote"
+      ],
+      [
+        "second note"
+      ]
+    ],
+    "tuple": [
+      58,
+      "parent",
+      3,
+      [
+        "parent",
+        "ac3a384ec6137a802fb386daee53927ded5ba41d3a2b20a02be1af80d8863886",
+        [
+          55,
+          2,
+          [
+            [
+              [
+                3,
+                "<!-- parent converted -->"
+              ]
+            ],
+            "example string"
+          ]
+        ],
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                135,
+                2,
+                [
+                  [
+                    27,
+                    8,
+                    [
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              62,
+                              3,
+                              [
+                                0,
+                                "div",
+                                {
+                                  "class": "thumb"
+                                },
+                                null,
+                                null,
+                                false,
+                                [
+                                  51,
+                                  1,
+                                  [
+                                    3,
+                                    "",
+                                    null,
+                                    null,
+                                    "example string"
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      2,
+                      "href",
+                      "",
+                      [
+                        84,
+                        1,
+                        [
+                          26,
+                          3,
+                          []
+                        ]
+                      ]
+                    ]
+                  ],
+                  false,
+                  [
+                    58,
+                    "notes",
+                    3,
+                    [
+                      "notes",
+                      "dcc8bacd065e5c28f0bfce33f50f9b55e1092b9188ffbf83a1b42e5f34d9b5e2",
+                      [
+                        55,
+                        2,
+                        [
+                          [],
+                          "example string"
+                        ]
+                      ],
+                      [
+                        26,
+                        3,
+                        []
+                      ],
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              30,
+                              7,
+                              [
+                                "child note",
+                                18,
+                                [
+                                  27,
+                                  8,
+                                  [
+                                    [
+                                      26,
+                                      3,
+                                      [
+                                        [
+                                          2,
+                                          [
+                                            62,
+                                            3,
+                                            [
+                                              0,
+                                              "p",
+                                              {},
+                                              null,
+                                              null,
+                                              false,
+                                              [
+                                                51,
+                                                1,
+                                                [
+                                                  3,
+                                                  "",
+                                                  null,
+                                                  null,
+                                                  "example string"
+                                                ]
+                                              ]
+                                            ]
+                                          ]
+                                        ]
+                                      ]
+                                    ],
+                                    1,
+                                    "href",
+                                    "",
+                                    [
+                                      84,
+                                      1,
+                                      [
+                                        26,
+                                        3,
+                                        []
+                                      ]
+                                    ]
+                                  ]
+                                ],
+                                "note"
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [],
+                      {
+                        "url": "https://children.example/post",
+                        "post_index": "7",
+                        "token": "preserved"
+                      }
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          26,
+          3,
+          []
+        ],
+        [],
+        {
+          "url": "https://children.example/post",
+          "post_index": "7",
+          "token": "preserved"
+        }
+      ]
+    ]
+  },
+  {
+    "case": "open_child",
+    "name": "new sub page parser",
+    "sort": false,
+    "collapse": false,
+    "formula": [
+      27,
+      8,
+      [
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                62,
+                3,
+                [
+                  0,
+                  "div",
+                  {
+                    "class": "thumb"
+                  },
+                  null,
+                  null,
+                  false,
+                  [
+                    51,
+                    1,
+                    [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        2,
+        "href",
+        "",
+        [
+          84,
+          1,
+          [
+            26,
+            3,
+            []
+          ]
+        ]
+      ]
+    ],
+    "texts": [
+      "<div class=\"thumb\"><p>first\n\nnote</p></div><div class=\"thumb\"><p>second note</p></div><!-- parent converted -->"
+    ],
+    "context": {
+      "url": "https://children.example/post",
+      "post_index": "7",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "child_data",
+    "name": "nested",
+    "texts": [
+      "<p>parent note</p>"
+    ],
+    "context": {
+      "url": "https://children.example/post",
+      "post_index": "7",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "open_child",
+    "name": "new sub page parser",
+    "sort": false,
+    "collapse": false,
+    "formula": [
+      27,
+      8,
+      [
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                62,
+                3,
+                [
+                  0,
+                  "div",
+                  {
+                    "class": "thumb"
+                  },
+                  null,
+                  null,
+                  false,
+                  [
+                    51,
+                    1,
+                    [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        2,
+        "href",
+        "",
+        [
+          84,
+          1,
+          [
+            26,
+            3,
+            []
+          ]
+        ]
+      ]
+    ],
+    "texts": [
+      "<p>parent note</p>"
+    ],
+    "context": {
+      "url": "https://children.example/post",
+      "post_index": "7",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "child_data",
+    "name": "nested tags",
+    "texts": [
+      "<p>leaf</p>"
+    ],
+    "context": {
+      "url": "https://children.example/post",
+      "post_index": "7",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "parent_action",
+    "action": "add_nested",
+    "names": [
+      "nested",
+      "notes"
+    ],
+    "outputs": [
+      [
+        "leaf",
+        "parent note"
+      ],
+      [
+        "first\n\nnote"
+      ],
+      [
+        "second note"
+      ]
+    ],
+    "tuple": [
+      58,
+      "parent",
+      3,
+      [
+        "parent",
+        "ac3a384ec6137a802fb386daee53927ded5ba41d3a2b20a02be1af80d8863886",
+        [
+          55,
+          2,
+          [
+            [
+              [
+                3,
+                "<!-- parent converted -->"
+              ]
+            ],
+            "example string"
+          ]
+        ],
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                135,
+                2,
+                [
+                  [
+                    136,
+                    1,
+                    [
+                      "<p>parent note</p>",
+                      1,
+                      "",
+                      [
+                        84,
+                        1,
+                        [
+                          26,
+                          3,
+                          []
+                        ]
+                      ]
+                    ]
+                  ],
+                  false,
+                  [
+                    58,
+                    "nested",
+                    3,
+                    [
+                      "nested",
+                      "04f4bf32afc0bf3f8a76309ee0b02efd6e1344ff51d64c76817882676e7f53ef",
+                      [
+                        55,
+                        2,
+                        [
+                          [],
+                          "example string"
+                        ]
+                      ],
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              135,
+                              2,
+                              [
+                                [
+                                  136,
+                                  1,
+                                  [
+                                    "<p>leaf</p>",
+                                    1,
+                                    "",
+                                    [
+                                      84,
+                                      1,
+                                      [
+                                        26,
+                                        3,
+                                        []
+                                      ]
+                                    ]
+                                  ]
+                                ],
+                                false,
+                                [
+                                  58,
+                                  "nested tags",
+                                  3,
+                                  [
+                                    "nested tags",
+                                    "2ba869662512f1ac3c32edb32a007a692cc2153b0b9f9dff6b19cf6163917140",
+                                    [
+                                      55,
+                                      2,
+                                      [
+                                        [],
+                                        "example string"
+                                      ]
+                                    ],
+                                    [
+                                      26,
+                                      3,
+                                      []
+                                    ],
+                                    [
+                                      26,
+                                      3,
+                                      [
+                                        [
+                                          2,
+                                          [
+                                            30,
+                                            7,
+                                            [
+                                              "child tag",
+                                              0,
+                                              [
+                                                136,
+                                                1,
+                                                [
+                                                  "leaf",
+                                                  1,
+                                                  "",
+                                                  [
+                                                    84,
+                                                    1,
+                                                    [
+                                                      26,
+                                                      3,
+                                                      []
+                                                    ]
+                                                  ]
+                                                ]
+                                              ],
+                                              "series"
+                                            ]
+                                          ]
+                                        ]
+                                      ]
+                                    ],
+                                    [],
+                                    {
+                                      "url": "https://children.example/post",
+                                      "post_index": "7",
+                                      "token": "preserved"
+                                    }
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              30,
+                              7,
+                              [
+                                "child note",
+                                18,
+                                [
+                                  27,
+                                  8,
+                                  [
+                                    [
+                                      26,
+                                      3,
+                                      [
+                                        [
+                                          2,
+                                          [
+                                            62,
+                                            3,
+                                            [
+                                              0,
+                                              "p",
+                                              {},
+                                              null,
+                                              null,
+                                              false,
+                                              [
+                                                51,
+                                                1,
+                                                [
+                                                  3,
+                                                  "",
+                                                  null,
+                                                  null,
+                                                  "example string"
+                                                ]
+                                              ]
+                                            ]
+                                          ]
+                                        ]
+                                      ]
+                                    ],
+                                    1,
+                                    "href",
+                                    "",
+                                    [
+                                      84,
+                                      1,
+                                      [
+                                        26,
+                                        3,
+                                        []
+                                      ]
+                                    ]
+                                  ]
+                                ],
+                                "note"
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [],
+                      {
+                        "url": "https://children.example/post",
+                        "post_index": "7",
+                        "token": "preserved"
+                      }
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                135,
+                2,
+                [
+                  [
+                    27,
+                    8,
+                    [
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              62,
+                              3,
+                              [
+                                0,
+                                "div",
+                                {
+                                  "class": "thumb"
+                                },
+                                null,
+                                null,
+                                false,
+                                [
+                                  51,
+                                  1,
+                                  [
+                                    3,
+                                    "",
+                                    null,
+                                    null,
+                                    "example string"
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      2,
+                      "href",
+                      "",
+                      [
+                        84,
+                        1,
+                        [
+                          26,
+                          3,
+                          []
+                        ]
+                      ]
+                    ]
+                  ],
+                  false,
+                  [
+                    58,
+                    "notes",
+                    3,
+                    [
+                      "notes",
+                      "dcc8bacd065e5c28f0bfce33f50f9b55e1092b9188ffbf83a1b42e5f34d9b5e2",
+                      [
+                        55,
+                        2,
+                        [
+                          [],
+                          "example string"
+                        ]
+                      ],
+                      [
+                        26,
+                        3,
+                        []
+                      ],
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              30,
+                              7,
+                              [
+                                "child note",
+                                18,
+                                [
+                                  27,
+                                  8,
+                                  [
+                                    [
+                                      26,
+                                      3,
+                                      [
+                                        [
+                                          2,
+                                          [
+                                            62,
+                                            3,
+                                            [
+                                              0,
+                                              "p",
+                                              {},
+                                              null,
+                                              null,
+                                              false,
+                                              [
+                                                51,
+                                                1,
+                                                [
+                                                  3,
+                                                  "",
+                                                  null,
+                                                  null,
+                                                  "example string"
+                                                ]
+                                              ]
+                                            ]
+                                          ]
+                                        ]
+                                      ]
+                                    ],
+                                    1,
+                                    "href",
+                                    "",
+                                    [
+                                      84,
+                                      1,
+                                      [
+                                        26,
+                                        3,
+                                        []
+                                      ]
+                                    ]
+                                  ]
+                                ],
+                                "note"
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [],
+                      {
+                        "url": "https://children.example/post",
+                        "post_index": "7",
+                        "token": "preserved"
+                      }
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          26,
+          3,
+          []
+        ],
+        [],
+        {
+          "url": "https://children.example/post",
+          "post_index": "7",
+          "token": "preserved"
+        }
+      ]
+    ]
+  },
+  {
+    "case": "open_child",
+    "name": "notes",
+    "sort": false,
+    "collapse": false,
+    "formula": [
+      27,
+      8,
+      [
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                62,
+                3,
+                [
+                  0,
+                  "div",
+                  {
+                    "class": "thumb"
+                  },
+                  null,
+                  null,
+                  false,
+                  [
+                    51,
+                    1,
+                    [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        2,
+        "href",
+        "",
+        [
+          84,
+          1,
+          [
+            26,
+            3,
+            []
+          ]
+        ]
+      ]
+    ],
+    "texts": [
+      "<div class=\"thumb\"><p>first\n\nnote</p></div><div class=\"thumb\"><p>second note</p></div><!-- parent converted -->"
+    ],
+    "context": {
+      "url": "https://children.example/post",
+      "post_index": "7",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "parent_action",
+    "action": "cancel_edit",
+    "names": [
+      "nested",
+      "notes"
+    ],
+    "outputs": [
+      [
+        "leaf",
+        "parent note"
+      ],
+      [
+        "first\n\nnote"
+      ],
+      [
+        "second note"
+      ]
+    ],
+    "tuple": [
+      58,
+      "parent",
+      3,
+      [
+        "parent",
+        "ac3a384ec6137a802fb386daee53927ded5ba41d3a2b20a02be1af80d8863886",
+        [
+          55,
+          2,
+          [
+            [
+              [
+                3,
+                "<!-- parent converted -->"
+              ]
+            ],
+            "example string"
+          ]
+        ],
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                135,
+                2,
+                [
+                  [
+                    136,
+                    1,
+                    [
+                      "<p>parent note</p>",
+                      1,
+                      "",
+                      [
+                        84,
+                        1,
+                        [
+                          26,
+                          3,
+                          []
+                        ]
+                      ]
+                    ]
+                  ],
+                  false,
+                  [
+                    58,
+                    "nested",
+                    3,
+                    [
+                      "nested",
+                      "04f4bf32afc0bf3f8a76309ee0b02efd6e1344ff51d64c76817882676e7f53ef",
+                      [
+                        55,
+                        2,
+                        [
+                          [],
+                          "example string"
+                        ]
+                      ],
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              135,
+                              2,
+                              [
+                                [
+                                  136,
+                                  1,
+                                  [
+                                    "<p>leaf</p>",
+                                    1,
+                                    "",
+                                    [
+                                      84,
+                                      1,
+                                      [
+                                        26,
+                                        3,
+                                        []
+                                      ]
+                                    ]
+                                  ]
+                                ],
+                                false,
+                                [
+                                  58,
+                                  "nested tags",
+                                  3,
+                                  [
+                                    "nested tags",
+                                    "2ba869662512f1ac3c32edb32a007a692cc2153b0b9f9dff6b19cf6163917140",
+                                    [
+                                      55,
+                                      2,
+                                      [
+                                        [],
+                                        "example string"
+                                      ]
+                                    ],
+                                    [
+                                      26,
+                                      3,
+                                      []
+                                    ],
+                                    [
+                                      26,
+                                      3,
+                                      [
+                                        [
+                                          2,
+                                          [
+                                            30,
+                                            7,
+                                            [
+                                              "child tag",
+                                              0,
+                                              [
+                                                136,
+                                                1,
+                                                [
+                                                  "leaf",
+                                                  1,
+                                                  "",
+                                                  [
+                                                    84,
+                                                    1,
+                                                    [
+                                                      26,
+                                                      3,
+                                                      []
+                                                    ]
+                                                  ]
+                                                ]
+                                              ],
+                                              "series"
+                                            ]
+                                          ]
+                                        ]
+                                      ]
+                                    ],
+                                    [],
+                                    {
+                                      "url": "https://children.example/post",
+                                      "post_index": "7",
+                                      "token": "preserved"
+                                    }
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              30,
+                              7,
+                              [
+                                "child note",
+                                18,
+                                [
+                                  27,
+                                  8,
+                                  [
+                                    [
+                                      26,
+                                      3,
+                                      [
+                                        [
+                                          2,
+                                          [
+                                            62,
+                                            3,
+                                            [
+                                              0,
+                                              "p",
+                                              {},
+                                              null,
+                                              null,
+                                              false,
+                                              [
+                                                51,
+                                                1,
+                                                [
+                                                  3,
+                                                  "",
+                                                  null,
+                                                  null,
+                                                  "example string"
+                                                ]
+                                              ]
+                                            ]
+                                          ]
+                                        ]
+                                      ]
+                                    ],
+                                    1,
+                                    "href",
+                                    "",
+                                    [
+                                      84,
+                                      1,
+                                      [
+                                        26,
+                                        3,
+                                        []
+                                      ]
+                                    ]
+                                  ]
+                                ],
+                                "note"
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [],
+                      {
+                        "url": "https://children.example/post",
+                        "post_index": "7",
+                        "token": "preserved"
+                      }
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                135,
+                2,
+                [
+                  [
+                    27,
+                    8,
+                    [
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              62,
+                              3,
+                              [
+                                0,
+                                "div",
+                                {
+                                  "class": "thumb"
+                                },
+                                null,
+                                null,
+                                false,
+                                [
+                                  51,
+                                  1,
+                                  [
+                                    3,
+                                    "",
+                                    null,
+                                    null,
+                                    "example string"
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      2,
+                      "href",
+                      "",
+                      [
+                        84,
+                        1,
+                        [
+                          26,
+                          3,
+                          []
+                        ]
+                      ]
+                    ]
+                  ],
+                  false,
+                  [
+                    58,
+                    "notes",
+                    3,
+                    [
+                      "notes",
+                      "dcc8bacd065e5c28f0bfce33f50f9b55e1092b9188ffbf83a1b42e5f34d9b5e2",
+                      [
+                        55,
+                        2,
+                        [
+                          [],
+                          "example string"
+                        ]
+                      ],
+                      [
+                        26,
+                        3,
+                        []
+                      ],
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              30,
+                              7,
+                              [
+                                "child note",
+                                18,
+                                [
+                                  27,
+                                  8,
+                                  [
+                                    [
+                                      26,
+                                      3,
+                                      [
+                                        [
+                                          2,
+                                          [
+                                            62,
+                                            3,
+                                            [
+                                              0,
+                                              "p",
+                                              {},
+                                              null,
+                                              null,
+                                              false,
+                                              [
+                                                51,
+                                                1,
+                                                [
+                                                  3,
+                                                  "",
+                                                  null,
+                                                  null,
+                                                  "example string"
+                                                ]
+                                              ]
+                                            ]
+                                          ]
+                                        ]
+                                      ]
+                                    ],
+                                    1,
+                                    "href",
+                                    "",
+                                    [
+                                      84,
+                                      1,
+                                      [
+                                        26,
+                                        3,
+                                        []
+                                      ]
+                                    ]
+                                  ]
+                                ],
+                                "note"
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [],
+                      {
+                        "url": "https://children.example/post",
+                        "post_index": "7",
+                        "token": "preserved"
+                      }
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          26,
+          3,
+          []
+        ],
+        [],
+        {
+          "url": "https://children.example/post",
+          "post_index": "7",
+          "token": "preserved"
+        }
+      ]
+    ]
+  },
+  {
+    "case": "open_child",
+    "name": "notes",
+    "sort": false,
+    "collapse": false,
+    "formula": [
+      27,
+      8,
+      [
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                62,
+                3,
+                [
+                  0,
+                  "div",
+                  {
+                    "class": "thumb"
+                  },
+                  null,
+                  null,
+                  false,
+                  [
+                    51,
+                    1,
+                    [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        2,
+        "href",
+        "",
+        [
+          84,
+          1,
+          [
+            26,
+            3,
+            []
+          ]
+        ]
+      ]
+    ],
+    "texts": [
+      "<div class=\"thumb\"><p>first\n\nnote</p></div><div class=\"thumb\"><p>second note</p></div><!-- parent converted -->"
+    ],
+    "context": {
+      "url": "https://children.example/post",
+      "post_index": "7",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "child_data",
+    "name": "edited notes",
+    "texts": [
+      "<p>edited\n\nnote</p>"
+    ],
+    "context": {
+      "url": "https://children.example/post",
+      "post_index": "7",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "parent_action",
+    "action": "edit",
+    "names": [
+      "edited notes",
+      "nested"
+    ],
+    "outputs": [
+      [
+        "edited\n\nnote"
+      ],
+      [
+        "leaf",
+        "parent note"
+      ]
+    ],
+    "tuple": [
+      58,
+      "parent",
+      3,
+      [
+        "parent",
+        "ac3a384ec6137a802fb386daee53927ded5ba41d3a2b20a02be1af80d8863886",
+        [
+          55,
+          2,
+          [
+            [
+              [
+                3,
+                "<!-- parent converted -->"
+              ]
+            ],
+            "example string"
+          ]
+        ],
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                135,
+                2,
+                [
+                  [
+                    136,
+                    1,
+                    [
+                      "<p>edited\n\nnote</p>",
+                      1,
+                      "",
+                      [
+                        84,
+                        1,
+                        [
+                          26,
+                          3,
+                          []
+                        ]
+                      ]
+                    ]
+                  ],
+                  true,
+                  [
+                    58,
+                    "edited notes",
+                    3,
+                    [
+                      "edited notes",
+                      "dcc8bacd065e5c28f0bfce33f50f9b55e1092b9188ffbf83a1b42e5f34d9b5e2",
+                      [
+                        55,
+                        2,
+                        [
+                          [],
+                          "example string"
+                        ]
+                      ],
+                      [
+                        26,
+                        3,
+                        []
+                      ],
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              30,
+                              7,
+                              [
+                                "child note",
+                                18,
+                                [
+                                  27,
+                                  8,
+                                  [
+                                    [
+                                      26,
+                                      3,
+                                      [
+                                        [
+                                          2,
+                                          [
+                                            62,
+                                            3,
+                                            [
+                                              0,
+                                              "p",
+                                              {},
+                                              null,
+                                              null,
+                                              false,
+                                              [
+                                                51,
+                                                1,
+                                                [
+                                                  3,
+                                                  "",
+                                                  null,
+                                                  null,
+                                                  "example string"
+                                                ]
+                                              ]
+                                            ]
+                                          ]
+                                        ]
+                                      ]
+                                    ],
+                                    1,
+                                    "href",
+                                    "",
+                                    [
+                                      84,
+                                      1,
+                                      [
+                                        26,
+                                        3,
+                                        []
+                                      ]
+                                    ]
+                                  ]
+                                ],
+                                "note"
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [],
+                      {
+                        "url": "https://children.example/post",
+                        "post_index": "7",
+                        "token": "preserved"
+                      }
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                135,
+                2,
+                [
+                  [
+                    136,
+                    1,
+                    [
+                      "<p>parent note</p>",
+                      1,
+                      "",
+                      [
+                        84,
+                        1,
+                        [
+                          26,
+                          3,
+                          []
+                        ]
+                      ]
+                    ]
+                  ],
+                  false,
+                  [
+                    58,
+                    "nested",
+                    3,
+                    [
+                      "nested",
+                      "04f4bf32afc0bf3f8a76309ee0b02efd6e1344ff51d64c76817882676e7f53ef",
+                      [
+                        55,
+                        2,
+                        [
+                          [],
+                          "example string"
+                        ]
+                      ],
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              135,
+                              2,
+                              [
+                                [
+                                  136,
+                                  1,
+                                  [
+                                    "<p>leaf</p>",
+                                    1,
+                                    "",
+                                    [
+                                      84,
+                                      1,
+                                      [
+                                        26,
+                                        3,
+                                        []
+                                      ]
+                                    ]
+                                  ]
+                                ],
+                                false,
+                                [
+                                  58,
+                                  "nested tags",
+                                  3,
+                                  [
+                                    "nested tags",
+                                    "2ba869662512f1ac3c32edb32a007a692cc2153b0b9f9dff6b19cf6163917140",
+                                    [
+                                      55,
+                                      2,
+                                      [
+                                        [],
+                                        "example string"
+                                      ]
+                                    ],
+                                    [
+                                      26,
+                                      3,
+                                      []
+                                    ],
+                                    [
+                                      26,
+                                      3,
+                                      [
+                                        [
+                                          2,
+                                          [
+                                            30,
+                                            7,
+                                            [
+                                              "child tag",
+                                              0,
+                                              [
+                                                136,
+                                                1,
+                                                [
+                                                  "leaf",
+                                                  1,
+                                                  "",
+                                                  [
+                                                    84,
+                                                    1,
+                                                    [
+                                                      26,
+                                                      3,
+                                                      []
+                                                    ]
+                                                  ]
+                                                ]
+                                              ],
+                                              "series"
+                                            ]
+                                          ]
+                                        ]
+                                      ]
+                                    ],
+                                    [],
+                                    {
+                                      "url": "https://children.example/post",
+                                      "post_index": "7",
+                                      "token": "preserved"
+                                    }
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              30,
+                              7,
+                              [
+                                "child note",
+                                18,
+                                [
+                                  27,
+                                  8,
+                                  [
+                                    [
+                                      26,
+                                      3,
+                                      [
+                                        [
+                                          2,
+                                          [
+                                            62,
+                                            3,
+                                            [
+                                              0,
+                                              "p",
+                                              {},
+                                              null,
+                                              null,
+                                              false,
+                                              [
+                                                51,
+                                                1,
+                                                [
+                                                  3,
+                                                  "",
+                                                  null,
+                                                  null,
+                                                  "example string"
+                                                ]
+                                              ]
+                                            ]
+                                          ]
+                                        ]
+                                      ]
+                                    ],
+                                    1,
+                                    "href",
+                                    "",
+                                    [
+                                      84,
+                                      1,
+                                      [
+                                        26,
+                                        3,
+                                        []
+                                      ]
+                                    ]
+                                  ]
+                                ],
+                                "note"
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [],
+                      {
+                        "url": "https://children.example/post",
+                        "post_index": "7",
+                        "token": "preserved"
+                      }
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          26,
+          3,
+          []
+        ],
+        [],
+        {
+          "url": "https://children.example/post",
+          "post_index": "7",
+          "token": "preserved"
+        }
+      ]
+    ]
+  }
+]

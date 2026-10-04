@@ -1022,3 +1022,162 @@ fn multiple_examples_restore_sources_and_propagate_converted_selected_child_data
     list.invoke_action("cancel".into());
     assert_eq!(definitions(&store), original);
 }
+
+fn recursive_child(slots: &Slots) -> (Slots, ParserEditWindow) {
+    let owned = (**slots.child.borrow().as_ref().unwrap()).clone();
+    let window = child(&owned.page);
+    (owned, window)
+}
+
+#[test]
+fn recursive_subsidiary_creation_is_staged_and_owner_cancels_descendants() {
+    let rendered = headless::init();
+    let (_dir, store, slots) = setup();
+    let before = definitions(&store);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    let raw = "<div class=\"thumb\"><p>first\n\nnote</p></div><div class=\"thumb\"><p>second note</p></div>";
+    page.set_document(raw.into());
+    page.set_test_url("https://children.example/post".into());
+    page.set_variables("token=preserved".into());
+    page.invoke_action("add-subsidiary".into());
+    let (owned, subsidiary) = recursive_child(&slots);
+    assert!(subsidiary.get_subsidiary());
+    assert!(!subsidiary.get_own_sorted());
+    assert_eq!(subsidiary.get_document(), raw);
+    screenshot(&rendered, 2, "recursive-subsidiary.png", &subsidiary);
+    subsidiary.invoke_text_edited(0, "new child".into());
+    subsidiary.invoke_action("add-content".into());
+    let content = child(&owned.content);
+    assert_eq!(content.get_examples().row_count(), 2);
+    assert_eq!(
+        content.get_document(),
+        "<div class=\"thumb\"><p>first\n\nnote</p></div>"
+    );
+    assert_eq!(content.get_variables(), "token=preserved");
+    content.invoke_choice_edited(1, 2);
+    content.invoke_action("formula".into());
+    let formula = owned
+        .formula
+        .formula
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    formula.set_kind(5);
+    formula.invoke_type_chosen();
+    formula.set_static_text("child\n\nnote".into());
+    formula.invoke_changed();
+    formula.invoke_apply();
+    content.invoke_action("apply".into());
+    subsidiary.invoke_action("apply".into());
+    assert_eq!(page.get_subsidiaries().row_count(), 2);
+    assert_eq!(definitions(&store), before);
+    page.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    let saved = definitions(&store);
+    let added = saved.parsers[0]
+        .subsidiary
+        .iter()
+        .find(|s| s.parser.name == "new child")
+        .unwrap();
+    assert_eq!(added.parser.content_parsers.len(), 1);
+    assert!(matches!(
+        added.parser.content_parsers[0].kind,
+        ContentKind::Note { .. }
+    ));
+    let parsed = saved.parsers[0]
+        .parse(&mut ParsingContext::new(), raw)
+        .unwrap();
+    assert_eq!(parsed.len(), 2);
+    assert!(
+        parsed
+            .iter()
+            .all(|p| p.contents.iter().any(|c| c.text == "child\n\nnote"))
+    );
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.set_document(raw.into());
+    page.invoke_action("add-subsidiary".into());
+    let (owned, subsidiary) = recursive_child(&slots);
+    subsidiary.invoke_action("add-subsidiary".into());
+    let (grand_slots, grandchild) = recursive_child(&owned);
+    assert!(page.get_child_open());
+    page.invoke_action("delete-subsidiary".into());
+    assert_eq!(page.get_subsidiaries().row_count(), 2);
+    page.invoke_force_close();
+    assert!(slots.child.borrow().is_none());
+    assert!(owned.page.borrow().is_none());
+    assert!(grand_slots.page.borrow().is_none());
+    grandchild.invoke_action("apply".into());
+    subsidiary.invoke_action("apply".into());
+    list.invoke_action("cancel".into());
+    assert_eq!(definitions(&store), saved);
+}
+
+#[test]
+fn subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_prompt() {
+    headless::init();
+    let (_dir, store, slots) = setup();
+    let cases = hydrus_testkit::fixture_json("parser_children.json");
+    let recorded = cases
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["action"] == "add_nested")
+        .unwrap();
+    let object = hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(
+        &recorded["tuple"].to_string(),
+    )
+    .unwrap();
+    let imported = hydrus_legacy::objects::parsers::page_parser(&object).unwrap();
+    store
+        .write_and_refresh(move |ctx| {
+            let mut definitions: Downloaders = settings::get(ctx.conn())?;
+            definitions.parsers[0] = imported;
+            settings::set(ctx.conn(), &definitions)
+        })
+        .unwrap();
+    let before = definitions(&store);
+    assert!(
+        before.parsers[0].subsidiary[0]
+            .parser
+            .reference_auxiliary
+            .is_some()
+    );
+    assert_eq!(before.parsers[0].subsidiary[0].parser.subsidiary.len(), 1);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.invoke_subsidiary_clicked(0);
+    page.invoke_action("edit-subsidiary".into());
+    let (_, subsidiary) = recursive_child(&slots);
+    subsidiary.invoke_own_sort_changed(true);
+    subsidiary.invoke_action("cancel".into());
+    assert!(slots.child.borrow().is_none());
+    assert_eq!(subsidiary.get_question(), "");
+    page.invoke_action("edit-subsidiary".into());
+    let (_, subsidiary) = recursive_child(&slots);
+    subsidiary.invoke_text_edited(0, "edited subsidiary".into());
+    subsidiary.invoke_own_sort_changed(false);
+    subsidiary.invoke_action("apply".into());
+    page.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    let saved = definitions(&store);
+    let old = &before.parsers[0].subsidiary[0];
+    let new = &saved.parsers[0].subsidiary[0];
+    assert_eq!(new.parser.key, old.parser.key);
+    assert_eq!(
+        new.parser.reference_auxiliary,
+        old.parser.reference_auxiliary
+    );
+    assert_eq!(new.formula, old.formula);
+    assert_eq!(new.parser.subsidiary, old.parser.subsidiary);
+    assert_eq!(new.parser.name, "edited subsidiary");
+    assert!(!new.sort_by_source_time);
+}

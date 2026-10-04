@@ -978,8 +978,10 @@ database. Concurrent edits to the same area use the last successful Apply.
 
 The native parser editor model supports all nine content kinds and typed test
 context. Native page/content/parser-list and direct URL-class-link windows are available.
-Existing subsidiary separation formulae and source-time sorting are editable;
-adding subsidiary parsers and editing their child pages remain deferred. Test-data
+Recursive subsidiary creation/editing, deletion, separation and source-time sorting
+are available. The subsidiary editor shares page-parser JSON/PNG exchange; its own
+separation/sort wrapper is preserved in parent-page exchange rather than exported
+as a standalone subsidiary object. Test-data
 URL fetches use a window-local downloader engine: progress appears in the test panel
 rather than the daemon job review. Its requests use the same headers, cookies,
 network settings and accounting machinery, and their usage is merged safely with
