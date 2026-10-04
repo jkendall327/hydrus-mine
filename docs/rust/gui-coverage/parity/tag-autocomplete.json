@@ -12,7 +12,8 @@
     "e9efa49e803e02168ae878bdb5a3364afc00d48c",
     "cc55349e79ed48110ad6be4548b05d2cb77f7a4a",
     "b5ebaf2b2748082ce100cc6b24c84bc8a198c922",
-    "244c9da991fba59587a83e13ab8ffc150eee041f"
+    "244c9da991fba59587a83e13ab8ffc150eee041f",
+    "21f4fa12"
   ],
   "implementation_leaf_count": 8,
   "partial_improvements": 4,
@@ -528,7 +529,7 @@
       "previous_status": "missing",
       "proposed_status": "first_pass",
       "change_kind": "implementation",
-      "exact_behavior": "Integer control 1–128, default 11; visible Manage Tags suggestion rows use the setting, scrolling retains every result beyond that height and the old twelve-result cap is removed. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
+      "exact_behavior": "Integer control 1\u2013128, default 11; visible Manage Tags suggestion rows use the setting, scrolling retains every result beyond that height and the old twelve-result cap is removed. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
       "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because maintenance/admin actions and multiple-tag selection menus are not yet implemented.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
@@ -1317,7 +1318,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "The Tag autocomplete tabs / favourite tags page opens the shared write-tag editor for all-known tags. It starts from the parent options draft; manual choices and pasted tags only add (repeated additions retain existing tags), explicit removal deletes, and rows/save order use natural text order. Child Apply updates the parent draft without a store write. Child Cancel preserves that draft; parent Cancel and window close discard accepted unsaved lists and invalidate child callbacks. Parent Apply waits for any open favourite editor, writes only changed settings, persists/reopens the list, preserves unrelated concurrent settings and feeds every shared favourites tab, including a real native Manage Tags consumer.",
-      "limits": "The native editor is a detached child rather than the Qt page’s embedded list/input; removal acts on one row at a time. Broader write-autocomplete parents remain partial for maintenance/admin actions and multiple-tag selection menus.",
+      "limits": "The native editor is a detached child rather than the Qt page\u2019s embedded list/input; removal acts on one row at a time. Broader write-autocomplete parents remain partial for maintenance/admin actions and multiple-tag selection menus.",
       "implementation_commit": "cc55349e79ed48110ad6be4548b05d2cb77f7a4a",
       "anchors": [
         {
@@ -1405,6 +1406,36 @@
         "b5ebaf2b2748082ce100cc6b24c84bc8a198c922",
         "244c9da991fba59587a83e13ab8ffc150eee041f"
       ]
+    }
+  ],
+  "continuations": [
+    {
+      "baseline": "2388372d",
+      "implementation_commit": "21f4fa12",
+      "reference_ids": [
+        "audit-media-tags-autocomplete",
+        "siblings-autocomplete",
+        "parents-autocomplete"
+      ],
+      "status": "partial",
+      "exact_behavior": "Shared logical multi-selection; plain/Ctrl/reversible Shift and Ctrl+Shift; inherited parent-row origin; unchanged fetch/decorations retain batch; Enter/double-click activates batch in ManageTags, both relationship sides and detached child. Cancel/reopen and stale callbacks retain staged owner boundaries. No new completed original-ID count.",
+      "limits": "Multiple-selection context actions, local maintenance and remaining shared autocomplete gaps remain outstanding.",
+      "source_anchors": [
+        "crates/hydrus-gui-model/src/write_autocomplete.rs::Selection::click",
+        "crates/hydrus-gui/ui/write_autocomplete.slint::WriteTagInput",
+        "crates/hydrus-gui/src/manage_tags_window.rs::on_selection_clicked",
+        "crates/hydrus-gui/src/tag_relationships_window.rs::on_autocomplete_clicked",
+        "crates/hydrus-gui/src/write_tag_window.rs::on_selection_clicked"
+      ],
+      "test_anchors": [
+        "crates/hydrus-gui-model/tests/model/write_autocomplete.rs::recorded_logical_selection_ranges_parent_hits_and_batch_activation",
+        "crates/hydrus-gui/tests/gui/write_autocomplete.rs::selected_batches_stage_in_shared_dialogs_and_closed_owners_ignore_callbacks"
+      ],
+      "reference_recording": [
+        "oracle/record_write_tag_selection.py",
+        "oracle/fixtures/write_tag_selection.json"
+      ],
+      "executed_validation": "Actual Qt client recorder via shared with-oracle lock completed 2026-10-04; cached Slint source compiler, Python syntax, fmt and diff check passed; native/model tests authored for root async CI, no local Cargo tests."
     }
   ]
 }
