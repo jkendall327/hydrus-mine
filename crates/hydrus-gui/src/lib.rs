@@ -928,7 +928,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let current_page = page.clone();
         let main = window.as_weak();
         move |page: Rc<RefCell<SearchPage>>| {
-            let Some(blank) = page.borrow_mut().take_editor_wanted() else {
+            let Some((blank, shift)) = page.borrow_mut().take_system_editor_wanted() else {
                 return;
             };
             let store = page.borrow().store().clone();
@@ -968,7 +968,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     if !owner() {
                         return;
                     }
-                    page.borrow_mut().add_predicates(&predicates);
+                    page.borrow_mut().apply_system_editor(predicates, shift);
                     shown(true);
                 }
             });

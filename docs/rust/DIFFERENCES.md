@@ -1864,3 +1864,8 @@ allocation. System-predicate editors reuse the existing shared native opener;
 the OR owner cancels them on close. Native layouts and text controls differ from
 Qt's notebook and icon controls. These additions do not promote the complete
 read-autocomplete or OR parent workflows.
+
+System selections in the main read input now preserve activation Shift and
+use the same OR construction broadcast as tags. The basic OR child still needs
+the matching callback adapter. The executed actual Qt activation recording
+covers both consumers; authored regression execution is pending hosted CI.

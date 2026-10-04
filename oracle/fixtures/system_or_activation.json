@@ -1,0 +1,1935 @@
+{
+  "tag": "parity:system or alpha",
+  "corpus": [
+    {
+      "tag": "parity:system or alpha",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "owner": "main",
+      "seed_draft": false,
+      "shift": false,
+      "accepted": false,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "after_parent": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      }
+    },
+    {
+      "owner": "main",
+      "seed_draft": false,
+      "shift": false,
+      "accepted": true,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "system:filesize < 7KB"
+        ],
+        "draft": null,
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [
+          "system:filesize < 7KB"
+        ],
+        "removed": [],
+        "query_count": 16
+      },
+      "after_parent": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "system:filesize < 7KB"
+        ],
+        "draft": null,
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [
+          "system:filesize < 7KB"
+        ],
+        "removed": [],
+        "query_count": 16
+      }
+    },
+    {
+      "owner": "main",
+      "seed_draft": false,
+      "shift": true,
+      "accepted": false,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "after_parent": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      }
+    },
+    {
+      "owner": "main",
+      "seed_draft": false,
+      "shift": true,
+      "accepted": true,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "after_parent": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      }
+    },
+    {
+      "owner": "main",
+      "seed_draft": true,
+      "shift": false,
+      "accepted": false,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "after_parent": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      }
+    },
+    {
+      "owner": "main",
+      "seed_draft": true,
+      "shift": false,
+      "accepted": true,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "parity:system or alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        10,
+                        [
+                          "<",
+                          7,
+                          1024
+                        ],
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "parity:system or alpha OR system:filesize < 7KB"
+        ],
+        "draft": null,
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [
+          "parity:system or alpha OR system:filesize < 7KB"
+        ],
+        "removed": [],
+        "query_count": 16
+      },
+      "after_parent": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "parity:system or alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        10,
+                        [
+                          "<",
+                          7,
+                          1024
+                        ],
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "parity:system or alpha OR system:filesize < 7KB"
+        ],
+        "draft": null,
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [
+          "parity:system or alpha OR system:filesize < 7KB"
+        ],
+        "removed": [],
+        "query_count": 16
+      }
+    },
+    {
+      "owner": "main",
+      "seed_draft": true,
+      "shift": true,
+      "accepted": false,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "after_parent": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      }
+    },
+    {
+      "owner": "main",
+      "seed_draft": true,
+      "shift": true,
+      "accepted": true,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "after_parent": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      }
+    },
+    {
+      "owner": "basic",
+      "seed_draft": false,
+      "shift": false,
+      "accepted": false,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "outer_value": [],
+      "after_parent": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      }
+    },
+    {
+      "owner": "basic",
+      "seed_draft": false,
+      "shift": false,
+      "accepted": true,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "system:filesize < 7KB"
+        ],
+        "draft": null,
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [],
+        "removed": [],
+        "query_count": 16
+      },
+      "outer_value": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_parent": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "system:filesize < 7KB"
+        ],
+        "draft": null,
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [
+          "system:filesize < 7KB"
+        ],
+        "removed": [],
+        "query_count": 16
+      }
+    },
+    {
+      "owner": "basic",
+      "seed_draft": false,
+      "shift": true,
+      "accepted": false,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "outer_value": [],
+      "after_parent": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      }
+    },
+    {
+      "owner": "basic",
+      "seed_draft": false,
+      "shift": true,
+      "accepted": true,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "outer_value": [],
+      "after_parent": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      }
+    },
+    {
+      "owner": "basic",
+      "seed_draft": true,
+      "shift": false,
+      "accepted": false,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "outer_value": [],
+      "after_parent": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      }
+    },
+    {
+      "owner": "basic",
+      "seed_draft": true,
+      "shift": false,
+      "accepted": true,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "parity:system or alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        10,
+                        [
+                          "<",
+                          7,
+                          1024
+                        ],
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "parity:system or alpha OR system:filesize < 7KB"
+        ],
+        "draft": null,
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [],
+        "removed": [],
+        "query_count": 16
+      },
+      "outer_value": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "parity:system or alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      10,
+                      [
+                        "<",
+                        7,
+                        1024
+                      ],
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_parent": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "parity:system or alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        10,
+                        [
+                          "<",
+                          7,
+                          1024
+                        ],
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "parity:system or alpha OR system:filesize < 7KB"
+        ],
+        "draft": null,
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [
+          "parity:system or alpha OR system:filesize < 7KB"
+        ],
+        "removed": [],
+        "query_count": 16
+      }
+    },
+    {
+      "owner": "basic",
+      "seed_draft": true,
+      "shift": true,
+      "accepted": false,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "outer_value": [],
+      "after_parent": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      }
+    },
+    {
+      "owner": "basic",
+      "seed_draft": true,
+      "shift": true,
+      "accepted": true,
+      "outer_accepted": true,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "outer_value": [],
+      "after_parent": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      }
+    },
+    {
+      "owner": "basic",
+      "seed_draft": true,
+      "shift": false,
+      "accepted": true,
+      "outer_accepted": false,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "parity:system or alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        10,
+                        [
+                          "<",
+                          7,
+                          1024
+                        ],
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "parity:system or alpha OR system:filesize < 7KB"
+        ],
+        "draft": null,
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [],
+        "removed": [],
+        "query_count": 16
+      },
+      "outer_value": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "parity:system or alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      10,
+                      [
+                        "<",
+                        7,
+                        1024
+                      ],
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_parent": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      }
+    },
+    {
+      "owner": "basic",
+      "seed_draft": true,
+      "shift": true,
+      "accepted": true,
+      "outer_accepted": false,
+      "before": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "system_predicates": [
+        [
+          14,
+          8,
+          [
+            10,
+            [
+              "<",
+              7,
+              1024
+            ],
+            true
+          ]
+        ]
+      ],
+      "after_system": {
+        "predicates": [],
+        "labels": [],
+        "draft": [
+          [
+            14,
+            8,
+            [
+              0,
+              "parity:system or alpha",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      },
+      "outer_value": [],
+      "after_parent": {
+        "predicates": [],
+        "labels": [],
+        "draft": null,
+        "text": "",
+        "recent": [
+          [
+            14,
+            8,
+            [
+              10,
+              [
+                "<",
+                7,
+                1024
+              ],
+              true
+            ]
+          ]
+        ],
+        "added": [],
+        "removed": [],
+        "query_count": null
+      }
+    }
+  ]
+}

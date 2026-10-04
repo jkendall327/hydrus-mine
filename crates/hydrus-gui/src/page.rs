@@ -76,7 +76,7 @@ pub struct SearchPage {
     tag_computation_limit: Option<u32>,
     error: Option<String>,
     /// A system predicate chosen that needs more, whose editor is to open.
-    editor_wanted: Option<crate::predicate_editors::Blank>,
+    editor_wanted: Option<(crate::predicate_editors::Blank, bool)>,
     /// A duplicates page's filtering, which the page can launch.
     duplicates: Option<DuplicatesPage>,
     /// What the status bar says while the page is empty (the reference's
@@ -2186,7 +2186,7 @@ impl SearchPage {
             return;
         };
         if let Some(blank) = suggestion.editor {
-            self.editor_wanted = Some(blank);
+            self.editor_wanted = Some((blank, shift));
             return;
         }
         let text = suggestion.predicate.clone();
@@ -2256,7 +2256,16 @@ impl SearchPage {
     /// The editor a chosen system predicate asked for, if one did (asked
     /// once).
     pub fn take_editor_wanted(&mut self) -> Option<crate::predicate_editors::Blank> {
+        self.take_system_editor_wanted().map(|(blank, _)| blank)
+    }
+    /// Retain the selecting key's Shift intent until its system child accepts.
+    pub fn take_system_editor_wanted(&mut self) -> Option<(crate::predicate_editors::Blank, bool)> {
         self.editor_wanted.take()
+    }
+    /// A fleshed-out system value follows the original suggestion broadcast:
+    /// Shift extends the draft; normal acceptance merges and commits it.
+    pub fn apply_system_editor(&mut self, predicates: Vec<Predicate>, shift: bool) {
+        self.broadcast_or(predicates, shift);
     }
 
     /// Add predicates an editor made, empty the search box and search again;
