@@ -1,0 +1,2817 @@
+{
+  "baseline_git_head": "5079206dc1d0c2d2614b428632dc9499cb9ad3f8",
+  "source_snapshot": "5079206dc1d0c2d2614b428632dc9499cb9ad3f8",
+  "inspection_method": "Read-only inspection of existing recorded-menu, GUI/model and worker assertions. No new test execution. Supplemental corrections to cd0ad6793b4986b66b97889422ff54f425902253.",
+  "native": {
+    "updates": [
+      {
+        "id": "menu.network.all-new-network-traffic",
+        "label": "all new network traffic",
+        "parent_id": "menu.network.pause",
+        "kind": "action",
+        "status": "first_pass",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 800
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/ClientGUI.py",
+          "line": 3740
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/menu_bar.rs",
+            "line": 412,
+            "role": "source_inspection",
+            "description": "Toggles the selected Pauses field through the store writer.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-net/src/engine.rs",
+            "line": 858,
+            "role": "source_inspection",
+            "description": "Backing worker/model reads this persistent scheduling gate.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+            "line": 147,
+            "role": "regression_test",
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-net/tests/engine.rs",
+            "line": 713,
+            "role": "regression_test",
+            "description": "Sets persistent network_traffic, asserts the engine request times out with the pause status, clears the flag and asserts it completes.",
+            "executed_in_inventory": false
+          }
+        ],
+        "remaining_limitations": [
+          "Settings are persisted; scheduling changes are observed by the daemon on its refresh cycle.",
+          "The specific menu click is source-traced; the regression executes its stored gate consumer rather than clicking this item."
+        ],
+        "menu_entry_type": "pause",
+        "assessment": "New requests wait at the network engine pause gate; an active transfer is not cancelled."
+      },
+      {
+        "id": "menu.network.pause.subscriptions",
+        "label": "subscriptions",
+        "parent_id": "menu.network.pause",
+        "kind": "action",
+        "status": "first_pass",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 807
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/ClientGUI.py",
+          "line": 3745
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/menu_bar.rs",
+            "line": 412,
+            "role": "source_inspection",
+            "description": "Toggles the selected Pauses field through the store writer.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-download/src/subscriptions.rs",
+            "line": 294,
+            "role": "source_inspection",
+            "description": "Backing worker/model reads this persistent scheduling gate.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+            "line": 147,
+            "role": "regression_test",
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-download/tests/subscriptions.rs",
+            "line": 606,
+            "role": "regression_test",
+            "description": "Sets subscriptions/network_traffic gates, asserts zero new URLs and an empty file-seed queue, clears pauses and asserts three new URLs.",
+            "executed_in_inventory": false
+          }
+        ],
+        "remaining_limitations": [
+          "Settings are persisted; scheduling changes are observed by the daemon on its refresh cycle.",
+          "The specific menu click is source-traced; the regression executes the saved subscription gate."
+        ],
+        "menu_entry_type": "pause",
+        "assessment": "The subscriptions runner stops starting work while the persistent subscriptions pause is set."
+      },
+      {
+        "id": "menu.network.paged-file-importing",
+        "label": "paged file importing",
+        "parent_id": "menu.network.pause",
+        "kind": "action",
+        "status": "first_pass",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 819
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/ClientGUI.py",
+          "line": 3769
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/menu_bar.rs",
+            "line": 412,
+            "role": "source_inspection",
+            "description": "Toggles the selected Pauses field through the store writer.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 147,
+            "role": "source_inspection",
+            "description": "Backing worker/model reads this persistent scheduling gate.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+            "line": 147,
+            "role": "regression_test",
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-download/tests/url_queue.rs",
+            "line": 556,
+            "role": "regression_test",
+            "description": "Sets the saved file_queues gate, asserts the pending seed remains and no server hits occur, clears pauses and waits for queue completion.",
+            "executed_in_inventory": false
+          }
+        ],
+        "remaining_limitations": [
+          "Settings are persisted; scheduling changes are observed by the daemon on its refresh cycle.",
+          "The specific menu click is source-traced; the regression executes the saved file-queue gate."
+        ],
+        "menu_entry_type": "pause",
+        "assessment": "The paged file queue gate prevents new file work while preserving queued items."
+      },
+      {
+        "id": "menu.network.paged-watcher-checking",
+        "label": "paged watcher checking",
+        "parent_id": "menu.network.pause",
+        "kind": "action",
+        "status": "first_pass",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 821
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/ClientGUI.py",
+          "line": 3793
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/menu_bar.rs",
+            "line": 412,
+            "role": "source_inspection",
+            "description": "Toggles the selected Pauses field through the store writer.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 157,
+            "role": "source_inspection",
+            "description": "Backing worker/model reads this persistent scheduling gate.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+            "line": 147,
+            "role": "regression_test",
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/menu_bar.rs",
+            "line": 210,
+            "role": "regression_test",
+            "description": "Invokes this menu item, reads the saved watcher gate, verifies the reopened menu is checked, clicks again and asserts the saved flag is false.",
+            "executed_in_inventory": false
+          }
+        ],
+        "remaining_limitations": [
+          "Settings are persisted; scheduling changes are observed by the daemon on its refresh cycle.",
+          "The GUI regression checks menu/store state; global watcher-worker pause/resume is source-traced rather than asserted by this test."
+        ],
+        "menu_entry_type": "pause",
+        "assessment": "The menu item toggles the persistent watcher-checking flag and reflects it as a checkmark; both directions are asserted by the GUI regression. Queue scheduling reads the same field in source."
+      },
+      {
+        "id": "menu.network.nudge-subscriptions-awake",
+        "label": "nudge subscriptions awake",
+        "parent_id": "menu.network.pause",
+        "kind": "action",
+        "status": "partial",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 810
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/ClientGUI.py",
+          "line": 3747
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/menu_bar.rs",
+            "line": 568,
+            "role": "source_inspection",
+            "description": "Queues the subscription wake notification.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-cli/src/main.rs",
+            "line": 798,
+            "role": "source_inspection",
+            "description": "Daemon dispatches the persisted nudge to subscription work.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+            "line": 147,
+            "role": "regression_test",
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          }
+        ],
+        "remaining_limitations": [
+          "The menu fixture confirms advanced-mode presence; no inspected assertion follows this click through persisted nudge consumption and a waking subscription runner."
+        ],
+        "menu_entry_type": "item",
+        "assessment": "Advanced-mode action enqueues SUBSCRIPTIONS_NUDGE; the daemon consumes it to wake its existing subscription runner. The menu fixture confirms advanced-mode presence; no inspected assertion follows this click through persisted nudge consumption and a waking subscription runner."
+      },
+      {
+        "id": "menu.network.all-paged-importer-work",
+        "label": "all paged importer work",
+        "parent_id": "menu.network.pause",
+        "kind": "action",
+        "status": "partial",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 817
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/ClientGUI.py",
+          "line": 3757
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/menu_bar.rs",
+            "line": 412,
+            "role": "source_inspection",
+            "description": "Toggles the selected Pauses field through the store writer.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 147,
+            "role": "source_inspection",
+            "description": "Backing worker/model reads this persistent scheduling gate.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+            "line": 147,
+            "role": "regression_test",
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          }
+        ],
+        "remaining_limitations": [
+          "Settings are persisted; scheduling changes are observed by the daemon on its refresh cycle.",
+          "The menu fixture checks the item and source links all three worker gates; no inspected assertion executes this combined gate across file/gallery/watcher scheduling."
+        ],
+        "menu_entry_type": "pause",
+        "assessment": "All file, gallery and watcher queue scheduling obeys the shared paged-importer gate. The menu fixture checks the item and source links all three worker gates; no inspected assertion executes this combined gate across file/gallery/watcher scheduling."
+      },
+      {
+        "id": "menu.network.paged-gallery-searching",
+        "label": "paged gallery searching",
+        "parent_id": "menu.network.pause",
+        "kind": "action",
+        "status": "partial",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 820
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/ClientGUI.py",
+          "line": 3781
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/menu_bar.rs",
+            "line": 412,
+            "role": "source_inspection",
+            "description": "Toggles the selected Pauses field through the store writer.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 152,
+            "role": "source_inspection",
+            "description": "Backing worker/model reads this persistent scheduling gate.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+            "line": 147,
+            "role": "regression_test",
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          }
+        ],
+        "remaining_limitations": [
+          "Settings are persisted; scheduling changes are observed by the daemon on its refresh cycle.",
+          "Recorded menu/state and actual gallery gate consumers exist; no inspected regression toggles the global gallery gate and verifies gallery/simple-downloader work stops and resumes."
+        ],
+        "menu_entry_type": "pause",
+        "assessment": "Gallery and simple-downloader search work obeys the gallery pause gate. Recorded menu/state and actual gallery gate consumers exist; no inspected regression toggles the global gallery gate and verifies gallery/simple-downloader work stops and resumes."
+      },
+      {
+        "id": "menu.network.user-run-downloader-repository",
+        "label": "user-run downloader repository",
+        "parent_id": "menu.network.downloaders",
+        "kind": "action",
+        "status": "partial",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 855
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/ClientGUI.py",
+          "line": 3837
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/menu_bar.rs",
+            "line": 557,
+            "role": "source_inspection",
+            "description": "Dispatches to the desktop URL launcher.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/main_menu.rs",
+            "line": 858,
+            "role": "source_inspection",
+            "description": "Exact reference destination is retained.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+            "line": 147,
+            "role": "regression_test",
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          }
+        ],
+        "remaining_limitations": [
+          "The destination and launcher callback are source-traced. The GUI launcher regression clicks a different help URL; it does not assert this community repository action."
+        ],
+        "menu_entry_type": "item",
+        "assessment": "The action launches the same community repository URL through the native external URL launcher. The destination and launcher callback are source-traced. The GUI launcher regression clicks a different help URL; it does not assert this community repository action."
+      },
+      {
+        "id": "menu.network.this-system-is-legacy",
+        "label": "THIS SYSTEM IS LEGACY",
+        "parent_id": "menu.network.logins",
+        "kind": "action",
+        "status": "first_pass",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 901
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/ClientGUI.py",
+          "line": 3856
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/main_menu.rs",
+            "line": 901,
+            "role": "source_inspection",
+            "description": "Static label construction and copy semantics.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/menu_bar.rs",
+            "line": 411,
+            "role": "source_inspection",
+            "description": "Copies informational text.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+            "line": 147,
+            "role": "regression_test",
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          }
+        ],
+        "remaining_limitations": [
+          "The menu fixture does not click the informational label or assert copied clipboard text."
+        ],
+        "menu_entry_type": "copy_label",
+        "assessment": "The informational caption \"THIS SYSTEM IS LEGACY\" matches the captured reference menu and its enabled label state. This finite caption slice is covered by recursive fixture assertions; the copy callback is source-traced."
+      },
+      {
+        "id": "menu.network.try-to-migrate-away-from-it",
+        "label": "TRY TO MIGRATE AWAY FROM IT",
+        "parent_id": "menu.network.logins",
+        "kind": "action",
+        "status": "first_pass",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 902
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/ClientGUI.py",
+          "line": 3857
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/main_menu.rs",
+            "line": 902,
+            "role": "source_inspection",
+            "description": "Static label construction and copy semantics.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/menu_bar.rs",
+            "line": 411,
+            "role": "source_inspection",
+            "description": "Copies informational text.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+            "line": 147,
+            "role": "regression_test",
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          }
+        ],
+        "remaining_limitations": [
+          "The menu fixture does not click the informational label or assert copied clipboard text."
+        ],
+        "menu_entry_type": "copy_label",
+        "assessment": "The informational caption \"TRY TO MIGRATE AWAY FROM IT\" matches the captured reference menu and its enabled label state. This finite caption slice is covered by recursive fixture assertions; the copy callback is source-traced."
+      },
+      {
+        "id": "menu.network.watch-clipboard-for-urls",
+        "label": "watch clipboard for urls",
+        "parent_id": "menu.network.downloaders",
+        "kind": "menu",
+        "status": "first_pass",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 867
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/ClientGUI.py",
+          "line": 3730
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/clipboard_monitor.rs",
+            "line": 32,
+            "role": "source_inspection",
+            "description": "Timer ownership and polling path.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/clipboard_urls.rs",
+            "line": 51,
+            "role": "source_inspection",
+            "description": "Repeated text is suppressed until reset.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/clipboard_urls.rs",
+            "line": 178,
+            "role": "regression_test",
+            "description": "Clicks both actual network submenu switches, toggles watcher independently and verifies both checked states after reopening.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/clipboard_urls.rs",
+            "line": 65,
+            "role": "regression_test",
+            "description": "Exercises changed watcher/direct-file clipboard text, repeated-text suppression and routing into existing importer queues without switching the active page.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/clipboard_urls.rs",
+            "line": 224,
+            "role": "regression_test",
+            "description": "Asserts an access error suspends further reads, creates a visible message and toggling retries the current URL into a watcher queue.",
+            "executed_in_inventory": false
+          }
+        ],
+        "remaining_limitations": [
+          "Text clipboard URLs only; unknown/unparseable URLs are ignored and access failure suspends monitoring."
+        ],
+        "menu_entry_type": "menu",
+        "assessment": "Independent watcher and other-recognised switches drive one-second text polling and compatible page routing."
+      },
+      {
+        "id": "menu.network.review-current-network-jobs",
+        "label": "review current network jobs",
+        "parent_id": "menu.network.data",
+        "kind": "action",
+        "status": "first_pass",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 837
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/ClientGUI.py",
+          "line": 3813
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/network_data_window.rs",
+            "line": 803,
+            "role": "source_inspection",
+            "description": "Review creation and action callbacks.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-net/src/engine.rs",
+            "line": 512,
+            "role": "source_inspection",
+            "description": "Commands are rejected for replaced daemons or completed requests.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/network_data.rs",
+            "line": 165,
+            "role": "regression_test",
+            "description": "Checks displayed job/context progress, queues override/cancel commands with reviewed epoch+ID, rejects replaced snapshots and disables actions for offline expiry/closed owner.",
+            "executed_in_inventory": false
+          }
+        ],
+        "remaining_limitations": [
+          "Live refresh defaults on; Qt starts with manual snapshots. Engine-position strings are replaced by typed wait reasons."
+        ],
+        "menu_entry_type": "item",
+        "assessment": "Opens active requests with extended selection, cancellation and bandwidth override through epoch-qualified local IPC."
+      },
+      {
+        "id": "audit.network.bandwidth.rows",
+        "parent_id": "catalog.bandwidthwindow",
+        "label": "Context list and numeric sorting",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "Known/global/rule contexts are merged and sorted using numeric usage/speed keys. Known context row values have fixture coverage; numeric sort interaction and ordering keys have no scoped inspected assertion.",
+        "native_source": {
+          "path": "crates/hydrus-gui/src/network_data_window.rs",
+          "line": 177
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/networking/ClientGUINetwork.py",
+          "line": 720
+        },
+        "remaining_limitations": [
+          "Known context row values have fixture coverage; numeric sort interaction and ordering keys have no scoped inspected assertion."
+        ],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/network_data.rs",
+            "line": 78,
+            "role": "native_model",
+            "description": "Known/global/rule contexts are merged and sorted using numeric usage/speed keys.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/network_data.rs",
+            "line": 15,
+            "role": "regression_test",
+            "description": "Builds known contexts and reports 2KB/one request; compares a seven-day row and rule rows to Qt fixture values, and compares revert/reset question strings. Sorting and other span selectors are not executed.",
+            "executed_in_inventory": false
+          }
+        ],
+        "relationship": "source_traced_control_or_workflow"
+      },
+      {
+        "id": "audit.network.bandwidth.history",
+        "parent_id": "catalog.bandwidthwindow",
+        "label": "Day/week/month/all-time usage span",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "Native history selector changes usage columns and uses saved trackers when heartbeat expires. A seven-day row and live/saved fallback are asserted; GUI day/week/month/all-time selector changes are source-traced without separate assertions.",
+        "native_source": {
+          "path": "crates/hydrus-gui/src/network_data_window.rs",
+          "line": 182
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/networking/ClientGUINetwork.py",
+          "line": 891
+        },
+        "remaining_limitations": [
+          "The history chart and Qt filter widgets are separate missing slices.",
+          "A seven-day row and live/saved fallback are asserted; GUI day/week/month/all-time selector changes are source-traced without separate assertions."
+        ],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/network_data.rs",
+            "line": 78,
+            "role": "native_model",
+            "description": "Native history selector changes usage columns and uses saved trackers when heartbeat expires.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/network_data.rs",
+            "line": 15,
+            "role": "regression_test",
+            "description": "Builds known contexts and reports 2KB/one request; compares a seven-day row and rule rows to Qt fixture values, and compares revert/reset question strings. Sorting and other span selectors are not executed.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/network_data.rs",
+            "line": 133,
+            "role": "regression_test",
+            "description": "Asserts a live snapshot wins at five seconds and saved-history fallback wins after expiry; it does not change the GUI history selector.",
+            "executed_in_inventory": false
+          }
+        ],
+        "relationship": "source_traced_control_or_workflow"
+      },
+      {
+        "id": "audit.network.bandwidth.detail",
+        "parent_id": "catalog.bandwidthwindow",
+        "label": "Selected context inherited rules and usage",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "Selecting a context reports its all-time use, inherited/specific ownership and usage against each limit. Native selected-detail formatting is source-traced; no inspected assertion checks every all-time/inherited/per-rule detail field after selecting a context.",
+        "native_source": {
+          "path": "crates/hydrus-gui/src/network_data_window.rs",
+          "line": 249
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/networking/ClientGUINetwork.py",
+          "line": 974
+        },
+        "remaining_limitations": [
+          "Native selected-detail formatting is source-traced; no inspected assertion checks every all-time/inherited/per-rule detail field after selecting a context."
+        ],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/network_data.rs",
+            "line": 78,
+            "role": "native_model",
+            "description": "Selecting a context reports its all-time use, inherited/specific ownership and usage against each limit.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/network_data.rs",
+            "line": 15,
+            "role": "regression_test",
+            "description": "Builds known contexts and reports 2KB/one request; compares a seven-day row and rule rows to Qt fixture values, and compares revert/reset question strings. Sorting and other span selectors are not executed.",
+            "executed_in_inventory": false
+          }
+        ],
+        "relationship": "source_traced_control_or_workflow"
+      },
+      {
+        "id": "audit.network.bandwidth.defaults",
+        "parent_id": "catalog.bandwidthwindow",
+        "label": "Edit global and per-kind default rules",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "Selected default kind opens a RulesDraft; global/default rules cannot inherit. The model regression edits a per-kind default and checks stale inherited drafts; the GUI default-kind chooser/global-default editor routing is not asserted.",
+        "native_source": {
+          "path": "crates/hydrus-gui/src/network_data_window.rs",
+          "line": 571
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/networking/ClientGUINetwork.py",
+          "line": 852
+        },
+        "remaining_limitations": [
+          "The model regression edits a per-kind default and checks stale inherited drafts; the GUI default-kind chooser/global-default editor routing is not asserted."
+        ],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/network_data.rs",
+            "line": 78,
+            "role": "native_model",
+            "description": "Selected default kind opens a RulesDraft; global/default rules cannot inherit.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/network_data.rs",
+            "line": 128,
+            "role": "regression_test",
+            "description": "Applies a per-kind default-rule edit and asserts a previously opened dependent draft is rejected.",
+            "executed_in_inventory": false
+          }
+        ],
+        "relationship": "source_traced_control_or_workflow"
+      },
+      {
+        "id": "audit.network.bandwidth.domain",
+        "parent_id": "catalog.bandwidthwindow",
+        "label": "Create a specific domain override",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "Validated domain text opens an inherited rules draft; Apply creates only that override.",
+        "native_source": {
+          "path": "crates/hydrus-gui/src/network_data_window.rs",
+          "line": 582
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/networking/ClientGUINetwork.py",
+          "line": 960
+        },
+        "remaining_limitations": [
+          "New subscription/service contexts cannot be authored here, but existing rows can be edited."
+        ],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/network_data.rs",
+            "line": 78,
+            "role": "native_model",
+            "description": "Validated domain text opens an inherited rules draft; Apply creates only that override.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/network_data.rs",
+            "line": 34,
+            "role": "regression_test",
+            "description": "Uses the review domain button; rejects zero limits, cancels without persistence, applies a request limit and finds that limit in the saved domain override, then checks stale/closed-editor safety.",
+            "executed_in_inventory": false
+          }
+        ],
+        "relationship": "source_traced_control_or_workflow"
+      },
+      {
+        "id": "audit.network.bandwidth.inherit",
+        "parent_id": "catalog.bandwidthwindow",
+        "label": "Revert a specific context to inherited defaults",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "Confirmed revert removes the specific override and preserves other rules/settings.",
+        "native_source": {
+          "path": "crates/hydrus-gui/src/network_data_window.rs",
+          "line": 597
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/networking/ClientGUINetwork.py",
+          "line": 1230
+        },
+        "remaining_limitations": [],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/network_data.rs",
+            "line": 78,
+            "role": "native_model",
+            "description": "Confirmed revert removes the specific override and preserves other rules/settings.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/network_data.rs",
+            "line": 118,
+            "role": "regression_test",
+            "description": "After reopening the store, applies revert=true and asserts the context inherits defaults.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/network_data.rs",
+            "line": 114,
+            "role": "regression_test",
+            "description": "Invokes the actual revert question, refuses it and asserts saved settings remain unchanged.",
+            "executed_in_inventory": false
+          }
+        ],
+        "relationship": "source_traced_control_or_workflow"
+      },
+      {
+        "id": "audit.network.bandwidth.reset",
+        "parent_id": "catalog.bandwidthwindow",
+        "label": "Confirmed reset of default/global rules",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "Confirmation dispatches reset_defaults, which retains all specific overrides and pacing settings.",
+        "native_source": {
+          "path": "crates/hydrus-gui/src/network_data_window.rs",
+          "line": 612
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/networking/ClientGUINetwork.py",
+          "line": 913
+        },
+        "remaining_limitations": [],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/network_data.rs",
+            "line": 78,
+            "role": "native_model",
+            "description": "Confirmation dispatches reset_defaults, which retains all specific overrides and pacing settings.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/network_data.rs",
+            "line": 110,
+            "role": "regression_test",
+            "description": "Resets global/default rules and asserts a specific context still has the previously saved explicit rule; reopens the store afterwards.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/network_data.rs",
+            "line": 15,
+            "role": "regression_test",
+            "description": "Builds known contexts and reports 2KB/one request; compares a seven-day row and rule rows to Qt fixture values, and compares revert/reset question strings. Sorting and other span selectors are not executed.",
+            "executed_in_inventory": false
+          }
+        ],
+        "relationship": "source_traced_control_or_workflow"
+      },
+      {
+        "id": "audit.network.sessions.browser",
+        "parent_id": "catalog.networkdatawindow",
+        "label": "Session browser: filter / show empty / create / review / confirmed clear",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "Browser reads persisted domain/service silos; create validates a new domain, review opens its cookies, clear removes selected sessions immediately after confirmation.",
+        "native_source": {
+          "path": "crates/hydrus-gui/src/network_sessions_window.rs",
+          "line": 214
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/networking/ClientGUINetwork.py",
+          "line": 1398
+        },
+        "remaining_limitations": [
+          "The regression covers domain browser operations; service-context rows are source-backed but this test does not construct a service context."
+        ],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/network_sessions_window.rs",
+            "line": 392,
+            "role": "source_inspection",
+            "description": "Native callback and its consumer were inspected.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/network.rs",
+            "line": 169,
+            "role": "native_model",
+            "description": "Browser reads persisted domain/service silos; create validates a new domain, review opens its cookies, clear removes selected sessions immediately after confirmation.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/network_sessions.rs",
+            "line": 22,
+            "role": "regression_test",
+            "description": "Creates a domain session, changes show-empty/filter controls, opens its cookie review, refuses/accepts clear, and checks stored state and stale child rejection.",
+            "executed_in_inventory": false
+          }
+        ],
+        "relationship": "source_traced_control_or_workflow",
+        "native_wiring_source": {
+          "path": "crates/hydrus-gui/src/network_sessions_window.rs",
+          "line": 392
+        }
+      },
+      {
+        "id": "catalog.editnetworkvaluewindow",
+        "label": "Edit Network Value",
+        "parent_id": "catalog.networkdatawindow",
+        "kind": "dialog",
+        "status": "first_pass",
+        "native_source": {
+          "path": "crates/hydrus-gui/ui/network_sessions.slint",
+          "line": 47
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/networking/ClientGUINetwork.py",
+          "line": 74
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/network_sessions_window.rs",
+            "line": 520,
+            "role": "source_inspection",
+            "description": "Populates mode-specific fields and applies validated draft edits.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/network_sessions.rs",
+            "line": 22,
+            "role": "source_inspection",
+            "description": "Cookie validation and identity rules.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/network_sessions.rs",
+            "line": 76,
+            "role": "source_inspection",
+            "description": "Header trimming and newline checks.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/network_sessions.rs",
+            "line": 22,
+            "role": "regression_test",
+            "description": "Creates a session through this child, checks cookie child cancellation, saved secure/session flags and renamed name/path/permanent expiry after acceptance.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/network_sessions.rs",
+            "line": 130,
+            "role": "regression_test",
+            "description": "Rejects an invalid header name and asserts saved approval/reason; reopened cancel/duplicate/delete paths inspect actual store state.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/network_sessions.rs",
+            "line": 198,
+            "role": "regression_test",
+            "description": "Asserts GUI-created cookies/headers appear in an existing engine request; secure-on-HTTP and denied-approval edits then suppress them.",
+            "executed_in_inventory": false
+          }
+        ],
+        "remaining_limitations": [
+          "No full Qt network-context type chooser: new sessions and headers use supported global/domain contexts. Other cookie attributes survive without separate controls.",
+          "Cookie delta validation is source-traced; these GUI assertions exercise session and absolute expiry, not every delta value."
+        ],
+        "component": "EditNetworkValueWindow",
+        "relationship": "inferred_from_native_open_calls",
+        "native_wiring_source": {
+          "path": "crates/hydrus-gui/src/network_sessions_window.rs",
+          "line": 520
+        },
+        "assessment": "Reusable detached editor creates domain sessions or edits cookie domain/path/name/value/HTTPS/expiry and header context/name/value/approval/reason."
+      },
+      {
+        "id": "dialog.subscription.synchronisation",
+        "label": "Check limits and synchronisation",
+        "parent_id": "dialog.subscription",
+        "kind": "action",
+        "status": "partial",
+        "native_source": {
+          "path": "crates/hydrus-gui/ui/edit_subscription.slint",
+          "line": 265
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/ClientGUISubscriptions.py",
+          "line": 369
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/edit_subscription_window.rs",
+            "line": 97,
+            "role": "source_inspection",
+            "description": "Limit/random-sample/checker fields are returned to the draft.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-download/src/subscriptions.rs",
+            "line": 310,
+            "role": "source_inspection",
+            "description": "Runner schedules queries using saved checker settings.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/edit_subscription.rs",
+            "line": 49,
+            "role": "regression_test",
+            "description": "Compares opened initial/periodic file limits and random-sample state to the recorded reference. The edited-fields test assigns these settings but does not assert all accepted values.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-download/tests/subscriptions.rs",
+            "line": 328,
+            "role": "regression_test",
+            "description": "Exercises a stored initial limit and later catch-up/download worker behavior; it does not drive the GUI random-sample/checker edit roundtrip.",
+            "executed_in_inventory": false
+          }
+        ],
+        "remaining_limitations": [
+          "Native subscription execution remains serial, ignoring max_simultaneous_subscriptions greater than one.",
+          "Opened limit/random-sample states and an initial-limit consumer have regression coverage, but the full GUI-edited limit/random-sample/checker save-to-runner roundtrip is not asserted."
+        ],
+        "assessment": "Initial/periodic file limits, random sample and checker settings are edited in the draft and saved through the list owner. Opened limit/random-sample states and an initial-limit consumer have regression coverage, but the full GUI-edited limit/random-sample/checker save-to-runner roundtrip is not asserted."
+      },
+      {
+        "id": "audit.network.import-folder.schedule",
+        "parent_id": "dialog.import-folder",
+        "label": "Regular period / check-now / popup / pause",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "Recorded schedule fields and accepted model values cover period/pause/check-now. The GUI regression changes period/pause and asserts the saved folder; the worker replay reads persisted check-now and popup settings.",
+        "native_source": {
+          "path": "crates/hydrus-gui/src/folders_window.rs",
+          "line": 551
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/importing/ClientGUIImportFolders.py",
+          "line": 196
+        },
+        "remaining_limitations": [
+          "Regular timer cadence and every popup setting combination are source-traced, not separately asserted by these tests."
+        ],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/folders.rs",
+            "line": 293,
+            "role": "native_model",
+            "description": "Schedule fields return to the parent draft; daemon worker consumes saved folder run settings.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-download/src/folders.rs",
+            "line": 531,
+            "role": "native_consumer",
+            "description": "Reads saved check-now/regular/period and working-popup settings.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/folders.rs",
+            "line": 120,
+            "role": "regression_test",
+            "description": "Compares opened schedule fields to Qt and accepted period/paused/check-now values for recorded edit cases.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/folders.rs",
+            "line": 164,
+            "role": "regression_test",
+            "description": "Changes the actual period control and pause checkbox, accepts the child/list and asserts saved two-hour period and paused state.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-download/tests/import_folder.rs",
+            "line": 274,
+            "role": "regression_test",
+            "description": "Persists check-now and asserts a second run finds no new files; a missing-folder check produces the recorded error popup.",
+            "executed_in_inventory": false
+          }
+        ],
+        "relationship": "source_traced_control_or_workflow",
+        "editor_refs": []
+      },
+      {
+        "id": "audit.network.import-folder.outcomes",
+        "parent_id": "dialog.import-folder",
+        "label": "Success/redundant/deleted/error ignore/delete/move",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "Per-outcome choices validate required move folders and ask safety/path questions before acceptance.",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/folders.rs",
+          "line": 293
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/importing/ClientGUIImportFolders.py",
+          "line": 196
+        },
+        "remaining_limitations": [
+          "Coverage is the recorded outcome cases, not every outcome/action/path combination."
+        ],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/folders.rs",
+            "line": 293,
+            "role": "native_model",
+            "description": "Per-outcome choices validate required move folders and ask safety/path questions before acceptance.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-download/src/folders.rs",
+            "line": 416,
+            "role": "native_consumer",
+            "description": "Applies per-status delete/move/ignore actions to completed file seeds.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/folders.rs",
+            "line": 120,
+            "role": "regression_test",
+            "description": "Compares per-outcome action choices, paths and enabled state; replays path/safety warnings and accepted failed-status action from recorded cases.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/folders.rs",
+            "line": 113,
+            "role": "regression_test",
+            "description": "Chooses successful-file move, rejects its absent destination, warns on a missing path and asserts the accepted move action is stored.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-download/tests/import_folder.rs",
+            "line": 80,
+            "role": "regression_test",
+            "description": "Recorded worker replay compares remaining/moved file listings and imported status/metadata for its configured outcomes.",
+            "executed_in_inventory": false
+          }
+        ],
+        "relationship": "source_traced_control_or_workflow",
+        "editor_refs": []
+      },
+      {
+        "id": "audit.network.import-folder.filetypes",
+        "parent_id": "dialog.import-folder",
+        "label": "Allowed file types and skip period",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "Filetype controls and recently-modified skip period configure what a folder worker considers. The skip-period model value is regression-backed; no inspected GUI assertion changes each allowed-filetype control and verifies its saved import/filter consumer.",
+        "native_source": {
+          "path": "crates/hydrus-gui/src/folders_window.rs",
+          "line": 551
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/importing/ClientGUIImportFolders.py",
+          "line": 196
+        },
+        "remaining_limitations": [
+          "The skip-period model value is regression-backed; no inspected GUI assertion changes each allowed-filetype control and verifies its saved import/filter consumer."
+        ],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/folders.rs",
+            "line": 293,
+            "role": "native_model",
+            "description": "Filetype controls and recently-modified skip period configure what a folder worker considers.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-download/src/folders.rs",
+            "line": 378,
+            "role": "native_consumer",
+            "description": "Skips recent modified files before queuing; supported MIME options are checked during import.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/folders.rs",
+            "line": 218,
+            "role": "regression_test",
+            "description": "Asserts accepted skip-period values from the recorded folder model edits; it does not exercise the full filetype checkbox family.",
+            "executed_in_inventory": false
+          }
+        ],
+        "relationship": "source_traced_control_or_workflow",
+        "editor_refs": []
+      },
+      {
+        "id": "audit.network.export-folder.schedule",
+        "parent_id": "dialog.export-folder",
+        "label": "Regular period / run-now / popup",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "Saved scheduling fields control regular export-folder execution. Opened schedule values/enablement have fixture coverage; no scoped inspected assertion edits every period/run-now/popup field, reopens it, and verifies due execution.",
+        "native_source": {
+          "path": "crates/hydrus-gui/src/folders_window.rs",
+          "line": 1241
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/exporting/ClientGUIExport.py",
+          "line": 231
+        },
+        "remaining_limitations": [
+          "Opened schedule values/enablement have fixture coverage; no scoped inspected assertion edits every period/run-now/popup field, reopens it, and verifies due execution."
+        ],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/folders.rs",
+            "line": 359,
+            "role": "native_model",
+            "description": "Saved scheduling fields control regular export-folder execution.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-download/src/export.rs",
+            "line": 526,
+            "role": "native_consumer",
+            "description": "Reads saved paused, period, check-regularly and run-now state before work.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/folders.rs",
+            "line": 258,
+            "role": "regression_test",
+            "description": "Compares opened regular-run/popup enablement and period values to Qt. The accepted export model test does not assert every edited schedule value.",
+            "executed_in_inventory": false
+          }
+        ],
+        "relationship": "source_traced_control_or_workflow",
+        "editor_refs": []
+      },
+      {
+        "id": "audit.network.export-folder.type",
+        "parent_id": "dialog.export-folder",
+        "label": "Regular/synchronise / symlinks / trash warning",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "Changing type disables incompatible trashing and accepted destructive export asks the reference warning.",
+        "native_source": {
+          "path": "crates/hydrus-gui/src/folders_window.rs",
+          "line": 1359
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/exporting/ClientGUIExport.py",
+          "line": 482
+        },
+        "remaining_limitations": [
+          "The GUI regression switches synchronise/trash; symlink execution is covered by migrated worker fixtures rather than a GUI checkbox roundtrip."
+        ],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/folders.rs",
+            "line": 359,
+            "role": "native_model",
+            "description": "Changing type disables incompatible trashing and accepted destructive export asks the reference warning.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-download/src/export.rs",
+            "line": 301,
+            "role": "native_consumer",
+            "description": "Regular/synchronise mode, symlinks, trash decisions and managed-file safety are enforced by export execution.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/folders.rs",
+            "line": 231,
+            "role": "regression_test",
+            "description": "Compares regular/synchronise choices, delete enablement, symlink state and destructive questions against recorded cases.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/folders.rs",
+            "line": 284,
+            "role": "regression_test",
+            "description": "Exercises destructive warning/refusal, switches to synchronise, asserts client-trash is disabled and asserts synchronise is saved by list Apply.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-download/tests/export_folder.rs",
+            "line": 75,
+            "role": "regression_test",
+            "description": "Runs migrated reference export folders and compares filesystem listings including symlink outcomes to recorded results.",
+            "executed_in_inventory": false
+          }
+        ],
+        "relationship": "source_traced_control_or_workflow",
+        "editor_refs": []
+      }
+    ],
+    "additions": [],
+    "deletions": []
+  },
+  "reference": {
+    "updates": [
+      {
+        "id": "bandwidth-context",
+        "label": "Per-context bandwidth/rule review",
+        "parent_id": "bandwidth",
+        "kind": "dialog",
+        "status": "partial",
+        "reference_source": {
+          "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py",
+          "line": 974,
+          "symbol": "ReviewNetworkContextBandwidthPanel"
+        },
+        "native_source": {
+          "line": 249,
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs"
+        },
+        "evidence": [
+          {
+            "kind": "native_model",
+            "source": {
+              "line": 78,
+              "relativepath": "crates/hydrus-gui-model/src/network_data.rs"
+            },
+            "description": "Selecting a context reports its all-time use, inherited/specific ownership and usage against each limit.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+              "line": 15
+            },
+            "description": "Builds known contexts and reports 2KB/one request; compares a seven-day row and rule rows to Qt fixture values, and compares revert/reset question strings. Sorting and other span selectors are not executed.",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "Native selected-detail formatting is source-traced; no inspected assertion checks every all-time/inherited/per-rule detail field after selecting a context."
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py",
+            "line": 968,
+            "symbol": "ReviewAllBandwidthPanel"
+          },
+          "strength": "direct_symbol",
+          "description": "Reference parent mentions child symbol."
+        },
+        "descendant_count": 3,
+        "descendant_status_counts": {
+          "first_pass": 2,
+          "missing": 1
+        },
+        "unique_feature_descendant_count": 3,
+        "unique_reachable_feature_count_including_shared": 3,
+        "assessment": "Selecting a context reports its all-time use, inherited/specific ownership and usage against each limit. Native selected-detail formatting is source-traced; no inspected assertion checks every all-time/inherited/per-rule detail field after selecting a context.",
+        "native_id_candidates": [
+          "audit.network.bandwidth.detail"
+        ]
+      },
+      {
+        "id": "bandwidth-reset-default",
+        "label": "Reset default bandwidth rules",
+        "parent_id": "bandwidth",
+        "kind": "workflow",
+        "status": "first_pass",
+        "reference_source": {
+          "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py",
+          "line": 913,
+          "symbol": "ReviewAllBandwidthPanel._ResetDefaultBandwidthRules"
+        },
+        "native_source": {
+          "line": 612,
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs"
+        },
+        "evidence": [
+          {
+            "kind": "native_model",
+            "source": {
+              "line": 334,
+              "relativepath": "crates/hydrus-gui-model/src/network_data.rs"
+            },
+            "description": "Retains specific contexts and replaces only default/global rules.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "model_test",
+            "source": {
+              "line": 110,
+              "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs"
+            },
+            "description": "Assertions verify preservation of an explicit domain override and reopening.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 612,
+              "relativepath": "crates/hydrus-gui/src/network_data_window.rs"
+            },
+            "description": "Question/answer dispatch reaches the worker reset operation.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+              "line": 110
+            },
+            "description": "Resets global/default rules and asserts a specific context still has the previously saved explicit rule; reopens the store afterwards.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+              "line": 15
+            },
+            "description": "Builds known contexts and reports 2KB/one request; compares a seven-day row and rule rows to Qt fixture values, and compares revert/reset question strings. Sorting and other span selectors are not executed.",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py",
+            "line": 671,
+            "symbol": "ReviewAllBandwidthPanel"
+          },
+          "strength": "direct_symbol",
+          "description": "Reference parent mentions child symbol."
+        },
+        "descendant_count": 0,
+        "descendant_status_counts": {},
+        "unique_feature_descendant_count": 0,
+        "unique_reachable_feature_count_including_shared": 0,
+        "assessment": "Confirmation dispatches reset_defaults, which retains all specific overrides and pacing settings.",
+        "native_id_candidates": [
+          "audit.network.bandwidth.reset"
+        ]
+      },
+      {
+        "id": "session-create",
+        "label": "Create domain context/session",
+        "parent_id": "sessions",
+        "kind": "workflow",
+        "status": "partial",
+        "reference_source": {
+          "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py",
+          "line": 1454,
+          "symbol": "ReviewNetworkSessionsPanel._Add"
+        },
+        "native_source": {
+          "line": 520,
+          "relativepath": "crates/hydrus-gui/src/network_sessions_window.rs"
+        },
+        "evidence": [
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 520,
+              "relativepath": "crates/hydrus-gui/src/network_sessions_window.rs"
+            },
+            "description": "New-session form accepts domain text only.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 1460,
+              "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py"
+            },
+            "description": "Reference session-creation context chooser includes domain and Hydrus service types.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/network_sessions.rs",
+              "line": 22
+            },
+            "description": "Creates a session through this child, checks cookie child cancellation, saved secure/session flags and renamed name/path/permanent expiry after acceptance.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/network_sessions.rs",
+              "line": 130
+            },
+            "description": "Rejects an invalid header name and asserts saved approval/reason; reopened cancel/duplicate/delete paths inspect actual store state.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/network_sessions.rs",
+              "line": 198
+            },
+            "description": "Asserts GUI-created cookies/headers appear in an existing engine request; secure-on-HTTP and denied-approval edits then suppress them.",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "Existing service contexts can be reviewed and cleared, but a new service context cannot be selected."
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py",
+            "line": 1416,
+            "symbol": "ReviewNetworkSessionsPanel"
+          },
+          "strength": "direct_symbol",
+          "description": "Reference parent mentions child symbol."
+        },
+        "descendant_count": 0,
+        "descendant_status_counts": {},
+        "unique_feature_descendant_count": 0,
+        "unique_reachable_feature_count_including_shared": 0,
+        "assessment": "Native browser creates a validated domain session. The reference also permits creation of Hydrus-service contexts, which the native domain-only editor cannot author.",
+        "native_id_candidates": [
+          "catalog.editnetworkvaluewindow"
+        ]
+      },
+      {
+        "id": "cookie-editor",
+        "label": "Cookie identity/value/expiry editor",
+        "parent_id": "session-review",
+        "kind": "dialog",
+        "status": "first_pass",
+        "reference_source": {
+          "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py",
+          "line": 74,
+          "symbol": "EditCookiePanel"
+        },
+        "native_source": {
+          "line": 520,
+          "relativepath": "crates/hydrus-gui/src/network_sessions_window.rs"
+        },
+        "evidence": [
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 520,
+              "relativepath": "crates/hydrus-gui/src/network_sessions_window.rs"
+            },
+            "description": "Populates mode-specific fields and applies validated draft edits.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 22,
+              "relativepath": "crates/hydrus-gui-model/src/network_sessions.rs"
+            },
+            "description": "Cookie validation and identity rules.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 76,
+              "relativepath": "crates/hydrus-gui-model/src/network_sessions.rs"
+            },
+            "description": "Header trimming and newline checks.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/network_sessions.rs",
+              "line": 22
+            },
+            "description": "Creates a session through this child, checks cookie child cancellation, saved secure/session flags and renamed name/path/permanent expiry after acceptance.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/network_sessions.rs",
+              "line": 130
+            },
+            "description": "Rejects an invalid header name and asserts saved approval/reason; reopened cancel/duplicate/delete paths inspect actual store state.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/network_sessions.rs",
+              "line": 198
+            },
+            "description": "Asserts GUI-created cookies/headers appear in an existing engine request; secure-on-HTTP and denied-approval edits then suppress them.",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "No full Qt network-context type chooser: new sessions and headers use supported global/domain contexts. Other cookie attributes survive without separate controls.",
+          "Cookie delta validation is source-traced; these GUI assertions exercise session and absolute expiry, not every delta value."
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py",
+            "line": 1904,
+            "symbol": "ReviewNetworkSessionPanel"
+          },
+          "strength": "direct_symbol",
+          "description": "Reference parent mentions child symbol."
+        },
+        "descendant_count": 0,
+        "descendant_status_counts": {},
+        "unique_feature_descendant_count": 0,
+        "unique_reachable_feature_count_including_shared": 0,
+        "assessment": "Reusable detached editor creates domain sessions or edits cookie domain/path/name/value/HTTPS/expiry and header context/name/value/approval/reason.",
+        "native_id_candidates": [
+          "catalog.editnetworkvaluewindow"
+        ]
+      },
+      {
+        "id": "audit-network-bandwidth-rows",
+        "parent_id": "bandwidth",
+        "label": "Context list and numeric sorting",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "Known/global/rule contexts are merged and sorted using numeric usage/speed keys. Known context row values have fixture coverage; numeric sort interaction and ordering keys have no scoped inspected assertion.",
+        "reference_source": {
+          "line": 720,
+          "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py"
+        },
+        "native_source": {
+          "line": 177,
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs"
+        },
+        "limitations": [
+          "Known context row values have fixture coverage; numeric sort interaction and ordering keys have no scoped inspected assertion."
+        ],
+        "evidence": [
+          {
+            "kind": "native_model",
+            "source": {
+              "line": 78,
+              "relativepath": "crates/hydrus-gui-model/src/network_data.rs"
+            },
+            "description": "Known/global/rule contexts are merged and sorted using numeric usage/speed keys.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+              "line": 15
+            },
+            "description": "Builds known contexts and reports 2KB/one request; compares a seven-day row and rule rows to Qt fixture values, and compares revert/reset question strings. Sorting and other span selectors are not executed.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 720,
+            "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "audit.network.bandwidth.rows"
+        ]
+      },
+      {
+        "id": "audit-network-bandwidth-history",
+        "parent_id": "bandwidth",
+        "label": "Day/week/month/all-time usage span",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "Native history selector changes usage columns and uses saved trackers when heartbeat expires. A seven-day row and live/saved fallback are asserted; GUI day/week/month/all-time selector changes are source-traced without separate assertions.",
+        "reference_source": {
+          "line": 891,
+          "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py"
+        },
+        "native_source": {
+          "line": 182,
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs"
+        },
+        "limitations": [
+          "The history chart and Qt filter widgets are separate missing slices.",
+          "A seven-day row and live/saved fallback are asserted; GUI day/week/month/all-time selector changes are source-traced without separate assertions."
+        ],
+        "evidence": [
+          {
+            "kind": "native_model",
+            "source": {
+              "line": 78,
+              "relativepath": "crates/hydrus-gui-model/src/network_data.rs"
+            },
+            "description": "Native history selector changes usage columns and uses saved trackers when heartbeat expires.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+              "line": 15
+            },
+            "description": "Builds known contexts and reports 2KB/one request; compares a seven-day row and rule rows to Qt fixture values, and compares revert/reset question strings. Sorting and other span selectors are not executed.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+              "line": 133
+            },
+            "description": "Asserts a live snapshot wins at five seconds and saved-history fallback wins after expiry; it does not change the GUI history selector.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 891,
+            "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "audit.network.bandwidth.history"
+        ]
+      },
+      {
+        "id": "audit-network-bandwidth-detail",
+        "parent_id": "bandwidth",
+        "label": "Selected context inherited rules and usage",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "Selecting a context reports its all-time use, inherited/specific ownership and usage against each limit. Native selected-detail formatting is source-traced; no inspected assertion checks every all-time/inherited/per-rule detail field after selecting a context.",
+        "reference_source": {
+          "line": 974,
+          "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py"
+        },
+        "native_source": {
+          "line": 249,
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs"
+        },
+        "limitations": [
+          "Native selected-detail formatting is source-traced; no inspected assertion checks every all-time/inherited/per-rule detail field after selecting a context."
+        ],
+        "evidence": [
+          {
+            "kind": "native_model",
+            "source": {
+              "line": 78,
+              "relativepath": "crates/hydrus-gui-model/src/network_data.rs"
+            },
+            "description": "Selecting a context reports its all-time use, inherited/specific ownership and usage against each limit.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+              "line": 15
+            },
+            "description": "Builds known contexts and reports 2KB/one request; compares a seven-day row and rule rows to Qt fixture values, and compares revert/reset question strings. Sorting and other span selectors are not executed.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 974,
+            "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "audit.network.bandwidth.detail"
+        ]
+      },
+      {
+        "id": "audit-network-bandwidth-defaults",
+        "parent_id": "bandwidth",
+        "label": "Edit global and per-kind default rules",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "Selected default kind opens a RulesDraft; global/default rules cannot inherit. The model regression edits a per-kind default and checks stale inherited drafts; the GUI default-kind chooser/global-default editor routing is not asserted.",
+        "reference_source": {
+          "line": 852,
+          "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py"
+        },
+        "native_source": {
+          "line": 571,
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs"
+        },
+        "limitations": [
+          "The model regression edits a per-kind default and checks stale inherited drafts; the GUI default-kind chooser/global-default editor routing is not asserted."
+        ],
+        "evidence": [
+          {
+            "kind": "native_model",
+            "source": {
+              "line": 78,
+              "relativepath": "crates/hydrus-gui-model/src/network_data.rs"
+            },
+            "description": "Selected default kind opens a RulesDraft; global/default rules cannot inherit.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+              "line": 128
+            },
+            "description": "Applies a per-kind default-rule edit and asserts a previously opened dependent draft is rejected.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 852,
+            "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "audit.network.bandwidth.defaults"
+        ]
+      },
+      {
+        "id": "audit-network-bandwidth-domain",
+        "parent_id": "bandwidth",
+        "label": "Create a specific domain override",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "Validated domain text opens an inherited rules draft; Apply creates only that override.",
+        "reference_source": {
+          "line": 960,
+          "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py"
+        },
+        "native_source": {
+          "line": 582,
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs"
+        },
+        "limitations": [
+          "New subscription/service contexts cannot be authored here, but existing rows can be edited."
+        ],
+        "evidence": [
+          {
+            "kind": "native_model",
+            "source": {
+              "line": 78,
+              "relativepath": "crates/hydrus-gui-model/src/network_data.rs"
+            },
+            "description": "Validated domain text opens an inherited rules draft; Apply creates only that override.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/network_data.rs",
+              "line": 34
+            },
+            "description": "Uses the review domain button; rejects zero limits, cancels without persistence, applies a request limit and finds that limit in the saved domain override, then checks stale/closed-editor safety.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 960,
+            "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "audit.network.bandwidth.domain"
+        ]
+      },
+      {
+        "id": "audit-network-bandwidth-inherit",
+        "parent_id": "bandwidth",
+        "label": "Revert a specific context to inherited defaults",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "Confirmed revert removes the specific override and preserves other rules/settings.",
+        "reference_source": {
+          "line": 1230,
+          "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py"
+        },
+        "native_source": {
+          "line": 597,
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs"
+        },
+        "limitations": [],
+        "evidence": [
+          {
+            "kind": "native_model",
+            "source": {
+              "line": 78,
+              "relativepath": "crates/hydrus-gui-model/src/network_data.rs"
+            },
+            "description": "Confirmed revert removes the specific override and preserves other rules/settings.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+              "line": 118
+            },
+            "description": "After reopening the store, applies revert=true and asserts the context inherits defaults.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/network_data.rs",
+              "line": 114
+            },
+            "description": "Invokes the actual revert question, refuses it and asserts saved settings remain unchanged.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 1230,
+            "relativepath": "hydrus/client/gui/networking/ClientGUINetwork.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "audit.network.bandwidth.inherit"
+        ]
+      },
+      {
+        "id": "audit-network-import-folder-schedule",
+        "parent_id": "import-folder",
+        "label": "Regular period / check-now / popup / pause",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "Recorded schedule fields and accepted model values cover period/pause/check-now. The GUI regression changes period/pause and asserts the saved folder; the worker replay reads persisted check-now and popup settings.",
+        "reference_source": {
+          "line": 196,
+          "relativepath": "hydrus/client/gui/importing/ClientGUIImportFolders.py"
+        },
+        "native_source": {
+          "line": 551,
+          "relativepath": "crates/hydrus-gui/src/folders_window.rs"
+        },
+        "limitations": [
+          "Regular timer cadence and every popup setting combination are source-traced, not separately asserted by these tests."
+        ],
+        "evidence": [
+          {
+            "kind": "native_model",
+            "source": {
+              "line": 293,
+              "relativepath": "crates/hydrus-gui-model/src/folders.rs"
+            },
+            "description": "Schedule fields return to the parent draft; daemon worker consumes saved folder run settings.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "native_consumer",
+            "source": {
+              "line": 531,
+              "relativepath": "crates/hydrus-download/src/folders.rs"
+            },
+            "description": "Reads saved check-now/regular/period and working-popup settings.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/folders.rs",
+              "line": 120
+            },
+            "description": "Compares opened schedule fields to Qt and accepted period/paused/check-now values for recorded edit cases.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/folders.rs",
+              "line": 164
+            },
+            "description": "Changes the actual period control and pause checkbox, accepts the child/list and asserts saved two-hour period and paused state.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-download/tests/import_folder.rs",
+              "line": 274
+            },
+            "description": "Persists check-now and asserts a second run finds no new files; a missing-folder check produces the recorded error popup.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 196,
+            "relativepath": "hydrus/client/gui/importing/ClientGUIImportFolders.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "audit.network.import-folder.schedule"
+        ]
+      },
+      {
+        "id": "audit-network-import-folder-outcomes",
+        "parent_id": "import-folder",
+        "label": "Success/redundant/deleted/error ignore/delete/move",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "Per-outcome choices validate required move folders and ask safety/path questions before acceptance.",
+        "reference_source": {
+          "line": 196,
+          "relativepath": "hydrus/client/gui/importing/ClientGUIImportFolders.py"
+        },
+        "native_source": {
+          "line": 293,
+          "relativepath": "crates/hydrus-gui-model/src/folders.rs"
+        },
+        "limitations": [
+          "Coverage is the recorded outcome cases, not every outcome/action/path combination."
+        ],
+        "evidence": [
+          {
+            "kind": "native_model",
+            "source": {
+              "line": 293,
+              "relativepath": "crates/hydrus-gui-model/src/folders.rs"
+            },
+            "description": "Per-outcome choices validate required move folders and ask safety/path questions before acceptance.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "native_consumer",
+            "source": {
+              "line": 416,
+              "relativepath": "crates/hydrus-download/src/folders.rs"
+            },
+            "description": "Applies per-status delete/move/ignore actions to completed file seeds.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/folders.rs",
+              "line": 120
+            },
+            "description": "Compares per-outcome action choices, paths and enabled state; replays path/safety warnings and accepted failed-status action from recorded cases.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/folders.rs",
+              "line": 113
+            },
+            "description": "Chooses successful-file move, rejects its absent destination, warns on a missing path and asserts the accepted move action is stored.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-download/tests/import_folder.rs",
+              "line": 80
+            },
+            "description": "Recorded worker replay compares remaining/moved file listings and imported status/metadata for its configured outcomes.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 196,
+            "relativepath": "hydrus/client/gui/importing/ClientGUIImportFolders.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "audit.network.import-folder.outcomes"
+        ]
+      },
+      {
+        "id": "audit-network-import-folder-filetypes",
+        "parent_id": "import-folder",
+        "label": "Allowed file types and skip period",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "Filetype controls and recently-modified skip period configure what a folder worker considers. The skip-period model value is regression-backed; no inspected GUI assertion changes each allowed-filetype control and verifies its saved import/filter consumer.",
+        "reference_source": {
+          "line": 196,
+          "relativepath": "hydrus/client/gui/importing/ClientGUIImportFolders.py"
+        },
+        "native_source": {
+          "line": 551,
+          "relativepath": "crates/hydrus-gui/src/folders_window.rs"
+        },
+        "limitations": [
+          "The skip-period model value is regression-backed; no inspected GUI assertion changes each allowed-filetype control and verifies its saved import/filter consumer."
+        ],
+        "evidence": [
+          {
+            "kind": "native_model",
+            "source": {
+              "line": 293,
+              "relativepath": "crates/hydrus-gui-model/src/folders.rs"
+            },
+            "description": "Filetype controls and recently-modified skip period configure what a folder worker considers.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "native_consumer",
+            "source": {
+              "line": 378,
+              "relativepath": "crates/hydrus-download/src/folders.rs"
+            },
+            "description": "Skips recent modified files before queuing; supported MIME options are checked during import.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/folders.rs",
+              "line": 218
+            },
+            "description": "Asserts accepted skip-period values from the recorded folder model edits; it does not exercise the full filetype checkbox family.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 196,
+            "relativepath": "hydrus/client/gui/importing/ClientGUIImportFolders.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "audit.network.import-folder.filetypes"
+        ]
+      },
+      {
+        "id": "audit-network-export-folder-schedule",
+        "parent_id": "export-folder",
+        "label": "Regular period / run-now / popup",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "Saved scheduling fields control regular export-folder execution. Opened schedule values/enablement have fixture coverage; no scoped inspected assertion edits every period/run-now/popup field, reopens it, and verifies due execution.",
+        "reference_source": {
+          "line": 231,
+          "relativepath": "hydrus/client/gui/exporting/ClientGUIExport.py"
+        },
+        "native_source": {
+          "line": 1241,
+          "relativepath": "crates/hydrus-gui/src/folders_window.rs"
+        },
+        "limitations": [
+          "Opened schedule values/enablement have fixture coverage; no scoped inspected assertion edits every period/run-now/popup field, reopens it, and verifies due execution."
+        ],
+        "evidence": [
+          {
+            "kind": "native_model",
+            "source": {
+              "line": 359,
+              "relativepath": "crates/hydrus-gui-model/src/folders.rs"
+            },
+            "description": "Saved scheduling fields control regular export-folder execution.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "native_consumer",
+            "source": {
+              "line": 526,
+              "relativepath": "crates/hydrus-download/src/export.rs"
+            },
+            "description": "Reads saved paused, period, check-regularly and run-now state before work.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/folders.rs",
+              "line": 258
+            },
+            "description": "Compares opened regular-run/popup enablement and period values to Qt. The accepted export model test does not assert every edited schedule value.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 231,
+            "relativepath": "hydrus/client/gui/exporting/ClientGUIExport.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "audit.network.export-folder.schedule"
+        ]
+      },
+      {
+        "id": "audit-network-export-folder-type",
+        "parent_id": "export-folder",
+        "label": "Regular/synchronise / symlinks / trash warning",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "Changing type disables incompatible trashing and accepted destructive export asks the reference warning.",
+        "reference_source": {
+          "line": 482,
+          "relativepath": "hydrus/client/gui/exporting/ClientGUIExport.py"
+        },
+        "native_source": {
+          "line": 1359,
+          "relativepath": "crates/hydrus-gui/src/folders_window.rs"
+        },
+        "limitations": [
+          "The GUI regression switches synchronise/trash; symlink execution is covered by migrated worker fixtures rather than a GUI checkbox roundtrip."
+        ],
+        "evidence": [
+          {
+            "kind": "native_model",
+            "source": {
+              "line": 359,
+              "relativepath": "crates/hydrus-gui-model/src/folders.rs"
+            },
+            "description": "Changing type disables incompatible trashing and accepted destructive export asks the reference warning.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "native_consumer",
+            "source": {
+              "line": 301,
+              "relativepath": "crates/hydrus-download/src/export.rs"
+            },
+            "description": "Regular/synchronise mode, symlinks, trash decisions and managed-file safety are enforced by export execution.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/folders.rs",
+              "line": 231
+            },
+            "description": "Compares regular/synchronise choices, delete enablement, symlink state and destructive questions against recorded cases.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/folders.rs",
+              "line": 284
+            },
+            "description": "Exercises destructive warning/refusal, switches to synchronise, asserts client-trash is disabled and asserts synchronise is saved by list Apply.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-download/tests/export_folder.rs",
+              "line": 75
+            },
+            "description": "Runs migrated reference export folders and compares filesystem listings including symlink outcomes to recorded results.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 482,
+            "relativepath": "hydrus/client/gui/exporting/ClientGUIExport.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "audit.network.export-folder.type"
+        ]
+      },
+      {
+        "id": "audit-network-pause-network_traffic",
+        "parent_id": "audit-network-network-pause",
+        "label": "all new network traffic",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "New requests wait at the network engine pause gate; an active transfer is not cancelled.",
+        "reference_source": {
+          "line": 3740,
+          "relativepath": "hydrus/client/gui/ClientGUI.py"
+        },
+        "native_source": {
+          "line": 412,
+          "relativepath": "crates/hydrus-gui/src/menu_bar.rs"
+        },
+        "limitations": [
+          "Settings are persisted; scheduling changes are observed by the daemon on its refresh cycle.",
+          "The specific menu click is source-traced; the regression executes its stored gate consumer rather than clicking this item."
+        ],
+        "evidence": [
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 412,
+              "relativepath": "crates/hydrus-gui/src/menu_bar.rs"
+            },
+            "description": "Toggles the selected Pauses field through the store writer.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 858,
+              "relativepath": "crates/hydrus-net/src/engine.rs"
+            },
+            "description": "Backing worker/model reads this persistent scheduling gate.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+              "line": 147
+            },
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-net/tests/engine.rs",
+              "line": 713
+            },
+            "description": "Sets persistent network_traffic, asserts the engine request times out with the pause status, clears the flag and asserts it completes.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 3740,
+            "relativepath": "hydrus/client/gui/ClientGUI.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "menu.network.all-new-network-traffic"
+        ]
+      },
+      {
+        "id": "audit-network-pause-subscriptions",
+        "parent_id": "audit-network-network-pause",
+        "label": "subscriptions",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "The subscriptions runner stops starting work while the persistent subscriptions pause is set.",
+        "reference_source": {
+          "line": 3745,
+          "relativepath": "hydrus/client/gui/ClientGUI.py"
+        },
+        "native_source": {
+          "line": 412,
+          "relativepath": "crates/hydrus-gui/src/menu_bar.rs"
+        },
+        "limitations": [
+          "Settings are persisted; scheduling changes are observed by the daemon on its refresh cycle.",
+          "The specific menu click is source-traced; the regression executes the saved subscription gate."
+        ],
+        "evidence": [
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 412,
+              "relativepath": "crates/hydrus-gui/src/menu_bar.rs"
+            },
+            "description": "Toggles the selected Pauses field through the store writer.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 294,
+              "relativepath": "crates/hydrus-download/src/subscriptions.rs"
+            },
+            "description": "Backing worker/model reads this persistent scheduling gate.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+              "line": 147
+            },
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-download/tests/subscriptions.rs",
+              "line": 606
+            },
+            "description": "Sets subscriptions/network_traffic gates, asserts zero new URLs and an empty file-seed queue, clears pauses and asserts three new URLs.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 3745,
+            "relativepath": "hydrus/client/gui/ClientGUI.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "menu.network.pause.subscriptions"
+        ]
+      },
+      {
+        "id": "audit-network-pause-paged_importers",
+        "parent_id": "audit-network-network-pause",
+        "label": "all paged importer work",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "All file, gallery and watcher queue scheduling obeys the shared paged-importer gate. The menu fixture checks the item and source links all three worker gates; no inspected assertion executes this combined gate across file/gallery/watcher scheduling.",
+        "reference_source": {
+          "line": 3757,
+          "relativepath": "hydrus/client/gui/ClientGUI.py"
+        },
+        "native_source": {
+          "line": 412,
+          "relativepath": "crates/hydrus-gui/src/menu_bar.rs"
+        },
+        "limitations": [
+          "Settings are persisted; scheduling changes are observed by the daemon on its refresh cycle.",
+          "The menu fixture checks the item and source links all three worker gates; no inspected assertion executes this combined gate across file/gallery/watcher scheduling."
+        ],
+        "evidence": [
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 412,
+              "relativepath": "crates/hydrus-gui/src/menu_bar.rs"
+            },
+            "description": "Toggles the selected Pauses field through the store writer.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 147,
+              "relativepath": "crates/hydrus-store/src/settings.rs"
+            },
+            "description": "Backing worker/model reads this persistent scheduling gate.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+              "line": 147
+            },
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 3757,
+            "relativepath": "hydrus/client/gui/ClientGUI.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "menu.network.all-paged-importer-work"
+        ]
+      },
+      {
+        "id": "audit-network-pause-file_queues",
+        "parent_id": "audit-network-network-pause",
+        "label": "paged file importing",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "The paged file queue gate prevents new file work while preserving queued items.",
+        "reference_source": {
+          "line": 3769,
+          "relativepath": "hydrus/client/gui/ClientGUI.py"
+        },
+        "native_source": {
+          "line": 412,
+          "relativepath": "crates/hydrus-gui/src/menu_bar.rs"
+        },
+        "limitations": [
+          "Settings are persisted; scheduling changes are observed by the daemon on its refresh cycle.",
+          "The specific menu click is source-traced; the regression executes the saved file-queue gate."
+        ],
+        "evidence": [
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 412,
+              "relativepath": "crates/hydrus-gui/src/menu_bar.rs"
+            },
+            "description": "Toggles the selected Pauses field through the store writer.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 147,
+              "relativepath": "crates/hydrus-store/src/settings.rs"
+            },
+            "description": "Backing worker/model reads this persistent scheduling gate.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+              "line": 147
+            },
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-download/tests/url_queue.rs",
+              "line": 556
+            },
+            "description": "Sets the saved file_queues gate, asserts the pending seed remains and no server hits occur, clears pauses and waits for queue completion.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 3769,
+            "relativepath": "hydrus/client/gui/ClientGUI.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "menu.network.paged-file-importing"
+        ]
+      },
+      {
+        "id": "audit-network-pause-gallery_searches",
+        "parent_id": "audit-network-network-pause",
+        "label": "paged gallery searching",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "Gallery and simple-downloader search work obeys the gallery pause gate. Recorded menu/state and actual gallery gate consumers exist; no inspected regression toggles the global gallery gate and verifies gallery/simple-downloader work stops and resumes.",
+        "reference_source": {
+          "line": 3781,
+          "relativepath": "hydrus/client/gui/ClientGUI.py"
+        },
+        "native_source": {
+          "line": 412,
+          "relativepath": "crates/hydrus-gui/src/menu_bar.rs"
+        },
+        "limitations": [
+          "Settings are persisted; scheduling changes are observed by the daemon on its refresh cycle.",
+          "Recorded menu/state and actual gallery gate consumers exist; no inspected regression toggles the global gallery gate and verifies gallery/simple-downloader work stops and resumes."
+        ],
+        "evidence": [
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 412,
+              "relativepath": "crates/hydrus-gui/src/menu_bar.rs"
+            },
+            "description": "Toggles the selected Pauses field through the store writer.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 152,
+              "relativepath": "crates/hydrus-store/src/settings.rs"
+            },
+            "description": "Backing worker/model reads this persistent scheduling gate.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+              "line": 147
+            },
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 3781,
+            "relativepath": "hydrus/client/gui/ClientGUI.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "menu.network.paged-gallery-searching"
+        ]
+      },
+      {
+        "id": "audit-network-pause-watcher_checkers",
+        "parent_id": "audit-network-network-pause",
+        "label": "paged watcher checking",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "The menu item toggles the persistent watcher-checking flag and reflects it as a checkmark; both directions are asserted by the GUI regression. Queue scheduling reads the same field in source.",
+        "reference_source": {
+          "line": 3793,
+          "relativepath": "hydrus/client/gui/ClientGUI.py"
+        },
+        "native_source": {
+          "line": 412,
+          "relativepath": "crates/hydrus-gui/src/menu_bar.rs"
+        },
+        "limitations": [
+          "Settings are persisted; scheduling changes are observed by the daemon on its refresh cycle.",
+          "The GUI regression checks menu/store state; global watcher-worker pause/resume is source-traced rather than asserted by this test."
+        ],
+        "evidence": [
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 412,
+              "relativepath": "crates/hydrus-gui/src/menu_bar.rs"
+            },
+            "description": "Toggles the selected Pauses field through the store writer.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 157,
+              "relativepath": "crates/hydrus-store/src/settings.rs"
+            },
+            "description": "Backing worker/model reads this persistent scheduling gate.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+              "line": 147
+            },
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/menu_bar.rs",
+              "line": 210
+            },
+            "description": "Invokes this menu item, reads the saved watcher gate, verifies the reopened menu is checked, clicks again and asserts the saved flag is false.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 3793,
+            "relativepath": "hydrus/client/gui/ClientGUI.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "menu.network.paged-watcher-checking"
+        ]
+      },
+      {
+        "id": "audit-network-pause-nudge",
+        "parent_id": "audit-network-network-pause",
+        "label": "Advanced: nudge subscriptions awake",
+        "kind": "feature",
+        "status": "partial",
+        "assessment": "Advanced-mode action enqueues SUBSCRIPTIONS_NUDGE; the daemon consumes it to wake its existing subscription runner. The menu fixture confirms advanced-mode presence; no inspected assertion follows this click through persisted nudge consumption and a waking subscription runner.",
+        "reference_source": {
+          "line": 3747,
+          "relativepath": "hydrus/client/gui/ClientGUI.py"
+        },
+        "native_source": {
+          "line": 568,
+          "relativepath": "crates/hydrus-gui/src/menu_bar.rs"
+        },
+        "limitations": [
+          "The menu fixture confirms advanced-mode presence; no inspected assertion follows this click through persisted nudge consumption and a waking subscription runner."
+        ],
+        "evidence": [
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 568,
+              "relativepath": "crates/hydrus-gui/src/menu_bar.rs"
+            },
+            "description": "Queues the subscription wake notification.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "source_inspection",
+            "source": {
+              "line": 798,
+              "relativepath": "crates/hydrus-cli/src/main.rs"
+            },
+            "description": "Daemon dispatches the persisted nudge to subscription work.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+              "line": 147
+            },
+            "description": "Recursive recorded-menu comparison asserts the network entry labels, ordering, enabled state and supported checked state in default/closed/advanced fixtures; it does not execute each action.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 3747,
+            "relativepath": "hydrus/client/gui/ClientGUI.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "menu.network.nudge-subscriptions-awake"
+        ]
+      },
+      {
+        "id": "audit-network-clipboard-monitor",
+        "parent_id": "downloaders",
+        "label": "Clipboard recognised URL monitoring",
+        "kind": "feature",
+        "status": "first_pass",
+        "assessment": "Independent watcher and other-recognised switches drive one-second text polling and compatible page routing.",
+        "reference_source": {
+          "line": 3846,
+          "relativepath": "hydrus/client/gui/ClientGUI.py"
+        },
+        "native_source": {
+          "line": 70,
+          "relativepath": "crates/hydrus-gui/src/clipboard_monitor.rs"
+        },
+        "limitations": [
+          "Text clipboard URLs only; unknown/unparseable URLs are ignored and access failure suspends monitoring."
+        ],
+        "evidence": [
+          {
+            "kind": "native_model",
+            "source": {
+              "line": 65,
+              "relativepath": "crates/hydrus-gui-model/src/clipboard_urls.rs"
+            },
+            "description": "Independent persistent switches route changed parseable watcher/other URLs once into compatible pages and recover after failure on toggle.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "line": 178,
+              "relativepath": "crates/hydrus-gui/tests/gui/clipboard_urls.rs"
+            },
+            "description": "Relevant regression assertions were read; no execution in this audit.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/clipboard_urls.rs",
+              "line": 178
+            },
+            "description": "Clicks both actual network submenu switches, toggles watcher independently and verifies both checked states after reopening.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/clipboard_urls.rs",
+              "line": 65
+            },
+            "description": "Exercises changed watcher/direct-file clipboard text, repeated-text suppression and routing into existing importer queues without switching the active page.",
+            "executed_in_inventory": false
+          },
+          {
+            "kind": "regression_test",
+            "source": {
+              "relativepath": "crates/hydrus-gui/tests/gui/clipboard_urls.rs",
+              "line": 224
+            },
+            "description": "Asserts an access error suspends further reads, creates a visible message and toggling retries the current URL into a watcher queue.",
+            "executed_in_inventory": false
+          }
+        ],
+        "edge_relation": "contains_feature",
+        "hierarchy_evidence": {
+          "source": {
+            "line": 3846,
+            "relativepath": "hydrus/client/gui/ClientGUI.py"
+          },
+          "strength": "control_or_workflow_trace",
+          "description": "Source-traced control/workflow within this feature scope; not necessarily a separate physical window."
+        },
+        "native_id_candidates": [
+          "menu.network.watch-clipboard-for-urls"
+        ]
+      }
+    ],
+    "additions": [],
+    "deletions": []
+  }
+}
