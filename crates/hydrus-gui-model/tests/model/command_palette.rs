@@ -299,15 +299,58 @@ fn calculator_matches_qt_precedence_integer_types_errors_and_special_values() {
         if query == "random()" {
             let value: f64 = rows[0].primary.parse().unwrap();
             assert!((0.0..1.0).contains(&value));
-        } else if matches!(query, "gamma(-.5)" | "lgamma(5)") {
-            // Python uses its own Lanczos routine here. Preserve semantics but
-            // document the native library's possible final-bit difference.
+        } else if matches!(
+            query.split_once('(').map(|(name, _)| name),
+            Some(
+                "exp"
+                    | "log"
+                    | "log2"
+                    | "log10"
+                    | "acos"
+                    | "asin"
+                    | "atan"
+                    | "cos"
+                    | "sin"
+                    | "tan"
+                    | "acosh"
+                    | "asinh"
+                    | "atanh"
+                    | "cosh"
+                    | "sinh"
+                    | "tanh"
+                    | "erf"
+                    | "erfc"
+                    | "gamma"
+                    | "lgamma"
+            )
+        ) && !query.contains("inf")
+        {
+            // These finite transcendental results use platform libm (and
+            // Python's own Lanczos gamma). Only their final floating bits are
+            // portable within four ULPs or four relative machine epsilons.
+            // Zero/sign, special values and integer/arithmetic display stay exact.
+            let expected_text = expected[0]["text"][0].as_str().unwrap();
             let ours: f64 = rows[0].primary.parse().unwrap();
-            let theirs: f64 = expected[0]["text"][0].as_str().unwrap().parse().unwrap();
-            assert!(
-                (ours - theirs).abs() <= theirs.abs() * 4.0 * f64::EPSILON,
-                "{query}: {ours} / {theirs}"
-            );
+            let theirs: f64 = expected_text.parse().unwrap();
+            if theirs.is_finite() && theirs.classify() != std::num::FpCategory::Zero {
+                assert!(ours.is_finite(), "{query}: {ours}");
+                assert_eq!(
+                    ours.is_sign_negative(),
+                    theirs.is_sign_negative(),
+                    "{query}"
+                );
+                assert!(
+                    rows[0].primary.contains('.') || rows[0].primary.contains('e'),
+                    "{query}: float result type"
+                );
+                let ulps = ours.to_bits().abs_diff(theirs.to_bits());
+                assert!(
+                    ulps <= 4 || (ours - theirs).abs() <= theirs.abs() * 4.0 * f64::EPSILON,
+                    "{query}: {ours} / {theirs}, {ulps} ULPs"
+                );
+            } else {
+                assert_eq!(rows[0].primary, expected_text, "{query}");
+            }
         } else {
             assert_eq!(rows[0].primary, expected[0]["text"][0], "{query}");
         }

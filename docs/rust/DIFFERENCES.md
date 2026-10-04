@@ -1789,7 +1789,14 @@ page or changed selection. The palette closes on native focus loss through the
 shared focus observer. The calculator now parses the reference's closed numeric
 language, including all its callable names (commas remain forbidden by the
 reference, so two-argument calls produce no result). Native math functions can
-differ in their final floating-point bit, particularly gamma/lgamma; expressions
+differ in their final floating-point bit, particularly gamma/lgamma and Windows
+atanh. Cross-platform fixture assertions permit at most four ULPs or four relative
+machine epsilons only for finite nonzero exp/log, trig/inverse-trig, hyperbolic,
+erf/erfc and gamma/lgamma outputs, retaining the float result type and sign.
+Zeros, special values/infinite inputs, integer results, errors and ordinary
+arithmetic display strings remain exact. This tolerance verifies bounded numerical
+semantics and does not claim identical platform-independent display strings or
+promote the partial calculator. Expressions
 requiring huge intermediate powers or conversion of enormous integers to floats
 have bounded native evaluation. The native palette uses plain matched text
 rather than Qt's rich-text emphasis and result icons; native menus retain their
