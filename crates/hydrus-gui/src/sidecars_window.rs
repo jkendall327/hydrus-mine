@@ -22,6 +22,9 @@ use crate::sidecar_editors::{
 use crate::sidecars::{exporter_text, importer_text, router_text};
 use crate::{SidecarNodeWindow, SidecarRouterWindow, SidecarRoutersWindow, TableRow};
 
+#[path = "sidecar_object_names.rs"]
+mod object_names;
+
 /// The windows while they are open.
 #[derive(Clone, Default)]
 pub struct Slots {
@@ -30,6 +33,8 @@ pub struct Slots {
     pub exchange: crate::downloader_interchange_window::Slots,
     pub router: Rc<RefCell<Option<SidecarRouterWindow>>>,
     pub node: Rc<RefCell<Option<SidecarNodeWindow>>>,
+    /// Literal JSON object-name text entry owned by its destination editor.
+    pub object_name: Rc<RefCell<Option<crate::SessionDialog>>>,
     /// The string processor editor, from a router or source.
     pub strings: crate::string_processor_window::Slots,
     /// Reusable JSON formula editor for sidecar sources.
@@ -247,6 +252,7 @@ struct NodeState {
     editing: Editing,
     context: Context,
     asking: Option<(NodeAsking, Question)>,
+    names: editors::object_names::ObjectNames,
 }
 
 fn show_node(window: &SidecarNodeWindow, state: &NodeState, store: &Store) {
@@ -302,7 +308,19 @@ fn show_node(window: &SidecarNodeWindow, state: &NodeState, store: &Store) {
         Editing::Destination(e) => {
             window.set_forced_on(e.forced_name.is_some());
             window.set_forced_name(e.forced_name.clone().unwrap_or_default().into());
-            window.set_nested(e.nested.join("\n").into());
+            window.set_nested_rows(ModelRc::new(VecModel::from(
+                state
+                    .names
+                    .names()
+                    .into_iter()
+                    .enumerate()
+                    .map(|(i, name)| TableRow {
+                        cells: strings([name]),
+                        selected: state.names.selected(i),
+                    })
+                    .collect::<Vec<_>>(),
+            )));
+            window.set_nested_selected(state.names.first_selected().is_some());
         }
     }
     show_question!(window, state.asking.as_ref().map(|(_, q)| q));
@@ -334,13 +352,7 @@ fn read_node(window: &SidecarNodeWindow, state: &mut NodeState) {
             e.forced_name = window
                 .get_forced_on()
                 .then(|| window.get_forced_name().to_string());
-            e.nested = window
-                .get_nested()
-                .lines()
-                .map(str::trim)
-                .filter(|l| !l.is_empty())
-                .map(str::to_owned)
-                .collect();
+            e.nested = state.names.names();
         }
     }
 }
@@ -379,8 +391,13 @@ pub fn open_node(
         )),
         _ => None,
     };
+    let names = editors::object_names::ObjectNames::new(match &editing {
+        Editing::Destination(e) => &e.nested,
+        Editing::Source(_) => &[],
+    });
     let state = Rc::new(RefCell::new(NodeState {
         editing,
+        names,
         context,
         asking: warning,
     }));
@@ -395,11 +412,24 @@ pub fn open_node(
         })
     };
     refresh();
+    object_names::bind(
+        &window,
+        &slots.object_name,
+        state.clone(),
+        active.clone(),
+        refresh.clone(),
+    );
     window.on_changed({
         let weak = window.as_weak();
         let state = state.clone();
         let refresh = refresh.clone();
+        let object_name = slots.object_name.clone();
+        let active = active.clone();
         move || {
+            if !active.get() || object_name.borrow().is_some() {
+                return;
+            }
+
             if let Some(window) = weak.upgrade() {
                 read_node(&window, &mut state.borrow_mut());
             }
@@ -474,7 +504,13 @@ pub fn open_node(
         let state = state.clone();
         let refresh = refresh.clone();
         let strings = slots.strings.clone();
+        let object_name = slots.object_name.clone();
+        let active = active.clone();
         move || {
+            if !active.get() || object_name.borrow().is_some() {
+                return;
+            }
+
             if strings.converter.borrow().is_some() {
                 return;
             }
@@ -567,7 +603,13 @@ pub fn open_node(
     window.on_change_type({
         let state = state.clone();
         let refresh = refresh.clone();
+        let object_name = slots.object_name.clone();
+        let active = active.clone();
         move || {
+            if !active.get() || object_name.borrow().is_some() {
+                return;
+            }
+
             {
                 let mut s = state.borrow_mut();
                 let destination = s.editing.destination();
@@ -590,7 +632,13 @@ pub fn open_node(
         let state = state.clone();
         let refresh = refresh.clone();
         let store = store.clone();
+        let object_name = slots.object_name.clone();
+        let active = active.clone();
         move || {
+            if !active.get() || object_name.borrow().is_some() {
+                return;
+            }
+
             {
                 let snapshot = store.snapshot();
                 let mut s = state.borrow_mut();
@@ -617,7 +665,13 @@ pub fn open_node(
     window.on_sidecar_help({
         let state = state.clone();
         let refresh = refresh.clone();
+        let object_name = slots.object_name.clone();
+        let active = active.clone();
         move || {
+            if !active.get() || object_name.borrow().is_some() {
+                return;
+            }
+
             state.borrow_mut().asking =
                 Some((NodeAsking::Info, Question::info(editors::SIDECAR_HELP)));
             refresh();
@@ -639,6 +693,10 @@ pub fn open_node(
                                 Editing::Source(e) => e.change_type(kind, &snapshot.services),
                                 Editing::Destination(e) => e.change_type(kind, &snapshot.services),
                             }
+                            s.names = editors::object_names::ObjectNames::new(match &s.editing {
+                                Editing::Destination(e) => &e.nested,
+                                Editing::Source(_) => &[],
+                            });
                         }
                     }
                     (Some((NodeAsking::Service(choices), _)), Some(i)) => {
@@ -663,10 +721,12 @@ pub fn open_node(
         let formula = slots.formula.clone();
         let strings = slots.strings.clone();
         let active = active.clone();
+        let object_name = slots.object_name.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
+            object_names::cancel(&object_name);
             formula.cancel();
             strings.cancel_all();
             if let Some(window) = weak.upgrade() {
@@ -684,8 +744,9 @@ pub fn open_node(
         let refresh = refresh.clone();
         let close = close.clone();
         let active = active.clone();
+        let object_name = slots.object_name.clone();
         move || {
-            if !active.get() {
+            if !active.get() || object_name.borrow().is_some() {
                 return;
             }
             let Some(window) = weak.upgrade() else {
