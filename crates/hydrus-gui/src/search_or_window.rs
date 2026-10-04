@@ -137,7 +137,7 @@ fn system_editor(window: &SearchOrWindow, state: &Rc<State>) {
     });
     if let Err(error) = crate::predicate_editor_window::open(
         &state.system,
-        store,
+        &store,
         editor,
         context,
         state.text.clone(),

@@ -196,7 +196,7 @@ fn change_recent(store: &Store, change: impl FnOnce(&mut RecentPredicates)) {
 /// open is replaced.
 pub(crate) fn open(
     slot: &Rc<RefCell<Option<PredicateEditorWindow>>>,
-    store: Arc<Store>,
+    store: &Arc<Store>,
     mut editor: Editor,
     context: Context,
     text: TextContext,
@@ -236,7 +236,7 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let state = state.clone();
         let text = text.clone();
-        let store = store.clone();
+        let store = Arc::clone(store);
         move |page: usize| {
             let Some(window) = weak.upgrade() else { return };
             if !window.get_question().is_empty() {
@@ -295,7 +295,7 @@ pub(crate) fn open(
     let finish = {
         let close = close.clone();
         let done = done.clone();
-        let store = store.clone();
+        let store = Arc::clone(store);
         let weak = window.as_weak();
         move |predicates: Vec<Predicate>| {
             if weak.upgrade().is_none_or(|window| {
@@ -331,7 +331,7 @@ pub(crate) fn open(
         }
     });
     window.on_recent_forgotten({
-        let store = store.clone();
+        let store = Arc::clone(store);
         let state = state.clone();
         let show_page = show_page.clone();
         let weak = window.as_weak();
@@ -502,7 +502,7 @@ pub(crate) fn open(
     window.on_defaults_menu({
         let weak = window.as_weak();
         let state = state.clone();
-        let store = store.clone();
+        let store = Arc::clone(store);
         move |p| {
             let Some(window) = weak.upgrade() else { return };
             if !window.window().is_visible() || !window.get_question().is_empty() {
@@ -529,7 +529,7 @@ pub(crate) fn open(
     window.on_defaults_action({
         let weak = window.as_weak();
         let state = state.clone();
-        let store = store.clone();
+        let store = Arc::clone(store);
         move |p, action| {
             let Some(window) = weak.upgrade() else { return };
             if !window.window().is_visible() || !window.get_question().is_empty() {

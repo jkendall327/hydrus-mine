@@ -877,7 +877,7 @@ fn open_edit(
                 });
                 match crate::predicate_editor_window::open(
                     &child,
-                    store,
+                    &store,
                     editor,
                     context,
                     words.text.clone(),

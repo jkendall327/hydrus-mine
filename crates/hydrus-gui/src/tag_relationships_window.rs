@@ -324,10 +324,10 @@ pub(crate) fn open(
                             reason: false,
                         })
                     } else {
-                        if answers[0].is_some() {
-                            if let Err(e) = binding.model.paste_tags(*right, tags) {
-                                window.set_error(e.into());
-                            }
+                        if answers[0].is_some()
+                            && let Err(e) = binding.model.paste_tags(*right, tags)
+                        {
+                            window.set_error(e.into());
                         }
                         Ok(())
                     }
