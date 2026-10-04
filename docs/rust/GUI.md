@@ -865,6 +865,8 @@ reference's confirmation and disables links; "export and close" asks "Export
 as shown?" and closes after success. `oracle/record_export_files.py` records
 the reference panel's previews, removal and confirmations, and its export
 worker's collision filenames and overwritten file contents.
+Export phrases accept either slash style between the final folder and filename
+on Windows, as the reference does; native separators preserve nested folders.
 
 Manage → "notes" (or "notes (2)", counting the focused file's notes; in
 the viewer, the file shown's) opens the reference's "manage notes"
