@@ -1606,3 +1606,11 @@ separator no-op, and clear confirmation. Its native detached window has a
 single-column table rather than Qt’s list widget; the no-parsers warning appears
 in the owner’s error area with the exact reference text. Neither presentation
 changes the persisted association or its live downloader consumer.
+
+The no-selection tag computation limit now reaches actual search-page tag rows
+and captions, with typed persistence and legacy import. It limits sorted
+thumbnail items before collection members are flattened, as Qt does; selected
+items remain uncapped. Native software-rendered sidebar regressions replay
+recorded zero, nullable and finite limits, including Options Apply/Cancel and
+page reopening. Other tag-presentation and tag-list menu differences remain
+unchanged; this completes only the original computation-limit preference leaf.

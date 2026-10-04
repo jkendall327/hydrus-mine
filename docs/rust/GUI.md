@@ -2438,3 +2438,13 @@ the installed link is selected. Accepting the separator or cancelling preserves
 the link. Clear asks “Clear all the selected linked parsers?” and only changes
 the draft on Yes. Apply updates the live downloader resolver; closing the owner
 retires its chooser and stale callbacks.
+
+Tag Presentation > selection tags now sets the maximum number of thumbnail
+items used to compute tags when nothing is selected. The default is 4,096;
+“no limit” and zero are preserved. The search sidebar counts the first sorted
+items, then includes every member of each collected item. Selected items bypass
+the cap. A capped list shows the reference's “for first N files” caption, with
+the chosen tag service when applicable. Apply refreshes the active page, and
+background pages refresh when activated; Cancel leaves saved values intact.
+The real Qt `unselected_tag_cap.json` recording covers twenty combinations of
+limits, sort direction, collections, selection and tag service.

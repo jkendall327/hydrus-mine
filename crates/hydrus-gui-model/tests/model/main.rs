@@ -81,6 +81,7 @@ mod tab_context;
 mod sibling_connector;
 mod tag_dialog_defaults;
 mod tag_dialog_preferences;
+mod unselected_tag_cap;
 
 mod write_autocomplete;
 

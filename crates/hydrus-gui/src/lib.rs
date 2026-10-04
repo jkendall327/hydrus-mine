@@ -491,6 +491,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if let Some(after) = after {
                 after();
             }
+            if !Rc::ptr_eq(&opened, &current.borrow()) {
+                // Background pages pick up current tag presentation when activated.
+                opened.borrow_mut().refresh_tags();
+            }
             *current.borrow_mut() = opened.clone();
             let key = pages.borrow().shown().key;
             let scroll = scrolls.borrow().get(&key).copied().unwrap_or(0.0);
@@ -1685,7 +1689,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             if store.snapshot().thumbnails != thumbnails_before {
                                 rows.thumbnails_changed();
                             }
-                            change_pages(&|_| Ok(()));
+                            change_pages(&|pages| {
+                                pages.current().borrow_mut().refresh_tags();
+                                Ok(())
+                            });
                         }
                     });
                     match options_window::open(&store, &slot, &checker_slot, applied) {
@@ -5734,6 +5741,7 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
         .map(|(text, rgb)| list_text(text, rgb))
         .collect();
     window.set_tags(ModelRc::new(VecModel::from(tags)));
+    window.set_selection_tags_title(page.tag_list_title().into());
     window.set_error(page.error().unwrap_or_default().into());
     window.set_status(page.status().into());
     let sort = page.sort();

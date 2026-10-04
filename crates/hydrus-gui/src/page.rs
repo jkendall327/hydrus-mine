@@ -63,6 +63,8 @@ pub struct SearchPage {
     /// The selection's tags (or, with nothing selected, the page's): each
     /// tag, and its row as the list shows it.
     tags: Vec<(String, String)>,
+    /// The limit actually applied to the latest no-selection tag computation.
+    tag_computation_limit: Option<u32>,
     error: Option<String>,
     /// A system predicate chosen that needs more, whose editor is to open.
     editor_wanted: Option<crate::predicate_editors::Blank>,
@@ -236,6 +238,7 @@ impl SearchPage {
             results: Vec::new(),
             selection: Selection::default(),
             tags: Vec::new(),
+            tag_computation_limit: None,
             error: None,
             editor_wanted: None,
             duplicates: None,
@@ -1874,7 +1877,6 @@ impl SearchPage {
         self.collect = collect;
         self.selection.select_none(&self.results);
         self.resort();
-        self.count_tags();
     }
 
     /// The page restored collecting as a session kept it: collected and
@@ -2017,6 +2019,7 @@ impl SearchPage {
         self.results = results;
         self.collections = collections;
         self.selection.remap(|f| item_of.get(&f).copied());
+        self.count_tags();
     }
 
     /// The selected files, in the page's order, collections' as theirs.
@@ -2256,6 +2259,7 @@ impl SearchPage {
             self.selection.focused(),
             to,
         );
+        self.count_tags();
     }
 
     /// Select every file (ctrl+A).
@@ -2287,8 +2291,31 @@ impl SearchPage {
         moved
     }
 
-    /// The tag list's rows: the selected files' tags, or with nothing
-    /// selected every file's, with how many have each (`tag (3) (+1)`).
+    /// The real computed cap, used by the sidebar notice (selection bypasses it).
+    pub fn tag_computation_limit(&self) -> Option<u32> {
+        self.tag_computation_limit
+    }
+
+    pub fn tag_list_title(&self) -> String {
+        let snapshot = self.store.snapshot();
+        let mut title = "selection tags".to_owned();
+        if let Ok(service) = snapshot.services.by_key(&self.context.tags.display_service)
+            && service.service_type() != hydrus_core::ServiceType::CombinedTag
+        {
+            title.push_str(" for ");
+            title.push_str(&service.name);
+        }
+        if let Some(limit) = self.tag_computation_limit {
+            title.push_str(&format!(
+                " (for first {} files)",
+                hydrus_core::numbers::human_int(u64::from(limit))
+            ));
+        }
+        title
+    }
+
+    /// The tag list's rows: selected files' tags or the capped thumbnail prefix,
+    /// with how many files have each (`tag (3) (+1)`).
     pub fn tag_rows(&self) -> Vec<&str> {
         self.tags.iter().map(|(_, row)| row.as_str()).collect()
     }
@@ -2328,8 +2355,22 @@ impl SearchPage {
     /// petitioned, less those the user hides from it, sorted by its default
     /// sort.
     fn count_tags(&mut self) {
+        self.tag_computation_limit = None;
         let files = match self.selected_files() {
-            selected if selected.is_empty() => self.files(),
+            selected if selected.is_empty() => {
+                let presentation: hydrus_core::tag_presentation::TagPresentation = self
+                    .store
+                    .read(hydrus_store::settings::get)
+                    .unwrap_or_default();
+                match presentation.unselected_tag_limit {
+                    Some(limit) if self.results.len() > limit as usize => {
+                        self.tag_computation_limit = Some(limit);
+                        // Qt caps sorted media, then includes every member of a collection.
+                        self.flatten(&self.results[..limit as usize])
+                    }
+                    _ => self.files(),
+                }
+            }
             selected => selected,
         };
         let snapshot = self.store.snapshot();
@@ -2351,6 +2392,7 @@ impl SearchPage {
         // as in the reference, a page with no predicates shows nothing
         if self.predicates.is_empty() {
             self.tags.clear();
+            self.tag_computation_limit = None;
             self.empty_status.set(Some("no search"));
             return;
         }
