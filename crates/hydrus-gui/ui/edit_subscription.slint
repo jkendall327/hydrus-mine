@@ -10,6 +10,7 @@ import { Button, CheckBox, LineEdit, SpinBox } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 import { Asking } from "subscriptions.slint";
+import { MenuPane, MenuPanes } from "main_menu.slint";
 
 // a box's title, as the reference's static boxes
 component BoxTitle inherits Text {
@@ -38,6 +39,7 @@ component Group inherits Rectangle {
 // a label and a checkbox on a row, as the reference's grids
 component CheckRow inherits HorizontalLayout {
     in property <string> label;
+    in property <bool> enabled: true;
     in-out property <bool> checked;
     callback toggled();
     spacing: 6px;
@@ -46,6 +48,7 @@ component CheckRow inherits HorizontalLayout {
         horizontal-stretch: 1;
     }
     CheckBox {
+        enabled: root.enabled;
         checked <=> root.checked;
         toggled => { root.toggled(); }
     }
@@ -111,6 +114,15 @@ export component EditSubscriptionWindow inherits Window {
     callback choose-downloader();
     callback add-query();
     callback copy-queries();
+    in property <bool> quality-visible;
+    in property <bool> can-quality;
+    in property <bool> quality-working;
+    in property <[MenuPane]> quality-panes;
+    callback quality-menu(length, length);
+    callback quality-line-hovered(int,int,length,length,length);
+    callback quality-line-clicked(int,int,length,length,length);
+    callback quality-placed(int,length,length,length);
+    callback quality-dismissed();
     callback paste-queries();
     callback edit-query();
     callback delete-queries();
@@ -132,7 +144,9 @@ export component EditSubscriptionWindow inherits Window {
     keys := FocusScope {
         key-pressed(event) => {
             if (event.text == Key.Escape) {
-                if (root.asking) {
+                if (root.quality-panes.length > 0) {
+                    root.quality-dismissed();
+                } else if (root.asking) {
                     root.cancelled();
                 } else if (root.editing-query) {
                     root.query-cancel();
@@ -153,6 +167,7 @@ export component EditSubscriptionWindow inherits Window {
                     spacing: 6px;
                     Label { text: "name: "; }
                     LineEdit {
+                                enabled: !root.quality-working;
                         text <=> root.name;
                         horizontal-stretch: 1;
                     }
@@ -163,7 +178,7 @@ export component EditSubscriptionWindow inherits Window {
                     vertical-stretch: 1;
                     Button {
                         text: root.downloader;
-                        enabled: !root.asking;
+                        enabled: !root.asking && !root.quality-working;
                         clicked => { root.choose-downloader(); }
                     }
                     ListTable {
@@ -185,37 +200,42 @@ export component EditSubscriptionWindow inherits Window {
                         rows: root.rows;
                         sort-column: root.sort-column;
                         ascending: root.ascending;
-                        sort(column, ascending) => { root.sort(column, ascending); }
-                        row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
-                        row-activated(row) => { root.row-activated(row); }
-                        delete-pressed => { if root.any-selected { root.delete-queries(); } }
+                        sort(column, ascending) => { if !root.quality-working { root.sort(column, ascending); } }
+                        row-clicked(row, ctrl, shift) => { if !root.quality-working { root.row-clicked(row, ctrl, shift); } }
+                        row-activated(row) => { if !root.quality-working { root.row-activated(row); } }
+                        delete-pressed => { if root.any-selected && !root.quality-working { root.delete-queries(); } }
                     }
                     HorizontalLayout {
                         spacing: 6px;
                         alignment: end;
                         Button {
                             text: "add";
-                            enabled: !root.asking;
+                            enabled: !root.asking && !root.quality-working;
                             clicked => { root.add-query(); }
+                        }
+                        if root.quality-visible: Button {
+                            text: "quality info ▾";
+                            enabled: root.can-quality && !root.asking && !root.quality-working;
+                            clicked => { root.quality-menu(self.absolute-position.x,self.absolute-position.y+self.height); }
                         }
                         Button {
                             text: "copy queries";
-                            enabled: root.any-selected && !root.asking;
+                            enabled: root.any-selected && !root.asking && !root.quality-working;
                             clicked => { root.copy-queries(); }
                         }
                         Button {
                             text: "paste queries";
-                            enabled: !root.asking;
+                            enabled: !root.asking && !root.quality-working;
                             clicked => { root.paste-queries(); }
                         }
                         Button {
                             text: "edit";
-                            enabled: root.one-selected && !root.asking;
+                            enabled: root.one-selected && !root.asking && !root.quality-working;
                             clicked => { root.edit-query(); }
                         }
                         Button {
                             text: "delete";
-                            enabled: root.any-selected && !root.asking;
+                            enabled: root.any-selected && !root.asking && !root.quality-working;
                             clicked => { root.delete-queries(); }
                         }
                     }
@@ -224,27 +244,27 @@ export component EditSubscriptionWindow inherits Window {
                         alignment: end;
                         Button {
                             text: "pause/play";
-                            enabled: root.any-selected && !root.asking;
+                            enabled: root.any-selected && !root.asking && !root.quality-working;
                             clicked => { root.pause-play(); }
                         }
                         if root.can-retry-failed: Button {
                             text: "retry failed";
-                            enabled: !root.asking;
+                            enabled: !root.asking && !root.quality-working;
                             clicked => { root.retry-failed(); }
                         }
                         if root.can-retry-ignored: Button {
                             text: "retry ignored";
-                            enabled: !root.asking;
+                            enabled: !root.asking && !root.quality-working;
                             clicked => { root.retry-ignored(); }
                         }
                         Button {
                             text: "check now";
-                            enabled: root.can-check-now && !root.asking;
+                            enabled: root.can-check-now && !root.asking && !root.quality-working;
                             clicked => { root.check-now(); }
                         }
                         Button {
                             text: "reset";
-                            enabled: root.can-reset && !root.asking;
+                            enabled: root.can-reset && !root.asking && !root.quality-working;
                             clicked => { root.reset(); }
                         }
                     }
@@ -257,6 +277,7 @@ export component EditSubscriptionWindow inherits Window {
                         Group {
                             title: "control";
                             CheckRow {
+                                enabled: !root.quality-working;
                                 label: "currently paused: ";
                                 checked <=> root.paused;
                             }
@@ -271,6 +292,7 @@ export component EditSubscriptionWindow inherits Window {
                                     horizontal-stretch: 1;
                                 }
                                 SpinBox {
+                                enabled: !root.quality-working;
                                     width: 110px;
                                     minimum: 1;
                                     maximum: root.most-files;
@@ -284,6 +306,7 @@ export component EditSubscriptionWindow inherits Window {
                                     horizontal-stretch: 1;
                                 }
                                 SpinBox {
+                                enabled: !root.quality-working;
                                     width: 110px;
                                     minimum: 1;
                                     maximum: root.most-files;
@@ -291,12 +314,13 @@ export component EditSubscriptionWindow inherits Window {
                                 }
                             }
                             CheckRow {
+                                enabled: !root.quality-working;
                                 label: "do not worry about subscription gaps: ";
                                 checked <=> root.random-sample;
                             }
                             Button {
                                 text: "checker options";
-                                enabled: !root.asking;
+                                enabled: !root.asking && !root.quality-working;
                                 clicked => { root.edit-checker(); }
                             }
                         }
@@ -309,14 +333,17 @@ export component EditSubscriptionWindow inherits Window {
                             title: "file publication";
                             Label { text: "If you like, the subscription can send its files to popup buttons or pages directly. The files it sends are shaped by the 'presentation' options in _file import options_."; }
                             CheckRow {
+                                enabled: !root.quality-working;
                                 label: "show a popup while working: ";
                                 checked <=> root.show-popup;
                             }
                             CheckRow {
+                                enabled: !root.quality-working;
                                 label: "publish presented files to a popup button: ";
                                 checked <=> root.publish-popup-button;
                             }
                             CheckRow {
+                                enabled: !root.quality-working;
                                 label: "publish presented files to a page: ";
                                 checked <=> root.publish-page;
                             }
@@ -329,15 +356,17 @@ export component EditSubscriptionWindow inherits Window {
                                 LineEdit {
                                     text <=> root.label-override;
                                     placeholder-text: "subscription files";
-                                    enabled: !root.label-override-none;
+                                    enabled: (!root.label-override-none) && !root.quality-working;
                                     horizontal-stretch: 1;
                                 }
                                 CheckBox {
+                                enabled: !root.quality-working;
                                     text: "no, use subscription name";
                                     checked <=> root.label-override-none;
                                 }
                             }
                             CheckRow {
+                                enabled: !root.quality-working;
                                 label: "publish all queries to the same page/popup button: ";
                                 checked <=> root.merge-publish;
                             }
@@ -360,6 +389,7 @@ export component EditSubscriptionWindow inherits Window {
                         spacing: 6px;
                         Label { text: "query text: "; }
                         LineEdit {
+                                enabled: !root.quality-working;
                             text <=> root.query-text;
                             horizontal-stretch: 1;
                         }
@@ -370,10 +400,11 @@ export component EditSubscriptionWindow inherits Window {
                         LineEdit {
                             text <=> root.display-name;
                             placeholder-text: "query name";
-                            enabled: !root.display-name-none;
+                            enabled: (!root.display-name-none) && !root.quality-working;
                             horizontal-stretch: 1;
                         }
                         CheckBox {
+                                enabled: !root.quality-working;
                             text: "use query text";
                             checked <=> root.display-name-none;
                         }
@@ -383,11 +414,13 @@ export component EditSubscriptionWindow inherits Window {
                     title: "status";
                     Label { text: root.query-status; }
                     CheckRow {
+                                enabled: !root.quality-working;
                         label: "check now: ";
                         checked <=> root.query-check-now;
                         toggled => { root.query-status-changed(); }
                     }
                     CheckRow {
+                                enabled: !root.quality-working;
                         label: "paused: ";
                         checked <=> root.query-paused;
                         toggled => { root.query-status-changed(); }
@@ -428,7 +461,7 @@ export component EditSubscriptionWindow inherits Window {
                     spacing: 6px;
                     Button {
                         text: "apply";
-                        enabled: !root.asking;
+                        enabled: !root.asking && !root.quality-working;
                         clicked => { root.query-apply(); }
                     }
                     Button {
@@ -449,7 +482,7 @@ export component EditSubscriptionWindow inherits Window {
                 spacing: 6px;
                 Button {
                     text: "apply";
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.quality-working;
                     clicked => { root.apply(); }
                 }
                 Button {
@@ -458,5 +491,15 @@ export component EditSubscriptionWindow inherits Window {
                 }
             }
         }
+    }
+    if root.quality-panes.length > 0: MenuPanes {
+        width: root.width;
+        height: root.height;
+        top: 0px;
+        panes: root.quality-panes;
+        dismiss => { root.quality-dismissed(); }
+        placed(p,x,y,w) => { root.quality-placed(p,x,y,w); }
+        line-hovered(p,l,r,t,left) => { root.quality-line-hovered(p,l,r,t,left); }
+        line-clicked(p,l,r,t,left) => { root.quality-line-clicked(p,l,r,t,left); }
     }
 }

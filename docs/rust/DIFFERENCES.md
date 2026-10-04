@@ -1473,3 +1473,12 @@ blank constraints, accepted values and the final-description Cancel behavior mat
 The script editor keeps a visible test-domain field instead of prompting on every
 run, and test results are delivered at the end of execution. Those presentation and
 streaming differences keep the broad script page short of full parity.
+
+Subscription quality review and CSV read durable query queues asynchronously,
+with the reference's count and percentage formatting. CSV deliberately uses
+raw comma-separated names and has no header or quoting. Native information and
+worker errors appear in the edit window's acknowledgement panel rather than a
+Qt information/global exception dialog. A disappeared saved queue is reported
+as unavailable; the reference DB layer wraps that missing-object error as a
+DBException. Closing the native editor stops polling and prevents a late
+clipboard publication; cancellation is checked between queue reads.

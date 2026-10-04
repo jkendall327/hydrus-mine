@@ -20,7 +20,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/network_job_control.rs",
-          "line": 344,
+          "line": 351,
           "symbol": "fn action(&self"
         },
         {
@@ -115,7 +115,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/network_job_control.rs",
-          "line": 344,
+          "line": 351,
           "symbol": "fn action(&self"
         },
         {
@@ -222,7 +222,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
-          "line": 337,
+          "line": 338,
           "symbol": "        Action::ImportFromClipboard => {"
         }
       ],
@@ -264,12 +264,12 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
-          "line": 356,
+          "line": 357,
           "symbol": "        Action::SearchUrls => {"
         },
         {
           "relativepath": "crates/hydrus-gui/src/lib.rs",
-          "line": 921,
+          "line": 1043,
           "symbol": "                let predicates = crate::file_log::url_search(&urls);"
         }
       ],
@@ -310,7 +310,7 @@
       "sourceAnchors": [
         {
           "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
-          "line": 318,
+          "line": 319,
           "symbol": "        Action::ImportFromPng =>"
         },
         {
@@ -376,7 +376,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
-          "line": 368,
+          "line": 369,
           "symbol": "        Action::Renormalise =>"
         },
         {
@@ -440,17 +440,17 @@
         {
           "relativepath": "crates/hydrus-gui-model/src/search_log.rs",
           "symbol": "pub fn export_objects(",
-          "line": 308
+          "line": 309
         },
         {
           "relativepath": "crates/hydrus-gui/src/search_log_import_window.rs",
           "symbol": "fn commit(",
-          "line": 48
+          "line": 51
         },
         {
           "relativepath": "crates/hydrus-gui/src/search_log_import_window.rs",
           "symbol": "fn present(",
-          "line": 130
+          "line": 133
         },
         {
           "relativepath": "crates/hydrus-gui/src/search_log_window.rs",
@@ -491,6 +491,140 @@
         "binaryFixture": "oracle/fixtures/search_log_urls.png",
         "executed": true,
         "cancelBoundary": "Qt titlebar close is simulated through the actual Dialog.SetCancelled(True) API before close; direct reject is the reference No result."
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintCachedCompiler": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; scoped model/GUI tests authored and not claimed locally passed."
+      }
+    },
+    {
+      "originalID": "audit-network-quality-review",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Advanced-mode-only quality info→show on selected originally saved query queues. A retained background worker reads durable file logs and current inbox/local-storage/trash membership; unique sha256 hashes count once regardless of seed status. Native information reproduces exact name/count/good-ratio formatting, omits the ratio when archive+deleted is zero, freezes draft mutations while working, restores the editor after completion/error, and suppresses publication after owner close. Unsaved queries do not qualify and no draft or queue writes are performed.",
+      "limits": [
+        "Native information and worker-error acknowledgement are embedded in the existing editor, replacing Qt information/global exception dialogs.",
+        "A disappeared saved log reports an unavailable error (the actual Qt DB facade wraps its missing-object error as DBException). Cancellation stops publication immediately and is checked between query reads."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/subscription_quality.rs",
+          "symbol": "pub fn read(",
+          "line": 21
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/subscription_quality.rs",
+          "symbol": "pub fn information(",
+          "line": 23
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/subscription_quality.rs",
+          "symbol": "pub fn selected(",
+          "line": 60
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/subscription_quality_control.rs",
+          "symbol": "pub(crate) fn bind(",
+          "line": 57
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/edit_subscription_window.rs",
+          "symbol": "    let quality = crate::subscription_quality_control::bind(",
+          "line": 275
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/edit_subscription.slint",
+          "symbol": "                        if root.quality-visible: Button",
+          "line": 216
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/subscription_quality.rs",
+          "symbol": "fn durable_logs_and_current_file_states_match_reference_quality_outputs",
+          "line": 16
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/edit_subscription.rs",
+          "symbol": "fn advanced_quality_menu_reads_saved_logs_and_current_media_without_applying_drafts",
+          "line": 288
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_subscription_quality.py",
+        "fixture": "oracle/fixtures/subscription_quality.json",
+        "executed": true,
+        "behavior": "Actual persisted Qt log objects and real media-results queries; actual advanced MenuButton actions and AsyncQtJob disable/restore; exact ShowInformation/clipboard outputs. Unknown hash, repeated hash, error-status seed, archive/trash changes, empty log and missing DB object included."
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintCachedCompiler": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; scoped model/GUI tests authored and not claimed locally passed."
+      }
+    },
+    {
+      "originalID": "audit-network-quality-csv",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Advanced-mode-only quality info→copy csv data to clipboard uses the same live background quality reader, saved-query selection and current media counts. Exact raw comma-joined rows with no header/quoting; archive/(archive+deleted) good ratio excludes inbox and an empty denominator prints 0.0%. Pending work never applies draft queries; editor close prevents stale clipboard publication.",
+      "limits": [
+        "Native information and worker-error acknowledgement are embedded in the existing editor, replacing Qt information/global exception dialogs.",
+        "A disappeared saved log reports an unavailable error (the actual Qt DB facade wraps its missing-object error as DBException). Cancellation stops publication immediately and is checked between query reads."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/subscription_quality.rs",
+          "symbol": "pub fn read(",
+          "line": 21
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/subscription_quality.rs",
+          "symbol": "pub fn csv(",
+          "line": 42
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/subscription_quality.rs",
+          "symbol": "pub fn selected(",
+          "line": 60
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/subscription_quality_control.rs",
+          "symbol": "pub(crate) fn bind(",
+          "line": 57
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/edit_subscription_window.rs",
+          "symbol": "    let quality = crate::subscription_quality_control::bind(",
+          "line": 275
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/edit_subscription.slint",
+          "symbol": "                        if root.quality-visible: Button",
+          "line": 216
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/subscription_quality.rs",
+          "symbol": "fn durable_logs_and_current_file_states_match_reference_quality_outputs",
+          "line": 16
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/edit_subscription.rs",
+          "symbol": "fn advanced_quality_menu_reads_saved_logs_and_current_media_without_applying_drafts",
+          "line": 288
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_subscription_quality.py",
+        "fixture": "oracle/fixtures/subscription_quality.json",
+        "executed": true,
+        "behavior": "Actual persisted Qt log objects and real media-results queries; actual advanced MenuButton actions and AsyncQtJob disable/restore; exact ShowInformation/clipboard outputs. Unknown hash, repeated hash, error-status seed, archive/trash changes, empty log and missing DB object included."
       },
       "validation": {
         "cargoFmt": true,

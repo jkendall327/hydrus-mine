@@ -2257,3 +2257,12 @@ access discards the row, while Keep description (or closing that final prompt)
 accepts the domain/access using its current/default description. Parent cancellation
 discards the whole example draft. Before the first test, edits update a test domain
 that still contains the initial example default; a previously used domain is retained.
+
+In advanced mode, an existing subscription query's “quality info” menu can show
+its saved log's inbox/archive/deleted counts and copy the exact reference CSV.
+The read runs in the background, disables editor changes until publication,
+and uses current file locations rather than seed import status. Repeated hashes
+count once; trash and nonlocal hashes count as deleted. The good ratio excludes
+inbox files. Unsaved queries do not enable the menu, and reports never apply the
+subscription draft. Closing the editor cancels publication; missing saved logs
+produce an acknowledgement and restore the editor.
