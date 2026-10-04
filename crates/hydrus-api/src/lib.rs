@@ -99,8 +99,8 @@ impl AppState {
     }
 
     /// Who is making this request. Keys can be added or removed by another
-    /// process (`hydrus api-keys`), so they are read again at least once a
-    /// minute, and before a key we don't know is refused.
+    /// process, so each request checks its committed permission revision. Raw
+    /// legacy writes without a revision are reread once a minute and on unknown keys.
     pub fn authenticate(&self, req: &ApiRequest) -> ApiResult<AccessPermissions> {
         // lock_off must authenticate while the writer/read pool is paused.
         if self.locked.load(std::sync::atomic::Ordering::SeqCst) {

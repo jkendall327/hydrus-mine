@@ -980,3 +980,5 @@ may take up to one second; current requests drain for at most ten seconds
 before restart. HTTP logs omit query strings and credentials. HTTPS is refused
 rather than served as plain HTTP; normie Eris/external URL override fields are
 shown as unsupported preserved values.
+Listener reconfiguration retains the same API state, so session keys continue
+to use the current permissions after rebind; revocation still invalidates them.

@@ -6,7 +6,7 @@ use hydrus_store::{
     Store,
     services::{PenBrush, RatingDisplay, Rgb, Service, ServiceKind, StarAppearance, StarShape},
 };
-use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
+use slint::{ComponentHandle, ModelRc, SharedString, VecModel};
 use std::{
     cell::{Cell, RefCell},
     rc::Rc,

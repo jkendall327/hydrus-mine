@@ -1474,3 +1474,5 @@ restarts only the API listener, keeping downloads, queues and authentication
 sessions alive. A bind failure reports its cause and recovers after settings
 are corrected; HTTPS reports a failure instead of silently serving HTTP.
 Explicit CLI `--port` and `--bind` overrides retain precedence.
+The local daemon regression additionally mints an authenticated session before
+listener reconfiguration and uses that same session after bind-failure recovery.

@@ -694,20 +694,46 @@ fn client_api_listener_reconfigures_recovers_and_preserves_daemon_state() {
     else {
         panic!("listening")
     };
-    let request = |address: &str, path: &str| {
+    let request = |address: &str, path: &str, credential: Option<(&str, &str)>| {
         let mut stream = std::net::TcpStream::connect(address).unwrap();
         stream
             .set_read_timeout(Some(Duration::from_secs(3)))
             .unwrap();
-        write!(stream,"GET {path} HTTP/1.1\r\nHost: {address}\r\nOrigin: https://test.example\r\nConnection: close\r\n\r\n").unwrap();
+        let credential = credential
+            .map(|(header, key)| format!("{header}: {key}\r\n"))
+            .unwrap_or_default();
+        write!(stream,"GET {path} HTTP/1.1\r\nHost: {address}\r\nOrigin: https://test.example\r\n{credential}Connection: close\r\n\r\n").unwrap();
         let mut response = String::new();
         stream.read_to_string(&mut response).unwrap();
         response
     };
     assert!(
-        request(&first, "/api_version?private-query-value=never-log-this")
-            .to_lowercase()
-            .contains("access-control-allow-origin: *")
+        request(
+            &first,
+            "/api_version?private-query-value=never-log-this",
+            None
+        )
+        .to_lowercase()
+        .contains("access-control-allow-origin: *")
+    );
+    let fixture = hydrus_testkit::fixture_json("legacy_db/basic.manifest.json");
+    let access = fixture["access_keys"]["full"].as_str().unwrap();
+    let response = request(
+        &first,
+        "/session_key",
+        Some(("Hydrus-Client-API-Access-Key", access)),
+    );
+    assert!(response.starts_with("HTTP/1.1 200"), "{response}");
+    let body: serde_json::Value =
+        serde_json::from_str(response.split_once("\r\n\r\n").unwrap().1).unwrap();
+    let session = body["session_key"].as_str().unwrap();
+    assert!(
+        request(
+            &first,
+            "/verify_access_key",
+            Some(("Hydrus-Client-API-Session-Key", session))
+        )
+        .starts_with("HTTP/1.1 200")
     );
     let occupied = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
     config.port = Some(occupied.local_addr().unwrap().port());
@@ -730,7 +756,7 @@ fn client_api_listener_reconfigures_recovers_and_preserves_daemon_state() {
         panic!("listening")
     };
     assert!(
-        !request(&second, "/api_version")
+        !request(&second, "/api_version", None)
             .to_lowercase()
             .contains("access-control-allow-origin")
     );
@@ -744,6 +770,15 @@ fn client_api_listener_reconfigures_recovers_and_preserves_daemon_state() {
         api_status(&dir).pid,
         pid,
         "listener correction keeps daemon process"
+    );
+    assert!(
+        request(
+            &second,
+            "/verify_access_key",
+            Some(("Hydrus-Client-API-Session-Key", session))
+        )
+        .starts_with("HTTP/1.1 200"),
+        "same session survives listener rebind and failed-bind correction"
     );
     config.use_https = true;
     update(config.clone());
