@@ -1229,3 +1229,11 @@ existing pages retain the values captured at construction, as in the reference.
 Native list rows use the desktop client's 22-pixel text-row spacing rather than
 Qt's platform font-metric size hint. Floating results share their highlighting,
 scrolling and selection behavior with embedded results.
+
+Subscription import-option clipboard commands do not yet include the shared
+custom-overwrite chooser or favourites controls. The exchange codec accepts all
+eight native kinds, upgrades supported old versions through the legacy reader,
+and preserves stored external-program definitions. It rejects deleted-domain
+location contexts atomically because the native importer does not yet represent
+them. PNG exchange is available in the typed codec; its subscription UI entry is
+assessed separately. These remaining limits keep the broad exchange items partial.

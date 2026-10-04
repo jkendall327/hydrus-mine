@@ -6,6 +6,7 @@
 //! subscriptions by query text, and delete. Recorded by
 //! `oracle/record_subscriptions_list.py`.
 
+use hydrus_core::import_options::ImportOptionsSlice;
 use hydrus_core::numbers::human_int;
 use hydrus_core::subscriptions::{CheckerOptions, QueryState, SeedTime, SubscriptionSettings};
 use hydrus_store::queues::{SeedStatus, StatusCounts};
@@ -220,6 +221,39 @@ impl DialogSubscription {
 /// The question "delete" asks (the reference's lists' simple delete).
 pub const DELETE_QUESTION: &str = "Remove all selected?";
 
+/// Clipboard mode names used by the subscription menu. The reference's
+/// subscription callbacks intentionally differ from its shared editor routing.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ImportOptionsPaste {
+    Replace,
+    Merge,
+    FillIn,
+}
+
+impl ImportOptionsPaste {
+    /// The actual v688 subscription popup binding, verified by the recorder.
+    pub fn from_menu_index(index: usize) -> Option<Self> {
+        match index {
+            0 => Some(Self::Replace),
+            1 => Some(Self::Merge),
+            2 => Some(Self::FillIn),
+            _ => None,
+        }
+    }
+
+    pub fn apply(self, current: &mut ImportOptionsSlice, incoming: &ImportOptionsSlice) {
+        match self {
+            Self::Replace => current.clone_from(incoming),
+            Self::Merge => {
+                let mut merged = incoming.clone();
+                merged.fill_in(current);
+                *current = merged;
+            }
+            Self::FillIn => current.fill_in(incoming),
+        }
+    }
+}
+
 /// What "select subscriptions" asks for.
 pub const SELECT_MESSAGE: &str = "This selects subscriptions based on query text. Please enter some search text, and any subscription that has a query that includes that text will be selected.";
 
@@ -387,6 +421,41 @@ impl Subscriptions {
     /// The selected, in the list's order.
     pub fn selected(&self, now: i64) -> Vec<u64> {
         self.selection.in_order(&self.order(now))
+    }
+
+    /// The clear confirmation uses the selection's current visible order.
+    pub fn clear_import_options_question(&self, now: i64) -> Option<String> {
+        let names = self
+            .selected(now)
+            .iter()
+            .filter_map(|key| self.get(*key))
+            .map(|s| s.name.as_str())
+            .collect::<Vec<_>>();
+        (!names.is_empty())
+            .then(|| format!("Clear all custom import options from {}?", names.join(", ")))
+    }
+
+    /// Apply clipboard options only to the snapshotted selection.
+    pub fn paste_import_options(
+        &mut self,
+        keys: &[u64],
+        mode: ImportOptionsPaste,
+        incoming: &ImportOptionsSlice,
+    ) {
+        for key in keys {
+            if let Some(subscription) = self.subscriptions.iter_mut().find(|s| s.key == *key) {
+                mode.apply(&mut subscription.settings.import_options, incoming);
+            }
+        }
+    }
+
+    /// Clearing returns all eight kinds to inheritance.
+    pub fn clear_import_options(&mut self, keys: &[u64]) {
+        self.paste_import_options(
+            keys,
+            ImportOptionsPaste::Replace,
+            &ImportOptionsSlice::default(),
+        );
     }
 
     pub fn click(&mut self, now: i64, row: usize, ctrl: bool, shift: bool) {

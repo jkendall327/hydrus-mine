@@ -1874,3 +1874,12 @@ fetch, and pasted tags only add to selections. Pasting a tag on the opposite
 side removes it from the original side. A pending paste cannot apply the
 relationship editor; closing its owner invalidates subsequent answers. The real
 Qt sibling/parent preview selections are recorded alongside write suggestions.
+
+Subscription import options can be copied as the reference JSON container,
+pasted into selected subscriptions and cleared after confirmation. Clipboard
+changes remain staged until Apply. The subscription popup preserves v688's
+observed callback routing: merge-paste replaces the slice, fill-in-gaps-paste
+merges incoming custom kinds, and replace-paste fills currently inherited kinds.
+The real Qt recording is `oracle/record_subscription_import_options.py`; native
+regressions cover clipboard output, all three modes, invalid input, declined
+clearing, reopening and callbacks retained after the owner closes.

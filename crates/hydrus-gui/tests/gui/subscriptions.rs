@@ -15,6 +15,97 @@ use hydrus_store::import::import_legacy;
 use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedStatus, SeedType};
 use hydrus_store::subscriptions;
 
+#[test]
+fn subscription_option_clipboard_edits_stay_staged_and_closed_owners_cannot_apply() {
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("subscription_import_options.json");
+    let existing =
+        hydrus_downloader_exchange::import_options::decode_text(&fixture["existing"].to_string())
+            .unwrap();
+    let original = existing.clone();
+    store
+        .write(move |ctx| {
+            for name in ["alpha", "beta"] {
+                subscriptions::create_subscription(
+                    ctx.conn(),
+                    name,
+                    &SubscriptionSettings {
+                        import_options: original.clone(),
+                        ..SubscriptionSettings::default()
+                    },
+                )?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let copied = std::rc::Rc::new(std::cell::RefCell::new(String::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let hydrus_gui::Clip::Text(text) = clip {
+                copied.borrow_mut().clone_from(text);
+            }
+        }
+    });
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_row_clicked(0, false, false);
+    dialog.invoke_copy_import_options();
+    assert_eq!(
+        hydrus_downloader_exchange::import_options::decode_text(&copied.borrow()).unwrap(),
+        existing
+    );
+    let incoming = fixture["incoming"].to_string();
+    hydrus_gui::set_paster(move || incoming.clone());
+    dialog.invoke_paste_import_options(0);
+    assert_eq!(
+        store.read(subscriptions::subscriptions).unwrap()[0]
+            .settings
+            .import_options,
+        existing
+    );
+    let pixels = headless::render(&windows.get(1).unwrap(), 1180, 560);
+    assert!(!pixels.is_empty());
+    dialog.invoke_cancel();
+    dialog.invoke_apply();
+    assert_eq!(
+        store.read(subscriptions::subscriptions).unwrap()[0]
+            .settings
+            .import_options,
+        existing
+    );
+
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_row_clicked(0, false, false);
+    dialog.invoke_row_clicked(1, true, false);
+    hydrus_gui::set_paster(|| "not json".into());
+    dialog.invoke_paste_import_options(0);
+    assert!(
+        asked(&dialog)
+            .1
+            .contains("JSON-serialised Import Options Container")
+    );
+    dialog.invoke_chosen(0);
+    dialog.invoke_clear_import_options();
+    assert_eq!(asked(&dialog).1, fixture["questions"][0]);
+    dialog.invoke_chosen(1);
+    dialog.invoke_clear_import_options();
+    dialog.invoke_chosen(0);
+    dialog.invoke_apply();
+    assert!(
+        store
+            .read(subscriptions::subscriptions)
+            .unwrap()
+            .iter()
+            .all(|s| s.settings.import_options.is_empty())
+    );
+    let reopened = open_dialog(&ui, &bound);
+    assert_eq!(rows(&reopened).len(), 2);
+    reopened.invoke_cancel();
+}
+
 pub(crate) fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
