@@ -151,6 +151,16 @@ fn shared_pattern_shortcuts_copy_without_editing_and_guard_closed_owners() {
     let window =
         export_files_window::open(&store, vec![hydrus_core::HashId(1)], &slots, Rc::new(|| {}))
             .unwrap();
+    // This tests shortcut ownership and unchanged preview rows, independently
+    // of the host platform's home-directory environment.
+    window.set_destination(
+        store
+            .dir()
+            .join("shortcut-preview")
+            .to_string_lossy()
+            .as_ref()
+            .into(),
+    );
     window.set_phrase("keep {hash}".into());
     window.invoke_update();
     let initial_rows = window
