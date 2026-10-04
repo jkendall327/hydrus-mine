@@ -211,7 +211,7 @@ fn html_rule(r: &HtmlRule) -> Value {
         ]),
     )
 }
-fn formula(f: &Formula) -> Result<Value> {
+pub(crate) fn formula(f: &Formula) -> Result<Value> {
     let p = processor(&f.processor)?;
     let mut encoded = match &f.kind {
         FormulaKind::Html { rules, content } => {
