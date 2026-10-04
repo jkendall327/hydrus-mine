@@ -232,7 +232,7 @@ fn fetched_page_examples_use_actual_network_headers_cookies_context_and_child_co
     assert_eq!(page.get_document(), "fetch failed: 404: missing\n\nmissing");
     assert!(server.requests.lock().unwrap()[1].contains("test-document=saved"));
     let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
-    let mut usage = store
+    let usage = store
         .read(|conn| hydrus_store::bandwidth::usage(conn, now))
         .unwrap()
         .into_iter()

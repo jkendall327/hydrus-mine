@@ -1081,7 +1081,7 @@ async fn independent_engines_add_new_usage_without_replacing_each_other_or_doubl
             .unwrap()
             .1
     };
-    let mut usage = read();
+    let usage = read();
     assert_eq!(
         usage.all_usage(BandwidthType::Data),
         1234 + one.bytes_read + two.bytes_read
@@ -1092,7 +1092,7 @@ async fn independent_engines_add_new_usage_without_replacing_each_other_or_doubl
     assert_eq!(read().to_counters(), usage.to_counters());
     let three = first.fetch(&request, &Job::new()).await.unwrap();
     first.save_bandwidth().unwrap();
-    let mut usage = read();
+    let usage = read();
     assert_eq!(
         usage.all_usage(BandwidthType::Data),
         1234 + one.bytes_read + two.bytes_read + three.bytes_read
@@ -1119,7 +1119,7 @@ async fn independent_engines_add_new_usage_without_replacing_each_other_or_doubl
     first.publish_runtime().unwrap();
     let fresh = first.fetch(&request, &Job::new()).await.unwrap();
     first.save_bandwidth().unwrap();
-    let mut usage = read();
+    let usage = read();
     assert_eq!(usage.all_usage(BandwidthType::Data), fresh.bytes_read);
     assert_eq!(usage.all_usage(BandwidthType::Requests), 1);
 }
