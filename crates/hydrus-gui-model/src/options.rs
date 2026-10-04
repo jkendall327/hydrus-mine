@@ -2905,7 +2905,7 @@ pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Sug
                 }
                 (Kind::NoneableText { none_phrase }, _) => labels.push(*none_phrase),
                 (Kind::CanvasTicks, _) => {
-                    labels.extend(["media views", "preview views", "client api views"])
+                    labels.extend(["media views", "preview views", "client api views"]);
                 }
                 (Kind::Duration { units, .. }, _) => {
                     labels.extend(units.iter().map(|unit| unit.label()));
