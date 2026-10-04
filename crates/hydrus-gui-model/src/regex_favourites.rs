@@ -90,3 +90,71 @@ pub fn validity(phrase: &str) -> Result<(), String> {
         .map(|_| ())
         .map_err(str::to_owned)
 }
+
+/// Reference clipboard snippets. The filename snippet follows
+/// the host path separator, as the reference does.
+pub fn regex_tools(category: usize) -> Vec<(String, String)> {
+    let rows: &[(&str, &str)] = match category {
+        1 => &[
+            ("whitespace character - \\s", "\\s"),
+            ("number character - \\d", "\\d"),
+            ("alphanumeric or underscore character - \\w", "\\w"),
+            ("any character - .", "."),
+            ("backslash character - \\\\", "\\\\"),
+            ("beginning of line - ^", "^"),
+            ("end of line - $", "$"),
+            ("any of these - […]", "[…]"),
+            ("anything other than these - [^…]", "[^…]"),
+            ("0 or more matches, consuming as many as possible - *", "*"),
+            ("1 or more matches, consuming as many as possible - +", "+"),
+            ("0 or 1 matches, preferring 1 - ?", "?"),
+            ("0 or more matches, consuming as few as possible - *?", "*?"),
+            ("1 or more matches, consuming as few as possible - +?", "+?"),
+            ("0 or 1 matches, preferring 0 - ??", "??"),
+            ("exactly m matches - {m}", "{m}"),
+            (
+                "m to n matches, consuming as many as possible - {m,n}",
+                "{m,n}",
+            ),
+            (
+                "m to n matches, consuming as few as possible - {m,n}?",
+                "{m,n}?",
+            ),
+            ("the next characters are: (non-consuming) - (?=…)", "(?=…)"),
+            (
+                "the next characters are not: (non-consuming) - (?!…)",
+                "(?!…)",
+            ),
+            (
+                "the previous characters are: (non-consuming) - (?<=…)",
+                "(?<=…)",
+            ),
+            (
+                "the previous characters are not: (non-consuming) - (?<!…)",
+                "(?<!…)",
+            ),
+            (
+                "anything except this exact phrase - ^(?!…$).+$",
+                "^(?!…$).+$",
+            ),
+            ("0074 -> 74 - [1-9]+\\d*", "[1-9]+\\d*"),
+        ],
+        2 => &[
+            ("unnamed group - (…)", "(…)"),
+            ("named group - (?P<name>…)", "(?P<name>…)"),
+            ("reference nth unnamed group - \\1", "\\1"),
+            ("reference named group - \\g<name>", "\\g<name>"),
+        ],
+        _ => &[],
+    };
+    let mut rows: Vec<_> = rows
+        .iter()
+        .map(|(label, value)| ((*label).into(), (*value).into()))
+        .collect();
+    if category == 1 {
+        let separator = if cfg!(windows) { r"\\" } else { "/" };
+        let phrase = format!(r"(?<={separator})[^{separator}]*?(?=\..*$)");
+        rows.push((format!("filename - {phrase}"), phrase));
+    }
+    rows
+}

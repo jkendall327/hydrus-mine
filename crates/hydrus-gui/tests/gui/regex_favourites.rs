@@ -95,3 +95,75 @@ fn matcher_favourites_manager_saves_global_choices_and_parent_cancel_closes_it()
     old.invoke_action("apply".into());
     assert!(!slots.has_open());
 }
+
+#[test]
+fn shared_regex_menus_copy_without_changing_text() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let slots = hydrus_gui::string_processor_window::Slots::default();
+    let copied = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let hydrus_gui::Clip::Text(text) = clip {
+                copied.borrow_mut().push(text.clone());
+            }
+        }
+    });
+    let matcher = StringMatch {
+        kind: MatchKind::Regex(PyRegex::new("a+")),
+        example: "a".into(),
+        ..StringMatch::default()
+    };
+    hydrus_gui::string_processor_window::open_match(&store, &matcher, &slots, Rc::new(|_| {}));
+    let step = slots.step.borrow().as_ref().unwrap().clone_strong();
+    for index in 0..step.get_regex_components().row_count() {
+        step.invoke_regex_tool(1, i32::try_from(index).unwrap());
+    }
+    assert_eq!(step.get_match_regex(), "a+");
+    let expected = hydrus_gui_model::regex_favourites::regex_tools(1)
+        .into_iter()
+        .map(|row| row.1)
+        .collect::<Vec<_>>();
+    assert_eq!(*copied.borrow(), expected);
+    step.invoke_regex_tool(-1, 0);
+    step.invoke_regex_tool(1, 9999);
+    step.invoke_cancel();
+    let count = copied.borrow().len();
+    step.invoke_regex_tool(1, 0);
+    assert_eq!(copied.borrow().len(), count);
+
+    use hydrus_core::url::strings::{Conversion, StringConverter};
+    let converter = hydrus_gui::string_processor_window::open_converter(
+        &StringConverter {
+            example: "a".into(),
+            conversions: vec![Conversion::RegexSub {
+                pattern: PyRegex::new("a"),
+                replacement: "b".into(),
+            }],
+        },
+        None,
+        &slots,
+        Rc::new(|_| {}),
+    )
+    .unwrap();
+    converter.invoke_row_clicked(0, false, false);
+    converter.invoke_edit();
+    let conversion = slots.conversion.borrow().as_ref().unwrap().clone_strong();
+    for index in 0..conversion.get_regex_groups().row_count() {
+        conversion.invoke_regex_tool(2, i32::try_from(index).unwrap());
+    }
+    assert_eq!(conversion.get_pattern(), "a");
+    assert_eq!(conversion.get_replacement(), "b");
+    assert_eq!(
+        &copied.borrow()[count..],
+        &hydrus_gui_model::regex_favourites::regex_tools(2)
+            .into_iter()
+            .map(|row| row.1)
+            .collect::<Vec<_>>()
+    );
+    converter.invoke_cancel();
+    let count = copied.borrow().len();
+    conversion.invoke_regex_tool(2, 0);
+    assert_eq!(copied.borrow().len(), count);
+}

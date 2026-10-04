@@ -1,4 +1,140 @@
 {
+ "menus": {
+  "regex help": [
+   [
+    "a good regex introduction",
+    "https://www.regular-expressions.info/index.html"
+   ],
+   [
+    "a full interactive tutorial",
+    "https://www.regexone.com/"
+   ],
+   [
+    "regex sandbox",
+    "https://regexr.com/3cvmf"
+   ]
+  ],
+  "regex components": [
+   [
+    "whitespace character - \\s",
+    "\\s"
+   ],
+   [
+    "number character - \\d",
+    "\\d"
+   ],
+   [
+    "alphanumeric or underscore character - \\w",
+    "\\w"
+   ],
+   [
+    "any character - .",
+    "."
+   ],
+   [
+    "backslash character - \\\\",
+    "\\\\"
+   ],
+   [
+    "beginning of line - ^",
+    "^"
+   ],
+   [
+    "end of line - $",
+    "$"
+   ],
+   [
+    "any of these - […]",
+    "[…]"
+   ],
+   [
+    "anything other than these - [^…]",
+    "[^…]"
+   ],
+   [
+    "0 or more matches, consuming as many as possible - *",
+    "*"
+   ],
+   [
+    "1 or more matches, consuming as many as possible - +",
+    "+"
+   ],
+   [
+    "0 or 1 matches, preferring 1 - ?",
+    "?"
+   ],
+   [
+    "0 or more matches, consuming as few as possible - *?",
+    "*?"
+   ],
+   [
+    "1 or more matches, consuming as few as possible - +?",
+    "+?"
+   ],
+   [
+    "0 or 1 matches, preferring 0 - ??",
+    "??"
+   ],
+   [
+    "exactly m matches - {m}",
+    "{m}"
+   ],
+   [
+    "m to n matches, consuming as many as possible - {m,n}",
+    "{m,n}"
+   ],
+   [
+    "m to n matches, consuming as few as possible - {m,n}?",
+    "{m,n}?"
+   ],
+   [
+    "the next characters are: (non-consuming) - (?=…)",
+    "(?=…)"
+   ],
+   [
+    "the next characters are not: (non-consuming) - (?!…)",
+    "(?!…)"
+   ],
+   [
+    "the previous characters are: (non-consuming) - (?<=…)",
+    "(?<=…)"
+   ],
+   [
+    "the previous characters are not: (non-consuming) - (?<!…)",
+    "(?<!…)"
+   ],
+   [
+    "anything except this exact phrase - ^(?!…$).+$",
+    "^(?!…$).+$"
+   ],
+   [
+    "0074 -> 74 - [1-9]+\\d*",
+    "[1-9]+\\d*"
+   ],
+   [
+    "filename - (?<=/)[^/]*?(?=\\..*$)",
+    "(?<=/)[^/]*?(?=\\..*$)"
+   ]
+  ],
+  "regex replacement groups": [
+   [
+    "unnamed group - (…)",
+    "(…)"
+   ],
+   [
+    "named group - (?P<name>…)",
+    "(?P<name>…)"
+   ],
+   [
+    "reference nth unnamed group - \\1",
+    "\\1"
+   ],
+   [
+    "reference named group - \\g<name>",
+    "\\g<name>"
+   ]
+  ]
+ },
  "initial": [
   [
    "z+",

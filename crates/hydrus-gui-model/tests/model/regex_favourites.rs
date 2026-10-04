@@ -95,3 +95,23 @@ fn legacy_favourites_load_until_native_values_including_empty_are_saved() {
         hydrus_store::settings::get::<RegexFavourites>(&conn).unwrap()
     );
 }
+
+#[test]
+fn regex_clipboard_components_match_real_qt() {
+    use hydrus_gui_model::regex_favourites::regex_tools;
+    let fixture = hydrus_testkit::fixture_json("regex_favourites.json");
+    for (category, name) in ["regex components", "regex replacement groups"]
+        .iter()
+        .enumerate()
+    {
+        let category = category + 1;
+        let mut expected = fixture["menus"][name].clone();
+        if cfg!(windows) && category == 1 {
+            let phrase = r"(?<=\\)[^\\]*?(?=\..*$)";
+            *expected.as_array_mut().unwrap().last_mut().unwrap() =
+                json!([format!("filename - {phrase}"), phrase]);
+        }
+        assert_eq!(json!(regex_tools(category)), expected);
+    }
+    assert!(regex_tools(3).is_empty());
+}

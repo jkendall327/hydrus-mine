@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Record real Qt regex favourite CRUD, duplicate/cancel boundaries and menu copy.
+"""Record real Qt regex favourite CRUD, duplicate/cancel boundaries and regex menu actions.
 
 Invalid regex fragments are advisory and may be saved. Add rejects an exact
 phrase/description duplicate; canceling either input stage preserves the list.
@@ -91,16 +91,30 @@ def record(session):
         controller.pub = pub
         HC.options['regex_favourites'] = panel.GetValue()
         menu_rows = []
+        menus = {}
+        urls = []
+        ClientGUIRegex.ClientGUIExecutableActions.OpenExternallyURLDefault = lambda parent, url: urls.append(url)
         def popup(parent, menu):
+            for top in menu.actions():
+                if top.menu() is None or top.text() == 'favourites': continue
+                entries = []
+                for action in top.menu().actions():
+                    if action.isSeparator(): continue
+                    before = len(clipboard), len(urls)
+                    action.trigger()
+                    if len(clipboard) > before[0]: entries.append([action.text(), clipboard[-1]])
+                    elif len(urls) > before[1]: entries.append([action.text(), urls[-1]])
+                menus[top.text()] = entries
             favourites = next(a.menu() for a in menu.actions() if a.text() == 'favourites')
             for action in favourites.actions():
                 if not action.isSeparator() and action.isEnabled() and action.text() != 'manage favourites':
                     menu_rows.append(action.text())
                     action.trigger()
         ClientGUICore.core().PopupMenu = popup
-        button = ClientGUIRegex.RegexButton(gui)
+        button = ClientGUIRegex.RegexButton(gui, show_group_menu=True)
         button._ShowMenu()
-        return {'initial': initial, 'defaults': defaults, 'steps': steps, 'menu_rows': menu_rows, 'copied': clipboard}
+        clipboard = clipboard[-len(panel.GetValue()):]
+        return {'menus': menus, 'initial': initial, 'defaults': defaults, 'steps': steps, 'menu_rows': menu_rows, 'copied': clipboard}
     return controller.CallBlockingToQt(gui, qt)
 recorder.record = record
 if __name__ == '__main__':

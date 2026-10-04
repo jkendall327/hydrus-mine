@@ -702,6 +702,15 @@ fn read_step(window: &StringStepWindow, editor: &mut StepEditor) {
     }
 }
 
+fn regex_tool(category: i32, index: i32) {
+    let (Ok(category), Ok(index)) = (usize::try_from(category), usize::try_from(index)) else {
+        return;
+    };
+    if let Some((_, value)) = hydrus_gui_model::regex_favourites::regex_tools(category).get(index) {
+        crate::copy_to_clipboard(value);
+    }
+}
+
 fn bind_step_favourites(
     window: &StringStepWindow,
     store: &Arc<Store>,
@@ -871,6 +880,24 @@ fn open_step(
     window.set_window_title(STEP_TITLE.into());
     let state = Rc::new(RefCell::new(step_editor));
     show_step(&window, &state.borrow());
+    window.set_regex_components(strings(
+        hydrus_gui_model::regex_favourites::regex_tools(1)
+            .into_iter()
+            .map(|row| row.0),
+    ));
+    window.set_regex_groups(strings(
+        hydrus_gui_model::regex_favourites::regex_tools(2)
+            .into_iter()
+            .map(|row| row.0),
+    ));
+    window.on_regex_tool({
+        let active = active.clone();
+        move |category, index| {
+            if active.get() {
+                regex_tool(category, index);
+            }
+        }
+    });
     bind_step_favourites(&window, store, slots, &active);
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
@@ -1402,6 +1429,24 @@ fn open_conversion(
     let window = ConversionWindow::new()?;
     let active = Rc::new(Cell::new(true));
     window.set_window_title(CONVERSION_TITLE.into());
+    window.set_regex_components(strings(
+        hydrus_gui_model::regex_favourites::regex_tools(1)
+            .into_iter()
+            .map(|row| row.0),
+    ));
+    window.set_regex_groups(strings(
+        hydrus_gui_model::regex_favourites::regex_tools(2)
+            .into_iter()
+            .map(|row| row.0),
+    ));
+    window.on_regex_tool({
+        let active = active.clone();
+        move |category, index| {
+            if active.get() {
+                regex_tool(category, index);
+            }
+        }
+    });
     let state = Rc::new(RefCell::new((editor, None::<&'static str>)));
     show_conversion(&window, &state.borrow().0, None);
     let close: Rc<dyn Fn()> = Rc::new({

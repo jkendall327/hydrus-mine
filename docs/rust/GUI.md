@@ -380,7 +380,10 @@ Add rejects an exact duplicate pair. Shared regex controls save accepted favouri
 immediately, while the standalone editor returns a draft to its owner. Native
 preferences override imported YAML, including an explicitly empty list.
 `oracle/record_regex_favourites.py` records real Qt rows, duplicate and cancel
-boundaries, advisory validity, defaults and favourite menu copy behavior.
+boundaries, advisory validity, defaults and menu copy behavior. The shared .*
+control offers the reference component snippets; regex conversion
+fields also offer pattern/replacement groups. Snippets copy to the clipboard
+without changing the current input.
 
 Help > about opens the about window (`ui/about.slint`,
 `src/about_window.rs`, `hydrus-gui-model/src/about.rs`), as the

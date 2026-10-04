@@ -683,13 +683,15 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   its question. A sorter's or match's error for a regex that won't
   compile is in hydrus-rs's words, not Python's ("That regex did not
   work! ..."). Match and sorter regex favourites use a description chooser
-  that copies the phrase to the clipboard, plus a shared manager. Regex help and
-  component menus remain absent. Favourite phrase and description are edited
+  that copies the phrase to the clipboard, plus a shared manager. The .* control
+  presents component menus in a compact popup palette rather than nested
+  submenus. Help links remain absent. Favourite phrase and description are edited
   together in a row form, where the reference uses sequential dialogs.
 - **The string converter editor** keeps the last conversion used (which
   "add" starts from) while hydrus-rs runs, where the reference keeps it
-  in its options. Its conversion editor's date phrase link is shown as
-  text. Date conversions execute and update live previews. Advanced parsing
+  in its options. Conversion regex fields have component/replacement group
+  controls; their help and favourites menus remain absent. Its date phrase link
+  is shown as text. Date conversions execute and update live previews. Advanced parsing
   uses Jiff's diagnostic reasons rather than Python's; English directives and
   common ISO/English automatic dates are supported. The easy parser supports
   relative English units (seconds through years), now/today/yesterday/tomorrow,

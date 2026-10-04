@@ -9,6 +9,7 @@ import { Button, CheckBox, ComboBox, LineEdit, SpinBox } from "std-widgets.slint
 import { Theme } from "theme.slint";
 import { Asking } from "subscriptions.slint";
 import { ListTable, TableRow } from "list_table.slint";
+import { RegexTools } from "regex_tools.slint";
 
 component Box inherits Rectangle {
     in property <string> title;
@@ -250,6 +251,9 @@ export component StringStepWindow inherits Window {
     in property <string> favourite-status;
     callback favourite-copied(int);
     callback manage-favourites();
+    in property <[string]> regex-components;
+    in property <[string]> regex-groups;
+    callback regex-tool(int, int);
     // sorter
     in-out property <int> sort-type;
     in-out property <bool> ascending;
@@ -442,6 +446,7 @@ export component StringStepWindow inherits Window {
                     text <=> root.regex;
                     edited => { root.changed(); }
                 }
+                RegexTools { components: root.regex-components; groups: root.regex-groups; show-groups: false; enabled: !root.child-open; selected(c, i) => { root.regex-tool(c, i); } }
             }
         }
         if root.kind == 4: Box {
@@ -470,6 +475,7 @@ export component StringStepWindow inherits Window {
                     text <=> root.match-regex;
                     edited => { root.changed(); }
                 }
+                RegexTools { components: root.regex-components; groups: root.regex-groups; show-groups: false; enabled: !root.child-open; selected(c, i) => { root.regex-tool(c, i); } }
             }
             if root.show-character-set: HorizontalLayout {
                 spacing: 6px;
@@ -734,6 +740,9 @@ export component ConversionWindow inherits Window {
     preferred-width: 560px;
     preferred-height: 380px;
     background: Theme.window;
+    in property <[string]> regex-components;
+    in property <[string]> regex-groups;
+    callback regex-tool(int, int);
     in property <[string]> types;
     in-out property <int> kind;
     in property <string> text-label;
@@ -830,6 +839,7 @@ export component ConversionWindow inherits Window {
                     text <=> root.pattern;
                     edited => { root.changed(); }
                 }
+                RegexTools { components: root.regex-components; groups: root.regex-groups; show-groups: true; selected(c, i) => { root.regex-tool(c, i); } }
             }
             if root.show-regex: HorizontalLayout {
                 spacing: 6px;

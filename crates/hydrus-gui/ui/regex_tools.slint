@@ -1,0 +1,44 @@
+// A compact equivalent of RegexButton's clipboard menus.
+import { Button, ComboBox, ScrollView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export component RegexTools inherits Rectangle {
+    in property <[string]> components;
+    in property <[string]> groups;
+    in property <bool> show-groups;
+    in property <bool> enabled: true;
+    private property <int> category: 0;
+    callback selected(int, int);
+    width: 42px;
+    height: 28px;
+    Button { text: ".*"; enabled: root.enabled; clicked => { menu.show(); } }
+    menu := PopupWindow {
+        x: 0px;
+        y: root.height;
+        Rectangle {
+            width: 580px;
+            height: 380px;
+            background: Theme.panel;
+            border-width: 1px;
+            border-color: Theme.border;
+            VerticalLayout {
+                padding: 6px;
+                spacing: 4px;
+                ComboBox {
+                    model: root.show-groups ? ["regex components", "regex replacement groups"] : ["regex components"];
+                    current-index <=> root.category;
+                }
+                Text { text: "click below to copy to clipboard"; color: Theme.text; }
+                ScrollView {
+                    vertical-stretch: 1;
+                    VerticalLayout {
+                        spacing: 2px;
+                        for label[i] in root.category == 0 ? root.components : root.groups: Button {
+                            text: label;
+                            clicked => { root.selected(root.category + 1, i); menu.close(); }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
