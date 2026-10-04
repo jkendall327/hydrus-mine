@@ -1,7 +1,10 @@
 //! Sending requests as the reference's network jobs do.
 
 use std::path::PathBuf;
-use std::sync::Arc;
+use std::sync::{
+    Arc,
+    atomic::{AtomicBool, AtomicU64, Ordering},
+};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use parking_lot::{Mutex, RwLock};
@@ -19,6 +22,7 @@ use hydrus_core::url::{UrlType, psl};
 use hydrus_store::Store;
 use hydrus_store::bandwidth::BandwidthSettings;
 use hydrus_store::network::{self, Approval, NetworkContext};
+use hydrus_store::network_runtime::{self, WaitReason};
 
 use crate::cookies::{CookieChange, CookieUrl, cookie_header, set_cookie_changes};
 use crate::error::{NetError, StatusOutcome, status_outcome};
@@ -189,22 +193,28 @@ pub struct BandwidthScope {
 }
 
 /// A request in progress: what it is doing, and a way to cancel it.
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Job {
-    state: Mutex<JobState>,
+    state: Arc<Mutex<JobState>>,
     cancel: CancellationToken,
-    scope: Mutex<BandwidthScope>,
+    override_bandwidth: Arc<AtomicBool>,
+    wake: Arc<tokio::sync::Notify>,
+    scope: Arc<Mutex<BandwidthScope>>,
     /// The data it has read, by second, for its speed (the reference's
     /// job's own `BandwidthTracker`).
-    tracker: Mutex<Option<Tracker>>,
+    tracker: Arc<Mutex<Option<Tracker>>>,
     /// Why it was cancelled, if it was.
-    cancel_reason: Mutex<Option<String>>,
+    cancel_reason: Arc<Mutex<Option<String>>>,
 }
 
 /// What a job is doing.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct JobState {
     pub status: String,
+    /// Typed runtime phase, independent of the displayed status wording.
+    pub wait: WaitReason,
+    /// Whether this request currently observes startup bandwidth limits.
+    pub obeys_bandwidth: bool,
     /// What its importer last said it is doing ("downloading file"), which
     /// the reference's importers report apart from the network job's own
     /// status (their status hooks).
@@ -232,7 +242,7 @@ impl Job {
     /// A job whose requests count against `scope`.
     pub fn scoped(scope: BandwidthScope) -> Arc<Self> {
         Arc::new(Self {
-            scope: Mutex::new(scope),
+            scope: Arc::new(Mutex::new(scope)),
             ..Self::default()
         })
     }
@@ -308,6 +318,16 @@ impl Job {
         state.stages += 1;
     }
 
+    /// Let this request skip bandwidth limits, waking a pending bandwidth wait.
+    pub fn override_bandwidth(&self) {
+        self.override_bandwidth.store(true, Ordering::Relaxed);
+        self.wake.notify_one();
+    }
+
+    fn set_wait(&self, reason: WaitReason) {
+        self.state.lock().wait = reason;
+    }
+
     fn set_status(&self, status: impl Into<String>) {
         self.state.lock().status = status.into();
     }
@@ -316,9 +336,11 @@ impl Job {
         if seconds <= 0.0 {
             return Ok(());
         }
+        let bandwidth_wait = self.state.lock().wait == WaitReason::Bandwidth;
         tokio::select! {
             () = tokio::time::sleep(Duration::from_secs_f64(seconds)) => Ok(()),
             () = self.cancel.cancelled() => Err(NetError::Cancelled),
+            () = self.wake.notified(), if bandwidth_wait => Ok(()),
         }
     }
 }
@@ -343,6 +365,9 @@ pub struct NetEngine {
     /// session tracker, `GetMySessionTracker`).
     started: i64,
     session: Mutex<Tracker>,
+    jobs: Mutex<std::collections::BTreeMap<u64, (Job, Vec<NetworkContext>)>>,
+    next_job: AtomicU64,
+    epoch: String,
 }
 
 /// Why one attempt failed, and so what happens next.
@@ -389,6 +414,17 @@ struct Progress {
 }
 
 const MAX_REDIRECTS: usize = 30;
+
+// Removing registration on Drop also covers an aborted/dropped fetch future.
+struct RegisteredJob<'a> {
+    engine: &'a NetEngine,
+    id: u64,
+}
+impl Drop for RegisteredJob<'_> {
+    fn drop(&mut self) {
+        self.engine.jobs.lock().remove(&self.id);
+    }
+}
 
 fn now_ms() -> i64 {
     SystemTime::now()
@@ -441,6 +477,70 @@ fn set_header(headers: &mut Vec<(String, String)>, name: &str, value: String) {
 }
 
 impl NetEngine {
+    /// Every fetch currently owned by this engine, and live usage before its
+    /// periodic durable save. Locks only protect snapshots, never store I/O.
+    pub fn runtime_snapshot(&self) -> network_runtime::Snapshot {
+        let handles = self.jobs.lock();
+        let jobs = handles
+            .iter()
+            .map(|(id, (job, contexts))| {
+                let state = job.state();
+                network_runtime::NetworkJob {
+                    id: *id,
+                    url: state.url,
+                    status: state.status,
+                    wait: state.wait,
+                    bytes_read: state.bytes_read,
+                    bytes_total: state.bytes_total,
+                    speed: state.speed,
+                    contexts: contexts.clone(),
+                    obeys_bandwidth: state.obeys_bandwidth
+                        && !job.override_bandwidth.load(Ordering::Relaxed),
+                }
+            })
+            .collect();
+        drop(handles);
+        network_runtime::Snapshot {
+            epoch: self.epoch.clone(),
+            at: now(),
+            jobs,
+            usage: self.bandwidth.lock().0.all_trackers(),
+        }
+    }
+
+    /// Apply a command only to the live request and daemon that were reviewed.
+    pub fn runtime_command(&self, command: &network_runtime::Command) -> bool {
+        if command.epoch != self.epoch {
+            return false;
+        }
+        let jobs = self.jobs.lock();
+        let Some((job, _)) = jobs.get(&command.job) else {
+            return false;
+        };
+        match command.action {
+            network_runtime::JobAction::Cancel => job.cancel(),
+            network_runtime::JobAction::OverrideBandwidth => job.override_bandwidth(),
+        }
+        true
+    }
+
+    /// Publish a heartbeat and consume GUI commands through local store IPC.
+    /// Call from a blocking worker at most a few times per second.
+    pub fn publish_runtime(&self) -> Result<(), NetError> {
+        let snapshot = self.runtime_snapshot();
+        let commands = self
+            .store
+            .write(move |ctx| {
+                hydrus_store::settings::set(ctx.conn(), &snapshot)?;
+                network_runtime::take_commands(ctx.conn())
+            })
+            .map_err(|e| NetError::Io(e.to_string()))?;
+        for command in commands {
+            self.runtime_command(&command);
+        }
+        Ok(())
+    }
+
     pub fn new(store: Arc<Store>, options: NetOptions) -> Result<Self, NetError> {
         let client = http_client(&options)?;
         let now = now();
@@ -465,6 +565,9 @@ impl NetEngine {
             wake: Mutex::default(),
             started: now,
             session: Mutex::new(Tracker::new(now)),
+            jobs: Mutex::default(),
+            next_job: AtomicU64::new(1),
+            epoch: format!("{}:{}", std::process::id(), now_ms()),
             options: RwLock::new(options),
         })
     }
@@ -608,6 +711,7 @@ impl NetEngine {
     /// Wait while `url`'s domain is having trouble.
     async fn wait_for_domain(&self, url: &str, job: &Job) -> Result<(), NetError> {
         while !self.domain_ok(url) {
+            job.set_wait(WaitReason::Domain);
             job.set_status("This domain has had several serious errors recently. Waiting a bit.");
             job.sleep(10.0).await?;
         }
@@ -695,7 +799,10 @@ impl NetEngine {
             }
             let now = now();
             // POSTs and overridden requests go at once (but still count)
-            let obeys = obeys && override_at.is_none_or(|at| now <= at);
+            let obeys = obeys
+                && !job.override_bandwidth.load(Ordering::Relaxed)
+                && override_at.is_none_or(|at| now <= at);
+            job.state.lock().obeys_bandwidth = obeys;
             let wait = {
                 let mut b = self.bandwidth.lock();
                 if !obeys {
@@ -720,6 +827,7 @@ impl NetEngine {
                 t if t == "now" => "imminently".to_owned(),
                 t => t,
             };
+            job.set_wait(WaitReason::Bandwidth);
             job.set_status(format!(
                 "{what} {when}\u{2026} ({})",
                 whose.to_human_string()
@@ -751,6 +859,7 @@ impl NetEngine {
             if !paused {
                 return Ok(());
             }
+            job.set_wait(WaitReason::Paused);
             job.set_status("all new network traffic is paused\u{2026}");
             job.sleep(2.0).await?;
         }
@@ -782,6 +891,7 @@ impl NetEngine {
             let Some(name) = pending else {
                 return Ok(());
             };
+            job.set_wait(WaitReason::Headers);
             job.set_status(format!(
                 "waiting for the custom header \"{name}\" to be approved\u{2026}"
             ));
@@ -823,6 +933,7 @@ impl NetEngine {
                         t if t == "now" => "checking".to_owned(),
                         t => t,
                     };
+                    job.set_wait(WaitReason::Gallery);
                     job.set_status(format!("waiting to start: {when}"));
                     job.sleep(0.8).await?;
                 }
@@ -841,8 +952,33 @@ impl NetEngine {
             let mut state = job.state.lock();
             state.done = false;
             state.error = false;
+            state.status = "initialising…".into();
+            state.bytes_read = 0;
+            state.bytes_total = None;
+            state.speed = 0;
             state.url.clone_from(&request.url);
+            state.obeys_bandwidth =
+                self.options.read().obey_bandwidth && request.method == Method::Get;
         }
+        *job.tracker.lock() = Some(Tracker::new(now()));
+        job.override_bandwidth.store(false, Ordering::Relaxed);
+        job.set_wait(WaitReason::Engine);
+        let id = self.next_job.fetch_add(1, Ordering::Relaxed);
+        let mut contexts = Self::contexts_for(&request.url);
+        for context in request.extra_contexts.iter().chain(&job.scope().contexts) {
+            if !contexts.contains(context) {
+                contexts.push(context.clone());
+            }
+        }
+        for url in &request.bandwidth_urls {
+            for context in Self::contexts_for(url) {
+                if !contexts.contains(&context) {
+                    contexts.push(context);
+                }
+            }
+        }
+        self.jobs.lock().insert(id, (job.clone(), contexts));
+        let _registered = RegisteredJob { engine: self, id };
         let result = self.fetch_inner(request, job).await;
         if let Err(e) = &result
             && e.is_infrastructure()
@@ -917,6 +1053,7 @@ impl NetEngine {
         self.wait_for_header_approval(&attempt.contexts, job)
             .await?;
         while self.just_woke() {
+            job.set_wait(WaitReason::Wake);
             job.set_status("looks like computer just woke up, waiting a bit");
             job.sleep(5.0).await?;
         }
@@ -940,6 +1077,7 @@ impl NetEngine {
             .gallery_token
             .filter(|_| request.gallery_page && self.options.read().obey_bandwidth);
 
+        job.set_wait(WaitReason::Engine);
         job.set_status("waiting for a slot");
         let _slot = tokio::select! {
             slot = Arc::clone(&self.slots.read()).acquire_owned() => slot.expect("never closed"),
@@ -998,6 +1136,7 @@ impl NetEngine {
                         },
                         |s| s as f64,
                     );
+                    job.set_wait(WaitReason::ServerBandwidth);
                     job.set_status("server reported limited bandwidth - retrying");
                     job.sleep(seconds).await?;
                 }
@@ -1059,6 +1198,7 @@ impl NetEngine {
         let seconds =
             u64::from(connection_attempt - 1) * self.options.read().connection_error_wait_time;
         if seconds > 0 {
+            job.set_wait(WaitReason::Connection);
             job.set_status(format!("{status} - retrying in {seconds} seconds"));
         }
         job.sleep(seconds as f64).await
@@ -1209,6 +1349,7 @@ impl NetEngine {
             if let Some(body) = &body {
                 builder = builder.body(body.clone());
             }
+            a.job.set_wait(WaitReason::Downloading);
             a.job.set_status("sending request\u{2026}");
             let response = tokio::select! {
                 r = builder.send() => r.map_err(|e| send_failure(&e))?,
@@ -1313,6 +1454,7 @@ impl NetEngine {
         if !compressed {
             progress.total = response.content_length();
         }
+        a.job.set_wait(WaitReason::Downloading);
         a.job.set_status("downloading\u{2026}");
         let mut last_modified;
         let mut server;
@@ -1339,6 +1481,7 @@ impl NetEngine {
             if !more {
                 break;
             }
+            a.job.set_wait(WaitReason::Downloading);
             a.job.set_status("downloading next part\u{2026}");
             let headers = self.headers(a, progress.read)?;
             let (next, url) = self.send(a, &headers).await?;
@@ -1388,12 +1531,16 @@ impl NetEngine {
                 }
                 // (it won't have changed within the same second)
                 if last_failed != Some(now) {
-                    if b.0.can_continue_download(&a.contexts, now) {
+                    if a.job.override_bandwidth.load(Ordering::Relaxed)
+                        || b.0.can_continue_download(&a.contexts, now)
+                    {
+                        a.job.set_wait(WaitReason::Downloading);
                         return Ok(());
                     }
                     last_failed = Some(now);
                 }
             }
+            a.job.set_wait(WaitReason::Bandwidth);
             a.job.sleep(0.1).await?;
         }
     }

@@ -228,9 +228,19 @@ fn with_no_port_there_is_no_client_api() {
     assert!(said.contains("\"client api\" has no port"), "{said}");
     assert!(exited_within(&mut serving.0, Duration::from_secs(2)).is_none());
     assert_eq!(api_status(&dir).state, ClientApiState::Off);
+    let editor = hydrus_store::Store::open(&dir).unwrap();
+    let runtime: hydrus_store::network_runtime::Snapshot = editor.read(settings::get).unwrap();
+    assert!(runtime.fresh(hydrus_core::time::TimestampMs::now().millis() / 1000));
+    assert!(runtime.jobs.is_empty());
     drop(serving.0.stdin.take());
     let stopped = exited_within(&mut serving.0, Duration::from_secs(30)).expect("stopped");
     assert!(stopped.success(), "{stopped}");
+    assert_eq!(
+        editor
+            .read(settings::get::<hydrus_store::network_runtime::Snapshot>)
+            .unwrap(),
+        hydrus_store::network_runtime::Snapshot::default()
+    );
 }
 
 #[test]
