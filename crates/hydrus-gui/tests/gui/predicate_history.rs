@@ -59,6 +59,7 @@ fn recorded_global_history_reaches_visible_locked_restored_and_empty_pages() {
     let mut pages = Pages::single(SearchPage::new(store));
     pages.rename_shown("Undo A");
     let bound = bind(&ui, pages);
+    ui.show().unwrap();
     bound.current.borrow().borrow_mut().set_synchronised(false);
     let mut searches = HashMap::from([("Undo A".to_owned(), bound.current.borrow().clone())]);
     let recording = hydrus_testkit::fixture_json("search_predicate_undo.json");
@@ -220,6 +221,7 @@ fn undo_retains_populated_locked_media_badge_and_raw_menu_labels() {
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store)));
+    ui.show().unwrap();
     let page = bound.current.borrow().clone();
     page.borrow_mut().set_synchronised(false);
     assert!(page.borrow_mut().add_files(&files));

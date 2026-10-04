@@ -2813,10 +2813,10 @@ leave caller text and predicates intact on Cancel; a closed caller, cancelled
 ancestor or retained old child cannot apply its staged search. Their recorded
 Qt dialogs, parser outputs and actual query counts are in `read_or_editors.json`.
 
-System predicate editors opened from the main read input retain the selecting
-Shift key: accepted values extend an OR draft with Shift, or merge and commit
+System predicate editors opened from the main read input or basic OR child
+retain the selecting Shift key: accepted values extend an OR draft with Shift, or merge and commit
 it with normal activation. Cancelling the system editor leaves the draft and
 active search alone. `oracle/fixtures/system_or_activation.json` records 18
 actual Qt cases in the main read input and basic OR child, including accepted
-system recents surviving outer Cancel. The shared basic-child callback adapter
-is a separate follow-up; authored model replay and native execution await CI.
+system recents surviving outer Cancel. Both callers use the original activation intent. Authored model replay and
+the native 18-case consumer replay await hosted CI; no native render is claimed.

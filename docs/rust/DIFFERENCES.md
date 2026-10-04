@@ -1865,7 +1865,8 @@ the OR owner cancels them on close. Native layouts and text controls differ from
 Qt's notebook and icon controls. These additions do not promote the complete
 read-autocomplete or OR parent workflows.
 
-System selections in the main read input now preserve activation Shift and
-use the same OR construction broadcast as tags. The basic OR child still needs
-the matching callback adapter. The executed actual Qt activation recording
-covers both consumers; authored regression execution is pending hosted CI.
+System selections in main read and basic OR input now preserve activation
+Shift and use the same OR construction broadcast as tags. The executed actual
+Qt activation recording covers both consumers, accepted recents after outer
+Cancel, history-free drafts and real query counts. Authored model/native
+regression execution remains pending hosted CI.

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "agent": "follow-predicate-undo",
   "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
-  "validation": "Executed actual Qt recorder via shared /workspace/parallel/with-oracle on 2026-10-04 at 19:44:59 UTC against fresh basic fixture: 20 events, actual query sidebars, queued deltas, QAction menu consumers, OR, editor Cancel, page close/restore, clear rejection/acceptance, real lock replacement/hidden-query Undo and empty notebook. Only question answers are scripted. Python syntax, source cargo fmt, diff whitespace and cached warning-aware Slint checks pass. Authored model and native regression replay not run locally; no Cargo builds, tests or native render claimed. Separate actual Qt recorder executed at 19:56:17 UTC on a fresh basic fixture: two real local media files, raw history names with namespaces hidden, real lock confirmation, synchronization enabled, QAction Undo preserves populated badge/media. Auxiliary fixture retained separately; original 20-event fixture unchanged. Additional native regression authored, unrun. Hosted model run exposed the empty-history raw Qt submenu expectation; repaired model checks both disabled Undo availability and exact retained disabled raw rows after clearing. Fixture unchanged; repair execution pending CI.",
+  "validation": "Executed actual Qt recorder via shared /workspace/parallel/with-oracle on 2026-10-04 at 19:44:59 UTC against fresh basic fixture: 20 events, actual query sidebars, queued deltas, QAction menu consumers, OR, editor Cancel, page close/restore, clear rejection/acceptance, real lock replacement/hidden-query Undo and empty notebook. Only question answers are scripted. Python syntax, source cargo fmt, diff whitespace and cached warning-aware Slint checks pass. Authored model and native regression replay not run locally; no Cargo builds, tests or native render claimed. Separate actual Qt recorder executed at 19:56:17 UTC on a fresh basic fixture: two real local media files, raw history names with namespaces hidden, real lock confirmation, synchronization enabled, QAction Undo preserves populated badge/media. Auxiliary fixture retained separately; original 20-event fixture unchanged. Additional native regression authored, unrun. Hosted model run exposed the empty-history raw Qt submenu expectation; repaired model checks both disabled Undo availability and exact retained disabled raw rows after clearing. Fixture unchanged; repair execution pending CI. Actual 18-case system activation recorder executed20:22:54 UTC confirms history-free Shift system draft extension, single-OR normal commit and no frame history after outer Cancel; full native action/history/typed recents/reopened persistence/query-count replay authored, unrun. No new or duplicate coverage claims.",
   "claims": [
     {
       "reference_id": "audit-options-search-undo",
@@ -10,7 +10,7 @@
       "proposedStatus": "partial",
       "countAsCompletedLeaf": false,
       "change_kind": "implementation",
-      "exactBehavior": "Frame-owned, transient, separate deduplicated addition/removal recency lists populate the actual searching submenus newest first. Typed stable commands toggle the selected historical predicate on the currently visible media page, retire its entry before recording the resulting delta, and leave stale commands inert. New/restored page predicates do not enter history; histories survive page close/restore, apply across pages and stay independent across windows. Committed typed OR is one entry; cancelled predicate children and refused inputs add none. Undo enters a locked page hidden query while retaining its lock; with an empty notebook selected, it preserves history. Clear history uses the exact reference confirmation: rejection retains both lists; acceptance clears both without changing searches or closed-page history. History names use raw predicate text despite hidden-namespace presentation. Populated locked pages retain their prior lock badge and media even with synchronization enabled; locking and hash synchronization update the cached panel count.",
+      "exactBehavior": "Frame-owned, transient, separate deduplicated addition/removal recency lists populate the actual searching submenus newest first. Typed stable commands toggle the selected historical predicate on the currently visible media page, retire its entry before recording the resulting delta, and leave stale commands inert. New/restored page predicates do not enter history; histories survive page close/restore, apply across pages and stay independent across windows. Committed typed OR is one entry; cancelled predicate children and refused inputs add none. Undo enters a locked page hidden query while retaining its lock; with an empty notebook selected, it preserves history. Clear history uses the exact reference confirmation: rejection retains both lists; acceptance clears both without changing searches or closed-page history. History names use raw predicate text despite hidden-namespace presentation. Populated locked pages retain their prior lock badge and media even with synchronization enabled; locking and hash synchronization update the cached panel count. Accepted system values preserve originating Shift intent: drafts extend without frame history; normal activation merges into one committed OR history entry. Accepting a system value and later cancelling its outer OR leaves frame history unchanged while retaining actual reference recent predicates.",
       "limits": [
         "Native menu entries do not yet expose the reference status-bar tooltips explaining that results depend on the visible query.",
         "Within one multi-predicate delta, native recency follows deterministic predicate order; reference Python set-difference ordering can vary across processes. Single-entry and cross-event recency, recorded batch outputs, and canonical identities are covered by authored replay.",
@@ -31,13 +31,13 @@
         },
         {
           "path": "crates/hydrus-gui/src/page.rs",
-          "line": 1583,
+          "line": 1585,
           "symbol": "fn enter_predicates",
           "kind": "source"
         },
         {
           "path": "crates/hydrus-gui/src/page.rs",
-          "line": 2201,
+          "line": 2288,
           "symbol": "fn undo_predicate",
           "kind": "source"
         },
@@ -55,7 +55,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/page.rs",
-          "line": 1753,
+          "line": 1755,
           "symbol": "pub fn locked_count",
           "kind": "source"
         }
@@ -81,8 +81,14 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/predicate_history.rs",
-          "line": 184,
+          "line": 185,
           "symbol": "fn undo_retains_populated_locked_media_badge_and_raw_menu_labels",
+          "kind": "authored_native_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/system_or_activation.rs",
+          "line": 113,
+          "symbol": "fn actual_main_and_basic_system_acceptance_preserves_shift_and_reaches_consumers",
           "kind": "authored_native_regression"
         }
       ],
@@ -109,6 +115,18 @@
           "path": "oracle/fixtures/search_undo_locked.json",
           "line": 1,
           "symbol": "hidden namespaces and populated synchronized lock before/after actual QAction Undo",
+          "kind": "executed_reference_fixture"
+        },
+        {
+          "path": "oracle/record_system_or_activation.py",
+          "line": 20,
+          "symbol": "def record",
+          "kind": "executed_reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/system_or_activation.json",
+          "line": 1,
+          "symbol": "18 main/basic system activation cases with actual history, recents and DB counts",
           "kind": "executed_reference_fixture"
         }
       ],
@@ -126,7 +144,7 @@
       "proposedStatus": "partial",
       "countAsCompletedLeaf": false,
       "change_kind": "implementation",
-      "exactBehavior": "Frame-owned, transient, separate deduplicated addition/removal recency lists populate the actual searching submenus newest first. Typed stable commands toggle the selected historical predicate on the currently visible media page, retire its entry before recording the resulting delta, and leave stale commands inert. New/restored page predicates do not enter history; histories survive page close/restore, apply across pages and stay independent across windows. Committed typed OR is one entry; cancelled predicate children and refused inputs add none. Undo enters a locked page hidden query while retaining its lock; with an empty notebook selected, it preserves history. Clear history uses the exact reference confirmation: rejection retains both lists; acceptance clears both without changing searches or closed-page history. History names use raw predicate text despite hidden-namespace presentation. Populated locked pages retain their prior lock badge and media even with synchronization enabled; locking and hash synchronization update the cached panel count.",
+      "exactBehavior": "Frame-owned, transient, separate deduplicated addition/removal recency lists populate the actual searching submenus newest first. Typed stable commands toggle the selected historical predicate on the currently visible media page, retire its entry before recording the resulting delta, and leave stale commands inert. New/restored page predicates do not enter history; histories survive page close/restore, apply across pages and stay independent across windows. Committed typed OR is one entry; cancelled predicate children and refused inputs add none. Undo enters a locked page hidden query while retaining its lock; with an empty notebook selected, it preserves history. Clear history uses the exact reference confirmation: rejection retains both lists; acceptance clears both without changing searches or closed-page history. History names use raw predicate text despite hidden-namespace presentation. Populated locked pages retain their prior lock badge and media even with synchronization enabled; locking and hash synchronization update the cached panel count. Accepted system values preserve originating Shift intent: drafts extend without frame history; normal activation merges into one committed OR history entry. Accepting a system value and later cancelling its outer OR leaves frame history unchanged while retaining actual reference recent predicates.",
       "limits": [
         "Native menu entries do not yet expose the reference status-bar tooltips explaining that results depend on the visible query.",
         "Within one multi-predicate delta, native recency follows deterministic predicate order; reference Python set-difference ordering can vary across processes. Single-entry and cross-event recency, recorded batch outputs, and canonical identities are covered by authored replay.",
@@ -147,13 +165,13 @@
         },
         {
           "path": "crates/hydrus-gui/src/page.rs",
-          "line": 1583,
+          "line": 1585,
           "symbol": "fn enter_predicates",
           "kind": "source"
         },
         {
           "path": "crates/hydrus-gui/src/page.rs",
-          "line": 2201,
+          "line": 2288,
           "symbol": "fn undo_predicate",
           "kind": "source"
         },
@@ -171,7 +189,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/page.rs",
-          "line": 1753,
+          "line": 1755,
           "symbol": "pub fn locked_count",
           "kind": "source"
         }
@@ -197,8 +215,14 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/predicate_history.rs",
-          "line": 184,
+          "line": 185,
           "symbol": "fn undo_retains_populated_locked_media_badge_and_raw_menu_labels",
+          "kind": "authored_native_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/system_or_activation.rs",
+          "line": 113,
+          "symbol": "fn actual_main_and_basic_system_acceptance_preserves_shift_and_reaches_consumers",
           "kind": "authored_native_regression"
         }
       ],
@@ -225,6 +249,18 @@
           "path": "oracle/fixtures/search_undo_locked.json",
           "line": 1,
           "symbol": "hidden namespaces and populated synchronized lock before/after actual QAction Undo",
+          "kind": "executed_reference_fixture"
+        },
+        {
+          "path": "oracle/record_system_or_activation.py",
+          "line": 20,
+          "symbol": "def record",
+          "kind": "executed_reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/system_or_activation.json",
+          "line": 1,
+          "symbol": "18 main/basic system activation cases with actual history, recents and DB counts",
           "kind": "executed_reference_fixture"
         }
       ],
@@ -242,7 +278,7 @@
       "proposedStatus": "partial",
       "countAsCompletedLeaf": false,
       "change_kind": "implementation",
-      "exactBehavior": "Frame-owned, transient, separate deduplicated addition/removal recency lists populate the actual searching submenus newest first. Typed stable commands toggle the selected historical predicate on the currently visible media page, retire its entry before recording the resulting delta, and leave stale commands inert. New/restored page predicates do not enter history; histories survive page close/restore, apply across pages and stay independent across windows. Committed typed OR is one entry; cancelled predicate children and refused inputs add none. Undo enters a locked page hidden query while retaining its lock; with an empty notebook selected, it preserves history. Clear history uses the exact reference confirmation: rejection retains both lists; acceptance clears both without changing searches or closed-page history. History names use raw predicate text despite hidden-namespace presentation. Populated locked pages retain their prior lock badge and media even with synchronization enabled; locking and hash synchronization update the cached panel count.",
+      "exactBehavior": "Frame-owned, transient, separate deduplicated addition/removal recency lists populate the actual searching submenus newest first. Typed stable commands toggle the selected historical predicate on the currently visible media page, retire its entry before recording the resulting delta, and leave stale commands inert. New/restored page predicates do not enter history; histories survive page close/restore, apply across pages and stay independent across windows. Committed typed OR is one entry; cancelled predicate children and refused inputs add none. Undo enters a locked page hidden query while retaining its lock; with an empty notebook selected, it preserves history. Clear history uses the exact reference confirmation: rejection retains both lists; acceptance clears both without changing searches or closed-page history. History names use raw predicate text despite hidden-namespace presentation. Populated locked pages retain their prior lock badge and media even with synchronization enabled; locking and hash synchronization update the cached panel count. Accepted system values preserve originating Shift intent: drafts extend without frame history; normal activation merges into one committed OR history entry. Accepting a system value and later cancelling its outer OR leaves frame history unchanged while retaining actual reference recent predicates.",
       "limits": [
         "Native menu entries do not yet expose the reference status-bar tooltips explaining that results depend on the visible query.",
         "Within one multi-predicate delta, native recency follows deterministic predicate order; reference Python set-difference ordering can vary across processes. Single-entry and cross-event recency, recorded batch outputs, and canonical identities are covered by authored replay.",
@@ -263,13 +299,13 @@
         },
         {
           "path": "crates/hydrus-gui/src/page.rs",
-          "line": 1583,
+          "line": 1585,
           "symbol": "fn enter_predicates",
           "kind": "source"
         },
         {
           "path": "crates/hydrus-gui/src/page.rs",
-          "line": 2201,
+          "line": 2288,
           "symbol": "fn undo_predicate",
           "kind": "source"
         },
@@ -287,7 +323,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/page.rs",
-          "line": 1753,
+          "line": 1755,
           "symbol": "pub fn locked_count",
           "kind": "source"
         }
@@ -313,8 +349,14 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/predicate_history.rs",
-          "line": 184,
+          "line": 185,
           "symbol": "fn undo_retains_populated_locked_media_badge_and_raw_menu_labels",
+          "kind": "authored_native_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/system_or_activation.rs",
+          "line": 113,
+          "symbol": "fn actual_main_and_basic_system_acceptance_preserves_shift_and_reaches_consumers",
           "kind": "authored_native_regression"
         }
       ],
@@ -341,6 +383,18 @@
           "path": "oracle/fixtures/search_undo_locked.json",
           "line": 1,
           "symbol": "hidden namespaces and populated synchronized lock before/after actual QAction Undo",
+          "kind": "executed_reference_fixture"
+        },
+        {
+          "path": "oracle/record_system_or_activation.py",
+          "line": 20,
+          "symbol": "def record",
+          "kind": "executed_reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/system_or_activation.json",
+          "line": 1,
+          "symbol": "18 main/basic system activation cases with actual history, recents and DB counts",
           "kind": "executed_reference_fixture"
         }
       ],
@@ -358,7 +412,7 @@
       "proposedStatus": "partial",
       "countAsCompletedLeaf": false,
       "change_kind": "implementation",
-      "exactBehavior": "Frame-owned, transient, separate deduplicated addition/removal recency lists populate the actual searching submenus newest first. Typed stable commands toggle the selected historical predicate on the currently visible media page, retire its entry before recording the resulting delta, and leave stale commands inert. New/restored page predicates do not enter history; histories survive page close/restore, apply across pages and stay independent across windows. Committed typed OR is one entry; cancelled predicate children and refused inputs add none. Undo enters a locked page hidden query while retaining its lock; with an empty notebook selected, it preserves history. Clear history uses the exact reference confirmation: rejection retains both lists; acceptance clears both without changing searches or closed-page history. History names use raw predicate text despite hidden-namespace presentation. Populated locked pages retain their prior lock badge and media even with synchronization enabled; locking and hash synchronization update the cached panel count.",
+      "exactBehavior": "Frame-owned, transient, separate deduplicated addition/removal recency lists populate the actual searching submenus newest first. Typed stable commands toggle the selected historical predicate on the currently visible media page, retire its entry before recording the resulting delta, and leave stale commands inert. New/restored page predicates do not enter history; histories survive page close/restore, apply across pages and stay independent across windows. Committed typed OR is one entry; cancelled predicate children and refused inputs add none. Undo enters a locked page hidden query while retaining its lock; with an empty notebook selected, it preserves history. Clear history uses the exact reference confirmation: rejection retains both lists; acceptance clears both without changing searches or closed-page history. History names use raw predicate text despite hidden-namespace presentation. Populated locked pages retain their prior lock badge and media even with synchronization enabled; locking and hash synchronization update the cached panel count. Accepted system values preserve originating Shift intent: drafts extend without frame history; normal activation merges into one committed OR history entry. Accepting a system value and later cancelling its outer OR leaves frame history unchanged while retaining actual reference recent predicates.",
       "limits": [
         "Native menu entries do not yet expose the reference status-bar tooltips explaining that results depend on the visible query.",
         "Within one multi-predicate delta, native recency follows deterministic predicate order; reference Python set-difference ordering can vary across processes. Single-entry and cross-event recency, recorded batch outputs, and canonical identities are covered by authored replay.",
@@ -379,13 +433,13 @@
         },
         {
           "path": "crates/hydrus-gui/src/page.rs",
-          "line": 1583,
+          "line": 1585,
           "symbol": "fn enter_predicates",
           "kind": "source"
         },
         {
           "path": "crates/hydrus-gui/src/page.rs",
-          "line": 2201,
+          "line": 2288,
           "symbol": "fn undo_predicate",
           "kind": "source"
         },
@@ -403,7 +457,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/page.rs",
-          "line": 1753,
+          "line": 1755,
           "symbol": "pub fn locked_count",
           "kind": "source"
         }
@@ -429,8 +483,14 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/predicate_history.rs",
-          "line": 184,
+          "line": 185,
           "symbol": "fn undo_retains_populated_locked_media_badge_and_raw_menu_labels",
+          "kind": "authored_native_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/system_or_activation.rs",
+          "line": 113,
+          "symbol": "fn actual_main_and_basic_system_acceptance_preserves_shift_and_reaches_consumers",
           "kind": "authored_native_regression"
         }
       ],
@@ -457,6 +517,18 @@
           "path": "oracle/fixtures/search_undo_locked.json",
           "line": 1,
           "symbol": "hidden namespaces and populated synchronized lock before/after actual QAction Undo",
+          "kind": "executed_reference_fixture"
+        },
+        {
+          "path": "oracle/record_system_or_activation.py",
+          "line": 20,
+          "symbol": "def record",
+          "kind": "executed_reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/system_or_activation.json",
+          "line": 1,
+          "symbol": "18 main/basic system activation cases with actual history, recents and DB counts",
           "kind": "executed_reference_fixture"
         }
       ],

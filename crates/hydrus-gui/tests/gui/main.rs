@@ -131,3 +131,4 @@ mod command_palette;
 mod read_autocomplete;
 
 mod read_or;
+mod system_or_activation;
