@@ -41,6 +41,8 @@ pub struct SearchPage {
     /// files, and what that hash follows (kept while unlocked, as the
     /// reference's page keeps it).
     locked: bool,
+    /// The lock panel count is updated by lock/hash synchronization, not Undo.
+    lock_panel_count: usize,
     lock_syncs: HashLock,
     /// Why the page shows files without a search, if it does.
     note: Option<String>,
@@ -236,6 +238,7 @@ impl SearchPage {
             predicate_history: Rc::default(),
             synchronised: file_search.search_immediately,
             locked: false,
+            lock_panel_count: 0,
             lock_syncs: HashLock::default(),
             note: None,
             // the options' default sort
@@ -1735,6 +1738,7 @@ impl SearchPage {
     /// The page restored with its search locked as a session kept it.
     #[must_use]
     pub fn with_lock(mut self, lock: Option<HashLock>) -> Self {
+        self.lock_panel_count = self.lock_hashes().map_or(0, |hashes| hashes.len());
         self.locked = lock.is_some();
         self.lock_syncs = lock.unwrap_or_default();
         self
@@ -1746,11 +1750,14 @@ impl SearchPage {
         self.locked.then_some(self.lock_syncs)
     }
 
-    /// How many files a locked search holds (its `system:hash`'s), for
-    /// the reference's "Locked at N files." (0 if the search is not just
-    /// such a hash).
+    /// The lock panel retains its prior count when Undo changes the hidden
+    /// query; locking or synchronizing its hashes updates the displayed count.
     pub fn locked_count(&self) -> usize {
-        self.lock_hashes().map_or(0, |h| h.len())
+        if self.locked {
+            self.lock_panel_count
+        } else {
+            self.lock_hashes().map_or(0, |h| h.len())
+        }
     }
 
     /// Unlock the search: it becomes its `system:hash`, which can be
@@ -1819,6 +1826,7 @@ impl SearchPage {
 
     /// Make the search a `system:hash` of `hashes` (`_UpdateSystemLockFiles`).
     fn set_lock_hashes(&mut self, hashes: std::collections::BTreeSet<hydrus_core::Sha256>) {
+        self.lock_panel_count = hashes.len();
         let before = self.predicates.clone();
         self.predicates = vec![Predicate::System(SystemPredicate::Hash {
             hashes: FileHashes::Sha256(hashes),

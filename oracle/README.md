@@ -79,6 +79,7 @@ export QT_QPA_PLATFORM=offscreen
 | `record_ugoira_render.py` | `fixtures/ugoira_render.json`: `/get_files/render` of the corpus's ugoiras as APNG and animated WebP, with and without timing notes: headers, and each frame's duration, size and pixels |
 | `record_viewer_zoom.py` | `fixtures/viewer_zoom.json`: the media viewer's zooms (`CalculateCanvasZooms`) for files of several types and sizes in several canvases, with a new client's options and with changed zoom levels and per-filetype rules (the changed options object included) |
 | `record_url_class_search.py` | `fixtures/url_class_search.json`: searches by URL class, through the Client API and in memory |
+| `record_search_undo_locked.py` | `fixtures/search_undo_locked.json`: actual populated lock keeps badge/media during synchronized Undo; hidden namespaces still have raw history menu names (executed 2026-10-04 19:56:17 UTC) |
 | `record_search_predicate_undo.py` | `fixtures/search_predicate_undo.json`: actual Qt frame-global histories, QAction visible-page toggles, OR, editor cancellation, close/restore, clear confirmations, hidden locked query and empty notebook (20 events; executed 2026-10-04 19:44:59 UTC) |
 | `record_similar_files.py` | `fixtures/similar_files.json`: the similar-files search on generated near-duplicates |
 | `record_auto_resolution.py` | `fixtures/auto_resolution_run.json` + `legacy_db/auto_resolution.tar.gz`: auto-resolution rules run on generated files |

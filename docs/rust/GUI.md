@@ -112,7 +112,9 @@ as Qt's do; a press anywhere else closes them. What works so far:
   transient frame histories, independent of each page's saved predicates.
   Opening/restoring a page and cancelling an editor add no history; committing
   an OR adds one typed entry. Undo can enter a locked page's hidden query; an
-  empty notebook retains the history entry. With neither closed pages nor
+  empty notebook retains the history entry. A populated locked page retains
+  its badge and files even with synchronization enabled; hiding tag namespaces
+  does not change the raw predicate names in the Undo menus. With neither closed pages nor
   search history, the menu is greyed out. Actual Qt inputs and menus are in
   `oracle/fixtures/search_predicate_undo.json`; authored model/native replay
   tests await hosted CI;

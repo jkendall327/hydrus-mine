@@ -93,7 +93,9 @@ pub(crate) fn facts(pages: &RefCell<Pages>, weigh: bool) -> Facts {
     facts.history = Some(pages.history().to_vec());
     facts.closed_pages = pages.closed_names();
     let history = pages.predicate_history();
-    let context = pages.current().borrow().text_context();
+    let mut context = pages.current().borrow().text_context();
+    // FrameGUI uses Predicate.ToString() without render_for_user.
+    context.presentation = None;
     let labelled = |predicates: Vec<hydrus_search::Predicate>| {
         predicates
             .into_iter()

@@ -285,8 +285,9 @@ search.
   executed actual Qt recording; its authored model/native replay awaits CI.
   Changes within one batch are kept in deterministic predicate order, whereas
   Qt emits a Python set difference whose internal order can vary between
-  processes. A populated locked page currently recomputes its displayed
-  hash count after a hidden-query Undo; Qt retains its prior lock-panel count.
+  processes. Populated locked pages retain their badge and media after
+  hidden-query Undo, including with synchronization enabled, as recorded
+  from the reference.
   Hydrus's menu entries describe themselves in the status bar as the
   pointer passes; ours don't yet, and the history's latest page isn't in
   bold. Saving a session asks its name and its questions in one dialog,

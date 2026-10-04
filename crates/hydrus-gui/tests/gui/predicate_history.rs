@@ -179,3 +179,98 @@ fn recorded_global_history_reaches_visible_locked_restored_and_empty_pages() {
     assert_eq!(labels(&history.added), recording["events"][3]["added"]);
     assert_eq!(labels(&history.removed), recording["events"][3]["removed"]);
 }
+
+#[test]
+fn undo_retains_populated_locked_media_badge_and_raw_menu_labels() {
+    let recording = hydrus_testkit::fixture_json("search_undo_locked.json");
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    store
+        .write(|ctx| {
+            let mut presentation: hydrus_core::tag_presentation::TagPresentation =
+                hydrus_store::settings::get(ctx.conn())?;
+            presentation.show_namespaces = false;
+            presentation.show_number_namespaces = false;
+            presentation.show_subtag_number_namespaces = false;
+            hydrus_store::settings::set(ctx.conn(), &presentation)
+        })
+        .unwrap();
+    let files: Vec<_> = recording["input_hashes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|hash| {
+            let hash = hash
+                .as_str()
+                .unwrap()
+                .parse::<hydrus_core::Sha256>()
+                .unwrap();
+            store
+                .read(|conn| hydrus_store::master::hash_id(conn, &hash))
+                .unwrap()
+                .unwrap()
+        })
+        .collect();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store)));
+    let page = bound.current.borrow().clone();
+    page.borrow_mut().set_synchronised(false);
+    assert!(page.borrow_mut().add_files(&files));
+    assert!(page.borrow_mut().add_predicate("undo:alpha"));
+    ui.invoke_tab_chosen(0, 0);
+    assert_eq!(
+        ui.get_predicates().row_data(0).unwrap().text,
+        recording["plain_menu"]["visible_predicate_labels"][0]
+            .as_str()
+            .unwrap()
+    );
+    searching(&ui);
+    hover(&ui, "addition");
+    let menu = ui.get_menu_panes();
+    assert_eq!(
+        menu.row_data(2).unwrap().lines.row_data(0).unwrap().label,
+        "undo:alpha"
+    );
+    ui.invoke_menu_dismissed();
+    ui.invoke_lock_search();
+    assert_eq!(
+        ui.get_question(),
+        recording["questions"][0].as_str().unwrap()
+    );
+    ui.invoke_answer(true);
+    page.borrow_mut().set_synchronised(true);
+    ui.invoke_tab_chosen(0, 0);
+    assert_eq!(
+        ui.get_lock_label(),
+        recording["before_undo"]["badge"].as_str().unwrap()
+    );
+    searching(&ui);
+    hover(&ui, "addition");
+    choose(&ui, "undo:alpha");
+    assert_eq!(page.borrow().files(), files);
+    assert!(page.borrow().synchronised());
+    assert!(page.borrow().lock().is_some());
+    assert_eq!(
+        ui.get_lock_label(),
+        recording["after_undo"]["badge"].as_str().unwrap()
+    );
+    let hydrus_core::pages::PageContent::Search { search, .. } =
+        page.borrow().content(&bound.pages.borrow().shown().content)
+    else {
+        panic!("search page");
+    };
+    let expected: Vec<_> = recording["after_undo"]["predicates"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(decode)
+        .collect();
+    assert_eq!(search.predicates, expected);
+}
