@@ -1570,3 +1570,12 @@ additional native outer DataMissing producers must preserve that identity when
 implemented. Unrelated existing inner import/veto throttle differences remain.
 
 The v688 URL-class links auto-fill button currently finds candidates but applies none: STATICLinkURLClassesAndParsers returns only previously unlinked keys, while EditURLClassLinksPanel applies replacements only among already-linked rows. The actual Qt recorder confirms empty, partly linked and installed cases; the installed case disables the button. Hydrus-rs reproduces that boundary and adds the reference’s real API/redirect pair review, including converter failure handling and readonly sorting. Existing native validation still rejects saving newly authored associations to unresolved API converters. Native parser links retain their existing explicit chooser rather than Qt’s per-row modal selector.
+
+The GUI Pages close-all confirmation preference now uses the native inline
+confirmation area for the reference's exact ordinary and notebook questions.
+The history-limit control and search-focus-on-switch preference reach the
+existing history menu and all five current text-input sidebars. Reference
+history menus additionally bold their newest entry; the native menu keeps its
+existing common item styling. Out-of-range values injected directly into the
+native options model are rejected while retaining the previous valid limit;
+both visible spinboxes constrain user input to 1–1000.

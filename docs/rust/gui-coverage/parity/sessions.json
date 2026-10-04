@@ -2233,6 +2233,206 @@
         },
         "observed": "Actual Qt Options checkbox defaults/enabled states/labels/UpdateOptions, 48 combinations of four flags and 1/2/10 registered domains, every offered actual page-query current/deleted LocationContext and cancellation result."
       }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-opening-and-closing-confirm-when-closing-any-page",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "aa5290f5",
+      "exactBehavior": "Staged default-false checkbox asks before ordinary search, empty importer and notebook tab closes. Search question is Close \"name\"?; notebooks add exact empty or recursive-held-page statement. Existing importer veto questions take priority without a second prompt. Denial preserves the full tree, acceptance uses normal close/undo; session replacement checks importer vetoes without adding notebook confirm-all prompts.",
+      "limits": [
+        "Questions use the existing inline native confirmation area."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1629,
+          "commit": "aa5290f5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1724,
+          "commit": "aa5290f5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 255,
+          "commit": "aa5290f5",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_navigation_options.rs",
+          "line": 59,
+          "commit": "aa5290f5",
+          "kind": "gui_close_cancel_undo_session_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_page_navigation_options.py",
+          "line": 1,
+          "commit": "a9248622",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/page_navigation_options.json",
+          "line": 1,
+          "commit": "a9248622",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt GUI Pages values/bounds/UpdateOptions; 24 ordinary/nested/session-close AskIfAbleToClose combinations and accepted/denied questions; real sidebar PageShown focus dispatch for search and all four importers; actual Pages History menus over 25 entries for bounds/default/short limits. Empty importer worker starts are suppressed; confirmation and PageShown implementations run unchanged."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-navigation-and-drag-and-drop-maximum-entries-to-show-in-page-navigation-history",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "aa5290f5",
+      "exactBehavior": "Staged integer control defaults to 100 with limits 1\u20131000. Apply caps Pages History visible entries, numbered newest-first, retaining all backing history and Clear History. Cancel leaves the stored value unchanged; legacy import/reopening preserve it; invalid raw model input leaves the prior valid setting and reports a problem.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1643,
+          "commit": "aa5290f5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 624,
+          "commit": "aa5290f5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 255,
+          "commit": "aa5290f5",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_navigation_options.rs",
+          "line": 13,
+          "commit": "aa5290f5",
+          "kind": "reference_menu_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_navigation_options.rs",
+          "line": 52,
+          "commit": "aa5290f5",
+          "kind": "import_invalid_boundary_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_navigation_options.rs",
+          "line": 135,
+          "commit": "aa5290f5",
+          "kind": "gui_history_apply_cancel_reopen_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_page_navigation_options.py",
+          "line": 1,
+          "commit": "a9248622",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/page_navigation_options.json",
+          "line": 1,
+          "commit": "a9248622",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt GUI Pages values/bounds/UpdateOptions; 24 ordinary/nested/session-close AskIfAbleToClose combinations and accepted/denied questions; real sidebar PageShown focus dispatch for search and all four importers; actual Pages History menus over 25 entries for bounds/default/short limits. Empty importer worker starts are suppressed; confirmation and PageShown implementations run unchanged."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-navigation-and-drag-and-drop-when-switching-to-pages-move-keyboard-focus-to-any-text-input-field",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "a9248622",
+      "exactBehavior": "Staged default-false checkbox requests actual text focus when changing the visible page, through existing search autocomplete and gallery/watcher/simple/URL query inputs. Same visible page and sidebars without a text input do not issue a request. Disabling the preference stops navigation focus requests; Apply/Cancel/reopening and legacy import retain exact behavior.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1652,
+          "commit": "aa5290f5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 508,
+          "commit": "a9248622",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 750,
+          "commit": "a9248622",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/gallery.slint",
+          "line": 46,
+          "commit": "a9248622",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/watcher.slint",
+          "line": 43,
+          "commit": "a9248622",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/simple_downloader.slint",
+          "line": 12,
+          "commit": "a9248622",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 255,
+          "commit": "aa5290f5",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_navigation_options.rs",
+          "line": 135,
+          "commit": "aa5290f5",
+          "kind": "gui_search_focus_apply_cancel_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_navigation_options.rs",
+          "line": 241,
+          "commit": "a9248622",
+          "kind": "gui_importer_focus_enabled_disabled_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_page_navigation_options.py",
+          "line": 1,
+          "commit": "a9248622",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/page_navigation_options.json",
+          "line": 1,
+          "commit": "a9248622",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt GUI Pages values/bounds/UpdateOptions; 24 ordinary/nested/session-close AskIfAbleToClose combinations and accepted/denied questions; real sidebar PageShown focus dispatch for search and all four importers; actual Pages History menus over 25 entries for bounds/default/short limits. Empty importer worker starts are suppressed; confirmation and PageShown implementations run unchanged."
+      }
     }
   ],
   "completedOriginalLeafCount": 12,

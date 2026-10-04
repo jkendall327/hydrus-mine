@@ -2389,3 +2389,17 @@ abandonment. Edits wait for Apply, Cancel retains the saved threshold, and legac
 number/None values migrate. New syncs consume the saved network setting.
 
 The URL-class links editor now has “parser links” and “api/redirect link review” tabs. The review computes direct pairs from source example URLs, skips failed converters/self matches, and displays sortable class names. Valid redirect sources use their target’s parser. The exact “try to fill in gaps based on example urls” button appears when gaps remain. The v688 reference owner leaves those gaps unchanged: its matching helper returns new keys, but its replacement loop iterates existing linked keys. The native owner preserves this recorded behavior. Installed associations continue to drive actual API/redirect parser resolution, and the review never changes them.
+
+GUI Pages also controls confirmation for any page close, navigation history
+length, and focus when switching pages. Ordinary close confirmations use the
+page name; notebook prompts say whether it is empty or how many pages it holds,
+including nested notebooks. Importer veto prompts take priority, denial leaves
+the tree intact, and acceptance retains normal undo. Session replacement keeps
+its separate importer-veto checks. Pages History shows the newest configured
+1–1000 entries (default 100) without deleting older history. The focus preference
+uses the actual search, gallery, watcher, simple downloader or URL text input
+when switching visible pages; sidebars without one leave focus alone. These
+controls are staged until Apply and survive reopening and legacy import.
+`page_navigation_options.json` records actual close questions, sidebar focus
+requests and history menu outputs; headless regressions check real text focus,
+confirmation cancellation, nested-tree undo and retained history.
