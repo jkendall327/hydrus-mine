@@ -62,6 +62,13 @@ impl Drop for Worker {
 /// The error dialog's owner. Showing/copying after an owner clear is a no-op.
 #[derive(Clone, Default)]
 pub struct Errors(Rc<RefCell<Option<NetworkErrorWindow>>>);
+impl std::fmt::Debug for Errors {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Errors")
+            .field("open", &self.0.borrow().is_some())
+            .finish()
+    }
+}
 impl Errors {
     /// Close an error popup when its owning window is force-closed.
     pub fn cancel(&self) {
@@ -438,6 +445,11 @@ impl Drop for State {
 /// Keep this owner alive as long as the downloader page controls are alive.
 #[derive(Clone)]
 pub struct Binding(Rc<State>);
+impl std::fmt::Debug for Binding {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Binding").finish_non_exhaustive()
+    }
+}
 impl Binding {
     /// Retire closed page controls, stopping their pending auto overrides.
     pub fn set_owner_alive(&self, alive: Rc<dyn Fn(&str) -> bool>) {
