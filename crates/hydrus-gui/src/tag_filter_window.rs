@@ -542,6 +542,9 @@ pub fn open(
         let store = store.clone();
         let refresh = refresh.clone();
         move |name| {
+            if name.is_empty() {
+                return;
+            }
             let mut s = state.borrow_mut();
             let Some(Asking::FavouriteName(filter, imported)) = s.asking.clone() else {
                 return;

@@ -49,6 +49,9 @@ fn shared_favourites_exchange_and_cancel_preserve_the_owner_and_persist_on_reope
     });
     let w = open();
     w.invoke_favourite("save".into());
+    w.invoke_favourite_named("".into());
+    assert!(w.get_favourite_naming());
+    assert!(FavouriteTagFilters::load(&store).unwrap().0.is_empty());
     w.invoke_favourite_named("zebra".into());
     assert_eq!(
         FavouriteTagFilters::load(&store).unwrap().get("zebra"),

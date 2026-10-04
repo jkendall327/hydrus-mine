@@ -502,5 +502,7 @@
         ]
       ]
     }
-  ]
+  ],
+  "empty_name_error": "Cannot enter blank text here!",
+  "whitespace_name": "  "
 }

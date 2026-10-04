@@ -678,6 +678,11 @@ impl FavouriteTagFilters {
         filter: TagFilter,
         overwrite: bool,
     ) -> hydrus_store::Result<bool> {
+        if name.is_empty() {
+            return Err(hydrus_store::StoreError::Invalid(
+                "Cannot enter blank text here!".into(),
+            ));
+        }
         store.write(move |ctx| {
             let mut favourites: Self = hydrus_store::settings::get(ctx.conn())?;
             if let Some((_, old)) = favourites.0.iter_mut().find(|(n, _)| *n == name) {

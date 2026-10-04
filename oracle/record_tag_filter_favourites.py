@@ -20,6 +20,7 @@ def record(session):
     from hydrus.client.gui import ClientGUIDialogsQuick as Q
     from hydrus.client.gui import ClientGUIDialogsMessage as M
     from hydrus.client.gui.metadata import ClientGUITagFilter as T
+    from hydrus.client.gui.panels import ClientGUIScrolledPanelsTextEntry as Entry
     from hydrus.core import HydrusTags as H, HydrusConstants as HC, HydrusExceptions as E
     controller = session.controller
     def qt():
@@ -33,6 +34,12 @@ def record(session):
         current = H.TagFilter()
         current.SetRule('goblin', HC.FILTER_BLACKLIST)
         panel = T.EditTagFilterPanel(controller.gui, current, namespaces=[])
+        entry = Entry.EditTextPanel(controller.gui, 'Enter a name for the favourite.')
+        try: entry.GetValue()
+        except E.CancelledException as error: empty_name_error = str(error)
+        entry._text.setText('  ')
+        whitespace_name = entry.GetValue()
+        entry.deleteLater()
         events, menus, questions, errors = [], [], [], []
         answers, names = [], []
         clipboard = [current.DumpToString()]
@@ -102,7 +109,7 @@ def record(session):
             extra._test_input.setPlainText('creator:goblin')
             extra_panels.append({'advanced': advanced, 'before': before, 'after': after, 'test': extra._test_result_st.text(), 'rules': rules(extra.GetValue())})
             extra.deleteLater()
-        return {'empty_menu': empty, 'load_menu': load_menu, 'delete_menu': delete_menu, 'export_menu': export_menu, 'reopen_menu': reopen_menu, 'payload': payload, 'dirty_payload': dirty.DumpToString(), 'events': events, 'paste': pasted, 'extra_panels': extra_panels}
+        return {'empty_menu': empty, 'load_menu': load_menu, 'delete_menu': delete_menu, 'export_menu': export_menu, 'reopen_menu': reopen_menu, 'payload': payload, 'dirty_payload': dirty.DumpToString(), 'events': events, 'paste': pasted, 'extra_panels': extra_panels, 'empty_name_error': empty_name_error, 'whitespace_name': whitespace_name}
     return controller.CallBlockingToQt(controller.gui, qt)
 
 def child(out):

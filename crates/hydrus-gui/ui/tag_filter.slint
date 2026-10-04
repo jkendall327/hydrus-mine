@@ -425,7 +425,7 @@ export component TagFilterWindow inherits Window {
                 text <=> root.favourite-name;
                 accepted(t) => { root.favourite-named(t); }
             }
-            Button { text: "save"; clicked => { root.favourite-named(root.favourite-name); } }
+            Button { text: "save"; enabled: root.favourite-name != ""; clicked => { root.favourite-named(root.favourite-name); } }
         }
         if root.favourite-exchange: Box {
             title: root.exchange-importing ? "import favourite" : "export favourite";

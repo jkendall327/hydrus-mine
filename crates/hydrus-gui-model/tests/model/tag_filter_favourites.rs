@@ -129,6 +129,11 @@ fn reference_favourite_workflow_preserves_cancelled_drafts_and_saves_immediately
 fn concurrent_favourite_saves_merge_and_invalid_exchange_cannot_change_settings() {
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
+    let reference = hydrus_testkit::fixture_json("tag_filter_favourites.json");
+    let empty_name = FavouriteTagFilters::save(&store, String::new(), TagFilter::new(), false)
+        .unwrap_err()
+        .to_string();
+    assert!(empty_name.contains(reference["empty_name_error"].as_str().unwrap()));
     let stale = FavouriteTagFilters::load(&store).unwrap();
     FavouriteTagFilters::save(&store, "A".into(), TagFilter::new(), false).unwrap();
     assert!(stale.get("A").is_none());
