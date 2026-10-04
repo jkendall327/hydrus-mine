@@ -139,4 +139,5 @@ mod manage_tag_counts;
 mod frame_locations;
 mod incremental_tagging;
 
+mod notebook_tree;
 mod tab_presentation;

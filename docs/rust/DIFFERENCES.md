@@ -2002,9 +2002,9 @@ and real action consumers; they do not claim direct OS-menu introspection.
 
 Notebook alignment, gated tab hiding and middle elision have native consumers;
 the broader GUI Pages/navigation/tab families remain partial. The dependency
-hierarchy selector uses a fixed 190-pixel column of expanded, indented page rows.
-It does not port the Qt tree's collapse, drag/drop, context menus or full keyboard
-navigation, and no additional tree leaf is claimed. Tab thickness is 28 pixels;
+hierarchy selector uses a fixed 190-pixel column of indented page rows. Its basic
+collapse and keyboard behavior is described below; full tree drag/drop, context
+menus and broader navigation remain unported. Tab thickness is 28 pixels;
 native font metrics and equal overflow budgets differ from Qt's tab allocation,
 so the exact retained substring at a given pixel width can differ. Middle fitting
 preserves Unicode scalar boundaries, but does not yet preserve combining-grapheme
@@ -2024,3 +2024,14 @@ so leaving the sample after the extra Right release cancels its capture: native
 cannot resume that chord drag upon re-entry while Left remains held. Ordinary
 single-button captured drags retain the previously recorded outside behavior.
 This framework boundary remains explicit; full chord capture parity is not claimed.
+
+The native notebook tree implements single selection, disclosure, collapse/expand
+all and basic Qt cursor/activation keys. Its cursor and expansion state belong to
+the live page owner and survive hierarchy edits; they are not a new persisted
+session payload. It currently follows the reference's default of retaining child
+expansion when a parent collapses. Tree drag/drop, context menus, filters, depth
+controls, tree history, cog options, empty-space page creation and optional
+collapse-all-descendants behavior remain unported. The native sidebar uses a fixed
+190px width, text toolbar buttons and 26px rows rather than Qt's splitter and
+configurable tree geometry. Broader navigation/tree families remain Partial;
+this slice changes only the original experimental show-tree option proposal.

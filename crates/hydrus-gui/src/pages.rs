@@ -98,6 +98,7 @@ pub struct Tabs {
 pub type TabHarvest = (Vec<PageKey>, Vec<HashId>, String);
 
 pub struct Pages {
+    pub(crate) page_tree: RefCell<hydrus_gui_model::page_tree::Tree>,
     predicate_history: Rc<RefCell<hydrus_gui_model::predicate_history::History>>,
     store: Arc<Store>,
     session: Session,
@@ -239,6 +240,7 @@ impl Pages {
                 pages: vec![new_search_page(&store)],
             });
         let mut pages = Self {
+            page_tree: RefCell::default(),
             store,
             session,
             path: Vec::new(),
@@ -309,6 +311,7 @@ impl Pages {
     pub fn single(mut page: SearchPage) -> Self {
         let tree = new_search_page(page.store());
         let mut pages = Self {
+            page_tree: RefCell::default(),
             store: page.store().clone(),
             session: Session {
                 name: LAST_SESSION.to_owned(),
