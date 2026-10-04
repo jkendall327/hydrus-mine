@@ -105,3 +105,26 @@ impl SizeWarning {
         ))
     }
 }
+
+/// The exact clean-shutdown recovery question, shown only for an existing name.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RecoveryQuestion {
+    pub title: String,
+    pub message: String,
+    pub yes: String,
+    pub no: String,
+    pub auto_yes_seconds: u64,
+}
+impl RecoveryQuestion {
+    pub fn for_session(name: &str) -> Self {
+        Self {
+            title: "Previous shutdown was bad".into(),
+            message: format!(
+                "It looks like the last instance of the client did not shut down cleanly.\n\nWould you like to try loading your default session \"{name}\", or just a blank page?\n\nThis will auto-choose to open your default session in 15 seconds."
+            ),
+            yes: format!("try to load \"{name}\""),
+            no: "just load a blank page".into(),
+            auto_yes_seconds: 15,
+        }
+    }
+}

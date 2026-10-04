@@ -150,3 +150,23 @@ fn size_warning_replays_real_threshold_seed_weight_disabled_and_one_boot_latch()
         assert_eq!(warning.shown(), step["shown"].as_bool().unwrap());
     }
 }
+
+#[test]
+fn recovery_question_matches_real_startup_dialog_labels_message_and_auto_yes_time() {
+    let fixture = hydrus_testkit::fixture_json("session_startup.json");
+    for step in fixture["recovery_steps"].as_array().unwrap() {
+        for recorded in step["questions"].as_array().unwrap() {
+            let question = hydrus_gui_model::session_lifecycle::RecoveryQuestion::for_session(
+                step["startup"].as_str().unwrap(),
+            );
+            assert_eq!(question.title, recorded["title"].as_str().unwrap());
+            assert_eq!(question.message, recorded["message"].as_str().unwrap());
+            assert_eq!(question.yes, recorded["yes_label"].as_str().unwrap());
+            assert_eq!(question.no, recorded["no_label"].as_str().unwrap());
+            assert_eq!(
+                question.auto_yes_seconds,
+                recorded["auto_yes_time"].as_u64().unwrap()
+            );
+        }
+    }
+}

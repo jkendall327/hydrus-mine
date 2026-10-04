@@ -85,6 +85,7 @@ pub mod services_editor_window;
 pub mod services_review_window;
 pub mod session_autosave;
 mod session_dialog;
+pub mod session_startup;
 pub mod sidecars_window;
 pub mod simple_formulae_window;
 pub mod slideshow;

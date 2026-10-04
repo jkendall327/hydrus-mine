@@ -2210,3 +2210,13 @@ the existing live permitted-input editor. A row and its whole list can be cancel
 independently; accepted lists remain staged beneath their step/script/list owners.
 Matcher updates persist through reopening, and the HTTP consumer regression shows
 an edited cookie value rejecting the actual loopback response cookie.
+
+An interrupted native client boot now triggers the reference's startup recovery
+question when the configured session exists. It offers that session or a blank
+page and automatically chooses the session after fifteen seconds. Closing the
+question chooses blank; this does not change the saved startup preference. The
+question retains its displayed session name if preferences change while it is
+open. The native running marker clears only after saving and stopping owned work;
+cancelling the password gate also clears it without opening a session. The real
+recovery questions, outputs and a fifteen-second auto-yes dialog are recorded
+in `oracle/record_session_startup.py`.

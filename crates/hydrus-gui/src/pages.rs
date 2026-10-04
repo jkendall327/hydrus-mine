@@ -172,20 +172,41 @@ impl Pages {
     /// Boot using the configured startup session; a missing name falls back to
     /// the default-domain blank page. Ordinary reopen keeps the live session.
     pub fn open_startup(store: Arc<Store>) -> hydrus_store::Result<Self> {
+        Self::open_startup_choice(store, true)
+    }
+
+    /// Recovery may choose a blank page for this boot without changing the
+    /// durable configured startup session.
+    pub fn open_startup_choice(
+        store: Arc<Store>,
+        load_default: bool,
+    ) -> hydrus_store::Result<Self> {
         let settings: hydrus_store::settings::GuiSessionSettings =
             store.read(hydrus_store::settings::get)?;
+        Self::open_startup_named(
+            store,
+            if load_default {
+                settings.startup.as_deref()
+            } else {
+                None
+            },
+        )
+    }
+
+    /// Load the frozen startup name that a recovery question displayed.
+    pub fn open_startup_named(store: Arc<Store>, name: Option<&str>) -> hydrus_store::Result<Self> {
         let mut pages = Self::open(store)?;
-        if settings.startup.as_deref() == Some(LAST_SESSION) {
+        if name == Some(LAST_SESSION) {
             return Ok(pages);
         }
-        if let Some(name) = settings.startup
+        if let Some(name) = name
             && pages
                 .store
-                .read(|conn| sessions::load(conn, &name))?
+                .read(|conn| sessions::load(conn, name))?
                 .is_some()
         {
             pages
-                .clear_and_load(&name)
+                .clear_and_load(name)
                 .map_err(hydrus_store::StoreError::Corrupt)?;
             return Ok(pages);
         }

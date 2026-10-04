@@ -1398,6 +1398,9 @@ separate unclaimed controls.
 Write-tag open-search and duplicate-page actions now have a main-window consumer
 and real session/query contexts. The optional reference setting that raises the
 main window on tag-search activation is still absent; its default is off.
+defers its initial load by a quarter second. Blank, missing, last and named-session
+outcomes, including bad-shutdown recovery choices, match the recorded reference.
+Loading an empty saved tree retains the native single blank search page.
 
 Native idle tracking covers input in every desktop window through the event-loop
 handler. The reference also polls the operating system's global cursor position;
@@ -1445,3 +1448,7 @@ the list and asks sequential matcher dialogs. Independent matcher objects with
 identical descriptions remain distinct, as in Python. Explicit matcher edits
 canonicalize their unused auxiliary matcher values. Script example-domain editing
 and the step argument list topology/extended-selection gap remain outstanding.
+Startup recovery uses the native session-question window and a native GUI running
+marker rather than the reference controller's process marker. Choosing blank
+keeps the configured startup name for the next boot. Native importer workers
+start only after the recovery choice resolves.

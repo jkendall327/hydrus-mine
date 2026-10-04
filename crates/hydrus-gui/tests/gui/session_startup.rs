@@ -298,3 +298,179 @@ fn named_startup_restores_ordered_media_selection_and_independent_importer_snaps
     let reopened = Pages::open(store.clone()).unwrap();
     assert_eq!(reopened.session().pages, boot.session().pages);
 }
+
+#[test]
+fn bad_shutdown_recovery_replays_real_yes_no_close_timeout_and_blank_bypasses() {
+    use std::{cell::RefCell, rc::Rc};
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("session_startup.json");
+    let named = Session {
+        name: "startup work".into(),
+        pages: source(&fixture["named_tree"]),
+    };
+    store
+        .write(move |ctx| hydrus_store::session_backups::save(ctx.conn(), &named, 1_000))
+        .unwrap();
+    for step in fixture["recovery_steps"].as_array().unwrap() {
+        let config = GuiSessionSettings {
+            startup: step["startup"].as_str().map(str::to_owned),
+            ..GuiSessionSettings::default()
+        };
+        let last = Session {
+            name: sessions::LAST_SESSION.into(),
+            pages: source(&fixture["last_tree"]),
+        };
+        store
+            .write(move |ctx| {
+                sessions::save(ctx.conn(), &last, 1)?;
+                settings::set(ctx.conn(), &config)
+            })
+            .unwrap();
+        let results = Rc::new(RefCell::new(Vec::new()));
+        let ready = Rc::new({
+            let results = results.clone();
+            move |pages: hydrus_store::Result<Pages>| results.borrow_mut().push(pages.unwrap())
+        });
+        let start = hydrus_core::TimestampMs::now().0;
+        let recovery = hydrus_gui::session_startup::prepare(store.clone(), true, ready).unwrap();
+        if let Some(question) = step["questions"].as_array().unwrap().first() {
+            assert!(results.borrow().is_empty());
+            let recovery = recovery.unwrap();
+            let window = recovery.window();
+            assert_eq!(
+                window.get_window_title(),
+                question["title"].as_str().unwrap()
+            );
+            assert_eq!(window.get_message(), question["message"].as_str().unwrap());
+            assert_eq!(
+                window.get_yes_label(),
+                question["yes_label"].as_str().unwrap()
+            );
+            assert_eq!(
+                window.get_no_label(),
+                question["no_label"].as_str().unwrap()
+            );
+            let delay = i64::try_from(question["auto_yes_time"].as_u64().unwrap()).unwrap() * 1_000;
+            assert!(
+                (start + delay..=hydrus_core::TimestampMs::now().0 + delay)
+                    .contains(&recovery.deadline())
+            );
+            match step["answer"].as_str().unwrap() {
+                "yes" => window.invoke_answered(true),
+                "no" => window.invoke_answered(false),
+                "close" => window
+                    .window()
+                    .dispatch_event(slint::platform::WindowEvent::CloseRequested),
+                "timeout" => {
+                    recovery.poll_at(recovery.deadline() - 1);
+                    assert!(results.borrow().is_empty());
+                    recovery.poll_at(recovery.deadline());
+                }
+                answer => panic!("unexpected recovery answer {answer}"),
+            }
+            assert_eq!(results.borrow().len(), 1);
+            // The expired timer or a stale answer cannot resolve startup again.
+            recovery.poll_at(recovery.deadline() + 1);
+            window.invoke_answered(false);
+            assert_eq!(results.borrow().len(), 1);
+        } else {
+            assert!(recovery.is_none());
+        }
+        let mut pages = results.borrow_mut().pop().unwrap();
+        assert_eq!(tree(&pages.session().pages), step["tree"]);
+        assert_eq!(pages.shown().name, step["shown"].as_str().unwrap());
+        assert_eq!(
+            store
+                .read(settings::get::<GuiSessionSettings>)
+                .unwrap()
+                .startup
+                .as_deref(),
+            step["startup"].as_str()
+        );
+        pages.sync(2).unwrap();
+        let reopened = Pages::open(store.clone()).unwrap();
+        assert_eq!(tree(&reopened.session().pages), step["tree"]);
+    }
+}
+
+#[test]
+fn recovery_keeps_displayed_name_if_preferences_change_and_clean_startup_skips_question() {
+    use std::{cell::RefCell, rc::Rc};
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("session_startup.json");
+    let named = Session {
+        name: "startup work".into(),
+        pages: source(&fixture["named_tree"]),
+    };
+    store
+        .write(move |ctx| {
+            hydrus_store::session_backups::save(ctx.conn(), &named, 1_000)?;
+            settings::set(
+                ctx.conn(),
+                &GuiSessionSettings {
+                    startup: Some("startup work".into()),
+                    ..GuiSessionSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let loaded = Rc::new(RefCell::new(None));
+    let ready = Rc::new({
+        let loaded = loaded.clone();
+        move |pages: hydrus_store::Result<Pages>| *loaded.borrow_mut() = Some(pages.unwrap())
+    });
+    let recovery = hydrus_gui::session_startup::prepare(store.clone(), true, ready)
+        .unwrap()
+        .unwrap();
+    assert!(recovery.window().get_yes_label().contains("startup work"));
+    store
+        .write(move |ctx| {
+            settings::set(
+                ctx.conn(),
+                &GuiSessionSettings {
+                    startup: None,
+                    ..GuiSessionSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    recovery.window().invoke_answered(true);
+    assert_eq!(
+        tree(&loaded.borrow().as_ref().unwrap().session().pages),
+        fixture["named_tree"]
+    );
+    let clean = Rc::new(RefCell::new(None));
+    let ready = Rc::new({
+        let clean = clean.clone();
+        move |pages: hydrus_store::Result<Pages>| *clean.borrow_mut() = Some(pages.unwrap())
+    });
+    assert!(
+        hydrus_gui::session_startup::prepare(store.clone(), false, ready)
+            .unwrap()
+            .is_none()
+    );
+    assert_eq!(clean.borrow().as_ref().unwrap().shown().name, "files");
+}
+
+#[test]
+fn running_marker_survives_interrupted_boot_and_clears_only_explicit_clean_finish() {
+    use hydrus_gui::session_startup::Run;
+    let directory = tempfile::tempdir().unwrap();
+    {
+        let first = Run::begin(directory.path()).unwrap();
+        assert!(!first.bad());
+        // An interrupted process does not run explicit clean shutdown.
+    }
+    let recovered = Run::begin(directory.path()).unwrap();
+    assert!(recovered.bad());
+    recovered.finish().unwrap();
+    let clean = Run::begin(directory.path()).unwrap();
+    assert!(!clean.bad());
+    clean.finish().unwrap();
+    let final_run = Run::begin(directory.path()).unwrap();
+    assert!(!final_run.bad());
+    final_run.finish().unwrap();
+    assert!(Run::begin(&directory.path().join("absent")).is_err());
+}
