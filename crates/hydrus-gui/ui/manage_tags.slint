@@ -4,11 +4,12 @@
 // through the suggestions. Changes wait: enter with nothing typed (or
 // "apply") applies them, escape (or "cancel") forgets them.
 
-import { Button, ComboBox, ListView } from "std-widgets.slint";
+import { Button, ListView } from "std-widgets.slint";
 import { WriteTagInput, TagMenuOverlay } from "write_autocomplete.slint";
 import { Question } from "favourites.slint";
 import { MenuPane } from "main_menu.slint";
 import { ListText, Theme } from "theme.slint";
+import { TagServicePanels } from "tag_service_panels.slint";
 
 export component ManageTagsWindow inherits Window {
     in property <[MenuPane]> tag-menu-panes;
@@ -22,11 +23,13 @@ export component ManageTagsWindow inherits Window {
     // ("manage tags for 3 files" from the thumbnails, as the reference has it)
     in property <string> window-title: "manage tags";
     title: root.window-title;
-    preferred-width: 420px;
+    preferred-width: root.use-listbook ? 580px : 420px;
     preferred-height: 560px;
     background: Theme.window;
 
     in property <[string]> service-names;
+    in property <bool> use-listbook;
+    out property <float> service-content-offset: services.content-offset;
     in-out property <int> service-index;
     in property <[ListText]> tags;
     in property <[ListText]> suggestions;
@@ -45,6 +48,9 @@ export component ManageTagsWindow inherits Window {
     callback entered();
     callback suggestion-chosen(int);
     callback context-menu(int,length,length);
+    callback domain-menu(bool,length,length);
+    in property <string> file-label;
+    in property <string> tag-label;
     callback paste-requested(bool) -> bool;
     callback paste-answered(bool);
     callback move-highlight(int);
@@ -62,72 +68,75 @@ export component ManageTagsWindow inherits Window {
             }
             reject
         }
-        VerticalLayout {
-            padding: 8px;
-            spacing: 6px;
-            ComboBox {
-                model: root.service-names;
-                current-index <=> root.service-index;
-                selected => { root.service-chosen(self.current-index); }
-            }
-            Rectangle {
-                border-width: 1px;
-                border-color: Theme.border;
-                background: Theme.panel;
-                vertical-stretch: 1;
-                ListView {
-                    for tag[i] in root.tags: Rectangle {
-                        height: 20px;
-                        background: pick.has-hover ? Theme.hover : transparent;
-                        Text {
-                            x: 4px;
-                            text: tag.text;
-                            color: tag.colour;
-                            vertical-alignment: center;
-                            overflow: elide;
-                            width: parent.width - 8px;
-                        }
-                        pick := TouchArea {
-                            double-clicked => { root.tag-activated(i); }
+        services := TagServicePanels {
+            names: root.service-names;
+            index: root.service-index;
+            use-listbook: root.use-listbook;
+            chosen(i) => { root.service-chosen(i); }
+            VerticalLayout {
+                padding: 8px;
+                spacing: 6px;
+                Rectangle {
+                    border-width: 1px;
+                    border-color: Theme.border;
+                    background: Theme.panel;
+                    vertical-stretch: 1;
+                    ListView {
+                        for tag[i] in root.tags: Rectangle {
+                            height: 20px;
+                            background: pick.has-hover ? Theme.hover : transparent;
+                            Text {
+                                x: 4px;
+                                text: tag.text;
+                                color: tag.colour;
+                                vertical-alignment: center;
+                                overflow: elide;
+                                width: parent.width - 8px;
+                            }
+                            pick := TouchArea {
+                                double-clicked => { root.tag-activated(i); }
+                            }
                         }
                     }
                 }
-            }
-            input := WriteTagInput {
-                enabled: root.question == "";
-                text <=> root.text;
-                suggestions: root.suggestions;
-                highlighted: root.highlighted;
-                tab-index: root.autocomplete-tab;
-                tab-chosen(i) => { root.tab-chosen(i); }
-                list-height: root.autocomplete-height;
-                edited(text) => { root.text-edited(text); }
-                entered => { root.entered(); }
-                fetch => { root.fetch(); }
-                move-highlight(by) => { root.move-highlight(by); }
-                chosen(i) => { root.suggestion-chosen(i); }
-                context-menu(i,x,y) => { root.context-menu(i,x,y); }
-                paste(button) => { root.paste-requested(button) }
-            }
-            if root.question != "": Text { text: "Want to paste everything?"; color: Theme.text; }
-            if root.question != "": Question { text: root.question; answered(yes) => { root.paste-answered(yes); } }
-            if root.error != "": Text {
-                text: root.error;
-                color: Theme.error;
-                wrap: word-wrap;
-            }
-            HorizontalLayout {
-                spacing: 6px;
-                alignment: end;
-                Button {text: "migrate tags…"; clicked => {root.migrate-tags();}}
-                Button {
+                input := WriteTagInput {
                     enabled: root.question == "";
-                    text: "apply";
-                    clicked => { root.apply(); }
+                    text <=> root.text;
+                    suggestions: root.suggestions;
+                    highlighted: root.highlighted;
+                    tab-index: root.autocomplete-tab;
+                    tab-chosen(i) => { root.tab-chosen(i); }
+                    list-height: root.autocomplete-height;
+                    edited(text) => { root.text-edited(text); }
+                    entered => { root.entered(); }
+                    fetch => { root.fetch(); }
+                    move-highlight(by) => { root.move-highlight(by); }
+                    chosen(i) => { root.suggestion-chosen(i); }
+                    context-menu(i,x,y) => { root.context-menu(i,x,y); }
+                    file-label:root.file-label;tag-label:root.tag-label;
+                    domain-menu(tags,x,y)=>{root.domain-menu(tags,x,y);}
+                    paste(button) => { root.paste-requested(button) }
                 }
-                Button {
-                    text: "cancel";
-                    clicked => { root.cancel(); }
+                if root.question != "": Text { text: "Want to paste everything?"; color: Theme.text; }
+                if root.question != "": Question { text: root.question; answered(yes) => { root.paste-answered(yes); } }
+                if root.error != "": Text {
+                    text: root.error;
+                    color: Theme.error;
+                    wrap: word-wrap;
+                }
+                HorizontalLayout {
+                    spacing: 6px;
+                    alignment: end;
+                    Button {text: "migrate tags…"; clicked => {root.migrate-tags();}}
+                    Button {
+                        enabled: root.question == "";
+                        text: "apply";
+                        clicked => { root.apply(); }
+                    }
+                    Button {
+                        text: "cancel";
+                        clicked => { root.cancel(); }
+                    }
                 }
             }
         }

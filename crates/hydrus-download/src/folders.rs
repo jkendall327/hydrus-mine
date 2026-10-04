@@ -338,7 +338,7 @@ impl Downloader {
                 set_status(seed, SeedStatus::Vetoed, note);
                 return Ok(());
             }
-            Err(Stop::Error(note)) => {
+            Err(Stop::Error(note) | Stop::DataMissing(note)) => {
                 set_status(seed, SeedStatus::Error, note);
                 return Ok(());
             }

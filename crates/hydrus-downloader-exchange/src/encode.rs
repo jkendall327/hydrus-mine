@@ -35,7 +35,7 @@ pub(crate) fn string_match(m: &StringMatch) -> Value {
         MatchKind::Fixed(s) => (0, json!(s)),
         MatchKind::Flexible(f) => (1, json!(*f as i64)),
         MatchKind::Regex(r) => (2, json!(r.pattern())),
-        MatchKind::Any => (3, Value::Null),
+        MatchKind::Any => (3, json!("")),
     };
     object(
         51,

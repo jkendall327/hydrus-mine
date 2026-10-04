@@ -84,3 +84,47 @@ impl Idle {
             && passed(now_ms, self.api, settings.api_seconds)
     }
 }
+
+/// One active-session size warning per client boot, independently of autosaves.
+#[derive(Debug, Default)]
+pub struct SizeWarning {
+    shown: bool,
+}
+impl SizeWarning {
+    pub fn shown(&self) -> bool {
+        self.shown
+    }
+    pub fn message(&mut self, weight: u64, enabled: bool) -> Option<String> {
+        if !enabled || weight <= 10_000_000 || self.shown {
+            return None;
+        }
+        self.shown = true;
+        Some(format!(
+            "Your session weight is {}, which is pretty big! To keep your UI lag-free, please try to close some pages or clear some finished downloaders!",
+            hydrus_core::numbers::human_int(weight)
+        ))
+    }
+}
+
+/// The exact clean-shutdown recovery question, shown only for an existing name.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RecoveryQuestion {
+    pub title: String,
+    pub message: String,
+    pub yes: String,
+    pub no: String,
+    pub auto_yes_seconds: u64,
+}
+impl RecoveryQuestion {
+    pub fn for_session(name: &str) -> Self {
+        Self {
+            title: "Previous shutdown was bad".into(),
+            message: format!(
+                "It looks like the last instance of the client did not shut down cleanly.\n\nWould you like to try loading your default session \"{name}\", or just a blank page?\n\nThis will auto-choose to open your default session in 15 seconds."
+            ),
+            yes: format!("try to load \"{name}\""),
+            no: "just load a blank page".into(),
+            auto_yes_seconds: 15,
+        }
+    }
+}

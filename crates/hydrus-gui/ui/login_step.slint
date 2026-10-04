@@ -1,4 +1,4 @@
-import { Button, CheckBox, ComboBox, LineEdit } from "std-widgets.slint";
+import { Button, CheckBox, ComboBox, LineEdit, ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 export component LoginStepWindow inherits Window {
@@ -13,6 +13,24 @@ export component LoginStepWindow inherits Window {
     in-out property <string> subdomain;
     in-out property <string> path;
     in property <[TableRow]> variables;
+    in property <[TableRow]> credential-variables;
+    in property <[TableRow]> static-variables;
+    in property <[TableRow]> temporary-variables;
+    in property <bool> credential-one;
+    in property <bool> credential-any;
+    in property <bool> static-one;
+    in property <bool> static-any;
+    in property <bool> temporary-one;
+    in property <bool> temporary-any;
+    callback argument-clicked(int,int,bool,bool);
+    in property <bool> variable-selected;
+    in property <int> variable-index: -1;
+    in property <bool> variable-editing;
+    in property <bool> variable-existing;
+    in-out property <int> variable-kind;
+    in-out property <string> variable-key;
+    in-out property <string> variable-value;
+    callback variable-clicked(int);
     in property <[TableRow]> cookies;
     in property <[TableRow]> content;
     in property <bool> one-selected;
@@ -27,28 +45,54 @@ export component LoginStepWindow inherits Window {
     callback action(string);
     callback closed();
     VerticalLayout { padding: 12px; spacing: 6px;
-        HorizontalLayout { Text { text: "name: "; color: Theme.text; vertical-alignment: center; } LineEdit { text <=> root.name; enabled: !root.child-open && !root.deleting; } }
+        ScrollView { vertical-stretch: 1; VerticalLayout { spacing: 6px;
+        HorizontalLayout { Text { text: "name: "; color: Theme.text; vertical-alignment: center; } LineEdit { text <=> root.name; enabled: !root.child-open && !root.deleting && !root.variable-editing; } }
         HorizontalLayout { spacing: 6px;
-            Text { text: "scheme: "; color: Theme.text; vertical-alignment: center; } ComboBox { model: ["http", "https"]; current-index <=> root.scheme; enabled: !root.child-open && !root.deleting; }
-            Text { text: "method: "; color: Theme.text; vertical-alignment: center; } ComboBox { model: ["GET", "POST"]; current-index <=> root.method; enabled: !root.child-open && !root.deleting; }
+            Text { text: "scheme: "; color: Theme.text; vertical-alignment: center; } ComboBox { model: ["http", "https"]; current-index <=> root.scheme; enabled: !root.child-open && !root.deleting && !root.variable-editing; }
+            Text { text: "method: "; color: Theme.text; vertical-alignment: center; } ComboBox { model: ["GET", "POST"]; current-index <=> root.method; enabled: !root.child-open && !root.deleting && !root.variable-editing; }
         }
-        HorizontalLayout { Text { text: "subdomain (replaces www, if present): "; color: Theme.text; vertical-alignment: center; } CheckBox { text: "set"; checked <=> root.has-subdomain; enabled: !root.child-open && !root.deleting; } LineEdit { text <=> root.subdomain; enabled: root.has-subdomain && !root.child-open && !root.deleting; } }
-        HorizontalLayout { Text { text: "path: "; color: Theme.text; vertical-alignment: center; } LineEdit { text <=> root.path; enabled: !root.child-open && !root.deleting; } }
-        Text { text: "variables to send"; color: Theme.text; font-weight: 700; }
-        ListTable { vertical-stretch: 1; columns: [{title: "kind", width: 180px}, {title: "name", width: 250px}, {title: "value / parameter name", width: 350px, stretch: true}]; rows: root.variables; }
-        Text { text: "cookies required to consider step successful"; color: Theme.text; font-weight: 700; }
-        ListTable { vertical-stretch: 1; columns: [{title: "cookie name", width: 350px}, {title: "permitted value", width: 450px, stretch: true}]; rows: root.cookies; }
-        Text { text: "content parsers"; color: Theme.text; font-weight: 700; }
-        ListTable { vertical-stretch: 1; columns: [{title: "name", width: 350px}, {title: "produces", width: 450px, stretch: true}]; rows: root.content; row-clicked(i,c,s) => { if !root.child-open && !root.deleting { root.content-clicked(i,c,s); } } row-activated(i) => { if !root.child-open && !root.deleting { root.content-activated(i); } } delete-pressed => { if !root.child-open && !root.deleting { root.action("delete-content"); } } }
+        HorizontalLayout { Text { text: "subdomain (replaces www, if present): "; color: Theme.text; vertical-alignment: center; } CheckBox { text: "set"; checked <=> root.has-subdomain; enabled: !root.child-open && !root.deleting && !root.variable-editing; } LineEdit { text <=> root.subdomain; enabled: root.has-subdomain && !root.child-open && !root.deleting && !root.variable-editing; } }
+        HorizontalLayout { Text { text: "path: "; color: Theme.text; vertical-alignment: center; } LineEdit { text <=> root.path; enabled: !root.child-open && !root.deleting && !root.variable-editing; } }
+        Text { text: "credentials to send"; color: Theme.text; font-weight: 700; }
+        ListTable { height: 120px; columns: [{title: "credential name", width: 340px}, {title: "parameter name", width: 440px, stretch: true}]; rows: root.credential-variables; row-clicked(i,c,s) => { root.argument-clicked(0,i,c,s); } row-activated(i) => { root.argument-clicked(0,i,false,false); root.action("edit-credential"); } delete-pressed => { root.action("delete-credential"); } }
         HorizontalLayout { spacing: 6px;
-            Button { text: "add"; enabled: !root.child-open && !root.deleting; clicked => { root.action("add-content"); } }
-            Button { text: "edit"; enabled: root.one-selected && !root.child-open && !root.deleting; clicked => { root.action("edit-content"); } }
-            Button { text: "delete"; enabled: root.any-selected && !root.child-open && !root.deleting; clicked => { root.action("delete-content"); } }
-            Button { text: "import"; enabled: !root.child-open && !root.deleting; clicked => { root.action("import-content"); } }
-            Button { text: "export selected"; enabled: root.any-selected && !root.child-open && !root.deleting; clicked => { root.action("export-content"); } }
+            Button { text: "add"; enabled: !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("add-credential"); } }
+            Button { text: "edit"; enabled: root.credential-one && !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("edit-credential"); } }
+            Button { text: "delete"; enabled: root.credential-any && !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("delete-credential"); } }
+        }
+        Text { text: "static variables to send"; color: Theme.text; font-weight: 700; }
+        ListTable { height: 120px; columns: [{title: "parameter name", width: 340px}, {title: "value", width: 440px, stretch: true}]; rows: root.static-variables; row-clicked(i,c,s) => { root.argument-clicked(1,i,c,s); } row-activated(i) => { root.argument-clicked(1,i,false,false); root.action("edit-static"); } delete-pressed => { root.action("delete-static"); } }
+        HorizontalLayout { spacing: 6px;
+            Button { text: "add"; enabled: !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("add-static"); } }
+            Button { text: "edit"; enabled: root.static-one && !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("edit-static"); } }
+            Button { text: "delete"; enabled: root.static-any && !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("delete-static"); } }
+        }
+        Text { text: "temporary variables to send"; color: Theme.text; font-weight: 700; }
+        ListTable { height: 120px; columns: [{title: "temp variable name", width: 340px}, {title: "parameter name", width: 440px, stretch: true}]; rows: root.temporary-variables; row-clicked(i,c,s) => { root.argument-clicked(2,i,c,s); } row-activated(i) => { root.argument-clicked(2,i,false,false); root.action("edit-temporary"); } delete-pressed => { root.action("delete-temporary"); } }
+        HorizontalLayout { spacing: 6px;
+            Button { text: "add"; enabled: !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("add-temporary"); } }
+            Button { text: "edit"; enabled: root.temporary-one && !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("edit-temporary"); } }
+            Button { text: "delete"; enabled: root.temporary-any && !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("delete-temporary"); } }
+        }
+        if root.variable-editing: VerticalLayout { spacing: 4px;
+            HorizontalLayout { ComboBox { model: ["credential", "static", "temporary"]; current-index <=> root.variable-kind; enabled: false; } LineEdit { text <=> root.variable-key; placeholder-text: root.variable-kind == 0 ? "credential name" : root.variable-kind == 2 ? "temp variable name" : "parameter name"; } LineEdit { text <=> root.variable-value; placeholder-text: root.variable-kind == 1 ? "value" : "parameter name"; } }
+            HorizontalLayout { alignment: end; spacing: 6px; Button { text: "save variable"; enabled: root.variable-key != ""; clicked => { root.action("save-variable"); } } Button { text: "cancel variable"; clicked => { root.action("cancel-variable"); } } }
+        }
+        Text { text: "cookies required to consider step successful"; color: Theme.text; font-weight: 700; }
+        ListTable { height: 120px; columns: [{title: "cookie name", width: 350px}, {title: "permitted value", width: 450px, stretch: true}]; rows: root.cookies; }
+        Button { text: "edit required cookies"; enabled: !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("cookies"); } }
+        Text { text: "content parsers"; color: Theme.text; font-weight: 700; }
+        ListTable { height: 120px; columns: [{title: "name", width: 350px}, {title: "produces", width: 450px, stretch: true}]; rows: root.content; row-clicked(i,c,s) => { if !root.child-open && !root.deleting { root.content-clicked(i,c,s); } } row-activated(i) => { if !root.child-open && !root.deleting { root.content-activated(i); } } delete-pressed => { if !root.child-open && !root.deleting { root.action("delete-content"); } } }
+        HorizontalLayout { spacing: 6px;
+            Button { text: "add"; enabled: !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("add-content"); } }
+            Button { text: "edit"; enabled: root.one-selected && !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("edit-content"); } }
+            Button { text: "delete"; enabled: root.any-selected && !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("delete-content"); } }
+            Button { text: "import"; enabled: !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("import-content"); } }
+            Button { text: "export selected"; enabled: root.any-selected && !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("export-content"); } }
         }
         if root.deleting: HorizontalLayout { spacing: 6px; Text { text: "Remove all selected?"; color: Theme.text; vertical-alignment: center; } Button { text: "yes"; clicked => { root.action("confirm-delete"); } } Button { text: "no"; clicked => { root.action("back"); } } }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-        footer := HorizontalLayout { alignment: end; spacing: 6px; Button { text: "apply"; enabled: !root.child-open && !root.deleting; clicked => { root.action("apply"); } } Button { text: "cancel"; clicked => { root.action("cancel"); } } }
+        } }
+        footer := HorizontalLayout { alignment: end; spacing: 6px; Button { text: "apply"; enabled: !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("apply"); } } Button { text: "cancel"; clicked => { root.action("cancel"); } } }
     }
 }

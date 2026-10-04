@@ -31,6 +31,7 @@ enum Asking {
     OpenMany(Vec<String>),
     /// Clipboard/store failures are acknowledged without changing the log.
     Error(String, String),
+    Renormalise,
 }
 
 struct State {
@@ -75,6 +76,7 @@ pub struct OpenFiles(
     pub Rc<dyn Fn(Vec<HashId>)>,
     pub Rc<dyn Fn(Vec<String>)>,
     pub crate::png_export_window::Slots,
+    pub crate::search_log_import_window::Slots,
 );
 
 impl std::fmt::Debug for OpenFiles {
@@ -89,6 +91,7 @@ impl Default for OpenFiles {
             Rc::new(|_| {}),
             Rc::new(|_| {}),
             crate::png_export_window::Slots::default(),
+            crate::search_log_import_window::Slots::default(),
         )
     }
 }
@@ -157,6 +160,7 @@ fn show(window: &FileLogWindow, state: &State) {
         Some(Asking::Delete(ids)) => Some(delete_question(ids.len())),
         Some(Asking::OpenMany(_)) => Some(OPEN_MANY_QUESTION.to_owned()),
         Some(Asking::Error(_, text)) => Some(text.clone()),
+        Some(Asking::Renormalise) => Some(crate::file_log::RENORMALISE_QUESTION.to_owned()),
     };
     window.set_asking(question.is_some());
     window.set_busy(state.exports.has_open());
@@ -358,6 +362,11 @@ fn act(store: &Arc<Store>, state: &mut State, action: &Action, open_files: &Open
                 .collect();
             (open_files.1)(urls);
         }
+        Action::ExportObjects => match crate::file_log::export_objects(&state.selected()) {
+            Ok(text) => crate::copy_to_clipboard(&text),
+            Err(error) => state.asking = Some(Asking::Error("Could not export!".into(), error)),
+        },
+        Action::Renormalise => state.asking = Some(Asking::Renormalise),
         Action::NotYet => {}
     }
 }
@@ -641,6 +650,21 @@ pub(crate) fn open(
                         }
                     }
                     Some(Asking::OpenMany(sources)) => open_sources(&sources),
+                    Some(Asking::Renormalise) => {
+                        let queue = state.borrow().queue;
+                        if let Err(error) = store.write(move |ctx| {
+                            let classes = hydrus_core::url::UrlClasses::new(
+                                hydrus_store::settings::get(ctx.conn())?,
+                            );
+                            queues::renormalise_file_seeds(ctx.conn(), queue, &classes)?;
+                            queues::nudge(ctx.conn(), queue)
+                        }) {
+                            state.borrow_mut().asking = Some(Asking::Error(
+                                "Could not re-normalise!".into(),
+                                error.to_string(),
+                            ));
+                        }
+                    }
                     Some(Asking::Error(_, _)) | None => {}
                 }
             }

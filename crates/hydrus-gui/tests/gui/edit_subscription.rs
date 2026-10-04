@@ -261,3 +261,238 @@ fn the_dialog_edits_a_subscription_and_the_list_writes_it() {
     assert!(!list.get_gallery_open());
     assert!(bound.edit_subscription.borrow().is_none());
 }
+
+fn quality_menu(dialog: &EditSubscriptionWindow, action: &str) {
+    dialog.invoke_quality_menu(10.0, 10.0);
+    let panes = dialog.get_quality_panes();
+    assert_eq!(panes.row_count(), 1);
+    let lines = panes.row_data(0).unwrap().lines;
+    let index = (0..lines.row_count())
+        .find(|&i| lines.row_data(i).unwrap().label == action)
+        .unwrap();
+    dialog.invoke_quality_line_clicked(0, i32::try_from(index).unwrap(), 300.0, 100.0, 10.0);
+}
+fn quality_ready(dialog: &EditSubscriptionWindow) {
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+    while dialog.get_quality_working() {
+        assert!(
+            std::time::Instant::now() < deadline,
+            "query quality worker finishes"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(10));
+        slint::platform::update_timers_and_animations();
+    }
+}
+
+#[test]
+fn advanced_quality_menu_reads_saved_logs_and_current_media_without_applying_drafts() {
+    use hydrus_core::Sha256;
+    use hydrus_gui::{Clip, set_clipper};
+    use std::{cell::RefCell, rc::Rc};
+    let (_dirs, store) = store();
+    let manifest = hydrus_testkit::fixture_json("legacy_db/basic.manifest.json");
+    let hashes: Vec<Sha256> = manifest["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .take(3)
+        .map(|f| f["hash"].as_str().unwrap().parse().unwrap())
+        .collect();
+    let ids = store
+        .read(|c| hydrus_store::master::hash_ids(c, &hashes))
+        .unwrap();
+    let ordered: Vec<_> = hashes.iter().map(|h| ids[h]).collect();
+    store
+        .write_content({
+            let ordered = ordered.clone();
+            move |w| {
+                w.inbox(&ordered)?;
+                w.archive(&[ordered[1]])?;
+                w.delete_files(
+                    w.roles().combined_local_media,
+                    &[ordered[2]],
+                    Some("synthetic quality"),
+                )
+            }
+        })
+        .unwrap();
+    let (sub, full, empty) = store
+        .write(move |ctx| {
+            let sub = subscriptions::create_subscription(
+                ctx.conn(),
+                "quality",
+                &SubscriptionSettings::default(),
+            )?
+            .unwrap();
+            let mut q = QueryState::new("synthetic query");
+            q.display_name = Some("display, name".into());
+            let full = subscriptions::add_query(ctx.conn(), sub, &q, 123)?;
+            let empty = subscriptions::add_query(ctx.conn(), sub, &QueryState::new("empty"), 123)?;
+            let hashes = [
+                hashes[0],
+                hashes[1],
+                hashes[2],
+                hashes[0],
+                Sha256([170; 32]),
+            ];
+            let seeds: Vec<_> = hashes
+                .iter()
+                .enumerate()
+                .map(|(i, h)| NewFileSeed {
+                    seed_type: SeedType::Url,
+                    data: format!("https://quality.example/{i}"),
+                    data_for_comparison: format!("https://quality.example/{i}"),
+                    source_time: None,
+                    referral_url: None,
+                    meta: FileSeedMeta {
+                        hashes: vec![("sha256".into(), h.to_string())],
+                        ..FileSeedMeta::default()
+                    },
+                })
+                .collect();
+            queues::add_file_seeds(ctx.conn(), full, &seeds, false, 123)?;
+            Ok((sub, full, empty))
+        })
+        .unwrap();
+    let copied = Rc::new(RefCell::new(Vec::new()));
+    set_clipper({
+        let copied = copied.clone();
+        move |c| copied.borrow_mut().push(c.clone())
+    });
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let list = open_dialog(&ui, &bound);
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_edit();
+    let ordinary = bound
+        .edit_subscription
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(!ordinary.get_quality_visible());
+    ordinary.invoke_quality_menu(10.0, 10.0);
+    assert_eq!(ordinary.get_quality_panes().row_count(), 0);
+    ordinary.invoke_cancel();
+    store
+        .write(move |ctx| {
+            hydrus_store::settings::set(ctx.conn(), &hydrus_store::settings::AdvancedMode(true))
+        })
+        .unwrap();
+    list.invoke_edit();
+    let dialog = bound
+        .edit_subscription
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(dialog.get_quality_visible());
+    assert!(!dialog.get_can_quality());
+    dialog.invoke_add_query();
+    dialog.set_query_text("unsaved query".into());
+    dialog.invoke_query_apply();
+    click(&dialog, "unsaved query");
+    assert!(!dialog.get_can_quality());
+    dialog.invoke_quality_menu(10.0, 10.0);
+    assert_eq!(dialog.get_quality_panes().row_count(), 0);
+    let full_row = names(&dialog)
+        .iter()
+        .position(|n| n.starts_with("display, name"))
+        .unwrap();
+    let empty_row = names(&dialog).iter().position(|n| n == "empty").unwrap();
+    dialog.invoke_row_clicked(i32::try_from(full_row).unwrap(), false, false);
+    dialog.invoke_row_clicked(i32::try_from(empty_row).unwrap(), true, false);
+    let draft_row = names(&dialog)
+        .iter()
+        .position(|n| n == "unsaved query")
+        .unwrap();
+    dialog.invoke_row_clicked(i32::try_from(draft_row).unwrap(), true, false);
+    assert!(dialog.get_can_quality());
+    quality_menu(&dialog, "show");
+    assert!(dialog.get_quality_working());
+    let original_names = names(&dialog);
+    dialog.invoke_delete_queries();
+    assert_eq!(
+        names(&dialog),
+        original_names,
+        "disabled editor refuses mutation while worker runs"
+    );
+    quality_ready(&dialog);
+    let recorded = hydrus_testkit::fixture_json("subscription_quality.json");
+    assert_eq!(
+        dialog.get_asking_message().as_str(),
+        recorded["messages"][0].as_str().unwrap()
+    );
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1100, 760);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("subscription_quality.png"),
+        &pixels,
+        1100,
+        760,
+    )
+    .unwrap();
+    dialog.invoke_chosen(0);
+    quality_menu(&dialog, "copy csv data to clipboard");
+    quality_ready(&dialog);
+    assert_eq!(
+        copied.borrow().last(),
+        Some(&Clip::Text(
+            recorded["clipboard"][0].as_str().unwrap().into()
+        ))
+    );
+    assert_eq!(
+        store
+            .read(|c| subscriptions::queries(c, sub))
+            .unwrap()
+            .len(),
+        2,
+        "quality never saves a draft query"
+    );
+    store
+        .write_content(move |w| w.archive(&[ordered[0]]))
+        .unwrap();
+    quality_menu(&dialog, "show");
+    quality_ready(&dialog);
+    assert!(
+        dialog
+            .get_asking_message()
+            .contains("inbox 0 | archive 2 | deleted 2 | good 50%")
+    );
+    dialog.invoke_chosen(0);
+    let copied_before = copied.borrow().clone();
+    quality_menu(&dialog, "copy csv data to clipboard");
+    dialog.invoke_cancel();
+    std::thread::sleep(std::time::Duration::from_millis(30));
+    slint::platform::update_timers_and_animations();
+    assert_eq!(
+        *copied.borrow(),
+        copied_before,
+        "closing editor cancels stale worker publication"
+    );
+    dialog.invoke_quality_menu(10.0, 10.0);
+    assert_eq!(dialog.get_quality_panes().row_count(), 0);
+    list.invoke_edit();
+    let reopened = bound
+        .edit_subscription
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(names(&reopened).len(), 2);
+    click(&reopened, "empty");
+    store
+        .write(move |ctx| queues::delete_queue(ctx.conn(), empty))
+        .unwrap();
+    quality_menu(&reopened, "show");
+    quality_ready(&reopened);
+    assert!(
+        reopened
+            .get_asking_message()
+            .starts_with("Could not read query quality:")
+    );
+    reopened.invoke_chosen(0);
+    reopened.invoke_cancel();
+    assert!(store.read(|c| queues::queue(c, full)).unwrap().is_some());
+    list.invoke_cancel();
+}

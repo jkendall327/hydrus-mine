@@ -7,6 +7,7 @@ component FavouriteSubmenu inherits Rectangle {
     in property <string> label;
     in property <[ImportFavouriteRow]> rows;
     in property <bool> editing;
+    in property <bool> save-current-allowed: true;
     callback selected(string);
     callback add();
     callback save();
@@ -28,7 +29,7 @@ component FavouriteSubmenu inherits Rectangle {
                     for row in root.rows: Button { text: root.editing ? row.edit-label : row.label; clicked => { entries.close(); root.selected(row.name); } }
                     if root.editing: Rectangle { height: 1px; background: Theme.border; }
                     if root.editing: Button { text: "add new favourite"; clicked => { entries.close(); root.add(); } }
-                    if root.editing: Button { text: "save current value as new favourite"; clicked => { entries.close(); root.save(); } }
+                    if root.editing && root.save-current-allowed: Button { text: "save current value as new favourite"; clicked => { entries.close(); root.save(); } }
                 }
             }
         }
@@ -38,6 +39,7 @@ component FavouriteSubmenu inherits Rectangle {
 export component ImportFavouritesButton inherits Rectangle {
     in property <[ImportFavouriteRow]> rows;
     in property <bool> edit-allowed: true;
+    in property <bool> save-current-allowed: true;
     in property <bool> enabled: true;
     callback refresh();
     // load, custom load, copy, edit, add, save current, delete
@@ -67,7 +69,7 @@ export component ImportFavouritesButton inherits Rectangle {
                 if root.rows.length > 0: FavouriteSubmenu { label: "custom load"; rows: root.rows; selected(name) => { menu.close(); root.selected(1, name); } }
                 if root.rows.length > 0: FavouriteSubmenu { label: "copy"; rows: root.rows; selected(name) => { menu.close(); root.selected(2, name); } }
                 if root.edit-allowed: FavouriteSubmenu {
-                    label: "edit/add"; rows: root.rows; editing: true;
+                    label: "edit/add"; rows: root.rows; editing: true; save-current-allowed: root.save-current-allowed;
                     selected(name) => { menu.close(); root.selected(3, name); }
                     add => { menu.close(); root.selected(4, ""); }
                     save => { menu.close(); root.selected(5, ""); }

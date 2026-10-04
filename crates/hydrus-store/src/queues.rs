@@ -1116,6 +1116,62 @@ pub fn update_file_seed(conn: &Connection, seed: &FileSeed) -> Result<()> {
     Ok(())
 }
 
+/// Re-normalise a complete file log using current URL classes. Comparison
+/// duplicates collapse to the first seed in import order, preserving its ID,
+/// status, timestamps and metadata. Temporary comparison keys avoid unique-key
+/// conflicts even when retained identities exchange places.
+pub fn renormalise_file_seeds(
+    conn: &Connection,
+    queue: i64,
+    classes: &hydrus_core::url::UrlClasses,
+) -> Result<usize> {
+    let seeds = file_seeds(conn, queue)?;
+    let mut identities = BTreeSet::new();
+    let mut reserved: BTreeSet<(i64, String)> = seeds
+        .iter()
+        .map(|s| (s.seed_type as i64, s.data_for_comparison.clone()))
+        .collect();
+    let mut retained = Vec::new();
+    let mut removed = Vec::new();
+    for mut seed in seeds {
+        if seed.seed_type == SeedType::Url
+            && let Ok(data) = classes.normalise(&seed.data, true)
+        {
+            seed.data = data;
+            if let Ok(comparison) = classes.normalise(&seed.data, false) {
+                seed.data_for_comparison = comparison;
+            }
+        }
+        let identity = (seed.seed_type as i64, seed.data_for_comparison.clone());
+        reserved.insert(identity.clone());
+        if identities.insert(identity) {
+            retained.push(seed);
+        } else {
+            removed.push(seed.id);
+        }
+    }
+    let count = removed.len();
+    remove_file_seeds_by_id(conn, &removed)?;
+    let mut index = 0_u64;
+    for seed in &retained {
+        let temporary = loop {
+            let value = format!("\0hydrus-renormalise:{queue}:{index}");
+            index += 1;
+            if reserved.insert((seed.seed_type as i64, value.clone())) {
+                break value;
+            }
+        };
+        conn.prepare_cached(
+            "UPDATE file_seeds SET data_for_comparison = ? WHERE queue_id = ? AND seed_id = ?",
+        )?
+        .execute(params![temporary, queue, seed.id])?;
+    }
+    for seed in retained {
+        conn.prepare_cached("UPDATE file_seeds SET data = ?, data_for_comparison = ? WHERE queue_id = ? AND seed_id = ?")?.execute(params![seed.data, seed.data_for_comparison, queue, seed.id])?;
+    }
+    Ok(count)
+}
+
 /// How many of a queue's seeds have each status.
 pub fn file_seed_counts(conn: &Connection, queue: i64) -> Result<BTreeMap<SeedStatus, usize>> {
     let mut stmt = conn.prepare_cached(

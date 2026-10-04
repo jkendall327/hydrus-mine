@@ -1,5 +1,7 @@
 //! Reference Qt credential rows, advisory prompts, script identities and storage.
-use hydrus_gui_model::login_workflows::{CredentialsEditor, ScriptsEditor};
+use hydrus_gui_model::login_workflows::{
+    ArgumentKind, CookiesEditor, CredentialsEditor, ExampleDraft, ScriptsEditor, StepEditor,
+};
 use hydrus_legacy::{objects::logins as legacy, serialisable::SerialisableObject};
 use hydrus_parse::login::CredentialKind;
 use serde_json::{Value, json};
@@ -116,7 +118,6 @@ fn preserved_credentials_load_then_native_save_controls_domain_warnings() {
 #[test]
 fn login_step_content_replays_reference_unique_import_cancel_sort_and_request_cleanup() {
     use hydrus_downloader_exchange::{Definition, Native};
-    use hydrus_gui_model::login_workflows::StepEditor;
     use hydrus_parse::content::ContentKind;
     let fixture = hydrus_testkit::fixture_json("login_editors.json");
     let states = fixture["step_states"].as_array().unwrap();
@@ -266,4 +267,233 @@ fn domain_apply_preserves_concurrent_script_edits_and_rejects_domain_conflicts()
         "an old domain draft must not overwrite a newer save"
     );
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
+}
+
+#[test]
+fn request_arguments_replay_real_qt_rename_duplicates_blank_values_and_cancel() {
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let states = fixture["argument_states"].as_array().unwrap();
+    let step = legacy::login_step(
+        &SerialisableObject::from_tuple_str(&states[0]["state"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let mut editor = StepEditor::new(&step);
+    for state in &states[1..] {
+        let kind = match state["kind"].as_str().unwrap() {
+            "credential" => ArgumentKind::Credential,
+            "temporary" => ArgumentKind::Temporary,
+            _ => ArgumentKind::Static,
+        };
+        let values = state["answers"].as_array().unwrap();
+        if values.len() == 1 {
+            assert_eq!(
+                editor
+                    .set_argument(
+                        kind,
+                        None,
+                        values[0].as_str().unwrap().to_owned(),
+                        String::new()
+                    )
+                    .unwrap_err(),
+                state["prompts"][1]["warning"].as_str().unwrap()
+            );
+        } else if let Some(value) = values[1].as_str() {
+            let old = if state["action"] == "edit" {
+                editor.arguments(kind).keys().next().cloned()
+            } else {
+                None
+            };
+            editor
+                .set_argument(
+                    kind,
+                    old.as_deref(),
+                    values[0].as_str().unwrap().to_owned(),
+                    value.to_owned(),
+                )
+                .unwrap();
+        }
+        assert_eq!(
+            hydrus_downloader_exchange::logins::step_tuple(&editor.value()).unwrap(),
+            state["state"]
+        );
+    }
+    let before = editor.value();
+    assert!(
+        editor
+            .set_argument(
+                ArgumentKind::Static,
+                Some("lang"),
+                String::new(),
+                "bad".into()
+            )
+            .is_err()
+    );
+    assert_eq!(editor.value(), before);
+    editor.remove_argument(ArgumentKind::Static, "empty");
+    assert!(!editor.step.static_args.contains_key("empty"));
+    assert_eq!(editor.step.credentials["account"], "account_param");
+    assert_eq!(editor.step.temp_args["csrf"], "token");
+}
+
+#[test]
+fn cookie_requirements_match_real_qt_pair_edits_cancel_and_duplicate_looking_keys() {
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let mut script = manager(&fixture).scripts.remove(0);
+    let mut editor = CookiesEditor::new(&script.required_cookies);
+    for state in &fixture["cookie_states"].as_array().unwrap()[1..] {
+        let values = state["answers"].as_array().unwrap();
+        if let Some(value) = values[1].as_str() {
+            let index = if state["action"] == "edit" {
+                editor.rows.iter().position(|row| {
+                    row.name == hydrus_core::url::strings::StringMatch::fixed("token")
+                })
+            } else {
+                None
+            };
+            editor.put(
+                index,
+                hydrus_parse::login::CookieRequirement {
+                    name: hydrus_core::url::strings::StringMatch::fixed(
+                        values[0].as_str().unwrap(),
+                    ),
+                    value: hydrus_core::url::strings::StringMatch::fixed(value),
+                    reference_auxiliary: None,
+                },
+            );
+        }
+        script.required_cookies = editor.value();
+        assert_eq!(
+            hydrus_downloader_exchange::logins::script_tuple(&script).unwrap()[3][1],
+            state["state"]["value"]
+        );
+        assert_eq!(
+            json!(
+                editor
+                    .value()
+                    .iter()
+                    .map(|row| vec![
+                        row.name.describe(false, false),
+                        row.value.describe(false, false)
+                    ])
+                    .collect::<Vec<_>>()
+            ),
+            state["state"]["rows"]
+        );
+    }
+    assert_eq!(
+        editor.rows.len(),
+        3,
+        "independent Python matcher objects may look identical"
+    );
+    let order = editor.order();
+    editor.selection.select_many(&order[..2]);
+    editor.delete();
+    assert_eq!(editor.rows.len(), 1);
+    assert!(editor.selection.is_empty());
+}
+
+#[test]
+fn three_argument_lists_keep_independent_extended_selection_and_bulk_deletion() {
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let state = fixture["argument_states"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap();
+    let step = legacy::login_step(
+        &SerialisableObject::from_tuple_str(&state["state"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let mut editor = StepEditor::new(&step);
+    editor.select_arguments(ArgumentKind::Credential, 0, false, false);
+    editor.select_arguments(ArgumentKind::Static, 0, false, false);
+    editor.select_arguments(ArgumentKind::Static, 1, true, false);
+    editor.select_arguments(ArgumentKind::Temporary, 0, false, false);
+    assert_eq!(
+        editor.selected_arguments(ArgumentKind::Credential),
+        ["account"]
+    );
+    assert_eq!(
+        editor.selected_arguments(ArgumentKind::Static),
+        ["empty", "lang"]
+    );
+    assert_eq!(editor.selected_arguments(ArgumentKind::Temporary), ["csrf"]);
+    editor.delete_arguments(ArgumentKind::Static);
+    assert!(editor.step.static_args.is_empty());
+    assert_eq!(
+        editor.selected_arguments(ArgumentKind::Credential),
+        ["account"]
+    );
+    assert_eq!(editor.selected_arguments(ArgumentKind::Temporary), ["csrf"]);
+    assert_eq!(editor.step.credentials, step.credentials);
+    assert_eq!(editor.step.temp_args, step.temp_args);
+}
+
+#[test]
+fn example_domains_replay_reference_defaults_duplicate_errors_and_final_cancel_acceptance() {
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let mut rows = manager(&fixture).scripts.remove(0).examples;
+    for state in &fixture["example_states"].as_array().unwrap()[1..] {
+        let texts = state["texts"].as_array().unwrap();
+        if let Some(domain) = texts[0].as_str() {
+            let index = if state["action"] == "edit" {
+                rows.iter().position(|row| {
+                    row.domain == "another.example" || row.domain == "renamed.example"
+                })
+            } else {
+                None
+            };
+            let mut draft = ExampleDraft::new(index.map(|i| &rows[i]));
+            draft.domain = domain.to_owned();
+            match draft.validate_domain(&rows, index) {
+                Err(error) => assert_eq!(error, state["prompts"][1]["warning"].as_str().unwrap()),
+                Ok(()) => {
+                    if let Some(access) = state["access"].as_i64() {
+                        draft
+                            .select_access(hydrus_parse::login::Access::from_code(access).unwrap());
+                        let row = draft.value(texts[1].as_str()).unwrap();
+                        if let Some(index) = index {
+                            rows[index] = row;
+                        } else {
+                            rows.push(row);
+                        }
+                    }
+                }
+            }
+        }
+        rows.sort_by_cached_key(|row| {
+            (
+                row.domain.clone(),
+                row.access.label(),
+                row.description.clone(),
+            )
+        });
+        assert_eq!(
+            json!(
+                rows.iter()
+                    .map(|row| json!([row.domain, row.access.code(), row.description]))
+                    .collect::<Vec<_>>()
+            ),
+            state["state"]["value"]
+        );
+        assert_eq!(
+            json!(
+                rows.iter()
+                    .map(|row| json!([row.domain, row.access.label(), row.description]))
+                    .collect::<Vec<_>>()
+            ),
+            state["state"]["rows"]
+        );
+    }
+    let mut draft = ExampleDraft::new(None);
+    assert_eq!(draft.domain, "example.com");
+    assert_eq!(draft.access, hydrus_parse::login::Access::Nsfw);
+    draft.domain.clear();
+    assert!(draft.validate_domain(&rows, None).is_err());
+    draft.select_access(hydrus_parse::login::Access::UserPreferences);
+    assert_eq!(
+        draft.value(None).unwrap().description,
+        fixture["access_types"][3][2].as_str().unwrap()
+    );
+    assert!(draft.value(Some("")).is_err());
 }

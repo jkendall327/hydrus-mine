@@ -1,0 +1,3991 @@
+{
+  "controls": [
+    {
+      "key": "show_all_my_files_on_page_chooser",
+      "default": true,
+      "enabled": true
+    },
+    {
+      "key": "show_all_my_files_on_page_chooser_at_top",
+      "default": false,
+      "enabled": true
+    },
+    {
+      "key": "show_local_files_on_page_chooser",
+      "default": false,
+      "enabled": true
+    },
+    {
+      "key": "show_local_files_on_page_chooser_at_top",
+      "default": false,
+      "enabled": true
+    }
+  ],
+  "labels": [
+    "In new page chooser, show \"combined local file domains\" if appropriate:",
+    "  Put it at the top:",
+    "In new page chooser, show \"hydrus local file storage\":",
+    "  Put it at the top:"
+  ],
+  "services": [
+    {
+      "key": "6c6f63616c2066696c6573",
+      "name": "domain 01"
+    },
+    {
+      "key": "7272727272727272727272727272727272727272727272727272727272727272",
+      "name": "domain 02"
+    },
+    {
+      "key": "7373737373737373737373737373737373737373737373737373737373737373",
+      "name": "domain 03"
+    },
+    {
+      "key": "7474747474747474747474747474747474747474747474747474747474747474",
+      "name": "domain 04"
+    },
+    {
+      "key": "7575757575757575757575757575757575757575757575757575757575757575",
+      "name": "domain 05"
+    },
+    {
+      "key": "7676767676767676767676767676767676767676767676767676767676767676",
+      "name": "domain 06"
+    },
+    {
+      "key": "7777777777777777777777777777777777777777777777777777777777777777",
+      "name": "domain 07"
+    },
+    {
+      "key": "7878787878787878787878787878787878787878787878787878787878787878",
+      "name": "domain 08"
+    },
+    {
+      "key": "7979797979797979797979797979797979797979797979797979797979797979",
+      "name": "domain 09"
+    },
+    {
+      "key": "7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a",
+      "name": "domain 10"
+    }
+  ],
+  "builtin_names": {
+    "616c6c206c6f63616c206d65646961": "combined local file domains",
+    "7472617368": "trash",
+    "616c6c206c6f63616c2066696c6573": "hydrus local file storage"
+  },
+  "steps": [
+    {
+      "count": 1,
+      "flags": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "trash",
+        "",
+        "",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "trash",
+        "",
+        "",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "trash",
+        "",
+        "hydrus local file storage",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "domain 01",
+        "",
+        "trash",
+        "",
+        "hydrus local file storage",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        false,
+        true,
+        false,
+        false
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "trash",
+        "",
+        "",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        true,
+        false,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        false,
+        true,
+        false,
+        true
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "trash",
+        "",
+        "",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        true,
+        false,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "trash",
+        "",
+        "hydrus local file storage",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "domain 01",
+        "",
+        "trash",
+        "",
+        "hydrus local file storage",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "trash",
+        "",
+        "",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "trash",
+        "",
+        "",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        true,
+        false,
+        true,
+        false
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "trash",
+        "",
+        "hydrus local file storage",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        false,
+        true,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "domain 01",
+        "",
+        "trash",
+        "",
+        "hydrus local file storage",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "trash",
+        "",
+        "",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "trash",
+        "",
+        "",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "trash",
+        "",
+        "hydrus local file storage",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 1,
+      "flags": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "domain 01",
+        "",
+        "trash",
+        "",
+        "hydrus local file storage",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "domain 02",
+        "",
+        "trash",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "domain 02",
+        "",
+        "trash",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "labels": [
+        "",
+        "hydrus local file storage",
+        "",
+        "domain 02",
+        "",
+        "trash",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "labels": [
+        "",
+        "trash",
+        "",
+        "domain 01",
+        "",
+        "domain 02",
+        "",
+        "hydrus local file storage",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        false,
+        true,
+        false,
+        false
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "domain 02",
+        "",
+        "trash",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        true,
+        false,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        false,
+        true,
+        false,
+        true
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "domain 02",
+        "",
+        "trash",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        true,
+        false,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "labels": [
+        "",
+        "hydrus local file storage",
+        "",
+        "domain 02",
+        "",
+        "trash",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "labels": [
+        "",
+        "trash",
+        "",
+        "domain 01",
+        "",
+        "domain 02",
+        "",
+        "hydrus local file storage",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "labels": [
+        "",
+        "trash",
+        "",
+        "domain 02",
+        "",
+        "combined local file domains",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "616c6c206c6f63616c206d65646961",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "labels": [
+        "",
+        "trash",
+        "",
+        "domain 02",
+        "",
+        "combined local file domains",
+        "",
+        "domain 01",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "616c6c206c6f63616c206d65646961",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        true,
+        false,
+        true,
+        false
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "trash",
+        "hydrus local file storage",
+        "",
+        "domain 01",
+        "domain 02",
+        "combined local file domains"
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "616c6c206c6f63616c206d65646961",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        false,
+        true,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "combined local file domains",
+        "trash",
+        "",
+        "hydrus local file storage",
+        "domain 01",
+        "domain 02"
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "616c6c206c6f63616c206d65646961",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "labels": [
+        "",
+        "trash",
+        "",
+        "domain 01",
+        "",
+        "domain 02",
+        "",
+        "combined local file domains",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "616c6c206c6f63616c206d65646961",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "labels": [
+        "",
+        "trash",
+        "",
+        "domain 01",
+        "",
+        "domain 02",
+        "",
+        "combined local file domains",
+        ""
+      ],
+      "choices": [
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "616c6c206c6f63616c206d65646961",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "trash",
+        "hydrus local file storage",
+        "",
+        "combined local file domains",
+        "domain 01",
+        "domain 02"
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "616c6c206c6f63616c206d65646961",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 2,
+      "flags": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "labels": [
+        "",
+        "",
+        "",
+        "domain 02",
+        "trash",
+        "",
+        "hydrus local file storage",
+        "combined local file domains",
+        "domain 01"
+      ],
+      "choices": [
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7472617368",
+          "current": [
+            "7472617368"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "616c6c206c6f63616c206d65646961",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "labels": [
+        "domain 07",
+        "domain 08",
+        "domain 09",
+        "domain 04",
+        "domain 05",
+        "domain 06",
+        "domain 01",
+        "domain 02",
+        "domain 03"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7979797979797979797979797979797979797979797979797979797979797979",
+          "current": [
+            "7979797979797979797979797979797979797979797979797979797979797979"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "labels": [
+        "domain 07",
+        "domain 08",
+        "domain 09",
+        "domain 04",
+        "domain 05",
+        "domain 06",
+        "domain 01",
+        "domain 02",
+        "domain 03"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7979797979797979797979797979797979797979797979797979797979797979",
+          "current": [
+            "7979797979797979797979797979797979797979797979797979797979797979"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "labels": [
+        "domain 07",
+        "domain 08",
+        "domain 09",
+        "domain 04",
+        "domain 05",
+        "domain 06",
+        "domain 01",
+        "domain 02",
+        "domain 03"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7979797979797979797979797979797979797979797979797979797979797979",
+          "current": [
+            "7979797979797979797979797979797979797979797979797979797979797979"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "labels": [
+        "domain 06",
+        "domain 07",
+        "domain 08",
+        "domain 03",
+        "domain 04",
+        "domain 05",
+        "hydrus local file storage",
+        "domain 01",
+        "domain 02"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        false,
+        true,
+        false,
+        false
+      ],
+      "labels": [
+        "domain 07",
+        "domain 08",
+        "domain 09",
+        "domain 04",
+        "domain 05",
+        "domain 06",
+        "domain 01",
+        "domain 02",
+        "domain 03"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7979797979797979797979797979797979797979797979797979797979797979",
+          "current": [
+            "7979797979797979797979797979797979797979797979797979797979797979"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        true,
+        false,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        false,
+        true,
+        false,
+        true
+      ],
+      "labels": [
+        "domain 07",
+        "domain 08",
+        "domain 09",
+        "domain 04",
+        "domain 05",
+        "domain 06",
+        "domain 01",
+        "domain 02",
+        "domain 03"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7979797979797979797979797979797979797979797979797979797979797979",
+          "current": [
+            "7979797979797979797979797979797979797979797979797979797979797979"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        true,
+        false,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "labels": [
+        "domain 07",
+        "domain 08",
+        "domain 09",
+        "domain 04",
+        "domain 05",
+        "domain 06",
+        "domain 01",
+        "domain 02",
+        "domain 03"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7979797979797979797979797979797979797979797979797979797979797979",
+          "current": [
+            "7979797979797979797979797979797979797979797979797979797979797979"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "labels": [
+        "domain 06",
+        "domain 07",
+        "domain 08",
+        "domain 03",
+        "domain 04",
+        "domain 05",
+        "hydrus local file storage",
+        "domain 01",
+        "domain 02"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "labels": [
+        "domain 07",
+        "domain 08",
+        "domain 09",
+        "domain 04",
+        "domain 05",
+        "domain 06",
+        "domain 01",
+        "domain 02",
+        "domain 03"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7979797979797979797979797979797979797979797979797979797979797979",
+          "current": [
+            "7979797979797979797979797979797979797979797979797979797979797979"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "labels": [
+        "domain 07",
+        "domain 08",
+        "domain 09",
+        "domain 04",
+        "domain 05",
+        "domain 06",
+        "domain 01",
+        "domain 02",
+        "domain 03"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7979797979797979797979797979797979797979797979797979797979797979",
+          "current": [
+            "7979797979797979797979797979797979797979797979797979797979797979"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        true,
+        false,
+        true,
+        false
+      ],
+      "labels": [
+        "domain 07",
+        "domain 08",
+        "domain 09",
+        "domain 04",
+        "domain 05",
+        "domain 06",
+        "domain 01",
+        "domain 02",
+        "domain 03"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7979797979797979797979797979797979797979797979797979797979797979",
+          "current": [
+            "7979797979797979797979797979797979797979797979797979797979797979"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        false,
+        true,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "labels": [
+        "domain 06",
+        "domain 07",
+        "domain 08",
+        "domain 03",
+        "domain 04",
+        "domain 05",
+        "hydrus local file storage",
+        "domain 01",
+        "domain 02"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "labels": [
+        "domain 06",
+        "domain 07",
+        "domain 08",
+        "domain 03",
+        "domain 04",
+        "domain 05",
+        "combined local file domains",
+        "domain 01",
+        "domain 02"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "616c6c206c6f63616c206d65646961",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "labels": [
+        "domain 06",
+        "domain 07",
+        "domain 08",
+        "domain 03",
+        "domain 04",
+        "domain 05",
+        "combined local file domains",
+        "domain 01",
+        "domain 02"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "616c6c206c6f63616c206d65646961",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "labels": [
+        "domain 06",
+        "domain 07",
+        "domain 08",
+        "domain 03",
+        "domain 04",
+        "domain 05",
+        "combined local file domains",
+        "domain 01",
+        "domain 02"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7878787878787878787878787878787878787878787878787878787878787878",
+          "current": [
+            "7878787878787878787878787878787878787878787878787878787878787878"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "616c6c206c6f63616c206d65646961",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "count": 10,
+      "flags": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "labels": [
+        "domain 05",
+        "domain 06",
+        "domain 07",
+        "domain 02",
+        "domain 03",
+        "domain 04",
+        "hydrus local file storage",
+        "combined local file domains",
+        "domain 01"
+      ],
+      "choices": [
+        {
+          "button": 1,
+          "kind": "page",
+          "key": "7575757575757575757575757575757575757575757575757575757575757575",
+          "current": [
+            "7575757575757575757575757575757575757575757575757575757575757575"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 2,
+          "kind": "page",
+          "key": "7676767676767676767676767676767676767676767676767676767676767676",
+          "current": [
+            "7676767676767676767676767676767676767676767676767676767676767676"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 3,
+          "kind": "page",
+          "key": "7777777777777777777777777777777777777777777777777777777777777777",
+          "current": [
+            "7777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 4,
+          "kind": "page",
+          "key": "7272727272727272727272727272727272727272727272727272727272727272",
+          "current": [
+            "7272727272727272727272727272727272727272727272727272727272727272"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 5,
+          "kind": "page",
+          "key": "7373737373737373737373737373737373737373737373737373737373737373",
+          "current": [
+            "7373737373737373737373737373737373737373737373737373737373737373"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 6,
+          "kind": "page",
+          "key": "7474747474747474747474747474747474747474747474747474747474747474",
+          "current": [
+            "7474747474747474747474747474747474747474747474747474747474747474"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 7,
+          "kind": "page",
+          "key": "616c6c206c6f63616c2066696c6573",
+          "current": [
+            "616c6c206c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 8,
+          "kind": "page",
+          "key": "616c6c206c6f63616c206d65646961",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": []
+        },
+        {
+          "button": 9,
+          "kind": "page",
+          "key": "6c6f63616c2066696c6573",
+          "current": [
+            "6c6f63616c2066696c6573"
+          ],
+          "deleted": []
+        }
+      ],
+      "cancelled_result": null,
+      "applied_flags": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "enabled": [
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  ]
+}

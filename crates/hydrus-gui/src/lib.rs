@@ -46,16 +46,20 @@ mod folders_window;
 mod force_filetype_window;
 pub mod formula_window;
 mod gallery;
+pub mod gallery_source_window;
 mod grid;
 pub mod headless;
 pub mod import_options_favourites_window;
 pub mod import_options_overwrite_window;
+pub mod import_options_panel_window;
 mod import_options_window;
 mod import_window;
 mod importer_list_menu;
 pub mod locations_window;
+pub mod login_cookies_window;
 pub mod login_credential_window;
 pub mod login_domains_window;
+pub mod login_example_window;
 pub mod login_step_window;
 pub mod login_test_window;
 pub mod login_workflows_window;
@@ -79,16 +83,19 @@ mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
 pub mod regex_favourites_window;
+pub mod search_log_import_window;
 mod search_log_window;
 pub mod services_editor_window;
 pub mod services_review_window;
 pub mod session_autosave;
 mod session_dialog;
+pub mod session_startup;
 pub mod sidecars_window;
 pub mod simple_formulae_window;
 pub mod slideshow;
 pub mod still;
 pub mod string_processor_window;
+mod subscription_quality_control;
 mod subscriptions_window;
 mod tab_context_window;
 pub(crate) mod tag_display_window;
@@ -99,6 +106,8 @@ pub mod thumbnail_menu;
 mod thumbnails;
 mod unlock;
 mod viewer;
+pub mod viewer_closing;
+pub mod viewer_focus;
 pub mod viewer_menu;
 mod viewer_presentation;
 mod watcher;
@@ -447,7 +456,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // is in use)
     let scrolls: Rc<RefCell<std::collections::HashMap<hydrus_core::pages::PageKey, f32>>> =
         Rc::default();
+    let viewer_exit_scrolls: Rc<
+        RefCell<std::collections::HashMap<hydrus_core::pages::PageKey, HashId>>,
+    > = Rc::default();
+    let reveal_viewer_exit: Rc<dyn Fn(hydrus_core::pages::PageKey, HashId)> = Rc::new({
+        let pending = viewer_exit_scrolls.clone();
+        move |key, file| {
+            pending.borrow_mut().insert(key, file);
+        }
+    });
     let change_pages = {
+        let viewer_exit_scrolls = viewer_exit_scrolls.clone();
+        let scrolls = scrolls.clone();
         let pages = pages.clone();
         let current = current.clone();
         let rows = rows.clone();
@@ -472,12 +492,25 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             *current.borrow_mut() = opened.clone();
             let key = pages.borrow().shown().key;
             let scroll = scrolls.borrow().get(&key).copied().unwrap_or(0.0);
-            rows.set_page(opened);
+            rows.set_page(opened.clone());
             if let Some(window) = weak.upgrade() {
                 show_tabs(&window, &pages.borrow());
                 window.set_grid_scroll(scroll);
             }
             shown(false);
+            if let Some(file) = viewer_exit_scrolls.borrow_mut().remove(&key) {
+                let page = opened.borrow();
+                let index = page
+                    .results()
+                    .iter()
+                    .position(|&item| page.files_of(item).contains(&file));
+                if let (Some(index), Some(window)) = (index, weak.upgrade()) {
+                    window.set_viewer_reveal_index(i32::try_from(index).unwrap_or(i32::MAX));
+                    window.set_viewer_reveal_request(
+                        window.get_viewer_reveal_request().wrapping_add(1),
+                    );
+                }
+            }
             if let (Err(e), Some(window)) = (result, weak.upgrade()) {
                 window.set_error(e.into());
             }
@@ -1042,6 +1075,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             })
         },
         png_export_window::Slots::default(),
+        search_log_import_window::Slots::default(),
     );
     // the page's importer's file log
     let file_log_slot: Rc<RefCell<Option<FileLogWindow>>> = Rc::default();
@@ -2357,7 +2391,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     log: &log,
                     open_files: &open_files,
                     ask: &ask,
-                    shown: &shown,
+                    shown: Rc::new(shown.clone()),
                 },
                 &action,
             );
@@ -2796,6 +2830,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // the media viewer on files not a page's (a duplicates rule's actioned
     // pair, say)
     *duplicates.open_viewer.borrow_mut() = Some(Rc::new({
+        let weak_main = window.as_weak();
+        let reveal_viewer_exit = reveal_viewer_exit.clone();
         let page = page.clone();
         let viewer = viewer.clone();
         let viewing = viewing.clone();
@@ -2818,6 +2854,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             };
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
+                closing_owner: viewer_closing::Owner::new(
+                    None,
+                    weak_main.clone(),
+                    change_pages.clone(),
+                    reveal_viewer_exit.clone(),
+                ),
                 viewing: viewing.clone(),
                 removed: removed.clone(),
                 tags_changed: tags_changed.clone(),
@@ -2839,6 +2881,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     }));
     window.on_thumbnail_activated({
+        let weak_main = window.as_weak();
+        let origin_pages = pages.clone();
+        let reveal_viewer_exit = reveal_viewer_exit.clone();
         let page = page.clone();
         let viewer = viewer.clone();
         let viewing = viewing.clone();
@@ -2852,8 +2897,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_embedded_metadata = open_embedded_metadata.clone();
         let files_changed = files_changed.clone();
         move |index| {
-            let page = page();
-            let page = page.borrow();
+            let source_page = page();
+            let original_key = origin_pages.borrow().shown().key;
+            let closing_owner = viewer_closing::Owner::new(
+                Some((original_key, Rc::downgrade(&source_page))),
+                weak_main.clone(),
+                change_pages.clone(),
+                reveal_viewer_exit.clone(),
+            );
+            let page = source_page.borrow();
             // (over all the page's files, from the item's first, as the
             // reference's `_LaunchMediaViewer` opens)
             let files = page.files();
@@ -2868,6 +2920,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let model = model.with_location(page.location().clone());
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
+                closing_owner,
                 viewing: viewing.clone(),
                 removed: removed.clone(),
                 tags_changed: tags_changed.clone(),
@@ -4131,6 +4184,7 @@ type OpenOnFiles = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn()>
 /// What a viewer tells its page of, and how it opens manage tags and
 /// notes.
 struct ViewerHooks {
+    closing_owner: Rc<viewer_closing::Owner>,
     /// The viewer and the file it shows, for the Client API.
     viewing: Viewing,
     removed: Removed,
@@ -4177,6 +4231,7 @@ fn open_viewer(
     hooks: ViewerHooks,
 ) -> Result<MediaViewerWindow, slint::PlatformError> {
     let ViewerHooks {
+        closing_owner,
         viewing,
         removed,
         tags_changed,
@@ -4212,10 +4267,13 @@ fn open_viewer(
                 .recenter_on_resize
         }
     });
+    let native_focus = viewer_focus::NativeFocus::new(&window);
     window.on_presentation_settings_changed({
+        let native_focus = native_focus.clone();
         let weak = window.as_weak();
         let model = model.clone();
         move || {
+            native_focus.watch_native();
             if let Some(window) = weak.upgrade() {
                 let model = model.borrow();
                 viewer_presentation::refresh(&window, model.store(), model.current());
@@ -4348,6 +4406,13 @@ fn open_viewer(
             viewer_presentation::refresh(&window, model.store(), model.current());
             let shown = viewer::shown(model.store(), model.current());
             window.set_info_line(shown.line.into());
+            window.set_location_strings(ModelRc::new(VecModel::from(
+                shown
+                    .locations
+                    .into_iter()
+                    .map(slint::SharedString::from)
+                    .collect::<Vec<_>>(),
+            )));
             window.set_file_inbox(shown.inbox);
             window.set_file_trashed(shown.trashed);
             window.set_file_local(shown.local);
@@ -5182,7 +5247,18 @@ fn open_viewer(
         let weak = window.as_weak();
         let slot = slot.clone();
         let viewing = viewing.clone();
+        let model = model.clone();
         move || {
+            let Some(window) = weak.upgrade() else { return };
+            let current = slot
+                .borrow()
+                .as_ref()
+                .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
+            if !current {
+                return;
+            }
+            let exit = model.borrow().exit_media();
+            closing_owner.closed(&store, exit);
             viewing.borrow_mut().take();
             // (stops playing at once)
             scanning.stop();
@@ -5214,6 +5290,7 @@ fn open_viewer(
     });
     windows::place(window.window(), &settings_frame);
     window.show()?;
+    native_focus.watch_native();
     Ok(window)
 }
 

@@ -1,0 +1,632 @@
+{
+  "options": {
+    "controls": {
+      "listbook": false,
+      "parents": true,
+      "expanded": true,
+      "siblings": true
+    },
+    "before_apply": {
+      "listbook": false,
+      "parents": true,
+      "expanded": true,
+      "siblings": true
+    },
+    "cancelled": {
+      "listbook": false,
+      "parents": true,
+      "expanded": true,
+      "siblings": true
+    },
+    "applied": {
+      "listbook": true,
+      "parents": false,
+      "expanded": false,
+      "siblings": false
+    },
+    "global_after": {
+      "listbook": false,
+      "parents": true,
+      "expanded": true,
+      "siblings": true
+    }
+  },
+  "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+  ],
+  "corpus": [
+    {
+      "tag": "parity:amber",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    },
+    {
+      "tag": "parity:amber old",
+      "hashes": [
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    }
+  ],
+  "siblings": [
+    [
+      "parity:amber old",
+      "parity:amber"
+    ]
+  ],
+  "parents": [
+    [
+      "parity:amber",
+      "category:colour"
+    ],
+    [
+      "category:colour",
+      "series:root"
+    ]
+  ],
+  "cases": [
+    {
+      "preferences": {
+        "listbook": false,
+        "parents": false,
+        "expanded": false,
+        "siblings": false
+      },
+      "topology": {
+        "manage": "BetterNotebook",
+        "siblings": "BetterNotebook",
+        "parents": "BetterNotebook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1)"
+          ]
+        }
+      ]
+    },
+    {
+      "preferences": {
+        "listbook": false,
+        "parents": false,
+        "expanded": false,
+        "siblings": true
+      },
+      "topology": {
+        "manage": "BetterNotebook",
+        "siblings": "BetterNotebook",
+        "parents": "BetterNotebook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1) → parity:amber"
+          ]
+        }
+      ]
+    },
+    {
+      "preferences": {
+        "listbook": false,
+        "parents": false,
+        "expanded": true,
+        "siblings": false
+      },
+      "topology": {
+        "manage": "BetterNotebook",
+        "siblings": "BetterNotebook",
+        "parents": "BetterNotebook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1)"
+          ]
+        }
+      ]
+    },
+    {
+      "preferences": {
+        "listbook": false,
+        "parents": false,
+        "expanded": true,
+        "siblings": true
+      },
+      "topology": {
+        "manage": "BetterNotebook",
+        "siblings": "BetterNotebook",
+        "parents": "BetterNotebook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1) → parity:amber"
+          ]
+        }
+      ]
+    },
+    {
+      "preferences": {
+        "listbook": false,
+        "parents": true,
+        "expanded": false,
+        "siblings": false
+      },
+      "topology": {
+        "manage": "BetterNotebook",
+        "siblings": "BetterNotebook",
+        "parents": "BetterNotebook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2) (2 parents)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1) (2 parents)"
+          ]
+        }
+      ]
+    },
+    {
+      "preferences": {
+        "listbook": false,
+        "parents": true,
+        "expanded": false,
+        "siblings": true
+      },
+      "topology": {
+        "manage": "BetterNotebook",
+        "siblings": "BetterNotebook",
+        "parents": "BetterNotebook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2) (2 parents)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1) → parity:amber (2 parents)"
+          ]
+        }
+      ]
+    },
+    {
+      "preferences": {
+        "listbook": false,
+        "parents": true,
+        "expanded": true,
+        "siblings": false
+      },
+      "topology": {
+        "manage": "BetterNotebook",
+        "siblings": "BetterNotebook",
+        "parents": "BetterNotebook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2)",
+            "    category:colour",
+            "    series:root"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1)",
+            "    category:colour",
+            "    series:root"
+          ]
+        }
+      ],
+      "parent_activation": {
+        "physical_row": 11,
+        "logical_tag": "parity:amber old",
+        "passed_tags": [
+          "parity:amber old"
+        ],
+        "activated": true
+      }
+    },
+    {
+      "preferences": {
+        "listbook": false,
+        "parents": true,
+        "expanded": true,
+        "siblings": true
+      },
+      "topology": {
+        "manage": "BetterNotebook",
+        "siblings": "BetterNotebook",
+        "parents": "BetterNotebook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2)",
+            "    category:colour",
+            "    series:root"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1) → parity:amber",
+            "    category:colour",
+            "    series:root"
+          ]
+        }
+      ],
+      "parent_activation": {
+        "physical_row": 11,
+        "logical_tag": "parity:amber old",
+        "passed_tags": [
+          "parity:amber old"
+        ],
+        "activated": true
+      }
+    },
+    {
+      "preferences": {
+        "listbook": true,
+        "parents": false,
+        "expanded": false,
+        "siblings": false
+      },
+      "topology": {
+        "manage": "ListBook",
+        "siblings": "ListBook",
+        "parents": "ListBook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1)"
+          ]
+        }
+      ]
+    },
+    {
+      "preferences": {
+        "listbook": true,
+        "parents": false,
+        "expanded": false,
+        "siblings": true
+      },
+      "topology": {
+        "manage": "ListBook",
+        "siblings": "ListBook",
+        "parents": "ListBook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1) → parity:amber"
+          ]
+        }
+      ]
+    },
+    {
+      "preferences": {
+        "listbook": true,
+        "parents": false,
+        "expanded": true,
+        "siblings": false
+      },
+      "topology": {
+        "manage": "ListBook",
+        "siblings": "ListBook",
+        "parents": "ListBook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1)"
+          ]
+        }
+      ]
+    },
+    {
+      "preferences": {
+        "listbook": true,
+        "parents": false,
+        "expanded": true,
+        "siblings": true
+      },
+      "topology": {
+        "manage": "ListBook",
+        "siblings": "ListBook",
+        "parents": "ListBook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1) → parity:amber"
+          ]
+        }
+      ]
+    },
+    {
+      "preferences": {
+        "listbook": true,
+        "parents": true,
+        "expanded": false,
+        "siblings": false
+      },
+      "topology": {
+        "manage": "ListBook",
+        "siblings": "ListBook",
+        "parents": "ListBook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2) (2 parents)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1) (2 parents)"
+          ]
+        }
+      ]
+    },
+    {
+      "preferences": {
+        "listbook": true,
+        "parents": true,
+        "expanded": false,
+        "siblings": true
+      },
+      "topology": {
+        "manage": "ListBook",
+        "siblings": "ListBook",
+        "parents": "ListBook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2) (2 parents)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1) → parity:amber (2 parents)"
+          ]
+        }
+      ]
+    },
+    {
+      "preferences": {
+        "listbook": true,
+        "parents": true,
+        "expanded": true,
+        "siblings": false
+      },
+      "topology": {
+        "manage": "ListBook",
+        "siblings": "ListBook",
+        "parents": "ListBook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2)",
+            "    category:colour",
+            "    series:root"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1)",
+            "    category:colour",
+            "    series:root"
+          ]
+        }
+      ],
+      "parent_activation": {
+        "physical_row": 11,
+        "logical_tag": "parity:amber old",
+        "passed_tags": [
+          "parity:amber old"
+        ],
+        "activated": true
+      }
+    },
+    {
+      "preferences": {
+        "listbook": true,
+        "parents": true,
+        "expanded": true,
+        "siblings": true
+      },
+      "topology": {
+        "manage": "ListBook",
+        "siblings": "ListBook",
+        "parents": "ListBook"
+      },
+      "services": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber (2)",
+            "    category:colour",
+            "    series:root"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old (1) → parity:amber",
+            "    category:colour",
+            "    series:root"
+          ]
+        }
+      ],
+      "parent_activation": {
+        "physical_row": 11,
+        "logical_tag": "parity:amber old",
+        "passed_tags": [
+          "parity:amber old"
+        ],
+        "activated": true
+      }
+    }
+  ]
+}

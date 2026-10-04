@@ -13,6 +13,15 @@ use hydrus_store::content::MappingAction;
 
 use crate::write_autocomplete::WriteAutocomplete;
 
+/// A rendered row retains its logical tag even when displaying an implied parent.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TagRow {
+    pub tag: String,
+    pub colour_tag: String,
+    pub label: String,
+    pub parent_row: bool,
+}
+
 pub struct ManageTags {
     store: Arc<Store>,
     files: Vec<HashId>,
@@ -26,6 +35,7 @@ pub struct ManageTags {
     /// to the files lacking it, or removed from them all.
     staged: Vec<BTreeMap<String, bool>>,
     input: WriteAutocomplete,
+    dialog_preferences: hydrus_store::tag_editing::TagEditingSettings,
 }
 
 impl std::fmt::Debug for ManageTags {
@@ -85,6 +95,7 @@ impl ManageTags {
             service,
             stored,
             input,
+            dialog_preferences: preference,
         })
     }
 
@@ -171,7 +182,7 @@ impl ManageTags {
     /// The tag list's rows: each tag as shown, with how many of the files
     /// have it when not all do (`tag (2)`), sorted as the media viewer's
     /// list is; each as (tag, row).
-    pub fn rows(&self) -> Vec<(String, String)> {
+    fn plain_rows(&self) -> Vec<(String, String)> {
         use hydrus_core::tag_sort::sort_tags;
         let presentation: hydrus_core::tag_presentation::TagPresentation = self
             .store
@@ -195,6 +206,90 @@ impl ManageTags {
                 (tag, row)
             })
             .collect()
+    }
+
+    /// Preferences are defaults captured when this dialog opens, as in Qt.
+    pub fn dialog_preferences(&self) -> &hydrus_store::tag_editing::TagEditingSettings {
+        &self.dialog_preferences
+    }
+    pub fn rows(&self) -> Vec<(String, String)> {
+        self.display_rows()
+            .into_iter()
+            .map(|row| (row.tag, row.label))
+            .collect()
+    }
+    pub fn display_rows(&self) -> Vec<TagRow> {
+        let rows = self.plain_rows();
+        let presentation: hydrus_core::tag_presentation::TagPresentation = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let snapshot = self.store.snapshot();
+        let graph = snapshot.display.get(self.services[self.service].0);
+        let details = self
+            .store
+            .read(|conn| {
+                let mut details = BTreeMap::new();
+                for (tag, _) in &rows {
+                    let Some(cleaned) = Tag::new(tag) else {
+                        continue;
+                    };
+                    let Some(id) = hydrus_store::master::tag_id(conn, &cleaned)? else {
+                        continue;
+                    };
+                    let ideal = graph.ideal(id);
+                    let mut ids = graph.ancestors(id).to_vec();
+                    ids.push(ideal);
+                    let texts = hydrus_store::master::tags(conn, &ids)?;
+                    let ideal = (ideal != id).then(|| texts[&ideal].as_str().to_owned());
+                    let mut parents: Vec<_> = graph
+                        .ancestors(id)
+                        .iter()
+                        .map(|id| texts[id].as_str().to_owned())
+                        .collect();
+                    hydrus_core::sort::human_sort(&mut parents);
+                    details.insert(tag.clone(), (ideal, parents));
+                }
+                Ok(details)
+            })
+            .unwrap_or_default();
+        let preferences = &self.dialog_preferences;
+        let mut out = Vec::new();
+        for (tag, mut label) in rows {
+            let (ideal, parents) = details.get(&tag).cloned().unwrap_or_default();
+            if preferences.tag_list_show_siblings
+                && let Some(ideal) = ideal
+            {
+                label.push_str(&presentation.sibling_connector);
+                label.push_str(&ideal);
+            }
+            if preferences.tag_list_show_parents
+                && !preferences.tag_list_expand_parents
+                && !parents.is_empty()
+            {
+                label.push_str(&format!(
+                    " ({} parents)",
+                    hydrus_core::numbers::human_int(parents.len() as u64)
+                ));
+            }
+            out.push(TagRow {
+                tag: tag.clone(),
+                colour_tag: tag.clone(),
+                label,
+                parent_row: false,
+            });
+            if preferences.tag_list_show_parents && preferences.tag_list_expand_parents {
+                for parent in parents {
+                    out.push(TagRow {
+                        tag: tag.clone(),
+                        colour_tag: parent.clone(),
+                        label: format!("    {parent}"),
+                        parent_row: true,
+                    });
+                }
+            }
+        }
+        out
     }
 
     /// Enter a tag, as typed: added to the files that lack it, or, if

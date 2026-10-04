@@ -18,6 +18,9 @@ export component WriteTagInput inherits FocusScope {
     callback move-highlight(int);
     callback chosen(int);
     callback context-menu(int, length, length);
+    callback domain-menu(bool,length,length);
+    in property <string> file-label;
+    in property <string> tag-label;
     callback paste(bool) -> bool;
     forward-focus: input;
     capture-key-pressed(event) => {
@@ -42,6 +45,11 @@ export component WriteTagInput inherits FocusScope {
                 accepted => { root.entered(); }
             }
             Button { enabled: root.enabled; text: "paste"; clicked => { root.paste(true); } }
+        }
+        HorizontalLayout {
+            spacing: 4px;
+            Button {text:root.file-label;enabled:root.enabled;clicked=>{root.domain-menu(false,self.absolute-position.x,self.absolute-position.y+self.height);} }
+            Button {text:root.tag-label;enabled:root.enabled;clicked=>{root.domain-menu(true,self.absolute-position.x,self.absolute-position.y+self.height);} }
         }
         ComboBox {
             enabled: root.enabled;
@@ -140,6 +148,9 @@ export component WriteTagsWindow inherits Window {
     callback move-highlight(int);
     callback chosen(int);
     callback context-menu(int, length, length);
+    callback domain-menu(bool,length,length);
+    in property <string> file-label;
+    in property <string> tag-label;
     callback paste(bool) -> bool;
     callback answered(bool);
     callback remove(int);
@@ -176,6 +187,8 @@ export component WriteTagsWindow inherits Window {
                 move-highlight(by) => { root.move-highlight(by); }
                 chosen(i) => { root.chosen(i); }
                 context-menu(i,x,y) => { root.context-menu(i,x,y); }
+                file-label:root.file-label;tag-label:root.tag-label;
+                domain-menu(tags,x,y)=>{root.domain-menu(tags,x,y);}
                 paste(button) => { root.paste(button) }
             }
             if root.question != "": Text { text: "Want to paste everything?"; color: Theme.text; }

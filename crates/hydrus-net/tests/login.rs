@@ -305,7 +305,7 @@ fn final_outcomes_guard_script_identity_and_preserve_domain_preferences() {
         match outcome {
             Outcome::Success => assert_eq!(domain.validity, Validity::Valid),
             Outcome::Network(_) | Outcome::Cancelled => {
-                assert_eq!(domain.no_work_until, 1000 + 4 * 3600)
+                assert_eq!(domain.no_work_until, 1000 + 4 * 3600);
             }
             _ => assert_eq!(domain.validity, Validity::Invalid),
         }
@@ -313,14 +313,16 @@ fn final_outcomes_guard_script_identity_and_preserve_domain_preferences() {
 }
 #[test]
 fn request_plan_replaces_www_and_orders_static_credentials_then_temporary_values() {
-    let mut step = hydrus_parse::login::LoginStep::default();
-    step.subdomain = Some("auth".into());
-    step.static_args = BTreeMap::from([
-        ("same".into(), "static".into()),
-        ("z".into(), "last".into()),
-    ]);
-    step.credentials = BTreeMap::from([("user".into(), "same".into())]);
-    step.temp_args = BTreeMap::from([("csrf".into(), "same".into())]);
+    let step = hydrus_parse::login::LoginStep {
+        subdomain: Some("auth".into()),
+        static_args: BTreeMap::from([
+            ("same".into(), "static".into()),
+            ("z".into(), "last".into()),
+        ]),
+        credentials: BTreeMap::from([("user".into(), "same".into())]),
+        temp_args: BTreeMap::from([("csrf".into(), "same".into())]),
+        ..hydrus_parse::login::LoginStep::default()
+    };
     let credentials = [("user".into(), "credential".into())].into();
     let variables = [("csrf".into(), "temporary".into())].into();
     let planned = login::plan(&step, "www.login.example", &credentials, &variables, None).unwrap();

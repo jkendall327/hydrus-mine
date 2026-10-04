@@ -41,6 +41,9 @@ export component LoginScriptWindow inherits Window {
     in property <[TableRow]> steps;
     in property <[TableRow]> cookies;
     in property <[TableRow]> examples;
+    in property <bool> one-example;
+    in property <bool> any-example;
+    callback example-clicked(int,bool,bool);
     in property <bool> deleting;
     in property <[TableRow]> results;
     in property <bool> result-selected;
@@ -73,8 +76,10 @@ export component LoginScriptWindow inherits Window {
         HorizontalLayout { spacing: 6px; Button { text: "add"; enabled: !root.running && !root.child-open && root.question == ""; clicked => { root.action("add-step"); } } Button { text: "edit"; enabled: !root.running && root.step-selected && !root.child-open && root.question == ""; clicked => { root.action("edit-step"); } } Button { text: "delete"; enabled: !root.running && root.step-selected && !root.child-open && root.question == ""; clicked => { root.action("delete-step"); } } Button { text: "up"; enabled: !root.running && root.step-up && !root.child-open && root.question == ""; clicked => { root.action("step-up"); } } Button { text: "down"; enabled: !root.running && root.step-down && !root.child-open && root.question == ""; clicked => { root.action("step-down"); } } }
         Text { text: "cookies required to consider session logged in"; color: Theme.text; font-weight: 700; }
         ListTable { vertical-stretch: 1; columns: [{title: "cookie name", width: 280px}, {title: "permitted value", width: 400px, stretch: true}]; rows: root.cookies; }
+        Button { text: "edit required cookies"; enabled: !root.running && !root.child-open && root.question == ""; clicked => { root.action("cookies"); } }
         Text { text: "example domains"; color: Theme.text; font-weight: 700; }
-        ListTable { vertical-stretch: 1; columns: [{title: "domain", width: 220px}, {title: "access", width: 120px}, {title: "description", width: 400px, stretch: true}]; rows: root.examples; }
+        ListTable { vertical-stretch: 1; columns: [{title: "domain", width: 220px}, {title: "access", width: 120px}, {title: "description", width: 400px, stretch: true}]; rows: root.examples; row-clicked(i,c,s) => { root.example-clicked(i,c,s); } row-activated(i) => { root.example-clicked(i,false,false); root.action("edit-example"); } delete-pressed => { root.action("delete-example"); } }
+        HorizontalLayout { spacing: 6px; Button { text: "add"; enabled: !root.running && !root.child-open && root.question == ""; clicked => { root.action("add-example"); } } Button { text: "edit"; enabled: root.one-example && !root.running && !root.child-open && root.question == ""; clicked => { root.action("edit-example"); } } Button { text: "delete"; enabled: root.any-example && !root.running && !root.child-open && root.question == ""; clicked => { root.action("delete-example"); } } }
         HorizontalLayout { spacing: 6px; Text { text: "test domain: "; color: Theme.text; vertical-alignment: center; } LineEdit { text <=> root.test-domain; enabled: !root.running && !root.child-open && root.question == ""; } Button { text: "run test"; enabled: !root.running && !root.child-open && root.question == ""; clicked => { root.action("run-test"); } } Button { text: "cancel test"; enabled: root.running; clicked => { root.action("cancel-test"); } } }
         if root.progress != "": Text { text: root.progress; color: Theme.text; wrap: word-wrap; }
         ListTable { vertical-stretch: 1; columns: [{title: "name", width: 200px}, {title: "url", width: 350px, stretch: true}, {title: "result", width: 230px}]; rows: root.results; row-clicked(i,c,s) => { root.result-clicked(i); } row-activated(i) => { root.result-clicked(i); root.action("review-result"); } }

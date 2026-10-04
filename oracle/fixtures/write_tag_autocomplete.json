@@ -1,4 +1,433 @@
 {
+  "domain_preferences": {
+    "current": [
+      "6c6f63616c2066696c6573"
+    ],
+    "deleted": []
+  },
+  "favourite_options": {
+    "initial": [
+      "parity:favourite 10",
+      "parity:favourite 2"
+    ],
+    "events": [
+      {
+        "action": "initial",
+        "tags": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ],
+        "rows": [
+          "parity:favourite 2",
+          "parity:favourite 10"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "manual",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 2",
+          "parity:favourite 10"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "repeat_manual",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 2",
+          "parity:favourite 10"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "paste",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 2",
+          "parity:favourite 3",
+          "parity:favourite pasted"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 2",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "repeat_paste",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 2",
+          "parity:favourite 3",
+          "parity:favourite pasted"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 2",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "remove",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 3",
+          "parity:favourite pasted"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "apply",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 3",
+          "parity:favourite pasted"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ],
+        "saved": [
+          "parity:favourite 1",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ]
+      }
+    ],
+    "cancelled_saved": [
+      "parity:favourite 1",
+      "parity:favourite 3",
+      "parity:favourite 10",
+      "parity:favourite pasted"
+    ]
+  },
+  "domains": [
+    {
+      "tags": true,
+      "choose": null,
+      "rows": [
+        {
+          "label": "downloader tags",
+          "checked": false
+        },
+        {
+          "label": "my tags",
+          "checked": true
+        },
+        {
+          "label": "second tags",
+          "checked": false
+        },
+        {
+          "label": "all known tags",
+          "checked": false
+        }
+      ],
+      "after": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": [],
+        "service": "6c6f63616c2074616773",
+        "display": "6c6f63616c2074616773",
+        "current_tags": true,
+        "pending_tags": true,
+        "file_label": "my files",
+        "tag_label": "my tags"
+      }
+    },
+    {
+      "tags": false,
+      "choose": null,
+      "rows": [
+        {
+          "label": "art",
+          "checked": false
+        },
+        {
+          "label": "my files",
+          "checked": true
+        },
+        {
+          "label": "combined local file domains",
+          "checked": false
+        },
+        {
+          "label": "trash",
+          "checked": false
+        },
+        {
+          "label": "all files ever imported or deleted",
+          "checked": false
+        },
+        {
+          "label": "all known files with tags",
+          "checked": false
+        },
+        {
+          "label": "multiple/deleted locations",
+          "checked": false
+        }
+      ],
+      "after": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": [],
+        "service": "6c6f63616c2074616773",
+        "display": "6c6f63616c2074616773",
+        "current_tags": true,
+        "pending_tags": true,
+        "file_label": "my files",
+        "tag_label": "my tags"
+      }
+    },
+    {
+      "tags": true,
+      "choose": "all known tags",
+      "rows": [
+        {
+          "label": "downloader tags",
+          "checked": false
+        },
+        {
+          "label": "my tags",
+          "checked": true
+        },
+        {
+          "label": "second tags",
+          "checked": false
+        },
+        {
+          "label": "all known tags",
+          "checked": false
+        }
+      ],
+      "after": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": [],
+        "service": "616c6c206b6e6f776e2074616773",
+        "display": "6c6f63616c2074616773",
+        "current_tags": true,
+        "pending_tags": true,
+        "file_label": "my files",
+        "tag_label": "all known tags"
+      }
+    },
+    {
+      "tags": false,
+      "choose": "all known files with tags",
+      "rows": [
+        {
+          "label": "art",
+          "checked": false
+        },
+        {
+          "label": "my files",
+          "checked": true
+        },
+        {
+          "label": "combined local file domains",
+          "checked": false
+        },
+        {
+          "label": "trash",
+          "checked": false
+        },
+        {
+          "label": "all files ever imported or deleted",
+          "checked": false
+        },
+        {
+          "label": "all known files with tags",
+          "checked": false
+        },
+        {
+          "label": "multiple/deleted locations",
+          "checked": false
+        }
+      ],
+      "after": {
+        "current": [
+          "616c6c206b6e6f776e2066696c6573"
+        ],
+        "deleted": [],
+        "service": "646f776e6c6f616465722074616773",
+        "display": "6c6f63616c2074616773",
+        "current_tags": true,
+        "pending_tags": true,
+        "file_label": "all known files with tags",
+        "tag_label": "downloader tags"
+      }
+    },
+    {
+      "tags": true,
+      "choose": "all known tags",
+      "rows": [
+        {
+          "label": "downloader tags",
+          "checked": true
+        },
+        {
+          "label": "my tags",
+          "checked": false
+        },
+        {
+          "label": "second tags",
+          "checked": false
+        },
+        {
+          "label": "all known tags",
+          "checked": false
+        }
+      ],
+      "after": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": [],
+        "service": "616c6c206b6e6f776e2074616773",
+        "display": "6c6f63616c2074616773",
+        "current_tags": true,
+        "pending_tags": true,
+        "file_label": "my files",
+        "tag_label": "all known tags"
+      }
+    },
+    {
+      "tags": true,
+      "choose": "my tags",
+      "rows": [
+        {
+          "label": "downloader tags",
+          "checked": false
+        },
+        {
+          "label": "my tags",
+          "checked": false
+        },
+        {
+          "label": "second tags",
+          "checked": false
+        },
+        {
+          "label": "all known tags",
+          "checked": true
+        }
+      ],
+      "after": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": [],
+        "service": "6c6f63616c2074616773",
+        "display": "6c6f63616c2074616773",
+        "current_tags": true,
+        "pending_tags": true,
+        "file_label": "my files",
+        "tag_label": "my tags"
+      }
+    },
+    {
+      "tags": false,
+      "choose": "all files ever imported or deleted",
+      "rows": [
+        {
+          "label": "art",
+          "checked": false
+        },
+        {
+          "label": "my files",
+          "checked": true
+        },
+        {
+          "label": "combined local file domains",
+          "checked": false
+        },
+        {
+          "label": "trash",
+          "checked": false
+        },
+        {
+          "label": "all files ever imported or deleted",
+          "checked": false
+        },
+        {
+          "label": "all known files with tags",
+          "checked": false
+        },
+        {
+          "label": "multiple/deleted locations",
+          "checked": false
+        }
+      ],
+      "after": {
+        "current": [
+          "616c6c206c6f63616c206d65646961"
+        ],
+        "deleted": [
+          "616c6c206c6f63616c206d65646961"
+        ],
+        "service": "6c6f63616c2074616773",
+        "display": "6c6f63616c2074616773",
+        "current_tags": true,
+        "pending_tags": true,
+        "file_label": "current and deleted files of combined local file domains",
+        "tag_label": "my tags"
+      }
+    }
+  ],
   "seeded_dialogs": [
     {
       "kind": "siblings",
@@ -199,7 +628,7 @@
       "action": "copy",
       "label": "parity:amber old and 2 parents",
       "copied": [
-        "parity:amber old\nparity:colour\nparity:root"
+        "parity:amber old\nparity:root\nparity:colour"
       ]
     },
     {
@@ -680,8 +1109,8 @@
           "tag": "parity:amber old",
           "rows": [
             "parity:amber old → parity:amber",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         },
         {
@@ -1079,8 +1508,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         },
         {
@@ -1088,8 +1517,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         }
       ],
@@ -1117,8 +1546,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         },
         {
@@ -1126,8 +1555,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         }
       ],
@@ -1256,8 +1685,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         },
         {
@@ -1265,8 +1694,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:colour",
-            "    parity:root"
+            "    parity:root",
+            "    parity:colour"
           ]
         }
       ],
@@ -1284,11 +1713,7 @@
       "consumed": false,
       "asked": [
         {
-          "message": "Remove \"parity:menu new\" from the most used list for \"my tags\"?",
-          "title": null
-        },
-        {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:amber\nparity:new",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
           "title": "Want to paste everything?"
         }
       ],
@@ -1302,7 +1727,7 @@
       "consumed": true,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:amber\nparity:new",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
           "title": "Want to paste everything?"
         }
       ],

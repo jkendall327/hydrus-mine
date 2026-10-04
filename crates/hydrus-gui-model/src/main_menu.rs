@@ -203,6 +203,7 @@ pub enum Command {
     },
     /// Switch a pause on or off.
     Pause(Pause),
+    NetworkBootPause,
     /// Switch automatic clipboard imports for watchers (true) or other recognised URLs.
     WatchClipboard(bool),
     /// Check an import folder now (none: all of them).
@@ -315,6 +316,7 @@ pub struct Facts {
     pub search_domains: Vec<(ServiceKey, String)>,
     pub maintenance: FileMaintenanceSettings,
     pub pauses: Pauses,
+    pub network_boot_pause: hydrus_store::settings::NetworkBootPause,
     pub clipboard_urls: hydrus_store::settings::ClipboardUrls,
     /// The repositories, and their pending content (none: no repositories).
     pub pending: Option<Vec<Pending>>,
@@ -378,6 +380,7 @@ impl Facts {
                 search_domains,
                 maintenance: settings::get(conn)?,
                 pauses: settings::get(conn)?,
+                network_boot_pause: settings::get(conn)?,
                 clipboard_urls: settings::get(conn)?,
                 pending,
                 ..Facts::default()
@@ -911,8 +914,8 @@ fn network_menu(facts: &Facts) -> Entry {
         pause("all new network traffic", Pause::NetworkTraffic, facts),
         check(
             "always boot the client with paused network traffic",
-            None,
-            false,
+            Some(Command::NetworkBootPause),
+            facts.network_boot_pause.0,
         ),
         SEP,
         pause("subscriptions", Pause::Subscriptions, facts),

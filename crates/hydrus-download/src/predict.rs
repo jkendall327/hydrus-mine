@@ -21,6 +21,7 @@ fn unknown() -> ImportResult {
         mime: None,
         note: String::new(),
         raised: None,
+        raised_kind: None,
     }
 }
 

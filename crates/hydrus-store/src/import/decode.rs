@@ -112,6 +112,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &pauses)?;
+    let boot = options
+        .as_ref()
+        .and_then(|o| o.booleans.get("boot_with_network_traffic_paused"))
+        .copied()
+        .unwrap_or(false);
+    insert_setting(&mut input, &crate::settings::NetworkBootPause(boot))?;
     if let Some(&advanced) = options
         .as_ref()
         .and_then(|o| o.booleans.get("advanced_mode"))
@@ -130,6 +136,28 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     insert_setting(&mut input, &notebooks)?;
     let mut tag_editing = crate::tag_editing::TagEditingSettings::default();
     if let Some(options) = &options {
+        for (key, field) in [
+            (
+                "use_listbook_for_tag_service_panels",
+                &mut tag_editing.use_listbook,
+            ),
+            (
+                "show_parent_decorators_on_storage_taglists",
+                &mut tag_editing.tag_list_show_parents,
+            ),
+            (
+                "expand_parents_on_storage_taglists",
+                &mut tag_editing.tag_list_expand_parents,
+            ),
+            (
+                "show_sibling_decorators_on_storage_taglists",
+                &mut tag_editing.tag_list_show_siblings,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
         if let Some(&value) = options
             .booleans
             .get("save_default_tag_service_tab_on_change")
@@ -198,6 +226,40 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         .unwrap_or_default();
     insert_setting(&mut input, &insertion)?;
     insert_setting(&mut input, &notebook_creation)?;
+    let mut page_chooser = crate::settings::PageChooserSettings::default();
+    if let Some(options) = &options {
+        for (key, target) in [
+            (
+                "show_all_my_files_on_page_chooser",
+                &mut page_chooser.show_combined,
+            ),
+            (
+                "show_all_my_files_on_page_chooser_at_top",
+                &mut page_chooser.combined_at_top,
+            ),
+            (
+                "show_local_files_on_page_chooser",
+                &mut page_chooser.show_storage,
+            ),
+            (
+                "show_local_files_on_page_chooser_at_top",
+                &mut page_chooser.storage_at_top,
+            ),
+        ] {
+            if let Some(&value) = options.booleans.get(key) {
+                *target = value;
+            }
+        }
+    }
+    insert_setting(&mut input, &page_chooser)?;
+    let import_ui = crate::settings::ImportOptionsUiSettings {
+        simple: options
+            .as_ref()
+            .and_then(|options| options.booleans.get("import_options_simple_mode"))
+            .copied()
+            .unwrap_or(true),
+    };
+    insert_setting(&mut input, &import_ui)?;
     let mut lifecycle = crate::settings::GuiSessionSettings::default();
     if let Some(value) = legacy_options.get("default_gui_session") {
         lifecycle.startup = value
@@ -494,6 +556,13 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             int("subscription_network_error_delay").unwrap_or(n.subscription_network_error_delay);
         n.subscription_other_error_delay =
             int("subscription_other_error_delay").unwrap_or(n.subscription_other_error_delay);
+        if let Some(threshold) = options
+            .noneable_integers
+            .get("subscription_file_error_cancel_threshold")
+        {
+            n.subscription_file_error_cancel_threshold =
+                threshold.and_then(|value| u64::try_from(value).ok());
+        }
         n.process_subs_in_random_order =
             boolean("process_subs_in_random_order").unwrap_or(n.process_subs_in_random_order);
         n.max_simultaneous_subscriptions =
@@ -658,6 +727,83 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             viewer_canvas.seek_nub_width = (*value).clamp(1, 63) as u32;
         }
         insert_setting(&mut input, &viewer_canvas)?;
+        let mut viewer_background = crate::settings::ViewerBackgroundSettings::default();
+        for (key, target) in [
+            (
+                "draw_tags_hover_in_media_viewer_background",
+                &mut viewer_background.tags,
+            ),
+            (
+                "draw_top_hover_in_media_viewer_background",
+                &mut viewer_background.information,
+            ),
+            (
+                "draw_top_right_hover_in_media_viewer_background",
+                &mut viewer_background.ratings,
+            ),
+            (
+                "draw_notes_hover_in_media_viewer_background",
+                &mut viewer_background.notes,
+            ),
+        ] {
+            if let Some(&value) = options.booleans.get(key) {
+                *target = value;
+            }
+        }
+        insert_setting(&mut input, &viewer_background)?;
+        let mut viewer_closing = crate::settings::ViewerClosingSettings::default();
+        for (key, field) in [
+            (
+                "focus_media_tab_on_viewer_close_if_possible",
+                &mut viewer_closing.reselect_page,
+            ),
+            (
+                "focus_media_thumb_on_viewer_close",
+                &mut viewer_closing.select_exit_media,
+            ),
+            (
+                "activate_main_gui_on_focusing_viewer_close",
+                &mut viewer_closing.activate_focusing,
+            ),
+            (
+                "activate_main_gui_on_viewer_close",
+                &mut viewer_closing.activate_always,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        insert_setting(&mut input, &viewer_closing)?;
+        let mut viewer_focus = crate::settings::ViewerFocusSettings::default();
+        for (key, field) in [
+            (
+                "animated_scanbar_pop_in_requires_focus",
+                &mut viewer_focus.seek_requires_focus,
+            ),
+            (
+                "hover_windows_need_window_focus_to_pop_in",
+                &mut viewer_focus.hovers_require_focus,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        insert_setting(&mut input, &viewer_focus)?;
+        let mut viewer_pointer = crate::settings::ViewerPointerSettings::default();
+        for (key, field) in [
+            (
+                "disallow_media_drags_on_duration_media",
+                &mut viewer_pointer.disallow_duration_drag,
+            ),
+            ("hide_canvas_drags", &mut viewer_pointer.hide_during_drag),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        insert_setting(&mut input, &viewer_pointer)?;
         let mut viewer_hovers = crate::settings::ViewerHoverSettings::default();
         for (key, field) in [
             (
@@ -1796,6 +1942,9 @@ fn tag_presentation(
     if let Some(connector) = options.strings.get("namespace_connector") {
         out.namespace_connector.clone_from(connector);
     }
+    if let Some(connector) = options.strings.get("sibling_connector") {
+        out.sibling_connector.clone_from(connector);
+    }
     if let Some(namespaces) = options.string_lists.get("user_namespace_group_by_sort") {
         out.user_namespaces.clone_from(namespaces);
     }
@@ -2492,6 +2641,115 @@ mod tests {
     }
 
     #[test]
+    fn subscription_file_failure_threshold_imports_none_and_number() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<crate::network::NetworkSettings>(
+                input.settings["network"].clone(),
+            )
+            .unwrap()
+            .subscription_file_error_cancel_threshold
+        };
+        assert_eq!(decoded(), Some(5));
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, 5]]"#,
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, null]]"#,
+            )],
+        );
+        assert_eq!(decoded(), None);
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, null]]"#,
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, 19]]"#,
+            )],
+        );
+        assert_eq!(decoded(), Some(19));
+    }
+
+    #[test]
+    fn network_boot_preference_converts_without_changing_live_pause() {
+        use crate::settings::{NetworkBootPause, Pauses};
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        assert_eq!(
+            decoded().settings["boot_with_network_traffic_paused"],
+            false
+        );
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "boot_with_network_traffic_paused"], [0, false]]"#,
+                r#"[[0, "boot_with_network_traffic_paused"], [0, true]]"#,
+            )],
+        );
+        let input = decoded();
+        let boot: NetworkBootPause =
+            serde_json::from_value(input.settings["boot_with_network_traffic_paused"].clone())
+                .unwrap();
+        assert!(boot.0);
+        let pauses: Pauses = serde_json::from_value(input.settings["pauses"].clone()).unwrap();
+        let before: Pauses = serde_json::from_value(
+            decode_input(&LegacyDb::open(hydrus_testkit::legacy_fixture("basic").path()).unwrap())
+                .unwrap()
+                .settings["pauses"]
+                .clone(),
+        )
+        .unwrap();
+        assert_eq!(pauses, before, "import does not apply a boot action");
+    }
+
+    #[test]
+    fn tag_dialog_defaults_import_independently_of_autocomplete_defaults() {
+        use crate::tag_editing::TagEditingSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<TagEditingSettings>(input.settings["tag_editing"].clone())
+                .unwrap()
+        };
+        let before = decoded();
+        assert!(!before.use_listbook);
+        assert!(before.tag_list_show_parents);
+        assert!(before.tag_list_expand_parents);
+        assert!(before.tag_list_show_siblings);
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "use_listbook_for_tag_service_panels"], [0, false]]"#,
+                    r#"[[0, "use_listbook_for_tag_service_panels"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "show_parent_decorators_on_storage_taglists"], [0, true]]"#,
+                    r#"[[0, "show_parent_decorators_on_storage_taglists"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "expand_parents_on_storage_taglists"], [0, true]]"#,
+                    r#"[[0, "expand_parents_on_storage_taglists"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "show_sibling_decorators_on_storage_taglists"], [0, true]]"#,
+                    r#"[[0, "show_sibling_decorators_on_storage_taglists"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            TagEditingSettings {
+                use_listbook: true,
+                tag_list_show_parents: false,
+                tag_list_expand_parents: false,
+                tag_list_show_siblings: false,
+                ..before
+            }
+        );
+    }
+
+    #[test]
     fn clipboard_monitor_switches_convert_independently() {
         use crate::settings::ClipboardUrls;
         let source = hydrus_testkit::legacy_fixture("basic");
@@ -2791,6 +3049,169 @@ mod tests {
     }
 
     #[test]
+    fn passive_background_options_import_each_draw_key() {
+        use crate::settings::ViewerBackgroundSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerBackgroundSettings>(
+                input.settings["viewer_background"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), ViewerBackgroundSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "draw_tags_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_tags_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_top_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_top_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_top_right_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_top_right_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_notes_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_notes_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerBackgroundSettings {
+                tags: false,
+                information: false,
+                ratings: false,
+                notes: false
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_closing_options_import_each_independent_preference() {
+        use crate::settings::ViewerClosingSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerClosingSettings>(
+                input.settings["viewer_closing"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), ViewerClosingSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "focus_media_tab_on_viewer_close_if_possible"], [0, false]]"#,
+                    r#"[[0, "focus_media_tab_on_viewer_close_if_possible"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "focus_media_thumb_on_viewer_close"], [0, true]]"#,
+                    r#"[[0, "focus_media_thumb_on_viewer_close"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "activate_main_gui_on_focusing_viewer_close"], [0, false]]"#,
+                    r#"[[0, "activate_main_gui_on_focusing_viewer_close"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "activate_main_gui_on_viewer_close"], [0, false]]"#,
+                    r#"[[0, "activate_main_gui_on_viewer_close"], [0, true]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerClosingSettings {
+                reselect_page: true,
+                select_exit_media: false,
+                activate_focusing: true,
+                activate_always: true
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_focus_options_import_independent_mouseover_gates() {
+        use crate::settings::ViewerFocusSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerFocusSettings>(input.settings["viewer_focus"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), ViewerFocusSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "animated_scanbar_pop_in_requires_focus"], [0, true]]"#,
+                    r#"[[0, "animated_scanbar_pop_in_requires_focus"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "hover_windows_need_window_focus_to_pop_in"], [0, true]]"#,
+                    r#"[[0, "hover_windows_need_window_focus_to_pop_in"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerFocusSettings {
+                seek_requires_focus: false,
+                hovers_require_focus: false
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_pointer_options_import_both_drag_preferences() {
+        use crate::settings::ViewerPointerSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerPointerSettings>(
+                input.settings["viewer_pointer"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(
+            decoded(),
+            ViewerPointerSettings {
+                disallow_duration_drag: false,
+                hide_during_drag: true
+            }
+        );
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "disallow_media_drags_on_duration_media"], [0, false]]"#,
+                    r#"[[0, "disallow_media_drags_on_duration_media"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "hide_canvas_drags"], [0, true]]"#,
+                    r#"[[0, "hide_canvas_drags"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerPointerSettings {
+                disallow_duration_drag: true,
+                hide_during_drag: false
+            }
+        );
+        let fresh: ViewerPointerSettings = serde_json::from_str("{}").unwrap();
+        assert!(!fresh.disallow_duration_drag);
+        assert_eq!(fresh.hide_during_drag, !cfg!(target_os = "macos"));
+    }
+
+    #[test]
     fn viewer_hover_options_migrate_disable_keys_as_enabled_controls() {
         use crate::settings::ViewerHoverSettings;
         let source = hydrus_testkit::legacy_fixture("basic");
@@ -2917,6 +3338,9 @@ mod tests {
         options
             .strings
             .insert("namespace_connector".into(), " - ".into());
+        options
+            .strings
+            .insert("sibling_connector".into(), " ⇢ ".into());
         options.string_lists.insert(
             "user_namespace_group_by_sort".into(),
             vec!["series".into(), ":".into(), String::new()],
@@ -2933,6 +3357,7 @@ mod tests {
         let converted = tag_presentation(&options);
         assert!(!converted.show_namespaces && converted.replace_underscores);
         assert_eq!(converted.namespace_connector, " - ");
+        assert_eq!(converted.sibling_connector, " ⇢ ");
         assert_eq!(converted.user_namespaces, ["series", ":", ""]);
         assert_eq!(
             converted.search_page_sort,

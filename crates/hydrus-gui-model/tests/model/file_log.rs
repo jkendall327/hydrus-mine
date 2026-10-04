@@ -226,3 +226,136 @@ fn source_png_carriers_import_actual_qt_exports_and_render_custom_headers() {
     assert!(hydrus_downloader_exchange::text_png::encode("text", 2, &[255]).is_err());
     assert!(hydrus_downloader_exchange::text_png::decode(b"invalid PNG").is_err());
 }
+
+fn advanced_seed(index: usize) -> FileSeed {
+    use std::collections::BTreeSet;
+    let urls = [
+        "https://renormalise.example/post?id=1&token=a",
+        "https://renormalise.example/post?id=1&token=b",
+        "https://renormalise.example/post?id=2&token=c",
+    ];
+    let n = i64::try_from(index).unwrap();
+    FileSeed {
+        id: n + 1,
+        queue_id: 1,
+        seed_type: SeedType::Url,
+        data: urls[index].into(),
+        data_for_comparison: urls[index].into(),
+        created: 1_700_000_000 + n,
+        modified: 1_700_000_100 + n,
+        source_time: Some(1_699_990_000 + n),
+        status: if index == 0 {
+            SeedStatus::Error
+        } else {
+            SeedStatus::SuccessfulAndNew
+        },
+        note: format!("entry {index} 日本"),
+        referral_url: Some("https://renormalise.example/gallery".into()),
+        meta: FileSeedMeta {
+            request_headers: vec![("X-Synthetic".into(), "header".into())],
+            external_filterable_tags: BTreeSet::from(["filter:tag".into()]),
+            external_additional_tags: vec![(
+                hex::encode([17; 32]),
+                BTreeSet::from(["extra:tag".into()]),
+            )],
+            primary_urls: BTreeSet::from(["https://renormalise.example/primary".into()]),
+            source_urls: BTreeSet::from(["https://source.example/a".into()]),
+            tags: BTreeSet::from(["tag:one".into()]),
+            notes: vec![("note".into(), "metadata note".into())],
+            hashes: vec![(
+                "sha256".into(),
+                hex::encode([u8::try_from(index + 1).unwrap(); 32]),
+            )],
+            ..FileSeedMeta::default()
+        },
+    }
+}
+
+#[test]
+fn selected_import_objects_match_full_reference_clipboard_bytes() {
+    let fixture = hydrus_testkit::fixture_json("file_log_advanced.json");
+    let seeds = [advanced_seed(0), advanced_seed(1)];
+    let output =
+        hydrus_gui_model::file_log::export_objects(&seeds.iter().collect::<Vec<_>>()).unwrap();
+    assert_eq!(output, fixture["clipboard"][0].as_str().unwrap());
+    assert_eq!(
+        hydrus_gui_model::file_log::RENORMALISE_QUESTION,
+        fixture["questions"][0]["text"]
+    );
+}
+
+#[test]
+fn renormalisation_collapses_later_duplicates_and_preserves_first_progress_and_metadata() {
+    use hydrus_core::url::strings::{StringMatch, StringProcessor};
+    use hydrus_core::url::{DomainMask, UrlClass, UrlClassSettings, UrlClasses, UrlParameter};
+    use hydrus_store::{Store, queues};
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let originals = vec![advanced_seed(0), advanced_seed(1), advanced_seed(2)];
+    let queue = store
+        .write({
+            let originals = originals.clone();
+            move |ctx| {
+                let queue = queues::create_queue(
+                    ctx.conn(),
+                    queues::QueueKind::Urls,
+                    "synthetic",
+                    None,
+                    &hydrus_core::import_options::ImportOptionsSlice::default(),
+                    0,
+                )?;
+                queues::restore_file_seeds(ctx.conn(), queue, &originals)?;
+                Ok(queue)
+            }
+        })
+        .unwrap();
+    let before = store.read(|c| queues::file_seeds(c, queue)).unwrap();
+    let classes = UrlClasses::new(UrlClassSettings {
+        url_classes: vec![UrlClass {
+            name: "synthetic changed class".into(),
+            domain_mask: DomainMask::new(vec!["renormalise.example".into()], vec![], false, false),
+            path_components: vec![(StringMatch::fixed("post"), None)],
+            parameters: vec![UrlParameter {
+                name: "id".into(),
+                value: StringMatch::any(),
+                ephemeral: false,
+                default: None,
+                default_processor: StringProcessor::default(),
+            }],
+            keep_extra_parameters_for_server: false,
+            ..UrlClass::default()
+        }],
+        ..UrlClassSettings::default()
+    });
+    assert_eq!(
+        store
+            .write(move |ctx| queues::renormalise_file_seeds(ctx.conn(), queue, &classes))
+            .unwrap(),
+        1
+    );
+    let after = store.read(|c| queues::file_seeds(c, queue)).unwrap();
+    let fixture = hydrus_testkit::fixture_json("file_log_advanced.json");
+    let summary: Vec<Json> = after
+        .iter()
+        .map(|s| {
+            json!([
+                s.data,
+                s.data_for_comparison,
+                s.status.code(),
+                s.created,
+                s.modified,
+                s.note
+            ])
+        })
+        .collect();
+    assert_eq!(json!(summary), fixture["states"][2]);
+    assert_eq!(after[0].id, before[0].id);
+    assert_eq!(after[0].meta, before[0].meta);
+    assert_eq!(
+        after[0].status,
+        SeedStatus::Error,
+        "first error survives later successful duplicate"
+    );
+    assert_eq!(after[1].meta, before[2].meta);
+    assert_eq!(after[0].source_time, before[0].source_time);
+}

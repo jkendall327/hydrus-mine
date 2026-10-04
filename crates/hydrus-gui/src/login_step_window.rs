@@ -1,6 +1,9 @@
 //! Login request identity and named response parsers owned by a script draft.
 use crate::{LoginStepWindow, TableRow};
-use hydrus_gui_model::{formula_editors::FormulaTestData, login_workflows::StepEditor};
+use hydrus_gui_model::{
+    formula_editors::FormulaTestData,
+    login_workflows::{ArgumentKind, StepEditor},
+};
 use hydrus_parse::{
     content::{ContentKind, ContentParser},
     login::LoginStep,
@@ -18,6 +21,7 @@ pub struct Slots {
     pub step: Rc<RefCell<Option<LoginStepWindow>>>,
     pub parsers: crate::parser_editors_window::Slots,
     pub exchange: crate::downloader_interchange_window::Slots,
+    pub cookies: crate::login_cookies_window::Slots,
 }
 /// Accepted step; script persistence still waits for the owner.
 pub type Applied = Rc<dyn Fn(LoginStep) -> Result<(), String>>;
@@ -70,18 +74,54 @@ fn show(window: &LoginStepWindow, editor: &StepEditor) {
     )));
     window.set_one_selected(selected.len() == 1);
     window.set_any_selected(!selected.is_empty());
-    let variables = [
-        ("credential", &editor.step.credentials),
-        ("static", &editor.step.static_args),
-        ("temporary", &editor.step.temp_args),
-    ]
-    .into_iter()
-    .flat_map(|(kind, values)| {
-        values
+    let mut variables = Vec::new();
+    for kind in [
+        ArgumentKind::Credential,
+        ArgumentKind::Static,
+        ArgumentKind::Temporary,
+    ] {
+        let selected = editor.selected_arguments(kind);
+        let rows = editor
+            .arguments(kind)
             .iter()
-            .map(move |(key, value)| row(vec![kind.into(), key.clone(), value.clone()], false))
-    })
-    .collect::<Vec<_>>();
+            .map(|(key, value)| row(vec![key.clone(), value.clone()], selected.contains(key)))
+            .collect::<Vec<_>>();
+        variables.extend(editor.arguments(kind).iter().map(|(key, value)| {
+            row(
+                vec![
+                    match kind {
+                        ArgumentKind::Credential => "credential",
+                        ArgumentKind::Static => "static",
+                        ArgumentKind::Temporary => "temporary",
+                    }
+                    .into(),
+                    key.clone(),
+                    value.clone(),
+                ],
+                selected.contains(key),
+            )
+        }));
+        let one = selected.len() == 1;
+        let any = !selected.is_empty();
+        let rows = ModelRc::new(VecModel::from(rows));
+        match kind {
+            ArgumentKind::Credential => {
+                window.set_credential_variables(rows);
+                window.set_credential_one(one);
+                window.set_credential_any(any);
+            }
+            ArgumentKind::Static => {
+                window.set_static_variables(rows);
+                window.set_static_one(one);
+                window.set_static_any(any);
+            }
+            ArgumentKind::Temporary => {
+                window.set_temporary_variables(rows);
+                window.set_temporary_one(one);
+                window.set_temporary_any(any);
+            }
+        }
+    }
     window.set_variables(ModelRc::new(VecModel::from(variables)));
     window.set_cookies(ModelRc::new(VecModel::from(
         editor
@@ -120,11 +160,15 @@ pub fn open(
     let editor = Rc::new(RefCell::new(StepEditor::new(step)));
     show(&window, &editor.borrow());
     let active = Rc::new(Cell::new(true));
+    let selected_argument = Rc::new(RefCell::new(None::<(ArgumentKind, String)>));
+    let edited_argument = Rc::new(RefCell::new(None::<(ArgumentKind, String)>));
+    let deleting_argument = Rc::new(Cell::new(false));
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slot = Rc::downgrade(&slots.step);
         let parsers = slots.parsers.clone();
         let exchange = slots.exchange.clone();
+        let cookies = slots.cookies.clone();
         let active = active.clone();
         move || {
             if !active.replace(false) {
@@ -132,6 +176,7 @@ pub fn open(
             }
             exchange.cancel();
             parsers.cancel();
+            cookies.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -204,6 +249,71 @@ pub fn open(
             }
         }
     });
+    window.on_variable_clicked({
+        let weak = window.as_weak();
+        let editor = editor.clone();
+        let active = active.clone();
+        let selected = selected_argument.clone();
+        move |index| {
+            if !active.get() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if window.get_child_open() || window.get_deleting() || window.get_variable_editing() {
+                return;
+            }
+            let row = usize::try_from(index)
+                .ok()
+                .and_then(|i| editor.borrow().argument_rows().get(i).cloned());
+            if let Some((kind, key, _)) = row {
+                let index = editor
+                    .borrow()
+                    .arguments(kind)
+                    .keys()
+                    .position(|value| value == &key)
+                    .unwrap();
+                editor
+                    .borrow_mut()
+                    .select_arguments(kind, index, false, false);
+                window.set_variable_kind(kind.index());
+                *selected.borrow_mut() = Some((kind, key));
+            } else {
+                *selected.borrow_mut() = None;
+            }
+            window.set_variable_selected(selected.borrow().is_some());
+            window.set_variable_index(index);
+            show(&window, &editor.borrow());
+        }
+    });
+    window.on_argument_clicked({
+        let weak = window.as_weak();
+        let editor = editor.clone();
+        let active = active.clone();
+        let selected = selected_argument.clone();
+        move |kind, index, ctrl, shift| {
+            if !active.get() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if window.get_child_open() || window.get_deleting() || window.get_variable_editing() {
+                return;
+            }
+            let kind = ArgumentKind::from_index(kind);
+            if let Ok(index) = usize::try_from(index) {
+                editor
+                    .borrow_mut()
+                    .select_arguments(kind, index, ctrl, shift);
+            }
+            window.set_variable_kind(kind.index());
+            *selected.borrow_mut() = editor.borrow().selected_argument(kind);
+            window.set_variable_selected(selected.borrow().is_some());
+            show(&window, &editor.borrow());
+        }
+    });
     window.on_content_clicked({
         let weak = window.as_weak();
         let editor = editor.clone();
@@ -215,7 +325,7 @@ pub fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_child_open() || window.get_deleting() {
+            if window.get_child_open() || window.get_deleting() || window.get_variable_editing() {
                 return;
             }
             if let Ok(i) = usize::try_from(i) {
@@ -238,7 +348,7 @@ pub fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_child_open() || window.get_deleting() {
+            if window.get_child_open() || window.get_deleting() || window.get_variable_editing() {
                 return;
             }
             let selected = if let Ok(i) = usize::try_from(i) {
@@ -261,6 +371,11 @@ pub fn open(
         let close = close.clone();
         let edit = edit.clone();
         let exchange = slots.exchange.clone();
+        let selected_argument = selected_argument.clone();
+        let edited_argument = edited_argument.clone();
+        let deleting_argument = deleting_argument.clone();
+        let cookies = slots.cookies.clone();
+        let store = store.clone();
         move |action| {
             if !active.get() {
                 return;
@@ -278,7 +393,126 @@ pub fn open(
             if window.get_deleting() && !matches!(action.as_str(), "confirm-delete" | "back") {
                 return;
             }
-            match action.as_str() {
+            if window.get_variable_editing()
+                && !matches!(action.as_str(), "save-variable" | "cancel-variable")
+            {
+                return;
+            }
+            let mapped = match action.as_str() {
+                "add-credential" => Some((0, "add-variable")),
+                "edit-credential" => Some((0, "edit-variable")),
+                "delete-credential" => Some((0, "delete-variable")),
+                "add-static" => Some((1, "add-variable")),
+                "edit-static" => Some((1, "edit-variable")),
+                "delete-static" => Some((1, "delete-variable")),
+                "add-temporary" => Some((2, "add-variable")),
+                "edit-temporary" => Some((2, "edit-variable")),
+                "delete-temporary" => Some((2, "delete-variable")),
+                _ => None,
+            };
+            if let Some((kind, _)) = mapped {
+                window.set_variable_kind(kind);
+                *selected_argument.borrow_mut() = editor
+                    .borrow()
+                    .selected_argument(ArgumentKind::from_index(kind));
+            }
+            let action = mapped.map_or(action.as_str(), |(_, action)| action);
+            match action {
+                "cookies" => {
+                    let values = editor.borrow().step.required_cookies.clone();
+                    let accepted: crate::login_cookies_window::Applied = Rc::new({
+                        let weak = weak.clone();
+                        let editor = editor.clone();
+                        let active = active.clone();
+                        move |values| {
+                            if !active.get() {
+                                return Err("The login step editor has closed.".into());
+                            }
+                            editor.borrow_mut().step.required_cookies = values;
+                            if let Some(window) = weak.upgrade() {
+                                show(&window, &editor.borrow());
+                            }
+                            Ok(())
+                        }
+                    });
+                    match crate::login_cookies_window::open(&store, &values, &cookies, accepted) {
+                        Ok(child) => {
+                            window.set_child_open(true);
+                            let weak = weak.clone();
+                            child.on_closed(move || {
+                                if let Some(window) = weak.upgrade() {
+                                    window.set_child_open(false);
+                                }
+                            });
+                        }
+                        Err(error) => window.set_error(error.to_string().into()),
+                    }
+                }
+                "add-variable" | "edit-variable" => {
+                    let selected = if action == "edit-variable" {
+                        selected_argument.borrow().clone()
+                    } else {
+                        None
+                    };
+                    if action == "edit-variable" && selected.is_none() {
+                        return;
+                    }
+                    window.set_variable_existing(selected.is_some());
+                    window.set_variable_kind(
+                        selected
+                            .as_ref()
+                            .map_or(window.get_variable_kind(), |(kind, _)| kind.index()),
+                    );
+                    window.set_variable_key(
+                        selected.as_ref().map_or("", |(_, key)| key.as_str()).into(),
+                    );
+                    window.set_variable_value(
+                        selected
+                            .as_ref()
+                            .and_then(|(kind, key)| {
+                                editor.borrow().arguments(*kind).get(key).cloned()
+                            })
+                            .unwrap_or_default()
+                            .into(),
+                    );
+                    *edited_argument.borrow_mut() = selected;
+                    window.set_variable_editing(true);
+                }
+                "save-variable" => {
+                    let kind = ArgumentKind::from_index(window.get_variable_kind());
+                    let old = edited_argument.borrow();
+                    let result = editor.borrow_mut().set_argument(
+                        kind,
+                        old.as_ref().map(|(_, key)| key.as_str()),
+                        window.get_variable_key().to_string(),
+                        window.get_variable_value().to_string(),
+                    );
+                    match result {
+                        Ok(()) => {
+                            window.set_variable_editing(false);
+                            window.set_variable_selected(false);
+                            window.set_variable_index(-1);
+                            selected_argument.borrow_mut().take();
+                            window.set_error("".into());
+                            show(&window, &editor.borrow());
+                        }
+                        Err(error) => window.set_error(error.into()),
+                    }
+                }
+                "cancel-variable" => {
+                    window.set_variable_editing(false);
+                    window.set_error("".into());
+                }
+                "delete-variable" => {
+                    if !editor
+                        .borrow()
+                        .selected_arguments(ArgumentKind::from_index(window.get_variable_kind()))
+                        .is_empty()
+                    {
+                        deleting_argument.set(true);
+                        window.set_deleting(true);
+                    }
+                }
                 "add-content" => edit(None),
                 "edit-content" => {
                     let selected = editor.borrow().selection.one();
@@ -292,11 +526,23 @@ pub fn open(
                     }
                 }
                 "confirm-delete" => {
-                    editor.borrow_mut().delete();
+                    if deleting_argument.replace(false) {
+                        editor
+                            .borrow_mut()
+                            .delete_arguments(ArgumentKind::from_index(window.get_variable_kind()));
+                        selected_argument.borrow_mut().take();
+                        window.set_variable_selected(false);
+                        window.set_variable_index(-1);
+                    } else {
+                        editor.borrow_mut().delete();
+                    }
                     window.set_deleting(false);
                     show(&window, &editor.borrow());
                 }
-                "back" => window.set_deleting(false),
+                "back" => {
+                    deleting_argument.set(false);
+                    window.set_deleting(false);
+                }
                 "apply" => {
                     let mut step = editor.borrow().value();
                     step.name = window.get_name().to_string();

@@ -14,7 +14,7 @@ use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 use hydrus_core::ServiceKey;
 use hydrus_core::import_options::{
     CallerType, ImportOptionsManager, ImportOptionsSlice, PrefetchCheck, PresentationInbox,
-    PresentationStatus,
+    PresentationStatus, UrlClassKind,
 };
 use hydrus_core::service::{ServiceType, builtin_keys};
 use hydrus_store::Store;
@@ -146,6 +146,9 @@ fn set_text(get: impl Fn() -> SharedString, set: impl Fn(SharedString), text: St
 struct State {
     editor: Editor,
     manager: ImportOptionsManager,
+    simple: bool,
+    defaults: bool,
+    url_classes: Vec<(String, UrlClassKind)>,
     services: Arc<hydrus_store::store::Snapshot>,
     /// The allowed filetypes' groups showing their filetypes.
     filetype_expanded: [bool; 7],
@@ -154,6 +157,22 @@ struct State {
     write_tags: crate::write_tag_window::Slot,
     overwrite: crate::import_options_overwrite_window::Slot,
     favourites: Option<Rc<crate::import_options_favourites_window::Controller>>,
+}
+
+impl State {
+    fn replace_options(&mut self, options: &ImportOptionsSlice) {
+        self.editor = if self.defaults {
+            Editor::new_for_defaults(
+                &self.manager,
+                self.editor.caller,
+                self.simple,
+                options,
+                &self.url_classes,
+            )
+        } else {
+            Editor::new(&self.manager, self.editor.caller, self.simple, options)
+        };
+    }
 }
 
 /// Show the editor whole: the list and the shown kind's page.
@@ -463,7 +482,17 @@ pub(crate) fn open(
 ) -> Result<ImportOptionsWindow, String> {
     open_inner(
         store,
-        caller,
+        Context {
+            caller,
+            manager: None,
+            simple: store
+                .read(
+                    hydrus_store::settings::get::<hydrus_store::settings::ImportOptionsUiSettings>,
+                )
+                .map_err(|e| e.to_string())?
+                .simple,
+            url_classes: Vec::new(),
+        },
         own,
         slot,
         None,
@@ -482,7 +511,17 @@ pub(crate) fn open_named(
 ) -> Result<ImportOptionsWindow, String> {
     open_inner(
         store,
-        CallerType::Favourites,
+        Context {
+            caller: CallerType::Favourites,
+            manager: None,
+            simple: store
+                .read(
+                    hydrus_store::settings::get::<hydrus_store::settings::ImportOptionsUiSettings>,
+                )
+                .map_err(|e| e.to_string())?
+                .simple,
+            url_classes: Vec::new(),
+        },
         own,
         slot,
         Some(name),
@@ -491,21 +530,72 @@ pub(crate) fn open_named(
     )
 }
 
-fn open_inner(
+/// Manager and presentation preferences from an owning Options draft.
+#[derive(Debug, Clone)]
+pub(crate) struct StagedOptions {
+    pub manager: Rc<RefCell<ImportOptionsManager>>,
+    pub simple: bool,
+    pub name: Option<String>,
+    pub url_classes: Vec<(String, UrlClassKind)>,
+}
+
+struct Context {
+    caller: CallerType,
+    manager: Option<Rc<RefCell<ImportOptionsManager>>>,
+    simple: bool,
+    url_classes: Vec<(String, UrlClassKind)>,
+}
+
+/// Open a child against the same staged defaults/profiles as its Options owner.
+pub(crate) fn open_staged(
     store: &Arc<Store>,
     caller: CallerType,
+    own: &ImportOptionsSlice,
+    slot: &Rc<RefCell<Option<ImportOptionsWindow>>>,
+    configuration: StagedOptions,
+    done: Rc<dyn Fn(String, ImportOptionsSlice)>,
+    closed: Rc<dyn Fn()>,
+) -> Result<ImportOptionsWindow, String> {
+    open_inner(
+        store,
+        Context {
+            caller,
+            manager: Some(configuration.manager),
+            simple: configuration.simple,
+            url_classes: configuration.url_classes,
+        },
+        own,
+        slot,
+        configuration.name.as_deref(),
+        done,
+        closed,
+    )
+}
+
+fn open_inner(
+    store: &Arc<Store>,
+    context: Context,
     own: &ImportOptionsSlice,
     slot: &Rc<RefCell<Option<ImportOptionsWindow>>>,
     name: Option<&str>,
     done: Rc<dyn Fn(String, ImportOptionsSlice)>,
     closed: Rc<dyn Fn()>,
 ) -> Result<ImportOptionsWindow, String> {
-    let manager: ImportOptionsManager = store
-        .read(hydrus_store::settings::get)
-        .map_err(|e| e.to_string())?;
-    // (the reference's "import options simple mode", on as a new client
-    // has it; hydrus-rs has no such option yet)
-    let editor = Editor::new(&manager, caller, true, own);
+    let caller = context.caller;
+    let defaults = context.manager.is_some();
+    let manager: ImportOptionsManager = context.manager.as_ref().map_or_else(
+        || {
+            store
+                .read(hydrus_store::settings::get)
+                .map_err(|e| e.to_string())
+        },
+        |manager| Ok(manager.borrow().clone()),
+    )?;
+    let editor = if defaults {
+        Editor::new_for_defaults(&manager, caller, context.simple, own, &context.url_classes)
+    } else {
+        Editor::new(&manager, caller, context.simple, own)
+    };
     let active = Rc::new(Cell::new(true));
     let window = ImportOptionsWindow::new().map_err(|e| e.to_string())?;
     window.set_favourite_editor(caller == CallerType::Favourites);
@@ -523,6 +613,9 @@ fn open_inner(
     let state = Rc::new(RefCell::new(State {
         editor,
         manager,
+        simple: context.simple,
+        defaults,
+        url_classes: context.url_classes,
         services: store.snapshot(),
         filetype_expanded: [false; 7],
         tag_filter: Rc::default(),
@@ -954,9 +1047,10 @@ fn open_inner(
             show(&window, &state.borrow());
         }
     });
-    let favourites = crate::import_options_favourites_window::Controller::new(
+    let favourites = crate::import_options_favourites_window::Controller::new_inner(
         store.clone(),
         caller,
+        context.manager,
         Rc::new({
             let state = Rc::downgrade(&state);
             let active = active.clone();
@@ -979,8 +1073,7 @@ fn open_inner(
                     return;
                 };
                 let mut state = state.borrow_mut();
-                let caller = state.editor.caller;
-                state.editor = Editor::new(&state.manager, caller, true, &options);
+                state.replace_options(&options);
                 if let Some(window) = weak.upgrade() {
                     show(&window, &state);
                     show_tag_services(&window, &state);
@@ -1004,6 +1097,7 @@ fn open_inner(
             }
         }),
     );
+    favourites.set_simple_mode(context.simple);
     state.borrow_mut().favourites = Some(favourites.clone());
     let refresh_favourites = Rc::new({
         let favourites = favourites.clone();
@@ -1068,12 +1162,11 @@ fn open_inner(
                 Rc::new(move |options| {
                     if !active.get() { return; }
                     let mut state = state.borrow_mut();
-                    let caller = state.editor.caller;
-                    state.editor = Editor::new(&state.manager, caller, true, &options);
+                    state.replace_options(&options);
                     if let Some(window) = weak.upgrade() { show(&window, &state); show_tag_services(&window, &state); }
                 })
             };
-            let draft = hydrus_gui_model::import_options_overwrite::Overwrite::new(caller, true, state.borrow().editor.value(), incoming);
+            let draft = hydrus_gui_model::import_options_overwrite::Overwrite::new(caller, state.borrow().simple, state.borrow().editor.value(), incoming);
             if index == 3 {
                 let slot = state.borrow().overwrite.clone();
                 let closed: Rc<dyn Fn()> = { let weak = weak.clone(); Rc::new(move || { if let Some(window) = weak.upgrade() { window.set_overwrite_open(false); } }) };

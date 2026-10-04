@@ -1,0 +1,91 @@
+{
+ "clipboard": [
+  "[26, 3, [[2, [57, 8, [1, \"https://renormalise.example/post?id=1&token=a\", \"https://renormalise.example/post?id=1&token=a\", 1700000000, 1700000100, 1699990000, 4, \"entry 0 \\u65e5\\u672c\", \"https://renormalise.example/gallery\", {\"X-Synthetic\": \"header\"}, [\"filter:tag\"], [77, 1, [[\"1111111111111111111111111111111111111111111111111111111111111111\", [\"extra:tag\"]]]], [\"https://renormalise.example/primary\"], [\"https://source.example/a\"], [\"tag:one\"], [[\"note\", \"metadata note\"]], [[\"sha256\", \"0101010101010101010101010101010101010101010101010101010101010101\"]]]]], [2, [57, 8, [1, \"https://renormalise.example/post?id=1&token=b\", \"https://renormalise.example/post?id=1&token=b\", 1700000001, 1700000101, 1699990001, 1, \"entry 1 \\u65e5\\u672c\", \"https://renormalise.example/gallery\", {\"X-Synthetic\": \"header\"}, [\"filter:tag\"], [77, 1, [[\"1111111111111111111111111111111111111111111111111111111111111111\", [\"extra:tag\"]]]], [\"https://renormalise.example/primary\"], [\"https://source.example/a\"], [\"tag:one\"], [[\"note\", \"metadata note\"]], [[\"sha256\", \"0202020202020202020202020202020202020202020202020202020202020202\"]]]]]]]"
+ ],
+ "questions": [
+  {
+   "title": "Are you sure?",
+   "text": "Are you sure you want to renormalise all the URLs in here (and discard any subsequent duplicates)? This typically only makes sense if you have changed the URL Class rules after this list was created (e.g. to remove an ephemeral token parameter) and you now need to collapse the existing list to catch future duplicates better.\n\nIf you do not know exactly what this does, click no.",
+   "yes": "yes",
+   "no": "no"
+  },
+  {
+   "title": "Are you sure?",
+   "text": "Are you sure you want to renormalise all the URLs in here (and discard any subsequent duplicates)? This typically only makes sense if you have changed the URL Class rules after this list was created (e.g. to remove an ephemeral token parameter) and you now need to collapse the existing list to catch future duplicates better.\n\nIf you do not know exactly what this does, click no.",
+   "yes": "yes",
+   "no": "no"
+  }
+ ],
+ "states": [
+  [
+   [
+    "https://renormalise.example/post?id=1&token=a",
+    "https://renormalise.example/post?id=1&token=a",
+    4,
+    1700000000,
+    1700000100,
+    "entry 0 日本"
+   ],
+   [
+    "https://renormalise.example/post?id=1&token=b",
+    "https://renormalise.example/post?id=1&token=b",
+    1,
+    1700000001,
+    1700000101,
+    "entry 1 日本"
+   ],
+   [
+    "https://renormalise.example/post?id=2&token=c",
+    "https://renormalise.example/post?id=2&token=c",
+    1,
+    1700000002,
+    1700000102,
+    "entry 2 日本"
+   ]
+  ],
+  [
+   [
+    "https://renormalise.example/post?id=1&token=a",
+    "https://renormalise.example/post?id=1&token=a",
+    4,
+    1700000000,
+    1700000100,
+    "entry 0 日本"
+   ],
+   [
+    "https://renormalise.example/post?id=1&token=b",
+    "https://renormalise.example/post?id=1&token=b",
+    1,
+    1700000001,
+    1700000101,
+    "entry 1 日本"
+   ],
+   [
+    "https://renormalise.example/post?id=2&token=c",
+    "https://renormalise.example/post?id=2&token=c",
+    1,
+    1700000002,
+    1700000102,
+    "entry 2 日本"
+   ]
+  ],
+  [
+   [
+    "https://renormalise.example/post?id=1",
+    "https://renormalise.example/post?id=1",
+    4,
+    1700000000,
+    1700000100,
+    "entry 0 日本"
+   ],
+   [
+    "https://renormalise.example/post?id=2",
+    "https://renormalise.example/post?id=2",
+    1,
+    1700000002,
+    1700000102,
+    "entry 2 日本"
+   ]
+  ]
+ ]
+}

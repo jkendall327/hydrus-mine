@@ -33,7 +33,7 @@ fn form_quote(value: &str) -> String {
     for byte in value.bytes() {
         match byte {
             b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
-                text.push(char::from(byte))
+                text.push(char::from(byte));
             }
             b' ' => text.push('+'),
             _ => {

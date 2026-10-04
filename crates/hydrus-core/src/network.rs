@@ -100,10 +100,10 @@ impl NetworkContext {
             CONTEXT_WATCHER_PAGE => "watcher page",
             _ => "unknown",
         };
-        if self.is_ephemeral() {
-            format!("{kind} instance")
-        } else if self.data.is_empty() {
+        if self.data.is_empty() {
             format!("{kind} default")
+        } else if self.is_ephemeral() {
+            format!("{kind} instance")
         } else {
             format!("{kind}: {}", self.data)
         }

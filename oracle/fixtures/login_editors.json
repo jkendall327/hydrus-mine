@@ -1,4 +1,1535 @@
 {
+ "example_states": [
+  {
+   "state": {
+    "value": [
+     [
+      "login.example",
+      0,
+      "Login required to access any content."
+     ]
+    ],
+    "rows": [
+     [
+      "login.example",
+      "Everything",
+      "Login required to access any content."
+     ]
+    ]
+   }
+  },
+  {
+   "action": "add",
+   "texts": [
+    "another.example",
+    null
+   ],
+   "access": 2,
+   "prompts": [
+    {
+     "message": "Edit the domain",
+     "options": {
+      "default": "example.com"
+     }
+    },
+    {
+     "message": "select what type of access the login gives to this domain",
+     "choices": [
+      [
+       "Everything",
+       0
+      ],
+      [
+       "NSFW",
+       1
+      ],
+      [
+       "Special",
+       2
+      ],
+      [
+       "User prefs",
+       3
+      ]
+     ],
+     "options": {
+      "value_to_select": 1,
+      "sort_tuples": false
+     }
+    },
+    {
+     "message": "Edit the access description, if needed.",
+     "options": {
+      "default": "Login required to access special content."
+     }
+    }
+   ],
+   "state": {
+    "value": [
+     [
+      "another.example",
+      2,
+      "Login required to access special content."
+     ],
+     [
+      "login.example",
+      0,
+      "Login required to access any content."
+     ]
+    ],
+    "rows": [
+     [
+      "another.example",
+      "Special",
+      "Login required to access special content."
+     ],
+     [
+      "login.example",
+      "Everything",
+      "Login required to access any content."
+     ]
+    ]
+   }
+  },
+  {
+   "action": "add",
+   "texts": [
+    "login.example"
+   ],
+   "access": 2,
+   "prompts": [
+    {
+     "message": "Edit the domain",
+     "options": {
+      "default": "example.com"
+     }
+    },
+    {
+     "warning": "That domain already exists!"
+    }
+   ],
+   "state": {
+    "value": [
+     [
+      "another.example",
+      2,
+      "Login required to access special content."
+     ],
+     [
+      "login.example",
+      0,
+      "Login required to access any content."
+     ]
+    ],
+    "rows": [
+     [
+      "another.example",
+      "Special",
+      "Login required to access special content."
+     ],
+     [
+      "login.example",
+      "Everything",
+      "Login required to access any content."
+     ]
+    ]
+   }
+  },
+  {
+   "action": "edit",
+   "texts": [
+    "renamed.example",
+    "custom access"
+   ],
+   "access": 2,
+   "prompts": [
+    {
+     "message": "Edit the domain",
+     "options": {
+      "default": "another.example"
+     }
+    },
+    {
+     "message": "select what type of access the login gives to this domain",
+     "choices": [
+      [
+       "Everything",
+       0
+      ],
+      [
+       "NSFW",
+       1
+      ],
+      [
+       "Special",
+       2
+      ],
+      [
+       "User prefs",
+       3
+      ]
+     ],
+     "options": {
+      "value_to_select": 2,
+      "sort_tuples": false
+     }
+    },
+    {
+     "message": "Edit the access description, if needed.",
+     "options": {
+      "default": "Login required to access special content."
+     }
+    }
+   ],
+   "state": {
+    "value": [
+     [
+      "login.example",
+      0,
+      "Login required to access any content."
+     ],
+     [
+      "renamed.example",
+      2,
+      "custom access"
+     ]
+    ],
+    "rows": [
+     [
+      "login.example",
+      "Everything",
+      "Login required to access any content."
+     ],
+     [
+      "renamed.example",
+      "Special",
+      "custom access"
+     ]
+    ]
+   }
+  },
+  {
+   "action": "edit",
+   "texts": [
+    "renamed.example",
+    null
+   ],
+   "access": 2,
+   "prompts": [
+    {
+     "message": "Edit the domain",
+     "options": {
+      "default": "renamed.example"
+     }
+    },
+    {
+     "message": "select what type of access the login gives to this domain",
+     "choices": [
+      [
+       "Everything",
+       0
+      ],
+      [
+       "NSFW",
+       1
+      ],
+      [
+       "Special",
+       2
+      ],
+      [
+       "User prefs",
+       3
+      ]
+     ],
+     "options": {
+      "value_to_select": 2,
+      "sort_tuples": false
+     }
+    },
+    {
+     "message": "Edit the access description, if needed.",
+     "options": {
+      "default": "custom access"
+     }
+    }
+   ],
+   "state": {
+    "value": [
+     [
+      "login.example",
+      0,
+      "Login required to access any content."
+     ],
+     [
+      "renamed.example",
+      2,
+      "custom access"
+     ]
+    ],
+    "rows": [
+     [
+      "login.example",
+      "Everything",
+      "Login required to access any content."
+     ],
+     [
+      "renamed.example",
+      "Special",
+      "custom access"
+     ]
+    ]
+   }
+  },
+  {
+   "action": "add",
+   "texts": [
+    null
+   ],
+   "access": 1,
+   "prompts": [
+    {
+     "message": "Edit the domain",
+     "options": {
+      "default": "example.com"
+     }
+    }
+   ],
+   "state": {
+    "value": [
+     [
+      "login.example",
+      0,
+      "Login required to access any content."
+     ],
+     [
+      "renamed.example",
+      2,
+      "custom access"
+     ]
+    ],
+    "rows": [
+     [
+      "login.example",
+      "Everything",
+      "Login required to access any content."
+     ],
+     [
+      "renamed.example",
+      "Special",
+      "custom access"
+     ]
+    ]
+   }
+  },
+  {
+   "action": "add",
+   "texts": [
+    "cancelled.example"
+   ],
+   "access": null,
+   "prompts": [
+    {
+     "message": "Edit the domain",
+     "options": {
+      "default": "example.com"
+     }
+    },
+    {
+     "message": "select what type of access the login gives to this domain",
+     "choices": [
+      [
+       "Everything",
+       0
+      ],
+      [
+       "NSFW",
+       1
+      ],
+      [
+       "Special",
+       2
+      ],
+      [
+       "User prefs",
+       3
+      ]
+     ],
+     "options": {
+      "value_to_select": 1,
+      "sort_tuples": false
+     }
+    }
+   ],
+   "state": {
+    "value": [
+     [
+      "login.example",
+      0,
+      "Login required to access any content."
+     ],
+     [
+      "renamed.example",
+      2,
+      "custom access"
+     ]
+    ],
+    "rows": [
+     [
+      "login.example",
+      "Everything",
+      "Login required to access any content."
+     ],
+     [
+      "renamed.example",
+      "Special",
+      "custom access"
+     ]
+    ]
+   }
+  }
+ ],
+ "cookie_states": [
+  {
+   "state": {
+    "value": [
+     21,
+     2,
+     [
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "rows": [
+     [
+      "session",
+      "ok"
+     ]
+    ]
+   }
+  },
+  {
+   "action": "add",
+   "answers": [
+    "token",
+    "ready"
+   ],
+   "dialogs": [
+    "edit cookie name",
+    "edit match"
+   ],
+   "state": {
+    "value": [
+     21,
+     2,
+     [
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ],
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "token",
+          null,
+          null,
+          "token"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ready",
+          null,
+          null,
+          "ready"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "rows": [
+     [
+      "session",
+      "ok"
+     ],
+     [
+      "token",
+      "ready"
+     ]
+    ]
+   }
+  },
+  {
+   "action": "edit",
+   "answers": [
+    "edited",
+    "changed"
+   ],
+   "dialogs": [
+    "edit cookie name",
+    "edit match"
+   ],
+   "state": {
+    "value": [
+     21,
+     2,
+     [
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "edited",
+          null,
+          null,
+          "edited"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "changed",
+          null,
+          null,
+          "changed"
+         ]
+        ]
+       ]
+      ],
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "rows": [
+     [
+      "edited",
+      "changed"
+     ],
+     [
+      "session",
+      "ok"
+     ]
+    ]
+   }
+  },
+  {
+   "action": "add",
+   "answers": [
+    "discarded",
+    null
+   ],
+   "dialogs": [
+    "edit cookie name",
+    "edit match"
+   ],
+   "state": {
+    "value": [
+     21,
+     2,
+     [
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "edited",
+          null,
+          null,
+          "edited"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "changed",
+          null,
+          null,
+          "changed"
+         ]
+        ]
+       ]
+      ],
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "rows": [
+     [
+      "edited",
+      "changed"
+     ],
+     [
+      "session",
+      "ok"
+     ]
+    ]
+   }
+  },
+  {
+   "action": "add",
+   "answers": [
+    "session",
+    "ok"
+   ],
+   "dialogs": [
+    "edit cookie name",
+    "edit match"
+   ],
+   "state": {
+    "value": [
+     21,
+     2,
+     [
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "edited",
+          null,
+          null,
+          "edited"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "changed",
+          null,
+          null,
+          "changed"
+         ]
+        ]
+       ]
+      ],
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ],
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "rows": [
+     [
+      "edited",
+      "changed"
+     ],
+     [
+      "session",
+      "ok"
+     ],
+     [
+      "session",
+      "ok"
+     ]
+    ]
+   }
+  }
+ ],
+ "argument_states": [
+  {
+   "state": [
+    74,
+    "establish session",
+    2,
+    [
+     "http",
+     "GET",
+     ".",
+     "/start",
+     {},
+     {
+      "lang": "en"
+     },
+     {},
+     [
+      21,
+      2,
+      []
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         30,
+         7,
+         [
+          "csrf variable",
+          14,
+          [
+           136,
+           1,
+           [
+            "dummy-csrf",
+            1,
+            "",
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              []
+             ]
+            ]
+           ]
+          ],
+          "csrf"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "rows": {
+    "credential": [],
+    "static": [
+     [
+      "lang",
+      "en"
+     ]
+    ],
+    "temporary": []
+   }
+  },
+  {
+   "kind": "credential",
+   "action": "add",
+   "answers": [
+    "username",
+    "user"
+   ],
+   "prompts": [
+    {
+     "message": "enter the credential name",
+     "options": {
+      "allow_blank": false
+     }
+    },
+    {
+     "message": "enter the parameter name",
+     "options": {
+      "allow_blank": true
+     }
+    }
+   ],
+   "state": [
+    74,
+    "establish session",
+    2,
+    [
+     "http",
+     "GET",
+     ".",
+     "/start",
+     {
+      "username": "user"
+     },
+     {
+      "lang": "en"
+     },
+     {},
+     [
+      21,
+      2,
+      []
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         30,
+         7,
+         [
+          "csrf variable",
+          14,
+          [
+           136,
+           1,
+           [
+            "dummy-csrf",
+            1,
+            "",
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              []
+             ]
+            ]
+           ]
+          ],
+          "csrf"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "rows": {
+    "credential": [
+     [
+      "username",
+      "user"
+     ]
+    ],
+    "static": [
+     [
+      "lang",
+      "en"
+     ]
+    ],
+    "temporary": []
+   }
+  },
+  {
+   "kind": "credential",
+   "action": "add",
+   "answers": [
+    "username"
+   ],
+   "prompts": [
+    {
+     "message": "enter the credential name",
+     "options": {
+      "allow_blank": false
+     }
+    },
+    {
+     "warning": "That credential name already exists!"
+    }
+   ],
+   "state": [
+    74,
+    "establish session",
+    2,
+    [
+     "http",
+     "GET",
+     ".",
+     "/start",
+     {
+      "username": "user"
+     },
+     {
+      "lang": "en"
+     },
+     {},
+     [
+      21,
+      2,
+      []
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         30,
+         7,
+         [
+          "csrf variable",
+          14,
+          [
+           136,
+           1,
+           [
+            "dummy-csrf",
+            1,
+            "",
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              []
+             ]
+            ]
+           ]
+          ],
+          "csrf"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "rows": {
+    "credential": [
+     [
+      "username",
+      "user"
+     ]
+    ],
+    "static": [
+     [
+      "lang",
+      "en"
+     ]
+    ],
+    "temporary": []
+   }
+  },
+  {
+   "kind": "credential",
+   "action": "edit",
+   "answers": [
+    "account",
+    "account_param"
+   ],
+   "prompts": [
+    {
+     "message": "edit the credential name",
+     "options": {
+      "default": "username",
+      "allow_blank": false
+     }
+    },
+    {
+     "message": "edit the parameter name",
+     "options": {
+      "default": "user",
+      "allow_blank": true
+     }
+    }
+   ],
+   "state": [
+    74,
+    "establish session",
+    2,
+    [
+     "http",
+     "GET",
+     ".",
+     "/start",
+     {
+      "account": "account_param"
+     },
+     {
+      "lang": "en"
+     },
+     {},
+     [
+      21,
+      2,
+      []
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         30,
+         7,
+         [
+          "csrf variable",
+          14,
+          [
+           136,
+           1,
+           [
+            "dummy-csrf",
+            1,
+            "",
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              []
+             ]
+            ]
+           ]
+          ],
+          "csrf"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "rows": {
+    "credential": [
+     [
+      "account",
+      "account_param"
+     ]
+    ],
+    "static": [
+     [
+      "lang",
+      "en"
+     ]
+    ],
+    "temporary": []
+   }
+  },
+  {
+   "kind": "static",
+   "action": "add",
+   "answers": [
+    "empty",
+    ""
+   ],
+   "prompts": [
+    {
+     "message": "enter the parameter name",
+     "options": {
+      "allow_blank": false
+     }
+    },
+    {
+     "message": "enter the value",
+     "options": {
+      "allow_blank": true
+     }
+    }
+   ],
+   "state": [
+    74,
+    "establish session",
+    2,
+    [
+     "http",
+     "GET",
+     ".",
+     "/start",
+     {
+      "account": "account_param"
+     },
+     {
+      "empty": "",
+      "lang": "en"
+     },
+     {},
+     [
+      21,
+      2,
+      []
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         30,
+         7,
+         [
+          "csrf variable",
+          14,
+          [
+           136,
+           1,
+           [
+            "dummy-csrf",
+            1,
+            "",
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              []
+             ]
+            ]
+           ]
+          ],
+          "csrf"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "rows": {
+    "credential": [
+     [
+      "account",
+      "account_param"
+     ]
+    ],
+    "static": [
+     [
+      "empty",
+      ""
+     ],
+     [
+      "lang",
+      "en"
+     ]
+    ],
+    "temporary": []
+   }
+  },
+  {
+   "kind": "temporary",
+   "action": "add",
+   "answers": [
+    "cancelled",
+    null
+   ],
+   "prompts": [
+    {
+     "message": "enter the temp variable name",
+     "options": {
+      "allow_blank": false
+     }
+    },
+    {
+     "message": "enter the parameter name",
+     "options": {
+      "allow_blank": true
+     }
+    }
+   ],
+   "state": [
+    74,
+    "establish session",
+    2,
+    [
+     "http",
+     "GET",
+     ".",
+     "/start",
+     {
+      "account": "account_param"
+     },
+     {
+      "empty": "",
+      "lang": "en"
+     },
+     {},
+     [
+      21,
+      2,
+      []
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         30,
+         7,
+         [
+          "csrf variable",
+          14,
+          [
+           136,
+           1,
+           [
+            "dummy-csrf",
+            1,
+            "",
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              []
+             ]
+            ]
+           ]
+          ],
+          "csrf"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "rows": {
+    "credential": [
+     [
+      "account",
+      "account_param"
+     ]
+    ],
+    "static": [
+     [
+      "empty",
+      ""
+     ],
+     [
+      "lang",
+      "en"
+     ]
+    ],
+    "temporary": []
+   }
+  },
+  {
+   "kind": "temporary",
+   "action": "add",
+   "answers": [
+    "csrf",
+    "token"
+   ],
+   "prompts": [
+    {
+     "message": "enter the temp variable name",
+     "options": {
+      "allow_blank": false
+     }
+    },
+    {
+     "message": "enter the parameter name",
+     "options": {
+      "allow_blank": true
+     }
+    }
+   ],
+   "state": [
+    74,
+    "establish session",
+    2,
+    [
+     "http",
+     "GET",
+     ".",
+     "/start",
+     {
+      "account": "account_param"
+     },
+     {
+      "empty": "",
+      "lang": "en"
+     },
+     {
+      "csrf": "token"
+     },
+     [
+      21,
+      2,
+      []
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         30,
+         7,
+         [
+          "csrf variable",
+          14,
+          [
+           136,
+           1,
+           [
+            "dummy-csrf",
+            1,
+            "",
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              []
+             ]
+            ]
+           ]
+          ],
+          "csrf"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "rows": {
+    "credential": [
+     [
+      "account",
+      "account_param"
+     ]
+    ],
+    "static": [
+     [
+      "empty",
+      ""
+     ],
+     [
+      "lang",
+      "en"
+     ]
+    ],
+    "temporary": [
+     [
+      "csrf",
+      "token"
+     ]
+    ]
+   }
+  }
+ ],
+ "domain_login_actions": [
+  {
+   "mode": "eligible",
+   "accepted": false,
+   "questions": [
+    "It looks like the following domains can log in:\n\nlogin.example\n\nThe dialog will ok and the login attempts will start. Is this ok?"
+   ],
+   "warnings": [],
+   "okayed": [],
+   "domains": []
+  },
+  {
+   "mode": "eligible",
+   "accepted": true,
+   "questions": [
+    "It looks like the following domains can log in:\n\nlogin.example\n\nThe dialog will ok and the login attempts will start. Is this ok?"
+   ],
+   "warnings": [],
+   "okayed": [
+    true
+   ],
+   "domains": [
+    "login.example"
+   ]
+  },
+  {
+   "mode": "ineligible",
+   "accepted": true,
+   "questions": [],
+   "warnings": [
+    "Unfortunately, none of the selected domains appear able to log in. Do you need to activate or scrub something somewhere?"
+   ],
+   "okayed": [],
+   "domains": []
+  }
+ ],
  "domain_states": [
   {
    "state": {

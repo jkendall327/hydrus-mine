@@ -6,7 +6,13 @@ use hydrus_gui_model::{
     manage_tags::ManageTags,
     write_autocomplete::{Paste, WriteAutocomplete, paste},
 };
-use hydrus_store::{Store, settings, tag_editing::TagEditingSettings};
+use hydrus_store::{
+    Store,
+    content::tag_relations::{self, RelationAction, RelationUpdate},
+    display::RelationKind,
+    settings,
+    tag_editing::TagEditingSettings,
+};
 use serde_json::{Value, json};
 
 fn seeded(fixture: &Value) -> (tempfile::TempDir, Arc<Store>) {
@@ -46,10 +52,6 @@ fn seeded(fixture: &Value) -> (tempfile::TempDir, Arc<Store>) {
             Ok(())
         })
         .unwrap();
-    use hydrus_store::{
-        content::tag_relations::{self, RelationAction, RelationUpdate},
-        display::RelationKind,
-    };
     for (kind, pairs) in [
         (
             RelationKind::Siblings,
@@ -132,7 +134,21 @@ fn exact_rows_counts_domains_decorations_and_first_selection_match_reference() {
                 actual.push(json!({"tag":row.tag,"count":row.counted,"rows":[row.label]}));
             }
         }
-        assert_eq!(json!(actual), query["suggestions"], "{query}");
+        // Qt iterates an unsorted parent collection (ListBoxItemTextTag
+        // _AppendParentsTextWithNamespaces); actual reruns emit either order.
+        // Preserve logical suggestion order, its primary row, counts and every
+        // inherited label, while comparing only that unordered suffix as a bag.
+        let canonical = |suggestions: &mut [Value]| {
+            for suggestion in suggestions {
+                let rows = suggestion["rows"].as_array_mut().unwrap();
+                rows[1..].sort_by(|a, b| a.as_str().unwrap().cmp(b.as_str().unwrap()));
+            }
+        };
+        let mut expected: Vec<Value> =
+            serde_json::from_value(query["suggestions"].clone()).unwrap();
+        canonical(&mut actual);
+        canonical(&mut expected);
+        assert_eq!(actual, expected, "{query}");
         assert_eq!(json!([input.chosen(None).unwrap()]), query["selected"]);
     }
     // Fetch-as-you-type disabled must suppress suggestions, while Ctrl+Space still fetches.
@@ -338,7 +354,7 @@ fn detached_import_tag_lists_replay_reference_and_never_mutate_caller() {
             match event["action"].as_str().unwrap() {
                 "initial" | "cancel" => {}
                 "paste" | "repeat_paste" => {
-                    model.paste(&["parity:caller initial".into(), "parity:child new".into()])
+                    model.paste(&["parity:caller initial".into(), "parity:child new".into()]);
                 }
                 "typed_toggle" => {
                     model.input.set_text("parity:caller initial");
@@ -491,7 +507,9 @@ fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
     use hydrus_gui_model::write_tag_menu::{Action, Entry};
     fn action(entries: &[Entry], label: &str) -> Option<Action> {
         entries.iter().find_map(|entry| match entry {
-            Entry::Item(text, action) if text == label => Some(action.clone()),
+            Entry::Item(text, action) | Entry::Check(text, action, _) if text == label => {
+                Some(action.clone())
+            }
             Entry::Menu(_, entries) => action(entries, label),
             _ => None,
         })
@@ -526,7 +544,7 @@ fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
             fn paths(entries: &[Entry], prefix: &[String], out: &mut Vec<Vec<String>>) {
                 for entry in entries {
                     match entry {
-                        Entry::Item(label, _) => {
+                        Entry::Item(label, _) | Entry::Check(label, _, _) => {
                             let mut path = prefix.to_vec();
                             path.push(label.clone());
                             out.push(path);
@@ -597,6 +615,9 @@ fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
                 } else {
                     assert_eq!(json!([text]), event["copied"]);
                 }
+            }
+            Action::Domain(..) | Action::Locations(..) => {
+                panic!("unexpected domain action in tag menu replay");
             }
             Action::Relationship { .. } | Action::LaunchMany { .. } => {
                 panic!("unexpected relationship or multiple-page action in write-menu replay");
@@ -799,4 +820,214 @@ fn seeded_relationship_editors_replay_service_defaults_memory_and_cancel() {
                 .all(|r| r.pair.1 != "parity:unapplied relation")
         );
     }
+}
+
+#[test]
+fn write_domain_menus_and_interlocks_replay_reference_without_persisting_options() {
+    use hydrus_core::{ServiceKey, service::builtin_keys};
+    use hydrus_gui_model::write_tag_menu::{Action, Entry};
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let (_dir, store) = seeded(&fixture);
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let initial = LocationContext::single(ServiceKey::new(builtin_keys::MY_FILES.to_vec()));
+    // The recorder explicitly sets the widget to "my files" and observes
+    // the client's configured local fallback; these are independent of a
+    // freshly constructed widget's per-service domain override.
+    let recorded_defaults = &fixture["domain_preferences"];
+    let keys = |name: &str| {
+        recorded_defaults[name]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|key| ServiceKey::from_hex(key.as_str().unwrap()).unwrap())
+            .collect::<Vec<_>>()
+    };
+    let defaults = LocationContext::new(keys("current"), keys("deleted"));
+    store
+        .write(move |ctx| {
+            let mut options: settings::SearchDefaults = settings::get(ctx.conn())?;
+            options.local_location = defaults;
+            settings::set(ctx.conn(), &options)
+        })
+        .unwrap();
+    let before = serde_json::to_value(
+        store
+            .read(settings::get::<hydrus_store::tag_display_config::AutocompleteWidgetSettings>)
+            .unwrap(),
+    )
+    .unwrap();
+    let mut input = WriteAutocomplete::new(store.clone(), key.clone(), initial.clone());
+    input.choose_domain(hydrus_gui_model::domains::Choice::Location(initial.clone()));
+    for event in fixture["domains"].as_array().unwrap() {
+        let entries = input.domain_menu(event["tags"].as_bool().unwrap());
+        let actual: Vec<_> = entries
+            .iter()
+            .filter_map(|entry| {
+                if let Entry::Check(label, _, checked) = entry {
+                    Some(json!({"label":label,"checked":checked}))
+                } else {
+                    None
+                }
+            })
+            .collect();
+        assert_eq!(json!(actual), event["rows"]);
+        if let Some(label) = event["choose"].as_str() {
+            let choice = entries
+                .into_iter()
+                .find_map(|entry| {
+                    if let Entry::Check(text, Action::Domain(choice), _) = entry {
+                        (text == label).then_some(choice)
+                    } else {
+                        None
+                    }
+                })
+                .unwrap();
+            input.choose_domain(choice);
+        }
+        let domains = input.domains();
+        let (files, tags) = input.domain_labels();
+        assert_eq!(
+            json!({"current":domains.location.current().iter().map(ServiceKey::to_hex).collect::<Vec<_>>(),"deleted":domains.location.deleted().iter().map(ServiceKey::to_hex).collect::<Vec<_>>(),"service":domains.tags.service.to_hex(),"display":domains.tags.display_service.to_hex(),"current_tags":domains.tags.include_current,"pending_tags":domains.tags.include_pending,"file_label":files,"tag_label":tags}),
+            event["after"]
+        );
+        assert_eq!(
+            serde_json::to_value(store
+                .read(settings::get::<hydrus_store::tag_display_config::AutocompleteWidgetSettings>)
+                .unwrap()).unwrap(),
+            before
+        );
+    }
+    // Per-service drafts survive switching a Manage Tags input; a new widget uses defaults.
+    let previous = input.domains();
+    let other = store
+        .snapshot()
+        .services
+        .by_name("second tags")
+        .unwrap()
+        .key
+        .clone();
+    input.set_context(other, initial.clone());
+    assert_ne!(input.domains(), previous);
+    input.set_context(key.clone(), initial.clone());
+    assert_eq!(input.domains(), previous);
+    let mut reopened = WriteAutocomplete::new(store.clone(), key, initial);
+    assert_ne!(reopened.domains(), previous);
+    reopened.set_text("parity:amb");
+    reopened.fetch();
+    let counted = reopened.rows().iter().filter(|r| r.counted).count();
+    assert!(counted > 0);
+    reopened.choose_domain(hydrus_gui_model::domains::Choice::Location(
+        LocationContext::new([], []),
+    ));
+    assert!(reopened.rows().iter().all(|row| !row.counted));
+}
+
+#[test]
+fn favourite_options_replay_add_only_choices_and_parent_transaction() {
+    use hydrus_gui_model::{
+        options::{Editor, Kind, Settings},
+        write_autocomplete::{Tab, TagEntry},
+    };
+    use hydrus_store::settings::FavouriteTags;
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let recorded = &fixture["favourite_options"];
+    let initial: Vec<String> = serde_json::from_value(recorded["initial"].clone()).unwrap();
+    let (_directory, store) = seeded(&fixture);
+    let initial_setting = FavouriteTags(initial.clone());
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &initial_setting))
+        .unwrap();
+    let before = store.read(Settings::load).unwrap();
+    let mut editor = Editor::new(before.clone());
+    let pages = hydrus_gui_model::options::pages(&before);
+    let page = pages
+        .iter()
+        .find(|page| page.name == "tag autocomplete tabs")
+        .unwrap();
+    assert!(
+        page.options()
+            .iter()
+            .any(|option| option.kind == Kind::FavouriteTags)
+    );
+    let service = hydrus_core::ServiceKey::new(hydrus_core::service::builtin_keys::COMBINED_TAG);
+    let mut child = TagEntry::new(
+        WriteAutocomplete::new(store.clone(), service.clone(), LocationContext::default()),
+        &initial,
+    )
+    .additions_only();
+    for event in recorded["events"].as_array().unwrap() {
+        match event["action"].as_str().unwrap() {
+            "initial" => {}
+            "manual" | "repeat_manual" => {
+                child.input.set_text("parity:favourite 1");
+                child.enter(None);
+            }
+            "paste" | "repeat_paste" => {
+                child.paste(&[
+                    "parity:favourite 2".into(),
+                    "parity:favourite 3".into(),
+                    "parity:favourite pasted".into(),
+                ]);
+            }
+            "remove" => {
+                let index = child
+                    .tags()
+                    .iter()
+                    .position(|tag| tag == "parity:favourite 2")
+                    .unwrap();
+                child.remove(index);
+            }
+            "apply" => {
+                editor.set_favourite_tags(&child.tags());
+            }
+            action => panic!("unexpected recorded action {action}"),
+        }
+        assert_eq!(serde_json::json!(child.tags()), event["rows"]);
+        assert_eq!(
+            store.read(Settings::load).unwrap().favourite_tags,
+            before.favourite_tags
+        );
+    }
+    let (after, original, problems) = editor.applied();
+    assert!(problems.is_empty());
+    assert_eq!(
+        serde_json::json!(after.favourite_tags.0),
+        recorded["events"][6]["saved"]
+    );
+    let original = original.clone();
+    // A concurrently edited child cap is unrelated to this favourite-list draft.
+    store
+        .write(|ctx| {
+            let mut tabs: settings::TagAutocompleteTabs = settings::get(ctx.conn())?;
+            tabs.children_limit = Some(1);
+            settings::set(ctx.conn(), &tabs)
+        })
+        .unwrap();
+    store
+        .write(move |ctx| after.save(ctx.conn(), &original))
+        .unwrap();
+    let reopened = store.read(Settings::load).unwrap();
+    assert_eq!(
+        serde_json::json!(reopened.favourite_tags.0),
+        recorded["cancelled_saved"]
+    );
+    assert_eq!(reopened.tag_autocomplete_tabs.children_limit, Some(1));
+    let mut consumer = WriteAutocomplete::new(store.clone(), service, LocationContext::default());
+    consumer.set_tab(Tab::Favourites);
+    let offered: std::collections::BTreeSet<_> =
+        consumer.rows().iter().map(|row| row.tag.clone()).collect();
+    assert_eq!(offered, reopened.favourite_tags.0.iter().cloned().collect());
+    let mut cancelled = Editor::new(reopened.clone());
+    cancelled.set_favourite_tags(&["parity:cancelled".into()]);
+    assert_eq!(store.read(Settings::load).unwrap(), reopened);
+    assert_eq!(
+        Editor::new(reopened.clone()).edited_favourite_tags(),
+        reopened.favourite_tags
+    );
 }

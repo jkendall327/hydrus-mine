@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "agent": "root-import-options",
+  "baseline_git_head": "d50df26b",
+  "validation": {
+    "reference_recording": "Actual Qt recorder executed 2026-10-04 12:09 UTC; native/model/exchange tests authored, hosted CI pending.",
+    "local_cargo_builds_or_tests": false
+  },
+  "claims": [
+    {
+      "id": "subscriptions-copy-options",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Real selected subscription import-options clipboard copy, all four reference menu routing behaviors, invalid clipboard review, exact clear confirmation and favourite direct/custom loading. Changes remain staged until list Apply; Cancel/owner close invalidate children and stale callbacks. Serialized eight-kind container preserves current/deleted locations and custom external-program payloads. Shared profile actions persist independently, and subscription list suppresses save-current.",
+      "limits": [
+        "Native information questions use the existing panel and the overwrite chooser is an owned detached window.",
+        "The separate serialized subscription exchange leaf remains incomplete."
+      ],
+      "source": [
+        "crates/hydrus-gui/src/subscriptions_window.rs::open",
+        "crates/hydrus-gui-model/src/subscriptions_dialog.rs::paste_import_options",
+        "crates/hydrus-downloader-exchange/src/import_options.rs::decode_text"
+      ],
+      "tests": [
+        "crates/hydrus-gui/tests/gui/subscriptions.rs::subscription_option_clipboard_edits_stay_staged_and_closed_owners_cannot_apply",
+        "crates/hydrus-gui/tests/gui/subscriptions.rs::favourites_load_selected_subscriptions_and_custom_overwrite_obeys_owner_lifetime",
+        "crates/hydrus-gui-model/tests/model/subscription_import_options.rs::subscription_paste_modes_and_clear_match_recorded_reference_outputs"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_subscription_import_options.py",
+        "fixture": "oracle/fixtures/subscription_import_options.json",
+        "executed": true
+      },
+      "implementationCommit": "e92db283"
+    }
+  ],
+  "nativeComponents": [
+    {
+      "name": "ImportOptionsOverwriteWindow",
+      "file": "crates/hydrus-gui/ui/import_options_overwrite.slint",
+      "title": "choose which import options to overwrite",
+      "ownerParentIDs": [
+        "subscriptions-copy-options"
+      ],
+      "referenceIDs": [
+        "subscriptions-copy-options"
+      ],
+      "owner": "Frozen incoming/current containers; owned by subscription list, importer or staged Options child; owner cancellation invalidates late Apply. Global replacement must retain all kinds.",
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/ui/import_options_overwrite.slint",
+          "line": 13,
+          "symbol": "export component ImportOptionsOverwriteWindow"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/import_options_overwrite_window.rs",
+          "line": 58,
+          "symbol": "pub fn open("
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/import_options.rs",
+          "line": 12,
+          "symbol": "fn shared_overwrite_drafts_close_cleanly_and_clipboard_reaches_real_importer()"
+        }
+      ],
+      "actionGroups": [
+        {
+          "label": "kinds and selected sources",
+          "controls": [
+            "eight reference import-option kinds",
+            "current or incoming source per kind",
+            "global full-container guard"
+          ]
+        },
+        {
+          "label": "preset choices",
+          "controls": [
+            "merge",
+            "fill in",
+            "replace",
+            "custom selections"
+          ]
+        },
+        {
+          "label": "owner lifecycle",
+          "controls": [
+            "apply selected combination",
+            "cancel without applying",
+            "stale owner close guard"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ImportFavouritePromptWindow",
+      "file": "crates/hydrus-gui/ui/import_options_favourites.slint",
+      "title": "import options",
+      "ownerParentIDs": [
+        "subscriptions-copy-options"
+      ],
+      "referenceIDs": [
+        "subscriptions-copy-options"
+      ],
+      "owner": "Shared favourites controller retains save-name or deletion question; durable profiles save independently for importer owners, Options-page profiles remain in the parent draft.",
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/ui/import_options_favourites.slint",
+          "line": 83,
+          "symbol": "export component ImportFavouritePromptWindow"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/import_options_favourites_window.rs",
+          "line": 396,
+          "symbol": "    fn open_prompt("
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/import_options.rs",
+          "line": 510,
+          "symbol": "fn favourites_popup_replays_real_dialogs_persists_and_invalidates_children()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/import_options.rs",
+          "line": 669,
+          "symbol": "fn options_profiles_share_the_parent_draft_without_persisting_children()"
+        }
+      ],
+      "actionGroups": [
+        {
+          "label": "name prompt",
+          "controls": [
+            "reference default name",
+            "accept name",
+            "duplicate-name suffix",
+            "cancel"
+          ]
+        },
+        {
+          "label": "delete prompt",
+          "controls": [
+            "exact favourite-name confirmation",
+            "accept removal",
+            "cancel removal",
+            "closed owner invalidation"
+          ]
+        },
+        {
+          "label": "shared favourite popup",
+          "controls": [
+            "direct load",
+            "custom overwrite child",
+            "copy serialized container",
+            "edit named profile",
+            "add empty profile",
+            "save current importer profile",
+            "confirmed deletion"
+          ],
+          "sharedComponents": [
+            "ImportOptionsWindow",
+            "ImportOptionsOverwriteWindow"
+          ]
+        }
+      ]
+    }
+  ],
+  "nativeMappingCorrections": [
+    {
+      "referenceID": "subscriptions-copy-options",
+      "replaceNativeCandidates": [
+        "dialog.subscriptions.options-clipboard"
+      ],
+      "reason": "The historical candidate dialog.subscriptions.missing.exchange is serialized subscription exchange, which remains Missing. Import-options clipboard/favourites actions are a separate sibling."
+    }
+  ]
+}

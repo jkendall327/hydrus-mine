@@ -747,6 +747,8 @@ export component MainWindow inherits Window {
     // ctrl+s: the search box takes the keyboard (counted, for the box to
     // see each ask)
     in-out property <int> search-focus-requests;
+    in property <int> viewer-reveal-index;
+    in-out property <int> viewer-reveal-request;
     // the selected file's shortcuts, and a question's answer
     callback archive-selected();
     callback inbox-selected();
@@ -1831,6 +1833,8 @@ export component MainWindow inherits Window {
                             }
                             reject
                         }
+                        property <int> viewer-reveal-request: root.viewer-reveal-request;
+                        changed viewer-reveal-request => { grid.scroll-to(root.viewer-reveal-index); }
                         grid := ThumbnailGrid {
                             width: 100%;
                             height: 100%;
@@ -2001,3 +2005,13 @@ export { LoginDomainsWindow } from "login_domains.slint";
 
 export { ImportFavouriteRow, ImportFavouritePromptWindow } from "import_options_favourites.slint";
 export { LoginTestResultWindow } from "login_result.slint";
+
+export { LoginCookiesWindow } from "login_cookies.slint";
+export { SearchLogImportWindow } from "search_log_import.slint";
+
+
+export { LoginExampleDomainWindow } from "login_example.slint";
+
+export { GallerySourceWindow } from "gallery_source.slint";
+
+export { ImportOptionsPanelWindow } from "import_options_panel.slint";

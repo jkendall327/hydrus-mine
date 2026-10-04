@@ -40,6 +40,7 @@ pub mod stats;
 pub mod storage;
 pub mod store;
 pub mod string_conversion;
+pub mod subscription_quality;
 pub mod subscriptions;
 pub mod synth;
 pub mod tag_display;
@@ -56,4 +57,5 @@ pub use conn::{Db, Paused, WriteCtx};
 pub use error::{Result, StoreError};
 pub use store::{Snapshot, Store};
 
+pub mod api_activity;
 pub mod api_permissions;

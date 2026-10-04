@@ -177,7 +177,7 @@ fn notebook_session_submenus_match_actual_tab_popup_reserved_name_rules() {
             };
             match command {
                 Command::AppendNotebookSession { notebook, .. } => {
-                    assert_eq!(*notebook, Some(parent))
+                    assert_eq!(*notebook, Some(parent));
                 }
                 Command::SaveNotebookSession {
                     key,

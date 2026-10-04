@@ -7,6 +7,7 @@
 //! (nothing is written to the store until that dialog's "apply").
 
 use std::cell::RefCell;
+use std::collections::BTreeSet;
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -57,6 +58,7 @@ type Change = Rc<dyn Fn(&dyn Fn(&mut Open))>;
 /// The dialog's state while it is open.
 struct Open {
     dialog: EditSubscription,
+    original_queues: BTreeSet<i64>,
     /// The client's downloaders: (key, name, initial search text).
     gugs: Vec<(String, String, String)>,
     short: ShortSummary,
@@ -158,6 +160,10 @@ fn show(window: &EditSubscriptionWindow, open: &Open) {
     window.set_sort_column(i32::try_from(dialog.sort.0).unwrap_or(0));
     window.set_ascending(dialog.sort.1);
     window.set_any_selected(!dialog.selection.is_empty());
+    window.set_can_quality(
+        !hydrus_gui_model::subscription_quality::selected(dialog, &open.original_queues, now)
+            .is_empty(),
+    );
     window.set_one_selected(dialog.selection.one().is_some());
     window.set_can_check_now(dialog.can_check_now(now));
     window.set_can_reset(dialog.can_reset(now));
@@ -250,8 +256,14 @@ pub(crate) fn open(
     let window = EditSubscriptionWindow::new().map_err(|e| e.to_string())?;
     window.set_most_files(if advanced.0 { 50000 } else { 1000 });
     show_fields(&window, &dialog);
+    let original_queues = dialog
+        .queries
+        .iter()
+        .filter_map(|q| q.query.queue)
+        .collect();
     let state = Rc::new(RefCell::new(Open {
         dialog,
+        original_queues,
         gugs: crate::gallery::offered_gugs(&definitions.gugs),
         short: ShortSummary {
             new: naming.short_summary_new,
@@ -260,10 +272,42 @@ pub(crate) fn open(
         asking: None,
         editing: None,
     }));
+    let quality = crate::subscription_quality_control::bind(
+        &window,
+        store,
+        advanced.0,
+        Rc::new({
+            let state = state.clone();
+            move || {
+                let open = state.borrow();
+                hydrus_gui_model::subscription_quality::selected(
+                    &open.dialog,
+                    &open.original_queues,
+                    now(),
+                )
+            }
+        }),
+        Rc::new({
+            let state = state.clone();
+            let weak = window.as_weak();
+            move |text| {
+                state.borrow_mut().asking = Some(Asking::Message(Choice {
+                    title: "Information".into(),
+                    message: text,
+                    choices: vec!["ok".into()],
+                }));
+                if let Some(w) = weak.upgrade() {
+                    show(&w, &state.borrow());
+                }
+            }
+        }),
+    );
     let close = {
+        let quality = quality.clone();
         let weak = window.as_weak();
         let slot = slots.edit.clone();
         move || {
+            quality.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -275,6 +319,11 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let state = state.clone();
         Rc::new(move |f: &dyn Fn(&mut Open)| {
+            if let Some(w) = weak.upgrade()
+                && w.get_quality_working()
+            {
+                return;
+            }
             f(&mut state.borrow_mut());
             if let Some(window) = weak.upgrade() {
                 show(&window, &state.borrow());
@@ -656,6 +705,9 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if window.get_quality_working() {
+                return;
+            }
             let mut open = state.borrow_mut();
             read_fields(&window, &mut open.dialog);
             let dialog = open.dialog.clone();

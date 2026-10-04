@@ -1056,7 +1056,7 @@ impl Jobs {
         }
         match self.cog_actions.borrow().get(&id) {
             Some(hydrus_gui_model::network_job_control::Action::CopyUrl(url)) => {
-                crate::copy_to_clipboard(url)
+                crate::copy_to_clipboard(url);
             }
             Some(hydrus_gui_model::network_job_control::Action::Rules(context)) => {
                 let _ = open_rules(self.store.clone(), &self.rules, context.clone());

@@ -254,3 +254,197 @@ fn auxiliary_native_window_events_reset_only_input_idle_and_preserve_autosave_re
             .is_some()
     );
 }
+
+#[test]
+fn non_page_api_activity_marker_drives_idle_retry_and_expiry_after_reopen() {
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    store
+        .write(move |ctx| {
+            settings::set(
+                ctx.conn(),
+                &GuiIdleSettings {
+                    enabled: true,
+                    user_seconds: None,
+                    mouse_seconds: None,
+                    api_seconds: Some(600),
+                },
+            )?;
+            settings::set(
+                ctx.conn(),
+                &GuiSessionSettings {
+                    only_during_idle: true,
+                    ..GuiSessionSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let due = bound.session_autosave.next().unwrap();
+    bound.session_autosave.api_at(0);
+    assert!(bound.session_autosave.idle_at(due));
+    let request_at = hydrus_core::TimestampMs::now().0;
+    hydrus_store::api_activity::touch(store.dir(), request_at).unwrap();
+    assert!(!bound.session_autosave.idle_at(due));
+    assert!(!bound.session_autosave.poll_at(due).unwrap());
+    assert_eq!(bound.session_autosave.next(), Some(due + 60_000));
+    assert!(!bound.session_autosave.idle_at(request_at + 600_000));
+    assert!(bound.session_autosave.idle_at(request_at + 600_001));
+    assert!(
+        bound
+            .session_autosave
+            .poll_at(request_at + 600_001)
+            .unwrap()
+    );
+    let reopened_ui = MainWindow::new().unwrap();
+    let reopened = bind(&reopened_ui, Pages::open(store.clone()).unwrap());
+    reopened.session_autosave.api_at(0);
+    assert!(
+        !reopened
+            .session_autosave
+            .idle_at(reopened.session_autosave.next().unwrap())
+    );
+    assert_eq!(
+        hydrus_store::api_activity::latest(store.dir()).unwrap(),
+        Some(request_at)
+    );
+}
+
+#[test]
+fn applied_size_warning_creates_exact_popup_once_and_resets_only_at_new_boot() {
+    const WARNING: &str = "Show warning popup if session size exceeds 10,000,000: ";
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("session_warning.json");
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let before: GuiSessionSettings = store.read(settings::get).unwrap();
+    assert_eq!(
+        before.warn_large_session,
+        fixture["default_enabled"].as_bool().unwrap()
+    );
+    let window = options(&ui, &bound);
+    window.invoke_check_toggled(row(&window, WARNING), false);
+    window.invoke_cancel();
+    assert_eq!(
+        store.read(settings::get::<GuiSessionSettings>).unwrap(),
+        before
+    );
+    let window = options(&ui, &bound);
+    window.invoke_check_toggled(row(&window, WARNING), false);
+    window.invoke_apply();
+    let now = hydrus_core::TimestampMs::now().0;
+    assert!(!bound.session_autosave.check_size(10_000_001, now).unwrap());
+    assert!(
+        !store
+            .read(settings::get::<GuiSessionSettings>)
+            .unwrap()
+            .warn_large_session
+    );
+    let window = options(&ui, &bound);
+    window.invoke_check_toggled(row(&window, WARNING), true);
+    window.invoke_apply();
+    assert!(!bound.session_autosave.check_size(10_000_000, now).unwrap());
+    let message = fixture["steps"][3]["messages"][0].as_str().unwrap();
+    assert!(bound.session_autosave.check_size(10_000_001, now).unwrap());
+    std::thread::sleep(std::time::Duration::from_millis(300));
+    slint::platform::update_timers_and_animations();
+    let popups = ui.get_popups();
+    let popup = (0..popups.row_count())
+        .find(|&index| popups.row_data(index).unwrap().text_1 == message)
+        .unwrap();
+    ui.invoke_popup_dismiss(i32::try_from(popup).unwrap());
+    assert!(
+        !bound
+            .session_autosave
+            .check_size(20_000_000, now + 1_000)
+            .unwrap()
+    );
+    assert!(
+        store
+            .read(|conn| hydrus_store::popups::all(conn, now / 1_000))
+            .unwrap()
+            .iter()
+            .all(|job| job.status_text_1.as_deref() != Some(message))
+    );
+    // A new bound client is a new boot; the durable setting survives but the
+    // one-boot warning latch does not. No re-enable/reopen repeats within boot.
+    let reopened_ui = MainWindow::new().unwrap();
+    let reopened = bind(&reopened_ui, Pages::open(store.clone()).unwrap());
+    assert!(
+        store
+            .read(settings::get::<GuiSessionSettings>)
+            .unwrap()
+            .warn_large_session
+    );
+    assert!(
+        reopened
+            .session_autosave
+            .check_size(10_000_020, now + 2_000)
+            .unwrap()
+    );
+    let expected = fixture["steps"][5]["messages"][0].as_str().unwrap();
+    assert!(
+        store
+            .read(|conn| hydrus_store::popups::all(conn, now / 1_000 + 2))
+            .unwrap()
+            .iter()
+            .any(|job| job.status_text_1.as_deref() == Some(expected))
+    );
+}
+
+#[test]
+fn native_focus_registry_delivers_to_owned_callback_once_and_releases_dead_viewers() {
+    use hydrus_gui::session_autosave::{
+        FocusCallback, observe_native_focus, watch_native_focus_id,
+    };
+    use std::{cell::RefCell, rc::Rc};
+    let id = slint::winit_030::winit::window::WindowId::dummy();
+    let events = Rc::new(RefCell::new(Vec::new()));
+    let callback: FocusCallback = Rc::new({
+        let events = events.clone();
+        move |focused| events.borrow_mut().push(focused)
+    });
+    let weak = Rc::downgrade(&callback);
+    watch_native_focus_id(id, &callback);
+    watch_native_focus_id(id, &callback);
+    observe_native_focus(id, true);
+    observe_native_focus(id, false);
+    assert_eq!(*events.borrow(), [true, false]);
+    drop(callback);
+    assert!(weak.upgrade().is_none());
+    observe_native_focus(id, true);
+    assert_eq!(*events.borrow(), [true, false]);
+}
+
+#[test]
+fn application_focus_observer_preserves_transient_none_and_identifies_other_windows() {
+    use hydrus_gui::session_autosave::{
+        ApplicationFocusCallback, observe_native_focus, watch_native_application_focus,
+    };
+    use std::{cell::RefCell, rc::Rc};
+    let first = slint::winit_030::winit::window::WindowId::from(1);
+    let other = slint::winit_030::winit::window::WindowId::from(2);
+    let events = Rc::new(RefCell::new(Vec::new()));
+    let callback: ApplicationFocusCallback = Rc::new({
+        let events = events.clone();
+        move |focused| events.borrow_mut().push(focused)
+    });
+    let weak = Rc::downgrade(&callback);
+    watch_native_application_focus(&callback);
+    observe_native_focus(first, true);
+    observe_native_focus(first, false);
+    observe_native_focus(other, true);
+    // A late unfocus from the prior window does not erase the current identity.
+    observe_native_focus(first, false);
+    assert_eq!(
+        &events.borrow()[1..],
+        [Some(first), None, Some(other), Some(other)]
+    );
+    drop(callback);
+    assert!(weak.upgrade().is_none());
+    let count = events.borrow().len();
+    observe_native_focus(other, false);
+    assert_eq!(events.borrow().len(), count);
+}

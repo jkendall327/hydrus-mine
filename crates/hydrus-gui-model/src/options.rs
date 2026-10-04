@@ -29,10 +29,11 @@ use hydrus_store::regex_favourites::RegexFavourites;
 use hydrus_store::session_backups::SessionBackupSettings;
 use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
-    AdvancedMode, ExportSettings, FileHandlingSettings, FileSearchSettings, FileViewingStatistics,
-    FolderSettings, GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings,
-    SearchDefaults, TagAutocompleteTabs, ThumbnailLayout, ViewerCanvasSettings,
-    ViewerHoverSettings,
+    AdvancedMode, ExportSettings, FavouriteTags, FileHandlingSettings, FileSearchSettings,
+    FileViewingStatistics, FolderSettings, GuiSettings, NotebookCreationSettings,
+    OptionsPreferences, PageSettings, SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
+    ViewerBackgroundSettings, ViewerCanvasSettings, ViewerClosingSettings, ViewerFocusSettings,
+    ViewerHoverSettings, ViewerPointerSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -86,11 +87,14 @@ settings! {
     gui: GuiSettings,
     gui_sessions: hydrus_store::settings::GuiSessionSettings,
     info_line: InfoLineSettings,
+    import_options: hydrus_core::import_options::ImportOptionsManager,
+    import_options_ui: hydrus_store::settings::ImportOptionsUiSettings,
     media_viewer: MediaViewerSettings,
     network: NetworkSettings,
     notebooks: NotebookSettings,
     notebook_creation: NotebookCreationSettings,
     page_insertion: hydrus_store::settings::PageInsertion,
+    page_chooser: hydrus_store::settings::PageChooserSettings,
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
@@ -100,6 +104,7 @@ settings! {
     file_search: FileSearchSettings,
     tag_editing: TagEditingSettings,
     tag_autocomplete_tabs: TagAutocompleteTabs,
+    favourite_tags: FavouriteTags,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
     sorts: SortSettings,
@@ -111,7 +116,11 @@ settings! {
     url_classes: UrlClassSettings,
     windows: WindowSettings,
     viewer_canvas: ViewerCanvasSettings,
+    viewer_background: ViewerBackgroundSettings,
     viewer_hovers: ViewerHoverSettings,
+    viewer_pointer: ViewerPointerSettings,
+    viewer_focus: ViewerFocusSettings,
+    viewer_closing: ViewerClosingSettings,
 }
 
 /// An option's value as its control holds it.
@@ -126,6 +135,7 @@ pub enum Value {
     /// The index of the item chosen.
     Choice(usize),
     SavedSession(Option<String>),
+    GallerySource(Option<crate::gallery_source::KeyAndName>),
     Text(String),
     /// Text, or none (the reference's `NoneableTextCtrl`); the text is
     /// kept while none, as its text box keeps it.
@@ -148,6 +158,9 @@ pub enum Value {
     Checker(CheckerOptions),
     /// The editable regular expression/description pairs.
     RegexFavourites(RegexFavourites),
+    /// Shared favourite tags, staged until the parent options dialog applies.
+    FavouriteTags(FavouriteTags),
+    ImportOptions(crate::import_options_panel::Value),
     TagService(hydrus_core::ServiceKey),
     Location(hydrus_core::search::context::LocationContext),
 }
@@ -175,6 +188,7 @@ pub enum Kind {
     Choice(&'static [&'static str]),
     /// Named GUI sessions plus the blank-page startup choice.
     SavedSession,
+    GallerySource,
     Text,
     NoneableText {
         none_phrase: &'static str,
@@ -205,6 +219,10 @@ pub enum Kind {
     RegexFavourites,
     /// Importable current file domains, edited in a child selector.
     LocalLocation,
+    /// A detached tag list editor sharing write autocomplete.
+    FavouriteTags,
+    /// The transactional manager page, including simple-mode presentation.
+    ImportOptions,
     /// Real tag services, optionally including all known tags.
     TagService {
         combined: bool,
@@ -1062,6 +1080,18 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "gallery downloader",
                     vec![
+                        opt(
+                            "Default download source:",
+                            Kind::GallerySource,
+                            Rc::new(|s| Value::GallerySource(s.gallery.gug.clone())),
+                            Rc::new(|s, v| match v {
+                                Value::GallerySource(value) => {
+                                    s.gallery.gug.clone_from(value);
+                                    Ok(())
+                                }
+                                _ => Err("expected a gallery source".into()),
+                            }),
+                        ),
                         int(
                             "Additional fixed time (in seconds) to wait between gallery page fetches:",
                             (1, 3600),
@@ -1566,6 +1596,26 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                     .unwrap_or_default();
                             },
                         ),
+                        check(
+                            "In new page chooser, show \"combined local file domains\" if appropriate:",
+                            |s| s.page_chooser.show_combined,
+                            |s, v| s.page_chooser.show_combined = v,
+                        ),
+                        check(
+                            "  Put it at the top:",
+                            |s| s.page_chooser.combined_at_top,
+                            |s, v| s.page_chooser.combined_at_top = v,
+                        ),
+                        check(
+                            "In new page chooser, show \"hydrus local file storage\":",
+                            |s| s.page_chooser.show_storage,
+                            |s, v| s.page_chooser.show_storage = v,
+                        ),
+                        check(
+                            "  Put it at the top:",
+                            |s| s.page_chooser.storage_at_top,
+                            |s, v| s.page_chooser.storage_at_top = v,
+                        ),
                         choice(
                             "When closing the current tab, move focus: ",
                             &[
@@ -1665,7 +1715,33 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         |s| s.session_backups.keep as i64,
                         |s, value| s.session_backups.keep = value as usize,
                     ),
+                    check(
+                        "Show warning popup if session size exceeds 10,000,000: ",
+                        |s| s.gui_sessions.warn_large_session,
+                        |s, value| s.gui_sessions.warn_large_session = value,
+                    ),
                 ],
+            )],
+        ),
+        page(
+            "import options",
+            vec![opt(
+                "",
+                Kind::ImportOptions,
+                Rc::new(|settings| {
+                    Value::ImportOptions(crate::import_options_panel::Value {
+                        manager: settings.import_options.clone(),
+                        ui: settings.import_options_ui.clone(),
+                    })
+                }),
+                Rc::new(|settings, value| match value {
+                    Value::ImportOptions(value) => {
+                        settings.import_options = value.manager.clone();
+                        settings.import_options_ui = value.ui.clone();
+                        Ok(())
+                    }
+                    _ => Err(wrong("import options")),
+                }),
             )],
         ),
         page(
@@ -1812,14 +1888,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "Draw image transparency as checkerboard:",
                             |settings| settings.viewer_canvas.transparency_checkerboard,
                             |settings, value| {
-                                settings.viewer_canvas.transparency_checkerboard = value
+                                settings.viewer_canvas.transparency_checkerboard = value;
                             },
                         ),
                         check(
                             "--Instead of checkerboard, use a bright greenscreen:",
                             |settings| settings.viewer_canvas.transparency_greenscreen,
                             |settings, value| {
-                                settings.viewer_canvas.transparency_greenscreen = value
+                                settings.viewer_canvas.transparency_greenscreen = value;
                             },
                         ),
                     ],
@@ -1829,6 +1905,23 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         page(
             "media viewer",
             vec![
+                boxed(
+                    "mouse behaviour",
+                    vec![
+                        check(
+                            "Do not allow mouse media drag-panning when the media has duration:",
+                            |settings| settings.viewer_pointer.disallow_duration_drag,
+                            |settings, value| {
+                                settings.viewer_pointer.disallow_duration_drag = value;
+                            },
+                        ),
+                        check(
+                            "Hide mouse cursor during media viewer drags:",
+                            |settings| settings.viewer_pointer.hide_during_drag,
+                            |settings, value| settings.viewer_pointer.hide_during_drag = value,
+                        ),
+                    ],
+                ),
                 boxed(
                     "animation/audio seek bar",
                     vec![
@@ -1844,8 +1937,13 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |settings| settings.viewer_canvas.seek_hidden_height.map(i64::from),
                             |settings, value| {
                                 settings.viewer_canvas.seek_hidden_height =
-                                    value.map(|height| height as u32)
+                                    value.map(|height| height as u32);
                             },
+                        ),
+                        check(
+                            "Seek bar full-height pop-in requires window focus:",
+                            |settings| settings.viewer_focus.seek_requires_focus,
+                            |settings, value| settings.viewer_focus.seek_requires_focus = value,
                         ),
                         int(
                             "Seek bar nub width:",
@@ -1901,6 +1999,35 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                     ],
                 ),
+                boxed(
+                    "closing focus",
+                    vec![
+                        check(
+                            "When closing the media viewer, re-select original search page: ",
+                            |settings| settings.viewer_closing.reselect_page,
+                            |settings, value| settings.viewer_closing.reselect_page = value,
+                        ),
+                        check(
+                            "When closing the media viewer, tell original search page to select exit media: ",
+                            |settings| settings.viewer_closing.select_exit_media,
+                            |settings, value| {
+                                settings.viewer_closing.select_exit_media = value;
+                            },
+                        ),
+                        check(
+                            "ADVANCED: When closing the media viewer with the above focusing options, activate Main GUI: ",
+                            |settings| settings.viewer_closing.activate_focusing,
+                            |settings, value| {
+                                settings.viewer_closing.activate_focusing = value;
+                            },
+                        ),
+                        check(
+                            "DEBUG: When closing the media viewer at any time, activate Main GUI: ",
+                            |settings| settings.viewer_closing.activate_always,
+                            |settings, value| settings.viewer_closing.activate_always = value,
+                        ),
+                    ],
+                ),
             ],
         ),
         page(
@@ -1908,15 +2035,42 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             vec![
                 boxed(
                     "background",
-                    vec![check(
-                        "Draw index text (bottom-right) in the viewer background:",
-                        |settings| settings.viewer_hovers.index_background,
-                        |settings, value| settings.viewer_hovers.index_background = value,
-                    )],
+                    vec![
+                        check(
+                            "Draw tags (left) in the viewer background:",
+                            |settings| settings.viewer_background.tags,
+                            |settings, value| settings.viewer_background.tags = value,
+                        ),
+                        check(
+                            "Draw file information (top) in the viewer background:",
+                            |settings| settings.viewer_background.information,
+                            |settings, value| settings.viewer_background.information = value,
+                        ),
+                        check(
+                            "Draw ratings and locations (top-right) in the viewer background:",
+                            |settings| settings.viewer_background.ratings,
+                            |settings, value| settings.viewer_background.ratings = value,
+                        ),
+                        check(
+                            "Draw notes (right) in the viewer background:",
+                            |settings| settings.viewer_background.notes,
+                            |settings, value| settings.viewer_background.notes = value,
+                        ),
+                        check(
+                            "Draw index text (bottom-right) in the viewer background:",
+                            |settings| settings.viewer_hovers.index_background,
+                            |settings, value| settings.viewer_hovers.index_background = value,
+                        ),
+                    ],
                 ),
                 boxed(
                     "hover windows",
                     vec![
+                        check(
+                            "Hover window pop-in requires window focus:",
+                            |settings| settings.viewer_focus.hovers_require_focus,
+                            |settings, value| settings.viewer_focus.hovers_require_focus = value,
+                        ),
                         check(
                             "Pop-in tags (left) hover window on mouseover:",
                             |settings| settings.viewer_hovers.tags,
@@ -2066,15 +2220,32 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "tag autocomplete tabs",
-            vec![boxed(
-                "children tags",
-                vec![noneable(
-                    "How many tags to show in the children tab: ",
-                    none("show all", 40, (1, 1_000_000), None),
-                    |s| s.tag_autocomplete_tabs.children_limit.map(|n| n as i64),
-                    |s, n| s.tag_autocomplete_tabs.children_limit = n.map(|n| n as usize),
-                )],
-            )],
+            vec![
+                boxed(
+                    "children tags",
+                    vec![noneable(
+                        "How many tags to show in the children tab: ",
+                        none("show all", 40, (1, 1_000_000), None),
+                        |s| s.tag_autocomplete_tabs.children_limit.map(|n| n as i64),
+                        |s, n| s.tag_autocomplete_tabs.children_limit = n.map(|n| n as usize),
+                    )],
+                ),
+                boxed(
+                    "favourite tags",
+                    vec![opt(
+                        "These tags will appear in every tag autocomplete results dropdown, under the 'favourites' tab.",
+                        Kind::FavouriteTags,
+                        Rc::new(|settings| Value::FavouriteTags(settings.favourite_tags.clone())),
+                        Rc::new(|settings, value| match value {
+                            Value::FavouriteTags(tags) => {
+                                settings.favourite_tags = tags.clone();
+                                Ok(())
+                            }
+                            _ => Err(wrong("favourite tags")),
+                        }),
+                    )],
+                ),
+            ],
         ),
         page(
             "tag editing",
@@ -2082,6 +2253,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "tag dialogs",
                     vec![
+                        check(
+                            "Use listbook instead of tabbed notebook for tag service panels: ",
+                            |settings| settings.tag_editing.use_listbook,
+                            |settings, value| settings.tag_editing.use_listbook = value,
+                        ),
                         check(
                             "Remember last used default tag service in manage tag dialogs: ",
                             |settings| settings.tag_editing.remember_service,
@@ -2093,6 +2269,21 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |settings| settings.tag_editing.default_service.clone(),
                             |settings, service| settings.tag_editing.default_service = service,
                             |settings| !settings.tag_editing.remember_service,
+                        ),
+                        check(
+                            "Show parent info by default on edit/write taglists: ",
+                            |settings| settings.tag_editing.tag_list_show_parents,
+                            |settings, value| settings.tag_editing.tag_list_show_parents = value,
+                        ),
+                        check(
+                            "Show parents expanded by default on edit/write taglists: ",
+                            |settings| settings.tag_editing.tag_list_expand_parents,
+                            |settings, value| settings.tag_editing.tag_list_expand_parents = value,
+                        ),
+                        check(
+                            "Show sibling info by default on edit/write taglists: ",
+                            |settings| settings.tag_editing.tag_list_show_siblings,
+                            |settings, value| settings.tag_editing.tag_list_show_siblings = value,
                         ),
                     ],
                 ),
@@ -2168,6 +2359,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "other rendering",
                     vec![
+                        text(
+                            "Sibling connecting string: ",
+                            |s| s.tag_presentation.sibling_connector.clone(),
+                            |s, t| {
+                                t.clone_into(&mut s.tag_presentation.sibling_connector);
+                                Ok(())
+                            },
+                        ),
                         check(
                             "EXPERIMENTAL: Replace all underscores with spaces: ",
                             |s| s.tag_presentation.replace_underscores,
@@ -2389,7 +2588,7 @@ pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Sug
                     }
                 }
                 (Kind::SavedSession, Value::SavedSession(name)) => {
-                    labels.push(name.as_deref().unwrap_or("just a blank page"))
+                    labels.push(name.as_deref().unwrap_or("just a blank page"));
                 }
                 (
                     Kind::Noneable {
@@ -2789,6 +2988,27 @@ impl Editor {
         }
     }
 
+    /// The staged default downloader pair, independent of the selected page.
+    pub fn edited_gallery_source(&self) -> Option<crate::gallery_source::KeyAndName> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| match value {
+                Value::GallerySource(current) => Some(current.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.gallery.gug.clone())
+    }
+
+    pub fn set_gallery_source(&mut self, current: Option<crate::gallery_source::KeyAndName>) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::GallerySource(_)) {
+                *value = Value::GallerySource(current);
+                return;
+            }
+        }
+    }
+
     /// The current favourites draft, independent of the selected options page.
     pub fn edited_regex_favourites(&self) -> RegexFavourites {
         self.values
@@ -2809,6 +3029,65 @@ impl Editor {
         for value in self.values.iter_mut().flatten() {
             if matches!(value, Value::RegexFavourites(_)) {
                 *value = Value::RegexFavourites(favourites);
+                return;
+            }
+        }
+    }
+
+    /// All defaults/profiles and their presentation preference, staged together.
+    pub fn edited_import_options(&self) -> crate::import_options_panel::Value {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| {
+                if let Value::ImportOptions(value) = value {
+                    Some(value.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| crate::import_options_panel::Value {
+                manager: self.before.import_options.clone(),
+                ui: self.before.import_options_ui.clone(),
+            })
+    }
+    pub fn set_import_options(&mut self, draft: crate::import_options_panel::Value) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::ImportOptions(_)) {
+                *value = Value::ImportOptions(draft);
+                return;
+            }
+        }
+    }
+
+    /// The shared favourite tags draft, independent of the selected page.
+    pub fn edited_favourite_tags(&self) -> FavouriteTags {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| {
+                if let Value::FavouriteTags(tags) = value {
+                    Some(tags.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| self.before.favourite_tags.clone())
+    }
+
+    /// Accept the child draft; only the parent Apply writes these tags.
+    pub fn set_favourite_tags(&mut self, tags: &[String]) {
+        let mut tags: Vec<String> = tags
+            .iter()
+            .filter_map(|tag| hydrus_core::Tag::new(tag))
+            .map(|tag| tag.as_str().to_owned())
+            .collect::<std::collections::BTreeSet<_>>()
+            .into_iter()
+            .collect();
+        hydrus_core::sort::human_sort(&mut tags);
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::FavouriteTags(_)) {
+                *value = Value::FavouriteTags(FavouriteTags(tags));
                 return;
             }
         }
@@ -2873,9 +3152,18 @@ mod tests {
         let pages = pages(&before);
         let mut values = values(&pages, &before);
         let viewer = pages.iter().position(|p| p.name == "media viewer").unwrap();
+        let option_index = |page: usize, label: &str| {
+            pages[page]
+                .options()
+                .iter()
+                .position(|option| option.label == label)
+                .unwrap()
+        };
+        let durations = option_index(viewer, "Slideshow durations:");
+        let once = option_index(viewer, "Always play media once through before moving on:");
         // (the rest is set regardless)
-        values[viewer][0] = Value::Text("1.0,soon".into());
-        values[viewer][1] = Value::Check(true);
+        values[viewer][durations] = Value::Text("1.0,soon".into());
+        values[viewer][once] = Value::Check(true);
         let (after, problems) = applied(&pages, &before, &values);
         assert_eq!(
             problems,
@@ -2884,12 +3172,12 @@ mod tests {
         assert_eq!(after.slideshow.durations, before.slideshow.durations);
         assert!(after.slideshow.once_through);
         // those above zero are kept; with none, they are left
-        values[viewer][0] = Value::Text("2.5, 7, 0".into());
+        values[viewer][durations] = Value::Text("2.5, 7, 0".into());
         assert_eq!(
             applied(&pages, &before, &values).0.slideshow.durations,
             [2.5, 7.0]
         );
-        values[viewer][0] = Value::Text("0".into());
+        values[viewer][durations] = Value::Text("0".into());
         assert_eq!(
             applied(&pages, &before, &values).0.slideshow.durations,
             before.slideshow.durations
@@ -2899,19 +3187,24 @@ mod tests {
             .iter()
             .position(|p| p.name == "media playback")
             .unwrap();
-        values[playback][1] = Value::Text("0.5,big".into());
+        let zooms = option_index(playback, "Media zooms:");
+        values[playback][zooms] = Value::Text("0.5,big".into());
         assert_eq!(
             applied(&pages, &before, &values).1,
             ["Could not parse those zooms, so they were not saved!"]
         );
-        values[playback][1] = Value::Text("0.5, 2".into());
+        values[playback][zooms] = Value::Text("0.5, 2".into());
         assert_eq!(
             applied(&pages, &before, &values).0.media_viewer.media_zooms,
             [0.5, 2.0]
         );
         let ratings = pages.iter().position(|p| p.name == "ratings").unwrap();
+        let rating_size = option_index(
+            ratings,
+            "Media viewer like/dislike and numerical rating icon size:",
+        );
         for bad in ["big", "300"] {
-            values[ratings][0] = Value::Float(bad.into());
+            values[ratings][rating_size] = Value::Float(bad.into());
             let (after, problems) = applied(&pages, &before, &values);
             assert_eq!(problems.len(), 1, "{bad}");
             assert_eq!(
@@ -2919,7 +3212,7 @@ mod tests {
                 before.media_viewer.rating_icon_size
             );
         }
-        values[ratings][0] = Value::Float("16.5".into());
+        values[ratings][rating_size] = Value::Float("16.5".into());
         assert_eq!(
             applied(&pages, &before, &values)
                 .0

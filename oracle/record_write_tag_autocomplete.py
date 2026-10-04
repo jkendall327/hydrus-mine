@@ -4,6 +4,8 @@
 Synthetic parity tags are seeded through real mapping/sibling/parent updates.
 WriteFetch runs the real database query and predicate insertion pipeline; its
 results are installed in the real Qt list and every rendered row is recorded.
+The actual TagsPanel favourite editor records add-only manual/paste entry,
+removal, natural row/save order and its staged settings boundary.
 """
 import json, os, sys, tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -171,6 +173,31 @@ def record(session):
     # Restore the local counted suggestions before driving the real tag menu.
     fetch('parity:amber old',False,True,True,True,local)
     menu_events=qt(context_menus)
+    def write_domains():
+        from hydrus.client.gui import ClientGUICore as CGC
+        events=[];captured={};old_popup=CGC.core().PopupMenu
+        CGC.core().PopupMenu=lambda win,menu:captured.update(menu=menu)
+        ac._SetLocationContext(location);ctx=ac._tag_context_button.GetValue().Duplicate();ctx.service_key=local;ac._SetTagContext(ctx)
+        def snapshot():
+            context=ac._tag_context_button.GetValue();files=ac._location_context_button.GetValue()
+            return {'current':[key.hex() for key in sorted(files.current_service_keys)],'deleted':[key.hex() for key in sorted(files.deleted_service_keys)],'service':context.service_key.hex(),'display':context.display_service_key.hex(),'current_tags':context.include_current_tags,'pending_tags':context.include_pending_tags,'file_label':ac._location_context_button.text(),'tag_label':ac._tag_context_button.text()}
+        try:
+            for tags,label in [(True,None),(False,None),(True,'all known tags'),(False,'all known files with tags'),(True,'all known tags'),(True,'my tags'),(False,'all files ever imported or deleted')]:
+                button=ac._tag_context_button if tags else ac._location_context_button
+                if tags:button._Edit()
+                else:button._EditLocation()
+                menu=captured['menu'];rows=[{'label':a.text(),'checked':a.isChecked()} for a in menu.actions() if not a.isSeparator()]
+                if label is not None:next(a for a in menu.actions() if a.text()==label).trigger()
+                events.append({'tags':tags,'choose':label,'rows':rows,'after':snapshot()})
+        finally:CGC.core().PopupMenu=old_popup
+        return events
+    domain_events=qt(write_domains)
+    def domain_preferences():
+        context=c.new_options.GetDefaultLocalLocationContext()
+        return {'current':[key.hex() for key in sorted(context.current_service_keys)],'deleted':[key.hex() for key in sorted(context.deleted_service_keys)]}
+    domain_defaults=qt(domain_preferences)
+    # Questions belong to one independently recorded interaction sequence.
+    asked.clear()
     paste_events=[]
     for text,skip,yes,button in [(' Parity:Amber \nparity:new\nparity:new\n\n',False,False,False),(' Parity:Amber \nparity:new\nparity:new\n\n',False,True,False),('parity:skip a\nparity:skip b',True,False,False),('parity:button a\nparity:button b',False,False,True),('parity:single',False,False,False)]:
         clipboard['text']=text;answer['yes']=yes;qt(lambda:c.new_options.SetBoolean('skip_yesno_on_write_autocomplete_multiline_paste',skip))
@@ -240,8 +267,31 @@ def record(session):
             dialog.reject();snapshot('cancel');dialog.deleteLater()
         return events
     detached_inputs=qt(detached_tag_lists)
+    def favourite_options():
+        from hydrus.client.gui.panels.options.TagsPanel import TagsPanel
+        from hydrus.client.search import ClientSearchPredicate as P
+        initial=['parity:favourite 10','parity:favourite 2']
+        draft=c.new_options.Duplicate();draft.SetStringList('favourite_tags',initial)
+        panel=TagsPanel(c.gui,draft);events=[]
+        def snapshot(action):
+            events.append({'action':action,'tags':sorted(panel._favourites.GetTags()),'rows':[term.GetTag() for term in panel._favourites._ordered_terms],'saved':draft.GetStringList('favourite_tags')})
+        snapshot('initial')
+        for action,tag in [('manual','parity:favourite 1'),('repeat_manual','parity:favourite 1')]:
+            panel._favourites_input.BroadcastChoices([P.Predicate(P.PREDICATE_TYPE_TAG,tag)])
+            snapshot(action)
+        clipboard['text']='parity:favourite 2\nparity:favourite 3\nparity:favourite pasted'
+        panel._favourites_input._Paste();snapshot('paste')
+        panel._favourites_input._Paste();snapshot('repeat_paste')
+        panel._favourites.RemoveTags({'parity:favourite 2'});snapshot('remove')
+        panel.UpdateOptions();snapshot('apply')
+        panel.deleteLater()
+        cancelled=TagsPanel(c.gui,draft)
+        cancelled._favourites.AddTags({'parity:cancelled'})
+        cancelled.deleteLater()
+        return {'initial':initial,'events':events,'cancelled_saved':draft.GetStringList('favourite_tags')}
+    favourite_options_events=qt(favourite_options)
     qt(ac.deleteLater);c.CallToThread=old_thread;c.GetClipboardText=old_clipboard
-    return {'seeded_dialogs':seeded_dialogs,'menus':menu_events,'tabs':tab_events,'children_control':children_control,'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
+    return {'domain_preferences':domain_defaults,'favourite_options':favourite_options_events,'domains':domain_events,'seeded_dialogs':seeded_dialogs,'menus':menu_events,'tabs':tab_events,'children_control':children_control,'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
 def child(out):
     import hydrus_driver,record_api
     result=hydrus_driver.run_client(record_api.unpack_fixture('basic'),record)

@@ -1,0 +1,39 @@
+{
+ "data": [
+  [
+   "display, name",
+   1,
+   1,
+   2
+  ],
+  [
+   "empty",
+   0,
+   0,
+   0
+  ]
+ ],
+ "menu": [
+  "show",
+  "copy csv data to clipboard"
+ ],
+ "messages": [
+  "display, name: inbox 1 | archive 1 | deleted 2 | good 33.3%\nempty: inbox 0 | archive 0 | deleted 0"
+ ],
+ "clipboard": [
+  "display, name,1,1,2,33.3%\nempty,0,0,0,0.0%"
+ ],
+ "steps": [
+  {
+   "action": "show",
+   "disabled": true,
+   "restored": true
+  },
+  {
+   "action": "copy csv data to clipboard",
+   "disabled": true,
+   "restored": true
+  }
+ ],
+ "missing_log_error_type": "DBException"
+}

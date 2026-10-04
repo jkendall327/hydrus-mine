@@ -99,6 +99,7 @@ pub struct WriteAutocomplete {
     tab: Tab,
     context_tags: std::collections::BTreeSet<String>,
     decorations: [[Option<bool>; 3]; 3],
+    domains: std::collections::BTreeMap<String, crate::domains::Domains>,
 }
 impl std::fmt::Debug for WriteAutocomplete {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -122,6 +123,7 @@ impl WriteAutocomplete {
             tab: Tab::Tags,
             context_tags: std::collections::BTreeSet::new(),
             decorations: [[None; 3]; 3],
+            domains: std::collections::BTreeMap::new(),
         }
     }
     pub fn store(&self) -> &Arc<Store> {
@@ -155,6 +157,61 @@ impl WriteAutocomplete {
         self.service = service;
         self.location = location;
         self.refresh(false);
+    }
+    /// Per-widget domains start from its service's autocomplete defaults and never persist as options.
+    pub fn domains(&self) -> crate::domains::Domains {
+        if let Some(domains) = self.domains.get(&self.service.to_hex()) {
+            return domains.clone();
+        }
+        let widgets: hydrus_store::tag_display_config::AutocompleteWidgetSettings =
+            self.store.read(settings::get).unwrap_or_default();
+        let options = widgets.options(&self.service);
+        let mut location = if options.override_location {
+            options.write_location
+        } else {
+            self.location.clone()
+        };
+        if location.is_all_known_files()
+            && options.write_tag_service.as_bytes()
+                == hydrus_core::service::builtin_keys::COMBINED_TAG
+        {
+            location = LocationContext::single(ServiceKey::new(
+                hydrus_core::service::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE.to_vec(),
+            ));
+        }
+        crate::domains::Domains {
+            location,
+            tags: hydrus_core::search::context::TagContext {
+                service: options.write_tag_service,
+                include_current: true,
+                include_pending: true,
+                display_service: self.service.clone(),
+            },
+        }
+    }
+    pub fn choose_domain(&mut self, choice: crate::domains::Choice) {
+        let mut domains = self.domains();
+        match choice {
+            crate::domains::Choice::Location(location) => {
+                domains.choose_location(&self.store.snapshot().services, location);
+            }
+            crate::domains::Choice::Tags(key) => {
+                let defaults: settings::SearchDefaults =
+                    self.store.read(settings::get).unwrap_or_default();
+                domains.choose_tags(key, &defaults.local_location);
+            }
+            crate::domains::Choice::Multiple => return,
+        }
+        self.domains.insert(self.service.to_hex(), domains);
+        self.refresh(true);
+    }
+    pub fn domain_labels(&self) -> (String, String) {
+        let domains = self.domains();
+        let snapshot = self.store.snapshot();
+        (
+            crate::domains::location_label(&snapshot.services, &domains.location),
+            crate::domains::tag_label(&snapshot.services, &domains.tags),
+        )
     }
     pub fn tab(&self) -> Tab {
         self.tab
@@ -235,25 +292,12 @@ impl WriteAutocomplete {
             .read(settings::get::<hydrus_store::tag_display_config::AutocompleteWidgetSettings>)
             .ok()?
             .options(&self.service);
-        let location = if options.override_location {
-            options.write_location.clone()
-        } else {
-            self.location.clone()
-        };
-        let location = if location.is_all_known_files()
-            && options.write_tag_service.as_bytes()
-                == hydrus_core::service::builtin_keys::COMBINED_TAG
-        {
-            LocationContext::single(ServiceKey::new(
-                hydrus_core::service::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE.to_vec(),
-            ))
-        } else {
-            location
-        };
+        let domains = self.domains();
+        let location = domains.location;
         let scope = TagSearchScope {
             domains: crate::autocomplete::count_domains(registry, &location),
             tag_service: registry
-                .by_key(&options.write_tag_service)
+                .by_key(&domains.tags.service)
                 .ok()
                 .filter(|s| s.service_type() != ServiceType::CombinedTag)
                 .map(|s| s.id),
@@ -342,7 +386,7 @@ impl WriteAutocomplete {
             });
         }
         let graph_service = if self.tab == Tab::Favourites {
-            registry.by_key(&options.write_tag_service).ok()?.id
+            registry.by_key(&domains.tags.service).ok()?.id
         } else {
             service
         };
@@ -439,7 +483,7 @@ impl WriteAutocomplete {
             if prefs.autocomplete_show_siblings
                 && let Some(ideal) = ideal
             {
-                label.push_str(" → ");
+                label.push_str(&presentation.sibling_connector);
                 label.push_str(&presentation.render(&ideal));
             }
             if !parents.is_empty()
@@ -479,12 +523,14 @@ impl WriteAutocomplete {
 pub struct TagEntry {
     pub input: WriteAutocomplete,
     tags: std::collections::BTreeSet<String>,
+    add_only: bool,
 }
 impl TagEntry {
     pub fn new(mut input: WriteAutocomplete, initial: &[String]) -> Self {
         input.set_context_tags(initial.iter().cloned());
         Self {
             input,
+            add_only: false,
             tags: initial
                 .iter()
                 .filter_map(|t| Tag::new(t))
@@ -492,12 +538,22 @@ impl TagEntry {
                 .collect(),
         }
     }
+    /// The options favourite list adds choices and sorts its rows naturally.
+    #[must_use]
+    pub fn additions_only(mut self) -> Self {
+        self.add_only = true;
+        self
+    }
     pub fn tags(&self) -> Vec<String> {
-        self.tags.iter().cloned().collect()
+        let mut tags: Vec<_> = self.tags.iter().cloned().collect();
+        if self.add_only {
+            hydrus_core::sort::human_sort(&mut tags);
+        }
+        tags
     }
     pub fn enter(&mut self, index: Option<usize>) {
         if let Some(tag) = self.input.chosen(index) {
-            if !self.tags.remove(&tag) {
+            if self.add_only || !self.tags.remove(&tag) {
                 self.tags.insert(tag);
             }
             self.input.set_context_tags(self.tags.iter().cloned());
@@ -514,7 +570,7 @@ impl TagEntry {
         self.input.clear();
     }
     pub fn remove(&mut self, index: usize) {
-        if let Some(tag) = self.tags.iter().nth(index).cloned() {
+        if let Some(tag) = self.tags().get(index).cloned() {
             self.tags.remove(&tag);
             self.input.set_context_tags(self.tags.iter().cloned());
         }

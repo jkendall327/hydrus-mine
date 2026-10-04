@@ -92,3 +92,21 @@ fn login_validation_matches_python_and_rejects_mixed_packages_atomically() {
         fixture["access_types"]
     );
 }
+
+#[test]
+fn native_veto_default_matcher_uses_python_constructor_empty_match_value() {
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let step = legacy::login_step(
+        &SerialisableObject::from_tuple_str(
+            &fixture["step_states"][4]["state"]["value"].to_string(),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    let encoded = logins::step_tuple(&step).unwrap();
+    assert_eq!(encoded, fixture["step_states"][4]["state"]["value"]);
+    let veto_matcher = &encoded[3][8][2][0][1][2][3][1];
+    // Reference StringMatch() stores the unused ANY match value as empty text.
+    assert_eq!(veto_matcher[2][0], 3);
+    assert_eq!(veto_matcher[2][1], "");
+}

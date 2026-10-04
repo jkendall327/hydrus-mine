@@ -12,7 +12,7 @@ use hydrus_store::Store;
 use slint::Model as _;
 use std::{cell::RefCell, rc::Rc, sync::Arc};
 type SearchLauncher = Rc<dyn Fn(LocationContext, TagContext, Vec<Predicate>, bool)>;
-thread_local! { static SEARCH_LAUNCHER: RefCell<Option<SearchLauncher>>=RefCell::new(None); }
+thread_local! { static SEARCH_LAUNCHER: RefCell<Option<SearchLauncher>>=const {RefCell::new(None)}; }
 /// Install the main window's weak search-page launcher on this GUI thread.
 pub fn install_search_launcher(launcher: SearchLauncher) {
     SEARCH_LAUNCHER.with(|slot| *slot.borrow_mut() = Some(launcher));
@@ -26,6 +26,7 @@ pub(crate) struct TagMenu {
     pub popup: Rc<Popup<Action>>,
     pending: RefCell<Option<Action>>,
     relationships: Rc<RefCell<Option<crate::TagRelationshipsWindow>>>,
+    locations: Rc<RefCell<Option<crate::LocationsWindow>>>,
     store: Arc<Store>,
     editable: Rc<dyn Fn() -> bool>,
     decorate: Rc<dyn Fn(Action)>,
@@ -46,6 +47,7 @@ impl TagMenu {
             popup: Popup::new(),
             pending: RefCell::default(),
             relationships: Rc::default(),
+            locations: Rc::default(),
             store,
             editable,
             decorate,
@@ -55,24 +57,53 @@ impl TagMenu {
         })
     }
     pub fn open(&self, entries: &[Entry], x: f32, y: f32) {
+        fn ticks(shown: &mut [main_menu::Entry], entries: &[Entry]) {
+            for (shown, entry) in shown.iter_mut().zip(entries) {
+                match entry {
+                    Entry::Check(label, _, checked) => {
+                        if let main_menu::Entry::Item { command, .. } = shown {
+                            *shown = main_menu::Entry::Check {
+                                label: label.clone(),
+                                command: command.clone(),
+                                checked: *checked,
+                            };
+                        }
+                    }
+                    Entry::Menu(_, children) => {
+                        if let main_menu::Entry::Menu { entries, .. } = shown {
+                            ticks(entries, children);
+                        }
+                    }
+                    _ => {}
+                }
+            }
+        }
         if !(self.editable)() || self.busy() {
             return;
         }
-        let (entries, actions) = main_menu::popup(entries, &|entry| match entry {
-            Entry::Item(label, action) => PopupNode::Item(label, action),
+        let (mut shown, actions) = main_menu::popup(entries, &|entry| match entry {
+            Entry::Item(label, action) | Entry::Check(label, action, _) => {
+                PopupNode::Item(label, action)
+            }
             Entry::Menu(label, children) => PopupNode::Menu(label, children),
             Entry::Separator => PopupNode::Separator,
         });
-        self.popup.open(entries, actions, x, y);
+        ticks(&mut shown, entries);
+        self.popup.open(shown, actions, x, y);
     }
     pub fn busy(&self) -> bool {
         self.pending.borrow().is_some()
             || self.popup.model().row_count() > 0
             || self.relationships.borrow().is_some()
+            || self.locations.borrow().is_some()
     }
     pub fn close(&self) {
         self.pending.borrow_mut().take();
         let child = self.relationships.borrow_mut().take();
+        if let Some(child) = child {
+            child.invoke_cancel();
+        }
+        let child = self.locations.borrow_mut().take();
         if let Some(child) = child {
             child.invoke_cancel();
         }
@@ -110,6 +141,30 @@ impl TagMenu {
     fn execute(&self, action: Action) {
         match action {
             Action::Copy(text) => crate::copy_to_clipboard(&text),
+            Action::Domain(..) | Action::Decorate { .. } => (self.decorate)(action),
+            Action::Locations(location) => {
+                let chosen = Rc::new({
+                    let editable = self.editable.clone();
+                    let decorate = self.decorate.clone();
+                    let refresh = self.refresh.clone();
+                    move |location| {
+                        if editable() {
+                            decorate(Action::Domain(hydrus_gui_model::domains::Choice::Location(
+                                location,
+                            )));
+                            refresh();
+                        }
+                    }
+                });
+                if let Err(e) = crate::locations_window::open_for_autocomplete(
+                    &self.locations,
+                    self.store.clone(),
+                    &location,
+                    chosen,
+                ) {
+                    (self.error)(&format!("could not open locations: {e}"));
+                }
+            }
             Action::Relationship { kind, tags } => {
                 match hydrus_gui_model::tag_relationships::Relationships::new_with_tags(
                     self.store.clone(),
@@ -124,7 +179,7 @@ impl TagMenu {
                         ) {
                             Ok(child) => *self.relationships.borrow_mut() = Some(child),
                             Err(e) => {
-                                (self.error)(&format!("could not open tag relationships: {e}"))
+                                (self.error)(&format!("could not open tag relationships: {e}"));
                             }
                         }
                     }
@@ -157,7 +212,6 @@ impl TagMenu {
                     }
                 }
             }
-            Action::Decorate { .. } => (self.decorate)(action),
             Action::Favourite { .. } => {
                 if let Err(e) = action.persist(&self.store) {
                     (self.error)(&format!("could not update favourite tags: {e}"));
@@ -201,7 +255,7 @@ mod tests {
     use super::*;
     use hydrus_core::Tag;
     use hydrus_store::display::RelationKind;
-    use slint::{ComponentHandle as _, Model as _};
+    use slint::ComponentHandle as _;
     use std::cell::Cell;
 
     #[test]

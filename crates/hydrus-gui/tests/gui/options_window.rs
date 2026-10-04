@@ -89,6 +89,7 @@ fn the_options_window_applies_its_changes() {
             "gui",
             "gui pages",
             "gui sessions",
+            "import options",
             "importing",
             "maintenance and processing",
             "media playback",
@@ -2361,4 +2362,1026 @@ fn hover_options_apply_to_actual_mouseover_panels_and_passive_index_text() {
     assert!(row(&options, labels[3]).1.checked);
     options.invoke_cancel();
     viewer.invoke_close_requested();
+}
+
+#[test]
+#[allow(clippy::float_cmp)] // exact integer pointer deltas in logical pixels
+fn pointer_options_change_real_drag_acceptance_and_cursor_transitions() {
+    use hydrus_store::settings::{self, ViewerPointerSettings};
+    use slint::{
+        LogicalPosition,
+        platform::{PointerEventButton, WindowEvent},
+    };
+    let fixture = hydrus_testkit::fixture_json("viewer_pointer_options.json");
+    let (_dirs, store) = store();
+    let animation =
+        hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new())
+            .import_path(
+                &hydrus_testkit::fixture_path("media/webp_anim.webp"),
+                &hydrus_import::FileImportOptions::default(),
+            )
+            .unwrap()
+            .hash
+            .unwrap();
+    let animation_id = store
+        .read(|conn| hydrus_store::master::hash_id(conn, &animation))
+        .unwrap()
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let basic = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &files))
+        .unwrap();
+    let jpeg = basic
+        .iter()
+        .position(|file| {
+            file.info
+                .as_ref()
+                .is_some_and(|info| info.mime == hydrus_core::Mime::ImageJpeg)
+        })
+        .unwrap();
+    let animation_index = files.iter().position(|id| *id == animation_id).unwrap();
+    let labels = [
+        "Do not allow mouse media drag-panning when the media has duration:",
+        "Hide mouse cursor during media viewer drags:",
+    ];
+    let mut showing_duration = false;
+    ui.invoke_thumbnail_activated(i32::try_from(jpeg).unwrap());
+    let mut drawn = windows.get(windows.count() - 1).unwrap();
+    for (case, event) in fixture["drags"].as_array().unwrap().iter().enumerate() {
+        let duration = event["has_duration"].as_bool().unwrap();
+        if duration != showing_duration {
+            bound
+                .viewer
+                .borrow()
+                .as_ref()
+                .unwrap()
+                .invoke_close_requested();
+            ui.invoke_thumbnail_activated(i32::try_from(animation_index).unwrap());
+            showing_duration = duration;
+            drawn = windows.get(windows.count() - 1).unwrap();
+        }
+        let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+        headless::render(&drawn, 1000, 750);
+        assert_eq!(
+            viewer.get_media_has_duration(),
+            duration,
+            "real file metadata"
+        );
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer");
+        options.invoke_check_toggled(
+            row(&options, labels[0]).0,
+            event["disallow"].as_bool().unwrap(),
+        );
+        options.invoke_check_toggled(row(&options, labels[1]).0, event["hide"].as_bool().unwrap());
+        options.invoke_apply();
+        assert_eq!(
+            viewer.get_disallow_duration_drag(),
+            event["disallow"].as_bool().unwrap()
+        );
+        assert_eq!(
+            viewer.get_hide_during_drag(),
+            event["hide"].as_bool().unwrap()
+        );
+        // Distinct press points avoid synthesising a double click that closes
+        // the actual viewer. The media delta is independent of the origin.
+        let x: f32 = 400.0 + case as f32 * 35.0;
+        let at = |dx: f32, dy: f32| LogicalPosition::new(x + dx, 350.0 + dy);
+        let moved = |dx, dy| {
+            viewer.window().dispatch_event(WindowEvent::PointerMoved {
+                position: at(dx, dy),
+            })
+        };
+        moved(0.0, 0.0);
+        let before = (viewer.get_media_x(), viewer.get_media_y());
+        viewer.window().dispatch_event(WindowEvent::PointerPressed {
+            position: at(0.0, 0.0),
+            button: PointerEventButton::Left,
+        });
+        assert_eq!(
+            viewer.get_drag_accepted(),
+            event["accepted"].as_bool().unwrap()
+        );
+        let cursor_hidden =
+            |phase: &str| event["cursor"][phase] == fixture["cursor_values"]["blank"];
+        assert_eq!(viewer.get_drag_cursor_hidden(), cursor_hidden("pressed"));
+        moved(21.0, 7.0);
+        assert_eq!(
+            (
+                viewer.get_media_x() - before.0,
+                viewer.get_media_y() - before.1
+            ),
+            (
+                event["delta"][0].as_i64().unwrap() as f32,
+                event["delta"][1].as_i64().unwrap() as f32
+            )
+        );
+        assert_eq!(viewer.get_drag_cursor_hidden(), cursor_hidden("moved"));
+        viewer
+            .window()
+            .dispatch_event(WindowEvent::PointerReleased {
+                position: at(21.0, 7.0),
+                button: PointerEventButton::Left,
+            });
+        assert!(!viewer.get_drag_accepted());
+        assert_eq!(viewer.get_drag_cursor_hidden(), cursor_hidden("released"));
+        moved(30.0, 19.0);
+        assert_eq!(
+            viewer.get_drag_cursor_hidden(),
+            cursor_hidden("ordinary_move")
+        );
+    }
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let persisted = store.read(settings::get::<ViewerPointerSettings>).unwrap();
+    assert!(persisted.disallow_duration_drag && persisted.hide_during_drag);
+    let before = viewer.get_media_x();
+    viewer.invoke_pan(1, 0);
+    assert_ne!(
+        viewer.get_media_x(),
+        before,
+        "keyboard panning remains available for duration media"
+    );
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer");
+    assert!(row(&options, labels[0]).1.checked && row(&options, labels[1]).1.checked);
+    options.invoke_check_toggled(row(&options, labels[0]).0, false);
+    options.invoke_check_toggled(row(&options, labels[1]).0, false);
+    options.invoke_cancel();
+    assert!(viewer.get_disallow_duration_drag() && viewer.get_hide_during_drag());
+    assert_eq!(
+        store.read(settings::get::<ViewerPointerSettings>).unwrap(),
+        persisted
+    );
+    viewer.invoke_close_requested();
+    ui.invoke_thumbnail_activated(i32::try_from(animation_index).unwrap());
+    let reopened = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert!(
+        reopened.get_media_has_duration()
+            && reopened.get_disallow_duration_drag()
+            && reopened.get_hide_during_drag()
+    );
+    reopened.invoke_close_requested();
+}
+
+#[test]
+fn favourite_tags_child_replays_reference_and_waits_for_parent_apply() {
+    use hydrus_store::settings::{self, FavouriteTags};
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let recorded = &fixture["favourite_options"];
+    let initial: Vec<String> = serde_json::from_value(recorded["initial"].clone()).unwrap();
+    let initial_setting = FavouriteTags(initial);
+    let (_dirs, store) = store();
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &initial_setting))
+        .unwrap();
+    let original = store.read(settings::get::<FavouriteTags>).unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    for apply in [false, true] {
+        open(&ui);
+        let parent = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&parent, "tag autocomplete tabs");
+        assert_eq!(row(&parent, "These tags will appear in every tag autocomplete results dropdown, under the 'favourites' tab.").1.kind, 16);
+        parent.invoke_favourite_tags_clicked();
+        let child = hydrus_gui::write_tag_window::last_opened().unwrap();
+        assert_eq!(child.get_tag_label(), "all known tags");
+        child.invoke_edited("parity:cancelled".into());
+        child.invoke_entered();
+        child.invoke_cancel();
+        parent.invoke_favourite_tags_clicked();
+        let child = hydrus_gui::write_tag_window::last_opened().unwrap();
+        assert!(
+            !child
+                .get_tags()
+                .iter()
+                .any(|row| row.text == "parity:cancelled")
+        );
+        for event in recorded["events"].as_array().unwrap() {
+            match event["action"].as_str().unwrap() {
+                "initial" => {}
+                "manual" | "repeat_manual" => {
+                    child.invoke_edited("parity:favourite 1".into());
+                    child.invoke_entered();
+                }
+                "paste" | "repeat_paste" => {
+                    hydrus_gui::set_paster(|| {
+                        "parity:favourite 2\nparity:favourite 3\nparity:favourite pasted".into()
+                    });
+                    assert!(child.invoke_paste(true));
+                }
+                "remove" => {
+                    let index = child
+                        .get_tags()
+                        .iter()
+                        .position(|row| row.text == "parity:favourite 2")
+                        .unwrap();
+                    child.invoke_remove(i32::try_from(index).unwrap());
+                }
+                "apply" => {
+                    parent.invoke_apply();
+                    assert!(bound.options.borrow().is_some());
+                    child.invoke_apply();
+                }
+                action => panic!("unexpected recorded action {action}"),
+            }
+            let tags: Vec<String> = child
+                .get_tags()
+                .iter()
+                .map(|row| row.text.to_string())
+                .collect();
+            assert_eq!(serde_json::json!(tags), event["rows"]);
+            assert_eq!(
+                store.read(settings::get::<FavouriteTags>).unwrap(),
+                original
+            );
+        }
+        if apply {
+            parent.invoke_apply();
+        } else {
+            parent.invoke_cancel();
+        }
+        let saved = store.read(settings::get::<FavouriteTags>).unwrap();
+        let expected = if apply {
+            &recorded["cancelled_saved"]
+        } else {
+            &recorded["initial"]
+        };
+        assert_eq!(serde_json::json!(saved.0), *expected);
+    }
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    manage.invoke_tab_chosen(1);
+    let offered: std::collections::BTreeSet<String> = manage
+        .get_suggestions()
+        .iter()
+        .map(|row| row.text.to_string())
+        .collect();
+    let expected: Vec<String> =
+        serde_json::from_value(recorded["cancelled_saved"].clone()).unwrap();
+    assert_eq!(offered, expected.into_iter().collect());
+    manage.invoke_cancel();
+    // Closing the parent closes its child and invalidates retained callbacks.
+    open(&ui);
+    let parent = bound.options.borrow().as_ref().unwrap().clone_strong();
+    parent.invoke_favourite_tags_clicked();
+    let child = hydrus_gui::write_tag_window::last_opened().unwrap();
+    let saved = store.read(settings::get::<FavouriteTags>).unwrap();
+    child.invoke_edited("parity:stale callback".into());
+    child.invoke_entered();
+    parent
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(!child.window().is_visible());
+    child.invoke_apply();
+    parent.invoke_apply();
+    assert!(bound.options.borrow().is_none());
+    assert_eq!(store.read(settings::get::<FavouriteTags>).unwrap(), saved);
+}
+
+#[test]
+#[allow(clippy::float_cmp)] // whole logical-pixel bar heights
+fn focus_options_reach_native_activity_and_actual_mouseover_gates() {
+    use hydrus_store::settings::{self, ViewerFocusSettings};
+    use slint::{
+        LogicalPosition,
+        platform::{PointerEventButton, WindowEvent},
+    };
+    let fixture = hydrus_testkit::fixture_json("viewer_focus_options.json");
+    let (_dirs, store) = store();
+    let animation =
+        hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new())
+            .import_path(
+                &hydrus_testkit::fixture_path("media/webp_anim.webp"),
+                &hydrus_import::FileImportOptions::default(),
+            )
+            .unwrap()
+            .hash
+            .unwrap();
+    let id = store
+        .read(|conn| hydrus_store::master::hash_id(conn, &animation))
+        .unwrap()
+        .unwrap();
+    store
+        .write_content(move |writer| writer.set_note(id, "details", "synthetic focus note"))
+        .unwrap();
+    let mut tags = hydrus_gui::manage_tags::ManageTags::new(store.clone(), vec![id]).unwrap();
+    let mine = tags
+        .service_names()
+        .iter()
+        .position(|name| name == "my tags")
+        .unwrap();
+    tags.choose_service(mine).unwrap();
+    tags.enter("synthetic focus tag").unwrap();
+    tags.apply().unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let index = files.iter().position(|file| *file == id).unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 1000, 750);
+    assert!(viewer.get_scanbar_shown());
+    assert!(
+        viewer.get_tags().row_count() > 0
+            && viewer.get_notes().row_count() > 0
+            && viewer.get_ratings().row_count() > 0
+    );
+    let focus = hydrus_gui::viewer_focus::NativeFocus::new(&viewer);
+    let identity = slint::winit_030::winit::window::WindowId::from(9_001);
+    focus.watch_id(identity);
+    let activate = |active| {
+        // Dispatch the native backend observer route used by ActivityHandler;
+        // headless Slint also receives its corresponding native activation.
+        hydrus_gui::session_autosave::observe_native_focus(identity, active);
+        if !active {
+            hydrus_gui::session_autosave::observe_native_focus(
+                slint::winit_030::winit::window::WindowId::from(9_002),
+                true,
+            );
+        }
+        viewer
+            .window()
+            .dispatch_event(WindowEvent::WindowActiveChanged(active));
+        headless::render(&drawn, 1000, 750);
+        assert_eq!(viewer.get_window_active(), active);
+    };
+    let move_to = |x, y| {
+        viewer.window().dispatch_event(WindowEvent::PointerMoved {
+            position: LogicalPosition::new(x, y),
+        });
+        headless::render(&drawn, 1000, 750);
+    };
+    activate(true);
+    let notes_y = (60..740)
+        .step_by(10)
+        .find(|&y| {
+            move_to(980.0, y as f32);
+            viewer.get_notes_showing()
+        })
+        .unwrap() as f32;
+    let labels = [
+        (
+            "media viewer",
+            "Seek bar full-height pop-in requires window focus:",
+        ),
+        (
+            "media viewer hovers",
+            "Hover window pop-in requires window focus:",
+        ),
+    ];
+    for event in fixture["events"].as_array().unwrap() {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        for ((name, label), field) in labels
+            .iter()
+            .zip(["seek_requires_focus", "hover_requires_focus"])
+        {
+            show_page(&options, name);
+            options.invoke_check_toggled(row(&options, label).0, event[field].as_bool().unwrap());
+        }
+        options.invoke_apply();
+        activate(event["active"].as_bool().unwrap());
+        let bottom = viewer.get_media_y() + viewer.get_media_height() - 2.0;
+        move_to(
+            viewer.get_media_x() + viewer.get_media_width() / 2.0,
+            bottom,
+        );
+        assert_eq!(
+            viewer.get_seek_bar_full(),
+            event["seek_full"].as_bool().unwrap()
+        );
+        assert_eq!(
+            viewer.get_seek_bar_height(),
+            event["seek_height"].as_i64().unwrap() as f32
+        );
+        let states = [
+            {
+                move_to(500.0, 10.0);
+                viewer.get_info_showing()
+            },
+            {
+                move_to(20.0, 375.0);
+                viewer.get_tags_showing()
+            },
+            {
+                move_to(980.0, 15.0);
+                viewer.get_ratings_showing()
+            },
+            {
+                move_to(980.0, notes_y);
+                viewer.get_notes_showing()
+            },
+        ];
+        assert_eq!(serde_json::json!(states), event["hover_up"]);
+    }
+    for trace in fixture["transient"].as_array().unwrap() {
+        let hover = trace["hover"].as_str().unwrap();
+        let point = match hover {
+            "top" => (500.0, 10.0),
+            "tags" => (20.0, 375.0),
+            "ratings" => (980.0, 15.0),
+            "notes" => (980.0, notes_y),
+            name => panic!("unrecorded hover {name}"),
+        };
+        let showing = || match hover {
+            "top" => viewer.get_info_showing(),
+            "tags" => viewer.get_tags_showing(),
+            "ratings" => viewer.get_ratings_showing(),
+            "notes" => viewer.get_notes_showing(),
+            name => panic!("unrecorded hover {name}"),
+        };
+        move_to(500.0, 375.0);
+        activate(true);
+        move_to(point.0, point.1);
+        let mut states = vec![showing()];
+        hydrus_gui::session_autosave::observe_native_focus(identity, false);
+        viewer
+            .window()
+            .dispatch_event(WindowEvent::WindowActiveChanged(false));
+        headless::render(&drawn, 1000, 750);
+        assert!(!viewer.get_window_active() && !viewer.get_another_window_active());
+        states.push(showing());
+        move_to(500.0, 375.0);
+        states.push(showing());
+        move_to(point.0, point.1);
+        states.push(showing());
+        activate(true);
+        states.push(showing());
+        activate(false);
+        states.push(showing());
+        let expected: Vec<_> = trace["states"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|state| state["up"].as_bool().unwrap())
+            .collect();
+        assert_eq!(
+            states, expected,
+            "{} active→None retains existing only→other hides",
+            trace["hover"]
+        );
+    }
+    // An inactive viewer can still finish a seek: an actual held scrub keeps
+    // the bar full, independently of the mouseover focus requirement.
+    activate(false);
+    let position = LogicalPosition::new(
+        viewer.get_media_x() + viewer.get_media_width() / 2.0,
+        viewer.get_media_y() + viewer.get_media_height() - 2.0,
+    );
+    viewer
+        .window()
+        .dispatch_event(WindowEvent::PointerMoved { position });
+    assert!(!viewer.get_seek_bar_full());
+    viewer.window().dispatch_event(WindowEvent::PointerPressed {
+        position,
+        button: PointerEventButton::Left,
+    });
+    assert!(viewer.get_seek_bar_full());
+    viewer
+        .window()
+        .dispatch_event(WindowEvent::PointerReleased {
+            position,
+            button: PointerEventButton::Left,
+        });
+    assert!(!viewer.get_seek_bar_full());
+    let persisted = store.read(settings::get::<ViewerFocusSettings>).unwrap();
+    assert_eq!(persisted, ViewerFocusSettings::default());
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    for (name, label) in labels {
+        show_page(&options, name);
+        assert!(row(&options, label).1.checked);
+        options.invoke_check_toggled(row(&options, label).0, false);
+    }
+    options.invoke_cancel();
+    assert!(viewer.get_seek_requires_focus() && viewer.get_hovers_require_focus());
+    assert_eq!(
+        store.read(settings::get::<ViewerFocusSettings>).unwrap(),
+        persisted
+    );
+    // Focus for other native identities and stale released observers do not
+    // alter this viewer. The registry never extends the callback's lifetime.
+    hydrus_gui::session_autosave::observe_native_focus(
+        slint::winit_030::winit::window::WindowId::from(9_002),
+        true,
+    );
+    assert!(!viewer.get_window_active());
+    drop(focus);
+    hydrus_gui::session_autosave::observe_native_focus(identity, true);
+    assert!(!viewer.get_window_active());
+    viewer.invoke_close_requested();
+}
+
+const CLOSING_LABELS: [&str; 4] = [
+    "When closing the media viewer, re-select original search page: ",
+    "When closing the media viewer, tell original search page to select exit media: ",
+    "ADVANCED: When closing the media viewer with the above focusing options, activate Main GUI: ",
+    "DEBUG: When closing the media viewer at any time, activate Main GUI: ",
+];
+
+fn closing_draft(ui: &MainWindow, bound: &hydrus_gui::Bound, values: &[bool]) -> OptionsWindow {
+    open(ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "media viewer");
+    for (label, &value) in CLOSING_LABELS.iter().zip(values) {
+        window.invoke_check_toggled(row(&window, label).0, value);
+    }
+    window
+}
+
+fn show_original_key(ui: &MainWindow, bound: &hydrus_gui::Bound, key: hydrus_core::pages::PageKey) {
+    let index = bound
+        .pages
+        .borrow()
+        .session()
+        .pages
+        .iter()
+        .position(|page| page.key == key)
+        .unwrap();
+    ui.invoke_tab_chosen(0, i32::try_from(index).unwrap());
+    assert_eq!(bound.pages.borrow().shown().key, key);
+}
+
+#[test]
+fn closing_preferences_reach_frozen_page_selection_and_native_main_activation() {
+    use hydrus_gui::viewer_closing::set_activation_observer;
+    use hydrus_gui_model::viewer_closing::Action;
+    use std::{cell::RefCell, rc::Rc};
+    let fixture = hydrus_testkit::fixture_json("viewer_closing_options.json");
+    let (_dirs, store) = store();
+    let ids: Vec<_> = fixture["hashes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|hash| {
+            store
+                .read(|conn| {
+                    hydrus_store::master::hash_id(conn, &hash.as_str().unwrap().parse().unwrap())
+                })
+                .unwrap()
+                .unwrap()
+        })
+        .collect();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let location = hydrus_search::LocationContext::single(
+        hydrus_core::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE,
+    );
+    let mut pages = Pages::single(hydrus_gui::SearchPage::new(store.clone()));
+    pages.open_files(location.clone(), ids[..2].to_vec(), None, None);
+    let original_key = pages.shown().key;
+    let original = pages.current();
+    pages.open_files(location, ids[..2].to_vec(), None, None);
+    let other_key = pages.shown().key;
+    let bound = bind(&ui, pages);
+    ui.show().unwrap();
+    let drawn = windows.get(0).unwrap();
+    headless::render(&drawn, 900, 700);
+    let activation = Rc::new(RefCell::new(Vec::new()));
+    let weak_main = ui.as_weak();
+    set_activation_observer(Some(Rc::new({
+        let activation = activation.clone();
+        move |main, reason| {
+            let expected = weak_main.upgrade().unwrap();
+            assert!(
+                std::ptr::eq(main.window(), expected.window()),
+                "activate the weak main owner"
+            );
+            activation.borrow_mut().push(match reason {
+                Action::ActivateFocusing => "focusing-panel",
+                Action::ActivateDebug => "debug-main",
+                Action::ReselectPage | Action::SelectExitMedia => panic!("not an activation"),
+            });
+        }
+    })));
+    for event in fixture["events"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|event| event["scenario"] != "unowned")
+    {
+        let values: Vec<_> = event["values"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|value| value.as_bool().unwrap())
+            .collect();
+        closing_draft(&ui, &bound, &values).invoke_apply();
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "media viewer");
+        for (label, &expected) in CLOSING_LABELS.iter().zip(&values) {
+            assert_eq!(
+                row(&window, label).1.checked,
+                expected,
+                "persisted/reopened {label}"
+            );
+        }
+        window.invoke_cancel();
+        show_original_key(&ui, &bound, original_key);
+        let missing = event["scenario"] == "missing-exit";
+        if missing {
+            original.borrow_mut().add_files(&ids[2..]);
+        }
+        let start = original
+            .borrow()
+            .results()
+            .iter()
+            .position(|file| *file == ids[0])
+            .unwrap();
+        original.borrow_mut().hit(None, false, false);
+        original.borrow_mut().select(start);
+        if event["scenario"] == "selected-multiple" {
+            let exit = original
+                .borrow()
+                .results()
+                .iter()
+                .position(|file| *file == ids[1])
+                .unwrap();
+            original.borrow_mut().hit(Some(exit), true, false);
+        }
+        let viewer_files = original.borrow().files();
+        let start_pos = viewer_files
+            .iter()
+            .position(|file| *file == ids[0])
+            .unwrap();
+        let exit = ids[if missing { 2 } else { 1 }];
+        let exit_pos = viewer_files.iter().position(|file| *file == exit).unwrap();
+        ui.invoke_thumbnail_activated(i32::try_from(start).unwrap());
+        let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+        for _ in 0..(exit_pos + viewer_files.len() - start_pos) % viewer_files.len() {
+            viewer.invoke_next();
+        }
+        if missing {
+            original.borrow_mut().remove_files(&ids[2..]);
+        }
+        show_original_key(&ui, &bound, other_key);
+        let closed = event["scenario"] == "closed-owner";
+        if closed {
+            bound
+                .pages
+                .borrow_mut()
+                .close_tab_keys(&[original_key])
+                .unwrap();
+        }
+        activation.borrow_mut().clear();
+        let reveal_before = ui.get_viewer_reveal_request();
+        viewer.invoke_close_requested();
+        assert!(bound.viewer.borrow().is_none());
+        let expected_key = if event["after"]["page"] == "original" {
+            original_key
+        } else {
+            other_key
+        };
+        assert_eq!(bound.pages.borrow().shown().key, expected_key, "{event:?}");
+        let hash_of = |id| {
+            store
+                .read(|conn| hydrus_store::master::hashes(conn, &[id]))
+                .unwrap()[&id]
+                .to_hex()
+        };
+        let selected: Vec<_> = original
+            .borrow()
+            .selected_files()
+            .into_iter()
+            .map(hash_of)
+            .collect();
+        assert_eq!(
+            serde_json::json!(selected),
+            event["after"]["selected"],
+            "{event:?}"
+        );
+        let source = original.borrow();
+        let focused = source
+            .focused()
+            .map(|index| hash_of(source.results()[index]));
+        assert_eq!(
+            serde_json::json!(focused),
+            event["after"]["focused"],
+            "{event:?}"
+        );
+        drop(source);
+        assert_eq!(
+            serde_json::json!(*activation.borrow()),
+            event["after"]["activation"],
+            "{event:?}"
+        );
+        if values[0] && values[1] && !closed && !missing {
+            assert_ne!(ui.get_viewer_reveal_request(), reveal_before);
+            let index = original
+                .borrow()
+                .results()
+                .iter()
+                .position(|file| *file == exit)
+                .unwrap();
+            assert_eq!(ui.get_viewer_reveal_index(), i32::try_from(index).unwrap());
+        }
+        if closed {
+            assert!(bound.pages.borrow_mut().unclose());
+            show_original_key(&ui, &bound, original_key);
+            assert_eq!(
+                original.borrow().selected_files(),
+                [ids[1]],
+                "undo preserves the hidden owner's exit selection"
+            );
+            assert_ne!(
+                ui.get_viewer_reveal_request(),
+                reveal_before,
+                "pending exit scroll follows frozen owner on undo"
+            );
+        }
+    }
+    set_activation_observer(None);
+    bound.pages.borrow_mut().save(1_700_000_000).unwrap();
+    let mut reopened = Pages::open(store).unwrap();
+    assert_eq!(
+        reopened
+            .page(&original_key)
+            .unwrap()
+            .borrow()
+            .selected_files(),
+        [ids[1]],
+        "exit selection persists in the last session"
+    );
+}
+
+#[test]
+fn cancelled_closing_options_and_stale_viewers_cannot_redirect_the_live_owner() {
+    use hydrus_gui::viewer_closing::set_activation_observer;
+    use std::{cell::RefCell, rc::Rc};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    assert!(files.len() > 2);
+    closing_draft(&ui, &bound, &[true, false, true, true]).invoke_apply();
+    ui.invoke_thumbnail_activated(0);
+    let stale = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    ui.invoke_thumbnail_activated(1);
+    let live = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let calls = Rc::new(RefCell::new(Vec::new()));
+    set_activation_observer(Some(Rc::new({
+        let calls = calls.clone();
+        move |_, action| calls.borrow_mut().push(action)
+    })));
+    stale.invoke_close_requested();
+    assert!(
+        calls.borrow().is_empty(),
+        "a stale callback does not activate or close its successor"
+    );
+    assert!(std::ptr::eq(
+        bound.viewer.borrow().as_ref().unwrap().window(),
+        live.window()
+    ));
+    closing_draft(&ui, &bound, &[false, true, false, false]).invoke_cancel();
+    live.invoke_close_requested();
+    assert_eq!(
+        calls.borrow().as_slice(),
+        [
+            hydrus_gui_model::viewer_closing::Action::ActivateFocusing,
+            hydrus_gui_model::viewer_closing::Action::ActivateDebug
+        ]
+    );
+    assert!(bound.viewer.borrow().is_none());
+    assert!(
+        store
+            .read(hydrus_gui::options::Settings::load)
+            .unwrap()
+            .viewer_closing
+            .reselect_page
+    );
+    // A session replacement destroys the original panel. The viewer's weak
+    // owner must not select the replacement page or request focusing activation.
+    closing_draft(&ui, &bound, &[true, true, true, true]).invoke_apply();
+    bound
+        .pages
+        .borrow_mut()
+        .save_session("closing replacement", 1_700_000_000)
+        .unwrap();
+    ui.invoke_thumbnail_activated(0);
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let old_page = std::rc::Rc::downgrade(&bound.current.borrow());
+    bound
+        .pages
+        .borrow_mut()
+        .clear_and_load("closing replacement")
+        .unwrap();
+    ui.invoke_tab_chosen(0, 0);
+    assert!(
+        old_page.upgrade().is_none(),
+        "the original page is destroyed after session replacement"
+    );
+    let replacement = bound.current.borrow().clone();
+    let before = replacement.borrow().selected_files();
+    calls.borrow_mut().clear();
+    viewer.invoke_close_requested();
+    assert_eq!(replacement.borrow().selected_files(), before);
+    assert_eq!(
+        calls.borrow().as_slice(),
+        [hydrus_gui_model::viewer_closing::Action::ActivateDebug]
+    );
+    set_activation_observer(None);
+}
+
+#[test]
+#[allow(clippy::float_cmp)] // logical background origin is exact zero or exact layout height
+fn passive_background_options_paint_independent_copies_behind_opaque_media() {
+    use hydrus_store::settings::{self, ViewerBackgroundSettings};
+    let fixture = hydrus_testkit::fixture_json("viewer_background_options.json");
+    let (_dirs, store) = store();
+    let id = store
+        .read(|conn| {
+            hydrus_store::master::hash_id(conn, &fixture["hash"].as_str().unwrap().parse().unwrap())
+        })
+        .unwrap()
+        .unwrap();
+    for (name, text) in fixture["notes"].as_object().unwrap() {
+        let (name, text) = (name.clone(), text.as_str().unwrap().to_owned());
+        store
+            .write_content(move |writer| writer.set_note(id, &name, &text))
+            .unwrap();
+    }
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let mut pages = Pages::single(hydrus_gui::SearchPage::new(store.clone()));
+    pages.open_files(
+        hydrus_search::LocationContext::single(
+            hydrus_core::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE,
+        ),
+        vec![id],
+        None,
+        None,
+    );
+    let bound = bind(&ui, pages);
+    ui.invoke_thumbnail_activated(0);
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    assert!(viewer.get_tags().row_count() > 0);
+    assert!(viewer.get_ratings().row_count() > 0);
+    assert_eq!(viewer.get_notes().row_count(), 2);
+    assert!(!viewer.get_info_line().is_empty());
+    assert!(
+        viewer.get_location_strings().row_count() > 0,
+        "real file domain names join ratings and URLs"
+    );
+    headless::render(&drawn, 1000, 750); // settle initial canvas resize before isolating its background
+    let labels = [
+        "Draw tags (left) in the viewer background:",
+        "Draw file information (top) in the viewer background:",
+        "Draw ratings and locations (top-right) in the viewer background:",
+        "Draw notes (right) in the viewer background:",
+    ];
+    let popup_labels = [
+        "Pop-in tags (left) hover window on mouseover:",
+        "Pop-in ratings and locations (top-right) hover window on mouseover:",
+        "Pop-in notes (right) hover window on mouseover:",
+    ];
+    let occupancy = |pixels: &[u8]| {
+        pixels
+            .chunks_exact(4)
+            .filter(|pixel| pixel[..3] != [32, 32, 32])
+            .count()
+    };
+    for event in fixture["events"].as_array().unwrap() {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer hovers");
+        for (label, value) in labels.iter().zip(event["values"].as_array().unwrap()) {
+            options.invoke_check_toggled(row(&options, label).0, value.as_bool().unwrap());
+        }
+        for label in popup_labels {
+            options.invoke_check_toggled(
+                row(&options, label).0,
+                event["hovers_enabled"].as_bool().unwrap(),
+            );
+        }
+        options.invoke_check_toggled(
+            row(
+                &options,
+                "Draw index text (bottom-right) in the viewer background:",
+            )
+            .0,
+            false,
+        );
+        options.invoke_apply();
+        let saved = store
+            .read(settings::get::<ViewerBackgroundSettings>)
+            .unwrap();
+        assert_eq!(
+            serde_json::json!([saved.tags, saved.information, saved.ratings, saved.notes]),
+            event["values"]
+        );
+        assert_eq!(
+            [
+                viewer.get_draw_tags_background(),
+                viewer.get_draw_information_background(),
+                viewer.get_draw_ratings_background(),
+                viewer.get_draw_notes_background()
+            ],
+            [saved.tags, saved.information, saved.ratings, saved.notes]
+        );
+        viewer
+            .window()
+            .dispatch_event(slint::platform::WindowEvent::PointerExited);
+        viewer.set_media(slint::Image::default());
+        viewer.set_sharp_shown(false);
+        viewer.set_sharp(slint::Image::default());
+        viewer.set_media_x(0.0);
+        viewer.set_media_y(0.0);
+        viewer.set_media_width(1000.0);
+        viewer.set_media_height(750.0);
+        let pixels = headless::render(&drawn, 1000, 750);
+        assert_eq!(
+            occupancy(&pixels) > 0,
+            event["visible_pixels"].as_u64().unwrap() > 0,
+            "{event:?}"
+        );
+        assert!(
+            !viewer.get_tags_showing()
+                && !viewer.get_ratings_showing()
+                && !viewer.get_notes_showing()
+        );
+        assert_eq!(
+            viewer.get_background_notes_y(),
+            if saved.ratings {
+                viewer.get_background_ratings_height()
+            } else {
+                0.0
+            }
+        );
+        if saved.ratings {
+            assert!(viewer.get_background_notes_y() > 0.0);
+        }
+        let calls = event["calls"].as_array().unwrap();
+        if let Some(notes) = calls.iter().find(|call| call["kind"] == "Notes") {
+            assert_eq!(notes["input_y"].as_u64().unwrap() > 0, saved.ratings);
+        }
+        // Opaque media painted after the passive text covers all of it. An
+        // empty image above isolated the real metadata/preferences' drawing.
+        let mut cover = slint::SharedPixelBuffer::<slint::Rgba8Pixel>::new(4, 3);
+        cover.make_mut_slice().fill(slint::Rgba8Pixel {
+            r: 32,
+            g: 32,
+            b: 32,
+            a: 255,
+        });
+        viewer.set_media(slint::Image::from_rgba8(cover));
+        let pixels = headless::render(&drawn, 1000, 750);
+        assert_eq!(
+            occupancy(&pixels),
+            event["opaque_cover_pixels"].as_u64().unwrap() as usize,
+            "media covers passive copies: {event:?}"
+        );
+    }
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer hovers");
+    for label in labels {
+        assert!(row(&options, label).1.checked);
+        options.invoke_check_toggled(row(&options, label).0, false);
+    }
+    options.invoke_cancel();
+    assert!(
+        viewer.get_draw_tags_background()
+            && viewer.get_draw_information_background()
+            && viewer.get_draw_ratings_background()
+            && viewer.get_draw_notes_background()
+    );
+    viewer.invoke_close_requested();
+    ui.invoke_thumbnail_activated(0);
+    let reopened = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert!(
+        reopened.get_draw_tags_background()
+            && reopened.get_draw_information_background()
+            && reopened.get_draw_ratings_background()
+            && reopened.get_draw_notes_background()
+    );
+    reopened.invoke_close_requested();
 }

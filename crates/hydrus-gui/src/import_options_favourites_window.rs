@@ -26,12 +26,15 @@ fn menu_label(text: &str) -> String {
 pub struct Controller {
     store: Arc<Store>,
     caller: CallerType,
+    manager: Option<Rc<RefCell<ImportOptionsManager>>>,
+    simple: Cell<bool>,
     current: Rc<dyn Fn() -> Option<ImportOptionsSlice>>,
     applied: Rc<dyn Fn(ImportOptionsSlice)>,
     error: Rc<dyn Fn(String)>,
     busy_changed: Rc<dyn Fn(bool)>,
     active: Cell<bool>,
     busy: Cell<bool>,
+    save_current_allowed: Cell<bool>,
     editor: Rc<RefCell<Option<ImportOptionsWindow>>>,
     prompt: Rc<RefCell<Option<ImportFavouritePromptWindow>>>,
     overwrite: crate::import_options_overwrite_window::Slot,
@@ -56,15 +59,51 @@ impl Controller {
         error: Rc<dyn Fn(String)>,
         busy_changed: Rc<dyn Fn(bool)>,
     ) -> Rc<Self> {
+        Self::new_inner(store, caller, None, current, applied, error, busy_changed)
+    }
+
+    /// Options-page profiles belong to its manager draft until Options Apply.
+    pub fn new_staged(
+        store: Arc<Store>,
+        caller: CallerType,
+        manager: Rc<RefCell<ImportOptionsManager>>,
+        current: Rc<dyn Fn() -> Option<ImportOptionsSlice>>,
+        applied: Rc<dyn Fn(ImportOptionsSlice)>,
+        error: Rc<dyn Fn(String)>,
+        busy_changed: Rc<dyn Fn(bool)>,
+    ) -> Rc<Self> {
+        Self::new_inner(
+            store,
+            caller,
+            Some(manager),
+            current,
+            applied,
+            error,
+            busy_changed,
+        )
+    }
+
+    pub(crate) fn new_inner(
+        store: Arc<Store>,
+        caller: CallerType,
+        manager: Option<Rc<RefCell<ImportOptionsManager>>>,
+        current: Rc<dyn Fn() -> Option<ImportOptionsSlice>>,
+        applied: Rc<dyn Fn(ImportOptionsSlice)>,
+        error: Rc<dyn Fn(String)>,
+        busy_changed: Rc<dyn Fn(bool)>,
+    ) -> Rc<Self> {
         Rc::new(Self {
             store,
             caller,
+            manager,
+            simple: Cell::new(true),
             current,
             applied,
             error,
             busy_changed,
             active: Cell::new(true),
             busy: Cell::new(false),
+            save_current_allowed: Cell::new(true),
             editor: Rc::default(),
             prompt: Rc::default(),
             overwrite: Rc::default(),
@@ -73,6 +112,22 @@ impl Controller {
 
     pub fn busy(&self) -> bool {
         self.busy.get()
+    }
+
+    /// Subscription lists have no singular current value to save as a profile.
+    pub fn set_save_current_allowed(&self, allowed: bool) {
+        self.save_current_allowed.set(allowed);
+    }
+
+    pub fn set_simple_mode(&self, simple: bool) {
+        self.simple.set(simple);
+    }
+
+    fn manager(&self) -> Result<ImportOptionsManager, String> {
+        self.manager.as_ref().map_or_else(
+            || self.store.read(settings::get).map_err(|e| e.to_string()),
+            |manager| Ok(manager.borrow().clone()),
+        )
     }
 
     pub fn editing_window(&self) -> Option<ImportOptionsWindow> {
@@ -98,8 +153,7 @@ impl Controller {
 
     /// Menu data is reread each time it opens, including other owners' saves.
     pub fn rows(&self) -> Result<Vec<ImportFavouriteRow>, String> {
-        let manager: ImportOptionsManager =
-            self.store.read(settings::get).map_err(|e| e.to_string())?;
+        let manager = self.manager()?;
         let snapshot = self.store.snapshot();
         let name = |key: &str| {
             hex::decode(key)
@@ -147,10 +201,37 @@ impl Controller {
         name: String,
         options: ImportOptionsSlice,
     ) -> Result<(), String> {
+        if let Some(manager) = &self.manager {
+            save_favourite(
+                &mut manager.borrow_mut(),
+                original.as_deref(),
+                &name,
+                options,
+            );
+            return Ok(());
+        }
         self.store
             .write(move |tx| {
                 let mut manager: ImportOptionsManager = settings::get(tx.conn())?;
                 save_favourite(&mut manager, original.as_deref(), &name, options);
+                settings::set(tx.conn(), &manager)
+            })
+            .map_err(|e| e.to_string())
+    }
+
+    fn delete(&self, name: &str) -> Result<(), String> {
+        if let Some(manager) = &self.manager {
+            manager
+                .borrow_mut()
+                .favourites
+                .retain(|(entry, _)| entry != name);
+            return Ok(());
+        }
+        let name = name.to_owned();
+        self.store
+            .write(move |tx| {
+                let mut manager: ImportOptionsManager = settings::get(tx.conn())?;
+                manager.favourites.retain(|(entry, _)| entry != &name);
                 settings::set(tx.conn(), &manager)
             })
             .map_err(|e| e.to_string())
@@ -169,8 +250,7 @@ impl Controller {
     }
 
     fn choose_inner(self: &Rc<Self>, action: i32, name: &str) -> Result<(), String> {
-        let manager: ImportOptionsManager =
-            self.store.read(settings::get).map_err(|e| e.to_string())?;
+        let manager = self.manager()?;
         let favourite = manager
             .favourites
             .into_iter()
@@ -203,7 +283,7 @@ impl Controller {
                     &self.store,
                     Overwrite::new(
                         self.caller,
-                        true,
+                        self.simple.get(),
                         current,
                         favourite.expect("checked entry"),
                     ),
@@ -231,10 +311,10 @@ impl Controller {
                 let options = favourite.unwrap_or_default();
                 let weak = Rc::downgrade(self);
                 let applied = Rc::new(move |name, options| {
-                    if let Some(owner) = weak.upgrade().filter(|owner| owner.active.get()) {
-                        if let Err(error) = owner.save(original.clone(), name, options) {
-                            (owner.error)(error);
-                        }
+                    if let Some(owner) = weak.upgrade().filter(|owner| owner.active.get())
+                        && let Err(error) = owner.save(original.clone(), name, options)
+                    {
+                        (owner.error)(error);
                     }
                 });
                 let weak = Rc::downgrade(self);
@@ -243,18 +323,38 @@ impl Controller {
                         owner.set_busy(false);
                     }
                 });
-                let child = crate::import_options_window::open_named(
-                    &self.store,
-                    &options,
-                    &self.editor,
-                    initial_name,
-                    applied,
-                    closed,
-                )?;
+                let child = if let Some(manager) = &self.manager {
+                    crate::import_options_window::open_staged(
+                        &self.store,
+                        CallerType::Favourites,
+                        &options,
+                        &self.editor,
+                        crate::import_options_window::StagedOptions {
+                            manager: manager.clone(),
+                            simple: self.simple.get(),
+                            name: Some(initial_name.to_owned()),
+                            url_classes: Vec::new(),
+                        },
+                        applied,
+                        closed,
+                    )?
+                } else {
+                    crate::import_options_window::open_named(
+                        &self.store,
+                        &options,
+                        &self.editor,
+                        initial_name,
+                        applied,
+                        closed,
+                    )?
+                };
                 *self.editor.borrow_mut() = Some(child);
                 self.set_busy(true);
             }
             5 => {
+                if !self.save_current_allowed.get() {
+                    return Ok(());
+                }
                 let Some(options) = (self.current)() else {
                     return Ok(());
                 };
@@ -279,17 +379,11 @@ impl Controller {
                     false,
                     &format!("Delete the favourite named \"{name}\"?"),
                     Rc::new({
-                        let store = self.store.clone();
+                        let weak = Rc::downgrade(self);
                         move |_| {
-                            let name = name.clone();
-                            store
-                                .write(move |tx| {
-                                    let mut manager: ImportOptionsManager =
-                                        settings::get(tx.conn())?;
-                                    manager.favourites.retain(|(entry, _)| entry != &name);
-                                    settings::set(tx.conn(), &manager)
-                                })
-                                .map_err(|e| e.to_string())
+                            weak.upgrade()
+                                .filter(|owner| owner.active.get())
+                                .map_or(Ok(()), |owner| owner.delete(&name))
                         }
                     }),
                 )?;

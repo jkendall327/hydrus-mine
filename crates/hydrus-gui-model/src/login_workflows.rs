@@ -191,12 +191,14 @@ pub fn script_warning(script: &LoginScript) -> Option<String> {
 pub struct StepEditor {
     pub step: hydrus_parse::login::LoginStep,
     pub selection: ListSelection<usize>,
+    pub argument_selection: [ListSelection<usize>; 3],
 }
 impl StepEditor {
     pub fn new(step: &hydrus_parse::login::LoginStep) -> Self {
         Self {
             step: step.clone(),
             selection: ListSelection::default(),
+            argument_selection: std::array::from_fn(|_| ListSelection::default()),
         }
     }
     pub fn order(&self) -> Vec<usize> {
@@ -287,7 +289,7 @@ impl StepEditor {
 pub struct DomainsEditor {
     pub draft: LoginManager,
     original_domains: BTreeMap<String, hydrus_parse::login::DomainLogin>,
-    pub selection: ListSelection<String>,
+    pub selection: ListSelection<usize>,
 }
 impl DomainsEditor {
     pub fn new(draft: LoginManager) -> Self {
@@ -297,8 +299,21 @@ impl DomainsEditor {
             selection: ListSelection::default(),
         }
     }
-    pub fn order(&self) -> Vec<String> {
-        self.draft.domains.keys().cloned().collect()
+    pub fn order(&self) -> Vec<usize> {
+        (0..self.draft.domains.len()).collect()
+    }
+    pub fn domain_at(&self, index: usize) -> Option<String> {
+        self.draft.domains.keys().nth(index).cloned()
+    }
+    pub fn selected_domain(&self) -> Option<String> {
+        self.selection.one().and_then(|i| self.domain_at(i))
+    }
+    pub fn selected_domains(&self) -> Vec<String> {
+        self.selection
+            .in_order(&self.order())
+            .into_iter()
+            .filter_map(|i| self.domain_at(i))
+            .collect()
     }
     pub fn replace_credentials(
         &mut self,
@@ -347,6 +362,232 @@ impl DomainsEditor {
             }
             current.domains = domains;
             hydrus_store::logins::save(ctx.conn(), &current)
+        })
+    }
+}
+
+/// One of the reference's three independent request argument dictionaries.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ArgumentKind {
+    Credential,
+    Static,
+    Temporary,
+}
+impl ArgumentKind {
+    pub fn from_index(index: i32) -> Self {
+        match index {
+            0 => Self::Credential,
+            2 => Self::Temporary,
+            _ => Self::Static,
+        }
+    }
+    pub fn index(self) -> i32 {
+        match self {
+            Self::Credential => 0,
+            Self::Static => 1,
+            Self::Temporary => 2,
+        }
+    }
+    pub fn key_name(self) -> &'static str {
+        match self {
+            Self::Credential => "credential name",
+            Self::Static => "parameter name",
+            Self::Temporary => "temp variable name",
+        }
+    }
+}
+impl StepEditor {
+    pub fn arguments(&self, kind: ArgumentKind) -> &BTreeMap<String, String> {
+        match kind {
+            ArgumentKind::Credential => &self.step.credentials,
+            ArgumentKind::Static => &self.step.static_args,
+            ArgumentKind::Temporary => &self.step.temp_args,
+        }
+    }
+    fn arguments_mut(&mut self, kind: ArgumentKind) -> &mut BTreeMap<String, String> {
+        match kind {
+            ArgumentKind::Credential => &mut self.step.credentials,
+            ArgumentKind::Static => &mut self.step.static_args,
+            ArgumentKind::Temporary => &mut self.step.temp_args,
+        }
+    }
+    /// Blank values are accepted; duplicate keys and blank names leave the draft intact.
+    pub fn set_argument(
+        &mut self,
+        kind: ArgumentKind,
+        old: Option<&str>,
+        key: String,
+        value: String,
+    ) -> Result<(), String> {
+        if key.is_empty() {
+            return Err(format!("Enter the {}.", kind.key_name()));
+        }
+        let values = self.arguments_mut(kind);
+        if old != Some(key.as_str()) && values.contains_key(&key) {
+            return Err(format!("That {} already exists!", kind.key_name()));
+        }
+        if let Some(old) = old {
+            values.remove(old);
+        }
+        values.insert(key, value);
+        self.argument_selection[kind.index() as usize].select_only(None);
+        Ok(())
+    }
+    pub fn remove_argument(&mut self, kind: ArgumentKind, key: &str) {
+        self.arguments_mut(kind).remove(key);
+        self.argument_selection[kind.index() as usize].select_only(None);
+    }
+    pub fn select_arguments(&mut self, kind: ArgumentKind, index: usize, ctrl: bool, shift: bool) {
+        let order = (0..self.arguments(kind).len()).collect::<Vec<_>>();
+        self.argument_selection[kind.index() as usize].click(&order, index, ctrl, shift);
+    }
+    pub fn selected_argument(&self, kind: ArgumentKind) -> Option<(ArgumentKind, String)> {
+        self.argument_selection[kind.index() as usize]
+            .one()
+            .and_then(|index| self.arguments(kind).keys().nth(index).cloned())
+            .map(|key| (kind, key))
+    }
+    pub fn selected_arguments(&self, kind: ArgumentKind) -> Vec<String> {
+        let order = (0..self.arguments(kind).len()).collect::<Vec<_>>();
+        self.argument_selection[kind.index() as usize]
+            .in_order(&order)
+            .into_iter()
+            .filter_map(|i| self.arguments(kind).keys().nth(i).cloned())
+            .collect()
+    }
+    pub fn delete_arguments(&mut self, kind: ArgumentKind) {
+        for key in self.selected_arguments(kind) {
+            self.remove_argument(kind, &key);
+        }
+    }
+    pub fn argument_rows(&self) -> Vec<(ArgumentKind, String, String)> {
+        [
+            ArgumentKind::Credential,
+            ArgumentKind::Static,
+            ArgumentKind::Temporary,
+        ]
+        .into_iter()
+        .flat_map(|kind| {
+            self.arguments(kind)
+                .iter()
+                .map(move |(key, value)| (kind, key.clone(), value.clone()))
+        })
+        .collect()
+    }
+}
+
+/// Detached cookie requirement list; matcher objects may have identical descriptions.
+#[derive(Debug, Clone)]
+pub struct CookiesEditor {
+    pub rows: Vec<hydrus_parse::login::CookieRequirement>,
+    pub selection: ListSelection<usize>,
+}
+impl CookiesEditor {
+    pub fn new(rows: &[hydrus_parse::login::CookieRequirement]) -> Self {
+        Self {
+            rows: rows.to_vec(),
+            selection: ListSelection::default(),
+        }
+    }
+    pub fn order(&self) -> Vec<usize> {
+        let mut order = (0..self.rows.len()).collect::<Vec<_>>();
+        order.sort_by_cached_key(|&i| {
+            (
+                self.rows[i].name.describe(false, false),
+                self.rows[i].value.describe(false, false),
+            )
+        });
+        order
+    }
+    pub fn value(&self) -> Vec<hydrus_parse::login::CookieRequirement> {
+        self.order()
+            .into_iter()
+            .map(|i| self.rows[i].clone())
+            .collect()
+    }
+    pub fn put(&mut self, index: Option<usize>, value: hydrus_parse::login::CookieRequirement) {
+        let index = if let Some(index) = index.filter(|&i| i < self.rows.len()) {
+            self.rows[index] = value;
+            index
+        } else {
+            self.rows.push(value);
+            self.rows.len() - 1
+        };
+        self.selection.select_only(Some(index));
+    }
+    pub fn delete(&mut self) {
+        let selected = self.selection.in_order(&self.order());
+        self.rows = std::mem::take(&mut self.rows)
+            .into_iter()
+            .enumerate()
+            .filter_map(|(i, row)| (!selected.contains(&i)).then_some(row))
+            .collect();
+        self.selection.select_only(None);
+    }
+}
+
+/// Three-stage reference example-domain entry, including final-description Cancel.
+#[derive(Debug, Clone)]
+pub struct ExampleDraft {
+    pub domain: String,
+    pub access: hydrus_parse::login::Access,
+    pub description: String,
+    original_access: hydrus_parse::login::Access,
+    original_description: String,
+}
+impl ExampleDraft {
+    pub fn new(row: Option<&hydrus_parse::login::ExampleDomain>) -> Self {
+        let access = row.map_or(hydrus_parse::login::Access::Nsfw, |row| row.access);
+        let description = row.map_or_else(
+            || access.description().to_owned(),
+            |row| row.description.clone(),
+        );
+        Self {
+            domain: row.map_or_else(|| "example.com".to_owned(), |row| row.domain.clone()),
+            access,
+            original_access: access,
+            original_description: description.clone(),
+            description,
+        }
+    }
+    pub fn validate_domain(
+        &self,
+        rows: &[hydrus_parse::login::ExampleDomain],
+        index: Option<usize>,
+    ) -> Result<(), String> {
+        if self.domain.is_empty() {
+            return Err("Enter the domain.".into());
+        }
+        if index
+            .and_then(|i| rows.get(i))
+            .is_some_and(|row| row.domain == self.domain)
+        {
+            return Ok(());
+        }
+        if rows.iter().any(|row| row.domain == self.domain) {
+            return Err("That domain already exists!".into());
+        }
+        Ok(())
+    }
+    pub fn select_access(&mut self, access: hydrus_parse::login::Access) {
+        self.access = access;
+        self.description = if access == self.original_access {
+            self.original_description.clone()
+        } else {
+            access.description().to_owned()
+        };
+    }
+    pub fn value(
+        &self,
+        description: Option<&str>,
+    ) -> Result<hydrus_parse::login::ExampleDomain, String> {
+        if description == Some("") {
+            return Err("Enter the access description.".into());
+        }
+        Ok(hydrus_parse::login::ExampleDomain {
+            domain: self.domain.clone(),
+            access: self.access,
+            description: description.unwrap_or(&self.description).to_owned(),
         })
     }
 }

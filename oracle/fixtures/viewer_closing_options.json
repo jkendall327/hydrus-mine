@@ -1,0 +1,608 @@
+{
+  "initial": [
+    false,
+    true,
+    false,
+    false
+  ],
+  "hashes": [
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf"
+  ],
+  "events": [
+    {
+      "values": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      }
+    },
+    {
+      "values": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": [
+          "debug-main"
+        ]
+      }
+    },
+    {
+      "values": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      }
+    },
+    {
+      "values": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": [
+          "debug-main"
+        ]
+      }
+    },
+    {
+      "values": [
+        false,
+        true,
+        false,
+        false
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "other",
+        "selected": [
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+        ],
+        "focused": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "original_open": true,
+        "activation": []
+      }
+    },
+    {
+      "values": [
+        false,
+        true,
+        false,
+        true
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "other",
+        "selected": [
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+        ],
+        "focused": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "original_open": true,
+        "activation": [
+          "debug-main"
+        ]
+      }
+    },
+    {
+      "values": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "other",
+        "selected": [
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+        ],
+        "focused": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "original_open": true,
+        "activation": [
+          "focusing-panel"
+        ]
+      }
+    },
+    {
+      "values": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "other",
+        "selected": [
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+        ],
+        "focused": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "original_open": true,
+        "activation": [
+          "focusing-panel",
+          "debug-main"
+        ]
+      }
+    },
+    {
+      "values": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "original",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      }
+    },
+    {
+      "values": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "original",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": [
+          "debug-main"
+        ]
+      }
+    },
+    {
+      "values": [
+        true,
+        false,
+        true,
+        false
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "original",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": [
+          "focusing-panel"
+        ]
+      }
+    },
+    {
+      "values": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "original",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": [
+          "focusing-panel",
+          "debug-main"
+        ]
+      }
+    },
+    {
+      "values": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "original",
+        "selected": [
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+        ],
+        "focused": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "original_open": true,
+        "activation": []
+      }
+    },
+    {
+      "values": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "original",
+        "selected": [
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+        ],
+        "focused": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "original_open": true,
+        "activation": [
+          "debug-main"
+        ]
+      }
+    },
+    {
+      "values": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "original",
+        "selected": [
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+        ],
+        "focused": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "original_open": true,
+        "activation": [
+          "focusing-panel"
+        ]
+      }
+    },
+    {
+      "values": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "scenario": "normal",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "original",
+        "selected": [
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+        ],
+        "focused": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "original_open": true,
+        "activation": [
+          "focusing-panel",
+          "debug-main"
+        ]
+      }
+    },
+    {
+      "values": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "scenario": "missing-exit",
+      "exit": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": [
+          "focusing-panel"
+        ]
+      }
+    },
+    {
+      "values": [
+        false,
+        true,
+        false,
+        false
+      ],
+      "scenario": "selected-multiple",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+        ],
+        "focused": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "original_open": true,
+        "activation": []
+      }
+    },
+    {
+      "values": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "scenario": "unowned",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": []
+      },
+      "after": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "original_open": true,
+        "activation": [
+          "debug-main"
+        ]
+      }
+    },
+    {
+      "values": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "scenario": "closed-owner",
+      "exit": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "before": {
+        "page": "other",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "focused": null,
+        "original_open": false,
+        "activation": []
+      },
+      "after": {
+        "page": "other",
+        "selected": [
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+        ],
+        "focused": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "original_open": false,
+        "activation": [
+          "focusing-panel"
+        ]
+      }
+    }
+  ]
+}

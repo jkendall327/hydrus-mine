@@ -2,7 +2,7 @@
   "schema_version": 1,
   "agent": "login-workflows",
   "baseline_git_head": "d50df26b",
-  "implementation_git_head": "ad113880",
+  "implementation_git_head": "45cffe11",
   "implementation_commits": [
     "44840f22",
     "da3c06f2",
@@ -11,12 +11,21 @@
     "fa1760c4",
     "6cd9f261",
     "89ef38d6",
-    "ad113880"
+    "ad113880",
+    "89334ad6",
+    "ba3d04b6",
+    "8ad97679",
+    "1aa947be",
+    "b477fe3f",
+    "2d14d685",
+    "b459569c",
+    "45cffe11"
   ],
   "validation": {
     "referenceRecording": "oracle/record_login_editors.py executed through shared with-oracle lock using the real Qt client; fixture oracle/fixtures/login_editors.json; oracle/record_login_execution.py executed actual reference HTTP jobs and real Qt result reviews on synthetic loopback, fixture oracle/fixtures/login_execution.json",
     "cargo_fmt": "passed",
-    "rust_tests": "Authored model, store, codec, GUI/menu/owner regressions. Root asynchronous CI owns execution; no local Cargo builds."
+    "rust_tests": "Root CI reports all four login HTTP test groups passed. New GUI/queue/type/lint checks remain root asynchronous CI; no local Cargo builds.",
+    "slint_syntax": "Cached source compiler passed after cookies, three independent request lists and staged example-domain editor; no Cargo builds."
   },
   "claims": [
     {
@@ -65,7 +74,7 @@
       "proposedStatus": "partial",
       "exactBehavior": "Real network menu opens sorted list; CRUD/extended selection, unique imported names/new keys, preserved edit keys and staged scripts-only save retaining domain fields.",
       "limits": [
-        "Global/step cookie and example-domain editing incomplete; typed preserved steps are editable and executable in isolated tests."
+        "Typed steps, cookies and example-domain controls are editable; broader script test output still arrives as a completed batch and uses a visible domain field rather than the reference run-time prompt."
       ],
       "source": [
         "crates/hydrus-gui/src/login_credential_window.rs:42",
@@ -86,18 +95,22 @@
       "proposedStatus": "partial",
       "exactBehavior": "Script identity/credential definitions/step queue and response parsers editable, invalid-script advisory; real HTTP test consumer with credential entry, isolated cookie store, domain input, Run/Cancel/live job status, final results and review; staged fields preserved.",
       "limits": [
-        "Request argument/cookie/example-domain editors remain read-only. Results table populates on completed run, whereas reference streams step results. Broad parent remains partial."
+        "Example domains now support staged domain/access/description controls including final-description Cancel acceptance; results still populate on completed run rather than streaming per-step. Native cookie list uses an owned child editor. Broad parent stays partial."
       ],
       "source": [
         "crates/hydrus-gui/src/login_credential_window.rs:42",
         "crates/hydrus-gui/src/login_workflows_window.rs:182",
         "crates/hydrus-gui-model/src/login_workflows.rs:20",
-        "crates/hydrus-store/src/logins.rs:14"
+        "crates/hydrus-store/src/logins.rs:14",
+        "crates/hydrus-gui/src/login_example_window.rs:25",
+        "crates/hydrus-gui-model/src/login_workflows.rs:531"
       ],
       "testAnchors": [
         "crates/hydrus-gui-model/tests/model/login_workflows.rs:16",
         "crates/hydrus-gui/tests/gui/login_workflows.rs:26",
-        "crates/hydrus-downloader-exchange/tests/logins.rs:1"
+        "crates/hydrus-downloader-exchange/tests/logins.rs:1",
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:433",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1178"
       ],
       "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json"
     },
@@ -144,34 +157,41 @@
       "id": "login-step",
       "before": "missing",
       "proposedStatus": "partial",
-      "exactBehavior": "Script queue add/edit/delete/order and step identity scheme/method/subdomain/path controls, preserving and cleansing typed serialization. Full response content list route connected.",
+      "exactBehavior": "Script queue add/edit/delete/order, step scheme/method/subdomain/path with cleanup; three independently selectable credential/static/temp request dictionaries with unique/nonblank keys, blank values, rename/cancel/confirmed bulk deletion; editable cookie name/value matchers and complete VARIABLE/VETO content route. Edited arguments/cookie rules consumed by actual synthetic loopback HTTP.",
       "limits": [
-        "Request argument dictionaries and cookie matchers remain read-only; existing values are consumed by the real HTTP executor."
+        "Native row editing uses inline key/value fields; reference asks sequential text dialogs. Cookies use a shared child list with a staged row; reference embeds a list and asks sequential matcher dialogs. Broad completion proposal stays partial pending native CI validation/root review."
       ],
       "source": [
-        "crates/hydrus-gui/src/login_step_window.rs:74",
-        "crates/hydrus-gui/src/login_workflows_window.rs:406"
+        "crates/hydrus-gui/src/login_step_window.rs:116",
+        "crates/hydrus-gui/ui/login_step.slint:56",
+        "crates/hydrus-gui/src/login_cookies_window.rs:74",
+        "crates/hydrus-gui-model/src/login_workflows.rs:191"
       ],
       "testAnchors": [
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:284"
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:280",
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:396",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:822",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:923",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1083"
       ],
-      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json"
+      "referenceRecording": "Executed oracle/record_login_editors.py real Qt step fields/content, StringToStringDictControl rename/duplicate/blank/cancel and all three row models, StringMatchToStringMatchDictControl add/edit/cancel/duplicate-looking objects; login_editors.json step_states/argument_states/cookie_states. Executed live HTTP recorder login_execution.json plus actual native HTTP regression authored for root CI."
     },
     {
       "id": "logins",
       "before": "missing",
       "proposedStatus": "partial",
-      "exactBehavior": "Real domain menu/list with extended selection, preserved complete preferences, editable credentials/activation, scrub delays/invalidity, optimistic staged domains-only save retaining current scripts.",
+      "exactBehavior": "Real domain menu/list with extended selection, preserved complete preferences, editable credentials/activation, scrub delays/invalidity, optimistic staged domains-only save retaining current scripts. Confirmed selected active/non-invalid/existing-script/not-logged-in domains save the parent and close before sequential actual HTTP attempts; source cookies persist and keyed outcome updates survive reopening, while status/cancel controls are available on reopening the manager.",
       "limits": [
-        "Add domain/change script, logged-in cookie status/reset and live execution absent. Future delay displays a raw timestamp."
+        "Add domain/change script, logged-in expiry display/cookie reset absent. Future delay displays raw timestamp. Automatic downloader-demand login and reference global process monitor are not implemented."
       ],
       "source": [
         "crates/hydrus-gui/src/login_domains_window.rs:61"
       ],
       "testAnchors": [
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:423"
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:423",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:730"
       ],
-      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json domain_states"
+      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json domain_states; domain_login_actions captures real Qt DoLogin decline/accept/ineligible; actual reference HTTP pipeline recorded by oracle/record_login_execution.py."
     },
     {
       "id": "login-test-results",
@@ -187,8 +207,8 @@
         "crates/hydrus-gui/src/login_workflows_window.rs:555"
       ],
       "testAnchors": [
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:450",
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:624",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:468",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:625",
         "crates/hydrus-net/tests/login.rs:190"
       ],
       "referenceRecording": "oracle/record_login_execution.py executed real Qt ReviewTestResultPanel and live reference HTTP engine; oracle/fixtures/login_execution.json reviews + long_review"
@@ -202,6 +222,219 @@
     {
       "git_head": "ae7227ab",
       "reason": "Recursive owner force cancellation"
+    }
+  ],
+  "nativeComponents": [
+    {
+      "id": "dialog.login-scripts",
+      "native_parent": "menu.network.login-scripts",
+      "component": "LoginScriptsWindow",
+      "file": "crates/hydrus-gui/ui/login_workflows.slint",
+      "source": [
+        "crates/hydrus-gui/src/login_workflows_window.rs:993"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:199"
+      ],
+      "child_control_groups": [
+        "Sorted extended script list: add/edit/delete confirmation",
+        "Standalone staged JSON/PNG import/export preview",
+        "List Apply/Cancel and recursively owned children"
+      ],
+      "shared_editor_refs": [
+        "DownloaderInterchangeWindow"
+      ],
+      "limits": [
+        "Original mixed downloader exchange-login remains partial."
+      ]
+    },
+    {
+      "id": "dialog.login-script",
+      "native_parent": "dialog.login-scripts",
+      "component": "LoginScriptWindow",
+      "file": "crates/hydrus-gui/ui/login_workflows.slint",
+      "source": [
+        "crates/hydrus-gui/src/login_workflows_window.rs:256"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:233"
+      ],
+      "child_control_groups": [
+        "Name and credential-definition extended list/CRUD",
+        "Ordered step queue/CRUD/movement",
+        "Required cookie matcher pairs",
+        "Example domains extended list/CRUD",
+        "Domain/test credential inputs, real HTTP Run/Cancel/status",
+        "Completed test result list/review; invalid-script advisory; parent Apply/Cancel"
+      ],
+      "shared_editor_refs": [
+        "LoginCredentialDefinitionWindow",
+        "LoginStepWindow",
+        "LoginCookiesWindow",
+        "LoginExampleDomainWindow",
+        "LoginCredentialsWindow",
+        "LoginTestResultWindow"
+      ],
+      "limits": [
+        "Broad parent remains partial: result list is populated at completion, visible test-domain field replaces per-run prompt."
+      ]
+    },
+    {
+      "id": "dialog.login-step",
+      "native_parent": "dialog.login-script",
+      "component": "LoginStepWindow",
+      "file": "crates/hydrus-gui/ui/login_step.slint",
+      "source": [
+        "crates/hydrus-gui/src/login_step_window.rs:144"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1083"
+      ],
+      "child_control_groups": [
+        "Name/scheme/method/subdomain/path",
+        "Three separate credential/static/temporary extended request-map lists with per-list CRUD",
+        "Inline staged row name/value and duplicate checks",
+        "Required response cookie matcher pairs",
+        "VARIABLE/VETO content parser list/CRUD",
+        "Scrollable body and pinned Apply/Cancel footer"
+      ],
+      "shared_editor_refs": [
+        "LoginCookiesWindow",
+        "ParserEditWindow",
+        "DownloaderInterchangeWindow"
+      ]
+    },
+    {
+      "id": "dialog.login-domains",
+      "native_parent": "menu.network.logins.manage",
+      "component": "LoginDomainsWindow",
+      "file": "crates/hydrus-gui/ui/login_domains.slint",
+      "source": [
+        "crates/hydrus-gui/src/login_domains_window.rs:140"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:730"
+      ],
+      "child_control_groups": [
+        "Sorted domain/script/access/active/validity/delay extended list",
+        "Credentials editor and valid activation question",
+        "Flip active/scrub delays/scrub invalidity",
+        "Confirmed eligible real HTTP login queue with persisted cookies/outcomes/cancellation",
+        "Parent Apply/Cancel"
+      ],
+      "shared_editor_refs": [
+        "LoginCredentialsWindow"
+      ],
+      "limits": [
+        "Broad parent remains partial: domain add/remove/change-script, expiry presentation, automatic global login demand remain absent."
+      ]
+    },
+    {
+      "id": "dialog.login-credentials",
+      "native_parent": "dialog.login-domains",
+      "component": "LoginCredentialsWindow",
+      "file": "crates/hydrus-gui/ui/login_credentials.slint",
+      "source": [
+        "crates/hydrus-gui/src/login_credential_window.rs:178"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:36"
+      ],
+      "child_control_groups": [
+        "Normal/password-masked input rows",
+        "Live matcher validation and invalid acceptance advisory",
+        "Apply/Cancel/owner cancellation"
+      ],
+      "shared_editor_refs": [],
+      "native_consumers": [
+        "dialog.login-script",
+        "dialog.login-domains"
+      ]
+    },
+    {
+      "id": "dialog.login-credential-definition",
+      "native_parent": "dialog.login-script",
+      "component": "LoginCredentialDefinitionWindow",
+      "file": "crates/hydrus-gui/ui/login_credentials.slint",
+      "source": [
+        "crates/hydrus-gui/src/login_credential_window.rs:43"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:98"
+      ],
+      "child_control_groups": [
+        "Name",
+        "Normal/hidden input type",
+        "Permitted input shared matcher",
+        "Apply/Cancel and owned matcher close"
+      ],
+      "shared_editor_refs": [
+        "StringMatchWindow"
+      ]
+    },
+    {
+      "id": "dialog.login-cookies",
+      "native_parent": "dialog.login-script",
+      "component": "LoginCookiesWindow",
+      "file": "crates/hydrus-gui/ui/login_cookies.slint",
+      "source": [
+        "crates/hydrus-gui/src/login_cookies_window.rs:63"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:923"
+      ],
+      "child_control_groups": [
+        "Sorted extended cookie name/permitted-value list",
+        "Add/edit row with name/value matchers",
+        "Staged row Save/Cancel",
+        "Confirmed selected deletion",
+        "List Apply/Cancel and recursively owned matcher children"
+      ],
+      "shared_editor_refs": [
+        "StringMatchWindow"
+      ],
+      "native_consumers": [
+        "dialog.login-script",
+        "dialog.login-step"
+      ]
+    },
+    {
+      "id": "dialog.login-test-result",
+      "native_parent": "dialog.login-script",
+      "component": "LoginTestResultWindow",
+      "file": "crates/hydrus-gui/ui/login_result.slint",
+      "source": [
+        "crates/hydrus-gui/src/login_test_window.rs:34"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:468"
+      ],
+      "child_control_groups": [
+        "Read-only name/URL/body",
+        "Unicode-safe 1024-character response preview and full-data copy",
+        "New temporary vars/new cookies/result",
+        "Close/owner cancellation"
+      ],
+      "shared_editor_refs": []
+    },
+    {
+      "id": "dialog.login-example-domain",
+      "native_parent": "dialog.login-script",
+      "component": "LoginExampleDomainWindow",
+      "file": "crates/hydrus-gui/ui/login_example.slint",
+      "source": [
+        "crates/hydrus-gui/src/login_example_window.rs:25"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1178"
+      ],
+      "child_control_groups": [
+        "Stage1 nonblank unique domain",
+        "Stage2 four access types with changed-type default description",
+        "Stage3 explicit nonblank custom description or accept current/default on Cancel/X",
+        "Stage1/2 Cancel discard; force owner cancellation always discards"
+      ],
+      "shared_editor_refs": []
     }
   ]
 }

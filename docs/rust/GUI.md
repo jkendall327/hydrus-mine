@@ -1558,6 +1558,13 @@ the reference panels' labels and local/remote action-context transitions;
 model replay, snapshot/count rollback checks, and real-store menu/window tests
 cover the implementation.
 
+
+The tag autocomplete tabs options page now opens a shared favourite-tag list
+editor with suggestions, manual fetch, domain controls and add-only manual/paste
+entry. Removing tags and applying the child updates the parent options draft;
+parent Apply saves the naturally sorted global list for every favourites tab.
+Child Cancel, parent Cancel and owner close discard the corresponding draft.
+
 **Tag display/search** (`tags > display/search`) edits each tag service's single
 file and selection display filters with the native tag-filter editor, plus
 fetch-as-you-type, character threshold, query rules and write autocomplete
@@ -1669,8 +1676,9 @@ scheme, method, optional subdomain and path, with the reference subdomain/path
 cleanup. Its response content list supports extended selection, unique named
 VARIABLE/VETO nodes, shared formula/live preview, delete confirmation and reviewed
 JSON/PNG exchange. Parent cancellation discards every nested formula/parser.
-Request argument dictionaries, required-cookie matchers and script example-domain
-rows are preserved and shown, but remain read-only in this slice.
+Credential/static/temporary argument dictionaries and required-cookie matchers
+are editable and consumed by real HTTP attempts. Script example-domain rows support extended selection and add/edit/confirmed
+delete. Their editor asks domain, access and description in the reference order.
 
 ## Network sessions and HTTP headers
 
@@ -2024,7 +2032,13 @@ validity, deactivate invalid credentials and ask before activating a valid inact
 domain. Domain Apply saves its draft while preserving concurrent script edits;
 Cancel closes credential children and ignores stale handles. Flip active, scrub
 delays and scrub invalidity work on extended selection. Adding domains, changing
-scripts, logged-in cookie status/reset and executing login attempts are still absent.
+scripts and logged-in cookie status/reset are still absent. Do login now filters
+selected active, non-invalid, existing-script domains whose required cookies are
+missing, asks the recorded confirmation, saves the domain draft and closes the
+manager before attempting its sorted queue. Attempts use the existing cookie store;
+key-guarded results update validity or network delays. Reopening the manager shows
+HTTP/final status and can cancel the queue. Canceling the application owner stops
+remaining attempts.
 
 Shared write-tag inputs now offer tags, favourites and children in Manage Tags,
 both sibling/parent inputs, and detached import additional-tags/whitelist
@@ -2151,3 +2165,219 @@ staged definitions unchanged. Applying while a test runs is blocked. Review open
 read-only URL/body/data/variable/cookie/result fields; the data preview contains
 at most 1024 Unicode characters, and copy transfers the complete response.
 Closing the owner cancels the run and its result review, and stale actions do nothing.
+
+Client API requests now publish an atomic timestamp-only activity marker before
+authentication, including rejected requests and database-busy responses. The GUI
+reads it when evaluating idle, so ordinary API reads also postpone idle-only
+session autosaves. This IPC remains available while the API's SQLite pool is
+paused and records no request paths, credentials or payloads.
+
+Importing a reference database whose startup preference selects a named session
+keeps that original name as an immutable snapshot as well as the native live
+last session. Startup can therefore load the configured name after conversion;
+its media and importer logs survive replacement of the initially staged pages.
+
+Media viewer mouse behaviour Options can reject mouse drag-panning on files
+with duration, while leaving still images, keyboard panning and seek bars
+available. The cursor-hiding preference blanks the native cursor on accepted
+drag movement; releasing retains the blank cursor until ordinary movement
+restores it. Both settings apply to the open viewer, persist on Apply and
+remain unchanged on Cancel. Duration drag blocking defaults off; cursor hiding
+defaults on except macOS, matching the reference. `viewer_pointer_options.json`
+records real Qt drag acceptance, geometry and cursor transitions.
+GUI Sessions exposes the large-session warning preference. When active page
+weight exceeds 10,000,000, the client adds the reference's warning text to the
+popup stack once per boot. The weight includes twenty per importer seed and
+excludes closed pages. Disabling the preference suppresses the warning without
+using that boot's allowance; dismissing a warning does not cause it to repeat.
+`oracle/record_session_warning.py` records the threshold, disabled state, seed
+weighting and exact popup messages from the reference's live menu-count updater.
+Every shared write input now has file/tag-domain buttons. Their checked menus
+follow the reference and always offer all known files; choosing that domain
+while searching all tags switches to the first local tag service. Choosing all
+tags while searching all known files restores the default local file domain.
+These domains stay local to the widget and service draft, including across
+Manage Tags service changes, and feed live search, favourites decorators and
+children counts. Multiple/deleted locations opens an owned staged selector;
+Cancel preserves the current input domains and owner close discards the child.
+The recorder drives the real Qt domain buttons and interlocks, and model/native
+regressions verify checked menus, labels, counts, no options writes and child
+cancellation.
+The file log’s **advanced** menu exports selected import objects as the reference
+SerialisableList/FileSeed JSON, including progress, headers, hashes, tags, source
+URLs and notes. **re-normalise all URLs** asks the reference’s full confirmation
+question in the log and downloader list menus. Yes reads current URL classes and
+atomically updates request/comparison URLs, discarding later duplicates while
+preserving the first seed’s identifier, status, timestamps and metadata. No or
+closing the log preserves the existing entries. The reference has no advanced
+object-import action.
+
+PNG export headers also render on installations without system fonts using a
+bundled Open Sans fallback with its Apache 2.0 licence and copyright notice.
+
+Login step request arguments use three independent lists for credentials, static
+variables and temporary variables. Each has extended selection and add/edit/delete
+controls. Editing stages its key/value pair; keys are
+nonblank and unique within that dictionary, while values can be blank. Rename,
+confirmed bulk deletion within that dictionary, row Cancel and parent Cancel
+preserve the expected draft boundaries. The body scrolls and the footer stays visible. The loopback consumer regression edits a static query argument through
+the native step window and observes it on the actual HTTP request.
+
+Subscription import-options favourites now use the shared star menu. Loading
+replaces the selected subscriptions' staged options; custom loading shows the
+reference's multiple-selection information before opening the shared three-column
+overwrite chooser. Cancel preserves the subscription draft, and Apply writes the
+chosen result to every selected subscription, including the reference's behavior
+after its topmost-selection warning. Profile edits persist independently of the
+subscription dialog. The list offers no save-current action, and closing it cancels
+its open profile/overwrite children and invalidates retained callbacks.
+
+Scripts and steps open a shared required-cookie editor with sorted name/value
+matcher rows, extended selection, add/edit and confirmed delete. Each matcher uses
+the existing live permitted-input editor. A row and its whole list can be canceled
+independently; accepted lists remain staged beneath their step/script/list owners.
+Matcher updates persist through reopening, and the HTTP consumer regression shows
+an edited cookie value rejecting the actual loopback response cookie.
+
+An interrupted native client boot now triggers the reference's startup recovery
+question when the configured session exists. It offers that session or a blank
+page and automatically chooses the session after fifteen seconds. Closing the
+question chooses blank; this does not change the saved startup preference. The
+question retains its displayed session name if preferences change while it is
+open. The native running marker clears only after saving and stopping owned work;
+cancelling the password gate also clears it without opening a session. The real
+recovery questions, outputs and a fifteen-second auto-yes dialog are recorded
+in `oracle/record_session_startup.py`.
+Search logs export all URLs through the reusable PNG panel, import new URL
+lines from the clipboard or PNG, and copy complete selected page objects as
+reference JSON. Imports ask the exact duplicate and continuation questions
+before committing and waking the queue. The current reference's duplicate
+“add all” answer ends the import; “only add new” proceeds to the continuation
+choice. Each imported page gets its own run token and the selected continuation
+flag. The standalone `SearchLogImportWindow` keeps the actual question text and
+button labels, handles invalid PNG/clipboard access errors, and cancels with its
+log owner. These actions also work directly from a downloader's search-log menu
+without opening the log editor.
+
+Seek-bar and hover pop-in focus preferences now consume actual desktop window
+activation through the shared native observer. Both default enabled and are
+independent: an inactive viewer keeps the seek bar at its configured away height,
+while an accepted scrub or existing volume popup keeps it full. The hover rule
+covers the top information, tags, ratings/locations and notes panels. With no
+active application window, an already-raised hover stays up while the pointer
+remains there; leaving hides it, and moving back cannot raise it until the viewer
+is active. Another active application window hides it. Apply updates the current
+viewer, Cancel retains the preferences, and legacy values migrate. The fresh
+`viewer_focus_options.json` recording includes real Qt activation and all four
+no-active-window transitions.
+
+
+Example domains require unique nonblank names, preserve the entered spelling and
+show all four reference access types. A changed access type supplies its default
+description; unchanged access keeps the existing description. Canceling domain or
+access discards the row, while Keep description (or closing that final prompt)
+accepts the domain/access using its current/default description. Parent cancellation
+discards the whole example draft. Before the first test, edits update a test domain
+that still contains the initial example default; a previously used domain is retained.
+
+In advanced mode, an existing subscription query's “quality info” menu can show
+its saved log's inbox/archive/deleted counts and copy the exact reference CSV.
+The read runs in the background, disables editor changes until publication,
+and uses current file locations rather than seed import status. Repeated hashes
+count once; trash and nonlocal hashes count as deleted. The good ratio excludes
+inbox files. Unsaved queries do not enable the menu, and reports never apply the
+subscription draft. Closing the editor cancels publication; missing saved logs
+produce an acknowledgement and restore the editor.
+
+The network > pause menu saves “always boot the client with paused network traffic” separately from the live traffic pause. The checked preference is available in basic and advanced mode, survives reopening, and is imported from legacy client options. Startup applies it before GUI daemon or standalone server workers start. Resuming live traffic keeps the next-boot preference; creating parser/login engines or restarting an attached daemon does not apply it again. The reference has no corresponding Options checkbox or Apply/Cancel draft.
+
+Tag Editing > tag dialogs now stages and saves the service-navigation and
+storage-list defaults. Manage Tags, siblings and parents use horizontal service
+tabs or a vertical service list according to the listbook preference. Manage
+Tags captures the separate parent-info, expanded-parent and sibling-info defaults
+when it opens: parents appear as a count or indented rows, and aliases display
+their ideal sibling. Inherited rows keep their parent's namespace colour and
+activate the originating stored tag. Cancelling either Options or Manage Tags
+preserves saved preferences and mappings; reopening uses the saved defaults.
+The real Qt `tag_dialog_preferences.json` recording covers all sixteen flag
+combinations and inherited-row activation.
+
+Options > downloading now includes Default download source. Its button resolves
+saved downloaders by key and then name, shows renamed entries, and preserves a
+missing-entry caption. The owned gallery chooser lists functional displayed
+sources alphabetically, then separate other-gallery and non-functional groups;
+broken entries explain their real URL-class/parser/template error and remain
+selectable. Empty clients receive the reference warning. Child OK updates only
+the Options draft; Cancel, window close and parent Cancel discard it. Apply saves
+the default for newly created gallery pages and the subscription Add chooser.
+
+Options > import options opens a staged manager page containing the reference's
+three expandable lists: caller defaults, eligible post/watchable/gallery URL
+classes, and favourites/profiles. Rows show the actual custom-container summary;
+selection survives sorting and profile renaming. Show stack explains the exact
+caller/site precedence, while edit opens the shared import-options editor against
+its less-specific parent defaults. Global keeps all eight kinds. Clear, deletion
+and the three reset choices use the reference prompts and wait for acceptance.
+The simple-mode checkbox controls both these children and ordinary importer
+editors after Apply. The help menu provides the recorded tl;dr and import-options
+manual. Copy/paste and the staged star menus share the existing container exchange
+and overwrite helpers. All manager changes remain in the Options draft until its
+outer Apply; Cancel also closes and invalidates child handles. Saved defaults,
+URL overrides and profiles are visible on reopening and reach importer defaults.
+`import_options_panel.json` records the actual Qt lists, stacks, editor kinds and
+fallback sources, clear/reset/name prompts, cancellation and apply isolation.
+
+The media viewer's four closing-focus preferences now act on the page that
+launched that viewer. Reselecting switches back to that page; selecting exit
+media focuses its thumbnail (or collection), retains an existing multiple
+selection, and scrolls to it. A background tab change does not redirect those
+actions. A closed undoable source receives selection while hidden and reveals it
+on undo; an absent exit file keeps its selection. Advanced activation applies
+when either focusing action is requested, and debug activation applies to every
+close, independently and in that order. Both use the weak main window's native
+focus request. Options wait for Apply, persist and import their reference keys.
+The real Qt `viewer_closing_options.json` recording covers all sixteen preference
+combinations plus missing media, multiple selection, unowned and closed sources.
+
+Regex string matchers offer the reference favourites menu: manage favourites, the enabled no-copy clipboard instruction, and saved descriptions that copy their phrase without changing the regex input. Opening the popup rereads global favourites, so an existing matcher sees choices accepted by another editor. The retained manager stages edits until Apply, cancels without writes, and closes with its matcher; accepted global changes survive cancelling the enclosing matcher.
+
+The four media-viewer background preferences now independently paint passive
+copies of tags, file information, ratings/locations and notes behind the media.
+They do not depend on pop-in hover enables or window focus and never take input.
+Ratings reuse the hover's rating drawing; inbox/trash icons, sorted local and
+remote domain names (including pending/petitioned markers), and displayed URLs
+join the top-right copy. Notes start below that copy while enabled and return to
+the top when disabled, as in the reference. Apply changes the open viewer,
+Cancel retains its saved policy, and legacy keys migrate. The fresh real Qt
+`viewer_background_options.json` recording observes actual QPainter calls and
+pixel occupancy for all sixteen combinations with popups enabled and disabled.
+Native rendered regressions also check that opaque media covers these copies.
+
+GUI Pages now exposes the four new-page chooser domain preferences. Combined
+local file domains is offered only when at least two local domains exist; its
+visibility and top position are independent choices. Hydrus local file storage
+has its own visibility and top position, and takes the first position when both
+top choices are enabled. Ordinary domains and repositories use service names in
+name order, with trash between the local-domain group and bottom storage entry.
+Apply changes the next chooser; Cancel leaves its previous settings intact, and
+hidden top choices survive reopening and legacy import. Each chosen domain makes
+a search with that exact current location, including combined, trash and storage.
+`page_chooser_options.json` records all 48 combinations with one, two and ten
+domains, actual Qt number-pad placement and each resulting query context.
+
+Tag Presentation > other rendering now edits the sibling connecting string.
+The exact saved text, including empty strings and Unicode, joins raw aliases
+and their ideal siblings in Manage Tags and every shared write-autocomplete
+consumer. Options changes remain staged until Apply; Cancel preserves existing
+labels and reopening reads the saved text. The real Qt `sibling_connector.json`
+recording uses actual storage and write-result widgets with unchanged raw tags
+and counts.
+
+Subscription file work now retains handled import error classes and applies its
+failure budget to exceptions that escape per-file option generation or query-tag
+writes. The count spans all queries in one sync and resets on the next sync.
+Reaching the configured threshold saves the failing file status, abandons the
+remaining sync, and persists the configured other-error delay with the reference
+reason. Counted failures wait five seconds; typed DataMissing is excluded. HTTP
+errors handled inside ordinary file work, including 500 and 404, keep their seed
+result and continue without spending this outer budget, as the reference does.

@@ -10,6 +10,16 @@ use std::sync::Arc;
 
 pub type Slot = Rc<RefCell<Option<ImportOptionsOverwriteWindow>>>;
 
+thread_local! {
+    static LAST: RefCell<Option<slint::Weak<ImportOptionsOverwriteWindow>>> = const { RefCell::new(None) };
+}
+
+/// The latest visible chooser, without retaining its owner or window.
+pub fn last_opened() -> Option<ImportOptionsOverwriteWindow> {
+    LAST.with(|last| last.borrow().as_ref().and_then(slint::Weak::upgrade))
+        .filter(|window| window.window().is_visible())
+}
+
 fn show(
     window: &ImportOptionsOverwriteWindow,
     draft: &Overwrite,
@@ -129,5 +139,6 @@ pub fn open(
     });
     show(&window, &state.borrow(), &snapshot);
     window.show().map_err(|e| e.to_string())?;
+    LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));
     Ok(window)
 }

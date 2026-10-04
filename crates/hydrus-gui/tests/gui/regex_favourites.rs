@@ -264,3 +264,140 @@ fn failed_last_conversion_write_keeps_the_child_and_parent_draft_open() {
         Some(Conversion::Append("new suffix".into()))
     );
 }
+
+#[test]
+fn matcher_favourite_popup_copies_refreshes_and_owns_persisted_management() {
+    use hydrus_gui::{Clip, StringStepWindow, string_processor_window};
+    use hydrus_store::{Store, settings};
+    fn rows(step: &StringStepWindow) -> serde_json::Value {
+        let pane = step.get_favourite_panes().row_data(0).unwrap();
+        serde_json::json!(
+            (0..pane.lines.row_count())
+                .map(|i| {
+                    let line = pane.lines.row_data(i).unwrap();
+                    if line.kind == 2 {
+                        serde_json::json!({"separator": true})
+                    } else {
+                        serde_json::json!({"label": line.label.to_string(), "enabled": line.usable})
+                    }
+                })
+                .collect::<Vec<_>>()
+        )
+    }
+    fn choose(step: &StringStepWindow, label: &str) {
+        let pane = step.get_favourite_panes().row_data(0).unwrap();
+        let index = (0..pane.lines.row_count())
+            .find(|i| pane.lines.row_data(*i).unwrap().label == label)
+            .unwrap();
+        step.invoke_favourite_line_clicked(0, i32::try_from(index).unwrap(), 0.0, 0.0, 0.0);
+    }
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("matcher_favourites.json");
+    let initial = RegexFavourites(serde_json::from_value(fixture["initial"].clone()).unwrap());
+    store
+        .write(|ctx| settings::set(ctx.conn(), &initial))
+        .unwrap();
+    let copied = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |value| {
+            if let Clip::Text(text) = value {
+                copied.borrow_mut().push(text.clone());
+            }
+        }
+    });
+    let slots = string_processor_window::Slots::default();
+    let matcher = StringMatch {
+        kind: MatchKind::Regex(PyRegex::new("original+")),
+        example: "original".into(),
+        ..StringMatch::any()
+    };
+    string_processor_window::open_match(
+        &store,
+        &matcher,
+        &slots,
+        Rc::new(|_| panic!("parent cancelled")),
+    );
+    let step = slots.step.borrow().as_ref().unwrap().clone_strong();
+    step.invoke_favourite_menu(10.0, 10.0);
+    assert_eq!(rows(&step), fixture["menus"][0]);
+    step.invoke_favourite_line_clicked(0, 2, 0.0, 0.0, 0.0);
+    assert!(copied.borrow().is_empty());
+    assert_eq!(
+        step.get_favourite_panes().row_count(),
+        0,
+        "instruction dismisses without a clipboard action"
+    );
+    step.invoke_favourite_menu(10.0, 10.0);
+    choose(&step, "letters");
+    step.invoke_favourite_menu(10.0, 10.0);
+    choose(&step, "fragment");
+    assert_eq!(
+        serde_json::json!(*copied.borrow()),
+        serde_json::json!(["a+", "["])
+    );
+    assert_eq!(
+        step.get_match_regex(),
+        fixture["unchanged_input"].as_str().unwrap()
+    );
+    for case in fixture["steps"].as_array().unwrap() {
+        step.invoke_favourite_menu(10.0, 10.0);
+        choose(&step, "manage favourites");
+        let child = slots.favourites.borrow().as_ref().unwrap().clone_strong();
+        assert!(step.get_child_open());
+        child.invoke_action("add".into());
+        child.set_phrase("z+".into());
+        child.set_description("new choice".into());
+        child.invoke_action("save-row".into());
+        child.invoke_action(
+            if case["accepted"] == true {
+                "apply"
+            } else {
+                "cancel"
+            }
+            .into(),
+        );
+        assert!(!step.get_child_open());
+        assert_eq!(
+            serde_json::json!(store.read(hydrus_store::regex_favourites::load).unwrap().0),
+            case["saved"]
+        );
+        assert_eq!(step.get_match_regex(), case["input"].as_str().unwrap());
+    }
+    step.invoke_favourite_menu(10.0, 10.0);
+    assert_eq!(rows(&step), fixture["menus"][3]);
+    choose(&step, "new choice");
+    assert_eq!(copied.borrow().last().unwrap(), "z+");
+    // An already-open input sees global favourites updated by another owner.
+    let refreshed = RegexFavourites(vec![("external+".into(), "external change".into())]);
+    store
+        .write(|ctx| settings::set(ctx.conn(), &refreshed))
+        .unwrap();
+    step.invoke_favourite_menu(10.0, 10.0);
+    choose(&step, "external change");
+    assert_eq!(copied.borrow().last().unwrap(), "external+");
+    assert_eq!(step.get_match_regex(), "original+");
+    step.invoke_favourite_menu(10.0, 10.0);
+    step.invoke_favourite_dismissed();
+    assert_eq!(step.get_favourite_panes().row_count(), 0);
+    step.invoke_favourite_menu(10.0, 10.0);
+    choose(&step, "manage favourites");
+    let stale_child = slots.favourites.borrow().as_ref().unwrap().clone_strong();
+    step.invoke_cancel();
+    assert!(!stale_child.window().is_visible());
+    stale_child.invoke_action("apply".into());
+    let count = copied.borrow().len();
+    step.invoke_favourite_menu(10.0, 10.0);
+    step.invoke_favourite_line_clicked(0, 4, 0.0, 0.0, 0.0);
+    assert_eq!(copied.borrow().len(), count);
+    assert_eq!(
+        store.read(hydrus_store::regex_favourites::load).unwrap(),
+        refreshed
+    );
+    let reopened = Store::open(store.dir()).unwrap();
+    assert_eq!(
+        reopened.read(hydrus_store::regex_favourites::load).unwrap(),
+        refreshed
+    );
+}

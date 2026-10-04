@@ -278,16 +278,23 @@ impl Job {
     }
 
     pub fn state(&self) -> JobState {
+        self.state_at(now())
+    }
+
+    fn state_at(&self, at: i64) -> JobState {
         let mut state = self.state.lock().clone();
         if let Some(tracker) = self.tracker.lock().as_mut() {
-            state.speed = tracker.usage(BandwidthType::Data, Some(1), now());
+            state.speed = tracker.usage(BandwidthType::Data, Some(1), at);
         }
         state
     }
 
     /// Count `bytes` read towards the job's speed.
     fn report_read(&self, bytes: u64) {
-        let now = now();
+        self.report_read_at(bytes, now());
+    }
+
+    fn report_read_at(&self, bytes: u64, now: i64) {
         self.tracker
             .lock()
             .get_or_insert_with(|| Tracker::new(now))
@@ -1974,6 +1981,18 @@ mod reload_tests {
     use super::*;
     use hydrus_store::network::NetworkSettings;
 
+    #[test]
+    fn job_speed_samples_the_current_second_and_expires_at_rollover() {
+        let job = Job::new();
+        job.report_read_at(400, 100);
+        job.report_read_at(600, 101);
+        job.state.lock().bytes_read = 1000;
+        assert_eq!(job.state_at(100).speed, 400);
+        assert_eq!(job.state_at(101).speed, 600);
+        assert_eq!(job.state_at(102).speed, 0);
+        assert_eq!(job.state_at(102).bytes_read, 1000);
+    }
+
     fn engine() -> (tempfile::TempDir, Arc<Store>, NetEngine) {
         let dir = tempfile::tempdir().unwrap();
         let store = Store::open(dir.path()).unwrap();
@@ -2005,6 +2024,48 @@ mod reload_tests {
         job.auto_override_bandwidth_for(2, false);
         assert_eq!(job.auto_override_at.load(Ordering::Relaxed), 0);
         assert!(!job.override_bandwidth.load(Ordering::Relaxed));
+    }
+
+    #[tokio::test]
+    async fn runtime_domain_scrub_wakes_a_registered_domain_gate_and_preserves_unrelated_errors() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let engine = NetEngine::new(
+            store,
+            NetOptions {
+                domain_error_number: 1,
+                ..NetOptions::default()
+            },
+        )
+        .unwrap();
+        let url = "https://sub.example.com/controlled";
+        // The reference scrub clears a registrable domain and its parents,
+        // so a subdomain job is blocked by this parent's recorded error.
+        engine.report_domain_error("https://example.com/parent-error");
+        engine.report_domain_error("https://other.example.net/unrelated");
+        assert!(!engine.domain_ok(url));
+        let job = Job::new();
+        {
+            let mut state = job.state.lock();
+            state.url = url.into();
+            state.created = now();
+        }
+        let contexts = NetEngine::contexts_for(url);
+        engine.jobs.lock().insert(42, ((*job).clone(), contexts));
+        let mut waiting = Box::pin(engine.wait_for_domain(url, &job));
+        tokio::select! { _ = &mut waiting => panic!("domain gate unexpectedly passed"), () = tokio::time::sleep(Duration::from_millis(10)) => {} }
+        assert_eq!(job.state().wait, WaitReason::Domain);
+        assert!(engine.runtime_command(&network_runtime::Command {
+            epoch: engine.epoch.clone(),
+            job: 42,
+            action: network_runtime::JobAction::ScrubDomainErrors
+        }));
+        tokio::time::timeout(Duration::from_secs(1), waiting)
+            .await
+            .unwrap()
+            .unwrap();
+        assert!(engine.domain_ok(url));
+        assert!(!engine.domain_ok("https://other.example.net/unrelated"));
     }
 
     #[tokio::test]

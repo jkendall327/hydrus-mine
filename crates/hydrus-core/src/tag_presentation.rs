@@ -21,6 +21,8 @@ pub struct TagPresentation {
     pub show_subtag_number_namespaces: bool,
     /// Between namespace and subtag (`namespace_connector`).
     pub namespace_connector: String,
+    /// Between a raw alias and its ideal sibling (`sibling_connector`).
+    pub sibling_connector: String,
     /// `replace_tag_underscores_with_spaces`.
     pub replace_underscores: bool,
     /// `replace_tag_emojis_with_boxes`.
@@ -42,6 +44,7 @@ impl Default for TagPresentation {
             show_number_namespaces: true,
             show_subtag_number_namespaces: true,
             namespace_connector: ":".into(),
+            sibling_connector: " → ".into(),
             replace_underscores: false,
             replace_emojis: false,
             user_namespaces: default_user_namespaces(),

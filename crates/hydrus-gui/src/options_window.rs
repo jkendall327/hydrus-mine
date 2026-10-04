@@ -3,7 +3,7 @@
 //! set is said in a popup, as the reference says it), "cancel" forgetting
 //! them.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -203,6 +203,24 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     out.text =
                         crate::domains::location_label(&store.snapshot().services, location).into();
                 }
+                (Kind::FavouriteTags, Value::FavouriteTags(_)) => {
+                    out.kind = 17;
+                    out.text = "edit favourite tags".into();
+                }
+                (Kind::GallerySource, Value::GallerySource(current)) => {
+                    out.kind = 19;
+                    let downloaders: hydrus_parse::Downloaders =
+                        store.read(hydrus_store::settings::get).unwrap_or_default();
+                    out.text = hydrus_gui_model::gallery_source::caption(
+                        &downloaders.gugs,
+                        current.as_ref(),
+                    )
+                    .into();
+                }
+                (Kind::ImportOptions, Value::ImportOptions(_)) => {
+                    out.kind = 18;
+                    out.text = "edit import options".into();
+                }
                 (Kind::RegexFavourites, Value::RegexFavourites(_)) => {
                     out.kind = 14;
                     out.text = "edit regex favourites".into();
@@ -255,9 +273,20 @@ pub(crate) fn open(
     let mut editor = Editor::new(settings);
     editor.set_local_location(resolved);
     editor.resolve_tag_services(store);
+    let downloaders: hydrus_parse::Downloaders =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let current = hydrus_gui_model::gallery_source::resolve(
+        &downloaders.gugs,
+        editor.edited_gallery_source(),
+    );
+    editor.set_gallery_source(current);
     let editor = Rc::new(RefCell::new(editor));
     let regex_slot: crate::regex_favourites_window::Slot = Rc::default();
+    let gallery_slot: crate::gallery_source_window::Slot = Rc::default();
     let location_slot: Rc<RefCell<Option<crate::LocationsWindow>>> = Rc::default();
+    let tag_slot: crate::write_tag_window::Slot = Rc::default();
+    let import_slot: crate::import_options_panel_window::Slot = Rc::default();
+    let active = Rc::new(Cell::new(true));
     let names: Vec<StandardListViewItem> = editor
         .borrow()
         .page_names()
@@ -305,11 +334,27 @@ pub(crate) fn open(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let import_slot = import_slot.clone();
         let regex_slot = regex_slot.clone();
+        let gallery_slot = gallery_slot.clone();
         let location_slot = location_slot.clone();
+        let tag_slot = tag_slot.clone();
+        let active = active.clone();
         move || {
+            if !active.replace(false) {
+                return;
+            }
+            let child = tag_slot
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(child) = child {
+                child.invoke_cancel();
+            }
+            crate::import_options_panel_window::cancel(&import_slot);
             crate::locations_window::cancel(&location_slot);
             crate::regex_favourites_window::cancel(&regex_slot);
+            crate::gallery_source_window::cancel(&gallery_slot);
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -402,6 +447,68 @@ pub(crate) fn open(
             }
         }
     });
+    window.on_favourite_tags_clicked({
+        let editor = editor.clone();
+        let store = store.clone();
+        let tag_slot = tag_slot.clone();
+        let import_slot = import_slot.clone();
+        let import_slot = import_slot.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        move || {
+            if !active.get() || tag_slot.borrow().is_some() || import_slot.borrow().is_some() {
+                return;
+            }
+            let initial = editor.borrow().edited_favourite_tags();
+            let accepted = Rc::new({
+                let editor = editor.clone();
+                let active = active.clone();
+                let show_page = show_page.clone();
+                move |tags: Vec<String>| {
+                    if active.get() {
+                        editor.borrow_mut().set_favourite_tags(&tags);
+                        show_page();
+                    }
+                }
+            });
+            if let Err(error) =
+                crate::write_tag_window::open_favourites(&store, &initial.0, &tag_slot, accepted)
+            {
+                eprintln!("could not open favourite tags: {error}");
+            }
+        }
+    });
+    window.on_gallery_source_clicked({
+        let editor = editor.clone();
+        let gallery_slot = gallery_slot.clone();
+        let store = store.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        move || {
+            if !active.get() {
+                return;
+            }
+            let current = editor.borrow().edited_gallery_source();
+            let applied: crate::gallery_source_window::Applied = Rc::new({
+                let editor = editor.clone();
+                let active = active.clone();
+                let show_page = show_page.clone();
+                move |value| {
+                    if !active.get() {
+                        return Err("The options window has closed.".into());
+                    }
+                    editor.borrow_mut().set_gallery_source(Some(value));
+                    show_page();
+                    Ok(())
+                }
+            });
+            if let Err(error) =
+                crate::gallery_source_window::open(&store, current, false, &gallery_slot, applied)
+            {
+                eprintln!("could not open gallery source: {error}");
+            }
+        }
+    });
     window.on_regex_favourites_clicked({
         let editor = editor.clone();
         let regex_slot = regex_slot.clone();
@@ -424,6 +531,36 @@ pub(crate) fn open(
                 crate::regex_favourites_window::open(&favourites, &regex_slot, applied)
             {
                 eprintln!("could not open regex favourites: {error}");
+            }
+        }
+    });
+    window.on_import_options_clicked({
+        let editor = editor.clone();
+        let store = store.clone();
+        let slot = import_slot.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        move || {
+            if !active.get() || slot.borrow().is_some() {
+                return;
+            }
+            let value = editor.borrow().edited_import_options();
+            let applied = Rc::new({
+                let editor = editor.clone();
+                let active = active.clone();
+                let show_page = show_page.clone();
+                move |value| {
+                    if active.get() {
+                        editor.borrow_mut().set_import_options(value);
+                        show_page();
+                    }
+                    Ok(())
+                }
+            });
+            if let Err(error) =
+                crate::import_options_panel_window::open(&store, &value, &slot, applied)
+            {
+                eprintln!("could not open import options: {error}");
             }
         }
     });
@@ -475,6 +612,7 @@ pub(crate) fn open(
     // least times if the options have it on, as the reference's reads
     // them), what it applies kept for "apply"
     window.on_checker_clicked({
+        let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let checker_slot = checker_slot.clone();
@@ -495,6 +633,7 @@ pub(crate) fn open(
                 .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
                 .is_ok_and(|a| a.0);
             let done: Rc<dyn Fn(hydrus_core::subscriptions::CheckerOptions)> = Rc::new({
+                let session_choices = session_choices.clone();
                 let editor = editor.clone();
                 let store = store.clone();
                 let weak = weak.clone();
@@ -507,7 +646,7 @@ pub(crate) fn open(
                             row,
                             OptionRow {
                                 found: editor.found(row),
-                                ..option_row(shown, &store)
+                                ..option_row(shown, &store, &session_choices)
                             },
                         );
                     }
@@ -550,6 +689,7 @@ pub(crate) fn open(
     // a sort's type (in its default order, as the reference's control
     // sets it), or its order; the row shows the type's orders
     let sort_edited = {
+        let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak = window.as_weak();
@@ -575,7 +715,7 @@ pub(crate) fn open(
                     at(i),
                     OptionRow {
                         found: editor.found(at(i)),
-                        ..option_row(row, &store)
+                        ..option_row(row, &store, &session_choices)
                     },
                 );
             }
@@ -598,6 +738,7 @@ pub(crate) fn open(
     // a tag sort's type, order or grouping; the row shows the type's
     // orders, and grouping only where the type groups
     window.on_tag_sort_chosen({
+        let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak = window.as_weak();
@@ -610,7 +751,7 @@ pub(crate) fn open(
                     at(i),
                     OptionRow {
                         found: editor.found(at(i)),
-                        ..option_row(row, &store)
+                        ..option_row(row, &store, &session_choices)
                     },
                 );
             }
@@ -618,6 +759,7 @@ pub(crate) fn open(
     });
     // a collect's choice checked or not, or its unmatched files' choice
     let collect_edited = {
+        let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak = window.as_weak();
@@ -645,7 +787,7 @@ pub(crate) fn open(
                     at(i),
                     OptionRow {
                         found: editor.found(at(i)),
-                        ..option_row(row, &store)
+                        ..option_row(row, &store, &session_choices)
                     },
                 );
             }
@@ -666,10 +808,16 @@ pub(crate) fn open(
         });
     });
     window.on_apply({
+        let import_slot = import_slot.clone();
+        let active = active.clone();
+        let tag_slot = tag_slot.clone();
         let editor = editor.clone();
         let store = store.clone();
         let close = close.clone();
         move || {
+            if !active.get() || tag_slot.borrow().is_some() || import_slot.borrow().is_some() {
+                return;
+            }
             let (after, before, problems) = {
                 let editor = editor.borrow();
                 let (after, before, problems) = editor.applied();

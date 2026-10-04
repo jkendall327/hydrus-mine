@@ -1,0 +1,64 @@
+// The service notebook and listbook share the same retained service drafts.
+// Changing this default alters navigation geometry, not the selected service.
+import { ListView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+export component TagServicePanels inherits Rectangle {
+    in property <[string]> names;
+    in property <int> index;
+    in property <bool> use-listbook;
+    out property <float> content-offset: content.x / 1px;
+    callback chosen(int);
+    HorizontalLayout {
+        spacing: 6px;
+        if root.use-listbook: Rectangle {
+            width: 150px;
+            border-width: 1px;
+            border-color: Theme.border;
+            background: Theme.panel;
+            ListView {
+                for name[i] in root.names: Rectangle {
+                    height: 30px;
+                    background: root.index == i ? Theme.highlight : list_pick.has-hover ? Theme.hover : transparent;
+                    Text {
+                        x: 6px;
+                        width: parent.width - 12px;
+                        height: parent.height;
+                        text: name;
+                        color: root.index == i ? Theme.highlight-text : Theme.text;
+                        vertical-alignment: center;
+                        overflow: elide;
+                    }
+                    list_pick := TouchArea { clicked => { root.chosen(i); } }
+                }
+            }
+        }
+        content := VerticalLayout {
+            spacing: 6px;
+            horizontal-stretch: 1;
+            if !root.use-listbook: Rectangle {
+                height: 32px;
+                HorizontalLayout {
+                    spacing: 2px;
+                    for name[i] in root.names: Rectangle {
+                        border-width: 1px;
+                        border-color: root.index == i ? Theme.accent : Theme.border;
+                        background: root.index == i ? Theme.panel : tab_pick.has-hover ? Theme.hover : Theme.window;
+                        Text {
+                            x: 6px;
+                            width: parent.width - 12px;
+                            height: parent.height;
+                            text: name;
+                            color: Theme.text;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                            overflow: elide;
+                        }
+                        tab_pick := TouchArea { clicked => { root.chosen(i); } }
+                    }
+                }
+            }
+            @children
+        }
+    }
+}

@@ -16,6 +16,7 @@ pub(crate) fn open(
     applied: Rc<dyn Fn()>,
 ) -> Result<ManageTagsWindow, slint::PlatformError> {
     let window = ManageTagsWindow::new()?;
+    window.set_use_listbook(model.dialog_preferences().use_listbook);
     let names: Vec<SharedString> = model
         .service_names()
         .iter()
@@ -31,6 +32,9 @@ pub(crate) fn open(
                 return;
             };
             let model = model.borrow();
+            let (file, tags) = model.write_input().domain_labels();
+            window.set_file_label(file.into());
+            window.set_tag_label(tags.into());
             let colours: hydrus_core::tag_presentation::NamespaceColours = model
                 .store()
                 .read(hydrus_store::settings::get)
@@ -46,9 +50,9 @@ pub(crate) fn open(
             );
             window.set_service_index(i32::try_from(model.service()).unwrap_or(0));
             let tags: Vec<ListText> = model
-                .rows()
+                .display_rows()
                 .iter()
-                .map(|(tag, row)| list_text(row, colours.tag(tag)))
+                .map(|row| list_text(&row.label, colours.tag(&row.colour_tag)))
                 .collect();
             window.set_tags(ModelRc::new(VecModel::from(tags)));
             window
@@ -89,6 +93,8 @@ pub(crate) fn open(
                         .borrow_mut()
                         .write_input_mut()
                         .decorate(tab, kind, value);
+                } else if let hydrus_gui_model::write_tag_menu::Action::Domain(choice) = action {
+                    model.borrow_mut().write_input_mut().choose_domain(choice);
                 }
             }
         }),
@@ -126,6 +132,14 @@ pub(crate) fn open(
                 let entries = model.borrow().write_input().menu(i);
                 tag_menu.open(&entries, x, y);
             }
+        }
+    });
+    window.on_domain_menu({
+        let menu = tag_menu.clone();
+        let model = model.clone();
+        move |tags, x, y| {
+            let entries = model.borrow().write_input().domain_menu(tags);
+            menu.open(&entries, x, y);
         }
     });
     let close = {
