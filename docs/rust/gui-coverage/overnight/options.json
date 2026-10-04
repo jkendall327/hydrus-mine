@@ -2,7 +2,7 @@
   "schema_version": 1,
   "agent": "options",
   "baseline_git_head": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
-  "implementation_git_head": "3b1f308d0943f91dc4065b1a033b0e739ea573ff",
+  "implementation_git_head": "4a93287cfbb7a0ababf027678e938107edb5364d",
   "implementation_commits": [
     "f146d9d4",
     "5e528865",
@@ -12,7 +12,11 @@
     "151c3001",
     "f1048a26",
     "13ccd48e",
-    "3b1f308d"
+    "3b1f308d",
+    "607c5173",
+    "abfdf902",
+    "944e602b",
+    "4a93287c"
   ],
   "dependencies": [
     {
@@ -34,10 +38,20 @@
       "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2",
       "agent": "overnight_string_dates",
       "reason": "Regex favourites owner-draft editor and legacy-aware storage used by f1048a26. Root/date packet owns the options-regex-favourites container and editor claims."
+    },
+    {
+      "git_head": "7afcbf7869f8353d75b86153ed2ca1d1db40bbe6",
+      "agent": "overnight_pages",
+      "reason": "Chooser creation preference consumer and real naming/cancellation recorder; registration lives in abfdf902."
+    },
+    {
+      "git_head": "59c40226208aedd7d649da469006f1eb40989ad9",
+      "agent": "overnight_tag_filters",
+      "reason": "TagEditingSettings and manage-tags service memory consumers used by 944e602b; tag agent owns the two distinct Tag Editing control claims."
     }
   ],
   "summary": {
-    "concrete_existing_reference_controls_completed": 16,
+    "concrete_existing_reference_controls_completed": 19,
     "concrete_existing_reference_controls_improved_to_partial": 1,
     "parent_or_alias_completions": 0
   },
@@ -46,12 +60,16 @@
       "oracle/record_options_ranges.py",
       "oracle/record_options_preferences.py",
       "oracle/record_gui_settings.py",
-      "oracle/record_system_sleep_options.py"
+      "oracle/record_system_sleep_options.py",
+      "oracle/record_hash_clipboard_options.py",
+      "oracle/record_search_default_service.py"
     ],
     "existing_reference_recordings_reused": [
       "oracle/record_options_dialog.py",
       "oracle/record_session_backups.py (pages agent)",
-      "oracle/record_tab_actions.py (pages agent)"
+      "oracle/record_tab_actions.py (pages agent)",
+      "oracle/record_notebook_creation.py (pages agent)",
+      "oracle/record_tag_dialog_defaults.py (tag agent)"
     ],
     "cargo_fmt": "passed",
     "python_compile": "passed",
@@ -514,7 +532,7 @@
         }
       ],
       "boundaries": [
-        "The separate automatically-prompt-on-new-page-chooser checkbox remains absent and is not claimed."
+        "Distinct from the independently registered chooser-created-notebook rename preference."
       ]
     },
     {
@@ -616,6 +634,130 @@
       ],
       "boundaries": [
         "A clock gap strictly greater than 60000 ms starts the wait. Zero seconds permits immediate network access. The daemon owns periodic checking; GUI workflows do not run a separate sleep checker."
+      ]
+    },
+    {
+      "reference_id": "audit-options-files-and-trash-when-copying-file-hashes-prefix-with-booru-friendly-hash-type",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Checkbox defaults false, imports prefix_hash_when_copying and persists on Apply. The shared selected/focused clipboard hash function prefixes every available output with its type, including pixel_hash and blurhash, preserving file order and skipping unavailable hashes.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1329,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        },
+        {
+          "path": "crates/hydrus-gui/src/thumbnail_menu.rs",
+          "line": 239,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 324,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 796,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 1179,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        }
+      ],
+      "boundaries": [
+        "Real recorder covers 24 single/multiple combinations across all six hash types. The reference missing-digest warning and copied-hashes notification remain absent; this claim is the setting and clipboard content."
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-pages-page-tab-names-automatically-prompt-to-rename-new-page-of-pages-after-creation",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Independent chooser-created-notebook checkbox defaults false, imports rename_page_of_pages_on_pick_new and persists on Apply. After the chooser creates a notebook, the consumer optionally prompts for its name. Cancel keeps the created notebook; accepted names persist and the prompt targets the created notebook key.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1481,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 156,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 567,
+          "git_head": "7afcbf7869f8353d75b86153ed2ca1d1db40bbe6"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 687,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 2621,
+          "git_head": "7afcbf7869f8353d75b86153ed2ca1d1db40bbe6"
+        }
+      ],
+      "boundaries": [
+        "Distinct from the send-down rename checkbox. Consumer and real chooser recording are supplied by the pages agent; no duplicate page/container completion is claimed."
+      ]
+    },
+    {
+      "reference_id": "audit-options-file-search-file-search-autocomplete-default-tag-service-in-search-pages",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Dynamic service dropdown offers all known tags then real tag services in reference order. It imports and edits SearchDefaults.tag_service. New search pages use the chosen service; a removed key falls back to all known tags in the consumer. Opening Options resolves removed keys to the first offered choice in a draft, Cancel discards that fallback and Apply persists it.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1277,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2218,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1681,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 831,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 887,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 1307,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 1360,
+          "git_head": "4a93287cfbb7a0ababf027678e938107edb5364d"
+        }
+      ],
+      "boundaries": [
+        "Real recording covers four offered services and an invalid saved key in the live new-page consumer. Other file-search controls remain absent. Repository defaults are valid for searching; repository tag editing remains outside native ManageTags support."
       ]
     }
   ]
