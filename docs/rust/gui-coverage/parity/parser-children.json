@@ -14,14 +14,15 @@
     "38189276a8c5fe2223821f1e3119450470b8dc54",
     "3d898d7ef54a6dde94eb9449f9af53849287008b",
     "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
-    "de70266f3f02b2d0bb328ae384462eee67b407e7"
+    "de70266f3f02b2d0bb328ae384462eee67b407e7",
+    "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64"
   ],
   "validation": {
-    "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states; real router queues in import/export contexts, six node kinds, exact vetoes, duplication, PNG and sidecar worker output; export-folder four real database query refreshes, states, media IDs/hashes and first-example source strings",
+    "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states; real router queues in import/export contexts, six node kinds, exact vetoes, duplication, PNG and sidecar worker output; export-folder four real database query refreshes, states, media IDs/hashes and first-example source strings; shared real Qt export-pattern menu and all eight clipboard payloads",
     "formatting": "cargo fmt --all, git diff --check and Python recorder syntax check passed",
     "rust_tests": "authored exact model reference replays, real-store GUI persistence, recursive/stale owner regressions and saved router consumer assertions; root asynchronous CI pending; no local Cargo builds",
     "rendered_ui": "reference screenshot inspected; native headless render assertions authored and pending root CI",
-    "slint_source_check": "passed with cached Slint compiler after de70266f; no Cargo build"
+    "slint_source_check": "passed with cached Slint compiler after 5dcebda9; no Cargo build"
   },
   "entries": [
     {
@@ -707,10 +708,10 @@
       "reference_id": "audit-network-export-folder-examples",
       "previous_status": "missing",
       "before": "missing",
-      "proposed_status": "partial",
-      "proposedStatus": "partial",
-      "behavior": "Export-folder update test example files runs the actual current query on a worker and publishes up to 25 media examples to router and source child previews. It matches reference loading/got-N/reset states, size selection only when a local query limit removes results, previous examples retained after query changes, and empty results. Closing the folder/list discards pending results and stale mutations; edited queries remain staged until owner Apply and reach the persisted real query consumer.",
-      "exactBehavior": "Export-folder update test example files runs the actual current query on a worker and publishes up to 25 media examples to router and source child previews. It matches reference loading/got-N/reset states, size selection only when a local query limit removes results, previous examples retained after query changes, and empty results. Closing the folder/list discards pending results and stale mutations; edited queries remain staged until owner Apply and reach the persisted real query consumer.",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Export-folder update test example files runs the actual current query on a worker and publishes up to 25 media examples to router and source child previews. It matches reference loading/got-N/reset states, size selection only when a local query limit removes results, previous examples retained after query changes, and empty results. Closing the folder/list discards pending results and stale mutations; edited queries remain staged until owner Apply and reach the persisted real query consumer. Folder and manual-export filename boxes expose the real shared pattern shortcuts menu: exact heading, seven labels and separator groups, clipboard phrases including Unicode placeholders; the reference heading itself is enabled and copies its own text. Choosing an item preserves the staged filename pattern; copied phrases reach the existing native filename generator after paste/accept. Invalid, closed, child-modal, working or pending-question callbacks cannot copy from a stale owner.",
+      "exactBehavior": "Export-folder update test example files runs the actual current query on a worker and publishes up to 25 media examples to router and source child previews. It matches reference loading/got-N/reset states, size selection only when a local query limit removes results, previous examples retained after query changes, and empty results. Closing the folder/list discards pending results and stale mutations; edited queries remain staged until owner Apply and reach the persisted real query consumer. Folder and manual-export filename boxes expose the real shared pattern shortcuts menu: exact heading, seven labels and separator groups, clipboard phrases including Unicode placeholders; the reference heading itself is enabled and copies its own text. Choosing an item preserves the staged filename pattern; copied phrases reach the existing native filename generator after paste/accept. Invalid, closed, child-modal, working or pending-question callbacks cannot copy from a stale owner.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/folders.rs",
@@ -723,6 +724,18 @@
           "line": 1280,
           "commit": "de70266f3f02b2d0bb328ae384462eee67b407e7",
           "symbol": "open_export_folder"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/export_files.rs",
+          "line": 41,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "pattern_shortcut"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/export_pattern.slint",
+          "line": 3,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "ExportPatternButton"
         }
       ],
       "test_anchors": [
@@ -737,21 +750,88 @@
           "line": 1189,
           "commit": "de70266f3f02b2d0bb328ae384462eee67b407e7",
           "symbol": "export_folder_query_examples_refresh_media_and_reach_source_children"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/export_files.rs",
+          "line": 376,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "shared_pattern_menu_copies_recorded_phrases_including_its_heading"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/export_files.rs",
+          "line": 135,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "shared_pattern_shortcuts_copy_without_editing_and_guard_closed_owners"
         }
       ],
       "reference_evidence": {
         "export_folder_examples_recorder": "oracle/record_export_folder_examples.py",
         "export_folder_examples_fixture": "oracle/fixtures/export_folder_examples.json",
         "export_folder_examples_visual": "oracle/fixtures/export_folder_examples_editor.png",
-        "export_folder_examples_recording": "passed: real Qt query work/publish callbacks against basic database, four unrestricted/limited/nonmatching queries, 25 result bound, exact button states and actual first-media URL strings; scheduler alone deferred for deterministic capture"
+        "export_folder_examples_recording": "passed: real Qt query work/publish callbacks against basic database, four unrestricted/limited/nonmatching queries, 25 result bound, exact button states and actual first-media URL strings; scheduler alone deferred for deterministic capture",
+        "pattern_recorder": "oracle/record_export_pattern_shortcuts.py",
+        "pattern_fixture": "oracle/fixtures/export_pattern_shortcuts.json",
+        "pattern_visual": "oracle/fixtures/export_pattern_shortcuts_editor.png",
+        "pattern_recording": "passed: actual shared Qt ExportPatternButton menu, heading enabled/copies own text, seven phrases, labels/separators/tooltips and unchanged owner phrase"
       },
       "limitations": [
-        "The original filename pattern shortcuts button is not yet wired; the reference source at line 449 refreshes only router media examples and has no separate sample-media filename preview worker.",
-        "Unlimited results use stable file-id order rather than Python set iteration. All-known-file context is unavailable in the reference export-folder query control; imported all-known contexts retain native deterministic size selection."
+        "Unlimited results use stable file-id order rather than Python set iteration. Reference export-folder UI disallows all-known-file queries; imported all-known contexts retain native deterministic size selection and are outside this original clicked leaf.",
+        "Native shortcut menus do not reproduce Qt bold-heading styling or per-action hover tooltips. No extra filename-preview panel or worker is invented: original source line 449 only refreshes the media test context."
       ],
       "limits": [
-        "The original filename pattern shortcuts button is not yet wired; the reference source at line 449 refreshes only router media examples and has no separate sample-media filename preview worker.",
-        "Unlimited results use stable file-id order rather than Python set iteration. All-known-file context is unavailable in the reference export-folder query control; imported all-known contexts retain native deterministic size selection."
+        "Unlimited results use stable file-id order rather than Python set iteration. Reference export-folder UI disallows all-known-file queries; imported all-known contexts retain native deterministic size selection and are outside this original clicked leaf.",
+        "Native shortcut menus do not reproduce Qt bold-heading styling or per-action hover tooltips. No extra filename-preview panel or worker is invented: original source line 449 only refreshes the media test context."
+      ]
+    },
+    {
+      "reference_id": "audit-network-export-examples",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "partial",
+      "proposedStatus": "partial",
+      "behavior": "Folder and manual-export filename boxes expose the real shared pattern shortcuts menu: exact heading, seven labels and separator groups, clipboard phrases including Unicode placeholders; the reference heading itself is enabled and copies its own text. Choosing an item preserves the staged filename pattern; copied phrases reach the existing native filename generator after paste/accept. Invalid, closed, child-modal, working or pending-question callbacks cannot copy from a stale owner.",
+      "exactBehavior": "Folder and manual-export filename boxes expose the real shared pattern shortcuts menu: exact heading, seven labels and separator groups, clipboard phrases including Unicode placeholders; the reference heading itself is enabled and copies its own text. Choosing an item preserves the staged filename pattern; copied phrases reach the existing native filename generator after paste/accept. Invalid, closed, child-modal, working or pending-question callbacks cannot copy from a stale owner.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/export_files.rs",
+          "line": 41,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "pattern_shortcut"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/export_pattern.slint",
+          "line": 3,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "ExportPatternButton"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/export_files.rs",
+          "line": 376,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "shared_pattern_menu_copies_recorded_phrases_including_its_heading"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/export_files.rs",
+          "line": 135,
+          "commit": "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
+          "symbol": "shared_pattern_shortcuts_copy_without_editing_and_guard_closed_owners"
+        }
+      ],
+      "reference_evidence": {
+        "pattern_recorder": "oracle/record_export_pattern_shortcuts.py",
+        "pattern_fixture": "oracle/fixtures/export_pattern_shortcuts.json",
+        "pattern_visual": "oracle/fixtures/export_pattern_shortcuts_editor.png",
+        "pattern_recording": "passed: actual shared Qt ExportPatternButton menu, heading enabled/copies own text, seven phrases, labels/separators/tooltips and unchanged owner phrase"
+      },
+      "limitations": [
+        "The manual-export selected-files tags sidebar remains absent; this menu slice does not complete the parent or this combined feature.",
+        "Native shortcut menus omit Qt bold-heading styling and action hover tooltips."
+      ],
+      "limits": [
+        "The manual-export selected-files tags sidebar remains absent; this menu slice does not complete the parent or this combined feature.",
+        "Native shortcut menus omit Qt bold-heading styling and action hover tooltips."
       ]
     }
   ]
