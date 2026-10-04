@@ -40,6 +40,11 @@ pub fn set_clipboard_text(text: &str) {
     CLIPBOARD_TEXT.with(|clipboard| *clipboard.borrow_mut() = Some(text.to_owned()));
 }
 
+/// Read the native text editor clipboard in headless keyboard regressions.
+pub fn clipboard_text() -> Option<String> {
+    CLIPBOARD_TEXT.with(|clipboard| clipboard.borrow().clone())
+}
+
 struct Headless {
     windows: Windows,
 }

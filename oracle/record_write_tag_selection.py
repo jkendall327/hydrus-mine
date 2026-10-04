@@ -9,7 +9,9 @@ real multi-tag menu records copy payloads and AND/OR/each-page/duplicate launche
 Maintenance records the actual question and accepted/declined write dispatch;
 the database repair job is intercepted at dispatch, not run by this recorder.
 Ctrl+V events use the real QLineEdit clipboard handler and selection range to
-record normal paste after declining the multiline-tag question.
+record normal paste after declining the multiline-tag question. Real result-list
+key events also record logical wrap/range/navigation and selected clipboard
+output, with an explicit three-physical-row page size.
 """
 import json,os,sys,tempfile
 HERE=os.path.dirname(os.path.abspath(__file__));sys.path.insert(0,HERE)
@@ -123,7 +125,24 @@ def record(session):
                 after=ac._text_ctrl.text();ac._text_ctrl.undo();undo=ac._text_ctrl.text();ac._text_ctrl.redo();redo=ac._text_ctrl.text()
                 paste_events.append(dict(text=text,anchor=anchor,length=length,pasted=pasted,answer=yes,asked=asked,after=after,undo=undo,redo=redo,entered=list(entered),pasted_tags=list(paste_signals)))
         finally:ClientGUIDialogsQuick.GetYesNo=old_yes_no
-        return dict(tags=tags,rows=rows,steps=steps,menus=menus,normal_paste=paste_events)
+        box.SetPredicates([]);box.SetPredicates(captured['matches'])
+        box._num_rows_per_page=3
+        keyboard=[snapshot('initial')];copies=[];old_pub=c.pub
+        def publish(topic,*args,**kw):
+            if topic=='clipboard':copies.append(args[1])
+            else:old_pub(topic,*args,**kw)
+        c.pub=publish
+        try:
+            for name,ctrl,shift in [('Up',False,False),('Down',False,False),('Down',False,True),('Down',False,True),('Up',False,True),('End',True,True),('Home',False,True),('Home',True,False),('End',False,False),('PageUp',False,False),('PageDown',False,False),('A',True,False),('C',True,False),('C',True,True),('P',True,False),('N',True,False)]:
+                modifiers=QtCore.Qt.KeyboardModifier.NoModifier
+                if ctrl:modifiers|=QtCore.Qt.KeyboardModifier.ControlModifier
+                if shift:modifiers|=QtCore.Qt.KeyboardModifier.ShiftModifier
+                copies.clear()
+                event=QtGui.QKeyEvent(QtCore.QEvent.Type.KeyPress,getattr(QtCore.Qt.Key,'Key_'+name),modifiers,name if len(name)==1 else '')
+                box.keyPressEvent(event)
+                keyboard.append(snapshot('key',key=name,ctrl=ctrl,shift=shift,copied=list(copies)))
+        finally:c.pub=old_pub
+        return dict(tags=tags,rows=rows,steps=steps,menus=menus,normal_paste=paste_events,keyboard=dict(page_rows=3,steps=keyboard))
     try:out=qt(replay)
     finally:c.CallToThread=old_thread
     return dict(files=[h.hex() for h in hashes],corpus=[dict(tag=t,hashes=[h.hex() for h in fs]) for t,fs in corpus],siblings=siblings,parents=parents,**out)

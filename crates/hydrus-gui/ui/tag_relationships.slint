@@ -69,6 +69,8 @@ export component TagRelationshipsWindow inherits Window {
     in property <string> left-tag-label;
     in property <string> right-tag-label;
     callback autocomplete-move(bool, int);
+    callback autocomplete-navigate(bool,int,bool,bool);
+    callback autocomplete-results-action(bool,int) -> bool;
     callback autocomplete-chosen(bool, int);
     callback autocomplete-clicked(bool,int,bool,bool);
     callback autocomplete-paste(bool, bool) -> bool;
@@ -169,6 +171,8 @@ export component TagRelationshipsWindow inherits Window {
                             entered => { root.enter-tags(false, self.text); }
                             fetch => { root.autocomplete-fetch(false); }
                             move-highlight(by) => { root.autocomplete-move(false, by); }
+                            navigate(d,ctrl,shift) => { root.autocomplete-navigate(false,d,ctrl,shift); }
+                            results-action(a) => { root.autocomplete-results-action(false,a) }
                             chosen(i) => { root.autocomplete-chosen(false, i); }
                             selection-clicked(i,ctrl,shift) => { root.autocomplete-clicked(false,i,ctrl,shift); }
                         context-menu(i,x,y) => { root.context-menu(false,i,x,y); }
@@ -202,6 +206,8 @@ export component TagRelationshipsWindow inherits Window {
                             entered => { root.enter-tags(true, self.text); }
                             fetch => { root.autocomplete-fetch(true); }
                             move-highlight(by) => { root.autocomplete-move(true, by); }
+                            navigate(d,ctrl,shift) => { root.autocomplete-navigate(true,d,ctrl,shift); }
+                            results-action(a) => { root.autocomplete-results-action(true,a) }
                             chosen(i) => { root.autocomplete-chosen(true, i); }
                             selection-clicked(i,ctrl,shift) => { root.autocomplete-clicked(true,i,ctrl,shift); }
                         context-menu(i,x,y) => { root.context-menu(true,i,x,y); }

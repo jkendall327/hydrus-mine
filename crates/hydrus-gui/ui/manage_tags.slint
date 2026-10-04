@@ -61,6 +61,8 @@ export component ManageTagsWindow inherits Window {
     callback paste-requested(bool) -> bool;
     callback paste-answered(bool);
     callback move-highlight(int);
+    callback navigate(int,bool,bool);
+    callback results-action(int) -> bool;
     callback tag-activated(int);
     callback migrate-tags();
     callback apply();
@@ -119,6 +121,8 @@ export component ManageTagsWindow inherits Window {
                     entered => { root.entered(); }
                     fetch => { root.fetch(); }
                     move-highlight(by) => { root.move-highlight(by); }
+                    navigate(d,ctrl,shift) => { root.navigate(d,ctrl,shift); }
+                    results-action(a) => { root.results-action(a) }
                     chosen(i) => { root.suggestion-chosen(i); }
                     selection-clicked(i,ctrl,shift) => { root.selection-clicked(i,ctrl,shift); }
                     context-menu(i,x,y) => { root.context-menu(i,x,y); }

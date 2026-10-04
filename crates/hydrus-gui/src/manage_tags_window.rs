@@ -330,6 +330,39 @@ pub(crate) fn open(
             refresh();
         }
     });
+    window.on_navigate({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
+        move |direction, ctrl, shift| {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+                return;
+            }
+            model
+                .borrow_mut()
+                .write_input_mut()
+                .navigate(direction, ctrl, shift);
+            refresh();
+        }
+    });
+    window.on_results_action({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
+        move |action| {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+                return false;
+            }
+            let handled =
+                crate::write_tag_menu::results_action(model.borrow_mut().write_input_mut(), action);
+            refresh();
+            handled
+        }
+    });
     window.on_selection_clicked({
         let model = model.clone();
         let refresh = refresh.clone();

@@ -1297,3 +1297,207 @@ fn normal_paste_replays_cursor_selection_and_accepted_tags_preserve_the_draft() 
     assert_eq!(relation.get_right_input(), "cancelled draft");
     assert!(bound.tag_relationships.borrow().is_none());
 }
+
+#[test]
+fn keyboard_result_selection_copy_and_native_text_copy_use_their_own_focus() {
+    use hydrus_core::{Sha256, Tag};
+    use hydrus_store::{
+        content::tag_relations::{self, RelationAction, RelationUpdate},
+        display::RelationKind,
+    };
+    use serde_json::json;
+    use slint::platform::{Key, WindowEvent};
+
+    let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    let windows = headless::init();
+    let snapshot = store.snapshot();
+    let service = snapshot.services.by_name("my tags").unwrap();
+    let id = service.id;
+    let key = service.key.clone();
+    let corpus = fixture["corpus"].clone();
+    store
+        .write_content(move |w| {
+            for row in corpus.as_array().unwrap() {
+                let tag = hydrus_store::master::intern_tag(
+                    w.conn(),
+                    &Tag::new(row["tag"].as_str().unwrap()).unwrap(),
+                )?;
+                let hashes = row["hashes"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|hash| {
+                        let hash: Sha256 = hash.as_str().unwrap().parse().unwrap();
+                        hydrus_store::master::hash_id(w.conn(), &hash).map(Option::unwrap)
+                    })
+                    .collect::<hydrus_store::Result<Vec<_>>>()?;
+                w.update_mappings(id, &hydrus_store::content::MappingAction::Add, tag, &hashes)?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    for (kind, field) in [
+        (RelationKind::Siblings, "siblings"),
+        (RelationKind::Parents, "parents"),
+    ] {
+        tag_relations::apply(
+            &store,
+            kind,
+            fixture[field]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|pair| RelationUpdate {
+                    service: id,
+                    left: Tag::new(pair[0].as_str().unwrap()).unwrap(),
+                    right: Tag::new(pair[1].as_str().unwrap()).unwrap(),
+                    action: RelationAction::Add,
+                })
+                .collect(),
+        )
+        .unwrap();
+    }
+    let saved_key = key.clone();
+    store
+        .write(move |ctx| {
+            let mut prefs: TagEditingSettings = settings::get(ctx.conn())?;
+            prefs.select_first_with_count = false;
+            prefs.autocomplete_show_parents = true;
+            prefs.autocomplete_expand_parents = true;
+            prefs.autocomplete_show_siblings = true;
+            prefs.autocomplete_list_height = 3;
+            settings::set(ctx.conn(), &prefs)?;
+            let mut defaults: settings::SearchDefaults = settings::get(ctx.conn())?;
+            defaults.local_location = hydrus_core::search::context::LocationContext::single(
+                hydrus_core::ServiceKey::new(hydrus_core::service::builtin_keys::MY_FILES),
+            );
+            settings::set(ctx.conn(), &defaults)?;
+            let mut widgets: hydrus_store::tag_display_config::AutocompleteWidgetSettings =
+                settings::get(ctx.conn())?;
+            let mut options = widgets.options(&saved_key);
+            options.write_tag_service = saved_key.clone();
+            widgets.services.insert(saved_key.to_hex(), options);
+            settings::set(ctx.conn(), &widgets)
+        })
+        .unwrap();
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let applied = Rc::new(RefCell::new(Vec::<String>::new()));
+    let child = hydrus_gui::write_tag_window::open(
+        &store,
+        key,
+        &[],
+        "keyboard tags",
+        &slot,
+        Rc::new({
+            let applied = applied.clone();
+            move |tags| *applied.borrow_mut() = tags
+        }),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    child.invoke_edited("parity:multi".into());
+    assert_eq!(
+        json!(
+            child
+                .get_suggestions()
+                .iter()
+                .map(|row| row.text.to_string())
+                .collect::<Vec<_>>()
+        ),
+        json!(
+            fixture["rows"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|row| row["text"].as_str().unwrap())
+                .collect::<Vec<_>>()
+        )
+    );
+    let native = windows.get(0).unwrap();
+    headless::render(&native, 460, 600);
+    let copies = Rc::new(RefCell::new(Vec::<String>::new()));
+    hydrus_gui::set_clipper({
+        let copies = copies.clone();
+        move |clip| {
+            if let hydrus_gui::Clip::Text(text) = clip {
+                copies.borrow_mut().push(text.clone());
+            }
+        }
+    });
+    // Selected editor text retains native Ctrl+C; the tag-list handler must not steal it.
+    child.invoke_select_input(0, 6);
+    headless::set_clipboard_text("before native text copy");
+    native.dispatch_event(WindowEvent::KeyPressed {
+        text: Key::Control.into(),
+    });
+    native.dispatch_event(WindowEvent::KeyPressed { text: "c".into() });
+    native.dispatch_event(WindowEvent::KeyReleased { text: "c".into() });
+    native.dispatch_event(WindowEvent::KeyReleased {
+        text: Key::Control.into(),
+    });
+    assert_eq!(headless::clipboard_text().as_deref(), Some("parity"));
+    assert!(copies.borrow().is_empty());
+    child.invoke_focus_results();
+    for step in fixture["keyboard"]["steps"].as_array().unwrap() {
+        copies.borrow_mut().clear();
+        if step["action"] == "key" {
+            let ctrl = step["ctrl"].as_bool().unwrap();
+            let shift = step["shift"].as_bool().unwrap();
+            if ctrl {
+                native.dispatch_event(WindowEvent::KeyPressed {
+                    text: Key::Control.into(),
+                });
+            }
+            if shift {
+                native.dispatch_event(WindowEvent::KeyPressed {
+                    text: Key::Shift.into(),
+                });
+            }
+            let key: slint::SharedString = match step["key"].as_str().unwrap() {
+                "Up" => Key::UpArrow.into(),
+                "Down" => Key::DownArrow.into(),
+                "Home" => Key::Home.into(),
+                "End" => Key::End.into(),
+                "PageUp" => Key::PageUp.into(),
+                "PageDown" => Key::PageDown.into(),
+                key => key.to_lowercase().into(),
+            };
+            native.dispatch_event(WindowEvent::KeyPressed { text: key.clone() });
+            native.dispatch_event(WindowEvent::KeyReleased { text: key });
+            if shift {
+                native.dispatch_event(WindowEvent::KeyReleased {
+                    text: Key::Shift.into(),
+                });
+            }
+            if ctrl {
+                native.dispatch_event(WindowEvent::KeyReleased {
+                    text: Key::Control.into(),
+                });
+            }
+            assert_eq!(json!(*copies.borrow()), step["copied"], "{step}");
+        }
+        let mut selected = Vec::new();
+        for (i, row) in fixture["rows"].as_array().unwrap().iter().enumerate() {
+            if child.get_selected().row_data(i).unwrap() {
+                let tag = row["tag"].as_str().unwrap();
+                if !selected.contains(&tag) {
+                    selected.push(tag);
+                }
+            }
+        }
+        assert_eq!(json!(selected), step["selected"], "{step}");
+        assert_eq!(child.get_text(), "parity:multi");
+        assert_eq!(child.get_tags().row_count(), 0);
+    }
+    let before = copies.borrow().clone();
+    child.invoke_cancel();
+    child.invoke_navigate(0, false, false);
+    assert!(!child.invoke_results_action(1));
+    child.invoke_entered();
+    child.invoke_apply();
+    assert_eq!(*copies.borrow(), before);
+    assert!(applied.borrow().is_empty());
+    assert!(slot.borrow().is_none());
+    hydrus_gui::set_clipper(|_| {});
+}

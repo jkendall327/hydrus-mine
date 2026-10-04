@@ -1069,6 +1069,7 @@ fn recorded_logical_selection_ranges_parent_hits_and_batch_activation() {
         .write(move |ctx| {
             let mut prefs: TagEditingSettings = settings::get(ctx.conn())?;
             prefs.select_first_with_count = false;
+            prefs.autocomplete_list_height = 3;
             prefs.autocomplete_show_parents = true;
             prefs.autocomplete_expand_parents = true;
             prefs.autocomplete_show_siblings = true;
@@ -1099,6 +1100,9 @@ fn recorded_logical_selection_ranges_parent_hits_and_batch_activation() {
         .map(|row| json!({"tag":row.tag,"text":row.label}))
         .collect();
     assert_eq!(json!(rows), fixture["rows"]);
+    check_recorded_keyboard(&mut entry.input, &fixture);
+    entry.input.clear();
+    entry.input.set_text("parity:multi");
     for step in fixture["steps"].as_array().unwrap() {
         match step["action"].as_str().unwrap() {
             "initial" => {}
@@ -1380,4 +1384,47 @@ fn clipboard_additions_keep_existing_text_and_result_selection() {
             .iter()
             .any(|(tag, _)| tag == "parity:paste one")
     );
+}
+
+fn check_recorded_keyboard(input: &mut WriteAutocomplete, fixture: &Value) {
+    for step in fixture["keyboard"]["steps"].as_array().unwrap() {
+        if step["action"] == "key" {
+            let ctrl = step["ctrl"].as_bool().unwrap();
+            let shift = step["shift"].as_bool().unwrap();
+            match step["key"].as_str().unwrap() {
+                "A" => input.select_all(),
+                "C" => assert_eq!(
+                    json!([input.copy_selection(shift).unwrap()]),
+                    step["copied"]
+                ),
+                key => {
+                    let direction = match key {
+                        "Up" | "P" => 0,
+                        "Down" | "N" => 1,
+                        "Home" => 2,
+                        "End" => 3,
+                        "PageUp" => 4,
+                        "PageDown" => 5,
+                        _ => panic!("unrecorded navigation {key}"),
+                    };
+                    input.navigate(direction, ctrl && key != "P" && key != "N", shift);
+                }
+            }
+        }
+        assert_eq!(json!(input.selected_tags()), step["selected"], "{step}");
+        let physical = input.highlighted().unwrap();
+        let logical = input.rows()[..=physical]
+            .iter()
+            .filter(|row| !row.parent_row)
+            .count()
+            - 1;
+        assert_eq!(json!(logical), step["last_hit"], "{step}");
+        assert_eq!(input.text(), "parity:multi");
+    }
+    let all = input.copy_selection(false).unwrap();
+    assert!(input.deselect());
+    assert_eq!(input.copy_selection(false).unwrap(), all);
+    assert!(input.chosen_tags(None).is_empty());
+    input.clear();
+    assert_eq!(input.copy_selection(false), None);
 }

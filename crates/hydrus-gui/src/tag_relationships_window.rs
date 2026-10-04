@@ -571,6 +571,39 @@ pub(crate) fn open(
             refresh();
         }
     });
+    window.on_autocomplete_navigate({
+        let binding = binding.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let tag_menu = tag_menu.clone();
+        move |right, direction, ctrl, shift| {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
+                return;
+            }
+            binding
+                .borrow_mut()
+                .input_mut(right)
+                .navigate(direction, ctrl, shift);
+            refresh();
+        }
+    });
+    window.on_autocomplete_results_action({
+        let binding = binding.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let tag_menu = tag_menu.clone();
+        move |right, action| {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
+                return false;
+            }
+            let handled = crate::write_tag_menu::results_action(
+                binding.borrow_mut().input_mut(right),
+                action,
+            );
+            refresh();
+            handled
+        }
+    });
     window.on_autocomplete_clicked({
         let binding = binding.clone();
         let refresh = refresh.clone();

@@ -18,6 +18,8 @@ export component WriteTagInput inherits FocusScope {
     callback entered();
     callback fetch();
     callback move-highlight(int);
+    callback navigate(int,bool,bool);
+    callback results-action(int) -> bool;
     callback chosen(int);
     callback selection-clicked(int, bool, bool);
     callback context-menu(int, length, length);
@@ -25,6 +27,7 @@ export component WriteTagInput inherits FocusScope {
     in property <string> file-label;
     in property <string> tag-label;
     callback paste(bool) -> bool;
+    public function focus-results() { result-keys.focus(); }
     public function normal-paste() { input.paste(); }
     public function undo-input() { input.undo(); }
     public function redo-input() { input.redo(); }
@@ -36,8 +39,21 @@ export component WriteTagInput inherits FocusScope {
             if !root.paste(false) { root.normal-paste(); }
             return accept;
         }
-        if event.text == Key.UpArrow { root.move-highlight(-1); return accept; }
-        if event.text == Key.DownArrow { root.move-highlight(1); return accept; }
+        if event.modifiers.control && (event.text == "c" || event.text == "C") && (!input.has-focus || !input.has-selected-text) && root.suggestions.length > 0 {
+            root.results-action(event.modifiers.shift ? 2 : 1); return accept;
+        }
+        if event.modifiers.control && (event.text == "a" || event.text == "A") && result-keys.has-focus {
+            root.results-action(0); return accept;
+        }
+        if event.modifiers.control && (event.text == "p" || event.text == "P") { root.navigate(0,false,event.modifiers.shift); return accept; }
+        if event.modifiers.control && (event.text == "n" || event.text == "N") { root.navigate(1,false,event.modifiers.shift); return accept; }
+        if event.text == Key.UpArrow { root.navigate(0,event.modifiers.control,event.modifiers.shift); return accept; }
+        if event.text == Key.DownArrow { root.navigate(1,event.modifiers.control,event.modifiers.shift); return accept; }
+        if event.text == Key.Home { root.navigate(2,event.modifiers.control,event.modifiers.shift); return accept; }
+        if event.text == Key.End { root.navigate(3,event.modifiers.control,event.modifiers.shift); return accept; }
+        if event.text == Key.PageUp { root.navigate(4,event.modifiers.control,event.modifiers.shift); return accept; }
+        if event.text == Key.PageDown { root.navigate(5,event.modifiers.control,event.modifiers.shift); return accept; }
+        if event.text == Key.Return && result-keys.has-focus { root.entered(); return accept; }
         reject
     }
     VerticalLayout {
@@ -65,32 +81,43 @@ export component WriteTagInput inherits FocusScope {
             current-index <=> root.tab-index;
             selected => { root.tab-chosen(self.current-index); }
         }
-        if root.suggestions.length > 0: Rectangle {
+        Rectangle {
+            visible: root.suggestions.length > 0;
             border-width: 1px;
             border-color: Theme.border;
             background: Theme.panel;
-            height: min(root.suggestions.length, root.list-height) * 22px + 4px;
-            ScrollView {
-                VerticalLayout {
-                    padding: 2px;
-                    alignment: start;
-                    for suggestion[i] in root.suggestions: Rectangle {
-                        height: 22px;
-                        background: root.selected[i] ? Theme.highlight : transparent;
-                        Text {
-                            x: 4px;
-                            text: suggestion.text;
-                            color: root.selected[i] ? Theme.highlight-text : suggestion.colour;
-                            vertical-alignment: center;
-                            overflow: elide;
-                            width: parent.width - 8px;
-                        }
-                        TouchArea {
-                            enabled: root.enabled;
-                            double-clicked => { root.chosen(i); }
-                            pointer-event(event) => {
-                                if event.kind == PointerEventKind.down && event.button == PointerEventButton.right { root.context-menu(i, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y); }
-                                if event.kind == PointerEventKind.down && event.button == PointerEventButton.left { root.selection-clicked(i, event.modifiers.control, event.modifiers.shift); }
+            height: root.suggestions.length > 0 ? min(root.suggestions.length, root.list-height) * 22px + 4px : 0px;
+            result-keys := FocusScope {
+                width: parent.width; height: parent.height;
+                property <int> kept-in-view: root.highlighted;
+                changed kept-in-view => {
+                    if self.kept-in-view >= 0 {
+                        if self.kept-in-view * 22px < -scroll.content-y { scroll.content-y = -self.kept-in-view * 22px; }
+                        else if (self.kept-in-view + 1) * 22px > scroll.visible-height - scroll.content-y { scroll.content-y = scroll.visible-height - (self.kept-in-view + 1) * 22px; }
+                    }
+                }
+                scroll := ScrollView {
+                    VerticalLayout {
+                        padding: 2px;
+                        alignment: start;
+                        for suggestion[i] in root.suggestions: Rectangle {
+                            height: 22px;
+                            background: root.selected[i] ? Theme.highlight : transparent;
+                            Text {
+                                x: 4px;
+                                text: suggestion.text;
+                                color: root.selected[i] ? Theme.highlight-text : suggestion.colour;
+                                vertical-alignment: center;
+                                overflow: elide;
+                                width: parent.width - 8px;
+                            }
+                            TouchArea {
+                                enabled: root.enabled;
+                                double-clicked => { root.chosen(i); }
+                                pointer-event(event) => {
+                                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.right { result-keys.focus(); root.context-menu(i, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y); }
+                                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.left { result-keys.focus(); root.selection-clicked(i, event.modifiers.control, event.modifiers.shift); }
+                                }
                             }
                         }
                     }
@@ -163,6 +190,7 @@ export component WriteTagsWindow inherits Window {
     in property <int> list-height: 11;
     in property <string> question;
     in property <string> error;
+    public function focus-results() { input.focus-results(); }
     public function normal-paste() { input.normal-paste(); }
     public function undo-input() { input.undo-input(); }
     public function redo-input() { input.redo-input(); }
@@ -172,6 +200,8 @@ export component WriteTagsWindow inherits Window {
     callback entered();
     callback fetch();
     callback move-highlight(int);
+    callback navigate(int,bool,bool);
+    callback results-action(int) -> bool;
     callback chosen(int);
     callback selection-clicked(int, bool, bool);
     callback context-menu(int, length, length);
@@ -213,6 +243,8 @@ export component WriteTagsWindow inherits Window {
                 entered => { root.entered(); }
                 fetch => { root.fetch(); }
                 move-highlight(by) => { root.move-highlight(by); }
+                navigate(d,ctrl,shift) => { root.navigate(d,ctrl,shift); }
+                results-action(a) => { root.results-action(a) }
                 chosen(i) => { root.chosen(i); }
                 selection-clicked(i,ctrl,shift) => { root.selection-clicked(i,ctrl,shift); }
                 context-menu(i,x,y) => { root.context-menu(i,x,y); }

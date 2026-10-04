@@ -2664,3 +2664,12 @@ Login required-cookie Add/Edit now opens the name matcher followed by the value
 matcher, using the reference titles and initial rules. Cancel at either stage
 leaves the pair intact; accepted pairs are sorted and selected. Independent
 matcher objects with identical descriptions remain separate entries.
+
+Write autocomplete keyboard selection now follows the result list: arrows wrap,
+Shift and Ctrl+Shift extend or reverse a selection, Home/End select endpoints,
+and Page Up/Down include expanded parent rows in the visible page distance.
+Ctrl+P/N navigate the results. A focused result list supports Ctrl+A and ordered
+Ctrl+C, with deduplicated parents on Ctrl+Shift+C; selected text in the editor
+keeps native text copying. Keyboard movement scrolls its last hit into view,
+without entering tags or changing the draft. The real Qt keyboard sequence and
+clipboard payloads are recorded in `write_tag_selection.json`.

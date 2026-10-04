@@ -392,9 +392,9 @@
           ],
           "deleted": [],
           "predicates": [
+            "parity:multi gamma",
             "parity:multi beta",
-            "parity:multi alpha",
-            "parity:multi gamma"
+            "parity:multi alpha"
           ]
         }
       ]
@@ -426,6 +426,16 @@
           ],
           "deleted": [],
           "predicates": [
+            "parity:multi gamma"
+          ]
+        },
+        {
+          "topic": "new_page_query",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
             "parity:multi beta"
           ]
         },
@@ -437,16 +447,6 @@
           "deleted": [],
           "predicates": [
             "parity:multi alpha"
-          ]
-        },
-        {
-          "topic": "new_page_query",
-          "current": [
-            "616c6c206c6f63616c206d65646961"
-          ],
-          "deleted": [],
-          "predicates": [
-            "parity:multi gamma"
           ]
         }
       ]
@@ -462,9 +462,9 @@
           ],
           "deleted": [],
           "predicates": [
+            "parity:multi gamma",
             "parity:multi beta",
-            "parity:multi alpha",
-            "parity:multi gamma"
+            "parity:multi alpha"
           ]
         }
       ]
@@ -578,5 +578,237 @@
         ]
       ]
     }
-  ]
+  ],
+  "keyboard": {
+    "page_rows": 3,
+    "steps": [
+      {
+        "action": "initial",
+        "selected": [
+          "parity:multi"
+        ],
+        "last_hit": 0
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi gamma"
+        ],
+        "last_hit": 4,
+        "key": "Up",
+        "ctrl": false,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi"
+        ],
+        "last_hit": 0,
+        "key": "Down",
+        "ctrl": false,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha"
+        ],
+        "last_hit": 1,
+        "key": "Down",
+        "ctrl": false,
+        "shift": true,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha",
+          "parity:multi alpha old"
+        ],
+        "last_hit": 2,
+        "key": "Down",
+        "ctrl": false,
+        "shift": true,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha"
+        ],
+        "last_hit": 1,
+        "key": "Up",
+        "ctrl": false,
+        "shift": true,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi"
+        ],
+        "last_hit": 4,
+        "key": "End",
+        "ctrl": true,
+        "shift": true,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 0,
+        "key": "Home",
+        "ctrl": false,
+        "shift": true,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 0,
+        "key": "Home",
+        "ctrl": true,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 4,
+        "key": "End",
+        "ctrl": false,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 2,
+        "key": "PageUp",
+        "ctrl": false,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 4,
+        "key": "PageDown",
+        "ctrl": false,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 4,
+        "key": "A",
+        "ctrl": true,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 4,
+        "key": "C",
+        "ctrl": true,
+        "shift": false,
+        "copied": [
+          "parity:multi\nparity:multi alpha\nparity:multi alpha old\nparity:multi beta\nparity:multi gamma"
+        ]
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 4,
+        "key": "C",
+        "ctrl": true,
+        "shift": true,
+        "copied": [
+          "parity:multi\nparity:multi alpha\ncategory:multi parent\nparity:multi alpha old\nparity:multi beta\nparity:multi gamma"
+        ]
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 3,
+        "key": "P",
+        "ctrl": true,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 4,
+        "key": "N",
+        "ctrl": true,
+        "shift": false,
+        "copied": []
+      }
+    ]
+  }
 }

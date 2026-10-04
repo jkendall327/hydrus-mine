@@ -360,16 +360,69 @@ impl WriteAutocomplete {
             self.selections[self.tab.index()].click(logical, ctrl, shift);
         }
     }
-    pub fn move_highlight(&mut self, by: isize) {
-        if let Some(last) = self.primary_rows().count().checked_sub(1) {
-            let selection = &mut self.selections[self.tab.index()];
-            let next = selection
-                .last
-                .unwrap_or(0)
-                .saturating_add_signed(by)
-                .min(last);
-            selection.reset(Some(next));
+    /// Up/down wrap. Page keys move by physical rows, including expanded parents.
+    /// The six directions are up, down, home, end, page up and page down.
+    pub fn navigate(&mut self, direction: i32, ctrl: bool, shift: bool) {
+        let count = self.primary_rows().count();
+        let Some(last) = self.selections[self.tab.index()].last else {
+            return;
+        };
+        if count <= 1 {
+            return;
         }
+        let target = match direction {
+            0 => (last + count - 1) % count,
+            1 => (last + 1) % count,
+            2 => 0,
+            3 => count - 1,
+            4 | 5 => {
+                let physical = self.highlighted().unwrap_or(0);
+                let distance =
+                    usize::try_from(self.options().autocomplete_list_height.clamp(1, 128))
+                        .unwrap_or(11);
+                let physical = if direction == 4 {
+                    physical.saturating_sub(distance)
+                } else {
+                    physical.saturating_add(distance).min(self.rows.len() - 1)
+                };
+                self.logical_index(physical).unwrap_or(last)
+            }
+            _ => return,
+        };
+        self.selections[self.tab.index()].click(target, ctrl, shift);
+    }
+    pub fn move_highlight(&mut self, by: isize) {
+        if by != 0 {
+            self.navigate(i32::from(by > 0), false, false);
+        }
+    }
+    /// Select-all retains the last hit and range anchor, just like the Qt list.
+    pub fn select_all(&mut self) {
+        self.selections[self.tab.index()].selected = (0..self.primary_rows().count()).collect();
+    }
+    pub fn deselect(&mut self) -> bool {
+        let selection = &mut self.selections[self.tab.index()];
+        let had_selection = !selection.selected.is_empty();
+        selection.selected.clear();
+        had_selection
+    }
+    /// Ctrl+C uses the whole result when nothing is selected. Parents appear once.
+    pub fn copy_selection(&self, include_parents: bool) -> Option<String> {
+        let selected = &self.selections[self.tab.index()].selected;
+        let mut tags = Vec::new();
+        for (logical, (_, row)) in self.primary_rows().enumerate() {
+            if !selected.is_empty() && !selected.contains(&logical) {
+                continue;
+            }
+            for tag in
+                std::iter::once(&row.tag).chain(row.parents.iter().filter(|_| include_parents))
+            {
+                if !tags.contains(tag) {
+                    tags.push(tag.clone());
+                }
+            }
+        }
+        (!tags.is_empty()).then(|| tags.join("\n"))
     }
     pub fn chosen(&self, index: Option<usize>) -> Option<String> {
         index

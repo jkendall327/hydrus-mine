@@ -1752,3 +1752,10 @@ have bounded native evaluation. The native palette uses plain matched text
 rather than Qt's rich-text emphasis and result icons; native menus retain their
 existing unavailable commands. These boundaries keep the whole-palette entry
 partial while its concrete preference and provider-order controls have consumers.
+
+Shared write autocomplete now records and implements result keyboard wrap,
+reversible ranges, physical-row page jumps and selected clipboard output. Native
+result rows gain focus on click; the editor retains its own selection/clipboard
+engine. Shared search autocomplete tabs/OR controls and asynchronous loading
+remain separate workflows; this keyboard slice does not promote their parent
+coverage entries.

@@ -22,6 +22,28 @@ pub fn clear_search_launcher() {
     SEARCH_LAUNCHER.with(|slot| slot.borrow_mut().take());
 }
 
+/// Shared list keyboard actions, called only after the owning editor's guard.
+pub(crate) fn results_action(
+    input: &mut hydrus_gui_model::write_autocomplete::WriteAutocomplete,
+    action: i32,
+) -> bool {
+    match action {
+        0 => {
+            input.select_all();
+            true
+        }
+        1 | 2 => {
+            if let Some(text) = input.copy_selection(action == 2) {
+                crate::copy_to_clipboard(&text);
+                true
+            } else {
+                false
+            }
+        }
+        _ => false,
+    }
+}
+
 pub(crate) struct TagMenu {
     pub popup: Rc<Popup<Action>>,
     pending: RefCell<Option<Action>>,

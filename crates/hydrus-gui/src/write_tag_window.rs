@@ -309,6 +309,32 @@ fn open_internal(
             refresh();
         }
     });
+    window.on_navigate({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let editable = editable.clone();
+        move |direction, ctrl, shift| {
+            if !editable() {
+                return;
+            }
+            model.borrow_mut().input.navigate(direction, ctrl, shift);
+            refresh();
+        }
+    });
+    window.on_results_action({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let editable = editable.clone();
+        move |action| {
+            if !editable() {
+                return false;
+            }
+            let handled =
+                crate::write_tag_menu::results_action(&mut model.borrow_mut().input, action);
+            refresh();
+            handled
+        }
+    });
     window.on_selection_clicked({
         let model = model.clone();
         let refresh = refresh.clone();

@@ -9,6 +9,8 @@ export component WriteTagLineEdit inherits Rectangle {
     in property <bool> enabled: true;
     callback edited(string);
     callback accepted(string);
+    out property <bool> has-focus: editor.has-focus;
+    out property <bool> has-selected-text: editor.anchor-position-byte-offset != editor.cursor-position-byte-offset;
     property <bool> pasting;
     property <length> scroll-x;
     public function set-selection-offsets(anchor: int, cursor: int) { editor.set-selection-offsets(anchor,cursor); }
