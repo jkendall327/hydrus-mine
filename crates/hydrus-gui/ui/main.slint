@@ -13,6 +13,8 @@ import { SimpleParsingBox } from "simple_downloader.slint";
 import { GalleryData, GallerySidebar } from "gallery.slint";
 import { WatcherData, WatcherSidebar } from "watcher.slint";
 import { TableColumn, TableRow } from "list_table.slint";
+import { NotebookNavigation, NotebookTree, TabRow, PageTreeRow } from "notebook_tabs.slint";
+export { TabRow, PageTreeRow, TabNames, TabFit } from "notebook_tabs.slint";
 import { MenuBarRow, MenuLine, MenuPane, MenuPanes, MenuTitle } from "main_menu.slint";
 import { PopupData, PopupStack } from "popups.slint";
 import { DuplicatesData, DuplicatesSidebar } from "duplicates_page.slint";
@@ -204,44 +206,6 @@ component ChooserButton inherits Rectangle {
         clicked => { root.pressed(); }
     }
 }
-
-// one notebook's tabs
-export struct TabRow {
-    names: [string],
-    selected: int,
-}
-
-component Tab inherits Rectangle {
-    in property <string> text;
-    in property <bool> selected;
-    callback chosen();
-    callback context-menu(length, length);
-    // as in the reference, a middle click closes a page
-    callback close();
-    height: 26px;
-    width: label.preferred-width + 20px;
-    background: root.selected ? Theme.panel : touch.has-hover ? Theme.hover : Theme.window;
-    border-width: 1px;
-    border-color: Theme.border;
-    label := Text {
-        text: root.text;
-        vertical-alignment: center;
-        horizontal-alignment: center;
-        font-weight: root.selected ? 600 : 400;
-    }
-    touch := TouchArea {
-        clicked => { root.chosen(); }
-        pointer-event(event) => {
-            if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
-                root.context-menu(self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
-            }
-            if (event.button == PointerEventButton.middle && event.kind == PointerEventKind.up) {
-                root.close();
-            }
-        }
-    }
-}
-
 
 // a choice in the collect control
 export struct CollectRow {
@@ -542,6 +506,27 @@ export component MainWindow inherits Window {
 
     // the tabs of each notebook on the way to the page shown
     in property <[TabRow]> tab-rows;
+    in property <int> tab-alignment;
+    in property <int> page-tree-side;
+    in property <bool> navigation-tabs-hidden;
+    in property <bool> elide-tab-names: true;
+    out property <length> tab-navigation-x: tab-navigation.absolute-position.x;
+    out property <length> tab-navigation-y: tab-navigation.absolute-position.y;
+    out property <length> tab-navigation-width: tab-navigation.width;
+    out property <length> tab-navigation-height: tab-navigation.height;
+    out property <length> page-content-x: page-content.absolute-position.x;
+    out property <length> page-content-y: page-content.absolute-position.y;
+    out property <length> page-content-width: page-content.width;
+    out property <length> page-content-height: page-content.height;
+    in property <[PageTreeRow]> page-tree;
+    callback page-tree-chosen(string);
+    out property <string> tab-tooltip;
+    property <length> tab-tooltip-x;
+    property <length> tab-tooltip-y;
+    property <bool> tab-tooltip-visible;
+    changed tab-tooltip => { root.tab-tooltip-visible=false; }
+    Timer { interval: 500ms; running: root.tab-tooltip != "" && !root.tab-tooltip-visible; triggered => { root.tab-tooltip-visible=true; } }
+
     // a press on a tab row's empty space (middle or left), twice for the
     // page chooser
     callback tab-space-pressed(int, bool);
@@ -939,35 +924,41 @@ export component MainWindow inherits Window {
                 hovered(i, x) => { root.menu-title-hovered(i, x, self.absolute-position.y + self.height); }
                 placed(i, x) => { root.menu-title-placed(i, x); }
             }
-            for row[level] in root.tab-rows: HorizontalLayout {
-                padding-left: 4px;
-                padding-top: 2px;
-                spacing: 2px;
-                for name[index] in row.names: Tab {
-                    text: name;
-                    selected: index == row.selected;
-                    chosen => { root.tab-chosen(level, index); }
-                    context-menu(x, y) => { root.tab-menu-requested(level, index, x, y); }
-                    close => { root.close-tab(level, index); }
+            page-frame := Rectangle {
+                vertical-stretch: 1;
+                property <bool> vertical-tabs: root.tab-alignment == 1 || root.tab-alignment == 2;
+                property <length> tab-space: root.navigation-tabs-hidden ? 0px : root.tab-rows.length * 28px;
+                property <length> tree-space: root.page-tree-side == 0 ? 0px : 190px;
+                property <length> tree-left: root.page-tree-side == 1 ? self.tree-space : 0px;
+                NotebookTree {
+                    visible: root.page-tree-side != 0;
+                    x: root.page-tree-side == 2 ? parent.width - parent.tree-space : 0px;
+                    width: parent.tree-space; height: parent.height;
+                    rows: root.page-tree;
+                    chosen(key) => { root.page-tree-chosen(key); }
                 }
-                // the row's empty space: as the reference's tab bar, a
-                // double click (left or middle) there chooses a new page for
-                // this notebook
-                TouchArea {
-                    horizontal-stretch: 1;
-                    min-width: 24px;
-                    pointer-event(event) => {
-                        if (event.kind == PointerEventKind.down && event.button == PointerEventButton.right) {
-                            root.tab-menu-requested(level, -1, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
-                        }
-                        if (event.kind == PointerEventKind.down
-                            && (event.button == PointerEventButton.left || event.button == PointerEventButton.middle)) {
-                            root.tab-space-pressed(level, event.button == PointerEventButton.middle);
-                        }
-                    }
+                tab-navigation := NotebookNavigation {
+                    visible: !root.navigation-tabs-hidden;
+                    x: root.tab-alignment == 2 ? parent.width - (root.page-tree-side == 2 ? parent.tree-space : 0px) - parent.tab-space : parent.tree-left;
+                    y: root.tab-alignment == 3 ? parent.height - parent.tab-space : 0px;
+                    width: parent.vertical-tabs ? parent.tab-space : parent.width - parent.tree-space;
+                    height: parent.vertical-tabs ? parent.height : parent.tab-space;
+                    rows: root.tab-rows;
+                    vertical: parent.vertical-tabs;
+                    clockwise: root.tab-alignment == 2;
+                    reverse-levels: root.tab-alignment == 2 || root.tab-alignment == 3;
+                    elide: root.elide-tab-names;
+                    chosen(level,index) => { root.tab-chosen(level,index); }
+                    context-menu(level,index,x,y) => { root.tab-menu-requested(level,index,x,y); }
+                    close(level,index) => { root.close-tab(level,index); }
+                    space-pressed(level,middle) => { root.tab-space-pressed(level,middle); }
+                    hovered(name,x,y,on) => { root.tab-tooltip=on ? name : ""; root.tab-tooltip-x=x; root.tab-tooltip-y=y; }
                 }
-            }
-            HorizontalLayout {
+            page-content := HorizontalLayout {
+                x: page-frame.tree-left + (root.tab-alignment == 1 ? page-frame.tab-space : 0px);
+                y: root.tab-alignment == 0 ? page-frame.tab-space : 0px;
+                width: page-frame.width - page-frame.tree-space - (page-frame.vertical-tabs ? page-frame.tab-space : 0px);
+                height: page-frame.height - (!page-frame.vertical-tabs ? page-frame.tab-space : 0px);
                 if root.gallery-page: VerticalBox {
                     width: 400px;
                     alignment: start;
@@ -1907,6 +1898,7 @@ export component MainWindow inherits Window {
                     }
                 }
             }
+            } // page-frame
             if root.daemon-note != "": Rectangle {
                 background: Theme.panel;
                 // (its own height, whatever room is left over)
@@ -2036,6 +2028,15 @@ export component MainWindow inherits Window {
             line-clicked(p, i, right, top, left) => { root.menu-line-clicked(p, i, right, top, left); }
             placed(p, x, y, width) => { root.menu-placed(p, x, y, width); }
             dismiss => { root.menu-dismissed(); }
+        }
+        if root.tab-tooltip-visible && root.tab-tooltip != "": Rectangle {
+            width: min(420px,label.preferred-width + 16px);
+            height: label.preferred-height + 12px;
+            x: min(root.tab-tooltip-x,max(0px,parent.width - self.width - 8px));
+            y: min(root.tab-tooltip-y,max(0px,parent.height - self.height - 8px));
+            background: Theme.panel;
+            border-width: 1px; border-color: Theme.border;
+            label := Text { x:8px;y:6px;width:parent.width - 16px;text:root.tab-tooltip;wrap:word-wrap;color:Theme.text; }
         }
         if root.search-or-open: Rectangle {
             width: parent.width;

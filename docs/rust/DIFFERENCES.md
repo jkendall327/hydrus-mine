@@ -1954,3 +1954,20 @@ therefore place fullwidth numeric subtags before alphabetic ones while retaining
 the reference's mixed ASCII/Unicode chunk ordering; the existing40-state exact
 banner replay remains unchanged. A fresh live Qt preview recording covers eight
 Unicode/mixed-script/zero boundaries and four sort-key equalities.
+
+
+Notebook alignment, gated tab hiding and middle elision have native consumers;
+the broader GUI Pages/navigation/tab families remain partial. The dependency
+hierarchy selector uses a fixed 190-pixel column of expanded, indented page rows.
+It does not port the Qt tree's collapse, drag/drop, context menus or full keyboard
+navigation, and no additional tree leaf is claimed. Tab thickness is 28 pixels;
+native font metrics and equal overflow budgets differ from Qt's tab allocation,
+so the exact retained substring at a given pixel width can differ. Middle fitting
+preserves Unicode scalar boundaries, but does not yet preserve combining-grapheme
+clusters. Labels and persisted page names are never replaced by fitted text.
+Native hover text always supplies the cleaned full page name (joined lines,
+maximum 256 characters); Qt may retain an empty or older tooltip when its stored
+tab text did not change. Small native overflow arrows replace Qt's styled arrows.
+Rust behavior/render tests for this slice are authored for hosted CI; locally only
+real Qt recordings, formatting, diff checks and cached Slint source compilation
+were executed.

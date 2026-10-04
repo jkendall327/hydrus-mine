@@ -122,6 +122,7 @@ settings! {
     page_insertion: hydrus_store::settings::PageInsertion,
     page_chooser: hydrus_store::settings::PageChooserSettings,
     page_navigation: hydrus_store::settings::PageNavigationSettings,
+    tab_presentation: hydrus_store::settings::TabPresentationSettings,
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
@@ -2055,6 +2056,18 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "navigation and drag-and-drop",
                     vec![
+                        choice(
+                            "Notebook tab alignment: ",
+                            &["top", "left", "right", "bottom"],
+                            |s| usize::try_from(s.tab_presentation.alignment.code()).unwrap_or(0),
+                            |s, value| {
+                                s.tab_presentation.alignment =
+                                    hydrus_store::settings::TabAlignment::from_code(
+                                        i64::try_from(value).unwrap_or(0),
+                                    )
+                                    .unwrap_or_default();
+                            },
+                        ),
                         int(
                             "Maximum entries to show in page navigation history: ",
                             (1, 1000),
@@ -2068,6 +2081,23 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| s.page_navigation.focus_search_on_change,
                             |s, v| s.page_navigation.focus_search_on_change = v,
                         ),
+                        choice(
+                            "EXPERIMENTAL: Show tab tree view: ",
+                            &["disable", "left", "right"],
+                            |s| usize::try_from(s.tab_presentation.tree_side()).unwrap_or(0),
+                            |s, value| {
+                                s.tab_presentation.tree_alignment = match value {
+                                    1 => Some(hydrus_store::settings::TabAlignment::Left),
+                                    2 => Some(hydrus_store::settings::TabAlignment::Right),
+                                    _ => None,
+                                };
+                            },
+                        ),
+                        check(
+                            "EXPERIMENTAL: Hide main page navigation tabs: ",
+                            |s| s.tab_presentation.hide_navigation_tabs,
+                            |s, value| s.tab_presentation.hide_navigation_tabs = value,
+                        ),
                     ],
                 ),
                 boxed(
@@ -2078,6 +2108,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             (1, 256),
                             |s| s.page_names.max_chars as i64,
                             |s, v| s.page_names.max_chars = v as usize,
+                        ),
+                        check(
+                            "When there are too many tabs to fit, '...' elide their names so they fit: ",
+                            |s| s.tab_presentation.elide_names,
+                            |s, value| s.tab_presentation.elide_names = value,
                         ),
                         choice(
                             "Show page file count after its name: ",

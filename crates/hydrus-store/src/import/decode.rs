@@ -353,6 +353,30 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &page_chooser)?;
+    let mut tabs = crate::settings::TabPresentationSettings::default();
+    if let Some(options) = &options {
+        if let Some(&value) = options.integers.get("notebook_tab_alignment") {
+            tabs.alignment = crate::settings::TabAlignment::from_code(value).unwrap_or_default();
+        }
+        tabs.tree_alignment = options
+            .noneable_integers
+            .get("treeview_alignment")
+            .and_then(|value| *value)
+            .and_then(crate::settings::TabAlignment::from_code)
+            .filter(|value| {
+                matches!(
+                    value,
+                    crate::settings::TabAlignment::Left | crate::settings::TabAlignment::Right
+                )
+            });
+        if let Some(&value) = options.booleans.get("treeview_hides_tabs") {
+            tabs.hide_navigation_tabs = value;
+        }
+        if let Some(&value) = options.booleans.get("elide_page_tab_names") {
+            tabs.elide_names = value;
+        }
+    }
+    insert_setting(&mut input, &tabs)?;
     let mut navigation = crate::settings::PageNavigationSettings::default();
     if let Some(options) = &options {
         navigation.confirm_all_closes = options

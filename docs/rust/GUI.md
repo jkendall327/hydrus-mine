@@ -2900,3 +2900,23 @@ status transition from deleted to unknown are in `service_deleted.json`.
 Opening another service review cancels the previous owner's pending question;
 retained callbacks from that retired owner cannot clear records or close the
 replacement review.
+
+
+GUI Pages now stages notebook tab alignment (top, left, right or bottom),
+width-based middle elision, and the experimental hide-navigation-tabs setting.
+Apply persists the choices and refreshes the existing nested notebooks without
+changing their pages or selection; Cancel leaves the open layout unchanged.
+Left/right labels rotate in their corresponding direction, and nested rows sit
+inside their parent row on each side. Full names remain available as hover text.
+Tabs keep their full stored labels when space is scarce: enabled elision measures
+native glyphs and replaces the middle only for painting; disabled elision offers
+small scrolling arrows without reducing the label height.
+
+The experimental hide flag takes effect only while the tree is enabled, matching
+Qt's gate. Its supporting native hierarchy selector lists every existing page on
+the chosen left/right side and selects by stable page key, including remembered
+children of notebooks. It is an expanded navigation list, with no new claim for
+Qt's broader tree drag/drop, collapse, or context-menu behavior. Actual Qt choices,
+bar positions, hidden states, selected indices and fitted strings are recorded in
+`tab_presentation.json`, alongside Qt orientation PNGs. Native consumer replays
+capture each side, hidden navigation and overflowing labels for hosted review.

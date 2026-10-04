@@ -109,6 +109,7 @@ pub mod string_processor_window;
 mod subscription_quality_control;
 mod subscriptions_window;
 mod tab_context_window;
+mod tab_presentation;
 pub mod tag_banner_window;
 pub(crate) mod tag_display_window;
 pub mod tag_filter_window;
@@ -448,6 +449,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         },
     );
+    tab_presentation::bind_names(window);
     show_tabs(window, &pages.borrow());
     refresh(window, &current.borrow().borrow());
     // a duplicates page's sidebar tabs
@@ -666,6 +668,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             };
             change_pages(&|pages| {
                 pages.select(level, index);
+                Ok(())
+            });
+        }
+    });
+    window.on_page_tree_chosen({
+        let change_pages = change_pages.clone();
+        move |text| {
+            let Some(key) = hydrus_core::pages::PageKey::from_hex(&text) else {
+                return;
+            };
+            change_pages(&|pages| {
+                pages.show(&key);
                 Ok(())
             });
         }
@@ -5808,6 +5822,7 @@ pub(crate) fn rating_row(control: &ratings::Control) -> RatingRow {
 
 /// Show the tabs of each notebook on the way to the page shown.
 fn show_tabs(window: &MainWindow, pages: &Pages) {
+    tab_presentation::show(window, pages);
     let rows: Vec<TabRow> = pages
         .tabs()
         .into_iter()
@@ -5816,6 +5831,18 @@ fn show_tabs(window: &MainWindow, pages: &Pages) {
             let names: Vec<SharedString> = labels.iter().map(|n| n.as_str().into()).collect();
             TabRow {
                 names: ModelRc::new(VecModel::from(names)),
+                full_names: ModelRc::new(VecModel::from(
+                    tabs.names
+                        .iter()
+                        .map(|name| {
+                            name.lines()
+                                .flat_map(str::chars)
+                                .take(256)
+                                .collect::<String>()
+                                .into()
+                        })
+                        .collect::<Vec<_>>(),
+                )),
                 selected: i32::try_from(tabs.selected).unwrap_or(0),
             }
         })

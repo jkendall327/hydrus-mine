@@ -298,6 +298,69 @@ impl Setting for PageChooserSettings {
     const KEY: &'static str = "gui_page_chooser";
 }
 
+/// Notebook bar/tree placement and width-based name elision from GUI Pages.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum TabAlignment {
+    #[default]
+    Top,
+    Left,
+    Right,
+    Bottom,
+}
+impl TabAlignment {
+    pub fn from_code(code: i64) -> Option<Self> {
+        Some(match code {
+            0 => Self::Top,
+            1 => Self::Left,
+            2 => Self::Right,
+            3 => Self::Bottom,
+            _ => return None,
+        })
+    }
+    pub fn code(self) -> i32 {
+        match self {
+            Self::Top => 0,
+            Self::Left => 1,
+            Self::Right => 2,
+            Self::Bottom => 3,
+        }
+    }
+}
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct TabPresentationSettings {
+    pub alignment: TabAlignment,
+    pub tree_alignment: Option<TabAlignment>,
+    pub hide_navigation_tabs: bool,
+    pub elide_names: bool,
+}
+impl Default for TabPresentationSettings {
+    fn default() -> Self {
+        Self {
+            alignment: TabAlignment::Top,
+            tree_alignment: None,
+            hide_navigation_tabs: false,
+            elide_names: true,
+        }
+    }
+}
+impl TabPresentationSettings {
+    pub fn tree_side(self) -> i32 {
+        match self.tree_alignment {
+            Some(TabAlignment::Left) => 1,
+            Some(TabAlignment::Right) => 2,
+            _ => 0,
+        }
+    }
+    pub fn tabs_hidden(self) -> bool {
+        self.hide_navigation_tabs && self.tree_side() != 0
+    }
+}
+impl Setting for TabPresentationSettings {
+    const KEY: &'static str = "gui_tab_presentation";
+}
+
 /// Confirmation and navigation preferences from GUI Pages.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
