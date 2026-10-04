@@ -10,7 +10,9 @@
     "c55c726dc9f7ae91650ba00755299db47701b641",
     "2b5015e642d20c1bd83450fe31ac63334735e8aa",
     "449c0957e2b5b72dd5f20c527dde2264a707d09e",
-    "57e9248907ae4cbaf953421192e4d8ffd087cfc6"
+    "57e9248907ae4cbaf953421192e4d8ffd087cfc6",
+    "38189276a8c5fe2223821f1e3119450470b8dc54",
+    "3d898d7ef54a6dde94eb9449f9af53849287008b"
   ],
   "validation": {
     "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states; real router queues in import/export contexts, six node kinds, exact vetoes, duplication, PNG and sidecar worker output",
@@ -83,8 +85,8 @@
       "before": "missing",
       "proposed_status": "first_pass",
       "proposedStatus": "first_pass",
-      "behavior": "Recursive subsidiary add/edit/delete and extended selected queues support standalone wrapper clipboard/PNG import/export, key-preserving duplication and recorded Remove all selected? confirmation/cancel. Separators, sorting, descendant parsers, inert editor context and converter sample data survive exact reference tuple/PNG roundtrips. Edits stay staged until page/list Apply; saved parser consumers produce the recorded multiline notes, and forced owner close invalidates retained exchange/recursive callbacks.",
-      "exactBehavior": "Recursive subsidiary add/edit/delete and extended selected queues support standalone wrapper clipboard/PNG import/export, key-preserving duplication and recorded Remove all selected? confirmation/cancel. Separators, sorting, descendant parsers, inert editor context and converter sample data survive exact reference tuple/PNG roundtrips. Edits stay staged until page/list Apply; saved parser consumers produce the recorded multiline notes, and forced owner close invalidates retained exchange/recursive callbacks.",
+      "behavior": "Recursive subsidiary add/edit/delete and extended selected queues support standalone wrapper clipboard/PNG import/export, key-preserving duplication and recorded Remove all selected? confirmation/cancel. Separators, sorting, descendant parsers, inert editor context and converter sample data survive exact reference tuple/PNG roundtrips. Edits stay staged until page/list Apply; saved parser consumers produce the recorded multiline notes, and forced owner close invalidates retained exchange/recursive callbacks. Selected queue PNG export opens the owned reference title/description/width panel with exact object type/count/size summary and default title. Edited title/description reach the readable header, width reaches the carrier, successful saves remember the directory and decoded payloads retain the recursive wrapper/router. Owner mutations are blocked while the child is open; queue/parser close invalidates retained exports.",
+      "exactBehavior": "Recursive subsidiary add/edit/delete and extended selected queues support standalone wrapper clipboard/PNG import/export, key-preserving duplication and recorded Remove all selected? confirmation/cancel. Separators, sorting, descendant parsers, inert editor context and converter sample data survive exact reference tuple/PNG roundtrips. Edits stay staged until page/list Apply; saved parser consumers produce the recorded multiline notes, and forced owner close invalidates retained exchange/recursive callbacks. Selected queue PNG export opens the owned reference title/description/width panel with exact object type/count/size summary and default title. Edited title/description reach the readable header, width reaches the carrier, successful saves remember the directory and decoded payloads retain the recursive wrapper/router. Owner mutations are blocked while the child is open; queue/parser close invalidates retained exports.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
@@ -121,6 +123,30 @@
           "line": 158,
           "commit": "24fbb367ec67b29eca8c53b62905adf1ba8acf80",
           "symbol": "open_subsidiaries"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/png_export.rs",
+          "line": 21,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "object_payload_description"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/png_export.rs",
+          "line": 90,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "encode_with_summary"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/png_export_window.rs",
+          "line": 81,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "open_with_summary"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_interchange_window.rs",
+          "line": 262,
+          "commit": "3d898d7ef54a6dde94eb9449f9af53849287008b",
+          "symbol": "open_subsidiaries_with_store"
         }
       ],
       "test_anchors": [
@@ -159,6 +185,18 @@
           "line": 1271,
           "commit": "24fbb367ec67b29eca8c53b62905adf1ba8acf80",
           "symbol": "subsidiary_queue_exchange_is_staged_preserves_wrappers_and_reaches_saved_parser"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_test_data.rs",
+          "line": 57,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "typed_png_summary_and_header_keep_the_recorded_object_package"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1571,
+          "commit": "3d898d7ef54a6dde94eb9449f9af53849287008b",
+          "symbol": "subsidiary_export_uses_owned_reference_png_parameters_and_discards_stale_export"
         }
       ],
       "reference_evidence": {
@@ -169,13 +207,19 @@
         "exchange_recorder": "oracle/record_subsidiary_exchange.py",
         "exchange_fixture": "oracle/fixtures/subsidiary_exchange.json",
         "exchange_png": "oracle/fixtures/subsidiary_exchange.png",
-        "exchange_visual": "oracle/fixtures/subsidiary_exchange_editor.png"
+        "exchange_visual": "oracle/fixtures/subsidiary_exchange_editor.png",
+        "png_parameters_recorder": "oracle/record_parser_png_export.py",
+        "png_parameters_fixture": "oracle/fixtures/parser_png_export.json",
+        "png_parameters_visual": "oracle/fixtures/parser_png_export_editor.png",
+        "png_parameters_recording": "passed: four real typed single/queue PNG panels, exact summary/title/width defaults, title/description edits, real .png writes, remembered directory and decoded payloads"
       },
       "limitations": [
-        "Mixed or unsupported packages reject atomically instead of partially accepting valid rows."
+        "Mixed or unsupported packages reject atomically instead of partially accepting valid rows.",
+        "Selected queues export as one PNG bundle; the reference export-each-object-to-PNGs dialog remains absent and is not claimed here."
       ],
       "limits": [
-        "Mixed or unsupported packages reject atomically instead of partially accepting valid rows."
+        "Mixed or unsupported packages reject atomically instead of partially accepting valid rows.",
+        "Selected queues export as one PNG bundle; the reference export-each-object-to-PNGs dialog remains absent and is not claimed here."
       ]
     },
     {
@@ -333,8 +377,8 @@
       "before": "partial",
       "proposed_status": "partial",
       "proposedStatus": "partial",
-      "behavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content.",
-      "exactBehavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content.",
+      "behavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content. Selected queue PNG export opens the owned reference title/description/width panel with exact object type/count/size summary and default title. Edited title/description reach the readable header, width reaches the carrier, successful saves remember the directory and decoded payloads retain the recursive wrapper/router. Owner mutations are blocked while the child is open; queue/parser close invalidates retained exports.",
+      "exactBehavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content. Selected queue PNG export opens the owned reference title/description/width panel with exact object type/count/size summary and default title. Edited title/description reach the readable header, width reaches the carrier, successful saves remember the directory and decoded payloads retain the recursive wrapper/router. Owner mutations are blocked while the child is open; queue/parser close invalidates retained exports.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-downloader-exchange/src/routers.rs",
@@ -365,6 +409,30 @@
           "line": 193,
           "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
           "symbol": "open_routers"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/png_export.rs",
+          "line": 21,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "object_payload_description"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/png_export.rs",
+          "line": 90,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "encode_with_summary"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/png_export_window.rs",
+          "line": 81,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "open_with_summary"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_interchange_window.rs",
+          "line": 232,
+          "commit": "3d898d7ef54a6dde94eb9449f9af53849287008b",
+          "symbol": "open_routers_with_store"
         }
       ],
       "test_anchors": [
@@ -391,6 +459,18 @@
           "line": 1024,
           "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
           "symbol": "closing_manual_export_discards_its_pending_router_exchange"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_test_data.rs",
+          "line": 57,
+          "commit": "38189276a8c5fe2223821f1e3119450470b8dc54",
+          "symbol": "typed_png_summary_and_header_keep_the_recorded_object_package"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 1087,
+          "commit": "3d898d7ef54a6dde94eb9449f9af53849287008b",
+          "symbol": "router_png_child_has_recorded_parameters_and_closes_with_its_queue_owner"
         }
       ],
       "reference_evidence": {
@@ -398,21 +478,25 @@
         "fixture": "oracle/fixtures/router_exchange.json",
         "png": "oracle/fixtures/router_exchange.png",
         "visual_reference": "oracle/fixtures/router_exchange_editor.png",
-        "actual_recording": "passed: real Qt queue controls and clipboard, all six node kinds, exact direction/source warnings, selected duplication, reference PNG decode, v2 upgrade and real generated sidecar write"
+        "actual_recording": "passed: real Qt queue controls and clipboard, all six node kinds, exact direction/source warnings, selected duplication, reference PNG decode, v2 upgrade and real generated sidecar write",
+        "png_parameters_recorder": "oracle/record_parser_png_export.py",
+        "png_parameters_fixture": "oracle/fixtures/parser_png_export.json",
+        "png_parameters_visual": "oracle/fixtures/parser_png_export_editor.png",
+        "png_parameters_recording": "passed: four real typed single/queue PNG panels, exact summary/title/width defaults, title/description edits, real .png writes, remembered directory and decoded payloads"
       },
       "limitations": [
         "The sidecar-router parent remains partial here: no broad parent/descendant completion is inferred from queue exchange.",
         "Unsupported mixed packages are rejected atomically rather than appending a permitted subset with a warning.",
-        "PNG exchange uses the existing shared review/path export UI; the separate reference title/description/width export panel is not connected to this owner yet.",
         "Export-folder query results are still not provided as media examples; existing manual-export/import-folder/filename-tagging examples remain covered.",
-        "Non-stub timestamps and unsupported processors are rejected before staging so unrepresentable data is not silently lost."
+        "Non-stub timestamps and unsupported processors are rejected before staging so unrepresentable data is not silently lost.",
+        "Selected queues export as one PNG bundle; the reference export-each-object-to-PNGs dialog remains absent and is not claimed here."
       ],
       "limits": [
         "The sidecar-router parent remains partial here: no broad parent/descendant completion is inferred from queue exchange.",
         "Unsupported mixed packages are rejected atomically rather than appending a permitted subset with a warning.",
-        "PNG exchange uses the existing shared review/path export UI; the separate reference title/description/width export panel is not connected to this owner yet.",
         "Export-folder query results are still not provided as media examples; existing manual-export/import-folder/filename-tagging examples remain covered.",
-        "Non-stub timestamps and unsupported processors are rejected before staging so unrepresentable data is not silently lost."
+        "Non-stub timestamps and unsupported processors are rejected before staging so unrepresentable data is not silently lost.",
+        "Selected queues export as one PNG bundle; the reference export-each-object-to-PNGs dialog remains absent and is not claimed here."
       ]
     },
     {
