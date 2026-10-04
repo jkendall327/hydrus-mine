@@ -7,6 +7,118 @@
 use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_core::import_options::PresentationStatus;
+
+#[test]
+fn shared_overwrite_drafts_close_cleanly_and_clipboard_reaches_real_importer() {
+    use hydrus_core::import_options::CallerType;
+    use hydrus_downloader_exchange::import_options;
+    use hydrus_gui_model::import_options_overwrite::Overwrite;
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("subscription_import_options.json");
+    let existing = import_options::decode_text(&fixture["existing"].to_string()).unwrap();
+    let incoming = import_options::decode_text(&fixture["incoming"].to_string()).unwrap();
+    let windows = headless::init();
+    let slot = Rc::new(RefCell::new(None));
+    let result = Rc::new(RefCell::new(None));
+    let accepted = {
+        let result = result.clone();
+        Rc::new(move |value| *result.borrow_mut() = Some(value))
+    };
+    let chooser = hydrus_gui::import_options_overwrite_window::open(
+        &store,
+        Overwrite::new(
+            CallerType::SpecificImporter,
+            true,
+            existing.clone(),
+            incoming.clone(),
+        ),
+        &slot,
+        accepted,
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    *slot.borrow_mut() = Some(chooser.clone_strong());
+    chooser.invoke_preset(1);
+    let pixels = headless::render(&windows.get(0).unwrap(), 1180, 430);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("import_options_overwrite.png"),
+        &pixels,
+        1180,
+        430,
+    )
+    .unwrap();
+    chooser.invoke_apply();
+    assert!(slot.borrow().is_none());
+    assert_eq!(
+        import_options::tuple(result.borrow().as_ref().unwrap()).unwrap(),
+        fixture["overwrite"][2]["options"]
+    );
+    result.borrow_mut().take();
+    chooser.invoke_apply();
+    assert!(result.borrow().is_none());
+
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(8);
+    let queue = bound.current.borrow().borrow().importer().unwrap().queue;
+    ui.invoke_importer_import_options();
+    let editor = bound
+        .folders
+        .import_options
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let text = import_options::encode_text(&incoming).unwrap();
+    hydrus_gui::set_paster(move || text.clone());
+    editor.invoke_paste_options(2);
+    assert!(
+        store
+            .read(move |conn| hydrus_store::queues::queue(conn, queue))
+            .unwrap()
+            .unwrap()
+            .options
+            .is_empty()
+    );
+    editor.invoke_apply();
+    assert_eq!(
+        store
+            .read(move |conn| hydrus_store::queues::queue(conn, queue))
+            .unwrap()
+            .unwrap()
+            .options,
+        incoming
+    );
+    editor.invoke_apply();
+    ui.invoke_importer_import_options();
+    let editor = bound
+        .folders
+        .import_options
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    hydrus_gui::set_paster(|| "[26, 3, []]".into());
+    editor.invoke_paste_options(0);
+    assert!(
+        editor
+            .get_clipboard_error()
+            .contains("Import Options Container")
+    );
+    editor.invoke_cancel();
+    assert_eq!(
+        store
+            .read(move |conn| hydrus_store::queues::queue(conn, queue))
+            .unwrap()
+            .unwrap()
+            .options,
+        incoming
+    );
+}
 use hydrus_gui::{ImportOptionsWindow, MainWindow, Pages, bind, headless};
 use hydrus_store::{import_folders, queues};
 

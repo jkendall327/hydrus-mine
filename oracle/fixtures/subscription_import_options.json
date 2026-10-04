@@ -1709,5 +1709,1047 @@
       "raw": "not json",
       "expected": "JSON-serialised Import Options Container"
     }
+  ],
+  "overwrite": [
+    {
+      "action": "initial",
+      "current": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "pasted": [
+        0,
+        6
+      ],
+      "left_labels": [
+        "> prefetch logic: looks good",
+        "file filtering: default",
+        "tag filtering: default",
+        "locations: default",
+        "tags: default",
+        "> notes: not adding notes",
+        "external programs: default",
+        "presentation: default"
+      ],
+      "pasted_labels": [
+        "> prefetch logic: WARNING: ignores hashes for file redownload checks!, ignores URLs for metadata redownload checks",
+        "no changes (both default)",
+        "no changes (both default)",
+        "no changes (both default)",
+        "no changes (both default)",
+        "notes: default",
+        "no changes (both default)",
+        "> presentation: not presenting any files"
+      ],
+      "result_labels": [
+        "> prefetch logic: WARNING: ignores hashes for file redownload checks!, ignores URLs for metadata redownload checks",
+        "file filtering: default",
+        "tag filtering: default",
+        "locations: default",
+        "tags: default",
+        "> notes: not adding notes",
+        "external programs: default",
+        "> presentation: not presenting any files"
+      ],
+      "options": [
+        143,
+        1,
+        [
+          21,
+          2,
+          [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                2,
+                [
+                  145,
+                  2,
+                  [
+                    0,
+                    1,
+                    true,
+                    true,
+                    false
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                5
+              ],
+              [
+                2,
+                [
+                  153,
+                  1,
+                  [
+                    false,
+                    true,
+                    0,
+                    [],
+                    "synthetic",
+                    [
+                      [
+                        "old",
+                        "new"
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                6
+              ],
+              [
+                2,
+                [
+                  108,
+                  2,
+                  [
+                    [
+                      103,
+                      1,
+                      [
+                        [
+                          "616c6c206c6f63616c206d65646961"
+                        ],
+                        []
+                      ]
+                    ],
+                    2,
+                    1
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    },
+    {
+      "action": "merge",
+      "current": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "pasted": [
+        0,
+        6
+      ],
+      "left_labels": [
+        "> prefetch logic: looks good",
+        "file filtering: default",
+        "tag filtering: default",
+        "locations: default",
+        "tags: default",
+        "> notes: not adding notes",
+        "external programs: default",
+        "presentation: default"
+      ],
+      "pasted_labels": [
+        "> prefetch logic: WARNING: ignores hashes for file redownload checks!, ignores URLs for metadata redownload checks",
+        "no changes (both default)",
+        "no changes (both default)",
+        "no changes (both default)",
+        "no changes (both default)",
+        "notes: default",
+        "no changes (both default)",
+        "> presentation: not presenting any files"
+      ],
+      "result_labels": [
+        "> prefetch logic: WARNING: ignores hashes for file redownload checks!, ignores URLs for metadata redownload checks",
+        "file filtering: default",
+        "tag filtering: default",
+        "locations: default",
+        "tags: default",
+        "> notes: not adding notes",
+        "external programs: default",
+        "> presentation: not presenting any files"
+      ],
+      "options": [
+        143,
+        1,
+        [
+          21,
+          2,
+          [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                2,
+                [
+                  145,
+                  2,
+                  [
+                    0,
+                    1,
+                    true,
+                    true,
+                    false
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                5
+              ],
+              [
+                2,
+                [
+                  153,
+                  1,
+                  [
+                    false,
+                    true,
+                    0,
+                    [],
+                    "synthetic",
+                    [
+                      [
+                        "old",
+                        "new"
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                6
+              ],
+              [
+                2,
+                [
+                  108,
+                  2,
+                  [
+                    [
+                      103,
+                      1,
+                      [
+                        [
+                          "616c6c206c6f63616c206d65646961"
+                        ],
+                        []
+                      ]
+                    ],
+                    2,
+                    1
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    },
+    {
+      "action": "fill in",
+      "current": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "pasted": [
+        6
+      ],
+      "left_labels": [
+        "> prefetch logic: looks good",
+        "file filtering: default",
+        "tag filtering: default",
+        "locations: default",
+        "tags: default",
+        "> notes: not adding notes",
+        "external programs: default",
+        "presentation: default"
+      ],
+      "pasted_labels": [
+        "> prefetch logic: WARNING: ignores hashes for file redownload checks!, ignores URLs for metadata redownload checks",
+        "no changes (both default)",
+        "no changes (both default)",
+        "no changes (both default)",
+        "no changes (both default)",
+        "notes: default",
+        "no changes (both default)",
+        "> presentation: not presenting any files"
+      ],
+      "result_labels": [
+        "> prefetch logic: looks good",
+        "file filtering: default",
+        "tag filtering: default",
+        "locations: default",
+        "tags: default",
+        "> notes: not adding notes",
+        "external programs: default",
+        "> presentation: not presenting any files"
+      ],
+      "options": [
+        143,
+        1,
+        [
+          21,
+          2,
+          [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                2,
+                [
+                  145,
+                  2,
+                  [
+                    2,
+                    1,
+                    true,
+                    false,
+                    false
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                5
+              ],
+              [
+                2,
+                [
+                  153,
+                  1,
+                  [
+                    false,
+                    true,
+                    0,
+                    [],
+                    "synthetic",
+                    [
+                      [
+                        "old",
+                        "new"
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                6
+              ],
+              [
+                2,
+                [
+                  108,
+                  2,
+                  [
+                    [
+                      103,
+                      1,
+                      [
+                        [
+                          "616c6c206c6f63616c206d65646961"
+                        ],
+                        []
+                      ]
+                    ],
+                    2,
+                    1
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    },
+    {
+      "action": "replace",
+      "current": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "pasted": [
+        0,
+        5,
+        6
+      ],
+      "left_labels": [
+        "> prefetch logic: looks good",
+        "file filtering: default",
+        "tag filtering: default",
+        "locations: default",
+        "tags: default",
+        "> notes: not adding notes",
+        "external programs: default",
+        "presentation: default"
+      ],
+      "pasted_labels": [
+        "> prefetch logic: WARNING: ignores hashes for file redownload checks!, ignores URLs for metadata redownload checks",
+        "no changes (both default)",
+        "no changes (both default)",
+        "no changes (both default)",
+        "no changes (both default)",
+        "notes: default",
+        "no changes (both default)",
+        "> presentation: not presenting any files"
+      ],
+      "result_labels": [
+        "> prefetch logic: WARNING: ignores hashes for file redownload checks!, ignores URLs for metadata redownload checks",
+        "file filtering: default",
+        "tag filtering: default",
+        "locations: default",
+        "tags: default",
+        "notes: default",
+        "external programs: default",
+        "> presentation: not presenting any files"
+      ],
+      "options": [
+        143,
+        1,
+        [
+          21,
+          2,
+          [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                2,
+                [
+                  145,
+                  2,
+                  [
+                    0,
+                    1,
+                    true,
+                    true,
+                    false
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                6
+              ],
+              [
+                2,
+                [
+                  108,
+                  2,
+                  [
+                    [
+                      103,
+                      1,
+                      [
+                        [
+                          "616c6c206c6f63616c206d65646961"
+                        ],
+                        []
+                      ]
+                    ],
+                    2,
+                    1
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    },
+    {
+      "action": "manual clear notes",
+      "current": [
+        0
+      ],
+      "pasted": [
+        5
+      ],
+      "left_labels": [
+        "> prefetch logic: looks good",
+        "file filtering: default",
+        "tag filtering: default",
+        "locations: default",
+        "tags: default",
+        "> notes: not adding notes",
+        "external programs: default",
+        "presentation: default"
+      ],
+      "pasted_labels": [
+        "> prefetch logic: WARNING: ignores hashes for file redownload checks!, ignores URLs for metadata redownload checks",
+        "no changes (both default)",
+        "no changes (both default)",
+        "no changes (both default)",
+        "no changes (both default)",
+        "notes: default",
+        "no changes (both default)",
+        "> presentation: not presenting any files"
+      ],
+      "result_labels": [
+        "> prefetch logic: looks good",
+        "file filtering: default",
+        "tag filtering: default",
+        "locations: default",
+        "tags: default",
+        "notes: default",
+        "external programs: default",
+        "presentation: default"
+      ],
+      "options": [
+        143,
+        1,
+        [
+          21,
+          2,
+          [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                2,
+                [
+                  145,
+                  2,
+                  [
+                    2,
+                    1,
+                    true,
+                    false,
+                    false
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    }
+  ],
+  "favourites": [
+    {
+      "action": "add",
+      "requested": "profile",
+      "actual": "profile"
+    },
+    {
+      "action": "add",
+      "requested": "profile",
+      "actual": "profile (1)"
+    },
+    {
+      "action": "add",
+      "requested": "profile (1)",
+      "actual": "profile (1) (1)"
+    },
+    {
+      "action": "edit",
+      "original": "profile",
+      "requested": "profile (1)",
+      "actual": "profile (1) (2)"
+    },
+    {
+      "action": "delete",
+      "name": "profile (1)"
+    }
+  ],
+  "favourite_rows": [
+    {
+      "name": "profile (1) (1)",
+      "options": [
+        143,
+        1,
+        [
+          21,
+          2,
+          [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                2,
+                [
+                  145,
+                  2,
+                  [
+                    0,
+                    1,
+                    true,
+                    true,
+                    false
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                1
+              ],
+              [
+                2,
+                [
+                  148,
+                  1,
+                  [
+                    true,
+                    true,
+                    [
+                      14,
+                      8,
+                      [
+                        17,
+                        [
+                          40,
+                          41,
+                          42,
+                          43,
+                          44,
+                          59,
+                          60
+                        ],
+                        true
+                      ]
+                    ],
+                    1234,
+                    null,
+                    null,
+                    null,
+                    [
+                      2048,
+                      4096
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                2
+              ],
+              [
+                2,
+                [
+                  150,
+                  1,
+                  [
+                    [
+                      44,
+                      1,
+                      []
+                    ],
+                    [
+                      "series:synthetic",
+                      "plain"
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                3
+              ],
+              [
+                2,
+                [
+                  149,
+                  1,
+                  [
+                    [
+                      103,
+                      1,
+                      [
+                        [
+                          "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+                        ],
+                        []
+                      ]
+                    ],
+                    false,
+                    true,
+                    true,
+                    true,
+                    false
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                4
+              ],
+              [
+                2,
+                [
+                  151,
+                  1,
+                  [
+                    [
+                      "646f776e6c6f616465722074616773",
+                      [
+                        65,
+                        4,
+                        [
+                          true,
+                          [
+                            44,
+                            1,
+                            []
+                          ],
+                          [
+                            "plain",
+                            "series:synthetic"
+                          ],
+                          true,
+                          true,
+                          true,
+                          false,
+                          [
+                            44,
+                            1,
+                            []
+                          ],
+                          false,
+                          true
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                5
+              ],
+              [
+                2,
+                [
+                  153,
+                  1,
+                  [
+                    false,
+                    true,
+                    0,
+                    [],
+                    "synthetic",
+                    [
+                      [
+                        "old",
+                        "new"
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                6
+              ],
+              [
+                2,
+                [
+                  108,
+                  2,
+                  [
+                    [
+                      103,
+                      1,
+                      [
+                        [
+                          "616c6c206c6f63616c206d65646961"
+                        ],
+                        []
+                      ]
+                    ],
+                    2,
+                    1
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                7
+              ],
+              [
+                2,
+                [
+                  162,
+                  1,
+                  [
+                    26,
+                    3,
+                    []
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    },
+    {
+      "name": "profile (1) (2)",
+      "options": [
+        143,
+        1,
+        [
+          21,
+          2,
+          [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                2,
+                [
+                  145,
+                  2,
+                  [
+                    2,
+                    1,
+                    true,
+                    false,
+                    false
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                1
+              ],
+              [
+                2,
+                [
+                  148,
+                  1,
+                  [
+                    true,
+                    true,
+                    [
+                      14,
+                      8,
+                      [
+                        17,
+                        [
+                          40,
+                          41,
+                          42,
+                          43,
+                          44,
+                          59,
+                          60
+                        ],
+                        true
+                      ]
+                    ],
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                2
+              ],
+              [
+                2,
+                [
+                  150,
+                  1,
+                  [
+                    [
+                      44,
+                      1,
+                      []
+                    ],
+                    []
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                3
+              ],
+              [
+                2,
+                [
+                  149,
+                  1,
+                  [
+                    [
+                      103,
+                      1,
+                      [
+                        [
+                          "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+                        ],
+                        []
+                      ]
+                    ],
+                    false,
+                    true,
+                    true,
+                    true,
+                    false
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                4
+              ],
+              [
+                2,
+                [
+                  151,
+                  1,
+                  []
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                5
+              ],
+              [
+                2,
+                [
+                  153,
+                  1,
+                  [
+                    true,
+                    true,
+                    3,
+                    [],
+                    null,
+                    []
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                6
+              ],
+              [
+                2,
+                [
+                  108,
+                  2,
+                  [
+                    [
+                      103,
+                      1,
+                      [
+                        [
+                          "616c6c206c6f63616c206d65646961"
+                        ],
+                        []
+                      ]
+                    ],
+                    0,
+                    0
+                  ]
+                ]
+              ]
+            ],
+            [
+              [
+                0,
+                7
+              ],
+              [
+                2,
+                [
+                  162,
+                  1,
+                  [
+                    26,
+                    3,
+                    []
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    }
   ]
 }

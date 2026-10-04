@@ -21,6 +21,19 @@ pub enum Kind {
 }
 
 impl Kind {
+    pub fn code(self) -> u8 {
+        match self {
+            Self::Prefetch => 0,
+            Self::FileFiltering => 1,
+            Self::TagFiltering => 2,
+            Self::Locations => 3,
+            Self::Tags => 4,
+            Self::Notes => 5,
+            Self::Presentation => 6,
+            Self::ExternalPrograms => 7,
+        }
+    }
+
     pub const ALL: [Kind; 8] = [
         Kind::Prefetch,
         Kind::FileFiltering,

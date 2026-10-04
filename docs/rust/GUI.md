@@ -1940,3 +1940,10 @@ has only **show error** and **copy error**. The error window uses the reference
 **Network Error** title and preserves the text. Removing a finished job keeps its
 error; the owner's explicit clear hides the button and suppresses replay of the
 same stored failure. Parser fetch ownership is being connected separately.
+
+Importer option editors now expose reference container copy/paste and the shared
+custom overwrite chooser. The chooser shows current, pasted/loaded and result
+columns, with merge, fill-in-gaps and replace presets plus per-kind checkboxes.
+Applying the child replaces only the parent draft; closing either owner cancels
+uncommitted edits and retained callbacks cannot apply twice. Non-full replacement
+of global options is rejected with the reference information message.

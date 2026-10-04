@@ -48,6 +48,7 @@ pub mod formula_window;
 mod gallery;
 mod grid;
 pub mod headless;
+pub mod import_options_overwrite_window;
 mod import_options_window;
 mod import_window;
 mod importer_list_menu;

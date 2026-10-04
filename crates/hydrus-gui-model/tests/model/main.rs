@@ -20,6 +20,7 @@ mod folders;
 mod force_filetype;
 mod formula_editors;
 mod import_options_editor;
+mod import_options_overwrite;
 mod importer_menu;
 mod local_import_dialog;
 mod login_workflows;

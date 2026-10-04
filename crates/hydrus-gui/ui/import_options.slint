@@ -135,6 +135,10 @@ export component ImportOptionsWindow inherits Window {
     callback resolution-edited(int, bool, int, int);
     callback apply();
     callback cancel();
+    callback copy-options();
+    callback paste-options(int);
+    in property <string> clipboard-error;
+    in property <bool> overwrite-open;
 
     VerticalLayout {
         padding: 10px;
@@ -517,11 +521,38 @@ export component ImportOptionsWindow inherits Window {
                 }
             }
         }
+        if root.clipboard-error != "": Text { text: root.clipboard-error; color: Theme.error; wrap: word-wrap; }
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
+            Button { text: "copy"; enabled: !root.overwrite-open && !root.tag-child-open; clicked => { root.copy-options(); } }
+            Rectangle {
+                width: 66px;
+                height: 28px;
+                Button { width: parent.width; height: parent.height; text: "paste"; enabled: !root.overwrite-open && !root.tag-child-open; clicked => { clipboard-menu.show(); } }
+                clipboard-menu := PopupWindow {
+                    y: parent.height;
+                    width: 320px;
+                    height: 148px;
+                    Rectangle {
+                        background: Theme.panel;
+                        border-color: Theme.border;
+                        border-width: 1px;
+                        VerticalLayout {
+                            padding: 4px;
+                            spacing: 2px;
+                            Button { text: "custom paste: choose what you want"; clicked => { clipboard-menu.close(); root.paste-options(3); } }
+                            Rectangle { height: 1px; background: Theme.border; }
+                            Button { text: "merge-paste"; clicked => { clipboard-menu.close(); root.paste-options(0); } }
+                            Button { text: "fill-in-gaps-paste"; clicked => { clipboard-menu.close(); root.paste-options(1); } }
+                            Button { text: "replace-paste"; clicked => { clipboard-menu.close(); root.paste-options(2); } }
+                        }
+                    }
+                }
+            }
             Button {
                 text: "apply";
+                enabled: !root.overwrite-open && !root.tag-child-open;
                 clicked => { root.apply(); }
             }
             Button {

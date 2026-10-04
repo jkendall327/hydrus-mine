@@ -38,6 +38,8 @@ def record(session):
         from hydrus.client import ClientLocation
         from hydrus.client.gui import ClientGUISubscriptions as G
         from hydrus.client.gui import ClientGUIDialogsQuick as Q
+        from hydrus.client.gui.importing import ClientGUIImportOptionsContainer as O
+        from hydrus.client.importing.options import ImportOptionsManager as M
         from hydrus.client.importing import ClientImportSubscriptions as Subs
         from hydrus.client.importing.options import ImportOptionsConstants as IOC
         from hydrus.client.importing.options import ImportOptionsContainer as C
@@ -158,6 +160,37 @@ def record(session):
             panel._ClearImportOptionsContainers()
             out['steps'].append({'action': 'clear', 'accepted': answer, 'rows': rows()})
         out.update(questions=questions, errors=errors)
+        overwrite = O.EditImportOptionsOverwritePanel(session.controller.gui,
+            IOC.IMPORT_OPTIONS_CALLER_TYPE_SPECIFIC_IMPORTER,
+            IOC.IMPORT_OPTIONS_TYPES_CANONICAL_ORDER, existing, incoming)
+        def overwrite_state(action):
+            return {'action': action,
+                    'current': overwrite._current_import_options_container_checklist_box.GetValue(),
+                    'pasted': overwrite._pasted_import_options_container_checklist_box.GetValue(),
+                    'left_labels': [overwrite._current_import_options_container_checklist_box.item(i).text() for i in range(8)],
+                    'pasted_labels': [overwrite._pasted_import_options_container_checklist_box.item(i).text() for i in range(8)],
+                    'result_labels': [overwrite._result_listbox.item(i).text() for i in range(overwrite._result_listbox.count())],
+                    'options': normalise(json.loads(overwrite.GetValue().DumpToString()))}
+        out['overwrite'] = [overwrite_state('initial')]
+        for action, mode in [('merge', O.PASTE_MERGE), ('fill in', O.PASTE_FILL_IN), ('replace', O.PASTE_REPLACE)]:
+            overwrite._SetUpOverwrite(mode)
+            out['overwrite'].append(overwrite_state(action))
+        overwrite._current_import_options_container_checklist_box.SetValue([IOC.IMPORT_OPTIONS_TYPE_PREFETCH])
+        overwrite._pasted_import_options_container_checklist_box.SetValue([IOC.IMPORT_OPTIONS_TYPE_NOTES])
+        overwrite._UpdateResultList()
+        out['overwrite'].append(overwrite_state('manual clear notes'))
+        overwrite.deleteLater()
+        manager = M.ImportOptionsManager()
+        out['favourites'] = []
+        for name, value in [('profile', existing), ('profile', incoming), ('profile (1)', varied)]:
+            actual = manager.AddFavourite(name, value)
+            out['favourites'].append({'action': 'add', 'requested': name, 'actual': actual})
+        actual = manager.EditFavourite('profile', 'profile (1)', full)
+        out['favourites'].append({'action': 'edit', 'original': 'profile', 'requested': 'profile (1)', 'actual': actual})
+        manager.DeleteFavourite('profile (1)')
+        out['favourites'].append({'action': 'delete', 'name': 'profile (1)'})
+        out['favourite_rows'] = [{'name': name, 'options': normalise(json.loads(value.DumpToString()))}
+                                for name, value in sorted(manager.GetFavouriteImportOptionContainers().items())]
         panel.deleteLater()
         return out
     return session.controller.CallBlockingToQt(session.controller.gui, qt)

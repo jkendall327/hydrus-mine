@@ -1275,3 +1275,9 @@ not currently call `SetError`; the shared error widget's Python consumer is the
 parser fetch owner, whose hook is a separate slice. The native error dialog is a
 scrollable window rather than Qt's critical message box. No explicit clear menu
 item is added: `ClearError` belongs to the owner, while `ClearNetworkJob` keeps it.
+
+The shared import-options overwrite and clipboard paths are connected to native
+importer editors. Their clipboard errors use the native inline error presentation.
+Favourite naming and overwrite semantics have reference recordings and model
+replays; the favourites popup and durable save/edit/delete GUI remain pending,
+so the broad favourites item is not yet complete.

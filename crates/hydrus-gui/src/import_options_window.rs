@@ -5,7 +5,7 @@
 //! programs is edited here (that can be set to custom, from its default,
 //! or back). "apply" gives the importer's options to `done`.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -145,12 +145,14 @@ fn set_text(get: impl Fn() -> SharedString, set: impl Fn(SharedString), text: St
 
 struct State {
     editor: Editor,
+    manager: ImportOptionsManager,
     services: Arc<hydrus_store::store::Snapshot>,
     /// The allowed filetypes' groups showing their filetypes.
     filetype_expanded: [bool; 7],
     /// A tag filter being edited.
     tag_filter: crate::tag_filter_window::Slot,
     write_tags: crate::write_tag_window::Slot,
+    overwrite: crate::import_options_overwrite_window::Slot,
 }
 
 /// Show the editor whole: the list and the shown kind's page.
@@ -464,6 +466,7 @@ pub(crate) fn open(
     // (the reference's "import options simple mode", on as a new client
     // has it; hydrus-rs has no such option yet)
     let editor = Editor::new(&manager, caller, true, own);
+    let active = Rc::new(Cell::new(true));
     let window = ImportOptionsWindow::new().map_err(|e| e.to_string())?;
     window.set_description(DESCRIPTION.into());
     window.set_downloader(!matches!(
@@ -472,16 +475,26 @@ pub(crate) fn open(
     ));
     let state = Rc::new(RefCell::new(State {
         editor,
+        manager,
         services: store.snapshot(),
         filetype_expanded: [false; 7],
         tag_filter: Rc::default(),
         write_tags: Rc::default(),
+        overwrite: Rc::default(),
     }));
     let close = {
+        let active = active.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
         let state = state.clone();
         move || {
+            if !active.replace(false) {
+                return;
+            }
+            let overwrite = state.borrow().overwrite.borrow_mut().take();
+            if let Some(overwrite) = overwrite {
+                overwrite.invoke_cancel();
+            }
             let child = state.borrow().write_tags.borrow_mut().take();
             if let Some(child) = child {
                 child.invoke_cancel();
@@ -858,11 +871,74 @@ pub(crate) fn open(
             show(&window, &state.borrow());
         }
     });
+    window.on_copy_options({
+        let active = active.clone();
+        let state = state.clone();
+        let weak = window.as_weak();
+        move || {
+            if !active.get() {
+                return;
+            }
+            let result = hydrus_downloader_exchange::import_options::encode_text(
+                &state.borrow().editor.value(),
+            );
+            match result {
+                Ok(text) => crate::to_clipboard(&crate::Clip::Text(text)),
+                Err(error) => {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_clipboard_error(error.to_string().into());
+                    }
+                }
+            }
+        }
+    });
+    window.on_paste_options({
+        let active = active.clone(); let state = state.clone(); let weak = window.as_weak(); let store = store.clone();
+        move |index| {
+            if !active.get() || state.borrow().overwrite.borrow().is_some() { return; }
+            let Some(window) = weak.upgrade() else { return; };
+            let result = crate::from_clipboard().and_then(|text| hydrus_downloader_exchange::import_options::decode_text(&text).map_err(|e| e.to_string()));
+            let incoming = match result { Ok(options) => options, Err(error) => { window.set_clipboard_error(format!("Could not understand the clipboard as JSON-serialised Import Options Container.\n\n{error}").into()); return; } };
+            if index == 2 && caller == CallerType::Global && Kind::ALL.into_iter().any(|kind| !kind.is_set(&incoming)) {
+                window.set_clipboard_error("Hey, you tried to paste a non-full import options container into the \"global\" entry. Did you mean to do a merge-paste instead?".into());
+                return;
+            }
+            window.set_clipboard_error("".into());
+            let apply: Rc<dyn Fn(ImportOptionsSlice)> = {
+                let active = active.clone(); let state = state.clone(); let weak = weak.clone();
+                Rc::new(move |options| {
+                    if !active.get() { return; }
+                    let mut state = state.borrow_mut();
+                    let caller = state.editor.caller;
+                    state.editor = Editor::new(&state.manager, caller, true, &options);
+                    if let Some(window) = weak.upgrade() { show(&window, &state); show_tag_services(&window, &state); }
+                })
+            };
+            let draft = hydrus_gui_model::import_options_overwrite::Overwrite::new(caller, true, state.borrow().editor.value(), incoming);
+            if index == 3 {
+                let slot = state.borrow().overwrite.clone();
+                let closed: Rc<dyn Fn()> = { let weak = weak.clone(); Rc::new(move || { if let Some(window) = weak.upgrade() { window.set_overwrite_open(false); } }) };
+                match crate::import_options_overwrite_window::open(&store, draft, &slot, apply, closed) {
+                    Ok(child) => { *slot.borrow_mut() = Some(child); window.set_overwrite_open(true); }
+                    Err(error) => window.set_clipboard_error(error.into()),
+                }
+            } else {
+                let mut draft = draft;
+                let preset = match index { 0 => hydrus_gui_model::import_options_overwrite::Preset::Merge, 1 => hydrus_gui_model::import_options_overwrite::Preset::FillIn, 2 => hydrus_gui_model::import_options_overwrite::Preset::Replace, _ => return };
+                draft.preset(preset);
+                apply(draft.value());
+            }
+        }
+    });
     window.on_apply({
+        let active = active.clone();
         let state = state.clone();
         let close = close.clone();
         move || {
-            if state.borrow().write_tags.borrow().is_some() {
+            if !active.get()
+                || state.borrow().write_tags.borrow().is_some()
+                || state.borrow().overwrite.borrow().is_some()
+            {
                 return;
             }
             done(state.borrow().editor.value());
