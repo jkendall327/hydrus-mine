@@ -1841,8 +1841,17 @@ than the reference's complete service/action picker; advanced deletion reasons,
 remembered actions, custom-reason queue and copy/move-domain confirmation controls
 are not yet connected. Undelete currently restores immediately.
 
-Read-search OR construction, rewind and cancel now have native consumers. The
-empty-OR child editor and advanced Boolean input are still pending in this slice.
+Read-search OR construction, rewind and cancel now have native consumers. The empty-OR and advanced Boolean child editors are now implemented.
 The shared read autocomplete remains partial: multiple selection, read context
 menus and asynchronous fetch publication are assessed separately. The native
 rewind/cancel controls use text buttons rather than Qt's icon buttons.
+
+The OR child keeps the opening file/tag domains; it does not yet embed Qt's
+domain chooser and favourite-search cog. Shared read selection/context menus and
+asynchronous fetch publication remain partial. The advanced editor supports the
+existing native system-parser vocabulary, rejects negated system terms as Qt
+does, and limits Boolean distribution to 4,096 clauses to avoid an exponential
+allocation. System-predicate editors reuse the existing shared native opener;
+the OR owner cancels them on close. Native layouts and text controls differ from
+Qt's notebook and icon controls. These additions do not promote the complete
+read-autocomplete or OR parent workflows.

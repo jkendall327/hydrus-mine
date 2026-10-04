@@ -2188,6 +2188,10 @@ impl SearchPage {
         }
         self.autocomplete.clear();
     }
+    /// Accepted child predicates follow the same normal broadcast as suggestions.
+    pub fn apply_or_editor(&mut self, predicates: Vec<Predicate>) {
+        self.broadcast_or(predicates, false);
+    }
     fn sync_or_draft(&mut self) {
         let label = self
             .or_draft

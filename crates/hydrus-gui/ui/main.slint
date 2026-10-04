@@ -1,3 +1,4 @@
+export { SearchOrWindow } from "search_or.slint";
 export { NamespaceSortsWindow } from "namespace_sorts.slint";
 // The main window: for now one search page, laid out as the reference's
 // (a sidebar with the search, and the thumbnail grid), and a status bar.
@@ -562,6 +563,8 @@ export component MainWindow inherits Window {
     in property <int> autocomplete-tab;
     callback autocomplete-tab-chosen(int);
     in property <bool> or-active;
+    in property <bool> search-or-open;
+    in property <bool> advanced-or-visible;
     in property <bool> or-rewind-visible;
     callback search-or-action(int);
     callback search-or-escape() -> bool;
@@ -835,6 +838,7 @@ export component MainWindow inherits Window {
         height: 100%;
         capture-key-pressed(event) => {
             root.session-user-activity();
+            if root.search-or-open { return accept; }
             // an open menu takes every key, and alt and a letter opens one
             if (root.menu-panes.length > 0) {
                 root.menu-key(event.text, event.modifiers.alt);
@@ -1456,10 +1460,11 @@ export component MainWindow inherits Window {
                         }
                     }
                     if !root.search-locked && !root.float-autocomplete && root.note == "": ReadAutocomplete {
-                        preferred-height: root.autocomplete-preferred-height + (root.or-active ? 72px : 36px);
-                        max-height: root.autocomplete-preferred-height + (root.or-active ? 72px : 36px);
+                        preferred-height: root.autocomplete-preferred-height + (root.or-active ? 108px : 72px);
+                        max-height: root.autocomplete-preferred-height + (root.or-active ? 108px : 72px);
                         tab-index: root.autocomplete-tab;
             or-active: root.or-active;
+                        advanced-visible: root.advanced-or-visible;
             or-rewind-visible: root.or-rewind-visible;
             or-action(i) => { root.search-or-action(i); root.search-focus-requests += 1; }
                         tab-chosen(i) => { root.autocomplete-tab-chosen(i); root.search-focus-requests += 1; }
@@ -1988,9 +1993,10 @@ export component MainWindow inherits Window {
             x: root.autocomplete-anchor-x;
             y: root.autocomplete-anchor-y;
             width: root.autocomplete-anchor-width;
-            height: max(62px, min(root.autocomplete-preferred-height + (root.or-active ? 72px : 36px), root.height - self.y - 4px));
+            height: max(62px, min(root.autocomplete-preferred-height + (root.or-active ? 108px : 72px), root.height - self.y - 4px));
             tab-index: root.autocomplete-tab;
             or-active: root.or-active;
+                        advanced-visible: root.advanced-or-visible;
             or-rewind-visible: root.or-rewind-visible;
             or-action(i) => { root.search-or-action(i); root.search-focus-requests += 1; }
             tab-chosen(i) => { root.autocomplete-tab-chosen(i); root.search-focus-requests += 1; }
@@ -2027,6 +2033,12 @@ export component MainWindow inherits Window {
             line-clicked(p, i, right, top, left) => { root.menu-line-clicked(p, i, right, top, left); }
             placed(p, x, y, width) => { root.menu-placed(p, x, y, width); }
             dismiss => { root.menu-dismissed(); }
+        }
+        if root.search-or-open: Rectangle {
+            width: parent.width;
+            height: parent.height;
+            background: Theme.shade;
+            TouchArea { }
         }
     }
     }

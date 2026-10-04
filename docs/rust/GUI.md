@@ -2781,3 +2781,15 @@ sorted term, then cancel the remaining draft. Cancel clears the input and leaves
 the active search alone. Committed OR predicates query real files and survive
 favourite-search persistence; draft state is never saved with a search. The
 actual Qt state and query count are recorded in `read_or.json`.
+
+The read autocomplete OR button opens an empty staged search editor in the
+caller's file/tag context. It uses the same results/favourites/children lists,
+system-predicate child opener and nested OR construction. Accepting zero terms
+clears the caller input, one term unwraps it, and multiple terms become an OR.
+Advanced mode exposes the advanced input dialog with a live result preview. It
+accepts not/and/or/implies/xor/xnor/nand/nor and their symbolic forms, parentheses
+and escaped tag text, distributing clauses into AND-of-OR search predicates.
+Invalid input stays open with the recorded validation message. Both children
+leave caller text and predicates intact on Cancel; a closed caller, cancelled
+ancestor or retained old child cannot apply its staged search. Their recorded
+Qt dialogs, parser outputs and actual query counts are in `read_or_editors.json`.

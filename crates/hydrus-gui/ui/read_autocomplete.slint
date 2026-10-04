@@ -4,6 +4,7 @@ import { ReadSuggestions } from "read_suggestions.slint";
 import { ListText, Theme } from "theme.slint";
 
 export component ReadAutocomplete inherits Rectangle {
+    in property <bool> enabled: true;
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
     in property <int> tab-index;
@@ -11,25 +12,31 @@ export component ReadAutocomplete inherits Rectangle {
     callback tab-chosen(int);
     callback chosen(int);
     in property <bool> or-active;
+    in property <bool> advanced-visible;
     in property <bool> or-rewind-visible;
     callback or-action(int);
     background: Theme.panel;
     VerticalLayout {
         spacing: 4px;
         tabs := ComboBox {
+            enabled: root.enabled;
             model: ["results", "favourites", "children"];
             current-index: root.tab-index;
             selected => { root.tab-chosen(self.current-index); }
         }
+        HorizontalLayout {
+            Button { enabled: root.enabled; text: "OR"; clicked => { root.or-action(3); } }
+            if root.advanced-visible: Button { enabled: root.enabled; text: "advanced"; clicked => { root.or-action(4); } }
+        }
         if root.or-active: HorizontalLayout {
-            if root.or-rewind-visible: Button { text: "↶"; clicked => { root.or-action(1); } }
-            Button { text: "cancel OR"; clicked => { root.or-action(2); } }
+            if root.or-rewind-visible: Button { enabled: root.enabled; text: "↶"; clicked => { root.or-action(1); } }
+            Button { enabled: root.enabled; text: "cancel OR"; clicked => { root.or-action(2); } }
         }
         ReadSuggestions {
             vertical-stretch: 1;
             suggestions: root.suggestions;
             highlighted: root.highlighted;
-            chosen(i) => { root.chosen(i); }
+            chosen(i) => { if root.enabled { root.chosen(i); } }
         }
     }
 }

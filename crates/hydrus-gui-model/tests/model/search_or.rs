@@ -39,3 +39,25 @@ fn staged_or_replays_actual_read_broadcasts_rewind_cancel_and_single_unwrap() {
         assert_eq!(json!(shown), event["predicates"], "{event}");
     }
 }
+
+#[test]
+fn advanced_boolean_preview_replays_all_operators_escapes_and_real_validation() {
+    let fixture: Value = hydrus_testkit::fixture_json("read_or_editors.json");
+    let text = TextContext::default();
+    for case in fixture["cases"].as_array().unwrap() {
+        let input = case["input"].as_str().unwrap();
+        let (preview, valid) = hydrus_gui_model::search_or::advanced::preview(input, &text);
+        assert_eq!(preview, case["preview"].as_str().unwrap(), "{case}");
+        assert_eq!(valid, case["valid"] == "HydrusValid", "{case}");
+        if valid {
+            let predicates =
+                hydrus_gui_model::search_or::advanced::predicates(input, &text).unwrap();
+            let mut shown: Vec<_> = predicates
+                .iter()
+                .map(|p| predicate_text(p, &text))
+                .collect();
+            shown.sort();
+            assert_eq!(json!(shown), case["predicates"], "{case}");
+        }
+    }
+}

@@ -1,4 +1,5 @@
 //! A read-autocomplete OR draft is separate from the active search.
+pub mod advanced;
 use hydrus_core::sort::human_sort_key;
 use hydrus_search::{Predicate, TextContext, predicate_text};
 

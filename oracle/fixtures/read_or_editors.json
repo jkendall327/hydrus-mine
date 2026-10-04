@@ -1,0 +1,385 @@
+{
+  "dialogs": [
+    {
+      "kind": "basic",
+      "accepted": false,
+      "title": "edit OR predicate",
+      "before": [],
+      "after": [
+        "parity:or alpha OR parity:or beta"
+      ],
+      "tags": [
+        "parity:or alpha",
+        "parity:or beta"
+      ],
+      "parent_text": "parent draft",
+      "parent_predicates": [],
+      "query_count": null
+    },
+    {
+      "kind": "basic",
+      "accepted": true,
+      "title": "edit OR predicate",
+      "before": [],
+      "after": [
+        "parity:or alpha OR parity:or beta"
+      ],
+      "tags": [
+        "parity:or alpha",
+        "parity:or beta"
+      ],
+      "parent_text": "",
+      "parent_predicates": [
+        "parity:or alpha OR parity:or beta"
+      ],
+      "query_count": 2
+    },
+    {
+      "kind": "advanced",
+      "accepted": false,
+      "title": "parse advanced predicate string",
+      "before": "",
+      "after": [
+        "parity:or alpha OR parity:or gamma",
+        "parity:or beta OR parity:or gamma"
+      ],
+      "tags": [],
+      "parent_text": "parent draft",
+      "parent_predicates": [
+        "parity:or alpha OR parity:or beta"
+      ],
+      "query_count": 2
+    },
+    {
+      "kind": "advanced",
+      "accepted": true,
+      "title": "parse advanced predicate string",
+      "before": "",
+      "after": [
+        "parity:or alpha OR parity:or gamma",
+        "parity:or beta OR parity:or gamma"
+      ],
+      "tags": [],
+      "parent_text": "",
+      "parent_predicates": [
+        "parity:or alpha OR parity:or beta",
+        "parity:or alpha OR parity:or gamma",
+        "parity:or beta OR parity:or gamma"
+      ],
+      "query_count": 1
+    },
+    {
+      "kind": "basic",
+      "accepted": true,
+      "title": "edit OR predicate",
+      "before": [],
+      "after": [],
+      "tags": [],
+      "parent_text": "",
+      "parent_predicates": [
+        "parity:or alpha OR parity:or beta",
+        "parity:or alpha OR parity:or gamma",
+        "parity:or beta OR parity:or gamma"
+      ],
+      "query_count": 1
+    },
+    {
+      "kind": "basic",
+      "accepted": true,
+      "title": "edit OR predicate",
+      "before": [],
+      "after": [
+        "parity:or alpha"
+      ],
+      "tags": [
+        "parity:or alpha"
+      ],
+      "parent_text": "",
+      "parent_predicates": [
+        "parity:or alpha",
+        "parity:or alpha OR parity:or beta",
+        "parity:or alpha OR parity:or gamma",
+        "parity:or beta OR parity:or gamma"
+      ],
+      "query_count": 1
+    }
+  ],
+  "cases": [
+    {
+      "input": "",
+      "preview": "",
+      "valid": "",
+      "predicates": [],
+      "error": "Please enter a string that parses into a set of search rules."
+    },
+    {
+      "input": "parity:or alpha",
+      "preview": "parity:or alpha",
+      "valid": "HydrusValid",
+      "predicates": [
+        "parity:or alpha"
+      ],
+      "error": null
+    },
+    {
+      "input": "parity:or alpha and parity:or beta",
+      "preview": "parity:or alpha\nparity:or beta",
+      "valid": "HydrusValid",
+      "predicates": [
+        "parity:or alpha",
+        "parity:or beta"
+      ],
+      "error": null
+    },
+    {
+      "input": "(parity:or alpha and parity:or beta) or parity:or gamma",
+      "preview": "parity:or alpha OR parity:or gamma\nparity:or beta OR parity:or gamma",
+      "valid": "HydrusValid",
+      "predicates": [
+        "parity:or alpha OR parity:or gamma",
+        "parity:or beta OR parity:or gamma"
+      ],
+      "error": null
+    },
+    {
+      "input": "not (parity:or alpha or parity:or beta)",
+      "preview": "-parity:or alpha\n-parity:or beta",
+      "valid": "HydrusValid",
+      "predicates": [
+        "-parity:or alpha",
+        "-parity:or beta"
+      ],
+      "error": null
+    },
+    {
+      "input": "parity:or alpha => parity:or beta",
+      "preview": "-parity:or alpha OR parity:or beta",
+      "valid": "HydrusValid",
+      "predicates": [
+        "-parity:or alpha OR parity:or beta"
+      ],
+      "error": null
+    },
+    {
+      "input": "parity:or alpha xor parity:or beta",
+      "preview": "parity:or alpha OR parity:or beta\n-parity:or alpha OR -parity:or beta",
+      "valid": "HydrusValid",
+      "predicates": [
+        "-parity:or alpha OR -parity:or beta",
+        "parity:or alpha OR parity:or beta"
+      ],
+      "error": null
+    },
+    {
+      "input": "parity:or alpha xnor parity:or beta",
+      "preview": "-parity:or beta OR parity:or alpha\n-parity:or alpha OR parity:or beta",
+      "valid": "HydrusValid",
+      "predicates": [
+        "-parity:or alpha OR parity:or beta",
+        "-parity:or beta OR parity:or alpha"
+      ],
+      "error": null
+    },
+    {
+      "input": "parity:or alpha nand parity:or beta",
+      "preview": "-parity:or alpha OR -parity:or beta",
+      "valid": "HydrusValid",
+      "predicates": [
+        "-parity:or alpha OR -parity:or beta"
+      ],
+      "error": null
+    },
+    {
+      "input": "parity:or alpha nor parity:or beta",
+      "preview": "-parity:or alpha\n-parity:or beta",
+      "valid": "HydrusValid",
+      "predicates": [
+        "-parity:or alpha",
+        "-parity:or beta"
+      ],
+      "error": null
+    },
+    {
+      "input": "parity:or alpha or not parity:or alpha",
+      "preview": "-parity:or alpha OR parity:or alpha",
+      "valid": "HydrusValid",
+      "predicates": [
+        "-parity:or alpha OR parity:or alpha"
+      ],
+      "error": null
+    },
+    {
+      "input": "parity:or alpha and parity:or alpha",
+      "preview": "parity:or alpha",
+      "valid": "HydrusValid",
+      "predicates": [
+        "parity:or alpha"
+      ],
+      "error": null
+    },
+    {
+      "input": "parity:or \\(literal\\) or parity:*",
+      "preview": "parity:*anything* OR parity:or (literal)",
+      "valid": "HydrusValid",
+      "predicates": [
+        "parity:*anything* OR parity:or (literal)"
+      ],
+      "error": null
+    },
+    {
+      "input": "system:inbox and parity:or alpha",
+      "preview": "system:inbox\nparity:or alpha",
+      "valid": "HydrusValid",
+      "predicates": [
+        "parity:or alpha",
+        "system:inbox"
+      ],
+      "error": null
+    },
+    {
+      "input": "not system:inbox",
+      "preview": "Could not parse! Sorry, that would make negated system tags, which are not supported yet! Try to rephrase or negate the system tag yourself.",
+      "valid": "HydrusInvalid",
+      "predicates": [],
+      "error": "Please enter a string that parses into a set of search rules."
+    },
+    {
+      "input": "parity:or alpha and",
+      "preview": "Could not parse! Parser error: unused values left in stack",
+      "valid": "HydrusInvalid",
+      "predicates": [],
+      "error": "Please enter a string that parses into a set of search rules."
+    },
+    {
+      "input": "(parity:or alpha",
+      "preview": "Could not parse! Syntax error: mismatched parentheses",
+      "valid": "HydrusInvalid",
+      "predicates": [],
+      "error": "Please enter a string that parses into a set of search rules."
+    },
+    {
+      "input": "parity:or alpha)",
+      "preview": "Could not parse! Syntax error: mismatched parentheses",
+      "valid": "HydrusInvalid",
+      "predicates": [],
+      "error": "Please enter a string that parses into a set of search rules."
+    },
+    {
+      "input": "PARITY:OR ALPHA && !PARITY:OR BETA",
+      "preview": "parity:or alpha\n-parity:or beta",
+      "valid": "HydrusValid",
+      "predicates": [
+        "-parity:or beta",
+        "parity:or alpha"
+      ],
+      "error": null
+    },
+    {
+      "input": "-parity:or alpha || parity:or beta",
+      "preview": "-parity:or alpha OR parity:or beta",
+      "valid": "HydrusValid",
+      "predicates": [
+        "-parity:or alpha OR parity:or beta"
+      ],
+      "error": null
+    },
+    {
+      "input": "parity:or alpha iff parity:or beta",
+      "preview": "-parity:or beta OR parity:or alpha\n-parity:or alpha OR parity:or beta",
+      "valid": "HydrusValid",
+      "predicates": [
+        "-parity:or alpha OR parity:or beta",
+        "-parity:or beta OR parity:or alpha"
+      ],
+      "error": null
+    },
+    {
+      "input": "parity:or alpha <=> parity:or beta",
+      "preview": "-parity:or beta OR parity:or alpha\n-parity:or alpha OR parity:or beta",
+      "valid": "HydrusValid",
+      "predicates": [
+        "-parity:or alpha OR parity:or beta",
+        "-parity:or beta OR parity:or alpha"
+      ],
+      "error": null
+    },
+    {
+      "input": "parity:or \\and beta",
+      "preview": "parity:or and beta",
+      "valid": "HydrusValid",
+      "predicates": [
+        "parity:or and beta"
+      ],
+      "error": null
+    },
+    {
+      "input": "parity:or bang!",
+      "preview": "parity:or bang!",
+      "valid": "HydrusValid",
+      "predicates": [
+        "parity:or bang!"
+      ],
+      "error": null
+    },
+    {
+      "input": "!!parity:or alpha",
+      "preview": "parity:or alpha",
+      "valid": "HydrusValid",
+      "predicates": [
+        "parity:or alpha"
+      ],
+      "error": null
+    },
+    {
+      "input": "(parity:or alpha or parity:or beta) and parity:or gamma",
+      "preview": "parity:or alpha OR parity:or beta\nparity:or gamma",
+      "valid": "HydrusValid",
+      "predicates": [
+        "parity:or alpha OR parity:or beta",
+        "parity:or gamma"
+      ],
+      "error": null
+    },
+    {
+      "input": "parity:or alpha and not (parity:or beta or parity:or gamma)",
+      "preview": "parity:or alpha\n-parity:or beta\n-parity:or gamma",
+      "valid": "HydrusValid",
+      "predicates": [
+        "-parity:or beta",
+        "-parity:or gamma",
+        "parity:or alpha"
+      ],
+      "error": null
+    }
+  ],
+  "corpus": [
+    {
+      "tag": "parity:or alpha",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    },
+    {
+      "tag": "parity:or beta",
+      "hashes": [
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
+    },
+    {
+      "tag": "parity:or single",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
+    },
+    {
+      "tag": "parity:or gamma",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    }
+  ]
+}
