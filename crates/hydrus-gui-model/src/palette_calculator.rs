@@ -50,8 +50,8 @@ enum Operator {
     Modulo,
     Power,
 }
-fn apply(left: Number, op: Operator, right: Number) -> Option<Number> {
-    if let (Number::Integer(a), Number::Integer(b)) = (&left, &right) {
+fn apply(left: &Number, op: Operator, right: &Number) -> Option<Number> {
+    if let (Number::Integer(a), Number::Integer(b)) = (left, right) {
         let value = match op {
             Operator::Add => Some(a + b),
             Operator::Subtract => Some(a - b),
@@ -276,7 +276,7 @@ impl Parser<'_> {
             } else {
                 return Some(value);
             };
-            value = apply(value, op, self.product()?)?;
+            value = apply(&value, op, &self.product()?)?;
         }
     }
     fn product(&mut self) -> Option<Number> {
@@ -297,7 +297,7 @@ impl Parser<'_> {
             } else {
                 return Some(value);
             };
-            value = apply(value, op, self.unary()?)?;
+            value = apply(&value, op, &self.unary()?)?;
         }
     }
     fn unary(&mut self) -> Option<Number> {
@@ -312,7 +312,7 @@ impl Parser<'_> {
         } else {
             let value = self.atom()?;
             if self.take(b"**") {
-                apply(value, Operator::Power, self.unary()?)
+                apply(&value, Operator::Power, &self.unary()?)
             } else {
                 Some(value)
             }

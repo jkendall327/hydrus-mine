@@ -888,7 +888,7 @@ fn command_palette_page() -> Page {
                             .map(|n| i64::try_from(n).unwrap_or(1_000_000))
                     },
                     |s, v| {
-                        s.command_palette.history_limit = v.and_then(|n| usize::try_from(n).ok())
+                        s.command_palette.history_limit = v.and_then(|n| usize::try_from(n).ok());
                     },
                 ),
                 noneable(
@@ -900,7 +900,7 @@ fn command_palette_page() -> Page {
                             .map(|n| i64::try_from(n).unwrap_or(1_000_000))
                     },
                     |s, v| {
-                        s.command_palette.favourite_limit = v.and_then(|n| usize::try_from(n).ok())
+                        s.command_palette.favourite_limit = v.and_then(|n| usize::try_from(n).ok());
                     },
                 ),
                 check(
@@ -931,7 +931,7 @@ fn command_palette_page() -> Page {
                         Rc::new(|s| Value::ProviderOrder(s.command_palette.provider_order.clone())),
                         Rc::new(|s, v| match v {
                             Value::ProviderOrder(order) => {
-                                s.command_palette.provider_order = order.clone();
+                                s.command_palette.provider_order.clone_from(order);
                                 Ok(())
                             }
                             _ => Err(wrong("search provider order")),
