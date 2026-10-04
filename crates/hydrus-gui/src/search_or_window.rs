@@ -103,7 +103,7 @@ fn show(window: &SearchOrWindow, state: &State) {
     }
 }
 fn system_editor(window: &SearchOrWindow, state: &Rc<State>) {
-    let Some(blank) = state.page.borrow_mut().take_editor_wanted() else {
+    let Some((blank, shift)) = state.page.borrow_mut().take_system_editor_wanted() else {
         return;
     };
     let store = state.page.borrow().store().clone();
@@ -129,7 +129,10 @@ fn system_editor(window: &SearchOrWindow, state: &Rc<State>) {
             if !state.valid() {
                 return;
             }
-            state.page.borrow_mut().add_predicates(&predicates);
+            state
+                .page
+                .borrow_mut()
+                .apply_system_editor(predicates, shift);
             if let Some(window) = weak.upgrade() {
                 show(&window, &state);
             }
