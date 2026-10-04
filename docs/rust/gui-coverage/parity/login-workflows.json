@@ -2,12 +2,13 @@
   "schema_version": 1,
   "agent": "login-workflows",
   "baseline_git_head": "d50df26b",
-  "implementation_git_head": "9b10b880bbf69cbe86d920e42af241807350738c",
+  "implementation_git_head": "fa1760c47990bf4523712bfbcf577003ebcf0937",
   "implementation_commits": [
     "44840f22",
     "da3c06f2",
     "b80b50e9",
-    "9b10b880"
+    "9b10b880",
+    "fa1760c4"
   ],
   "validation": {
     "referenceRecording": "oracle/record_login_editors.py executed through shared with-oracle lock using the real Qt client; fixture oracle/fixtures/login_editors.json",
@@ -39,23 +40,21 @@
     {
       "id": "login-credentials",
       "before": "missing",
-      "proposedStatus": "partial",
-      "exactBehavior": "Live masked credential entry, normal-before-hidden ordering, exact invalid/blank advisory confirmation and local script CheckCanLogin consumer.",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Real Network > logins > logins > edit credentials consumer. Stable normal-before-hidden controls, masked passwords, live recorded validity labels; invalid/blank advisory accepts or returns; accepted edits reset validity/delays, deactivate invalid values and ask to activate a valid inactive domain. Parent staged Apply/Cancel, independent concurrent-script preservation and stale child isolation.",
       "limits": [
-        "Domain manager route and persisted domain credentials editing are not connected yet."
+        "Native imported maps do not retain arbitrary source dictionary iteration order; entry validation follows the recorded control order. Broader domain add/change-script/cookie-status/execution actions remain partial."
       ],
       "source": [
-        "crates/hydrus-gui/src/login_credential_window.rs:42",
-        "crates/hydrus-gui/src/login_workflows_window.rs:182",
-        "crates/hydrus-gui-model/src/login_workflows.rs:20",
-        "crates/hydrus-store/src/logins.rs:14"
+        "crates/hydrus-gui/src/login_credential_window.rs:191",
+        "crates/hydrus-gui/src/login_domains_window.rs:61",
+        "crates/hydrus-gui-model/src/login_workflows.rs:290"
       ],
       "testAnchors": [
-        "crates/hydrus-gui-model/tests/model/login_workflows.rs:16",
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:26",
-        "crates/hydrus-downloader-exchange/tests/logins.rs:1"
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:197",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:423"
       ],
-      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json"
+      "referenceRecording": "oracle/record_login_editors.py real Qt credentials and manager execution; oracle/fixtures/login_editors.json domain_states (invalid accepted, activation accepted, Cancel, blank accepted)."
     },
     {
       "id": "login-scripts",
@@ -154,6 +153,22 @@
         "crates/hydrus-gui/tests/gui/login_workflows.rs:284"
       ],
       "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json"
+    },
+    {
+      "id": "logins",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "exactBehavior": "Real domain menu/list with extended selection, preserved complete preferences, editable credentials/activation, scrub delays/invalidity, optimistic staged domains-only save retaining current scripts.",
+      "limits": [
+        "Add domain/change script, logged-in cookie status/reset and live execution absent. Future delay displays a raw timestamp."
+      ],
+      "source": [
+        "crates/hydrus-gui/src/login_domains_window.rs:61"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:423"
+      ],
+      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json domain_states"
     }
   ],
   "dependencies": [
