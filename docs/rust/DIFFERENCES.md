@@ -292,7 +292,8 @@ search.
   deferred delete and idle work settings; on the duplicates page, the
   preparation tab's notification and the filter's colours; on the file
   viewing statistics page, the filters' own switches and the menus'
-  stats; most of the gui page; on the importing page, dropped URLs and
+  stats; most of the gui page; gui pages still omits the independent prompt
+  for renaming notebooks created from the new-page chooser; on the importing page, dropped URLs and
   the work slots; and on the media playback page, the preview's zoom,
   re-centring, the checkerboard, animations, mpv, Qt's player and the
   system settings; on the file sort/collect page, the namespace sorts'

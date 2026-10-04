@@ -26,6 +26,7 @@ use hydrus_store::duplicates::auto::AutoResolutionSettings;
 use hydrus_store::file_maintenance::FileMaintenanceSettings;
 use hydrus_store::network::NetworkSettings;
 use hydrus_store::session_backups::SessionBackupSettings;
+use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FileHandlingSettings, FileViewingStatistics, FolderSettings,
     GuiSettings, OptionsPreferences, PageSettings, ThumbnailLayout,
@@ -80,6 +81,7 @@ settings! {
     info_line: InfoLineSettings,
     media_viewer: MediaViewerSettings,
     network: NetworkSettings,
+    notebooks: NotebookSettings,
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
@@ -1354,11 +1356,22 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             vec![
                 boxed(
                     "opening and closing",
-                    vec![check(
-                        "Confirm when closing a non-empty importer page: ",
-                        |s| s.downloader_pages.confirm_non_empty_close,
-                        |s, v| s.downloader_pages.confirm_non_empty_close = v,
-                    )],
+                    vec![
+                        choice(
+                            "When closing the current tab, move focus: ",
+                            &[
+                                "left of the closed page tab",
+                                "right of the closed page tab",
+                            ],
+                            |s| usize::from(!s.notebooks.close_focus_left),
+                            |s, value| s.notebooks.close_focus_left = value == 0,
+                        ),
+                        check(
+                            "Confirm when closing a non-empty importer page: ",
+                            |s| s.downloader_pages.confirm_non_empty_close,
+                            |s, v| s.downloader_pages.confirm_non_empty_close = v,
+                        ),
+                    ],
                 ),
                 boxed(
                     "page tab names",
@@ -1379,6 +1392,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "Show import page x/y progress after its name: ",
                             |s| s.page_names.import_progress,
                             |s, v| s.page_names.import_progress = v,
+                        ),
+                        check(
+                            "  Also automatically prompt when sending some pages to one: ",
+                            |s| s.notebooks.rename_sent_notebooks,
+                            |s, value| s.notebooks.rename_sent_notebooks = value,
                         ),
                         check(
                             "Suffix 'page of pages' tab names with a decorator string: ",

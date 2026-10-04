@@ -658,3 +658,36 @@ fn reopening_numeric_options_clamps_saved_advanced_values() {
         }
     }
 }
+
+#[test]
+fn notebook_navigation_preferences_match_recorded_controls() {
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let mut settings = store.read(Settings::load).unwrap();
+    let pages = pages(&settings);
+    let page = pages.iter().find(|page| page.name == "gui pages").unwrap();
+    let reference = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "gui pages")
+        .unwrap();
+    assert!(page_problems(page, &reference["items"], &settings, &store).is_empty());
+    let options = page.options();
+    let focus = options
+        .iter()
+        .find(|option| option.label == "When closing the current tab, move focus: ")
+        .unwrap();
+    for index in [0, 1] {
+        (focus.set)(&mut settings, &Value::Choice(index)).unwrap();
+        assert_eq!(settings.notebooks.close_focus_left, index == 0);
+    }
+    let rename = options
+        .iter()
+        .find(|option| {
+            option.label == "  Also automatically prompt when sending some pages to one: "
+        })
+        .unwrap();
+    (rename.set)(&mut settings, &Value::Check(true)).unwrap();
+    assert!(settings.notebooks.rename_sent_notebooks);
+}

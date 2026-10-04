@@ -1035,3 +1035,53 @@ fn applied_session_backup_count_controls_the_next_save() {
     );
     window.invoke_cancel();
 }
+
+#[test]
+fn notebook_focus_option_changes_the_next_tab_close() {
+    use hydrus_core::service::builtin_keys;
+    use hydrus_gui::page_chooser::NewPage;
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let mut pages = Pages::single(hydrus_gui::SearchPage::new(store.clone()));
+    for name in ["left", "middle", "right"] {
+        pages
+            .new_page(&NewPage::Search {
+                domain: builtin_keys::ALL_LOCAL_FILES.clone(),
+                name: name.into(),
+            })
+            .unwrap();
+    }
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, pages);
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "gui pages");
+    let (index, _) = row(&window, "When closing the current tab, move focus: ");
+    window.invoke_choice_chosen(index, 0);
+    let (index, _) = row(
+        &window,
+        "  Also automatically prompt when sending some pages to one: ",
+    );
+    window.invoke_check_toggled(index, true);
+    window.invoke_apply();
+    ui.invoke_tab_chosen(0, 2);
+    ui.invoke_close_tab(0, 2);
+    assert_eq!(ui.get_tab_rows().row_data(0).unwrap().selected, 1);
+    assert!(bound.pages.borrow().shown().name.starts_with("left"));
+    let stored = store
+        .read(hydrus_store::settings::get::<hydrus_store::sessions::NotebookSettings>)
+        .unwrap();
+    assert!(stored.close_focus_left && stored.rename_sent_notebooks);
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "gui pages");
+    let (index, _) = row(&window, "When closing the current tab, move focus: ");
+    window.invoke_choice_chosen(index, 1);
+    window.invoke_cancel();
+    assert!(
+        store
+            .read(hydrus_store::settings::get::<hydrus_store::sessions::NotebookSettings>)
+            .unwrap()
+            .close_focus_left
+    );
+}

@@ -438,7 +438,9 @@ thumbnail options within a second of "apply". Connection limits and the three
 downloader error delays use the reference’s normal or advanced ranges when the
 window opens (`oracle/record_options_ranges.py` records both modes and clamps).
 The gui sessions page sets the number of rolling backups to keep (1–32);
-the next session save uses that limit.
+the next session save uses that limit. Gui pages also chooses whether closing
+the current tab focuses its left or right neighbour, and whether sending pages
+to a new notebook prompts to rename it.
 A "checker options"
 button opens the checker options editor (`hydrus-gui-model/src/checker_options.rs`,
 checked against the reference's `EditCheckerOptions`, recorded by

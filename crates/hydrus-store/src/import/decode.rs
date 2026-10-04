@@ -118,6 +118,16 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     {
         insert_setting(&mut input, &crate::settings::AdvancedMode(advanced))?;
     }
+    let mut notebooks = crate::sessions::NotebookSettings::default();
+    if let Some(options) = &options {
+        if let Some(value) = options.integers.get("close_page_focus_goes") {
+            notebooks.close_focus_left = *value == 0;
+        }
+        if let Some(&value) = options.booleans.get("rename_page_of_pages_on_send") {
+            notebooks.rename_sent_notebooks = value;
+        }
+    }
+    insert_setting(&mut input, &notebooks)?;
     let mut backups = crate::session_backups::SessionBackupSettings::default();
     if let Some(options) = &options
         && let Some(value) = options.integers.get("number_of_gui_session_backups")
