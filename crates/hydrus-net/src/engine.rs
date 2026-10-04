@@ -641,13 +641,13 @@ impl NetEngine {
             }
             network_runtime::JobAction::OverrideGalleryWait => job.override_gallery_wait(),
             network_runtime::JobAction::ScrubDomainErrors => {
-                self.scrub_domain_errors(&job.state().url)
+                self.scrub_domain_errors(&job.state().url);
             }
             network_runtime::JobAction::AutoOverrideBandwidth(enabled) => {
-                job.auto_override_bandwidth(enabled)
+                job.auto_override_bandwidth(enabled);
             }
             network_runtime::JobAction::AutoOverrideBandwidthFor { owner, enabled } => {
-                job.auto_override_bandwidth_for(owner, enabled)
+                job.auto_override_bandwidth_for(owner, enabled);
             }
         }
         true
