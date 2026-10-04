@@ -20,6 +20,13 @@ handover patch has been applied and removed. Store snapshot revisions also
 propagate service, URL-class and tag-graph edits to a running daemon.
 Service deletion also refreshes open viewer and locked-selection tags.
 
+The second parallel slate is in progress: Client API key administration and
+supported server settings; tag display/search and relationship application
+configuration; and page/content parser editors with URL-class links. It uses
+three feature worktrees with staged integration and batched GUI validation.
+Reference recordings, behavioral regressions and independent review replace
+mutation runs at the owner's request. Review this slate before starting more.
+
 The next breadth work, in the owner's existing order:
 
 1. **Services**: remote repositories/IPFS/account administration, Client API
