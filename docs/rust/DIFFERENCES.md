@@ -1660,4 +1660,7 @@ complete the broader Tag Presentation parent.
 File sorts now preserve independent tag contexts and use their selected service
 for namespace and number-of-tags keys, including fallback sorting and collection
 keys. This backend boundary is recorded by `sort_cogs.json`; the Options-owned
-selector UI is a separate continuation step and is not claimed complete here.
+cogs now edit both contexts transactionally. Their two-level native popups
+use the reference service groups, separators, checks and advanced-view order.
+They edit each sort independently and preserve its full saved context metadata.
+The page-level sort cog remains a separate, unclaimed workflow.

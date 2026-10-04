@@ -95,3 +95,5 @@ mod namespace_sorts;
 mod viewer_cursor;
 
 mod tag_list_display_types;
+
+mod sort_cog;

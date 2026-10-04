@@ -2512,5 +2512,9 @@ search and collect context. Namespace and number-of-tags keys read the chosen
 service's current and pending display tags; primary and fallback contexts remain
 independent for both files and collections. Older native sorts without this
 field keep the all-known-tags default, and legacy imported contexts retain
-their service, display service and current/pending flags. The Options cog UI
-for choosing those contexts is being wired separately.
+their service, display service and current/pending flags. Options exposes an owned cog on both the default and secondary sort when
+sorting by namespaces or number of tags. Its tag-service submenu groups local
+tags, repositories and all known tags, retaining independent check states.
+Namespace sorts also offer display, multiple-media and single-media tag views.
+These choices remain in the Options draft until Apply; Cancel preserves saved
+settings, and reopening retains the chosen context and view.

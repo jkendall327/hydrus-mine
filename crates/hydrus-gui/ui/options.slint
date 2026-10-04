@@ -14,6 +14,8 @@ export struct DurationField {
     label: string,
 }
 
+export struct SortCogItem { label: string, checked: bool, separator: bool }
+
 export struct OptionRow {
     // 0 a box's title, 1 a checkbox, 2 a number, 3 a number that may be
     // none, 4 a number with a fraction (typed), 5 a dropdown, 6 text, 7
@@ -55,6 +57,7 @@ export struct OptionRow {
     groups: [string],
     group-index: int,
     grouped: bool,
+    sort-cog: bool,
 }
 
 // a whole number typed in a small box
@@ -135,6 +138,13 @@ export component OptionsWindow inherits Window {
     callback favourite-tags-clicked();
     callback import-options-clicked();
     callback namespace-sorts-clicked();
+    in property <[string]> sort-cog-groups;
+    in property <[SortCogItem]> sort-cog-items;
+    in property <int> sort-cog-group: -1;
+    callback sort-cog-open(int);
+    callback sort-cog-group-chosen(int, int);
+    callback sort-cog-choice(int, int);
+    callback sort-cog-cancel();
     callback apply();
     callback cancel();
 
@@ -348,6 +358,46 @@ export component OptionsWindow inherits Window {
                                     model: row.orders;
                                     current-index: row.order-index;
                                     selected => { root.order-chosen(i, self.current-index); }
+                                }
+                                if row.sort-cog: Rectangle {
+                                    height: 28px;
+                                    Button { text: "⚙"; clicked => { root.sort-cog-open(i); cog-menu.show(); } }
+                                    cog-menu := PopupWindow {
+                                        y: parent.height;
+                                        width: 320px;
+                                        Rectangle {
+                                            background: Theme.panel;
+                                            border-width: 1px;
+                                            border-color: Theme.border;
+                                            FocusScope {
+                                                init => { self.focus(); }
+                                                key-pressed(event) => {
+                                                    if event.text == Key.Escape { cog-menu.close(); root.sort-cog-cancel(); return accept; }
+                                                    reject
+                                                }
+                                                VerticalLayout {
+                                                    padding: 4px;
+                                                    spacing: 2px;
+                                                    if root.sort-cog-group < 0: VerticalLayout {
+                                                        for name[group] in root.sort-cog-groups: Button {
+                                                            text: name + "  ›";
+                                                            clicked => { root.sort-cog-group-chosen(i, group); }
+                                                        }
+                                                    }
+                                                    if root.sort-cog-group >= 0: VerticalLayout {
+                                                        for entry[index] in root.sort-cog-items: Rectangle {
+                                                            height: entry.separator ? 3px : 28px;
+                                                            if entry.separator: Rectangle { height: 1px; background: Theme.border; }
+                                                            if !entry.separator: Button {
+                                                                text: (entry.checked ? "✓ " : "") + entry.label;
+                                                                clicked => { cog-menu.close(); root.sort-cog-choice(i, index); }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             if row.kind == 12: VerticalLayout {

@@ -39,6 +39,8 @@ fn int(n: i64) -> i32 {
 
 /// A collect's choices for the files that match none of it, as the
 /// reference's cog menu has them ("unmatched files").
+type SortCogTarget = (usize, usize, Vec<hydrus_gui_model::sort_cog::Entry>);
+
 const UNMATCHED: [&str; 2] = ["collect into one group", "leave separate"];
 
 /// A row as the window shows it (a sort's types are the store's).
@@ -162,6 +164,7 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 }
                 (Kind::Sort, Value::Sort(sort)) => {
                     out.kind = 10;
+                    out.sort_cog = !hydrus_gui_model::sort_cog::groups(sort).is_empty();
                     let choices = crate::sort::page_choices(store, &sort.by);
                     let names: Vec<SharedString> =
                         choices.iter().map(|c| c.name.as_str().into()).collect();
@@ -296,6 +299,7 @@ pub(crate) fn open(
     let import_slot: crate::import_options_panel_window::Slot = Rc::default();
     let namespace_slot: crate::namespace_sorts_window::Slot = Rc::default();
     let active = Rc::new(Cell::new(true));
+    let cog_target: Rc<RefCell<Option<SortCogTarget>>> = Rc::default();
     let names: Vec<StandardListViewItem> = editor
         .borrow()
         .page_names()
@@ -306,11 +310,13 @@ pub(crate) fn open(
     // (the rows are made anew only as the page changes: an edit leaves its
     // control as the user left it)
     let show_page = {
+        let cog_target = cog_target.clone();
         let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak = window.as_weak();
         move || {
+            cog_target.borrow_mut().take();
             let Some(window) = weak.upgrade() else { return };
             let editor = editor.borrow();
             let rows: Vec<OptionRow> = editor
@@ -790,8 +796,113 @@ pub(crate) fn open(
             });
         }
     });
-    window.on_order_chosen(move |i, index| {
-        sort_edited(i, &|sort, _| sort.ascending = index == 0);
+    window.on_order_chosen({
+        let sort_edited = sort_edited.clone();
+        move |i, index| {
+            sort_edited(i, &|sort, _| sort.ascending = index == 0);
+        }
+    });
+    // Each cog freezes its owned sort row and page; it never edits a search or collect context.
+    window.on_sort_cog_open({
+        let target = cog_target.clone();
+        let editor = editor.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        move |row| {
+            target.borrow_mut().take();
+            let Some(window) = weak.upgrade().filter(|_| active.get()) else {
+                return;
+            };
+            let editor = editor.borrow();
+            let rows = editor.rows();
+            let Some(Row::Opt {
+                value: Value::Sort(sort),
+                ..
+            }) = rows.get(at(row))
+            else {
+                return;
+            };
+            let groups = hydrus_gui_model::sort_cog::groups(sort);
+            if groups.is_empty() {
+                return;
+            }
+            window.set_sort_cog_group(-1);
+            window.set_sort_cog_groups(ModelRc::new(VecModel::from(
+                groups
+                    .into_iter()
+                    .map(SharedString::from)
+                    .collect::<Vec<_>>(),
+            )));
+            *target.borrow_mut() = Some((editor.page(), at(row), Vec::new()));
+        }
+    });
+    window.on_sort_cog_group_chosen({
+        let target = cog_target.clone();
+        let editor = editor.clone();
+        let store = store.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        move |row, group| {
+            let Some(window) = weak.upgrade().filter(|_| active.get()) else {
+                return;
+            };
+            let editor = editor.borrow();
+            let mut target = target.borrow_mut();
+            let Some((_, _, entries)) = target
+                .as_mut()
+                .filter(|(page, owner, _)| *page == editor.page() && *owner == at(row))
+            else {
+                return;
+            };
+            let rows = editor.rows();
+            let Some(Row::Opt {
+                value: Value::Sort(sort),
+                ..
+            }) = rows.get(at(row))
+            else {
+                return;
+            };
+            let new = hydrus_gui_model::sort_cog::entries(&store, sort, at(group));
+            if new.is_empty() {
+                return;
+            }
+            window.set_sort_cog_items(ModelRc::new(VecModel::from(
+                new.iter()
+                    .map(|entry| crate::SortCogItem {
+                        label: entry.label.as_str().into(),
+                        checked: entry.checked,
+                        separator: entry.action.is_none(),
+                    })
+                    .collect::<Vec<_>>(),
+            )));
+            *entries = new;
+            window.set_sort_cog_group(group);
+        }
+    });
+    window.on_sort_cog_choice({
+        let target = cog_target.clone();
+        let editor = editor.clone();
+        let active = active.clone();
+        let sort_edited = sort_edited.clone();
+        move |row, index| {
+            if !active.get() {
+                return;
+            }
+            let action = target
+                .borrow()
+                .as_ref()
+                .filter(|(page, owner, _)| *page == editor.borrow().page() && *owner == at(row))
+                .and_then(|(_, _, entries)| entries.get(at(index)))
+                .and_then(|entry| entry.action.clone());
+            let Some(action) = action else { return };
+            target.borrow_mut().take();
+            sort_edited(row, &|sort, _| {
+                hydrus_gui_model::sort_cog::choose(sort, &action);
+            });
+        }
+    });
+    window.on_sort_cog_cancel(move || {
+        cog_target.borrow_mut().take();
     });
     // a tag sort's type, order or grouping; the row shows the type's
     // orders, and grouping only where the type groups

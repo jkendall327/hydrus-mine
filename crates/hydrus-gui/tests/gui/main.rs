@@ -118,3 +118,5 @@ mod gallery_source;
 
 mod namespace_sorts;
 mod tag_list_display_types;
+
+mod sort_cog;

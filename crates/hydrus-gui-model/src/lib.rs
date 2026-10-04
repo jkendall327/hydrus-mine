@@ -101,3 +101,6 @@ pub mod viewer_closing;
 
 pub mod namespace_sorts;
 pub mod viewer_cursor;
+
+
+pub mod sort_cog;
