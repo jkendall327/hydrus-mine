@@ -35,6 +35,10 @@ export component ManageTagsWindow inherits Window {
     out property <float> service-content-offset: services.content-offset;
     in-out property <int> service-index;
     in property <[ListText]> tags;
+    in property <string> deleted-count-label;
+    in property <bool> deleted-count-visible;
+    in property <bool> show-deleted;
+    callback flip-show-deleted();
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
     in property <[bool]> suggestion-selected;
@@ -106,6 +110,16 @@ export component ManageTagsWindow inherits Window {
                                 double-clicked => { root.tag-activated(i); }
                             }
                         }
+                    }
+                }
+                if root.deleted-count-visible: HorizontalLayout {
+                    alignment: end;
+                    spacing: 6px;
+                    Text { text: root.deleted-count-label; color: Theme.text; vertical-alignment: center; }
+                    Button {
+                        text: root.show-deleted ? "hide deleted mappings" : "show deleted mappings";
+                        enabled: root.question == "";
+                        clicked => { root.flip-show-deleted(); }
                     }
                 }
                 input := WriteTagInput {

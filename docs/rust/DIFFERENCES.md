@@ -1629,9 +1629,8 @@ reach Manage Tags; the service navigator also reaches sibling and parent editors
 These are opening defaults independent of write-autocomplete decorations. Native
 service tabs and list rows use Slint geometry. Inherited parent ordering follows
 natural tag order; Qt's inherited-parent collection does not specify relative
-order. Existing Manage Tags differences remain: counts are omitted when every
-selected file has the tag, multiple stored-tag selection and its full context
-menu are not implemented, and remote service petition dialogs are outside this
+order. Existing Manage Tags differences remain: multiple stored-tag selection and its
+full context menu are not implemented, and remote service petition dialogs are outside this
 local-service slice. The four preference leaves do not claim those parent
 workflow gaps complete.
 
@@ -1864,3 +1863,10 @@ allocation. System-predicate editors reuse the existing shared native opener;
 the OR owner cancels them on close. Native layouts and text controls differ from
 Qt's notebook and icon controls. These additions do not promote the complete
 read-autocomplete or OR parent workflows.
+
+Manage Tags deleted-mapping counts and the global show/hide preference now reach
+existing local-service panels, including staged changes and persisted reopening.
+Other open native owners observe a toggle within 200 ms, rather than Qt's queued
+notification. Native uses a labelled show/hide button instead of the reference
+eye icon. Repository Manage Tags panels and their petition/pend action choices
+remain an inherited gap; this checkpoint does not claim that parent complete.

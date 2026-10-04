@@ -131,3 +131,5 @@ mod command_palette;
 mod read_autocomplete;
 
 mod read_or;
+
+mod manage_tag_counts;
