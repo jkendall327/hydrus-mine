@@ -84,7 +84,28 @@ fn ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions() {
         .unwrap();
     ui.show().unwrap();
     let _image = headless::render(&windows.get(0).unwrap(), 1000, 700);
-    use slint::platform::{Key, WindowEvent};
+    use slint::platform::{Key, PointerEventButton, WindowEvent};
+    // Changing pages deliberately retains focus by default. Give the actual
+    // search input focus through a rendered mouse click before sending keys.
+    assert!(ui.get_autocomplete_anchor_width() > 64.0);
+    let position = slint::LogicalPosition::new(
+        ui.get_autocomplete_anchor_x() + 24.0,
+        ui.get_autocomplete_anchor_y() - 12.0,
+    );
+    ui.window()
+        .dispatch_event(WindowEvent::PointerMoved { position });
+    ui.window().dispatch_event(WindowEvent::PointerPressed {
+        position,
+        button: PointerEventButton::Left,
+    });
+    ui.window().dispatch_event(WindowEvent::PointerReleased {
+        position,
+        button: PointerEventButton::Left,
+    });
+    assert!(
+        ui.get_search_focused(),
+        "rendered search input owns keyboard focus"
+    );
     ui.window().dispatch_event(WindowEvent::KeyPressed {
         text: Key::Control.into(),
     });

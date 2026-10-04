@@ -4433,8 +4433,19 @@ fn viewing_menu_preferences_apply_to_real_menu_lines_and_cancel_preserves_them()
         .copied()
         .find(|id| *id != file)
         .expect("second imported file");
+    let sorted_files = current.borrow().results().to_vec();
     store
         .write_content(move |w| {
+            // The basic fixture contains other media-view counts (up to six).
+            // Isolate this pair's ranking while keeping the real page result
+            // set, persisted options and sort consumer under test.
+            for id in sorted_files {
+                for canvas in [CanvasType::MediaViewer, CanvasType::Preview] {
+                    w.set_views(id, canvas, Some(now), 0, 0)?;
+                }
+            }
+            w.set_views(file, CanvasType::MediaViewer, Some(now), 2, 12_000)?;
+            w.set_views(file, CanvasType::Preview, Some(now), 3, 9000)?;
             w.set_views(other, CanvasType::MediaViewer, Some(now), 1, 1000)?;
             w.set_views(other, CanvasType::Preview, Some(now), 10, 1000)
         })
