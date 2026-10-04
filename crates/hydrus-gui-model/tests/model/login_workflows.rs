@@ -1,6 +1,6 @@
 //! Reference Qt credential rows, advisory prompts, script identities and storage.
 use hydrus_gui_model::login_workflows::{
-    ArgumentKind, CookiesEditor, CredentialsEditor, ScriptsEditor, StepEditor,
+    ArgumentKind, CookiesEditor, CredentialsEditor, ExampleDraft, ScriptsEditor, StepEditor,
 };
 use hydrus_legacy::{objects::logins as legacy, serialisable::SerialisableObject};
 use hydrus_parse::login::CredentialKind;
@@ -427,4 +427,73 @@ fn three_argument_lists_keep_independent_extended_selection_and_bulk_deletion() 
     assert_eq!(editor.selected_arguments(ArgumentKind::Temporary), ["csrf"]);
     assert_eq!(editor.step.credentials, step.credentials);
     assert_eq!(editor.step.temp_args, step.temp_args);
+}
+
+#[test]
+fn example_domains_replay_reference_defaults_duplicate_errors_and_final_cancel_acceptance() {
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let mut rows = manager(&fixture).scripts.remove(0).examples;
+    for state in &fixture["example_states"].as_array().unwrap()[1..] {
+        let texts = state["texts"].as_array().unwrap();
+        if let Some(domain) = texts[0].as_str() {
+            let index = if state["action"] == "edit" {
+                rows.iter().position(|row| {
+                    row.domain == "another.example" || row.domain == "renamed.example"
+                })
+            } else {
+                None
+            };
+            let mut draft = ExampleDraft::new(index.map(|i| &rows[i]));
+            draft.domain = domain.to_owned();
+            match draft.validate_domain(&rows, index) {
+                Err(error) => assert_eq!(error, state["prompts"][1]["warning"].as_str().unwrap()),
+                Ok(()) => {
+                    if let Some(access) = state["access"].as_i64() {
+                        draft
+                            .select_access(hydrus_parse::login::Access::from_code(access).unwrap());
+                        let row = draft.value(texts[1].as_str()).unwrap();
+                        if let Some(index) = index {
+                            rows[index] = row;
+                        } else {
+                            rows.push(row);
+                        }
+                    }
+                }
+            }
+        }
+        rows.sort_by_cached_key(|row| {
+            (
+                row.domain.clone(),
+                row.access.label(),
+                row.description.clone(),
+            )
+        });
+        assert_eq!(
+            json!(
+                rows.iter()
+                    .map(|row| json!([row.domain, row.access.code(), row.description]))
+                    .collect::<Vec<_>>()
+            ),
+            state["state"]["value"]
+        );
+        assert_eq!(
+            json!(
+                rows.iter()
+                    .map(|row| json!([row.domain, row.access.label(), row.description]))
+                    .collect::<Vec<_>>()
+            ),
+            state["state"]["rows"]
+        );
+    }
+    let mut draft = ExampleDraft::new(None);
+    assert_eq!(draft.domain, "example.com");
+    assert_eq!(draft.access, hydrus_parse::login::Access::Nsfw);
+    draft.domain.clear();
+    assert!(draft.validate_domain(&rows, None).is_err());
+    draft.select_access(hydrus_parse::login::Access::UserPreferences);
+    assert_eq!(
+        draft.value(None).unwrap().description,
+        fixture["access_types"][3][2].as_str().unwrap()
+    );
+    assert!(draft.value(Some("")).is_err());
 }

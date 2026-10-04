@@ -525,3 +525,69 @@ impl CookiesEditor {
         self.selection.select_only(None);
     }
 }
+
+/// Three-stage reference example-domain entry, including final-description Cancel.
+#[derive(Debug, Clone)]
+pub struct ExampleDraft {
+    pub domain: String,
+    pub access: hydrus_parse::login::Access,
+    pub description: String,
+    original_access: hydrus_parse::login::Access,
+    original_description: String,
+}
+impl ExampleDraft {
+    pub fn new(row: Option<&hydrus_parse::login::ExampleDomain>) -> Self {
+        let access = row.map_or(hydrus_parse::login::Access::Nsfw, |row| row.access);
+        let description = row.map_or_else(
+            || access.description().to_owned(),
+            |row| row.description.clone(),
+        );
+        Self {
+            domain: row.map_or_else(|| "example.com".to_owned(), |row| row.domain.clone()),
+            access,
+            original_access: access,
+            original_description: description.clone(),
+            description,
+        }
+    }
+    pub fn validate_domain(
+        &self,
+        rows: &[hydrus_parse::login::ExampleDomain],
+        index: Option<usize>,
+    ) -> Result<(), String> {
+        if self.domain.is_empty() {
+            return Err("Enter the domain.".into());
+        }
+        if index
+            .and_then(|i| rows.get(i))
+            .is_some_and(|row| row.domain == self.domain)
+        {
+            return Ok(());
+        }
+        if rows.iter().any(|row| row.domain == self.domain) {
+            return Err("That domain already exists!".into());
+        }
+        Ok(())
+    }
+    pub fn select_access(&mut self, access: hydrus_parse::login::Access) {
+        self.access = access;
+        self.description = if access == self.original_access {
+            self.original_description.clone()
+        } else {
+            access.description().to_owned()
+        };
+    }
+    pub fn value(
+        &self,
+        description: Option<&str>,
+    ) -> Result<hydrus_parse::login::ExampleDomain, String> {
+        if description == Some("") {
+            return Err("Enter the access description.".into());
+        }
+        Ok(hydrus_parse::login::ExampleDomain {
+            domain: self.domain.clone(),
+            access: self.access,
+            description: description.unwrap_or(&self.description).to_owned(),
+        })
+    }
+}

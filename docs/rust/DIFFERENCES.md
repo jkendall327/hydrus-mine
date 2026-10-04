@@ -1046,9 +1046,7 @@ Login script types, bounded JSON/PNG interchange and credential/temporary-variab
 validation are available through native script, step and credential editors.
 Script/domain edits wait for parent Apply; advisory questions appear inline.
 Request arguments, cookie matchers and VARIABLE/VETO response parsers are editable
-and used by actual HTTP script tests and confirmed domain attempts. Script
-example-domain editing, domain add/script-choice and session-status/reset controls
-remain absent. Domain credentials reproduce validity/delay/activation behavior;
+and used by actual HTTP script tests and confirmed domain attempts. Domain add/script-choice and session-status/reset controls remain absent. Domain credentials reproduce validity/delay/activation behavior;
 the domain list omits logged-in cookie expiry and displays future delays as raw
 timestamps. Imported credential maps do not retain arbitrary dictionary iteration
 order; entry checks follow the recorded normal-before-hidden control order.
@@ -1442,8 +1440,9 @@ Login global/step cookie requirements are now editable through a shared child li
 with a staged row and separate name/value matcher buttons; the reference embeds
 the list and asks sequential matcher dialogs. Independent matcher objects with
 identical descriptions remain distinct, as in Python. Explicit matcher edits
-canonicalize their unused auxiliary matcher values. Script example-domain editing
-remains outstanding; the three argument-list topology and selection gap is closed.
+canonicalize their unused auxiliary matcher values. The three argument-list topology
+and selection gap is closed; example-domain add/edit/delete and the reference
+default/description-cancellation rules are implemented.
 Startup recovery uses the native session-question window and a native GUI running
 marker rather than the reference controller's process marker. Choosing blank
 keeps the configured startup name for the next boot. Native importer workers
@@ -1467,3 +1466,10 @@ is active. Native hover content/layout and the reference's menu/dominant-hover
 interaction rules retain their existing differences; the implemented focus
 preference applies to all four existing native hover panels. Focus callbacks use
 weak viewer handles and do not keep closed components alive.
+
+Example-domain text/access/description questions share one native staged window;
+the reference opens separate quick-entry dialogs. Their defaults, duplicate checks,
+blank constraints, accepted values and the final-description Cancel behavior match.
+The script editor keeps a visible test-domain field instead of prompting on every
+run, and test results are delivered at the end of execution. Those presentation and
+streaming differences keep the broad script page short of full parity.

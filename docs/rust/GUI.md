@@ -1655,8 +1655,8 @@ cleanup. Its response content list supports extended selection, unique named
 VARIABLE/VETO nodes, shared formula/live preview, delete confirmation and reviewed
 JSON/PNG exchange. Parent cancellation discards every nested formula/parser.
 Credential/static/temporary argument dictionaries and required-cookie matchers
-are editable and consumed by real HTTP attempts. Script example-domain rows are
-preserved and shown; their editor is still absent.
+are editable and consumed by real HTTP attempts. Script example-domain rows support extended selection and add/edit/confirmed
+delete. Their editor asks domain, access and description in the reference order.
 
 ## Network sessions and HTTP headers
 
@@ -2248,3 +2248,12 @@ is active. Another active application window hides it. Apply updates the current
 viewer, Cancel retains the preferences, and legacy values migrate. The fresh
 `viewer_focus_options.json` recording includes real Qt activation and all four
 no-active-window transitions.
+
+
+Example domains require unique nonblank names, preserve the entered spelling and
+show all four reference access types. A changed access type supplies its default
+description; unchanged access keeps the existing description. Canceling domain or
+access discards the row, while Keep description (or closing that final prompt)
+accepts the domain/access using its current/default description. Parent cancellation
+discards the whole example draft. Before the first test, edits update a test domain
+that still contains the initial example default; a previously used domain is retained.

@@ -1173,3 +1173,107 @@ fn step_shows_three_reference_argument_lists_with_independent_selection_and_pinn
         step.temp_args
     );
 }
+
+#[test]
+fn example_domain_stages_match_reference_final_cancel_and_preserve_parent_transaction() {
+    let (_dir, store, original) = store();
+    let rendered = headless::init();
+    let slots = Slots::default();
+    let list = windows::open_scripts(&store, &slots).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let script = slots.script.borrow().as_ref().unwrap().clone_strong();
+    script.invoke_action("add-example".into());
+    let child = slots.example.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(child.get_domain(), "example.com");
+    assert_eq!(child.get_access(), 1);
+    child.set_domain("login.example".into());
+    child.invoke_action("next".into());
+    assert_eq!(child.get_error(), "That domain already exists!");
+    assert_eq!(child.get_stage(), 0);
+    child.invoke_action("cancel".into());
+    assert!(!script.get_child_open());
+    script.invoke_action("add-example".into());
+    let child = slots.example.borrow().as_ref().unwrap().clone_strong();
+    child.set_domain("another.example".into());
+    child.invoke_action("next".into());
+    assert_eq!(child.get_stage(), 1);
+    child.set_access(2);
+    child.invoke_action("next".into());
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    assert_eq!(
+        child.get_description(),
+        fixture["example_states"][1]["prompts"][2]["options"]["default"]
+            .as_str()
+            .unwrap()
+    );
+    child.set_description("discard this edit".into());
+    child
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(slots.example.borrow().is_none());
+    assert!(!script.get_child_open());
+    assert_eq!(
+        string_table(&script.get_examples()),
+        fixture["example_states"][1]["state"]["rows"]
+    );
+    assert_eq!(script.get_test_domain(), "another.example");
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+    script.invoke_example_clicked(0, false, false);
+    script.invoke_action("edit-example".into());
+    let child = slots.example.borrow().as_ref().unwrap().clone_strong();
+    child.set_domain("renamed.example".into());
+    child.invoke_action("next".into());
+    child.set_access(2);
+    child.invoke_action("next".into());
+    child.set_description("custom access".into());
+    child.invoke_action("save".into());
+    assert_eq!(
+        string_table(&script.get_examples()),
+        fixture["example_states"][3]["state"]["rows"]
+    );
+    script.invoke_example_clicked(1, false, false);
+    script.invoke_action("edit-example".into());
+    let child = slots.example.borrow().as_ref().unwrap().clone_strong();
+    child.invoke_action("next".into());
+    child.invoke_action("next".into());
+    assert_eq!(child.get_description(), "custom access");
+    child.invoke_action("keep-description".into());
+    script.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    let saved = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(saved.scripts[0].examples.len(), 2);
+    assert_eq!(saved.scripts[0].examples[1].description, "custom access");
+    assert_eq!(saved.domains, original.domains);
+    let list = windows::open_scripts(&store, &slots).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let script = slots.script.borrow().as_ref().unwrap().clone_strong();
+    script.invoke_example_clicked(0, false, false);
+    script.invoke_example_clicked(1, true, false);
+    script.invoke_action("delete-example".into());
+    assert!(script.get_deleting());
+    script.invoke_action("back".into());
+    assert_eq!(script.get_examples().row_count(), 2);
+    script.invoke_action("delete-example".into());
+    script.invoke_action("confirm".into());
+    assert_eq!(script.get_examples().row_count(), 0);
+    script.invoke_action("add-example".into());
+    let child = slots.example.borrow().as_ref().unwrap().clone_strong();
+    child.set_domain("cancelled.example".into());
+    child.invoke_action("next".into());
+    child.invoke_action("next".into());
+    let pixels = headless::render(&rendered.get(rendered.count() - 1).unwrap(), 650, 260);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("login_example_domain.png"),
+        &pixels,
+        650,
+        260,
+    )
+    .unwrap();
+    script.invoke_action("cancel".into());
+    assert!(slots.example.borrow().is_none());
+    child.invoke_action("keep-description".into());
+    list.invoke_action("cancel".into());
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
+}

@@ -161,6 +161,38 @@ def record(session):
             argument_states.append({'kind': kind, 'action': action, 'answers': values, 'prompts': list(prompts), 'state': arguments_panel.GetValue().GetSerialisableTuple(), 'rows': argument_rows()})
         arguments_panel.deleteLater()
 
+        examples_panel = G.EditLoginScriptPanel(gui, script)
+        example_states = []
+        example_texts = []
+        example_access = []
+        example_prompts = []
+        def example_enter(parent, message, **kwargs):
+            example_prompts.append({'message': message, 'options': kwargs})
+            value = example_texts.pop(0)
+            if value is None: raise G.HydrusExceptions.CancelledException('scripted cancel')
+            return value
+        def example_choose(parent, message, choices, **kwargs):
+            example_prompts.append({'message': message, 'choices': choices, 'options': kwargs})
+            value = example_access.pop(0)
+            if value is None: raise G.HydrusExceptions.CancelledException('scripted cancel')
+            return value
+        ClientGUIDialogsQuick.EnterText = example_enter
+        ClientGUIDialogsQuick.SelectFromList = example_choose
+        G.ClientGUIDialogsMessage.ShowWarning = lambda parent, message: example_prompts.append({'warning': message})
+        def example_state():
+            return {'value': examples_panel.GetValue().GetExampleDomainsInfo(), 'rows': table(examples_panel._example_domains_info)}
+        example_states.append({'state': example_state()})
+        for action, texts, access in [('add', ['another.example', None], 2), ('add', ['login.example'], 2), ('edit', ['renamed.example', 'custom access'], 2), ('edit', ['renamed.example', None], 2), ('add', [None], 1), ('add', ['cancelled.example'], None)]:
+            if action == 'edit':
+                data = examples_panel._example_domains_info.GetData()
+                target = next(row for row in data if row[0] in ['another.example', 'renamed.example'])
+                examples_panel._example_domains_info.SelectDatas([target], deselect_others=True)
+            example_texts[:] = texts; example_access[:] = [access]; example_prompts.clear()
+            if action == 'add': examples_panel._AddExampleDomainsInfo()
+            else: examples_panel._EditExampleDomainsInfo()
+            example_states.append({'action': action, 'texts': texts, 'access': access, 'prompts': list(example_prompts), 'state': example_state()})
+        examples_panel.deleteLater()
+
         cookie_panel = G.EditLoginScriptPanel(gui, script)
         cookie_control = cookie_panel._required_cookies_info
         cookie_states = []
@@ -232,7 +264,7 @@ def record(session):
             login_actions.append({'mode': mode, 'accepted': allow, 'questions': list(questions), 'warnings': list(warnings), 'okayed': list(okayed), 'domains': route._domains_to_login_after_ok})
             route.deleteLater()
 
-        return {'cookie_states': cookie_states, 'argument_states': argument_states, 'domain_login_actions': login_actions, 'domain_states': domain_states, 'step_states': step_states, 'permitted_content_types': permitted, 'manager': original_manager, 'script_rows': script_rows, 'script_list': script_list, 'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
+        return {'example_states': example_states, 'cookie_states': cookie_states, 'argument_states': argument_states, 'domain_login_actions': login_actions, 'domain_states': domain_states, 'step_states': step_states, 'permitted_content_types': permitted, 'manager': original_manager, 'script_rows': script_rows, 'script_list': script_list, 'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
                 'credential_types': [[i, L.credential_type_str_lookup[i]] for i in [0, 1]], 'access_types': [[i, L.login_access_type_str_lookup[i], L.login_access_type_default_description_lookup[i]] for i in range(4)]}
     return controller.CallBlockingToQt(gui, qt)
 recorder.record = record
