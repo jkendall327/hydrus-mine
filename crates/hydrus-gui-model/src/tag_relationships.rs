@@ -83,6 +83,7 @@ pub struct Relationships {
     service: usize,
     sort: usize,
     ascending: bool,
+    use_listbook: bool,
 }
 
 impl Relationships {
@@ -133,7 +134,13 @@ impl Relationships {
             service: selected,
             sort: 2,
             ascending: true,
+            use_listbook: preferences.use_listbook,
         })
+    }
+
+    /// The service navigator's topology is captured when the dialog opens.
+    pub fn use_listbook(&self) -> bool {
+        self.use_listbook
     }
 
     /// Seed the selected tags on every service page, as context-menu relationship editors do.

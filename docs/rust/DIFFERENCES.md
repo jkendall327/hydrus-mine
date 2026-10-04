@@ -1470,3 +1470,14 @@ is active. Native hover content/layout and the reference's menu/dominant-hover
 interaction rules retain their existing differences; the implemented focus
 preference applies to all four existing native hover panels. Focus callbacks use
 weak viewer handles and do not keep closed components alive.
+
+The Tag Editing service-listbook and three storage-list decoration defaults now
+reach Manage Tags; the service navigator also reaches sibling and parent editors.
+These are opening defaults independent of write-autocomplete decorations. Native
+service tabs and list rows use Slint geometry. Inherited parent ordering follows
+natural tag order; Qt's inherited-parent collection does not specify relative
+order. Existing Manage Tags differences remain: counts are omitted when every
+selected file has the tag, multiple stored-tag selection and its full context
+menu are not implemented, and remote service petition dialogs are outside this
+local-service slice. The four preference leaves do not claim those parent
+workflow gaps complete.

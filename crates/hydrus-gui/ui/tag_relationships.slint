@@ -1,8 +1,9 @@
-import { Button, CheckBox, ComboBox, LineEdit, ListView, TextEdit } from "std-widgets.slint";
+import { Button, CheckBox, LineEdit, ListView, TextEdit } from "std-widgets.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { WriteTagInput, TagMenuOverlay } from "write_autocomplete.slint";
 import { MenuPane } from "main_menu.slint";
 import { Theme, ListText } from "theme.slint";
+import { TagServicePanels } from "tag_service_panels.slint";
 
 export component TagRelationshipsWindow inherits Window {
     in property <[MenuPane]> tag-menu-panes;
@@ -19,6 +20,8 @@ export component TagRelationshipsWindow inherits Window {
     preferred-height: 660px;
     background: Theme.window;
     in property <[string]> service-names;
+    in property <bool> use-listbook;
+    out property <float> service-content-offset: services.content-offset;
     in-out property <int> service-index;
     in property <[TableRow]> rows;
     in property <[ListText]> left-tags;
@@ -83,143 +86,144 @@ export component TagRelationshipsWindow inherits Window {
             if root.question != "" { return accept; }
             reject
         }
-        VerticalLayout {
-            padding: 10px;
-            spacing: 8px;
-            ComboBox {
-                model: root.service-names;
-                current-index <=> root.service-index;
-                selected => { root.service-chosen(self.current-index); }
-            }
-            Text {
-                text: root.siblings ? "Tags on the left will appear as those on the right." : "Files with any tag on the left will also be given the tags on the right.";
-                color: Theme.text;
-            }
-            Text { text: root.sync-status; color: Theme.text; wrap: word-wrap; }
-            HorizontalLayout {
-                spacing: 12px;
-                CheckBox { text: "show all pairs"; checked <=> root.show-all; toggled => { root.filters-changed(); } }
-                CheckBox { text: "show pending and petitioned groups"; enabled: !root.show-all; checked <=> root.show-pending; toggled => { root.filters-changed(); } }
-                if !root.siblings: CheckBox { text: "show whole chains"; enabled: !root.show-all; checked <=> root.whole-chain; toggled => { root.filters-changed(); } }
-            }
-            HorizontalLayout {
-                Button { text: "wipe workspace"; clicked => { root.wipe-workspace(); } }
-                Text { text: root.rows.length + " pairs."; color: Theme.text; vertical-alignment: center; }
-            }
-            ListTable {
-                vertical-stretch: 1;
-                columns: [
-                    { title: "", width: 48px, stretch: false },
-                    { title: root.siblings ? "to be replaced" : "child", width: 190px, stretch: true },
-                    { title: root.siblings ? "ideal" : "parent", width: 190px, stretch: true },
-                    { title: "note", width: 280px, stretch: true }
-                ];
-                rows: root.rows;
-                sort-column: root.sort-column;
-                ascending: root.ascending;
-                sort(c, asc) => { root.sort(c, asc); }
-                row-clicked(i, ctrl, shift) => { root.row-clicked(i, ctrl, shift); }
-                row-activated(i) => { root.row-activated(i); }
-                delete-pressed => { root.delete(); }
-            }
-            HorizontalLayout {
-                spacing: 6px;
-                Button { text: "add"; enabled: root.can-add; clicked => { root.add(); } }
-                Button { text: "delete"; enabled: root.has-selection; clicked => { root.delete(); } }
-                Button { text: "import clipboard"; clicked => { root.import-pairs(false); } }
-                Button { text: "import .txt"; clicked => { root.import-pairs(true); } }
-                Button { text: "export clipboard"; enabled: root.has-selection; clicked => { root.export-pairs(false); } }
-                Button { text: "export .txt"; enabled: root.has-selection; clicked => { root.export-pairs(true); } }
-            }
-            HorizontalLayout {
-                spacing: 12px;
-                VerticalLayout {
-                    Text { text: root.siblings ? "set tags to be replaced" : "set children"; color: Theme.text; horizontal-alignment: center; }
-                    Rectangle {
-                        height: 84px; background: Theme.panel; border-width: 1px; border-color: Theme.border;
-                        ListView {
-                            for tag[i] in root.left-tags: Rectangle {
-                                height: 22px;
-                                Text { text: tag.text; color: tag.colour; x: 4px; vertical-alignment: center; }
-                                TouchArea { double-clicked => { root.remove-input(false, i); } }
+        services := TagServicePanels {
+            names: root.service-names;
+            index: root.service-index;
+            use-listbook: root.use-listbook;
+            chosen(i) => { root.service-chosen(i); }
+            VerticalLayout {
+                padding: 10px;
+                spacing: 8px;
+                Text {
+                    text: root.siblings ? "Tags on the left will appear as those on the right." : "Files with any tag on the left will also be given the tags on the right.";
+                    color: Theme.text;
+                }
+                Text { text: root.sync-status; color: Theme.text; wrap: word-wrap; }
+                HorizontalLayout {
+                    spacing: 12px;
+                    CheckBox { text: "show all pairs"; checked <=> root.show-all; toggled => { root.filters-changed(); } }
+                    CheckBox { text: "show pending and petitioned groups"; enabled: !root.show-all; checked <=> root.show-pending; toggled => { root.filters-changed(); } }
+                    if !root.siblings: CheckBox { text: "show whole chains"; enabled: !root.show-all; checked <=> root.whole-chain; toggled => { root.filters-changed(); } }
+                }
+                HorizontalLayout {
+                    Button { text: "wipe workspace"; clicked => { root.wipe-workspace(); } }
+                    Text { text: root.rows.length + " pairs."; color: Theme.text; vertical-alignment: center; }
+                }
+                ListTable {
+                    vertical-stretch: 1;
+                    columns: [
+                        { title: "", width: 48px, stretch: false },
+                        { title: root.siblings ? "to be replaced" : "child", width: 190px, stretch: true },
+                        { title: root.siblings ? "ideal" : "parent", width: 190px, stretch: true },
+                        { title: "note", width: 280px, stretch: true }
+                    ];
+                    rows: root.rows;
+                    sort-column: root.sort-column;
+                    ascending: root.ascending;
+                    sort(c, asc) => { root.sort(c, asc); }
+                    row-clicked(i, ctrl, shift) => { root.row-clicked(i, ctrl, shift); }
+                    row-activated(i) => { root.row-activated(i); }
+                    delete-pressed => { root.delete(); }
+                }
+                HorizontalLayout {
+                    spacing: 6px;
+                    Button { text: "add"; enabled: root.can-add; clicked => { root.add(); } }
+                    Button { text: "delete"; enabled: root.has-selection; clicked => { root.delete(); } }
+                    Button { text: "import clipboard"; clicked => { root.import-pairs(false); } }
+                    Button { text: "import .txt"; clicked => { root.import-pairs(true); } }
+                    Button { text: "export clipboard"; enabled: root.has-selection; clicked => { root.export-pairs(false); } }
+                    Button { text: "export .txt"; enabled: root.has-selection; clicked => { root.export-pairs(true); } }
+                }
+                HorizontalLayout {
+                    spacing: 12px;
+                    VerticalLayout {
+                        Text { text: root.siblings ? "set tags to be replaced" : "set children"; color: Theme.text; horizontal-alignment: center; }
+                        Rectangle {
+                            height: 84px; background: Theme.panel; border-width: 1px; border-color: Theme.border;
+                            ListView {
+                                for tag[i] in root.left-tags: Rectangle {
+                                    height: 22px;
+                                    Text { text: tag.text; color: tag.colour; x: 4px; vertical-alignment: center; }
+                                    TouchArea { double-clicked => { root.remove-input(false, i); } }
+                                }
                             }
                         }
-                    }
-                    WriteTagInput {
-                        enabled: root.question == "";
-                        text <=> root.left-input;
-                        suggestions: root.left-suggestions;
-                        highlighted: root.left-highlighted;
-                        tab-index: root.left-tab;
-                        tab-chosen(i) => { root.autocomplete-tab(false, i); }
-                        list-height: root.autocomplete-height;
-                        edited(text) => { root.autocomplete-edited(false, text); }
-                        entered => { root.enter-tags(false, self.text); }
-                        fetch => { root.autocomplete-fetch(false); }
-                        move-highlight(by) => { root.autocomplete-move(false, by); }
-                        chosen(i) => { root.autocomplete-chosen(false, i); }
-                    context-menu(i,x,y) => { root.context-menu(false,i,x,y); }
-                    file-label:root.left-file-label;tag-label:root.left-tag-label;
-                    domain-menu(tags,x,y)=>{root.domain-menu(false,tags,x,y);}
-                        paste(button) => { root.autocomplete-paste(false, button) }
-                    }
-                }
-                VerticalLayout {
-                    Text { text: root.siblings ? "set new ideal tag" : "set parents"; color: Theme.text; horizontal-alignment: center; }
-                    Rectangle {
-                        height: 84px; background: Theme.panel; border-width: 1px; border-color: Theme.border;
-                        ListView {
-                            for tag[i] in root.right-tags: Rectangle {
-                                height: 22px;
-                                Text { text: tag.text; color: tag.colour; x: 4px; vertical-alignment: center; }
-                                TouchArea { double-clicked => { root.remove-input(true, i); } }
-                            }
+                        WriteTagInput {
+                            enabled: root.question == "";
+                            text <=> root.left-input;
+                            suggestions: root.left-suggestions;
+                            highlighted: root.left-highlighted;
+                            tab-index: root.left-tab;
+                            tab-chosen(i) => { root.autocomplete-tab(false, i); }
+                            list-height: root.autocomplete-height;
+                            edited(text) => { root.autocomplete-edited(false, text); }
+                            entered => { root.enter-tags(false, self.text); }
+                            fetch => { root.autocomplete-fetch(false); }
+                            move-highlight(by) => { root.autocomplete-move(false, by); }
+                            chosen(i) => { root.autocomplete-chosen(false, i); }
+                        context-menu(i,x,y) => { root.context-menu(false,i,x,y); }
+                        file-label:root.left-file-label;tag-label:root.left-tag-label;
+                        domain-menu(tags,x,y)=>{root.domain-menu(false,tags,x,y);}
+                            paste(button) => { root.autocomplete-paste(false, button) }
                         }
                     }
-                    WriteTagInput {
-                        enabled: root.question == "";
-                        text <=> root.right-input;
-                        suggestions: root.right-suggestions;
-                        highlighted: root.right-highlighted;
-                        tab-index: root.right-tab;
-                        tab-chosen(i) => { root.autocomplete-tab(true, i); }
-                        list-height: root.autocomplete-height;
-                        edited(text) => { root.autocomplete-edited(true, text); }
-                        entered => { root.enter-tags(true, self.text); }
-                        fetch => { root.autocomplete-fetch(true); }
-                        move-highlight(by) => { root.autocomplete-move(true, by); }
-                        chosen(i) => { root.autocomplete-chosen(true, i); }
-                    context-menu(i,x,y) => { root.context-menu(true,i,x,y); }
-                    file-label:root.right-file-label;tag-label:root.right-tag-label;
-                    domain-menu(tags,x,y)=>{root.domain-menu(true,tags,x,y);}
-                        paste(button) => { root.autocomplete-paste(true, button) }
+                    VerticalLayout {
+                        Text { text: root.siblings ? "set new ideal tag" : "set parents"; color: Theme.text; horizontal-alignment: center; }
+                        Rectangle {
+                            height: 84px; background: Theme.panel; border-width: 1px; border-color: Theme.border;
+                            ListView {
+                                for tag[i] in root.right-tags: Rectangle {
+                                    height: 22px;
+                                    Text { text: tag.text; color: tag.colour; x: 4px; vertical-alignment: center; }
+                                    TouchArea { double-clicked => { root.remove-input(true, i); } }
+                                }
+                            }
+                        }
+                        WriteTagInput {
+                            enabled: root.question == "";
+                            text <=> root.right-input;
+                            suggestions: root.right-suggestions;
+                            highlighted: root.right-highlighted;
+                            tab-index: root.right-tab;
+                            tab-chosen(i) => { root.autocomplete-tab(true, i); }
+                            list-height: root.autocomplete-height;
+                            edited(text) => { root.autocomplete-edited(true, text); }
+                            entered => { root.enter-tags(true, self.text); }
+                            fetch => { root.autocomplete-fetch(true); }
+                            move-highlight(by) => { root.autocomplete-move(true, by); }
+                            chosen(i) => { root.autocomplete-chosen(true, i); }
+                        context-menu(i,x,y) => { root.context-menu(true,i,x,y); }
+                        file-label:root.right-file-label;tag-label:root.right-tag-label;
+                        domain-menu(tags,x,y)=>{root.domain-menu(true,tags,x,y);}
+                            paste(button) => { root.autocomplete-paste(true, button) }
+                        }
                     }
                 }
-            }
-            if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-            HorizontalLayout {
-                alignment: end; spacing: 8px;
-                Button { text: "apply"; clicked => { root.apply(); } }
-                Button { text: "cancel"; clicked => { root.cancel(); } }
+                if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+                HorizontalLayout {
+                    alignment: end; spacing: 8px;
+                    Button { text: "apply"; clicked => { root.apply(); } }
+                    Button { text: "cancel"; clicked => { root.cancel(); } }
+                }
             }
         }
-    }
-    if root.question != "": Rectangle {
-        background: #00000055;
-        TouchArea {}
-    }
-    if root.question != "": Rectangle {
-        background: Theme.window;
-        border-width: 1px; border-color: Theme.border;
-        x: 50px; y: 150px; width: parent.width - 100px; height: 340px;
-        VerticalLayout {
-            padding: 20px; spacing: 10px;
-            TextEdit { text: root.question; read-only: true; vertical-stretch: 1; }
-            if root.ask-reason: LineEdit { text <=> root.reason; placeholder-text: "reason"; }
-            HorizontalLayout {
-                alignment: end; spacing: 10px;
-                Button { text: root.yes-label; enabled: !root.ask-reason || root.reason != ""; clicked => { root.answered(true); } }
-                Button { text: root.no-label; clicked => { root.answered(false); } }
+        if root.question != "": Rectangle {
+            background: #00000055;
+            TouchArea {}
+        }
+        if root.question != "": Rectangle {
+            background: Theme.window;
+            border-width: 1px; border-color: Theme.border;
+            x: 50px; y: 150px; width: parent.width - 100px; height: 340px;
+            VerticalLayout {
+                padding: 20px; spacing: 10px;
+                TextEdit { text: root.question; read-only: true; vertical-stretch: 1; }
+                if root.ask-reason: LineEdit { text <=> root.reason; placeholder-text: "reason"; }
+                HorizontalLayout {
+                    alignment: end; spacing: 10px;
+                    Button { text: root.yes-label; enabled: !root.ask-reason || root.reason != ""; clicked => { root.answered(true); } }
+                    Button { text: root.no-label; clicked => { root.answered(false); } }
+                }
             }
         }
 

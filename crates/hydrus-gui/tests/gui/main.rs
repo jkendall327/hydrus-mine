@@ -103,6 +103,7 @@ mod downloader_display;
 mod favourite_search_editor;
 
 mod tag_dialog_defaults;
+mod tag_dialog_preferences;
 
 mod write_autocomplete;
 

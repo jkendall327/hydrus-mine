@@ -10,6 +10,10 @@ use serde::{Deserialize, Serialize};
 pub struct TagEditingSettings {
     pub remember_service: bool,
     pub default_service: ServiceKey,
+    pub use_listbook: bool,
+    pub tag_list_show_parents: bool,
+    pub tag_list_expand_parents: bool,
+    pub tag_list_show_siblings: bool,
     pub select_first_with_count: bool,
     pub skip_multiline_paste_confirmation: bool,
     pub autocomplete_list_height: u32,
@@ -23,6 +27,10 @@ impl Default for TagEditingSettings {
         Self {
             remember_service: true,
             default_service: ServiceKey::new(builtin_keys::MY_TAGS.to_vec()),
+            use_listbook: false,
+            tag_list_show_parents: true,
+            tag_list_expand_parents: true,
+            tag_list_show_siblings: true,
             select_first_with_count: false,
             skip_multiline_paste_confirmation: false,
             autocomplete_list_height: 11,
@@ -59,6 +67,10 @@ mod tests {
             "default_service": ServiceKey::new(builtin_keys::MY_TAGS.to_vec())
         }))
         .unwrap();
+        assert!(!old.use_listbook);
+        assert!(old.tag_list_show_parents);
+        assert!(old.tag_list_expand_parents);
+        assert!(old.tag_list_show_siblings);
         assert!(!old.select_first_with_count);
         assert!(!old.skip_multiline_paste_confirmation);
         assert!(old.autocomplete_show_parents);
@@ -68,6 +80,10 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let store = crate::Store::open(dir.path()).unwrap();
         let changed = TagEditingSettings {
+            use_listbook: true,
+            tag_list_show_parents: false,
+            tag_list_expand_parents: false,
+            tag_list_show_siblings: false,
             select_first_with_count: true,
             skip_multiline_paste_confirmation: true,
             autocomplete_list_height: 3,

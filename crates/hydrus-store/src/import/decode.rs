@@ -130,6 +130,28 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     insert_setting(&mut input, &notebooks)?;
     let mut tag_editing = crate::tag_editing::TagEditingSettings::default();
     if let Some(options) = &options {
+        for (key, field) in [
+            (
+                "use_listbook_for_tag_service_panels",
+                &mut tag_editing.use_listbook,
+            ),
+            (
+                "show_parent_decorators_on_storage_taglists",
+                &mut tag_editing.tag_list_show_parents,
+            ),
+            (
+                "expand_parents_on_storage_taglists",
+                &mut tag_editing.tag_list_expand_parents,
+            ),
+            (
+                "show_sibling_decorators_on_storage_taglists",
+                &mut tag_editing.tag_list_show_siblings,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
         if let Some(&value) = options
             .booleans
             .get("save_default_tag_service_tab_on_change")
@@ -2518,6 +2540,53 @@ mod tests {
             [dump.into_bytes()],
         )
         .unwrap();
+    }
+
+    #[test]
+    fn tag_dialog_defaults_import_independently_of_autocomplete_defaults() {
+        use crate::tag_editing::TagEditingSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<TagEditingSettings>(input.settings["tag_editing"].clone())
+                .unwrap()
+        };
+        let before = decoded();
+        assert!(!before.use_listbook);
+        assert!(before.tag_list_show_parents);
+        assert!(before.tag_list_expand_parents);
+        assert!(before.tag_list_show_siblings);
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "use_listbook_for_tag_service_panels"], [0, false]]"#,
+                    r#"[[0, "use_listbook_for_tag_service_panels"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "show_parent_decorators_on_storage_taglists"], [0, true]]"#,
+                    r#"[[0, "show_parent_decorators_on_storage_taglists"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "expand_parents_on_storage_taglists"], [0, true]]"#,
+                    r#"[[0, "expand_parents_on_storage_taglists"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "show_sibling_decorators_on_storage_taglists"], [0, true]]"#,
+                    r#"[[0, "show_sibling_decorators_on_storage_taglists"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            TagEditingSettings {
+                use_listbook: true,
+                tag_list_show_parents: false,
+                tag_list_expand_parents: false,
+                tag_list_show_siblings: false,
+                ..before
+            }
+        );
     }
 
     #[test]

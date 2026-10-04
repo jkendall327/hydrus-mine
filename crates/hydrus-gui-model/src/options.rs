@@ -2139,6 +2139,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     "tag dialogs",
                     vec![
                         check(
+                            "Use listbook instead of tabbed notebook for tag service panels: ",
+                            |settings| settings.tag_editing.use_listbook,
+                            |settings, value| settings.tag_editing.use_listbook = value,
+                        ),
+                        check(
                             "Remember last used default tag service in manage tag dialogs: ",
                             |settings| settings.tag_editing.remember_service,
                             |settings, value| settings.tag_editing.remember_service = value,
@@ -2149,6 +2154,21 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |settings| settings.tag_editing.default_service.clone(),
                             |settings, service| settings.tag_editing.default_service = service,
                             |settings| !settings.tag_editing.remember_service,
+                        ),
+                        check(
+                            "Show parent info by default on edit/write taglists: ",
+                            |settings| settings.tag_editing.tag_list_show_parents,
+                            |settings, value| settings.tag_editing.tag_list_show_parents = value,
+                        ),
+                        check(
+                            "Show parents expanded by default on edit/write taglists: ",
+                            |settings| settings.tag_editing.tag_list_expand_parents,
+                            |settings, value| settings.tag_editing.tag_list_expand_parents = value,
+                        ),
+                        check(
+                            "Show sibling info by default on edit/write taglists: ",
+                            |settings| settings.tag_editing.tag_list_show_siblings,
+                            |settings, value| settings.tag_editing.tag_list_show_siblings = value,
                         ),
                     ],
                 ),

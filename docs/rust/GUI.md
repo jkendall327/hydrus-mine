@@ -2242,3 +2242,14 @@ is active. Another active application window hides it. Apply updates the current
 viewer, Cancel retains the preferences, and legacy values migrate. The fresh
 `viewer_focus_options.json` recording includes real Qt activation and all four
 no-active-window transitions.
+
+Tag Editing > tag dialogs now stages and saves the service-navigation and
+storage-list defaults. Manage Tags, siblings and parents use horizontal service
+tabs or a vertical service list according to the listbook preference. Manage
+Tags captures the separate parent-info, expanded-parent and sibling-info defaults
+when it opens: parents appear as a count or indented rows, and aliases display
+their ideal sibling. Inherited rows keep their parent's namespace colour and
+activate the originating stored tag. Cancelling either Options or Manage Tags
+preserves saved preferences and mappings; reopening uses the saved defaults.
+The real Qt `tag_dialog_preferences.json` recording covers all sixteen flag
+combinations and inherited-row activation.
