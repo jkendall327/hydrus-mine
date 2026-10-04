@@ -1,6 +1,5 @@
 //! Native ± child reads the ordered selection and accepts only into its live parent.
-#[path = "../../../hydrus-gui-model/tests/support/manage_tag_counts.rs"]
-mod fixture;
+use super::manage_tag_counts::fixture;
 use hydrus_core::ContentStatus;
 use hydrus_gui::{IncrementalTaggingWindow, MainWindow, Pages, SearchPage, bind, headless};
 use serde_json::{Value, json};

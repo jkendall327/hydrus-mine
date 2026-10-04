@@ -1,6 +1,5 @@
 //! Exact Qt child summaries/pairs, live text memory and per-file staged Apply.
-#[path = "../support/manage_tag_counts.rs"]
-mod fixture;
+use super::manage_tag_counts::fixture;
 use hydrus_core::ContentStatus;
 use hydrus_gui_model::{incremental_tagging::IncrementalTagging, manage_tags::ManageTags};
 use serde_json::{Value, json};
