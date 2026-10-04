@@ -1,0 +1,649 @@
+{
+  "gugs": [
+    [
+      69,
+      "zeta visible",
+      1,
+      [
+        "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
+        "https://gallery.example/search?q=%tags%",
+        "%tags%",
+        "+",
+        "tag",
+        "blue eyes"
+      ]
+    ],
+    [
+      69,
+      "Alpha visible",
+      1,
+      [
+        "0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c",
+        "https://gallery.example/search?q=%tags%",
+        "%tags%",
+        "+",
+        "tag",
+        "blue eyes"
+      ]
+    ],
+    [
+      69,
+      "beta hidden",
+      1,
+      [
+        "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+        "https://gallery.example/search?q=%tags%",
+        "%tags%",
+        "+",
+        "tag",
+        "blue eyes"
+      ]
+    ],
+    [
+      69,
+      "unknown URL",
+      1,
+      [
+        "0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e",
+        "https://unknown.example/search?q=%tags%",
+        "%tags%",
+        "+",
+        "tag",
+        "blue eyes"
+      ]
+    ],
+    [
+      69,
+      "unlinked URL",
+      1,
+      [
+        "0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f",
+        "https://unlinked.example/search?q=%tags%",
+        "%tags%",
+        "+",
+        "tag",
+        "blue eyes"
+      ]
+    ],
+    [
+      69,
+      "missing parser",
+      1,
+      [
+        "1010101010101010101010101010101010101010101010101010101010101010",
+        "https://missing-parser.example/search?q=%tags%",
+        "%tags%",
+        "+",
+        "tag",
+        "blue eyes"
+      ]
+    ],
+    [
+      69,
+      "broken template",
+      1,
+      [
+        "1111111111111111111111111111111111111111111111111111111111111111",
+        "https://gallery.example/search?q=%tags%",
+        "",
+        "+",
+        "tag",
+        "blue eyes"
+      ]
+    ],
+    [
+      70,
+      "nested broken",
+      1,
+      [
+        "1212121212121212121212121212121212121212121212121212121212121212",
+        "search tags",
+        [
+          [
+            "0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f",
+            "unlinked URL"
+          ]
+        ]
+      ]
+    ],
+    [
+      70,
+      "nested missing",
+      1,
+      [
+        "1313131313131313131313131313131313131313131313131313131313131313",
+        "search tags",
+        [
+          [
+            "4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d",
+            "gone"
+          ]
+        ]
+      ]
+    ],
+    [
+      70,
+      "nested empty",
+      1,
+      [
+        "1414141414141414141414141414141414141414141414141414141414141414",
+        "search tags",
+        []
+      ]
+    ]
+  ],
+  "classes": [
+    [
+      50,
+      "synthetic gallery",
+      15,
+      [
+        "5151515151515151515151515151515151515151515151515151515151515151",
+        3,
+        "https",
+        [
+          139,
+          1,
+          [
+            [
+              "gallery.example"
+            ],
+            [],
+            false,
+            false
+          ]
+        ],
+        [
+          true,
+          false,
+          false,
+          true,
+          false,
+          true,
+          false
+        ],
+        [],
+        [
+          26,
+          3,
+          []
+        ],
+        false,
+        [
+          51,
+          1,
+          [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+          ]
+        ],
+        [],
+        [
+          55,
+          2,
+          [
+            [],
+            "https://hostname.com/post/page.php?id=123456&s=view"
+          ]
+        ],
+        0,
+        [
+          55,
+          2,
+          [
+            [],
+            "https://hostname.com/post/page.php?id=123456&s=view"
+          ]
+        ],
+        null,
+        null,
+        1,
+        "https://gallery.example/search?q=test"
+      ]
+    ],
+    [
+      50,
+      "unlinked gallery",
+      15,
+      [
+        "5252525252525252525252525252525252525252525252525252525252525252",
+        3,
+        "https",
+        [
+          139,
+          1,
+          [
+            [
+              "unlinked.example"
+            ],
+            [],
+            false,
+            false
+          ]
+        ],
+        [
+          true,
+          false,
+          false,
+          true,
+          false,
+          true,
+          false
+        ],
+        [],
+        [
+          26,
+          3,
+          []
+        ],
+        false,
+        [
+          51,
+          1,
+          [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+          ]
+        ],
+        [],
+        [
+          55,
+          2,
+          [
+            [],
+            "https://hostname.com/post/page.php?id=123456&s=view"
+          ]
+        ],
+        0,
+        [
+          55,
+          2,
+          [
+            [],
+            "https://hostname.com/post/page.php?id=123456&s=view"
+          ]
+        ],
+        null,
+        null,
+        1,
+        "https://unlinked.example/search?q=test"
+      ]
+    ],
+    [
+      50,
+      "missing parser gallery",
+      15,
+      [
+        "5353535353535353535353535353535353535353535353535353535353535353",
+        3,
+        "https",
+        [
+          139,
+          1,
+          [
+            [
+              "missing-parser.example"
+            ],
+            [],
+            false,
+            false
+          ]
+        ],
+        [
+          true,
+          false,
+          false,
+          true,
+          false,
+          true,
+          false
+        ],
+        [],
+        [
+          26,
+          3,
+          []
+        ],
+        false,
+        [
+          51,
+          1,
+          [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+          ]
+        ],
+        [],
+        [
+          55,
+          2,
+          [
+            [],
+            "https://hostname.com/post/page.php?id=123456&s=view"
+          ]
+        ],
+        0,
+        [
+          55,
+          2,
+          [
+            [],
+            "https://hostname.com/post/page.php?id=123456&s=view"
+          ]
+        ],
+        null,
+        null,
+        1,
+        "https://missing-parser.example/search?q=test"
+      ]
+    ]
+  ],
+  "parser": [
+    58,
+    "synthetic gallery parser",
+    3,
+    [
+      "synthetic gallery parser",
+      "5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b",
+      [
+        55,
+        2,
+        [
+          [],
+          "example string"
+        ]
+      ],
+      [
+        26,
+        3,
+        []
+      ],
+      [
+        26,
+        3,
+        []
+      ],
+      [],
+      {
+        "url": "https://example.com/posts/index.php?id=123456"
+      }
+    ]
+  ],
+  "display": [
+    "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
+    "0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c",
+    "0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e",
+    "0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f",
+    "1010101010101010101010101010101010101010101010101010101010101010",
+    "1111111111111111111111111111111111111111111111111111111111111111",
+    "1212121212121212121212121212121212121212121212121212121212121212",
+    "1313131313131313131313131313131313131313131313131313131313131313",
+    "1414141414141414141414141414141414141414141414141414141414141414"
+  ],
+  "labels": [
+    {
+      "given": null,
+      "caption": "no downloader set",
+      "value": null
+    },
+    {
+      "given": [
+        "0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c",
+        "old name"
+      ],
+      "caption": "Alpha visible",
+      "value": [
+        "0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c",
+        "Alpha visible"
+      ]
+    },
+    {
+      "given": [
+        "4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d",
+        "beta hidden"
+      ],
+      "caption": "beta hidden",
+      "value": [
+        "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+        "beta hidden"
+      ]
+    },
+    {
+      "given": [
+        "4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d",
+        "gone"
+      ],
+      "caption": "not found: gone",
+      "value": [
+        "4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d",
+        "gone"
+      ]
+    },
+    {
+      "given": [
+        "0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c",
+        ""
+      ],
+      "caption": "no downloader set",
+      "value": null
+    }
+  ],
+  "functional": [
+    {
+      "name": "zeta visible",
+      "error": null
+    },
+    {
+      "name": "Alpha visible",
+      "error": null
+    },
+    {
+      "name": "beta hidden",
+      "error": null
+    },
+    {
+      "name": "unknown URL",
+      "error": "No URL Class for example URL!"
+    },
+    {
+      "name": "unlinked URL",
+      "error": "Cannot parse unlinked gallery: Could not find a parser for unlinked gallery URL Class!"
+    },
+    {
+      "name": "missing parser",
+      "error": "Cannot parse missing parser gallery: Could not find a parser for missing parser gallery URL Class!"
+    },
+    {
+      "name": "broken template",
+      "error": "Unusual error: No replacement phrase!"
+    },
+    {
+      "name": "nested broken",
+      "error": "Cannot parse unlinked gallery: Could not find a parser for unlinked gallery URL Class!"
+    },
+    {
+      "name": "nested missing",
+      "error": null
+    },
+    {
+      "name": "nested empty",
+      "error": null
+    }
+  ],
+  "cases": [
+    {
+      "case": "cancel",
+      "dialogs": [
+        {
+          "title": "select gallery",
+          "choices": [
+            "Alpha visible",
+            "nested empty",
+            "nested missing",
+            "zeta visible",
+            "--other galleries…",
+            "--non-functional galleries…"
+          ],
+          "selected": [
+            "Alpha visible"
+          ],
+          "answer": null
+        }
+      ],
+      "value": null,
+      "cancelled": true
+    },
+    {
+      "case": "visible",
+      "dialogs": [
+        {
+          "title": "select gallery",
+          "choices": [
+            "Alpha visible",
+            "nested empty",
+            "nested missing",
+            "zeta visible",
+            "--other galleries…",
+            "--non-functional galleries…"
+          ],
+          "selected": [
+            "Alpha visible"
+          ],
+          "answer": 0
+        }
+      ],
+      "value": [
+        "0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c",
+        "Alpha visible"
+      ],
+      "cancelled": false
+    },
+    {
+      "case": "other",
+      "dialogs": [
+        {
+          "title": "select gallery",
+          "choices": [
+            "Alpha visible",
+            "nested empty",
+            "nested missing",
+            "zeta visible",
+            "--other galleries…",
+            "--non-functional galleries…"
+          ],
+          "selected": [
+            "Alpha visible"
+          ],
+          "answer": 4
+        },
+        {
+          "title": "select gallery",
+          "choices": [
+            "beta hidden"
+          ],
+          "selected": [
+            "beta hidden"
+          ],
+          "answer": 0
+        }
+      ],
+      "value": [
+        "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+        "beta hidden"
+      ],
+      "cancelled": false
+    },
+    {
+      "case": "other cancel",
+      "dialogs": [
+        {
+          "title": "select gallery",
+          "choices": [
+            "Alpha visible",
+            "nested empty",
+            "nested missing",
+            "zeta visible",
+            "--other galleries…",
+            "--non-functional galleries…"
+          ],
+          "selected": [
+            "Alpha visible"
+          ],
+          "answer": 4
+        },
+        {
+          "title": "select gallery",
+          "choices": [
+            "beta hidden"
+          ],
+          "selected": [
+            "beta hidden"
+          ],
+          "answer": null
+        }
+      ],
+      "value": null,
+      "cancelled": true
+    },
+    {
+      "case": "non-functional",
+      "dialogs": [
+        {
+          "title": "select gallery",
+          "choices": [
+            "Alpha visible",
+            "nested empty",
+            "nested missing",
+            "zeta visible",
+            "--other galleries…",
+            "--non-functional galleries…"
+          ],
+          "selected": [
+            "Alpha visible"
+          ],
+          "answer": 5
+        },
+        {
+          "title": "select gallery",
+          "choices": [
+            "broken template (Unusual error: No replacement phrase!)",
+            "missing parser (Cannot parse missing parser gallery: Could not find a parser for missing parser gallery URL Class!)",
+            "nested broken (Cannot parse unlinked gallery: Could not find a parser for unlinked gallery URL Class!)",
+            "unknown URL (No URL Class for example URL!)",
+            "unlinked URL (Cannot parse unlinked gallery: Could not find a parser for unlinked gallery URL Class!)"
+          ],
+          "selected": [
+            "broken template (Unusual error: No replacement phrase!)"
+          ],
+          "answer": 0
+        }
+      ],
+      "value": [
+        "1111111111111111111111111111111111111111111111111111111111111111",
+        "broken template"
+      ],
+      "cancelled": false
+    },
+    {
+      "case": "empty",
+      "warnings": [
+        "Hey, you do not have any downloaders set up in this client, so there is nothing to select!\n\nCheck the _network->downloaders_ menu to find downloaders made by users."
+      ]
+    },
+    {
+      "case": "empty subscription",
+      "warnings": [
+        "Hey, you do not have any downloaders set up in this client, so you cannot create a new subscription yet!\n\nCheck the _network->downloaders_ menu to find downloaders made by users."
+      ]
+    }
+  ]
+}
