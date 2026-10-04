@@ -1292,7 +1292,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             (1, 128),
                             |settings| i64::from(settings.file_search.active_predicate_rows),
                             |settings, value| {
-                                settings.file_search.active_predicate_rows = value as u32
+                                settings.file_search.active_predicate_rows = value as u32;
                             },
                         ),
                         opt(
@@ -1353,7 +1353,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             },
                             |settings, value| {
                                 settings.file_search.implicit_limit =
-                                    value.map(|value| value as u64)
+                                    value.map(|value| value as u64);
                             },
                         ),
                         check(
@@ -1535,10 +1535,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 hydrus_store::settings::PageInsertion::FarRight => 3,
                             },
                             |s, value| {
-                                s.page_insertion = hydrus_store::settings::PageInsertion::from_code(
-                                    i64::try_from(value).unwrap_or(3),
-                                )
-                                .unwrap_or_default()
+                                s.page_insertion =
+                                    hydrus_store::settings::PageInsertion::from_code(
+                                        i64::try_from(value).unwrap_or(3),
+                                    )
+                                    .unwrap_or_default();
                             },
                         ),
                         choice(
@@ -1614,7 +1615,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         (1, 1440),
                         |s| i64::from(s.gui_sessions.autosave_minutes),
                         |s, value| {
-                            s.gui_sessions.autosave_minutes = u16::try_from(value).unwrap_or(5)
+                            s.gui_sessions.autosave_minutes = u16::try_from(value).unwrap_or(5);
                         },
                     ),
                     check(
