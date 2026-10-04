@@ -2326,14 +2326,13 @@ fn new_duplicates_page(
     })
 }
 
-/// A new search page, "files", searching "my files" (see
-/// [`new_search_page_on`]).
+/// A blank search page uses the configured default local file location.
 fn new_search_page(store: &Store) -> Page {
+    let defaults: hydrus_store::settings::SearchDefaults =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
     new_search_page_on(
         store,
-        hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
-            hydrus_core::service::builtin_keys::MY_FILES.to_vec(),
-        )),
+        defaults.resolved_local_location(&store.snapshot().services),
     )
 }
 

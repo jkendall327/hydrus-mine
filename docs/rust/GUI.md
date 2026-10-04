@@ -1831,3 +1831,9 @@ selection and importer snapshots. Appending into a background notebook remembers
 its new child selection while preserving the visible sibling, and survives reopen.
 
 The network engine's local job-control protocol distinguishes connection retries, server bandwidth retries, domain errors and gallery waits. Commands validate the daemon epoch and live request identifier. A recent-error journal lets the owning control display a failure even after its request leaves the live list. The reference recording also establishes that the visible error menu contains only show and copy; clearing belongs to the control's owner.
+
+The File Search default/fallback local location button edits current importable
+file domains in a child selector, including multiple domains. Its Apply stages
+the location in Options; Options Apply persists it. Blank search pages and new
+notebooks use it, as does switching an all-known-file search to all known tags.
+Missing services are removed; an empty default resolves to all local file domains.

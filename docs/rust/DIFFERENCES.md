@@ -1201,3 +1201,8 @@ Automatic GUI-session lifecycle history and legacy historical snapshot import
 remain outside the manual notebook session menu implementation.
 
 The network runtime now exposes request-scoped retry, domain scrub, gallery-token and five-second bandwidth override commands. Recent failures remain available after short requests finish (128 entries per daemon epoch, long text follows the reference's displayed prefix). These commands are being connected to the page controls; the existing current-job review remains separately scoped. See `oracle/fixtures/network_job_control.json`.
+
+The default/fallback local search location is editable and consumed by native
+blank-page creation and tag-domain fallback. Its native button opens the current
+importable-domain tick list directly; the reference offers single-domain menu
+shortcuts before that same multi-domain selector.

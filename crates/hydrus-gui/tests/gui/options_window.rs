@@ -1518,3 +1518,121 @@ fn search_defaults_apply_to_new_pages_and_the_real_autocomplete() {
     assert!(row(&reopened, "Show system:everything:").1.checked);
     reopened.invoke_cancel();
 }
+
+#[test]
+fn default_local_location_child_draft_drives_blank_pages_and_tag_fallback() {
+    use hydrus_core::ServiceKey;
+    use hydrus_core::search::context::LocationContext;
+    use hydrus_core::service::builtin_keys;
+    use hydrus_store::settings::{SearchDefaults, get};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("default_search_location.json");
+    let defaults = || store.read(get::<SearchDefaults>).unwrap();
+    let before = defaults();
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "file search");
+    let (location_row, location) = row(&window, "Default/Fallback local file search location:");
+    assert_eq!(location.text, fixture["initial"]["label"].as_str().unwrap());
+    window.invoke_local_location_clicked(location_row);
+    let child = hydrus_gui::locations_window::last_opened().unwrap();
+    child.invoke_toggled(0, true);
+    window.invoke_cancel();
+    assert!(!child.window().is_visible());
+    child.invoke_apply();
+    assert_eq!(defaults(), before, "cancel invalidates child callbacks");
+
+    for event in fixture["events"].as_array().unwrap() {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "file search");
+        let (location_row, _) = row(&window, "Default/Fallback local file search location:");
+        window.invoke_local_location_clicked(location_row);
+        let child = hydrus_gui::locations_window::last_opened().unwrap();
+        let choices = fixture["choices"].as_array().unwrap();
+        assert_eq!(child.get_ticks().row_count(), choices.len());
+        for (index, choice) in choices.iter().enumerate() {
+            assert_eq!(
+                child.get_ticks().row_data(index).unwrap().label,
+                choice["label"].as_str().unwrap()
+            );
+            let selected = event["selected"]["current"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|key| key == &choice["data"]);
+            child.invoke_toggled(index as i32, selected);
+        }
+        let unchanged = defaults();
+        child.invoke_apply();
+        assert_eq!(
+            defaults(),
+            unchanged,
+            "child Apply only changes parent draft"
+        );
+        window.invoke_apply();
+        let keys = |location: &LocationContext| {
+            location
+                .current()
+                .iter()
+                .map(ServiceKey::to_hex)
+                .collect::<Vec<_>>()
+        };
+        let expected = |field: &str| {
+            event[field]["current"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|value| value.as_str().unwrap().to_owned())
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(keys(&defaults().local_location), expected("selected"));
+        bound.pages.borrow_mut().new_search_page();
+        let page = bound.pages.borrow_mut().current();
+        assert_eq!(keys(page.borrow().location()), expected("new_page"));
+        page.borrow_mut()
+            .choose_location(LocationContext::single(ServiceKey::new(
+                builtin_keys::COMBINED_FILE.to_vec(),
+            )));
+        page.borrow_mut()
+            .choose_tag_service(ServiceKey::new(builtin_keys::COMBINED_TAG.to_vec()));
+        assert_eq!(keys(page.borrow().location()), expected("fallback"));
+        let standalone = hydrus_gui::SearchPage::new(store.clone());
+        assert_eq!(keys(standalone.location()), expected("resolved"));
+    }
+    store
+        .write(|ctx| {
+            let mut value = get::<SearchDefaults>(ctx.conn())?;
+            value.local_location =
+                LocationContext::single(ServiceKey::new(b"missing synthetic file domain".to_vec()));
+            hydrus_store::settings::set(ctx.conn(), &value)
+        })
+        .unwrap();
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "file search");
+    assert_eq!(
+        row(&window, "Default/Fallback local file search location:")
+            .1
+            .text,
+        fixture["missing"]["label"].as_str().unwrap()
+    );
+    window.invoke_apply();
+    assert_eq!(
+        defaults()
+            .local_location
+            .current()
+            .iter()
+            .map(ServiceKey::to_hex)
+            .collect::<Vec<_>>(),
+        fixture["missing"]["current"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|key| key.as_str().unwrap().to_owned())
+            .collect::<Vec<_>>()
+    );
+}

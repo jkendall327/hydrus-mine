@@ -185,6 +185,11 @@ fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
                     // (as the reference's, a subtag sort doesn't group)
                     out.grouped = sort.sort_type != hydrus_core::tag_sort::TagSortType::Subtag;
                 }
+                (Kind::LocalLocation, Value::Location(location)) => {
+                    out.kind = 16;
+                    out.text =
+                        crate::domains::location_label(&store.snapshot().services, location).into();
+                }
                 (Kind::RegexFavourites, Value::RegexFavourites(_)) => {
                     out.kind = 14;
                     out.text = "edit regex favourites".into();
@@ -230,10 +235,15 @@ pub(crate) fn open(
         .map_err(|e| format!("could not read the options: {e}"))?;
     let window = OptionsWindow::new().map_err(|e| e.to_string())?;
     window.set_search_at_top(settings.options_preferences.search_at_top);
+    let resolved = settings
+        .search_defaults
+        .resolved_local_location(&store.snapshot().services);
     let mut editor = Editor::new(settings);
+    editor.set_local_location(resolved);
     editor.resolve_tag_services(store);
     let editor = Rc::new(RefCell::new(editor));
     let regex_slot: crate::regex_favourites_window::Slot = Rc::default();
+    let location_slot: Rc<RefCell<Option<crate::LocationsWindow>>> = Rc::default();
     let names: Vec<StandardListViewItem> = editor
         .borrow()
         .page_names()
@@ -281,7 +291,9 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let slot = slot.clone();
         let regex_slot = regex_slot.clone();
+        let location_slot = location_slot.clone();
         move || {
+            crate::locations_window::cancel(&location_slot);
             crate::regex_favourites_window::cancel(&regex_slot);
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
@@ -341,6 +353,37 @@ pub(crate) fn open(
                 window.set_search_text(SharedString::new());
                 window.set_matches(ModelRc::default());
                 window.set_match_highlighted(-1);
+            }
+        }
+    });
+    window.on_local_location_clicked({
+        let editor = editor.clone();
+        let store = store.clone();
+        let location_slot = location_slot.clone();
+        let show_page = show_page.clone();
+        move |row| {
+            let current = match editor.borrow().rows().get(at(row)) {
+                Some(Row::Opt {
+                    value: Value::Location(location),
+                    ..
+                }) => location.clone(),
+                _ => return,
+            };
+            let chosen = Rc::new({
+                let editor = editor.clone();
+                let show_page = show_page.clone();
+                move |location| {
+                    editor.borrow_mut().set_local_location(location);
+                    show_page();
+                }
+            });
+            if let Err(error) = crate::locations_window::open_importable(
+                &location_slot,
+                store.clone(),
+                &current,
+                chosen,
+            ) {
+                eprintln!("could not open default local location: {error}");
             }
         }
     });

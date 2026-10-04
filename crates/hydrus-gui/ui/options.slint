@@ -127,6 +127,7 @@ export component OptionsWindow inherits Window {
     // (checker options' button clicked)
     callback checker-clicked(int);
     callback regex-favourites-clicked();
+    callback local-location-clicked(int);
     callback apply();
     callback cancel();
 
@@ -278,6 +279,10 @@ export component OptionsWindow inherits Window {
                                     checked: row.is-none;
                                     toggled => { root.none-toggled(i, self.checked); }
                                 }
+                            }
+                            if row.kind == 16: Button {
+                                text: row.text;
+                                clicked => { root.local-location-clicked(i); }
                             }
                             if row.kind == 14: Button {
                                 text: row.text;
