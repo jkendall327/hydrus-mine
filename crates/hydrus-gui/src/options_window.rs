@@ -161,6 +161,21 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                         .collect::<Vec<_>>(),
                     ));
                 }
+                (
+                    Kind::NoneableDuration {
+                        units,
+                        min,
+                        none_phrase,
+                        ..
+                    },
+                    Value::NoneableDuration { none, seconds },
+                ) => {
+                    out.kind = 24;
+                    out.is_none = *none;
+                    out.none_phrase = (*none_phrase).into();
+                    out.minimum = int((min * 1000.0) as i64);
+                    out.fields = fields(*seconds, units);
+                }
                 (Kind::Duration { units, .. }, Value::Duration(seconds)) => {
                     out.kind = 8;
                     out.fields = fields(*seconds, units);

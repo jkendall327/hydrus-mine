@@ -416,3 +416,103 @@ fn duplicates_pages_kept_by_an_earlier_import_still_open() {
         );
     }
 }
+
+#[test]
+fn viewing_statistics_switch_controls_actual_pair_navigation_and_cancelled_close() {
+    use hydrus_core::duplicates::DuplicatesSearch;
+    use hydrus_core::pages::{DuplicatesPage, Page, PageContent, PageKey, Session};
+    use hydrus_gui::{MainWindow, Pages, bind, headless};
+    use hydrus_store::sessions::{self, LAST_SESSION};
+    use hydrus_store::settings::{self, FileViewingStatistics};
+    use slint::ComponentHandle as _;
+    let _windows = headless::init();
+    let (_dir, store) = store_with_pairs();
+    let (_, key) = my_files(&store);
+    let search = FileSearchContext {
+        location: LocationContext::single(key),
+        ..Default::default()
+    };
+    let session = Session {
+        name: LAST_SESSION.into(),
+        pages: vec![Page {
+            key: PageKey::random(),
+            name: "duplicates".into(),
+            content: PageContent::Duplicates {
+                duplicates: DuplicatesPage::new(DuplicatesSearch {
+                    search_1: search.clone(),
+                    search_2: search,
+                    kind: PairSearchKind::OneFileMatchesOneSearch,
+                    pixel_duplicates: PixelDuplicates::Allowed,
+                    max_hamming_distance: 4,
+                }),
+                sort: None,
+            },
+        }],
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 0))
+        .unwrap();
+    let policy = |enabled| {
+        store
+            .write(|ctx| {
+                settings::set(
+                    ctx.conn(),
+                    &FileViewingStatistics {
+                        duplicates: enabled,
+                        media_min_ms: None,
+                        media_max_ms: None,
+                        ..Default::default()
+                    },
+                )
+            })
+            .unwrap();
+    };
+    let views = || {
+        store
+            .read(|conn| {
+                Ok(conn.query_row(
+                    "SELECT COALESCE(sum(views),0) FROM file_viewing_stats WHERE canvas_type=0",
+                    [],
+                    |row| row.get::<_, i64>(0),
+                )?)
+            })
+            .unwrap()
+    };
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    policy(false);
+    ui.invoke_launch_filter();
+    let disabled = bound.filter.borrow().as_ref().unwrap().clone_strong();
+    disabled.invoke_switch_media();
+    disabled.invoke_close_requested();
+    assert_eq!(
+        views(),
+        0,
+        "the disabled duplicate-filter switch suppresses both displayed sides"
+    );
+    policy(true);
+    ui.invoke_launch_filter();
+    let filter = bound.filter.borrow().as_ref().unwrap().clone_strong();
+    filter.invoke_switch_media();
+    assert_eq!(views(), 1, "switching ends the first displayed side");
+    filter.invoke_close_requested();
+    assert_eq!(
+        views(),
+        2,
+        "close ends the second side and normalizes it to media views"
+    );
+    filter.invoke_switch_media();
+    filter.invoke_answer(0);
+    filter.invoke_close_requested();
+    assert_eq!(
+        views(),
+        2,
+        "stale callbacks cannot restart an interval or write decisions"
+    );
+    // Live policy changes are read when each actual interval finishes.
+    ui.invoke_launch_filter();
+    let live = bound.filter.borrow().as_ref().unwrap().clone_strong();
+    policy(false);
+    live.invoke_close_requested();
+    assert_eq!(views(), 2);
+}

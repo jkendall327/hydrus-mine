@@ -2710,6 +2710,19 @@ combined style sums multiple viewed canvases in a submenu, while stacked style
 keeps separate labels. Empty selection removes viewing labels. Changes wait for
 Apply, and Cancel/reopen preserve saved values.
 
+File viewing statistics also exposes the reference archive/delete and duplicate
+filter switches and media-viewer minimum/cap duration fields, including “count
+every view” and “no limit”. Applying changes reaches the actual media viewer and
+both filtering windows. Navigation and final close save one interval; same-file
+redraws retain the original start, and cancelling filtering decisions still counts
+the time viewed. Tracking reads the live policy when an interval finishes, caps
+the time before checking its minimum, permits up to five times a file's duration,
+and records both filters as media views. Closed or replaced window callbacks
+cannot restart an interval or clear the successor's owner. The real Qt recording
+covers480 manager outputs,18 duration widget states and actual displayed canvas
+intervals; native integration renders the Options page and covers Apply,
+Cancel/reopen, real timed viewer caps, filter navigation and stale callbacks.
+
 Search-page autocomplete now shares results, favourites and children tabs in
 both its embedded and floating layouts. Favourites show the full saved list;
 children show count-ranked descendants of top-level search tags, exclude tags
@@ -2719,9 +2732,3 @@ enters its predicate in the actual search; removing a predicate updates children
 Typing returns to results, while choosing a tab preserves the draft. Options
 Cancel/Apply and restored-page consumers are covered against
 `oracle/fixtures/read_tag_tabs.json`. Empty tabs retain the tab selector.
-
-The viewing interval model now matches the reference's cap-before-minimum timing
-policy and filter-to-media normalization. Its recorded timing matrix covers480
-actual manager outputs, and an actual displayed Qt canvas confirms same-file
-redraws retain one interval and global tracking disable records nothing. Native
-viewer/filter wiring and timing controls follow in the next slice.

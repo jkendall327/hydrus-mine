@@ -3316,6 +3316,22 @@ mod tests {
             source.path(),
             &[
                 (
+                    r#"[[0, "file_viewing_statistics_active_on_archive_delete_filter"], [0, true]]"#,
+                    r#"[[0, "file_viewing_statistics_active_on_archive_delete_filter"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "file_viewing_statistics_active_on_dupe_filter"], [0, false]]"#,
+                    r#"[[0, "file_viewing_statistics_active_on_dupe_filter"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "file_viewing_statistics_media_min_time_ms"], [0, 2000]]"#,
+                    r#"[[0, "file_viewing_statistics_media_min_time_ms"], [0, null]]"#,
+                ),
+                (
+                    r#"[[0, "file_viewing_statistics_media_max_time_ms"], [0, 600000]]"#,
+                    r#"[[0, "file_viewing_statistics_media_max_time_ms"], [0, 1234]]"#,
+                ),
+                (
                     r#"[[0, "file_viewing_stats_menu_display"], [0, 2]]"#,
                     r#"[[0, "file_viewing_stats_menu_display"], [0, 3]]"#,
                 ),
@@ -3328,11 +3344,19 @@ mod tests {
         let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
         let viewing: FileViewingStatistics =
             serde_json::from_value(input.settings["file_viewing_statistics"].clone()).unwrap();
+        assert!(!viewing.archive_delete);
+        assert!(viewing.duplicates);
+        assert_eq!(viewing.media_min_ms, None);
+        assert_eq!(viewing.media_max_ms, Some(1234));
         assert_eq!(viewing.menu_display, ViewingStatsMenuDisplay::Stacked);
         assert_eq!(viewing.interesting_canvases, [CanvasType::Preview]);
         let old: FileViewingStatistics =
             serde_json::from_str(r#"{"active":false,"interesting_canvases":[1]}"#).unwrap();
         assert!(!old.active);
+        assert!(old.archive_delete);
+        assert!(!old.duplicates);
+        assert_eq!(old.media_min_ms, Some(2000));
+        assert_eq!(old.media_max_ms, Some(600000));
         assert_eq!(old.menu_display, ViewingStatsMenuDisplay::Combined);
         assert_eq!(old.interesting_canvases, [CanvasType::Preview]);
     }

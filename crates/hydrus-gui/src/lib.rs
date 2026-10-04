@@ -116,6 +116,7 @@ pub mod viewer_cursor;
 pub mod viewer_focus;
 pub mod viewer_menu;
 mod viewer_presentation;
+mod viewing_tracking;
 mod watcher;
 pub mod windows;
 pub mod write_tag_menu;
@@ -4358,6 +4359,10 @@ fn open_viewer(
         change_pages,
     } = hooks;
     let window = MediaViewerWindow::new()?;
+    let viewing_stats = viewing_tracking::CanvasTracker::new(
+        model.store().clone(),
+        hydrus_core::CanvasType::MediaViewer,
+    );
     let model = Rc::new(RefCell::new(model));
     let playback = playback::Playback::for_store(model.borrow().store().clone());
     let animator = animation::Animator::for_store(model.borrow().store().clone());
@@ -4575,6 +4580,7 @@ fn open_viewer(
     // plays (`CurrentlyPresentingMediaWithDuration`), with its duration
     let presenting = Rc::new(std::cell::Cell::new(slideshow::Shown::Still));
     let show = {
+        let viewing_stats = viewing_stats.clone();
         let model = model.clone();
         let weak = window.as_weak();
         let playback = playback.clone();
@@ -4590,7 +4596,11 @@ fn open_viewer(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if !viewing_stats.active() {
+                return;
+            }
             let model = model.borrow();
+            viewing_stats.show(Some(model.current()));
             if let Some((_, file)) = viewing.borrow_mut().as_mut() {
                 *file = Some(model.current());
             }
@@ -5376,6 +5386,7 @@ fn open_viewer(
     });
     let store = model.borrow().store().clone();
     window.on_close_requested({
+        let viewing_stats = viewing_stats.clone();
         let native_cursor = native_cursor.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
@@ -5387,6 +5398,7 @@ fn open_viewer(
                 .borrow()
                 .as_ref()
                 .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
+            viewing_stats.close();
             if !current {
                 return;
             }

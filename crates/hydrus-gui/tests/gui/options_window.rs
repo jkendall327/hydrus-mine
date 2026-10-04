@@ -4461,3 +4461,207 @@ fn viewing_menu_preferences_apply_to_real_menu_lines_and_cancel_preserves_them()
         );
     }
 }
+
+#[test]
+fn viewing_timing_options_reach_real_viewer_and_archive_filter_lifetimes() {
+    use hydrus_core::{CanvasType, HashId};
+    use hydrus_store::settings::{self, FileViewingStatistics};
+    let (_dirs, store) = store();
+    let oracle = hydrus_testkit::fixture_json("viewing_statistics_options.json");
+    let file = store
+        .read(|conn| {
+            hydrus_store::master::hash_id(conn, &oracle["file"].as_str().unwrap().parse().unwrap())
+        })
+        .unwrap()
+        .unwrap();
+    store
+        .write_content(move |w| w.set_views(file, CanvasType::MediaViewer, None, 0, 0))
+        .unwrap();
+    let stats = |file: HashId| {
+        store
+            .read(|conn| hydrus_store::media::viewing_stats(conn, &[file]))
+            .unwrap()
+            .into_iter()
+            .find(|s| s.canvas == CanvasType::MediaViewer)
+            .unwrap()
+    };
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let index = i32::try_from(
+        bound
+            .current
+            .borrow()
+            .borrow()
+            .results()
+            .iter()
+            .position(|id| *id == file)
+            .unwrap(),
+    )
+    .unwrap();
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "file viewing statistics");
+    let minimum = row(
+        &options,
+        "Min time to view on media viewer to count as a view:",
+    )
+    .0;
+    let maximum = row(
+        &options,
+        "Cap any view on the media viewer to this maximum time:",
+    )
+    .0;
+    let archive = row(
+        &options,
+        "Enable file viewing statistics tracking in the archive/delete filter?:",
+    )
+    .0;
+    let duplicates = row(
+        &options,
+        "Enable file viewing statistics tracking in the duplicate filter?:",
+    )
+    .0;
+    assert_eq!(
+        row(
+            &options,
+            "Min time to view on media viewer to count as a view:"
+        )
+        .1
+        .kind,
+        24
+    );
+    options.invoke_none_toggled(minimum, true);
+    // Hours/minutes/seconds/milliseconds: an entered 0 is clamped to the 1s cap.
+    for field in 0..4 {
+        options.invoke_field_edited(maximum, field, 0);
+    }
+    options.invoke_check_toggled(archive, false);
+    options.invoke_check_toggled(duplicates, true);
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 900, 640);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("options_viewing_statistics.png"),
+        &pixels,
+        900,
+        640,
+    )
+    .unwrap();
+    options.invoke_apply();
+    let saved = store.read(settings::get::<FileViewingStatistics>).unwrap();
+    assert_eq!(saved.media_min_ms, None);
+    assert_eq!(saved.media_max_ms, Some(1000));
+    assert!(!saved.archive_delete);
+    assert!(saved.duplicates);
+    ui.invoke_thumbnail_activated(index);
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    std::thread::sleep(std::time::Duration::from_millis(1050));
+    // Presentation refresh is the same file and must retain this one interval.
+    viewer.invoke_presentation_settings_changed();
+    viewer.invoke_close_requested();
+    let recorded = stats(file);
+    assert_eq!((recorded.views, recorded.viewtime_ms), (1, 1000));
+    viewer.invoke_close_requested();
+    viewer.invoke_next();
+    assert_eq!(
+        stats(file),
+        recorded,
+        "a closed owner cannot add another interval"
+    );
+    open(&ui);
+    let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&reopened, "file viewing statistics");
+    assert!(
+        row(
+            &reopened,
+            "Min time to view on media viewer to count as a view:"
+        )
+        .1
+        .is_none
+    );
+    assert_eq!(
+        row(
+            &reopened,
+            "Cap any view on the media viewer to this maximum time:"
+        )
+        .1
+        .fields
+        .row_data(2)
+        .unwrap()
+        .value,
+        1
+    );
+    reopened.invoke_none_toggled(minimum, false);
+    reopened.invoke_check_toggled(archive, true);
+    reopened.invoke_cancel();
+    reopened.invoke_apply();
+    assert_eq!(
+        store.read(settings::get::<FileViewingStatistics>).unwrap(),
+        saved,
+        "Cancel and stale Apply preserve saved timing"
+    );
+    ui.invoke_thumbnail_clicked(index, false, false);
+    ui.invoke_archive_delete_filter();
+    let filter = bound
+        .archive_delete
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    filter.invoke_close_requested();
+    assert_eq!(
+        stats(file),
+        recorded,
+        "disabled archive filter adds no viewing record"
+    );
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "file viewing statistics");
+    options.invoke_check_toggled(archive, true);
+    options.invoke_none_toggled(maximum, true);
+    options.invoke_apply();
+    ui.invoke_archive_delete_filter();
+    let filter = bound
+        .archive_delete
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    filter.invoke_keep();
+    assert!(!filter.get_question().is_empty());
+    filter.invoke_forget();
+    assert!(bound.archive_delete.borrow().is_none());
+    assert_eq!(
+        stats(file).views,
+        2,
+        "forgetting archive decisions still records actual viewing"
+    );
+    filter.invoke_commit();
+    filter.invoke_keep();
+    assert_eq!(
+        stats(file).views,
+        2,
+        "closed filter callbacks cannot write or restart tracking"
+    );
+    // Two owner windows may overlap. Closing an old one flushes only its own
+    // interval and cannot discard or navigate the replacement owner.
+    ui.invoke_thumbnail_activated(index);
+    let stale = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    ui.invoke_thumbnail_activated(index);
+    let live = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    stale.invoke_close_requested();
+    let once = stats(file).views;
+    stale.invoke_next();
+    stale.invoke_close_requested();
+    assert_eq!(stats(file).views, once);
+    assert!(std::ptr::eq(
+        bound.viewer.borrow().as_ref().unwrap().window(),
+        live.window()
+    ));
+    live.invoke_close_requested();
+    assert_eq!(stats(file).views, once + 1);
+}

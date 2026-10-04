@@ -3,7 +3,9 @@
 
 Use real imported local media with synthetic in-memory view rows. Drive the
 actual panel ticks/choice and UpdateOptions; generate actual media-menu labels.
-Read NoneableTimeDeltaWidget units/min/field bounds for subsequent timing controls.
+Replay 18 NoneableTimeDeltaWidget bounds/None/millisecond-conversion states,
+480 actual manager timing/filter policy outputs, and real displayed Canvas
+same-file/clear-media intervals with controlled time.
 """
 import itertools,json,os,sys,tempfile
 HERE=os.path.dirname(os.path.abspath(__file__))
@@ -31,6 +33,15 @@ def record(session):
             control=getattr(panel,'_file_viewing_statistics_'+key);widget=control._time_delta_widget
             units={name:[getattr(widget,'_'+name).minimum(),getattr(widget,'_'+name).maximum()] for name in ('hours','minutes','seconds','milliseconds') if getattr(widget,'_show_'+name)}
             durations[key]={'initial':control.GetValue(),'minimum':widget._min,'none_phrase':control._checkbox.text(),'units':units}
+        duration_events=[]
+        for key in ('media_min_time','media_max_time'):
+            control=getattr(panel,'_file_viewing_statistics_'+key)
+            for value in (None,0,.049,.05,.999,1,1.001,1.999,600.125):
+                control.SetValue(value);panel.UpdateOptions()
+                widget=control._time_delta_widget
+                duration_events.append({'control':key,'requested':value,'value':control.GetValue(),
+                    'fields':[getattr(widget,'_'+name).value() for name in ('hours','minutes','seconds','milliseconds') if getattr(widget,'_show_'+name)],
+                    'persisted_ms':options.GetNoneableInteger('file_viewing_statistics_'+key+'_ms')})
         with open(os.path.join(HERE,'fixtures/legacy_db/basic.manifest.json')) as f:manifest=json.load(f)
         file_hash=next(bytes.fromhex(f['hash']) for f in manifest['files'] if f['name']=='jpeg_00.jpg')
         result=controller.Read('media_results',[file_hash])[0].Duplicate()
@@ -98,7 +109,7 @@ def record(session):
                 HydrusTime.GetNowMS=old_ms;manager._PubSubRow=old_pub;manager._pending_updates=old_pending
         finally:
             HydrusTime.GetNow=old_now;panel.deleteLater()
-        return {'initial':initial,'durations':durations,'menu_events':events,'timing_events':timing_events,'canvas_events':canvas_events,'now':now,'file':file_hash.hex()}
+        return {'initial':initial,'durations':durations,'duration_events':duration_events,'menu_events':events,'timing_events':timing_events,'canvas_events':canvas_events,'now':now,'file':file_hash.hex()}
     return session.controller.CallBlockingToQt(session.controller.gui,qt)
 
 def main():

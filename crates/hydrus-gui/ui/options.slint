@@ -75,6 +75,7 @@ export component NumberField inherits LineEdit {
 
 // a time's fields, each its number then its unit
 export component TimeFields {
+    in property <bool> enabled:true;
     in property <[DurationField]> fields;
     callback edited(int, int);
     HorizontalLayout {
@@ -83,6 +84,7 @@ export component TimeFields {
         for field[f] in root.fields: HorizontalLayout {
             spacing: 3px;
             NumberField {
+                enabled:root.enabled;
                 number: field.value;
                 number-edited(n) => { root.edited(f, n); }
             }
@@ -477,6 +479,19 @@ export component OptionsWindow inherits Window {
                                 answer(yes)=>{root.provider-answer(yes);}
                             }
                             // (a time or a rate: its fields under its label)
+                            if row.kind == 24: HorizontalLayout {
+                                spacing:6px;
+                                TimeFields {
+                                    fields:row.fields;
+                                    enabled:!duration-none.checked;
+                                    edited(f,n)=>{root.field-edited(i,f,n);}
+                                }
+                                duration-none:=CheckBox {
+                                    text:row.none-phrase;
+                                    checked:row.is-none;
+                                    toggled=>{root.none-toggled(i,self.checked);}
+                                }
+                            }
                             if row.kind == 8: HorizontalLayout {
                                 padding-left: 16px;
                                 alignment: start;

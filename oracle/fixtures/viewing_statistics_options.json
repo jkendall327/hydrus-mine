@@ -104,6 +104,215 @@
       }
     }
   },
+  "duration_events": [
+    {
+      "control": "media_min_time",
+      "requested": null,
+      "value": null,
+      "fields": [
+        0,
+        2,
+        0
+      ],
+      "persisted_ms": null
+    },
+    {
+      "control": "media_min_time",
+      "requested": 0,
+      "value": 0.05,
+      "fields": [
+        0,
+        0,
+        50
+      ],
+      "persisted_ms": 50
+    },
+    {
+      "control": "media_min_time",
+      "requested": 0.049,
+      "value": 0.05,
+      "fields": [
+        0,
+        0,
+        50
+      ],
+      "persisted_ms": 50
+    },
+    {
+      "control": "media_min_time",
+      "requested": 0.05,
+      "value": 0.05,
+      "fields": [
+        0,
+        0,
+        50
+      ],
+      "persisted_ms": 50
+    },
+    {
+      "control": "media_min_time",
+      "requested": 0.999,
+      "value": 0.999,
+      "fields": [
+        0,
+        0,
+        999
+      ],
+      "persisted_ms": 999
+    },
+    {
+      "control": "media_min_time",
+      "requested": 1,
+      "value": 1.0,
+      "fields": [
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_min_time",
+      "requested": 1.001,
+      "value": 1.0,
+      "fields": [
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_min_time",
+      "requested": 1.999,
+      "value": 1.999,
+      "fields": [
+        0,
+        1,
+        999
+      ],
+      "persisted_ms": 1999
+    },
+    {
+      "control": "media_min_time",
+      "requested": 600.125,
+      "value": 600.125,
+      "fields": [
+        10,
+        0,
+        125
+      ],
+      "persisted_ms": 600125
+    },
+    {
+      "control": "media_max_time",
+      "requested": null,
+      "value": null,
+      "fields": [
+        0,
+        10,
+        0,
+        0
+      ],
+      "persisted_ms": null
+    },
+    {
+      "control": "media_max_time",
+      "requested": 0,
+      "value": 1.0,
+      "fields": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_max_time",
+      "requested": 0.049,
+      "value": 1.0,
+      "fields": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_max_time",
+      "requested": 0.05,
+      "value": 1.0,
+      "fields": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_max_time",
+      "requested": 0.999,
+      "value": 1.0,
+      "fields": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_max_time",
+      "requested": 1,
+      "value": 1.0,
+      "fields": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_max_time",
+      "requested": 1.001,
+      "value": 1.0,
+      "fields": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_max_time",
+      "requested": 1.999,
+      "value": 1.999,
+      "fields": [
+        0,
+        0,
+        1,
+        999
+      ],
+      "persisted_ms": 1999
+    },
+    {
+      "control": "media_max_time",
+      "requested": 600.125,
+      "value": 600.125,
+      "fields": [
+        0,
+        10,
+        0,
+        125
+      ],
+      "persisted_ms": 600125
+    }
+  ],
   "menu_events": [
     {
       "canvases": [],

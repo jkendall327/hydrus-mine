@@ -215,3 +215,101 @@ fn tracker_counts_once_on_change_or_close_reads_live_policy_and_preserves_latest
     disabled.close(165000).unwrap();
     assert_eq!(stats().views, 3, "policy is read when interval finishes");
 }
+
+#[test]
+#[allow(clippy::float_cmp)] // exact recorded control minima
+fn timing_controls_replay_qt_bounds_none_and_millisecond_conversion() {
+    use hydrus_gui_model::options::{duration_seconds, noneable_duration_fields};
+    let oracle = hydrus_testkit::fixture_json("viewing_statistics_options.json");
+    let directory = tempfile::tempdir().unwrap();
+    let store = hydrus_store::Store::open(directory.path()).unwrap();
+    for event in oracle["duration_events"].as_array().unwrap() {
+        let is_min = event["control"] == "media_min_time";
+        let requested = event["requested"]
+            .as_f64()
+            .map(|n| (n * 1000.0).round() as u64);
+        let mut settings = store.read(Settings::load).unwrap();
+        if is_min {
+            settings.file_viewing.media_min_ms = requested;
+        } else {
+            settings.file_viewing.media_max_ms = requested;
+        }
+        let mut editor = Editor::new(settings);
+        let page = editor
+            .page_names()
+            .iter()
+            .position(|name| *name == "file viewing statistics")
+            .unwrap();
+        editor.show_page(page);
+        let at = row(
+            &editor,
+            if is_min {
+                "Min time to view on media viewer to count as a view:"
+            } else {
+                "Cap any view on the media viewer to this maximum time:"
+            },
+        );
+        let rows = editor.rows();
+        let Row::Opt { option, value, .. } = &rows[at] else {
+            panic!("timing control")
+        };
+        let Kind::NoneableDuration {
+            units,
+            min,
+            none_phrase,
+            ..
+        } = &option.kind
+        else {
+            panic!("noneable duration")
+        };
+        let units = *units;
+        let spec = &oracle["durations"][event["control"].as_str().unwrap()];
+        assert_eq!(*min, spec["minimum"].as_f64().unwrap());
+        assert_eq!(*none_phrase, spec["none_phrase"].as_str().unwrap());
+        let Value::NoneableDuration { none, seconds } = **value else {
+            panic!("time value")
+        };
+        assert_eq!(none, event["value"].is_null());
+        let fields = noneable_duration_fields(seconds, units);
+        assert_eq!(serde_json::json!(fields), event["fields"], "{event}");
+        if !none {
+            assert!(
+                (duration_seconds(&fields, units) - event["value"].as_f64().unwrap()).abs() < 1e-9
+            );
+        }
+        let (after, _, errors) = editor.applied();
+        assert!(errors.is_empty(), "{errors:?}");
+        assert_eq!(
+            if is_min {
+                after.file_viewing.media_min_ms
+            } else {
+                after.file_viewing.media_max_ms
+            },
+            event["persisted_ms"].as_u64(),
+            "{event}"
+        );
+        // A None checkbox preserves its numeric draft, and fields clamp to Qt ranges.
+        editor.none(at, true);
+        editor.none(at, false);
+        editor.field(at, units.len() - 1, 1500);
+        let Row::Opt { value, .. } = &editor.rows()[at] else {
+            panic!("time draft")
+        };
+        let Value::NoneableDuration { seconds, .. } = **value else {
+            panic!("time value")
+        };
+        assert_eq!(
+            *hydrus_gui_model::options::duration_fields(seconds, units)
+                .last()
+                .unwrap(),
+            999
+        );
+    }
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<FileViewingStatistics>)
+            .unwrap(),
+        FileViewingStatistics::default(),
+        "the parent draft never writes early"
+    );
+}

@@ -1796,11 +1796,16 @@ by this recording.
 Viewing-statistic context-menu style and canvas selection now have native Options
 controls and real menu/search/sort consumers, backed by
 `oracle/fixtures/viewing_statistics_options.json`. Native media-preview rendering
-and its minimum/maximum tracking controls remain absent. The owned viewer/filter interval model is now implemented and recorded, including
-live policy reads, capped durations and latest-start preservation across overlapping
-canvases. Native viewer/filter window wiring and timing controls are still pending.
-Native recording commits at interval boundaries rather than buffering Qt's60-second
-flush; the explicit Client API count/viewtime path keeps its existing semantics.
+and its minimum/maximum tracking controls remain absent. The actual media viewer,
+archive/delete filter and duplicate filter now own recorded viewing intervals,
+with reference minimum/cap controls, filter switches, live policy reads,
+cap-before-minimum arithmetic and latest-start preservation across overlapping
+canvases. Duration fields retain the reference's float-to-millisecond truncation
+at opening/Apply. Native recording commits at interval boundaries rather than
+buffering Qt's60-second flush; the explicit Client API count/viewtime path keeps
+its existing semantics. Preview statistics imported or supplied by the API can
+still participate in the menu/canvas selection without pretending that a native
+preview renderer exists.
 
 Read-search favourites and children now reach actual page predicates, queries,
 shared settings and restored contexts. Their selector is a native dropdown

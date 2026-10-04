@@ -150,6 +150,11 @@ pub enum Value {
     },
     /// A time, in seconds (the reference's `TimeDeltaWidget`).
     Duration(f64),
+    /// A duration whose last numeric value remains staged while disabled.
+    NoneableDuration {
+        none: bool,
+        seconds: f64,
+    },
     /// Selected viewing canvases, in the reference checkbox-list order.
     Canvases(Vec<hydrus_core::CanvasType>),
     /// A number per a time in seconds (the reference's `VelocityCtrl`).
@@ -210,6 +215,13 @@ pub enum Kind {
     Duration {
         units: &'static [Unit],
         min: f64,
+    },
+    /// A reference NoneableTimeDeltaWidget, including millisecond fields.
+    NoneableDuration {
+        units: &'static [Unit],
+        min: f64,
+        default: f64,
+        none_phrase: &'static str,
     },
     /// A number in `number`'s range, `per` (the text between), then a time
     /// as a duration's.
@@ -372,6 +384,26 @@ pub fn duration_fields(seconds: f64, units: &[Unit]) -> Vec<i64> {
             };
             left = (left - n * unit.seconds()).max(0.0);
             (n as i64).min(unit.max())
+        })
+        .collect()
+}
+
+/// Fields of a NoneableTimeDeltaWidget opened from persisted milliseconds.
+/// Qt truncates its fractional millisecond remainder on SetValue; regular
+/// duration editing retains its separately entered fields until Apply.
+pub fn noneable_duration_fields(seconds: f64, units: &[Unit]) -> Vec<i64> {
+    let mut remaining = seconds.max(0.0);
+    units
+        .iter()
+        .map(|&unit| {
+            let number = if unit == Unit::Milliseconds {
+                (remaining * 1000.0) as i64
+            } else {
+                let number = (remaining / unit.seconds()).floor() as i64;
+                remaining %= unit.seconds();
+                number
+            };
+            number.min(unit.max())
         })
         .collect()
 }
@@ -776,6 +808,41 @@ fn duration(
             // makes it)
             Value::Duration(d) => {
                 set(s, d.max(min));
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+fn noneable_duration(
+    label: &'static str,
+    units: &'static [Unit],
+    min: f64,
+    default: f64,
+    none_phrase: &'static str,
+    get: fn(&Settings) -> Option<u64>,
+    set: fn(&mut Settings, Option<u64>),
+) -> Item {
+    opt(
+        label,
+        Kind::NoneableDuration {
+            units,
+            min,
+            default,
+            none_phrase,
+        },
+        Rc::new(move |s| {
+            let value = get(s);
+            Value::NoneableDuration {
+                none: value.is_none(),
+                seconds: value.map_or(default, |ms| ms as f64 / 1000.0),
+            }
+        }),
+        Rc::new(move |s, v| match v {
+            Value::NoneableDuration { none, seconds } => {
+                // Reference MillisecondiseS truncates this float, including 1.001s.
+                set(s, (!none).then_some((seconds.max(min) * 1000.0) as u64));
                 Ok(())
             }
             _ => Err(wrong(label)),
@@ -1628,6 +1695,39 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     "Enable file viewing statistics tracking?:",
                     |s| s.file_viewing.active,
                     |s, v| s.file_viewing.active = v,
+                ),
+                check(
+                    "Enable file viewing statistics tracking in the archive/delete filter?:",
+                    |s| s.file_viewing.archive_delete,
+                    |s, v| s.file_viewing.archive_delete = v,
+                ),
+                check(
+                    "Enable file viewing statistics tracking in the duplicate filter?:",
+                    |s| s.file_viewing.duplicates,
+                    |s, v| s.file_viewing.duplicates = v,
+                ),
+                noneable_duration(
+                    "Min time to view on media viewer to count as a view:",
+                    &[Unit::Minutes, Unit::Seconds, Unit::Milliseconds],
+                    0.05,
+                    2.0,
+                    "count every view",
+                    |s| s.file_viewing.media_min_ms,
+                    |s, v| s.file_viewing.media_min_ms = v,
+                ),
+                noneable_duration(
+                    "Cap any view on the media viewer to this maximum time:",
+                    &[
+                        Unit::Hours,
+                        Unit::Minutes,
+                        Unit::Seconds,
+                        Unit::Milliseconds,
+                    ],
+                    1.0,
+                    600.0,
+                    "no limit",
+                    |s| s.file_viewing.media_max_ms,
+                    |s, v| s.file_viewing.media_max_ms = v,
                 ),
                 choice(
                     "Show viewing stats on media right-click menus?:",
@@ -2790,6 +2890,16 @@ pub fn values(pages: &[Page], settings: &Settings) -> Vec<Vec<Value>> {
                     (Kind::Int { min, max }, Value::Int(number)) => {
                         Value::Int(number.clamp(*min, *max))
                     }
+                    (
+                        Kind::NoneableDuration { units, min, .. },
+                        Value::NoneableDuration { none, seconds },
+                    ) => Value::NoneableDuration {
+                        none,
+                        seconds: duration_seconds(
+                            &noneable_duration_fields(seconds.max(*min), units),
+                            units,
+                        ),
+                    },
                     (_, value) => value,
                 })
                 .collect()
@@ -2908,6 +3018,15 @@ pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Sug
                     labels.extend(["media views", "preview views", "client api views"]);
                 }
                 (Kind::Duration { units, .. }, _) => {
+                    labels.extend(units.iter().map(|unit| unit.label()));
+                }
+                (
+                    Kind::NoneableDuration {
+                        units, none_phrase, ..
+                    },
+                    _,
+                ) => {
+                    labels.push(*none_phrase);
                     labels.extend(units.iter().map(|unit| unit.label()));
                 }
                 (Kind::Velocity { per, units, .. }, _) => {
@@ -3197,7 +3316,9 @@ impl Editor {
             return;
         };
         let value = &mut self.values[self.page][i];
-        if let Value::NoneableText { none: was, .. } = value {
+        if let Value::NoneableText { none: was, .. } | Value::NoneableDuration { none: was, .. } =
+            value
+        {
             *was = none;
         } else {
             let number = self.numbers[self.page][i];
@@ -3226,7 +3347,9 @@ impl Editor {
             return;
         };
         let units = match self.kind(i) {
-            Kind::Duration { units, .. } | Kind::Velocity { units, .. } => *units,
+            Kind::Duration { units, .. }
+            | Kind::NoneableDuration { units, .. }
+            | Kind::Velocity { units, .. } => *units,
             _ => return,
         };
         let set = |seconds: f64| {
@@ -3239,6 +3362,10 @@ impl Editor {
         let value = &mut self.values[self.page][i];
         *value = match *value {
             Value::Duration(seconds) => Value::Duration(set(seconds)),
+            Value::NoneableDuration { none, seconds } => Value::NoneableDuration {
+                none,
+                seconds: set(seconds),
+            },
             Value::Velocity(number, seconds) => Value::Velocity(number, set(seconds)),
             _ => return,
         };
