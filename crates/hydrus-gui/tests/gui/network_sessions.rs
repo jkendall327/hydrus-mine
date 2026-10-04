@@ -122,7 +122,7 @@ fn browse_create_edit_cancel_apply_and_clear() {
     let edit = windows::last_edit_opened().unwrap();
     browser.invoke_cancel_clicked();
     assert!(!edit.window().is_visible());
-    edit.set_domain("stale.com".into());
+    edit.set_domain("stale.example".into());
     edit.invoke_apply_clicked();
     assert!(store.read(network::sessions).unwrap().is_empty());
 }
@@ -337,7 +337,7 @@ fn dropping_final_owner_cancels_open_drafts_and_invalidates_child_callbacks() {
     drop(clone);
     assert!(!browser.window().is_visible());
     assert!(!child.window().is_visible());
-    child.set_domain("stale.com".into());
+    child.set_domain("stale.example".into());
     child.invoke_apply_clicked();
     browser.invoke_add_clicked();
     assert!(store.read(network::sessions).unwrap().is_empty());

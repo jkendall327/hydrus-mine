@@ -1,7 +1,7 @@
 //! Registrable domains, from the public suffix list.
 //!
 //! The reference asks `tldextract` for a domain's "top domain under the public
-//! suffix" (`forums.bbc.co.uk` -> `bbc.co.uk`) using the ICANN section of
+//! suffix" (`forums.example.com` -> `example.com`) using the ICANN section of
 //! `static/public_suffix_list.dat`. It decides which network session a
 //! cookie belongs to and which domains a URL's rules apply to. This is a port
 //! of that lookup: a trie of the list's rules by reversed labels, with
@@ -116,7 +116,7 @@ pub fn second_level_domain(domain: &str) -> String {
     }
 }
 
-/// The domain one level up (`maps.google.com` -> `google.com`).
+/// The domain one level up (`maps.example.com` -> `example.com`).
 pub fn next_level_domain(domain: &str) -> &str {
     domain.split_once('.').map_or("", |(_, rest)| rest)
 }

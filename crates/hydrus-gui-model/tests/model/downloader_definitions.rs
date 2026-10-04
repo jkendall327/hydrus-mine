@@ -473,6 +473,12 @@ fn editor_controls_change_matching_normalisation_and_validate_pagination() {
     let mut editor =
         DefinitionEditor::new(EditValue::Class(Box::new(definitions::new_class())), &draft);
     assert!(editor.validate().is_ok());
+    editor.text(3, "gallery.example.com".into());
+    editor.text(
+        40,
+        "https://gallery.example.com/post/page.php?id=123456&s=view".into(),
+    );
+    assert!(editor.validate().is_ok());
     editor.choose(1, 1);
     editor.choose(2, 0);
     editor.choose(20, 2);
@@ -482,7 +488,7 @@ fn editor_controls_change_matching_normalisation_and_validate_pagination() {
     editor.toggle(6, true);
     editor.text(
         40,
-        "https://sub.hostname.com/post/page.php?s=view&id=123456".into(),
+        "https://sub.gallery.example.com/post/page.php?s=view&id=123456".into(),
     );
     assert!(editor.validate().is_ok());
     let EditValue::Class(class) = &editor.value else {
@@ -496,11 +502,11 @@ fn editor_controls_change_matching_normalisation_and_validate_pagination() {
     let preview = definitions::class_preview(class, false);
     assert_eq!(
         preview.normalised,
-        "http://sub.hostname.com/post/page.php?id=123456&s=view"
+        "http://sub.gallery.example.com/post/page.php?id=123456&s=view"
     );
     assert_eq!(
         preview.next,
-        "http://sub.hostname.com/post/page.php?id=123458&s=view"
+        "http://sub.gallery.example.com/post/page.php?id=123458&s=view"
     );
     editor.text(22, "0".into());
     assert_eq!(
@@ -522,7 +528,7 @@ fn editor_controls_change_matching_normalisation_and_validate_pagination() {
     assert!(editor.validate().is_err());
     editor.text(
         40,
-        "https://hostname.com/post/page.php?id=123456&s=view".into(),
+        "https://gallery.example.com/post/page.php?id=123456&s=view".into(),
     );
     assert!(editor.validate().is_ok());
 

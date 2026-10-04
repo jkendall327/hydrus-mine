@@ -315,10 +315,10 @@ impl UrlClasses {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::url::class::tests::gelbooru_post;
+    use crate::url::class::tests::booru_post;
 
     fn registry() -> UrlClasses {
-        let class = gelbooru_post();
+        let class = booru_post();
         UrlClasses::new(UrlClassSettings {
             parser_links: vec![(hex::encode(&class.key), Some("ab".into()))],
             parser_keys: vec!["ab".into()],
@@ -343,14 +343,16 @@ mod tests {
     #[test]
     fn known_urls_are_classified() {
         let r = registry();
-        let url = "https://gelbooru.com/index.php?id=5&page=post&s=view";
+        let url = "https://booru.example.com/index.php?id=5&page=post&s=view";
         let c = r.parse_capability(url);
-        assert_eq!(c.match_name, "gelbooru file page");
+        assert_eq!(c.match_name, "booru file page");
         assert_eq!(c.parser, Ok(()));
         assert_eq!(r.url_to_fetch(url).unwrap(), url);
         let search = r.search_urls(url);
         assert!(
-            search.contains(&"http://www.gelbooru.com/index.php?id=5&page=post&s=view".to_owned())
+            search.contains(
+                &"http://www.booru.example.com/index.php?id=5&page=post&s=view".to_owned()
+            )
         );
         assert!(search.contains(&format!("{url}/")));
     }

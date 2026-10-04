@@ -235,10 +235,10 @@ mod tests {
 
     #[test]
     fn maps_lowercase_slices_back_to_the_original() {
-        let text = SystemText::new("  System:Has URL İstanbul.COM/X ").unwrap();
+        let text = SystemText::new("  System:Has URL İstanbul.EXAMPLE/X ").unwrap();
         let lower = text.lower();
         let at = lower.find("i̇stanbul").unwrap();
-        assert_eq!(text.original_of(&lower[at..]), "İstanbul.COM/X");
+        assert_eq!(text.original_of(&lower[at..]), "İstanbul.EXAMPLE/X");
         assert_eq!(text.original_of(&lower[..6]), "System");
     }
 

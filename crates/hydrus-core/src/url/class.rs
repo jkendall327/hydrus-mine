@@ -1,4 +1,4 @@
-//! URL classes: patterns recognising the URLs of a site ("a danbooru post
+//! URL classes: patterns recognising the URLs of a site ("a booru post
 //! page"), which also say how to normalise such URLs so the same page is
 //! always stored under the same URL.
 
@@ -707,13 +707,18 @@ pub(crate) mod tests {
     use super::*;
     use crate::url::strings::{FlexibleMatch, MatchKind};
 
-    pub(crate) fn gelbooru_post() -> UrlClass {
+    pub(crate) fn booru_post() -> UrlClass {
         UrlClass {
-            name: "gelbooru file page".into(),
+            name: "booru file page".into(),
             key: vec![1; 32],
             url_type: UrlType::Post,
             preferred_scheme: "https".into(),
-            domain_mask: DomainMask::new(vec!["gelbooru.com".into()], Vec::new(), false, false),
+            domain_mask: DomainMask::new(
+                vec!["booru.example.com".into()],
+                Vec::new(),
+                false,
+                false,
+            ),
             alphabetise_get_parameters: true,
             no_more_path_components_than_this: false,
             no_more_parameters_than_this: false,
@@ -752,7 +757,7 @@ pub(crate) mod tests {
             single_value_parameters_match: StringMatch::any(),
             header_overrides: Vec::new(),
             api_lookup_converter: StringConverter::default(),
-            example_url: "https://gelbooru.com/index.php?page=post&s=view&id=123".into(),
+            example_url: "https://booru.example.com/index.php?page=post&s=view&id=123".into(),
             referral: Referral::default(),
             gallery_index: None,
         }
@@ -760,18 +765,21 @@ pub(crate) mod tests {
 
     #[test]
     fn classes_match_and_normalise() {
-        let c = gelbooru_post();
-        let url = "http://www.gelbooru.com/index.php?id=2000&s=view&page=post&extra=1#top";
+        let c = booru_post();
+        let url = "http://www.booru.example.com/index.php?id=2000&s=view&page=post&extra=1#top";
         assert!(c.matches(url, false));
         assert_eq!(
             c.normalise(url, false, false).unwrap(),
-            "https://gelbooru.com/index.php?id=2000&page=post&s=view"
+            "https://booru.example.com/index.php?id=2000&page=post&s=view"
         );
         assert_eq!(
             c.normalise(url, true, false).unwrap(),
-            "https://gelbooru.com/index.php?extra=1&id=2000&page=post&s=view"
+            "https://booru.example.com/index.php?extra=1&id=2000&page=post&s=view"
         );
-        assert!(!c.matches("https://gelbooru.com/index.php?page=post&s=list", false));
+        assert!(!c.matches(
+            "https://booru.example.com/index.php?page=post&s=list",
+            false
+        ));
         assert!(!c.matches("https://example.com/index.php?page=post&s=view&id=1", false));
     }
 

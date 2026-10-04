@@ -220,18 +220,18 @@ mod tests {
     #[test]
     fn splits_like_python() {
         assert_eq!(
-            parse("HTTPS://A.com/x;p?q#f"),
-            ["https", "A.com", "/x", "p", "q", "f"]
+            parse("HTTPS://A.example/x;p?q#f"),
+            ["https", "A.example", "/x", "p", "q", "f"]
         );
         assert_eq!(parse("not a url"), ["", "", "not a url", "", "", ""]);
         assert_eq!(
-            parse("  https://a.com/x\ty "),
-            ["https", "a.com", "/xy ", "", "", ""]
+            parse("  https://a.example/x\ty "),
+            ["https", "a.example", "/xy ", "", "", ""]
         );
         assert_eq!(parse("mailto:x@y"), ["mailto", "", "x@y", "", "", ""]);
         assert_eq!(
-            parse("https://a.com//x"),
-            ["https", "a.com", "//x", "", "", ""]
+            parse("https://a.example//x"),
+            ["https", "a.example", "//x", "", "", ""]
         );
         assert!(urlparse("https://[::1/x").is_err());
     }
@@ -240,16 +240,16 @@ mod tests {
     fn joins_like_python() {
         for url in [
             "https://example.com/post/3",
-            "https://a.com/x;p?q#f",
+            "https://a.example/x;p?q#f",
             "not a url",
             "mailto:x@y",
-            "https://a.com//x",
+            "https://a.example//x",
         ] {
             assert_eq!(urlunparse(&urlparse(url).unwrap()), url);
         }
         assert_eq!(
-            urlunparse(&urlparse("https://a.com/x?#").unwrap()),
-            "https://a.com/x"
+            urlunparse(&urlparse("https://a.example/x?#").unwrap()),
+            "https://a.example/x"
         );
     }
 

@@ -309,8 +309,8 @@ mod tests {
     #[test]
     fn urls_encode_like_the_reference() {
         assert_eq!(
-            ensure_url_is_encoded("https://site.com/a b/é?q=x y#frag", false, false),
-            "https://site.com/a%20b/%C3%A9?q=x%20y"
+            ensure_url_is_encoded("https://site.example/a b/é?q=x y#frag", false, false),
+            "https://site.example/a%20b/%C3%A9?q=x%20y"
         );
         assert_eq!(
             ensure_url_is_encoded("not a url", false, false),
@@ -327,6 +327,6 @@ mod tests {
         use crate::url::psl::remove_www;
         assert_eq!(remove_www("www.example.com"), "example.com");
         assert_eq!(remove_www("example.com"), "example.com");
-        assert_eq!(remove_www("www.com"), "www.com");
+        assert_eq!(remove_www("www.test"), "www.test");
     }
 }

@@ -37,6 +37,13 @@ Read `ARCHITECTURE.md` first. These are the rules every crate follows.
 - Use `proptest` for anything with an algebraic property (round trips,
   idempotence, incremental == rebuild).
 - Tests must not need Python or the network. Fixture generation may.
+- Use reserved synthetic domains (`example.com`, `*.example`, `*.test`) for
+  authored Rust test inputs and documentation examples. Update related URL-class
+  masks, context domains, regex escapes and expected URLs together. Preserve
+  imported reference fixtures and recordings, public-suffix rule examples,
+  protocol identifiers and assertions for actual application links/defaults.
+  Derive fixture-dependent domains from imported values when an independent
+  synthetic input would lose positive coverage; keep comparison data unchanged.
 
 ## Style
 

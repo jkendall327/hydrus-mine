@@ -61,7 +61,7 @@ impl UrlsEditor {
     }
 
     /// The list: each URL (sorted) and its label, with how many of the
-    /// files have it when there are several ("https://a.com/1 (2)").
+    /// files have it when there are several ("https://a.example/1 (2)").
     pub fn rows(&self) -> Vec<(String, String)> {
         let mut counts: BTreeMap<&str, usize> = BTreeMap::new();
         for urls in &self.files {
