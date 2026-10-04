@@ -1,0 +1,1119 @@
+{
+  "defaults": {
+    "alignment": 0,
+    "tree": null,
+    "hide": false,
+    "elide": true
+  },
+  "choices": [
+    {
+      "label": "top",
+      "value": 0
+    },
+    {
+      "label": "left",
+      "value": 1
+    },
+    {
+      "label": "right",
+      "value": 2
+    },
+    {
+      "label": "bottom",
+      "value": 3
+    }
+  ],
+  "tree_choices": [
+    {
+      "label": "disable",
+      "value": null
+    },
+    {
+      "label": "left",
+      "value": 1
+    },
+    {
+      "label": "right",
+      "value": 2
+    }
+  ],
+  "labels": [
+    "Notebook tab alignment: ",
+    "EXPERIMENTAL: Show tab tree view: ",
+    "EXPERIMENTAL: Hide main page navigation tabs: ",
+    "When there are too many tabs to fit, '...' elide their names so they fit: "
+  ],
+  "cancelled": {
+    "alignment": 0,
+    "tree": null,
+    "hide": false,
+    "elide": true
+  },
+  "names": [
+    "alpha with a very long title and a distinct end ALPHA",
+    "nested notebook",
+    "omega with a very long title and a distinct end OMEGA"
+  ],
+  "nested_names": [
+    "beta with a very long title and a distinct end BETA",
+    "gamma with a very long title and a distinct end GAMMA"
+  ],
+  "alignments": [
+    {
+      "choice": {
+        "label": "top",
+        "value": 0
+      },
+      "settings": {
+        "alignment": 0,
+        "tree": null,
+        "hide": false,
+        "elide": true
+      },
+      "root": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a very long title and a distinct end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 323,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "nested notebook ↓",
+            "tooltip": "nested notebook",
+            "width": 128,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a very long title and a distinct end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 336,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      },
+      "nested": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a very long title and a distinct end BETA",
+            "tooltip": "",
+            "width": 297,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a very long title and a distinct end GAMMA",
+            "tooltip": "",
+            "width": 331,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      }
+    },
+    {
+      "choice": {
+        "label": "left",
+        "value": 1
+      },
+      "settings": {
+        "alignment": 1,
+        "tree": null,
+        "hide": false,
+        "elide": true
+      },
+      "root": {
+        "position": "West",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a …t end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 26,
+            "height": 194,
+            "shape": "RoundedWest"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "n…↓",
+            "tooltip": "nested notebook",
+            "width": 26,
+            "height": 49,
+            "shape": "RoundedWest"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a …t end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 26,
+            "height": 207,
+            "shape": "RoundedWest"
+          }
+        ]
+      },
+      "nested": {
+        "position": "West",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a ver…stinct end BETA",
+            "tooltip": "",
+            "width": 26,
+            "height": 206,
+            "shape": "RoundedWest"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a ver…stinct end GAMMA",
+            "tooltip": "",
+            "width": 26,
+            "height": 240,
+            "shape": "RoundedWest"
+          }
+        ]
+      }
+    },
+    {
+      "choice": {
+        "label": "right",
+        "value": 2
+      },
+      "settings": {
+        "alignment": 2,
+        "tree": null,
+        "hide": false,
+        "elide": true
+      },
+      "root": {
+        "position": "East",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a …t end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 26,
+            "height": 194,
+            "shape": "RoundedEast"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "n…↓",
+            "tooltip": "nested notebook",
+            "width": 26,
+            "height": 49,
+            "shape": "RoundedEast"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a …t end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 26,
+            "height": 207,
+            "shape": "RoundedEast"
+          }
+        ]
+      },
+      "nested": {
+        "position": "East",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a ver…stinct end BETA",
+            "tooltip": "",
+            "width": 26,
+            "height": 206,
+            "shape": "RoundedEast"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a ver…stinct end GAMMA",
+            "tooltip": "",
+            "width": 26,
+            "height": 240,
+            "shape": "RoundedEast"
+          }
+        ]
+      }
+    },
+    {
+      "choice": {
+        "label": "bottom",
+        "value": 3
+      },
+      "settings": {
+        "alignment": 3,
+        "tree": null,
+        "hide": false,
+        "elide": true
+      },
+      "root": {
+        "position": "South",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a very long title and a distinct end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 323,
+            "height": 26,
+            "shape": "RoundedSouth"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "nested notebook ↓",
+            "tooltip": "nested notebook",
+            "width": 128,
+            "height": 26,
+            "shape": "RoundedSouth"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a very long title and a distinct end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 336,
+            "height": 26,
+            "shape": "RoundedSouth"
+          }
+        ]
+      },
+      "nested": {
+        "position": "South",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a very long title and a distinct end BETA",
+            "tooltip": "",
+            "width": 297,
+            "height": 26,
+            "shape": "RoundedSouth"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a very long title and a distinct end GAMMA",
+            "tooltip": "",
+            "width": 331,
+            "height": 26,
+            "shape": "RoundedSouth"
+          }
+        ]
+      }
+    }
+  ],
+  "hide": [
+    {
+      "settings": {
+        "alignment": 0,
+        "tree": null,
+        "hide": false,
+        "elide": true
+      },
+      "root": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a very long title and a distinct end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 323,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "nested notebook ↓",
+            "tooltip": "nested notebook",
+            "width": 128,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a very long title and a distinct end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 336,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      },
+      "nested": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a very long title and a distinct end BETA",
+            "tooltip": "",
+            "width": 297,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a very long title and a distinct end GAMMA",
+            "tooltip": "",
+            "width": 331,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      }
+    },
+    {
+      "settings": {
+        "alignment": 0,
+        "tree": null,
+        "hide": true,
+        "elide": true
+      },
+      "root": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a very long title and a distinct end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 323,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "nested notebook ↓",
+            "tooltip": "nested notebook",
+            "width": 128,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a very long title and a distinct end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 336,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      },
+      "nested": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a very long title and a distinct end BETA",
+            "tooltip": "",
+            "width": 297,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a very long title and a distinct end GAMMA",
+            "tooltip": "",
+            "width": 331,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      }
+    },
+    {
+      "settings": {
+        "alignment": 0,
+        "tree": 1,
+        "hide": false,
+        "elide": true
+      },
+      "root": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a very long title and a distinct end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 323,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "nested notebook ↓",
+            "tooltip": "nested notebook",
+            "width": 128,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a very long title and a distinct end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 336,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      },
+      "nested": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a very long title and a distinct end BETA",
+            "tooltip": "",
+            "width": 297,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a very long title and a distinct end GAMMA",
+            "tooltip": "",
+            "width": 331,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      }
+    },
+    {
+      "settings": {
+        "alignment": 0,
+        "tree": 1,
+        "hide": true,
+        "elide": true
+      },
+      "root": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": true,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a very long title and a distinct end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 323,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "nested notebook ↓",
+            "tooltip": "nested notebook",
+            "width": 128,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a very long title and a distinct end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 336,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      },
+      "nested": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": true,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a very long title and a distinct end BETA",
+            "tooltip": "",
+            "width": 297,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a very long title and a distinct end GAMMA",
+            "tooltip": "",
+            "width": 331,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      }
+    },
+    {
+      "settings": {
+        "alignment": 0,
+        "tree": 2,
+        "hide": false,
+        "elide": true
+      },
+      "root": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a very long title and a distinct end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 323,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "nested notebook ↓",
+            "tooltip": "nested notebook",
+            "width": 128,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a very long title and a distinct end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 336,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      },
+      "nested": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a very long title and a distinct end BETA",
+            "tooltip": "",
+            "width": 297,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a very long title and a distinct end GAMMA",
+            "tooltip": "",
+            "width": 331,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      }
+    },
+    {
+      "settings": {
+        "alignment": 0,
+        "tree": 2,
+        "hide": true,
+        "elide": true
+      },
+      "root": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": true,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a very long title and a distinct end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 323,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "nested notebook ↓",
+            "tooltip": "nested notebook",
+            "width": 128,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a very long title and a distinct end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 336,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      },
+      "nested": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": true,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a very long title and a distinct end BETA",
+            "tooltip": "",
+            "width": 297,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a very long title and a distinct end GAMMA",
+            "tooltip": "",
+            "width": 331,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      }
+    }
+  ],
+  "elide": [
+    {
+      "width": 230,
+      "settings": {
+        "alignment": 0,
+        "tree": null,
+        "hide": false,
+        "elide": false
+      },
+      "root": {
+        "position": "North",
+        "elide": "ElideNone",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a very long title and a distinct end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 323,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "nested notebook ↓",
+            "tooltip": "nested notebook",
+            "width": 128,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a very long title and a distinct end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 336,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      },
+      "nested": {
+        "position": "North",
+        "elide": "ElideNone",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a very long title and a distinct end BETA",
+            "tooltip": "",
+            "width": 297,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a very long title and a distinct end GAMMA",
+            "tooltip": "",
+            "width": 331,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      }
+    },
+    {
+      "width": 230,
+      "settings": {
+        "alignment": 0,
+        "tree": null,
+        "hide": false,
+        "elide": true
+      },
+      "root": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alp…A ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 84,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "n…↓",
+            "tooltip": "nested notebook",
+            "width": 49,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omeg…GA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 97,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      },
+      "nested": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta … BETA",
+            "tooltip": "",
+            "width": 96,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma … GAMMA",
+            "tooltip": "",
+            "width": 130,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      }
+    },
+    {
+      "width": 420,
+      "settings": {
+        "alignment": 0,
+        "tree": null,
+        "hide": false,
+        "elide": false
+      },
+      "root": {
+        "position": "North",
+        "elide": "ElideNone",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a very long title and a distinct end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 323,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "nested notebook ↓",
+            "tooltip": "nested notebook",
+            "width": 128,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a very long title and a distinct end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 336,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      },
+      "nested": {
+        "position": "North",
+        "elide": "ElideNone",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a very long title and a distinct end BETA",
+            "tooltip": "",
+            "width": 297,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a very long title and a distinct end GAMMA",
+            "tooltip": "",
+            "width": 331,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      }
+    },
+    {
+      "width": 420,
+      "settings": {
+        "alignment": 0,
+        "tree": null,
+        "hide": false,
+        "elide": true
+      },
+      "root": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a… end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 179,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "n…↓",
+            "tooltip": "nested notebook",
+            "width": 49,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a… end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 192,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      },
+      "nested": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a v…inct end BETA",
+            "tooltip": "",
+            "width": 191,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a v…inct end GAMMA",
+            "tooltip": "",
+            "width": 225,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      }
+    },
+    {
+      "width": 1000,
+      "settings": {
+        "alignment": 0,
+        "tree": null,
+        "hide": false,
+        "elide": false
+      },
+      "root": {
+        "position": "North",
+        "elide": "ElideNone",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a very long title and a distinct end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 323,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "nested notebook ↓",
+            "tooltip": "nested notebook",
+            "width": 128,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a very long title and a distinct end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 336,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      },
+      "nested": {
+        "position": "North",
+        "elide": "ElideNone",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a very long title and a distinct end BETA",
+            "tooltip": "",
+            "width": 297,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a very long title and a distinct end GAMMA",
+            "tooltip": "",
+            "width": 331,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      }
+    },
+    {
+      "width": 1000,
+      "settings": {
+        "alignment": 0,
+        "tree": null,
+        "hide": false,
+        "elide": true
+      },
+      "root": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "alpha with a very long title and a distinct end ALPHA ↓",
+            "paint": "alpha with a very long title and a distinct end ALPHA ↓",
+            "tooltip": "alpha with a very long title and a distinct end ALPHA",
+            "width": 323,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "nested notebook ↓",
+            "paint": "nested notebook ↓",
+            "tooltip": "nested notebook",
+            "width": 128,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "omega with a very long title and a distinct end OMEGA ↓",
+            "paint": "omega with a very long title and a distinct end OMEGA ↓",
+            "tooltip": "omega with a very long title and a distinct end OMEGA",
+            "width": 336,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      },
+      "nested": {
+        "position": "North",
+        "elide": "ElideMiddle",
+        "hidden": false,
+        "selected": 1,
+        "tabs": [
+          {
+            "stored": "beta with a very long title and a distinct end BETA",
+            "paint": "beta with a very long title and a distinct end BETA",
+            "tooltip": "",
+            "width": 297,
+            "height": 26,
+            "shape": "RoundedNorth"
+          },
+          {
+            "stored": "gamma with a very long title and a distinct end GAMMA",
+            "paint": "gamma with a very long title and a distinct end GAMMA",
+            "tooltip": "",
+            "width": 331,
+            "height": 26,
+            "shape": "RoundedNorth"
+          }
+        ]
+      }
+    }
+  ],
+  "reopened": {
+    "alignment": 0,
+    "tree": null,
+    "hide": false,
+    "elide": true
+  }
+}

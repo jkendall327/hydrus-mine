@@ -121,3 +121,4 @@ pub mod incremental_tagging;
 pub mod tag_banner;
 
 pub mod rating_example;
+pub mod tab_presentation;
