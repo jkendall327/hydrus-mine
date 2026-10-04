@@ -263,3 +263,53 @@ fn closing_a_sibling_definition_list_keeps_the_owning_import_open() {
     classes.invoke_action("apply".into());
     assert_eq!(store.snapshot().url_classes.settings().url_classes.len(), 1);
 }
+
+#[test]
+fn dropping_the_final_exchange_owner_hides_and_invalidates_a_retained_window_handle() {
+    headless::init();
+    let slots = windows::Slots::default();
+    let other_owner = slots.clone();
+    let weak_slot = Rc::downgrade(&slots.0);
+    let accepted = Rc::new(std::cell::Cell::new(0));
+    let closed = Rc::new(std::cell::Cell::new(0));
+    let w = windows::open(
+        &slots,
+        true,
+        Vec::new(),
+        Rc::new(|_| Ok("reviewed".into())),
+        Rc::new({
+            let accepted = accepted.clone();
+            move |_| {
+                accepted.set(accepted.get() + 1);
+                Ok(())
+            }
+        }),
+    )
+    .unwrap();
+    w.on_closed({
+        let closed = closed.clone();
+        move || closed.set(closed.get() + 1)
+    });
+    w.set_text(one_page().into());
+    w.invoke_action("review".into());
+    assert!(w.get_ready());
+    assert!(w.window().is_visible());
+    drop(slots);
+    assert!(other_owner.has_open());
+    assert!(w.window().is_visible());
+    assert_eq!(closed.get(), 0);
+    drop(other_owner);
+    assert!(
+        weak_slot.upgrade().is_none(),
+        "window callbacks retained their owner"
+    );
+    assert!(!w.window().is_visible());
+    assert_eq!(closed.get(), 1);
+    w.invoke_action("accept".into());
+    w.set_text("invalid".into());
+    w.invoke_action("review".into());
+    w.invoke_action("cancel".into());
+    assert_eq!(accepted.get(), 0);
+    assert_eq!(closed.get(), 1);
+    assert!(w.get_error().is_empty());
+}

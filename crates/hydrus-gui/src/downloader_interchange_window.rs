@@ -15,6 +15,13 @@ use std::{
 /// An owned exchange child, cancelled with its parent editor.
 #[derive(Clone, Default)]
 pub struct Slots(pub Rc<RefCell<Option<DownloaderExchangeWindow>>>);
+impl Drop for Slots {
+    fn drop(&mut self) {
+        if Rc::strong_count(&self.0) == 1 {
+            self.cancel();
+        }
+    }
+}
 impl std::fmt::Debug for Slots {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_tuple("ExchangeSlots")
@@ -68,7 +75,7 @@ pub fn open(
     let pending = Rc::new(RefCell::new(None::<Vec<Definition>>));
     let close: Rc<dyn Fn()> = Rc::new({
         let active = active.clone();
-        let slot = slots.0.clone();
+        let slot = Rc::downgrade(&slots.0);
         let weak = w.as_weak();
         move || {
             if !active.replace(false) {
@@ -77,7 +84,9 @@ pub fn open(
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
             }
-            slot.borrow_mut().take();
+            if let Some(slot) = slot.upgrade() {
+                slot.borrow_mut().take();
+            }
             if let Some(w) = weak.upgrade() {
                 w.invoke_closed();
             }
