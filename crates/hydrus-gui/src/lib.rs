@@ -998,6 +998,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let weak = window.as_weak();
         let page = page.clone();
         let shown = shown.clone();
+        let open_editor = open_editor.clone();
         move |action| {
             let current = page();
             if slot.borrow().is_some() {
@@ -1071,6 +1072,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 _ => return,
             }
             shown(true);
+            if action == 0 {
+                open_editor(current);
+            }
         }
     });
     window.on_search_or_escape({
