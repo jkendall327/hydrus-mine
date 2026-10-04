@@ -178,6 +178,13 @@ fn per_service_inputs_cancel_import_and_selection() {
         })
         .unwrap();
     let mut editor = Relationships::new(store.clone(), RelationKind::Parents).unwrap();
+    let initial = editor.service();
+    let other = editor
+        .service_names()
+        .iter()
+        .position(|name| name == "other tags")
+        .unwrap();
+    assert_ne!(initial, other);
     editor.enter_tags(false, " Sword \n Shield ").unwrap();
     assert!(!editor.can_add());
     editor.enter_tags(true, "Weapon\nObject").unwrap();
@@ -199,12 +206,12 @@ fn per_service_inputs_cancel_import_and_selection() {
     editor.delete(&[Some(String::new())]).unwrap();
     assert!(editor.rows().is_empty());
     assert!(editor.import(" Red\n Colour\nodd", &[]).unwrap());
-    editor.choose_service(1);
+    editor.choose_service(other);
     assert!(editor.rows().is_empty());
     editor.enter_tags(false, "left").unwrap();
     editor.enter_tags(true, "right").unwrap();
     editor.add(&[]).unwrap();
-    editor.choose_service(0);
+    editor.choose_service(initial);
     assert_eq!(editor.rows().len(), 1);
     editor.wipe_workspace();
     assert!(editor.rows().is_empty());
@@ -215,7 +222,7 @@ fn per_service_inputs_cancel_import_and_selection() {
     let mut reloaded = Relationships::new(store, RelationKind::Parents).unwrap();
     reloaded.set_filters(true, false, false);
     assert!(reloaded.rows().is_empty());
-    reloaded.choose_service(1);
+    reloaded.choose_service(other);
     reloaded.set_filters(true, false, false);
     assert!(reloaded.rows().is_empty());
 }

@@ -171,6 +171,8 @@ def record(session):
     # Restore the local counted suggestions before driving the real tag menu.
     fetch('parity:amber old',False,True,True,True,local)
     menu_events=qt(context_menus)
+    # Questions belong to one independently recorded interaction sequence.
+    asked.clear()
     paste_events=[]
     for text,skip,yes,button in [(' Parity:Amber \nparity:new\nparity:new\n\n',False,False,False),(' Parity:Amber \nparity:new\nparity:new\n\n',False,True,False),('parity:skip a\nparity:skip b',True,False,False),('parity:button a\nparity:button b',False,False,True),('parity:single',False,False,False)]:
         clipboard['text']=text;answer['yes']=yes;qt(lambda:c.new_options.SetBoolean('skip_yesno_on_write_autocomplete_multiline_paste',skip))
