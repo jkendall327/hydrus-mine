@@ -192,7 +192,7 @@ fn local_bulk_review_replays_confirmations_store_changes_and_reopens() {
             window.get_trash_nonempty(),
             event["before"]["clear_enabled"].as_bool().unwrap()
         );
-        let action = if event["action"] == "clear" { 0 } else { 1 };
+        let action = i32::from(event["action"] != "clear");
         window.invoke_maintenance(action);
         assert_eq!(
             window.get_question(),
