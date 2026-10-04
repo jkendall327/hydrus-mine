@@ -1161,3 +1161,26 @@ pub fn set<S: Setting>(conn: &Connection, value: &S) -> Result<()> {
         .execute(params![S::KEY, serde_json::to_string(value)?])?;
     Ok(())
 }
+
+/// Editing and clipboard choices shared by note dialogs, Options and viewers.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct NotePreferences {
+    pub copy_all: bool,
+    pub copy_json: bool,
+    pub start_at_end: bool,
+    pub hover_text_only: bool,
+}
+impl Default for NotePreferences {
+    fn default() -> Self {
+        Self {
+            copy_all: true,
+            copy_json: true,
+            start_at_end: true,
+            hover_text_only: false,
+        }
+    }
+}
+impl Setting for NotePreferences {
+    const KEY: &'static str = "note_preferences";
+}

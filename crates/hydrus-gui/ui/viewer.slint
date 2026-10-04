@@ -27,6 +27,7 @@ import { ViewerEyeMenu, ViewerEyeButton } from "viewer_eye_menu.slint";
 import { LineEdit } from "std-widgets.slint";
 import { ListText } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
+import { NoteHoverCopy } from "note_hover_copy.slint";
 
 export struct ViewerUrlRow { label: string, url: string }
 
@@ -182,9 +183,12 @@ export component MediaViewerWindow inherits Window {
     // the file's notes, for the right hover frame under the ratings, shown
     // while the pointer is over it
     in property <[NoteRow]> notes;
-    out property <bool> notes-showing: (root.hover-focus-good || (!root.another-window-active && root.notes-raised)) && root.hover-notes-enabled && root.notes.length > 0 && pointer.has-hover
+    callback note-copy-requested(int);
+    out property <length> notes-hover-y: notes-box.y;
+    out property <length> notes-hover-height: notes-box.height;
+    out property <bool> notes-showing: (root.hover-focus-good || (!root.another-window-active && root.notes-raised)) && root.hover-notes-enabled && root.notes.length > 0 && (notes-box.has-hover || (pointer.has-hover
         && pointer.mouse-x >= notes-box.x
-        && pointer.mouse-y >= notes-box.y && pointer.mouse-y <= notes-box.y + notes-box.height;
+        && pointer.mouse-y >= notes-box.y && pointer.mouse-y <= notes-box.y + notes-box.height));
     // the file's info line, for the top hover frame, which shows with the
     // pointer over it or near it, in the window's middle three fifths
     in property <string> info-line;
@@ -1301,34 +1305,27 @@ export component MediaViewerWindow inherits Window {
                 }
             }
         }
-        // (nothing in it takes the pointer, so the area below keeps it)
-        notes-box := Rectangle {
+        // The note text keeps the hover alive and middle-clicks copy that note.
+        notes-box := TouchArea {
             x: root.width * 0.8;
             y: root.ratings.length > 0 || root.url-links.length > 0 ? ratings-box.preferred-height + 4px : 0;
             width: root.width * 0.2;
             height: min(notes-layout.preferred-height, root.height - self.y);
+            visible: root.notes-showing;
+            Rectangle {
+            width: parent.width; height: parent.height;
             background: #202020e8;
             clip: true;
-            visible: root.notes-showing;
             notes-layout := VerticalLayout {
                 padding: 6px;
                 spacing: 8px;
                 alignment: start;
-                for note in root.notes: VerticalLayout {
-                    spacing: 2px;
-                    Text {
-                        text: note.name;
-                        color: #f0f0f0;
-                        font-weight: 700;
-                        horizontal-alignment: center;
-                        wrap: word-wrap;
-                    }
-                    Text {
-                        text: note.text;
-                        color: #e0e0e0;
-                        wrap: word-wrap;
-                    }
+                for note[i] in root.notes: NoteHoverCopy {
+                    name: note.name;
+                    text: note.text;
+                    copied => { root.note-copy-requested(i); }
                 }
+            }
             }
         }
         ratings-frame := TouchArea {

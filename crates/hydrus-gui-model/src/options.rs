@@ -75,6 +75,24 @@ macro_rules! settings {
             hydrus_store::settings::set($conn, &eye)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, note_preferences) => {
+        if $after.note_preferences != $before.note_preferences {
+            let mut latest: hydrus_store::settings::NotePreferences = hydrus_store::settings::get($conn)?;
+            if $after.note_preferences.copy_all != $before.note_preferences.copy_all {
+                latest.copy_all = $after.note_preferences.copy_all;
+            }
+            if $after.note_preferences.copy_json != $before.note_preferences.copy_json {
+                latest.copy_json = $after.note_preferences.copy_json;
+            }
+            if $after.note_preferences.start_at_end != $before.note_preferences.start_at_end {
+                latest.start_at_end = $after.note_preferences.start_at_end;
+            }
+            if $after.note_preferences.hover_text_only != $before.note_preferences.hover_text_only {
+                latest.hover_text_only = $after.note_preferences.hover_text_only;
+            }
+            hydrus_store::settings::set($conn, &latest)?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, $field:ident) => {
         if $after.$field != $before.$field {hydrus_store::settings::set($conn, &$after.$field)?;}
     };
@@ -153,6 +171,7 @@ settings! {
     thumbnail_layout: ThumbnailLayout,
     thumbnail_ratings: ThumbnailRatingSettings,
     rating_context_sizes: hydrus_store::settings::RatingContextSizes,
+    note_preferences: hydrus_store::settings::NotePreferences,
     trash: TrashSettings,
     url_classes: UrlClassSettings,
     windows: WindowSettings,
@@ -2695,6 +2714,21 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s, v| s.info_line.nice_resolutions = v,
                         ),
                     ],
+                ),
+            ],
+        ),
+        page(
+            "notes",
+            vec![
+                check(
+                    "Start editing notes with the text cursor at the end of the document: ",
+                    |s| s.note_preferences.start_at_end,
+                    |s, v| s.note_preferences.start_at_end = v,
+                ),
+                check(
+                    "When middle-clicking a note hover, only copy the text: ",
+                    |s| s.note_preferences.hover_text_only,
+                    |s, v| s.note_preferences.hover_text_only = v,
                 ),
             ],
         ),

@@ -1436,6 +1436,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let open_manage_notes: OpenManageNotes = Rc::new({
         let manage_notes = manage_notes.clone();
         move |store: Arc<hydrus_store::Store>, file: HashId, applied: Rc<dyn Fn()>| {
+            if let Some(existing) = manage_notes.borrow().as_ref() {
+                existing.invoke_focus_note();
+                return;
+            }
             match manage_notes_window::open(&store, file, &manage_notes, applied) {
                 Ok(window) => *manage_notes.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage notes: {e}"),
@@ -4833,6 +4837,36 @@ fn open_viewer(
                 && hydrus_core::url::functions::check_full_url(link.url.as_str()).is_ok()
             {
                 launch(link.url.as_str());
+            }
+        }
+    });
+    window.on_note_copy_requested({
+        let model = model.clone();
+        let weak = window.as_weak();
+        move |index| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if !window.window().is_visible() {
+                return;
+            }
+            let Ok(index) = usize::try_from(index) else {
+                return;
+            };
+            let Some(note) = window.get_notes().row_data(index) else {
+                return;
+            };
+            let model = model.borrow();
+            match model
+                .store()
+                .read(hydrus_store::settings::get::<hydrus_store::settings::NotePreferences>)
+            {
+                Ok(preferences) => copy_to_clipboard(&notes_editor::hover_copy(
+                    note.name.as_str(),
+                    note.text.as_str(),
+                    preferences.hover_text_only,
+                )),
+                Err(error) => eprintln!("could not read note copy preference: {error}"),
             }
         }
     });

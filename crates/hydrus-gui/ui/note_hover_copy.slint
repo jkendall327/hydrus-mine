@@ -1,0 +1,20 @@
+// Interactive viewer note hover. Copy is a middle-button press, as Qt's event
+// filter on either its name or text. The containing viewer owns the clipboard.
+export component NoteHoverCopy inherits Rectangle {
+    in property <string> name;
+    in property <string> text;
+    callback copied();
+    preferred-height: layout.preferred-height;
+    layout := VerticalLayout {
+        spacing: 2px;
+        Text { text: root.name; color: #f0f0f0; font-weight: 700; horizontal-alignment: center; wrap: word-wrap; }
+        Text { text: root.text; color: #e0e0e0; wrap: word-wrap; }
+    }
+    TouchArea {
+        pointer-event(event) => {
+            if event.kind == PointerEventKind.down && event.button == PointerEventButton.middle {
+                root.copied();
+            }
+        }
+    }
+}
