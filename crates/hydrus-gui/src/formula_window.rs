@@ -199,6 +199,7 @@ pub fn open(
     slots: &Slots,
     applied: Rc<dyn Fn(Formula)>,
 ) -> Result<FormulaWindow, slint::PlatformError> {
+    slots.strings.set_store(store);
     let w = FormulaWindow::new()?;
     let active = Rc::new(Cell::new(true));
     let fetch = crate::parser_test_fetch::Slot::default();

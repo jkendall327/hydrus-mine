@@ -331,6 +331,7 @@ fn open_editor(
     slots: &Slots,
     applied: Done,
 ) -> Result<ParserEditWindow, slint::PlatformError> {
+    slots.formula.strings.set_store(store);
     test.prepare_examples();
     let w = ParserEditWindow::new()?;
     let page = matches!(value, Value::Page(_));

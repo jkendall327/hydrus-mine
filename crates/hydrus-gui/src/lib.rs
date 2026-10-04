@@ -1395,9 +1395,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 });
                 move || {
                     let store = pages.borrow().store().clone();
-                    let key = hydrus_core::ServiceKey::new(
-                        hydrus_core::service::builtin_keys::MY_TAGS.to_vec(),
-                    );
+                    let preferences = store
+                        .read(
+                            hydrus_store::settings::get::<
+                                hydrus_store::tag_editing::TagEditingSettings,
+                            >,
+                        )
+                        .unwrap_or_default();
+                    let key = preferences.default_service;
                     if let Err(error) =
                         tag_migration_window::open(&store, &key, Vec::new(), &slot, changed.clone())
                     {
