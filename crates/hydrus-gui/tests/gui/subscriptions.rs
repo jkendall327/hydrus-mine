@@ -876,7 +876,7 @@ fn full_subscription_exchange_is_staged_cancellable_and_reopens_with_complete_hi
     use hydrus_downloader_exchange::subscriptions as exchange;
     let reference = hydrus_testkit::fixture_json("subscription_exchange.json");
     let (_dirs, store) = store();
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let dialog = open_dialog(&ui, &bound);
@@ -997,6 +997,14 @@ fn full_subscription_exchange_is_staged_cancellable_and_reopens_with_complete_hi
         exported[0].queries[0].reference_header.as_ref().unwrap()[2][15],
         reference["single"][2][0][3][1][0][2][15]
     );
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 880, 610);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("subscription-exchange-export.png"),
+        &pixels,
+        880,
+        610,
+    )
+    .unwrap();
     let exports = tempfile::tempdir().unwrap();
     let path = exports.path().join("subscriptions.json");
     child.set_path(path.to_string_lossy().as_ref().into());
