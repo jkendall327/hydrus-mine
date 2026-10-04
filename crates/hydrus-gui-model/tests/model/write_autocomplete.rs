@@ -523,6 +523,45 @@ fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
     input.fetch();
     for event in fixture["menus"].as_array().unwrap() {
         if event["action"] == "open" {
+            fn paths(entries: &[Entry], prefix: &[String], out: &mut Vec<Vec<String>>) {
+                for entry in entries {
+                    match entry {
+                        Entry::Item(label, _) => {
+                            let mut path = prefix.to_vec();
+                            path.push(label.clone());
+                            out.push(path);
+                        }
+                        Entry::Menu(label, entries) => {
+                            let mut path = prefix.to_vec();
+                            path.push(label.clone());
+                            paths(entries, &path, out);
+                        }
+                        Entry::Separator => {}
+                    }
+                }
+            }
+            let row = input
+                .rows()
+                .iter()
+                .position(|r| r.tag == "parity:amber old")
+                .unwrap();
+            let mut actual = Vec::new();
+            paths(&input.menu(row), &[], &mut actual);
+            for path in event["paths"].as_array().unwrap() {
+                let first = path[0].as_str().unwrap();
+                if first.contains("siblings") || first.contains("parents") {
+                    let path: Vec<_> = path
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|s| s.as_str().unwrap().to_owned())
+                        .collect();
+                    assert!(
+                        actual.contains(&path),
+                        "missing recorded relationship path {path:?}"
+                    );
+                }
+            }
             continue;
         }
         let favourite = event["action"] == "favourite";
@@ -559,6 +598,7 @@ fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
                     assert_eq!(json!([text]), event["copied"]);
                 }
             }
+            Action::Relationship { .. } => panic!("unexpected relationship action in menu replay"),
             Action::Launch {
                 location,
                 context,
@@ -662,4 +702,99 @@ fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
     reopened.fetch();
     assert!(reopened.rows().iter().any(|r| r.parent_row));
     assert!(reopened.rows().iter().any(|r| r.label.contains('→')));
+}
+
+#[test]
+fn seeded_relationship_editors_replay_service_defaults_memory_and_cancel() {
+    use hydrus_gui_model::tag_relationships::{RelationKind, Relationships};
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let (_dir, store) = seeded(&fixture);
+    let my_tags = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    for event in fixture["seeded_dialogs"].as_array().unwrap() {
+        let kind = if event["kind"] == "siblings" {
+            RelationKind::Siblings
+        } else {
+            RelationKind::Parents
+        };
+        let key = my_tags.clone();
+        store
+            .write(move |ctx| {
+                let mut prefs: TagEditingSettings = settings::get(ctx.conn())?;
+                prefs.default_service = key;
+                prefs.remember_service = true;
+                settings::set(ctx.conn(), &prefs)
+            })
+            .unwrap();
+        let mut model =
+            Relationships::new_with_tags(store.clone(), kind, &["parity:amber old".into()])
+                .unwrap();
+        assert_eq!(
+            model.service_names()[model.service()],
+            event["initial"].as_str().unwrap()
+        );
+        for seed in event["seeds"].as_array().unwrap() {
+            let service = model
+                .service_names()
+                .iter()
+                .position(|s| s == seed["service"].as_str().unwrap())
+                .unwrap();
+            model.choose_service(service);
+            assert_eq!(json!(model.inputs().0), seed["tags"]);
+            assert!(model.inputs().1.is_empty());
+        }
+        let remembered = model
+            .service_names()
+            .iter()
+            .position(|s| s == event["remembered"].as_str().unwrap())
+            .unwrap();
+        model.choose_service_remembered(remembered).unwrap();
+        let prefs: TagEditingSettings = store.read(settings::get).unwrap();
+        assert_eq!(
+            prefs.default_service,
+            model.service_key(remembered).unwrap()
+        );
+        store
+            .write(|ctx| {
+                let mut prefs: TagEditingSettings = settings::get(ctx.conn())?;
+                prefs.remember_service = false;
+                settings::set(ctx.conn(), &prefs)
+            })
+            .unwrap();
+        let mine = model
+            .service_names()
+            .iter()
+            .position(|s| s == "my tags")
+            .unwrap();
+        model.choose_service_remembered(mine).unwrap();
+        let prefs: TagEditingSettings = store.read(settings::get).unwrap();
+        assert_eq!(
+            store
+                .snapshot()
+                .services
+                .by_key(&prefs.default_service)
+                .unwrap()
+                .name,
+            event["disabled_memory"].as_str().unwrap()
+        );
+        model.enter_tags(true, "parity:unapplied relation").unwrap();
+        model.add(&[]).unwrap();
+        drop(model);
+        let reopened = Relationships::new(store.clone(), kind).unwrap();
+        assert_eq!(
+            reopened.service_names()[reopened.service()],
+            event["disabled_memory"].as_str().unwrap()
+        );
+        assert!(
+            reopened
+                .rows()
+                .iter()
+                .all(|r| r.pair.1 != "parity:unapplied relation")
+        );
+    }
 }

@@ -121,12 +121,14 @@ def record(session):
     tab_events,children_control=qt(tabs)
     def context_menus():
         from qtpy import QtCore
-        from hydrus.client.gui import ClientGUICore as CGC
+        from hydrus.client.gui import ClientGUICore as CGC, ClientGUIAsync
         from hydrus.client.gui.lists import ClientGUIListBoxes as L
         events=[]; captured={}; copied=[]
         box=ac._search_results_list
         box.SetParentDecoratorsAllowed(True);box.SetExtraParentRowsAllowed(True);box.SetSiblingDecoratorsAllowed(True)
         old_popup=CGC.core().PopupMenu
+        old_start=ClientGUIAsync.AsyncQtJob.start
+        ClientGUIAsync.AsyncQtJob.start=lambda job:job._publish_callable(job._work_callable())
         old_pub=c.pub
         CGC.core().PopupMenu=lambda win,menu:captured.update(menu=menu)
         launches=[]
@@ -164,7 +166,7 @@ def record(session):
                 menu=captured['menu'];action=next(action for path,action in paths(menu) if path == (label,));action.trigger();box.ShowMenuFromSignal(QtCore.QPoint(0,0))
                 events.append({'action':'decorator','label':label,'paths':[list(path) for path,action in paths(captured['menu'])]})
         finally:
-            c.pub=old_pub;CGC.core().PopupMenu=old_popup
+            c.pub=old_pub;CGC.core().PopupMenu=old_popup;ClientGUIAsync.AsyncQtJob.start=old_start
         return events
     # Restore the local counted suggestions before driving the real tag menu.
     fetch('parity:amber old',False,True,True,True,local)
@@ -196,6 +198,33 @@ def record(session):
             panel.deleteLater()
         return results
     relationship_inputs=qt(relation_inputs)
+    def seeded_relationship_dialogs():
+        from hydrus.client.gui.metadata.ClientGUIManageTagSiblings import ManageTagSiblings
+        from hydrus.client.gui.metadata.ClientGUIManageTagParents import ManageTagParents
+        from hydrus.client.gui import ClientGUIAsync
+        events=[];old_after=c.CallAfterQtSafe;old_start=ClientGUIAsync.AsyncQtJob.start
+        ClientGUIAsync.AsyncQtJob.start=lambda job:job._publish_callable(job._work_callable())
+        c.CallAfterQtSafe=lambda target,func,*args,**kw:func(*args,**kw) if getattr(func,'__name__','') == 'setCurrentWidget' else old_after(target,func,*args,**kw)
+        try:
+            for kind,cls in [('siblings',ManageTagSiblings),('parents',ManageTagParents)]:
+                c.new_options.SetKey('default_tag_service_tab',local);c.new_options.SetBoolean('save_default_tag_service_tab_on_change',True)
+                panel=cls(c.gui,['parity:amber old']);notebook=panel._tag_services
+                initial=c.services_manager.GetName(notebook.currentWidget().GetServiceKey())
+                seeds=[]
+                for i in range(notebook.count()):
+                    page=notebook.widget(i);box=page._old_siblings if kind == 'siblings' else page._children
+                    seeds.append({'service':c.services_manager.GetName(page.GetServiceKey()),'tags':sorted(box.GetTags())})
+                other=next(i for i in range(notebook.count()) if notebook.widget(i).GetServiceKey() != local)
+                notebook.setCurrentIndex(other)
+                remembered=c.services_manager.GetName(c.new_options.GetKey('default_tag_service_tab'))
+                c.new_options.SetBoolean('save_default_tag_service_tab_on_change',False)
+                notebook.setCurrentIndex(next(i for i in range(notebook.count()) if notebook.widget(i).GetServiceKey() == local))
+                events.append({'kind':kind,'initial':initial,'seeds':seeds,'remembered':remembered,'disabled_memory':c.services_manager.GetName(c.new_options.GetKey('default_tag_service_tab'))})
+                panel.deleteLater()
+        finally:
+            ClientGUIAsync.AsyncQtJob.start=old_start;c.CallAfterQtSafe=old_after;c.new_options.SetKey('default_tag_service_tab',local);c.new_options.SetBoolean('save_default_tag_service_tab_on_change',True)
+        return events
+    seeded_dialogs=qt(seeded_relationship_dialogs)
     def detached_tag_lists():
         from hydrus.client.gui import ClientGUIDialogs
         from hydrus.client.metadata import ClientTags
@@ -212,7 +241,7 @@ def record(session):
         return events
     detached_inputs=qt(detached_tag_lists)
     qt(ac.deleteLater);c.CallToThread=old_thread;c.GetClipboardText=old_clipboard
-    return {'menus':menu_events,'tabs':tab_events,'children_control':children_control,'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
+    return {'seeded_dialogs':seeded_dialogs,'menus':menu_events,'tabs':tab_events,'children_control':children_control,'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
 def child(out):
     import hydrus_driver,record_api
     result=hydrus_driver.run_client(record_api.unpack_fixture('basic'),record)

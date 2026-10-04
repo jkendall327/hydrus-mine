@@ -25,6 +25,7 @@ pub fn clear_search_launcher() {
 pub(crate) struct TagMenu {
     pub popup: Rc<Popup<Action>>,
     pending: RefCell<Option<Action>>,
+    relationships: Rc<RefCell<Option<crate::TagRelationshipsWindow>>>,
     store: Arc<Store>,
     editable: Rc<dyn Fn() -> bool>,
     decorate: Rc<dyn Fn(Action)>,
@@ -44,6 +45,7 @@ impl TagMenu {
         Rc::new(Self {
             popup: Popup::new(),
             pending: RefCell::default(),
+            relationships: Rc::default(),
             store,
             editable,
             decorate,
@@ -53,7 +55,7 @@ impl TagMenu {
         })
     }
     pub fn open(&self, entries: &[Entry], x: f32, y: f32) {
-        if !(self.editable)() || self.pending.borrow().is_some() {
+        if !(self.editable)() || self.busy() {
             return;
         }
         let (entries, actions) = main_menu::popup(entries, &|entry| match entry {
@@ -64,10 +66,16 @@ impl TagMenu {
         self.popup.open(entries, actions, x, y);
     }
     pub fn busy(&self) -> bool {
-        self.pending.borrow().is_some() || self.popup.model().row_count() > 0
+        self.pending.borrow().is_some()
+            || self.popup.model().row_count() > 0
+            || self.relationships.borrow().is_some()
     }
     pub fn close(&self) {
         self.pending.borrow_mut().take();
+        let child = self.relationships.borrow_mut().take();
+        if let Some(child) = child {
+            child.invoke_cancel();
+        }
         self.popup.close();
         (self.question)("");
     }
@@ -102,6 +110,27 @@ impl TagMenu {
     fn execute(&self, action: Action) {
         match action {
             Action::Copy(text) => crate::copy_to_clipboard(&text),
+            Action::Relationship { kind, tags } => {
+                match hydrus_gui_model::tag_relationships::Relationships::new_with_tags(
+                    self.store.clone(),
+                    kind,
+                    &tags,
+                ) {
+                    Ok(model) => {
+                        match crate::tag_relationships_window::open(
+                            model,
+                            &self.relationships,
+                            self.refresh.clone(),
+                        ) {
+                            Ok(child) => *self.relationships.borrow_mut() = Some(child),
+                            Err(e) => {
+                                (self.error)(&format!("could not open tag relationships: {e}"))
+                            }
+                        }
+                    }
+                    Err(e) => (self.error)(&format!("could not load tag relationships: {e}")),
+                }
+            }
             Action::Launch {
                 location,
                 context,
@@ -151,3 +180,95 @@ macro_rules! bind {
     }};
 }
 pub(crate) use bind;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use hydrus_core::Tag;
+    use hydrus_store::display::RelationKind;
+    use slint::{ComponentHandle as _, Model as _};
+    use std::cell::Cell;
+
+    #[test]
+    fn seeded_relationship_child_apply_refresh_and_owner_close_discard_stale_actions() {
+        let _windows = crate::headless::init();
+        let legacy = hydrus_testkit::legacy_fixture("basic");
+        let dir = tempfile::tempdir().unwrap();
+        hydrus_store::import::import_legacy(
+            legacy.path(),
+            &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let active = Rc::new(Cell::new(true));
+        let refreshed = Rc::new(Cell::new(0));
+        let menu = TagMenu::new(
+            store.clone(),
+            Rc::new({
+                let active = active.clone();
+                move || active.get()
+            }),
+            Rc::new(|_| {}),
+            Rc::new({
+                let refreshed = refreshed.clone();
+                move || refreshed.set(refreshed.get() + 1)
+            }),
+            Rc::new(|_| {}),
+            Rc::new(|error| panic!("{error}")),
+        );
+        let tag = Tag::new("parity:context child").unwrap();
+        menu.choose(Some(Chosen::Action(Action::Relationship {
+            kind: RelationKind::Siblings,
+            tags: vec![tag.as_str().to_owned()],
+        })));
+        assert!(menu.busy());
+        let child = menu.relationships.borrow().as_ref().unwrap().clone_strong();
+        assert!(child.get_siblings());
+        assert_eq!(
+            child.get_left_tags().row_data(0).unwrap().text,
+            tag.as_str()
+        );
+        child.invoke_enter_tags(true, "parity:cancelled ideal".into());
+        child.invoke_add();
+        active.set(false);
+        menu.close();
+        child.invoke_apply();
+        assert!(!menu.busy());
+        assert!(
+            store
+                .read(|conn| hydrus_store::master::tag_id(
+                    conn,
+                    &Tag::new("parity:cancelled ideal").unwrap()
+                ))
+                .unwrap()
+                .is_none()
+        );
+        active.set(true);
+        menu.choose(Some(Chosen::Action(Action::Relationship {
+            kind: RelationKind::Parents,
+            tags: vec![tag.as_str().to_owned()],
+        })));
+        let child = menu.relationships.borrow().as_ref().unwrap().clone_strong();
+        assert!(!child.get_siblings());
+        child.invoke_enter_tags(true, "parity:applied parent".into());
+        child.invoke_add();
+        let before = refreshed.get();
+        child.invoke_apply();
+        assert!(!menu.busy());
+        assert_eq!(refreshed.get(), before + 1);
+        let id = store
+            .read(move |conn| hydrus_store::master::tag_id(conn, &tag))
+            .unwrap()
+            .unwrap();
+        let service = store.snapshot().services.by_name("my tags").unwrap().id;
+        assert!(
+            !store
+                .snapshot()
+                .display
+                .get(service)
+                .ancestors(id)
+                .is_empty()
+        );
+        menu.close();
+    }
+}

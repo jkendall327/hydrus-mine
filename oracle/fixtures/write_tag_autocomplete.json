@@ -1,4 +1,58 @@
 {
+  "seeded_dialogs": [
+    {
+      "kind": "siblings",
+      "initial": "my tags",
+      "seeds": [
+        {
+          "service": "downloader tags",
+          "tags": [
+            "parity:amber old"
+          ]
+        },
+        {
+          "service": "my tags",
+          "tags": [
+            "parity:amber old"
+          ]
+        },
+        {
+          "service": "second tags",
+          "tags": [
+            "parity:amber old"
+          ]
+        }
+      ],
+      "remembered": "downloader tags",
+      "disabled_memory": "downloader tags"
+    },
+    {
+      "kind": "parents",
+      "initial": "my tags",
+      "seeds": [
+        {
+          "service": "downloader tags",
+          "tags": [
+            "parity:amber old"
+          ]
+        },
+        {
+          "service": "my tags",
+          "tags": [
+            "parity:amber old"
+          ]
+        },
+        {
+          "service": "second tags",
+          "tags": [
+            "parity:amber old"
+          ]
+        }
+      ],
+      "remembered": "downloader tags",
+      "disabled_memory": "downloader tags"
+    }
+  ],
   "menus": [
     {
       "action": "open",
@@ -53,12 +107,28 @@
           "all subtags with counts"
         ],
         [
-          "siblings",
+          "1 siblings",
           "add siblings to parity:amber old"
         ],
         [
-          "parents",
+          "1 siblings",
+          "ideal is \"parity:amber\" on: downloader tags, my tags"
+        ],
+        [
+          "2 parents, 0 children",
           "add parents to parity:amber old"
+        ],
+        [
+          "2 parents, 0 children",
+          "--downloader tags, my tags--"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:colour"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:root"
         ],
         [
           "open",
@@ -129,7 +199,7 @@
       "action": "copy",
       "label": "parity:amber old and 2 parents",
       "copied": [
-        "parity:amber old\nparity:root\nparity:colour"
+        "parity:amber old\nparity:colour\nparity:root"
       ]
     },
     {
@@ -334,12 +404,28 @@
           "all subtags with counts"
         ],
         [
-          "siblings",
+          "1 siblings",
           "add siblings to parity:amber old"
         ],
         [
-          "parents",
+          "1 siblings",
+          "ideal is \"parity:amber\" on: downloader tags, my tags"
+        ],
+        [
+          "2 parents, 0 children",
           "add parents to parity:amber old"
+        ],
+        [
+          "2 parents, 0 children",
+          "--downloader tags, my tags--"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:colour"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:root"
         ],
         [
           "open",
@@ -422,12 +508,28 @@
           "all subtags with counts"
         ],
         [
-          "siblings",
+          "1 siblings",
           "add siblings to parity:amber old"
         ],
         [
-          "parents",
+          "1 siblings",
+          "ideal is \"parity:amber\" on: downloader tags, my tags"
+        ],
+        [
+          "2 parents, 0 children",
           "add parents to parity:amber old"
+        ],
+        [
+          "2 parents, 0 children",
+          "--downloader tags, my tags--"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:colour"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:root"
         ],
         [
           "open",
@@ -510,12 +612,28 @@
           "all subtags with counts"
         ],
         [
-          "siblings",
+          "1 siblings",
           "add siblings to parity:amber old"
         ],
         [
-          "parents",
+          "1 siblings",
+          "ideal is \"parity:amber\" on: downloader tags, my tags"
+        ],
+        [
+          "2 parents, 0 children",
           "add parents to parity:amber old"
+        ],
+        [
+          "2 parents, 0 children",
+          "--downloader tags, my tags--"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:colour"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:root"
         ],
         [
           "open",
@@ -562,8 +680,8 @@
           "tag": "parity:amber old",
           "rows": [
             "parity:amber old → parity:amber",
-            "    parity:root",
-            "    parity:colour"
+            "    parity:colour",
+            "    parity:root"
           ]
         },
         {
@@ -961,8 +1079,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:root",
-            "    parity:colour"
+            "    parity:colour",
+            "    parity:root"
           ]
         },
         {
@@ -970,8 +1088,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:root",
-            "    parity:colour"
+            "    parity:colour",
+            "    parity:root"
           ]
         }
       ],
@@ -999,8 +1117,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:root",
-            "    parity:colour"
+            "    parity:colour",
+            "    parity:root"
           ]
         },
         {
@@ -1008,8 +1126,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:root",
-            "    parity:colour"
+            "    parity:colour",
+            "    parity:root"
           ]
         }
       ],
@@ -1138,8 +1256,8 @@
           "count": true,
           "rows": [
             "parity:amber (3)",
-            "    parity:root",
-            "    parity:colour"
+            "    parity:colour",
+            "    parity:root"
           ]
         },
         {
@@ -1147,8 +1265,8 @@
           "count": true,
           "rows": [
             "parity:amber old (1) → parity:amber",
-            "    parity:root",
-            "    parity:colour"
+            "    parity:colour",
+            "    parity:root"
           ]
         }
       ],
@@ -1170,7 +1288,7 @@
           "title": null
         },
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:amber\nparity:new",
           "title": "Want to paste everything?"
         }
       ],
@@ -1184,7 +1302,7 @@
       "consumed": true,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:amber\nparity:new",
           "title": "Want to paste everything?"
         }
       ],

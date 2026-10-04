@@ -1854,3 +1854,14 @@ open submenu hands selected raw predicates to the main window's weak search/
 duplicate launcher. The real Qt menu actions, copy payloads, questions and page
 publications are recorded by `oracle/record_write_tag_autocomplete.py`; model
 replay and native-window lifecycle regressions cover these boundaries.
+
+The shared suggestion menu also shows sibling ideals and parent/child lookups
+from all real tag services, grouped by common service membership with the
+reference's ten-item display cap. Add siblings/parents opens an owned relationship
+editor seeded on every service tab. Those dialogs now select the configured
+default service and remember real tab changes immediately, including after
+Cancel; disabling memory preserves the configured default. Closing the write-tag
+owner cancels its relationship child and prevents stale Apply. The reference
+recorder runs the actual relationship lookup and initialization workers and
+records all service seeds and preference changes; model and native child tests
+check graph publication, cancellation and owner lifetimes.
