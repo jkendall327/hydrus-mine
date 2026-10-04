@@ -1,0 +1,289 @@
+{
+ "now": 1900000000,
+ "script": [
+  73,
+  "session fixture",
+  2,
+  [
+   "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+   [
+    21,
+    2,
+    [
+     [
+      [
+       2,
+       [
+        51,
+        1,
+        [
+         0,
+         "session",
+         null,
+         null,
+         "session"
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        51,
+        1,
+        [
+         0,
+         "ok",
+         null,
+         null,
+         "ok"
+        ]
+       ]
+      ]
+     ],
+     [
+      [
+       2,
+       [
+        51,
+        1,
+        [
+         0,
+         "token",
+         null,
+         null,
+         "token"
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        51,
+        1,
+        [
+         0,
+         "ready",
+         null,
+         null,
+         "ready"
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    26,
+    3,
+    []
+   ],
+   [
+    26,
+    3,
+    []
+   ],
+   []
+  ]
+ ],
+ "domain": "login.example",
+ "info": [
+  [
+   "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+   "session fixture"
+  ],
+  {},
+  0,
+  "synthetic fixture",
+  true,
+  1,
+  "",
+  1900003600,
+  "synthetic delay"
+ ],
+ "states": [
+  {
+   "action": "missing",
+   "input": [],
+   "state": {
+    "cells": [
+     "login.example",
+     "session fixture",
+     "Everything - synthetic fixture",
+     "yes",
+     "no",
+     "untested",
+     "expires in 1 hour - synthetic delay"
+    ],
+    "can_login": true,
+    "can_scrub_delay": true,
+    "can_scrub_invalidity": false,
+    "logged_in": false,
+    "expiry": null,
+    "cookies": []
+   }
+  },
+  {
+   "action": "persistent",
+   "input": [
+    [
+     "session",
+     "ok",
+     1900007200
+    ],
+    [
+     "token",
+     "ready",
+     1900003600
+    ]
+   ],
+   "state": {
+    "cells": [
+     "login.example",
+     "session fixture",
+     "Everything - synthetic fixture",
+     "yes",
+     "yes - expires in 1 hour",
+     "untested",
+     "expires in 1 hour - synthetic delay"
+    ],
+    "can_login": false,
+    "can_scrub_delay": true,
+    "can_scrub_invalidity": false,
+    "logged_in": true,
+    "expiry": 1900003600,
+    "cookies": [
+     "session",
+     "token"
+    ]
+   }
+  },
+  {
+   "action": "session",
+   "input": [
+    [
+     "session",
+     "ok",
+     null
+    ],
+    [
+     "token",
+     "ready",
+     1900003600
+    ]
+   ],
+   "state": {
+    "cells": [
+     "login.example",
+     "session fixture",
+     "Everything - synthetic fixture",
+     "yes",
+     "yes - session",
+     "untested",
+     "expires in 1 hour - synthetic delay"
+    ],
+    "can_login": false,
+    "can_scrub_delay": true,
+    "can_scrub_invalidity": false,
+    "logged_in": true,
+    "expiry": null,
+    "cookies": [
+     "session",
+     "token"
+    ]
+   }
+  },
+  {
+   "action": "invalid-value",
+   "input": [
+    [
+     "session",
+     "wrong",
+     null
+    ],
+    [
+     "token",
+     "ready",
+     1900003600
+    ]
+   ],
+   "state": {
+    "cells": [
+     "login.example",
+     "session fixture",
+     "Everything - synthetic fixture",
+     "yes",
+     "no",
+     "untested",
+     "expires in 1 hour - synthetic delay"
+    ],
+    "can_login": true,
+    "can_scrub_delay": true,
+    "can_scrub_invalidity": false,
+    "logged_in": false,
+    "expiry": null,
+    "cookies": [
+     "session",
+     "token"
+    ]
+   }
+  },
+  {
+   "action": "reset",
+   "accepted": false,
+   "questions": [
+    "Are you sure you want to clear these domains' sessions? This will delete all their existing cookies and cannot be undone."
+   ],
+   "state": {
+    "cells": [
+     "login.example",
+     "session fixture",
+     "Everything - synthetic fixture",
+     "yes",
+     "yes - session",
+     "untested",
+     "expires in 1 hour - synthetic delay"
+    ],
+    "can_login": false,
+    "can_scrub_delay": true,
+    "can_scrub_invalidity": false,
+    "logged_in": true,
+    "expiry": null,
+    "cookies": [
+     "session",
+     "token",
+     "keep"
+    ]
+   },
+   "other_cookies": [
+    "session",
+    "token",
+    "keep"
+   ]
+  },
+  {
+   "action": "reset",
+   "accepted": true,
+   "questions": [
+    "Are you sure you want to clear these domains' sessions? This will delete all their existing cookies and cannot be undone."
+   ],
+   "state": {
+    "cells": [
+     "login.example",
+     "session fixture",
+     "Everything - synthetic fixture",
+     "yes",
+     "no",
+     "untested",
+     "expires in 1 hour - synthetic delay"
+    ],
+    "can_login": true,
+    "can_scrub_delay": true,
+    "can_scrub_invalidity": false,
+    "logged_in": false,
+    "expiry": null,
+    "cookies": []
+   },
+   "other_cookies": []
+  }
+ ]
+}

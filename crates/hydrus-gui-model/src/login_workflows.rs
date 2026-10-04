@@ -291,6 +291,51 @@ pub struct DomainsEditor {
     original_domains: BTreeMap<String, hydrus_parse::login::DomainLogin>,
     pub selection: ListSelection<usize>,
 }
+/// Reference domain row, with cookie-derived login state independent of activation.
+pub fn domain_cells(
+    domain: &str,
+    login: &hydrus_parse::login::DomainLogin,
+    script: Option<&LoginScript>,
+    logged_in: bool,
+    expires: Option<i64>,
+    now: i64,
+) -> Vec<String> {
+    vec![
+        domain.into(),
+        script.map_or_else(
+            || "login script not found".into(),
+            |script| script.name.clone(),
+        ),
+        format!("{} - {}", login.access.label(), login.description),
+        if login.active { "yes" } else { "no" }.into(),
+        if logged_in {
+            format!(
+                "yes - {}",
+                crate::network_sessions::expiry_text(expires, now)
+            )
+        } else {
+            "no".into()
+        },
+        if login.active {
+            if login.validity_error.is_empty() {
+                login.validity.label().into()
+            } else {
+                format!("{} - {}", login.validity.label(), login.validity_error)
+            }
+        } else {
+            String::new()
+        },
+        if login.no_work_until > now {
+            format!(
+                "{} - {}",
+                crate::network_sessions::expiry_text(Some(login.no_work_until), now),
+                login.delay_reason
+            )
+        } else {
+            String::new()
+        },
+    ]
+}
 impl DomainsEditor {
     pub fn new(draft: LoginManager) -> Self {
         Self {

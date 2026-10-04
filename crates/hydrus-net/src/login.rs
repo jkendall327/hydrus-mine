@@ -166,13 +166,60 @@ pub fn check_cookies(
 }
 /// Persisted session cookies determine logged-in state, independent of active status.
 pub fn logged_in(store: &Store, script: &LoginScript, domain: &str) -> Result<bool, String> {
-    Ok(check_cookies(
-        &script.required_cookies,
-        &cookies(store, domain)?,
-        domain,
-        None,
-    )
-    .is_ok())
+    Ok(session_state(store, script, domain)?.logged_in)
+}
+/// Required-cookie validity and the earliest expiry, with session-cookie precedence.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SessionState {
+    pub logged_in: bool,
+    pub expires: Option<i64>,
+}
+/// Read the current shared cookie store, including changes made by open session editors.
+pub fn session_state(
+    store: &Store,
+    script: &LoginScript,
+    domain: &str,
+) -> Result<SessionState, String> {
+    let cookies = cookies(store, domain)?;
+    let logged_in = check_cookies(&script.required_cookies, &cookies, domain, None).is_ok();
+    let domain = host(domain);
+    let mut expires = None;
+    for requirement in &script.required_cookies {
+        let Some(cookie) = cookies.iter().find(|cookie| {
+            cookie_domain_matches(cookie, &domain) && requirement.name.matches(&cookie.name)
+        }) else {
+            return Ok(SessionState {
+                logged_in,
+                expires: None,
+            });
+        };
+        let Some(expiry) = cookie.expires else {
+            return Ok(SessionState {
+                logged_in,
+                expires: None,
+            });
+        };
+        expires = Some(expires.map_or(expiry, |old: i64| old.min(expiry)));
+    }
+    Ok(SessionState { logged_in, expires })
+}
+/// Reference reset-login clears the resolved shared sessions immediately, outside the draft.
+pub fn clear_sessions(store: &Store, domains: &[String]) -> Result<(), String> {
+    let domains = domains.to_vec();
+    store
+        .write_and_refresh(move |ctx| {
+            let sessions = domains
+                .iter()
+                .map(|domain| {
+                    network::session_for(ctx.conn(), &NetworkContext::domain(host(domain)))
+                })
+                .collect::<hydrus_store::Result<BTreeSet<_>>>()?;
+            for session in sessions {
+                network::clear_session(ctx.conn(), &session)?;
+            }
+            Ok(())
+        })
+        .map_err(|error| error.to_string())
 }
 fn cookie_strings(cookies: &[Cookie]) -> BTreeSet<String> {
     cookies

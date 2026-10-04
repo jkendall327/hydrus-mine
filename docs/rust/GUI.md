@@ -2055,8 +2055,14 @@ labels and advisory invalid/blank confirmation. Accepted values reset delays and
 validity, deactivate invalid credentials and ask before activating a valid inactive
 domain. Domain Apply saves its draft while preserving concurrent script edits;
 Cancel closes credential children and ignores stale handles. Flip active, scrub
-delays and scrub invalidity work on extended selection. Adding domains, changing
-scripts and logged-in cookie status/reset are still absent. Do login now filters
+delays and scrub invalidity work on extended selection. The logged-in column reads
+required cookies from the shared session store, showing session lifetime or the
+earliest required-cookie expiry; delays use the reference relative expiry text.
+Reset login asks the recorded irreversible-delete question, then clears the
+selected domains’ resolved sessions immediately, even if the manager is later
+canceled. Other sessions remain intact and existing HTTP engines see the reset
+on their next request. Cookie rows and action eligibility refresh while open.
+Adding domains and changing scripts remain absent. Do login now filters
 selected active, non-invalid, existing-script domains whose required cookies are
 missing, asks the recorded confirmation, saves the domain draft and closes the
 manager before attempting its sorted queue. Attempts use the existing cookie store;

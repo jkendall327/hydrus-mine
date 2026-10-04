@@ -5,6 +5,7 @@ use hydrus_gui_model::login_workflows::{
 use hydrus_legacy::{objects::logins as legacy, serialisable::SerialisableObject};
 use hydrus_parse::login::CredentialKind;
 use serde_json::{Value, json};
+use std::collections::BTreeMap;
 fn manager(fixture: &Value) -> hydrus_parse::login::LoginManager {
     legacy::manager(&SerialisableObject::from_tuple_str(&fixture["manager"].to_string()).unwrap())
         .unwrap()
@@ -496,4 +497,53 @@ fn example_domains_replay_reference_defaults_duplicate_errors_and_final_cancel_a
         fixture["access_types"][3][2].as_str().unwrap()
     );
     assert!(draft.value(Some("")).is_err());
+}
+
+#[test]
+fn login_domain_rows_replay_cookie_expiry_and_pretty_delay_reference() {
+    use hydrus_gui_model::login_workflows::domain_cells;
+    use hydrus_parse::login::{Access, DomainLogin, Validity};
+    let fixture = hydrus_testkit::fixture_json("login_sessions.json");
+    let script = legacy::login_script(
+        &SerialisableObject::from_tuple_str(&fixture["script"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let now = fixture["now"].as_i64().unwrap();
+    let login = DomainLogin {
+        script_key: script.key.clone(),
+        script_name: script.name.clone(),
+        credentials: BTreeMap::new(),
+        access: Access::Everything,
+        description: "synthetic fixture".into(),
+        active: true,
+        validity: Validity::Untested,
+        validity_error: String::new(),
+        no_work_until: now + 3600,
+        delay_reason: "synthetic delay".into(),
+    };
+    for step in fixture["states"].as_array().unwrap() {
+        let state = &step["state"];
+        assert_eq!(
+            json!(domain_cells(
+                "login.example",
+                &login,
+                Some(&script),
+                state["logged_in"].as_bool().unwrap(),
+                state["expiry"].as_i64(),
+                now
+            )),
+            state["cells"]
+        );
+    }
+    let mut inactive = login.clone();
+    inactive.active = false;
+    inactive.validity = Validity::Invalid;
+    inactive.validity_error = "synthetic error".into();
+    let cells = domain_cells("login.example", &inactive, Some(&script), true, None, now);
+    assert_eq!(cells[3], "no");
+    assert_eq!(cells[4], "yes - session");
+    assert!(cells[5].is_empty());
+    let cells = domain_cells("login.example", &login, None, false, None, now + 3601);
+    assert_eq!(cells[1], "login script not found");
+    assert!(cells[6].is_empty());
 }

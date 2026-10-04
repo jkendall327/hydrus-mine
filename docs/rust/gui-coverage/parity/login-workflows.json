@@ -22,10 +22,10 @@
     "45cffe11"
   ],
   "validation": {
-    "referenceRecording": "oracle/record_login_editors.py executed through shared with-oracle lock using the real Qt client; fixture oracle/fixtures/login_editors.json; oracle/record_login_execution.py executed actual reference HTTP jobs and real Qt result reviews on synthetic loopback, fixture oracle/fixtures/login_execution.json",
+    "referenceRecording": "oracle/record_login_editors.py executed through shared with-oracle lock using the real Qt client; fixture oracle/fixtures/login_editors.json; oracle/record_login_execution.py executed actual reference HTTP jobs and real Qt result reviews on synthetic loopback, fixture oracle/fixtures/login_execution.json; oracle/record_login_sessions.py executed through shared with-oracle lock, real Qt manager rows/actions and real session-manager resets on synthetic domains; oracle/fixtures/login_sessions.json",
     "cargo_fmt": "passed",
-    "rust_tests": "Root CI reports all four login HTTP test groups passed. New GUI/queue/type/lint checks remain root asynchronous CI; no local Cargo builds.",
-    "slint_syntax": "Cached source compiler passed after cookies, three independent request lists and staged example-domain editor; no Cargo builds."
+    "rust_tests": "New scoped model/GUI/real HTTP assertions authored; root asynchronous CI pending. No local Cargo builds or tests.",
+    "slint_syntax": "Cached source compiler passed for login-session rows, exact reset question and eligibility properties; no Cargo builds."
   },
   "claims": [
     {
@@ -180,18 +180,23 @@
       "id": "logins",
       "before": "missing",
       "proposedStatus": "partial",
-      "exactBehavior": "Real domain menu/list with extended selection, preserved complete preferences, editable credentials/activation, scrub delays/invalidity, optimistic staged domains-only save retaining current scripts. Confirmed selected active/non-invalid/existing-script/not-logged-in domains save the parent and close before sequential actual HTTP attempts; source cookies persist and keyed outcome updates survive reopening, while status/cancel controls are available on reopening the manager.",
+      "exactBehavior": "Real domain menu/list with extended selection, preserved complete preferences, editable credentials/activation, scrub delays/invalidity, optimistic staged domains-only save retaining current scripts. Confirmed selected active/non-invalid/existing-script/not-logged-in domains save the parent and close before sequential actual HTTP attempts; source cookies persist and keyed outcome updates survive reopening, while status/cancel controls are available on reopening the manager. Logged-in rows read shared required cookies independently of activation, with session-cookie precedence/earliest expiry and reference pretty delay text. Exact confirmed reset immediately deletes selected resolved cookie sessions, survives parent Cancel, preserves other sessions and reaches an already-open HTTP engine; rows and Do login/scrub eligibility refresh while open.",
       "limits": [
-        "Add domain/change script, logged-in expiry display/cookie reset absent. Future delay displays raw timestamp. Automatic downloader-demand login and reference global process monitor are not implemented."
+        "Domain Add/change-script and automatic downloader-demand login/global process monitoring remain absent; manager stays partial. Cookie-state refresh polls once per second."
       ],
       "source": [
-        "crates/hydrus-gui/src/login_domains_window.rs:61"
+        "crates/hydrus-gui/src/login_domains_window.rs:61",
+        "crates/hydrus-net/src/login.rs:179",
+        "crates/hydrus-gui-model/src/login_workflows.rs:295"
       ],
       "testAnchors": [
         "crates/hydrus-gui/tests/gui/login_workflows.rs:423",
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:730"
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:730",
+        "crates/hydrus-net/tests/login.rs:341",
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:503",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1283"
       ],
-      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json domain_states; domain_login_actions captures real Qt DoLogin decline/accept/ineligible; actual reference HTTP pipeline recorded by oracle/record_login_execution.py."
+      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json domain_states; domain_login_actions captures real Qt DoLogin decline/accept/ineligible; actual reference HTTP pipeline recorded by oracle/record_login_execution.py.; oracle/record_login_sessions.py executed real Qt manager and shared reference session manager; oracle/fixtures/login_sessions.json"
     },
     {
       "id": "login-test-results",
@@ -313,20 +318,24 @@
         "crates/hydrus-gui/src/login_domains_window.rs:140"
       ],
       "testAnchors": [
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:730"
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:730",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1285"
       ],
       "child_control_groups": [
         "Sorted domain/script/access/active/validity/delay extended list",
         "Credentials editor and valid activation question",
         "Flip active/scrub delays/scrub invalidity",
         "Confirmed eligible real HTTP login queue with persisted cookies/outcomes/cancellation",
-        "Parent Apply/Cancel"
+        "Parent Apply/Cancel",
+        "shared required-cookie login status/session/earliest expiry and pretty delays",
+        "confirmed immediate selected-session reset; parent Cancel preserves reset",
+        "live cookie refresh and Do-login/scrub eligibility"
       ],
       "shared_editor_refs": [
         "LoginCredentialsWindow"
       ],
       "limits": [
-        "Broad parent remains partial: domain add/remove/change-script, expiry presentation, automatic global login demand remain absent."
+        "Domain Add/change-script and automatic-demand/global-monitor workflow remain partial."
       ]
     },
     {

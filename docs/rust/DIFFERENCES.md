@@ -1374,6 +1374,10 @@ stays visible until the review closes. Domain-manager confirmed execution now sa
 eligible queue through the shared persisted cookie store. Its progress/cancel
 controls appear when the manager is reopened; it does not share the reference's
 global login process monitor or automatically log in on ordinary downloader demand.
+The manager now shows required-cookie login status and session/earliest-cookie
+expiry, refreshes it from the shared store, and resets selected resolved sessions
+after the reference confirmation. This reset is immediate and survives parent
+Cancel, matching Qt ownership; configuration edits still wait for Apply.
 Login requests bypass bandwidth
 waiting while using ordinary cookies, custom headers, redirect and retry behavior.
 The executor waits the reference two seconds after successful steps and observes

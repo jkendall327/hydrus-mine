@@ -1278,3 +1278,148 @@ fn example_domain_stages_match_reference_final_cancel_and_preserve_parent_transa
     list.invoke_action("cancel".into());
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
 }
+
+#[test]
+fn domain_cookie_reset_is_confirmed_immediate_and_survives_parent_cancel() {
+    let rendered = headless::init();
+    let (dir, store, mut original) = store();
+    let fixture = hydrus_testkit::fixture_json("login_sessions.json");
+    let script = legacy::login_script(
+        &SerialisableObject::from_tuple_str(&fixture["script"].to_string()).unwrap(),
+    )
+    .unwrap();
+    original.scripts = vec![script.clone()];
+    let login = original.domains.get_mut("login.example").unwrap();
+    login.script_key.clone_from(&script.key);
+    login.script_name.clone_from(&script.name);
+    login.active = true;
+    login.validity = hydrus_parse::login::Validity::Untested;
+    login.no_work_until = 0;
+    login.delay_reason.clear();
+    let initial = original.clone();
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::logins::save(ctx.conn(), &initial)?;
+            for (domain, names) in [
+                ("login.example", vec!["session", "token"]),
+                ("other.example", vec!["keep"]),
+            ] {
+                for name in names {
+                    hydrus_store::network::set_cookie(
+                        ctx.conn(),
+                        &hydrus_store::network::NetworkContext::domain(domain),
+                        &hydrus_store::network::Cookie {
+                            name: name.into(),
+                            value: Some(if name == "token" { "ready" } else { "ok" }.into()),
+                            domain: domain.into(),
+                            path: "/".into(),
+                            expires: None,
+                            secure: false,
+                            rest: Vec::new(),
+                        },
+                    )?;
+                }
+            }
+            Ok(())
+        })
+        .unwrap();
+    let slots = hydrus_gui::login_domains_window::Slots::default();
+    let window = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    window.invoke_row_clicked(0, false, false);
+    assert_eq!(
+        window
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(4)
+            .unwrap(),
+        "yes - session"
+    );
+    assert!(!window.get_can_do_login());
+    window.invoke_action("reset-login".into());
+    assert_eq!(
+        window.get_question(),
+        fixture["states"][4]["questions"][0].as_str().unwrap()
+    );
+    window.invoke_action("back-reset".into());
+    assert!(hydrus_net::login::logged_in(&store, &script, "login.example").unwrap());
+    window.invoke_action("reset-login".into());
+    window.invoke_action("confirm-reset".into());
+    assert_eq!(
+        window
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(4)
+            .unwrap(),
+        "no"
+    );
+    assert!(window.get_can_do_login());
+    window.invoke_action("flip-active".into());
+    assert!(!window.get_can_do_login());
+    window.invoke_action("cancel".into());
+    window.invoke_action("confirm-reset".into());
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+    assert!(!hydrus_net::login::logged_in(&store, &script, "login.example").unwrap());
+    let reopened = Store::open(dir.path()).unwrap();
+    assert!(!hydrus_net::login::logged_in(&reopened, &script, "login.example").unwrap());
+    assert_eq!(
+        reopened
+            .read(|conn| hydrus_store::network::cookies(
+                conn,
+                &hydrus_store::network::NetworkContext::domain("other.example")
+            ))
+            .unwrap()
+            .len(),
+        1
+    );
+    let again = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    assert_eq!(
+        again
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(4)
+            .unwrap(),
+        "no"
+    );
+    store
+        .write_and_refresh(move |ctx| {
+            for (name, value) in [("session", "ok"), ("token", "ready")] {
+                hydrus_store::network::set_cookie(
+                    ctx.conn(),
+                    &hydrus_store::network::NetworkContext::domain("login.example"),
+                    &hydrus_store::network::Cookie {
+                        name: name.into(),
+                        value: Some(value.into()),
+                        domain: "login.example".into(),
+                        path: "/".into(),
+                        expires: None,
+                        secure: false,
+                        rest: Vec::new(),
+                    },
+                )?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    until_login(|| {
+        again
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(4)
+            .unwrap()
+            == "yes - session"
+    });
+    assert!(!again.get_can_do_login());
+    window.invoke_action("reset-login".into());
+    window.invoke_action("confirm-reset".into());
+    assert!(hydrus_net::login::logged_in(&store, &script, "login.example").unwrap());
+    again.invoke_action("cancel".into());
+    assert!(rendered.count() >= 2);
+}

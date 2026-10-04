@@ -336,3 +336,95 @@ fn request_plan_replaces_www_and_orders_static_credentials_then_temporary_values
         "The temporary variable 'csrf' was not found!"
     );
 }
+
+#[test]
+fn shared_login_session_state_replays_required_cookie_expiry_and_reset() {
+    let fixture = hydrus_testkit::fixture_json("login_sessions.json");
+    let script = script(&fixture);
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    for case in fixture["states"].as_array().unwrap().iter().take(4) {
+        let input = case["input"].as_array().unwrap().clone();
+        store
+            .write_and_refresh(move |ctx| {
+                let session = NetworkContext::domain("login.example");
+                network::clear_session(ctx.conn(), &session)?;
+                for row in input {
+                    network::set_cookie(
+                        ctx.conn(),
+                        &session,
+                        &network::Cookie {
+                            name: row[0].as_str().unwrap().into(),
+                            value: Some(row[1].as_str().unwrap().into()),
+                            domain: "login.example".into(),
+                            path: "/".into(),
+                            expires: row[2].as_i64(),
+                            secure: false,
+                            rest: Vec::new(),
+                        },
+                    )?;
+                }
+                Ok(())
+            })
+            .unwrap();
+        let state = login::session_state(&store, &script, "login.example").unwrap();
+        assert_eq!(
+            state.logged_in,
+            case["state"]["logged_in"].as_bool().unwrap()
+        );
+        assert_eq!(state.expires, case["state"]["expiry"].as_i64());
+    }
+}
+
+#[tokio::test]
+async fn confirmed_login_reset_reaches_an_existing_http_engine_and_keeps_other_sessions() {
+    let site = site().await;
+    site.store
+        .write_and_refresh(move |ctx| {
+            for domain in ["127.0.0.1", "other.example"] {
+                network::set_cookie(
+                    ctx.conn(),
+                    &NetworkContext::domain(domain),
+                    &network::Cookie {
+                        name: "session".into(),
+                        value: Some("ok".into()),
+                        domain: domain.into(),
+                        path: "/".into(),
+                        expires: None,
+                        secure: false,
+                        rest: Vec::new(),
+                    },
+                )?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    let request = hydrus_net::Request::get(format!("http://{}/start", site.domain));
+    site.engine.fetch(&request, &Job::new()).await.unwrap();
+    assert_eq!(site.requests.lock().unwrap()[0]["cookie"], "session=ok");
+    login::clear_sessions(&site.store, &[site.domain.clone()]).unwrap();
+    site.engine.fetch(&request, &Job::new()).await.unwrap();
+    assert!(site.requests.lock().unwrap()[1]["cookie"].is_null());
+    assert_eq!(
+        site.store
+            .read(|conn| network::cookies(conn, &NetworkContext::domain("other.example")))
+            .unwrap()
+            .len(),
+        1
+    );
+    let reopened = Store::open(site.dir.path()).unwrap();
+    assert_eq!(
+        reopened
+            .read(|conn| network::cookies(conn, &NetworkContext::domain("other.example")))
+            .unwrap()
+            .len(),
+        1
+    );
+    assert!(
+        !reopened
+            .read(|conn| network::cookies(conn, &NetworkContext::domain("127.0.0.1")))
+            .unwrap()
+            .iter()
+            .any(|cookie| cookie.name == "session")
+    );
+}
