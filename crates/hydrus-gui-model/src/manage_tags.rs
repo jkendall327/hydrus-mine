@@ -138,7 +138,7 @@ impl ManageTags {
                 .key
                 .clone();
             self.store
-                .write(|ctx| hydrus_store::tag_editing::remember_service(ctx.conn(), &key))?;
+                .write(move |ctx| hydrus_store::tag_editing::remember_service(ctx.conn(), &key))?;
             self.service = index;
             self.set_text(&self.text.clone());
         }

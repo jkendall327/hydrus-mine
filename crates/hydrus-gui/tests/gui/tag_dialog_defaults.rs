@@ -79,7 +79,7 @@ fn remembered_tag_service_survives_native_cancel_without_saving_staged_tags() {
     );
     // Applying the option while this consumer is open must stop preference memory.
     store
-        .write(|ctx| {
+        .write(move |ctx| {
             let mut options: TagEditingSettings = settings::get(ctx.conn())?;
             options.remember_service = false;
             settings::set(ctx.conn(), &options)
@@ -100,7 +100,7 @@ fn remembered_tag_service_survives_native_cancel_without_saving_staged_tags() {
     w.invoke_cancel();
     // A configured fixed service is consumed when the next dialog opens.
     store
-        .write(|ctx| {
+        .write(move |ctx| {
             settings::set(
                 ctx.conn(),
                 &TagEditingSettings {

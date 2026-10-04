@@ -25,7 +25,7 @@ fn set(store: &Store, remember: bool, name: &str) {
         key(store, name)
     };
     store
-        .write(|ctx| {
+        .write(move |ctx| {
             settings::set(
                 ctx.conn(),
                 &TagEditingSettings {
