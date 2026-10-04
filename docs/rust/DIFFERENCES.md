@@ -960,6 +960,10 @@ deferred; API/redirect source classes are excluded because their targets own
 the parser. The temporary-variable content kind is also editable here, while
 the reference page editor normally limits its creation to lookup scripts.
 
+Changed parser links are rejected if another editor removed their URL class or
+changed it to a kind that cannot own a parser. Reopening the links panel then
+shows the current eligible classes; unrelated class edits are preserved.
+
 Client API key edits made through native persistence now take effect on the
 next authenticated request through a durable permission revision, including
 existing sessions. Changed/revoked keys lose their previous restricted search

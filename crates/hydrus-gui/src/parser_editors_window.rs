@@ -539,7 +539,7 @@ struct ListState {
     links: bool,
     sort_column: usize,
     ascending: bool,
-    deleting: bool,
+    pending_delete: Option<Vec<String>>,
 }
 fn list_row(s: &ListState, i: usize) -> Vec<String> {
     if s.links {
@@ -627,7 +627,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
         links,
         sort_column: 0,
         ascending: true,
-        deleting: false,
+        pending_delete: None,
     }));
     let refresh: Rc<dyn Fn()> = Rc::new({
         let weak = w.as_weak();
@@ -642,7 +642,12 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
     let blocked: Rc<dyn Fn() -> bool> = Rc::new({
         let active = active.clone();
         let slots = slots.clone();
-        move || !active.get() || slots.page.borrow().is_some()
+        let state = state.clone();
+        move || {
+            !active.get()
+                || slots.page.borrow().is_some()
+                || state.borrow().pending_delete.is_some()
+        }
     });
     let close: Rc<dyn Fn()> = Rc::new({
         let active = active.clone();
@@ -696,24 +701,21 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
     w.on_answered({
         let state = state.clone();
         let refresh = refresh.clone();
-        let blocked = blocked.clone();
+        let active = active.clone();
+        let slots = slots.clone();
         let weak = w.as_weak();
         move |yes| {
-            if blocked() {
+            if !active.get() || slots.page.borrow().is_some() {
                 return;
             }
             let mut s = state.borrow_mut();
-            if yes && s.deleting {
-                let keys = s
-                    .selection
-                    .in_order(&s.order)
-                    .iter()
-                    .map(|&i| s.draft.parsers[i].key.clone())
-                    .collect::<Vec<_>>();
+            let Some(keys) = s.pending_delete.take() else {
+                return;
+            };
+            if yes {
                 s.draft.remove(&keys);
                 s.selection = ListSelection::default();
             }
-            s.deleting = false;
             drop(s);
             if let Some(w) = weak.upgrade() {
                 w.set_question(SharedString::new());
@@ -749,8 +751,17 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                     }
                     "cancel" => close(),
                     "delete" => {
-                        state.borrow_mut().deleting = true;
-                        w.set_question("Remove all selected?".into());
+                        let mut s = state.borrow_mut();
+                        let keys = s
+                            .selection
+                            .in_order(&s.order)
+                            .iter()
+                            .map(|&i| s.draft.parsers[i].key.clone())
+                            .collect::<Vec<_>>();
+                        if !keys.is_empty() {
+                            s.pending_delete = Some(keys);
+                            w.set_question("Remove all selected?".into());
+                        }
                     }
                     "link" | "clear" => {
                         let mut s = state.borrow_mut();

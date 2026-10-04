@@ -25,28 +25,28 @@ export component ParserListWindow inherits Window {
         padding: 10px; spacing: 8px;
         ListTable {
             columns: root.columns; rows: root.rows;
-            row-clicked(i,c,s) => { root.row-clicked(i,c,s); }
-            row-activated(i) => { root.row-clicked(i,false,false); root.action(root.links ? "link" : "edit"); }
-            sort(c,a) => { root.sort(c,a); }
-            delete-pressed => { root.action(root.links ? "clear" : "delete"); }
+            row-clicked(i,c,s) => { if root.question == "" { root.row-clicked(i,c,s); } }
+            row-activated(i) => { if root.question == "" { root.row-clicked(i,false,false); root.action(root.links ? "link" : "edit"); } }
+            sort(c,a) => { if root.question == "" { root.sort(c,a); } }
+            delete-pressed => { if root.question == "" { root.action(root.links ? "clear" : "delete"); } }
         }
         HorizontalLayout {
             spacing: 6px; alignment: start;
-            if !root.links: Button { text: "add"; enabled: !root.child-open; clicked => { root.action("add"); } }
-            if !root.links: Button { text: "edit"; enabled: root.selected && !root.child-open; clicked => { root.action("edit"); } }
-            if !root.links: Button { text: "duplicate"; enabled: root.selected && !root.child-open; clicked => { root.action("duplicate"); } }
-            if !root.links: Button { text: "delete"; enabled: root.selected && !root.child-open; clicked => { root.action("delete"); } }
-            if root.links: ComboBox { model: root.parser-choices; current-index <=> root.chosen-parser; }
-            if root.links: Button { text: "link"; enabled: root.selected; clicked => { root.action("link"); } }
-            if root.links: Button { text: "clear"; enabled: root.selected; clicked => { root.action("clear"); } }
+            if !root.links: Button { text: "add"; enabled: !root.child-open && root.question == ""; clicked => { root.action("add"); } }
+            if !root.links: Button { text: "edit"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("edit"); } }
+            if !root.links: Button { text: "duplicate"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("duplicate"); } }
+            if !root.links: Button { text: "delete"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("delete"); } }
+            if root.links: ComboBox { enabled: root.question == ""; model: root.parser-choices; current-index <=> root.chosen-parser; }
+            if root.links: Button { text: "link"; enabled: root.selected && root.question == ""; clicked => { root.action("link"); } }
+            if root.links: Button { text: "clear"; enabled: root.selected && root.question == ""; clicked => { root.action("clear"); } }
         }
         if root.links: Text { text: "API/redirect source classes use their target's parser. Associations apply to the live downloader."; color: Theme.text; wrap: word-wrap; }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         if root.question != "": Question { text: root.question; answered(yes) => { root.answered(yes); } }
         HorizontalLayout {
             alignment: end; spacing: 6px;
-            Button { text: "apply"; enabled: !root.child-open; clicked => { root.action("apply"); } }
-            Button { text: "cancel"; enabled: !root.child-open; clicked => { root.action("cancel"); } }
+            Button { text: "apply"; enabled: !root.child-open && root.question == ""; clicked => { root.action("apply"); } }
+            Button { text: "cancel"; enabled: !root.child-open && root.question == ""; clicked => { root.action("cancel"); } }
         }
     }
 }

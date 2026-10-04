@@ -140,3 +140,67 @@ fn any_namespace_toggle_retains_the_disabled_namespace() {
     assert_eq!(editor.parser, parser);
     assert!(!editor.changed());
 }
+
+#[test]
+fn changed_links_revalidate_current_class_capability_and_rollback_atomically() {
+    use hydrus_core::url::strings::Conversion;
+    use hydrus_core::url::{UrlClass, UrlType};
+    for change in 0..5 {
+        let directory = tempfile::tempdir().unwrap();
+        let store = Store::open(directory.path()).unwrap();
+        let mut page = editors::new_page();
+        page.key = "page".into();
+        page.name = "original".into();
+        let values = Downloaders {
+            parsers: vec![page],
+            ..Downloaders::default()
+        };
+        let classes = UrlClassSettings {
+            url_classes: vec![UrlClass {
+                key: vec![1],
+                url_type: UrlType::Post,
+                ..UrlClass::default()
+            }],
+            parser_keys: vec!["page".into()],
+            ..UrlClassSettings::default()
+        };
+        store
+            .write_and_refresh(move |ctx| {
+                settings::set(ctx.conn(), &values)?;
+                settings::set(ctx.conn(), &classes)
+            })
+            .unwrap();
+        let mut draft = Draft::load(&store).unwrap();
+        draft.link("01", Some("page")).unwrap();
+        draft.parsers[0].name = "edited".into();
+        store
+            .write_and_refresh(move |ctx| {
+                let mut classes: UrlClassSettings = settings::get(ctx.conn())?;
+                match change {
+                    0 => classes.url_classes[0].url_type = UrlType::File,
+                    1 => classes.url_classes[0].url_type = UrlType::Api,
+                    2 => classes.url_classes[0]
+                        .api_lookup_converter
+                        .conversions
+                        .push(Conversion::Prepend("redirect".into())),
+                    3 => classes.url_classes.clear(),
+                    _ => classes.url_classes[0].name = "new class name".into(),
+                }
+                settings::set(ctx.conn(), &classes)
+            })
+            .unwrap();
+        let before_classes: UrlClassSettings = store.read(settings::get).unwrap();
+        if change < 4 {
+            assert!(draft.save(&store).is_err());
+            let after: Downloaders = store.read(settings::get).unwrap();
+            assert_eq!(after.parsers[0].name, "original");
+            let after: UrlClassSettings = store.read(settings::get).unwrap();
+            assert_eq!(after, before_classes);
+        } else {
+            draft.save(&store).unwrap();
+            let after: UrlClassSettings = store.read(settings::get).unwrap();
+            assert_eq!(after.url_classes[0].name, "new class name");
+            assert_eq!(after.parser_links, vec![("01".into(), Some("page".into()))]);
+        }
+    }
+}

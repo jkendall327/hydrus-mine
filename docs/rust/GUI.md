@@ -1451,6 +1451,11 @@ Child editors block parent changes and Apply; cancellation or owner closure
 invalidates all child callbacks. GUI/store regressions include rendered page
 and note-content screenshots through HYDRUS_PARSER_SCREENSHOTS.
 
+Parser deletion confirms a snapshot of stable parser keys; selection, sorting
+and other list actions wait until Yes/No. Applying changed parser associations
+checks the current URL class's type and redirect converter in the transaction,
+so a concurrent class edit cannot install a link on a file or redirect source.
+
 Service review now opens a native Client API access-key list with the reference
 columns, extended selection, sorting, add/edit/duplicate/delete, copy-key and
 local base-URL opening. Permission editors expose all 14 basic permissions,

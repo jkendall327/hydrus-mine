@@ -291,3 +291,69 @@ fn namespace_control_is_disabled_without_losing_its_saved_text() {
     list.invoke_action("cancel".into());
     assert_eq!(definitions(&store), original);
 }
+
+#[test]
+fn deletion_confirmation_is_modal_and_removes_only_its_snapshotted_keys() {
+    let (_dir, store, slots) = setup();
+    headless::init();
+    store
+        .write(|ctx| {
+            let mut values: Downloaders = settings::get(ctx.conn())?;
+            let mut other = new_page();
+            other.key = "other".into();
+            other.name = "z other".into();
+            values.parsers.push(other);
+            settings::set(ctx.conn(), &values)
+        })
+        .unwrap();
+    let original = definitions(&store);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("delete".into());
+    assert!(!list.get_question().is_empty());
+    list.invoke_row_clicked(1, false, false);
+    list.invoke_sort(0, false);
+    list.invoke_action("edit".into());
+    list.invoke_action("duplicate".into());
+    list.invoke_action("apply".into());
+    assert!(slots.page.borrow().is_none());
+    assert_eq!(definitions(&store), original);
+    assert!(list.get_rows().row_data(0).unwrap().selected);
+    assert!(!list.get_rows().row_data(1).unwrap().selected);
+    list.invoke_answered(false);
+    assert!(list.get_question().is_empty());
+    assert_eq!(list.get_rows().row_count(), 2);
+    list.invoke_action("delete".into());
+    list.invoke_row_clicked(1, false, false);
+    list.invoke_answered(true);
+    list.invoke_answered(true);
+    assert_eq!(list.get_rows().row_count(), 1);
+    list.invoke_action("apply".into());
+    let saved = definitions(&store);
+    assert_eq!(saved.parsers.len(), 1);
+    assert_eq!(saved.parsers[0].key, "other");
+}
+
+#[test]
+fn link_apply_rejects_a_class_changed_to_a_file_in_another_editor() {
+    let (_dir, store, slots) = setup();
+    headless::init();
+    let links = windows::open(&store, &slots, true).unwrap();
+    links.invoke_row_clicked(0, false, false);
+    links.set_chosen_parser(0);
+    links.invoke_action("link".into());
+    store
+        .write_and_refresh(|ctx| {
+            let mut classes: UrlClassSettings = settings::get(ctx.conn())?;
+            classes.url_classes[0].url_type = UrlType::File;
+            settings::set(ctx.conn(), &classes)
+        })
+        .unwrap();
+    links.invoke_action("apply".into());
+    assert!(!links.get_error().is_empty());
+    assert!(slots.links.borrow().is_some());
+    let classes: UrlClassSettings = store.read(settings::get).unwrap();
+    assert_eq!(classes.url_classes[0].url_type, UrlType::File);
+    assert!(classes.parser_links.is_empty());
+    links.invoke_action("cancel".into());
+}

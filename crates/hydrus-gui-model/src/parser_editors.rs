@@ -4,7 +4,7 @@ use crate::favourites::non_dupe_name;
 use crate::formula_editors::{FormulaTestData, new_formula};
 use hydrus_core::pages::PageKey;
 use hydrus_core::url::strings::{StringConverter, StringMatch};
-use hydrus_core::url::{UrlClassSettings, UrlType};
+use hydrus_core::url::{UrlClass, UrlClassSettings, UrlType};
 use hydrus_parse::content::{ContentKind, ContentParser, PageParser, ParseFailure, ParsedPost};
 use hydrus_parse::downloaders::Downloaders;
 use hydrus_parse::formula::ParsingContext;
@@ -277,12 +277,7 @@ impl Draft {
             .url_classes
             .iter()
             .enumerate()
-            .filter(|(_, c)| {
-                matches!(
-                    c.url_type,
-                    UrlType::Post | UrlType::Gallery | UrlType::Watchable
-                ) && !c.uses_api_url()
-            })
+            .filter(|(_, c)| can_link(c))
             .map(|(i, _)| i)
             .collect()
     }
@@ -333,6 +328,13 @@ impl Draft {
                 }) {
                     return Err(StoreError::Invalid("A linked parser no longer exists. Reopen this dialog before applying.".into()));
                 }
+                for (class_key, parser_key) in &draft.classes.parser_links {
+                    let original = draft.original_links.iter().find(|(key, _)|key == class_key).and_then(|(_,key)|key.as_ref());
+                    if parser_key.is_some() && parser_key.as_ref() != original
+                        && !classes.url_classes.iter().any(|class| hex::encode(&class.key) == *class_key && can_link(class)) {
+                        return Err(StoreError::Invalid("A URL class changed and can no longer own this parser link. Reopen this dialog before applying.".into()));
+                    }
+                }
                 classes.parser_links = draft.classes.parser_links;
             }
             if parsers_changed {
@@ -370,4 +372,11 @@ pub fn preview_text(posts: &[ParsedPost]) -> String {
         })
         .collect::<Vec<_>>()
         .join("\n\n")
+}
+
+fn can_link(class: &UrlClass) -> bool {
+    matches!(
+        class.url_type,
+        UrlType::Post | UrlType::Gallery | UrlType::Watchable
+    ) && !class.uses_api_url()
 }
