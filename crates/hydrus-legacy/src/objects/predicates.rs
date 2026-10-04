@@ -484,14 +484,14 @@ fn viewtime_value(value: &PyJson) -> DecodeResult<(ViewingStat, u64)> {
         PyJson::Int(n) => *n as f64,
         other => float(KIND, other, "viewing time")?,
     };
+    if n.fract() == 0.0 {
+        return Ok((ViewingStat::ViewTime, count_value(value, "viewing time")?));
+    }
     if !(0.0..=u64::MAX as f64).contains(&n) {
         return Err(malformed(
             KIND,
             format!("viewing time {n} is not a non-negative number we can hold"),
         ));
-    }
-    if n.fract() == 0.0 {
-        return Ok((ViewingStat::ViewTime, n as u64));
     }
     let milliseconds = (n * 1000.0).round();
     if milliseconds > u64::MAX as f64 {

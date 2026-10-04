@@ -1107,10 +1107,8 @@ fn recorded_logical_selection_ranges_parent_hits_and_batch_activation() {
         match step["action"].as_str().unwrap() {
             "initial" => {}
             "click" | "parent_click" => {
-                let index = step["physical"]
-                    .as_u64()
-                    .map(|i| usize::try_from(i).unwrap())
-                    .unwrap_or_else(|| {
+                let index = step["physical"].as_u64().map_or_else(
+                    || {
                         entry
                             .input
                             .rows()
@@ -1119,7 +1117,9 @@ fn recorded_logical_selection_ranges_parent_hits_and_batch_activation() {
                                 row.tag == step["tag"].as_str().unwrap() && !row.parent_row
                             })
                             .unwrap()
-                    });
+                    },
+                    |i| usize::try_from(i).unwrap(),
+                );
                 entry.input.click(
                     index,
                     step["ctrl"].as_bool().unwrap(),

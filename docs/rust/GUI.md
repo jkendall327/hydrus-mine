@@ -2658,6 +2658,8 @@ actual matching file hashes are recorded from the real editor and database in
 comparisons and canvas selections. Whole-second predicates keep their existing
 stored representation. Queries reproduce the reference's conversion back to
 integer milliseconds, including its 1.001-second floating-point boundary.
+The reference's separate `< 1 second` shortcut selects only zero viewing time;
+`< 1.001 seconds` uses its truncated millisecond threshold instead.
 
 A shared write autocomplete selection can now copy tags, subtags, underscore
 variants, counts and deduplicated parents together. Its context menu opens the

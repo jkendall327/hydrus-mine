@@ -410,6 +410,15 @@ fn system_expr(env: &Env<'_>, predicate: &SystemPredicate) -> Result<Expr> {
             op,
             value,
         } => {
+            // The reference treats '< 1' as zero before converting viewtime
+            // seconds to milliseconds. A fractional 1.001 remains a normal
+            // comparison even when its DB threshold truncates to 1000 ms.
+            let only_zero = *op == Comparison::Less
+                && *value
+                    == match stat {
+                        ViewingStat::Views | ViewingStat::ViewTime => 1,
+                        ViewingStat::ViewTimeMilliseconds => 1000,
+                    };
             let canvases = match canvases {
                 ViewCanvases::Default => env.viewing.interesting_canvases.clone(),
                 ViewCanvases::Specific(set) => set.iter().map(|c| c.canvas_type()).collect(),
@@ -428,9 +437,13 @@ fn system_expr(env: &Env<'_>, predicate: &SystemPredicate) -> Result<Expr> {
             };
             Expr::Leaf(Leaf::Count {
                 source: CountSource::Views { canvases, viewtime },
-                accept: Counts::from_comparison(*op, value, |v| {
-                    Counts::range((0.8 * v as f64) as u64, (1.2 * v as f64) as u64)
-                }),
+                accept: if only_zero {
+                    Counts::exactly(0)
+                } else {
+                    Counts::from_comparison(*op, value, |v| {
+                        Counts::range((0.8 * v as f64) as u64, (1.2 * v as f64) as u64)
+                    })
+                },
             })
         }
         S::KnownUrl { rule, has } => url_expr(env, rule)?.negate_if(!has),

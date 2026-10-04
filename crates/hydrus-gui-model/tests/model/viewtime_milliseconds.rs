@@ -54,7 +54,10 @@ fn editor_and_imported_predicates_match_reference_millisecond_queries() {
         Vec::new(),
         CivilDateTime::new(2026, 10, 4, 0, 0).unwrap(),
     );
-    let text = TextContext::from_store(&store.snapshot().services, &Default::default());
+    let text = TextContext::from_store(
+        &store.snapshot().services,
+        &hydrus_store::settings::FileViewingStatistics::default(),
+    );
     let mut checked = 0;
     for case in fixture["cases"].as_array().unwrap() {
         let editor = Editor::new(Blank::FileViewingStats, &context);
