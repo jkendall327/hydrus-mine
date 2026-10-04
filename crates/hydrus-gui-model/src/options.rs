@@ -1823,14 +1823,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "Draw image transparency as checkerboard:",
                             |settings| settings.viewer_canvas.transparency_checkerboard,
                             |settings, value| {
-                                settings.viewer_canvas.transparency_checkerboard = value
+                                settings.viewer_canvas.transparency_checkerboard = value;
                             },
                         ),
                         check(
                             "--Instead of checkerboard, use a bright greenscreen:",
                             |settings| settings.viewer_canvas.transparency_greenscreen,
                             |settings, value| {
-                                settings.viewer_canvas.transparency_greenscreen = value
+                                settings.viewer_canvas.transparency_greenscreen = value;
                             },
                         ),
                     ],
@@ -1847,7 +1847,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "Do not allow mouse media drag-panning when the media has duration:",
                             |settings| settings.viewer_pointer.disallow_duration_drag,
                             |settings, value| {
-                                settings.viewer_pointer.disallow_duration_drag = value
+                                settings.viewer_pointer.disallow_duration_drag = value;
                             },
                         ),
                         check(
@@ -1872,7 +1872,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |settings| settings.viewer_canvas.seek_hidden_height.map(i64::from),
                             |settings, value| {
                                 settings.viewer_canvas.seek_hidden_height =
-                                    value.map(|height| height as u32)
+                                    value.map(|height| height as u32);
                             },
                         ),
                         int(
