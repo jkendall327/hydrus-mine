@@ -557,13 +557,9 @@ fn boot_pause_menu_saves_preference_and_preserves_live_resume() {
         hover(&ui, "pause");
     };
     for menu in recorded["menus"].as_array().unwrap() {
+        let advanced = menu["advanced"].as_bool().unwrap();
         store
-            .write(|ctx| {
-                settings::set(
-                    ctx.conn(),
-                    &AdvancedMode(menu["advanced"].as_bool().unwrap()),
-                )
-            })
+            .write(move |ctx| settings::set(ctx.conn(), &AdvancedMode(advanced)))
             .unwrap();
         open();
         let (_, usable, checked) = panes(&ui)
@@ -620,16 +616,15 @@ fn boot_pause_menu_saves_preference_and_preserves_live_resume() {
             .network_traffic
     );
     for case in recorded["boot"].as_array().unwrap() {
+        let preference = case["preference"].as_bool().unwrap();
+        let before = case["before"].as_bool().unwrap();
         reopened
-            .write(|ctx| {
-                settings::set(
-                    ctx.conn(),
-                    &NetworkBootPause(case["preference"].as_bool().unwrap()),
-                )?;
+            .write(move |ctx| {
+                settings::set(ctx.conn(), &NetworkBootPause(preference))?;
                 settings::set(
                     ctx.conn(),
                     &Pauses {
-                        network_traffic: case["before"].as_bool().unwrap(),
+                        network_traffic: before,
                         subscriptions: true,
                         ..Pauses::default()
                     },

@@ -296,7 +296,7 @@ fn matcher_favourite_popup_copies_refreshes_and_owns_persisted_management() {
     let fixture = hydrus_testkit::fixture_json("matcher_favourites.json");
     let initial = RegexFavourites(serde_json::from_value(fixture["initial"].clone()).unwrap());
     store
-        .write(|ctx| settings::set(ctx.conn(), &initial))
+        .write(move |ctx| settings::set(ctx.conn(), &initial))
         .unwrap();
     let copied = Rc::new(RefCell::new(Vec::new()));
     hydrus_gui::set_clipper({
@@ -371,8 +371,9 @@ fn matcher_favourite_popup_copies_refreshes_and_owns_persisted_management() {
     assert_eq!(copied.borrow().last().unwrap(), "z+");
     // An already-open input sees global favourites updated by another owner.
     let refreshed = RegexFavourites(vec![("external+".into(), "external change".into())]);
+    let saved = refreshed.clone();
     store
-        .write(|ctx| settings::set(ctx.conn(), &refreshed))
+        .write(move |ctx| settings::set(ctx.conn(), &saved))
         .unwrap();
     step.invoke_favourite_menu(10.0, 10.0);
     choose(&step, "external change");
