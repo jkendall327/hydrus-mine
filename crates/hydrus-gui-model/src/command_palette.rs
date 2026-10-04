@@ -11,7 +11,7 @@ use crate::main_menu::Command;
 #[derive(Debug, Clone, PartialEq)]
 pub enum Action {
     Page(PageKey),
-    Favourite(FavouriteSearch),
+    Favourite(Box<FavouriteSearch>),
     MainMenu(Command),
     /// Index in the native owner's frozen thumbnail-menu action snapshot.
     MediaMenu(usize),
@@ -153,7 +153,7 @@ pub fn query(
                                 format!("{folder} - favourite search")
                             }),
                         checked: None,
-                        action: Some(Action::Favourite(favourite.clone())),
+                        action: Some(Action::Favourite(Box::new(favourite.clone()))),
                     });
                 }
             }

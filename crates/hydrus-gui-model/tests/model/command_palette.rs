@@ -141,7 +141,7 @@ fn providers_match_real_qt_order_limits_and_thresholds() {
     let rows = palette::query(Provider::Favourites, "Favourite Alpha", &settings, &data);
     assert_eq!(
         rows[0].action,
-        Some(Action::Favourite(data.favourites[0].clone()))
+        Some(Action::Favourite(Box::new(data.favourites[0].clone())))
     );
 }
 
