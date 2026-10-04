@@ -91,6 +91,7 @@ impl Default for OpenFiles {
             Rc::new(|_| {}),
             Rc::new(|_| {}),
             crate::png_export_window::Slots::default(),
+            crate::search_log_import_window::Slots::default(),
         )
     }
 }
