@@ -1835,23 +1835,61 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "tag editing",
-            vec![boxed(
-                "tag dialogs",
-                vec![
-                    check(
-                        "Remember last used default tag service in manage tag dialogs: ",
-                        |settings| settings.tag_editing.remember_service,
-                        |settings, value| settings.tag_editing.remember_service = value,
-                    ),
-                    tag_service(
-                        "Default tag service in tag dialogs: ",
-                        false,
-                        |settings| settings.tag_editing.default_service.clone(),
-                        |settings, service| settings.tag_editing.default_service = service,
-                        |settings| !settings.tag_editing.remember_service,
-                    ),
-                ],
-            )],
+            vec![
+                boxed(
+                    "tag dialogs",
+                    vec![
+                        check(
+                            "Remember last used default tag service in manage tag dialogs: ",
+                            |settings| settings.tag_editing.remember_service,
+                            |settings, value| settings.tag_editing.remember_service = value,
+                        ),
+                        tag_service(
+                            "Default tag service in tag dialogs: ",
+                            false,
+                            |settings| settings.tag_editing.default_service.clone(),
+                            |settings, service| settings.tag_editing.default_service = service,
+                            |settings| !settings.tag_editing.remember_service,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "tag edit autocomplete",
+                    vec![
+                        check(
+                            "By default, select the first tag result with actual count in write-autocomplete: ",
+                            |s| s.tag_editing.select_first_with_count,
+                            |s, v| s.tag_editing.select_first_with_count = v,
+                        ),
+                        check(
+                            "When pasting multiline content into a write-autocomplete, skip the yes/no check: ",
+                            |s| s.tag_editing.skip_multiline_paste_confirmation,
+                            |s, v| s.tag_editing.skip_multiline_paste_confirmation = v,
+                        ),
+                        check(
+                            "Show parent info by default on edit/write autocomplete taglists: ",
+                            |s| s.tag_editing.autocomplete_show_parents,
+                            |s, v| s.tag_editing.autocomplete_show_parents = v,
+                        ),
+                        check(
+                            "Show parents expanded by default on edit/write autocomplete taglists: ",
+                            |s| s.tag_editing.autocomplete_expand_parents,
+                            |s, v| s.tag_editing.autocomplete_expand_parents = v,
+                        ),
+                        check(
+                            "Show sibling info by default on edit/write autocomplete taglists: ",
+                            |s| s.tag_editing.autocomplete_show_siblings,
+                            |s, v| s.tag_editing.autocomplete_show_siblings = v,
+                        ),
+                        int(
+                            "Autocomplete list height: ",
+                            (1, 128),
+                            |s| i64::from(s.tag_editing.autocomplete_list_height),
+                            |s, v| s.tag_editing.autocomplete_list_height = v as u32,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "tag presentation",

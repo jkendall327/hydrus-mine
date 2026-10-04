@@ -71,3 +71,5 @@ mod regex_favourites;
 mod tab_context;
 
 mod tag_dialog_defaults;
+
+mod write_autocomplete;

@@ -1805,3 +1805,15 @@ Changes to these options stay staged until Apply; selecting a service tab in
 a manage-tags dialog remembers it immediately when enabled, even if the tag
 edits are later cancelled. New notebooks can separately prompt for a name after
 the page chooser creates them.
+
+Manage Tags now uses the shared write-autocomplete model: known zero-count tags
+stay available, typed tags and their ideal sibling are elevated, counts follow
+the configured write domain and tag service, and parent/sibling decorations use
+the edited service. Ctrl+Space fetches when automatic fetching is disabled.
+Suggestions scroll without the old twelve-result cap and can be entered by
+clicking. Tag Editing's six autocomplete controls set the first counted result,
+multiline paste confirmation, parent/sibling decorations, expanded parent rows,
+and visible list height (1–128 rows). Clipboard paste adds cleaned unique tags
+without toggling existing tags off; its question and all staged tags are dropped
+when the owner is cancelled or closed. The running Qt client's synthetic corpus,
+rendered rows and paste decisions are in `write_tag_autocomplete.json`.

@@ -434,6 +434,29 @@ pub fn search_tags(
     scope: &TagSearchScope,
     query: &TagQuery,
 ) -> Result<Vec<TagMatch>> {
+    search_tags_inner(conn, services, graphs, scope, query, None)
+}
+
+/// Write autocomplete keeps matching known tags even with no mappings in the searched domain.
+pub fn search_tags_for_write(
+    conn: &Connection,
+    services: &ServiceRegistry,
+    graphs: &DisplayGraphs,
+    scope: &TagSearchScope,
+    query: &TagQuery,
+    display_service: ServiceId,
+) -> Result<Vec<TagMatch>> {
+    search_tags_inner(conn, services, graphs, scope, query, Some(display_service))
+}
+
+fn search_tags_inner(
+    conn: &Connection,
+    services: &ServiceRegistry,
+    graphs: &DisplayGraphs,
+    scope: &TagSearchScope,
+    query: &TagQuery,
+    write_display_service: Option<ServiceId>,
+) -> Result<Vec<TagMatch>> {
     let all_known_files = services
         .of_type(ServiceType::CombinedFile)
         .next()
@@ -473,7 +496,7 @@ pub fn search_tags(
 
     let mut merged: HashMap<TagId, CountRange> = HashMap::new();
     for &service in &tag_services {
-        let graph = graphs.get(service);
+        let graph = graphs.get(write_display_service.unwrap_or(service));
         let tables = MappingTables::new(service);
         let table = match scope.display {
             TagDisplayType::Storage => tables.counts,
@@ -517,12 +540,42 @@ pub fn search_tags(
             }
         }
     }
+    if let Some(display_service) = write_display_service {
+        let graph = graphs.get(display_service);
+        let mut candidates = with_sibling_chains(&graph, &text_matches);
+        for matcher in &matchers {
+            match matcher {
+                TagMatcher::All => candidates.extend(
+                    conn.prepare_cached("SELECT tag_id FROM tags")?
+                        .query_map([], |row| row.get::<_, TagId>(0))?
+                        .collect::<rusqlite::Result<Vec<_>>>()?,
+                ),
+                TagMatcher::Namespaces(namespaces) => candidates.extend(
+                    conn.prepare_cached("SELECT tag_id FROM tags WHERE namespace_id IN rarray(?)")?
+                        .query_map([id_array(namespaces)], |row| row.get::<_, TagId>(0))?
+                        .collect::<rusqlite::Result<Vec<_>>>()?,
+                ),
+                TagMatcher::Nothing | TagMatcher::Text { .. } => (),
+            }
+        }
+        for candidate in candidates {
+            merged.entry(candidate).or_default();
+        }
+    }
     if merged.is_empty() {
         return Ok(Vec::new());
     }
 
     // the siblings a result may also be matched by
     let known_siblings = |tag: TagId| -> Vec<TagId> {
+        if let Some(service) = write_display_service {
+            let graph = graphs.get(service);
+            return if graph.in_sibling_chain(tag) {
+                graph.chain(tag).to_vec()
+            } else {
+                Vec::new()
+            };
+        }
         let sources: &[ServiceId] = match (scope.display, scope.tag_service) {
             (TagDisplayType::Storage, None) => &[],
             (TagDisplayType::Storage, Some(_)) | (TagDisplayType::Display, _) => &tag_services,

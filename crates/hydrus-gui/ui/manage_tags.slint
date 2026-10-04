@@ -4,7 +4,8 @@
 // through the suggestions. Changes wait: enter with nothing typed (or
 // "apply") applies them, escape (or "cancel") forgets them.
 
-import { Button, ComboBox, LineEdit, ListView } from "std-widgets.slint";
+import { Button, ComboBox, LineEdit, ListView, ScrollView } from "std-widgets.slint";
+import { Question } from "favourites.slint";
 import { ListText, Theme } from "theme.slint";
 
 export component ManageTagsWindow inherits Window {
@@ -21,6 +22,8 @@ export component ManageTagsWindow inherits Window {
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
     in property <string> error;
+    in property <string> question;
+    in property <int> autocomplete-height: 11;
     in-out property <string> text;
 
     callback service-chosen(int);
@@ -28,6 +31,9 @@ export component ManageTagsWindow inherits Window {
     callback fetch();
     callback refresh-autocomplete();
     callback entered();
+    callback suggestion-chosen(int);
+    callback paste-requested(bool) -> bool;
+    callback paste-answered(bool);
     callback move-highlight(int);
     callback tag-activated(int);
     callback migrate-tags();
@@ -83,17 +89,32 @@ export component ManageTagsWindow inherits Window {
                     }
                 }
             }
-            input := LineEdit {
-                text <=> root.text;
-                placeholder-text: "enter a tag";
-                edited(text) => { root.text-edited(text); }
-                accepted => { root.entered(); }
+            HorizontalLayout {
+                input := FocusScope {
+                    enabled: root.question == "";
+                    horizontal-stretch: 1;
+                    forward-focus: tag-input;
+                    capture-key-pressed(event) => {
+                        if event.modifiers.control && (event.text == "v" || event.text == "V") {
+                            if root.paste-requested(false) { return accept; }
+                        }
+                        reject
+                    }
+                    tag-input := LineEdit {
+                        text <=> root.text;
+                        placeholder-text: "enter a tag";
+                        edited(text) => { root.text-edited(text); }
+                        accepted => { root.entered(); }
+                    }
+                }
+                Button { enabled: root.question == ""; text: "paste"; clicked => { root.paste-requested(true); } }
             }
             if root.suggestions.length > 0: Rectangle {
                 border-width: 1px;
                 border-color: Theme.border;
                 background: Theme.panel;
-                height: min(root.suggestions.length, 8) * 22px + 4px;
+                height: min(root.suggestions.length, root.autocomplete-height) * 22px + 4px;
+                ScrollView {
                 VerticalLayout {
                     padding: 2px;
                     alignment: start;
@@ -108,9 +129,13 @@ export component ManageTagsWindow inherits Window {
                             overflow: elide;
                             width: parent.width - 8px;
                         }
+                        TouchArea { enabled: root.question == ""; clicked => { root.suggestion-chosen(i); } }
                     }
                 }
+                }
             }
+            if root.question != "": Text { text: "Want to paste everything?"; color: Theme.text; }
+            if root.question != "": Question { text: root.question; answered(yes) => { root.paste-answered(yes); } }
             if root.error != "": Text {
                 text: root.error;
                 color: Theme.error;
@@ -121,6 +146,7 @@ export component ManageTagsWindow inherits Window {
                 alignment: end;
                 Button {text: "migrate tags…"; clicked => {root.migrate-tags();}}
                 Button {
+                    enabled: root.question == "";
                     text: "apply";
                     clicked => { root.apply(); }
                 }

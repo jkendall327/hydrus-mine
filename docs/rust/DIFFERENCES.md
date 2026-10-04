@@ -1181,3 +1181,12 @@ services fall back to the first local service by name.
   autocomplete and search-limit controls are absent. Tag-editing exposes only
   service memory and the default service; ManageTags currently has local tag
   service tabs, so a repository default falls back to its first local tab.
+
+Manage Tags' write autocomplete now has storage counts, typed/ideal elevation,
+parent and sibling rows, manual fetch, a scrollable suggestions list, multiline
+paste and all six Tag Editing autocomplete preferences. The reference's
+favourite/children suggestion tabs and tag context menus are still absent.
+Declining a multiline paste leaves the existing text draft intact; Qt returns
+that event to its line editor's normal paste handling. The relationship and
+import-options text inputs have not yet adopted this shared widget. Expanded
+parent rows enter their originating child, matching Qt's logical-list selection.

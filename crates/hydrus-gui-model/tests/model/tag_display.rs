@@ -312,12 +312,11 @@ fn write_autocomplete_uses_override_or_launcher_domain_and_rejects_tag_locations
     editor.current_mut().autocomplete.override_location = false;
     editor.apply().unwrap();
     manage.set_text("other service");
-    assert!(
-        !manage
-            .suggestions()
-            .iter()
-            .any(|(t, _)| t == "other service suggestion")
-    );
+    // Writes retain known suggestions at zero count in an empty launcher domain.
+    // The override above counted the mapping; disabling it must remove that count.
+    assert!(manage.suggestions().iter().any(
+        |(tag, label)| tag == "other service suggestion" && label == "other service suggestion"
+    ));
     editor.current_mut().autocomplete.write_location = LocationContext::single(mine.key.clone());
     assert!(editor.apply().is_err());
     let settings: AutocompleteWidgetSettings = store.read(settings::get).unwrap();
