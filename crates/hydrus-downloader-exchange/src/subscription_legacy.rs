@@ -60,7 +60,7 @@ pub(crate) fn convert(value: &Value, now: i64) -> Result<subscriptions::Subscrip
         if object.version <= 2 {
             q.insert(1, Value::Null);
             q.push(json!([
-                39,
+                6,
                 9,
                 [
                     false,
