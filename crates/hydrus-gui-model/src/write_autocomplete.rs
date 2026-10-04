@@ -193,7 +193,7 @@ impl WriteAutocomplete {
         let mut domains = self.domains();
         match choice {
             crate::domains::Choice::Location(location) => {
-                domains.choose_location(&self.store.snapshot().services, location)
+                domains.choose_location(&self.store.snapshot().services, location);
             }
             crate::domains::Choice::Tags(key) => {
                 let defaults: settings::SearchDefaults =

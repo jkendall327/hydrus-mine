@@ -134,11 +134,23 @@ impl WriteAutocomplete {
                 self.store().read(settings::get).unwrap_or_default();
             crate::domains::location_menu(&snapshot.services, advanced, &domains.location)
         };
-        if !tags && !rows.iter().flatten().any(|row| matches!(&row.choice,crate::domains::Choice::Location(location) if location.is_all_known_files())) {
-            let multiple=rows.pop();
-            let location=LocationContext::single(ServiceKey::new(hydrus_core::service::builtin_keys::COMBINED_FILE.to_vec()));
-            rows.push(Some(crate::domains::Row {label:"all known files with tags".into(),checked:location==domains.location,choice:crate::domains::Choice::Location(location)}));rows.push(None);
-            if let Some(Some(mut multiple))=multiple {multiple.checked=!rows.iter().flatten().any(|row|row.checked);rows.push(Some(multiple));}
+        if !tags && !rows.iter().flatten().any(|row| {
+            matches!(&row.choice, crate::domains::Choice::Location(location) if location.is_all_known_files())
+        }) {
+            let multiple = rows.pop();
+            let location = LocationContext::single(ServiceKey::new(
+                hydrus_core::service::builtin_keys::COMBINED_FILE.to_vec(),
+            ));
+            rows.push(Some(crate::domains::Row {
+                label: "all known files with tags".into(),
+                checked: location == domains.location,
+                choice: crate::domains::Choice::Location(location),
+            }));
+            rows.push(None);
+            if let Some(Some(mut multiple)) = multiple {
+                multiple.checked = !rows.iter().flatten().any(|row| row.checked);
+                rows.push(Some(multiple));
+            }
         }
         rows.into_iter()
             .map(|row| {
@@ -169,7 +181,7 @@ impl WriteAutocomplete {
                         kind,
                         value,
                     },
-                ))
+                ));
             };
             if prefs.autocomplete_show_parents {
                 if !prefs.autocomplete_expand_parents {
@@ -340,6 +352,7 @@ fn sorted_tags(tags: &mut [String]) {
 fn relationship_entries(store: &Store, tag: &str) -> hydrus_store::Result<Vec<Entry>> {
     use hydrus_store::display::RelationKind;
     use std::collections::{BTreeMap, BTreeSet};
+    type Groups = BTreeMap<BTreeSet<usize>, (Vec<String>, Vec<String>)>;
     let snapshot = store.snapshot();
     let mut services: Vec<_> = [
         hydrus_core::ServiceType::LocalTag,
@@ -425,7 +438,6 @@ fn relationship_entries(store: &Store, tag: &str) -> hydrus_store::Result<Vec<En
             ));
         }
     }
-    type Groups = BTreeMap<BTreeSet<usize>, (Vec<String>, Vec<String>)>;
     let mut groups: Groups = BTreeMap::new();
     for (sibling, group) in siblings {
         groups.entry(group).or_default().0.push(sibling);

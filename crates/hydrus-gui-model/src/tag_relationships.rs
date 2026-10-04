@@ -149,7 +149,7 @@ impl Relationships {
             .map(|tag| tag.as_str().to_owned())
             .collect();
         for service in &mut model.services {
-            service.left = tags.clone();
+            service.left.clone_from(&tags);
             service.workspace.extend(tags.iter().cloned());
         }
         Ok(model)
