@@ -57,16 +57,6 @@ impl TagMenu {
         })
     }
     pub fn open(&self, entries: &[Entry], x: f32, y: f32) {
-        if !(self.editable)() || self.busy() {
-            return;
-        }
-        let (mut shown, actions) = main_menu::popup(entries, &|entry| match entry {
-            Entry::Item(label, action) | Entry::Check(label, action, _) => {
-                PopupNode::Item(label, action)
-            }
-            Entry::Menu(label, children) => PopupNode::Menu(label, children),
-            Entry::Separator => PopupNode::Separator,
-        });
         fn ticks(shown: &mut [main_menu::Entry], entries: &[Entry]) {
             for (shown, entry) in shown.iter_mut().zip(entries) {
                 match entry {
@@ -88,6 +78,16 @@ impl TagMenu {
                 }
             }
         }
+        if !(self.editable)() || self.busy() {
+            return;
+        }
+        let (mut shown, actions) = main_menu::popup(entries, &|entry| match entry {
+            Entry::Item(label, action) | Entry::Check(label, action, _) => {
+                PopupNode::Item(label, action)
+            }
+            Entry::Menu(label, children) => PopupNode::Menu(label, children),
+            Entry::Separator => PopupNode::Separator,
+        });
         ticks(&mut shown, entries);
         self.popup.open(shown, actions, x, y);
     }
@@ -141,7 +141,7 @@ impl TagMenu {
     fn execute(&self, action: Action) {
         match action {
             Action::Copy(text) => crate::copy_to_clipboard(&text),
-            Action::Domain(..) => (self.decorate)(action),
+            Action::Domain(..) | Action::Decorate { .. } => (self.decorate)(action),
             Action::Locations(location) => {
                 let chosen = Rc::new({
                     let editable = self.editable.clone();
@@ -179,7 +179,7 @@ impl TagMenu {
                         ) {
                             Ok(child) => *self.relationships.borrow_mut() = Some(child),
                             Err(e) => {
-                                (self.error)(&format!("could not open tag relationships: {e}"))
+                                (self.error)(&format!("could not open tag relationships: {e}"));
                             }
                         }
                     }
@@ -197,7 +197,6 @@ impl TagMenu {
                     launcher(location, context, predicates, duplicate);
                 }
             }
-            Action::Decorate { .. } => (self.decorate)(action),
             Action::Favourite { .. } => {
                 if let Err(e) = action.persist(&self.store) {
                     (self.error)(&format!("could not update favourite tags: {e}"));

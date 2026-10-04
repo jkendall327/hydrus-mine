@@ -400,7 +400,7 @@ fn favourite_children_tabs_and_applied_cap_feed_manage_tags_and_import_tag_child
     let child_slot = hydrus_gui::write_tag_window::Slot::default();
     let child = hydrus_gui::write_tag_window::open(
         &store,
-        service.key,
+        service.key.clone(),
         &["parity:gui root".into()],
         "edit tags",
         &child_slot,
