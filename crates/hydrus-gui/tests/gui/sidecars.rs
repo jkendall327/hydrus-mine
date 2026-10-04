@@ -1184,3 +1184,215 @@ fn router_png_child_has_recorded_parameters_and_closes_with_its_queue_owner() {
     assert!(!applied.get());
     assert!(slots.exchange.1.window().is_none());
 }
+
+#[test]
+fn export_folder_query_examples_refresh_media_and_reach_source_children() {
+    use hydrus_core::search::context::FileSearchContext;
+    use hydrus_core::url::strings::StringProcessor;
+    use hydrus_gui_model::folders::new_export_folder;
+    use hydrus_parse::sidecar::Importer;
+    let (_dirs, store) = store();
+    let reference = hydrus_testkit::fixture_json("export_folder_examples.json");
+    let exchange = hydrus_testkit::fixture_json("router_exchange.json");
+    let mut router =
+        hydrus_downloader_exchange::routers::decode_text(&exchange["exports"][1].to_string())
+            .unwrap()
+            .remove(0);
+    router.importers = vec![Importer {
+        source: Source::MediaUrls,
+        processor: StringProcessor::default(),
+    }];
+    router.processor = StringProcessor::default();
+    let mut folder = new_export_folder("{hash}".into(), FileSearchContext::default());
+    folder.routers = vec![router];
+    let original = settings::ExportFolders(vec![folder]);
+    store
+        .write({
+            let original = original.clone();
+            move |ctx| settings::set(ctx.conn(), &original)
+        })
+        .unwrap();
+    let rendered = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    open(&ui, "manage export folders\u{2026}");
+    let list = bound
+        .folders
+        .export_list
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_edit();
+    let edit = bound
+        .folders
+        .export_edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let slots = &bound.folders.sidecars;
+    assert_eq!(
+        edit.get_examples_label(),
+        reference["initial"]["text"].as_str().unwrap()
+    );
+    assert!(edit.get_examples_enabled());
+    assert!(slots.test_objects.borrow().is_empty());
+    for case in reference["cases"].as_array().unwrap() {
+        while edit.get_predicates().row_count() > 0 {
+            edit.invoke_predicate_removed(0);
+        }
+        for tag in case["tags"].as_array().unwrap() {
+            edit.set_typed(tag.as_str().unwrap().into());
+            edit.invoke_typed_accepted();
+            assert!(edit.get_error().is_empty());
+        }
+        assert_eq!(
+            edit.get_examples_label(),
+            case["before"]["text"].as_str().unwrap()
+        );
+        assert!(edit.get_examples_enabled());
+        edit.invoke_update_examples();
+        assert_eq!(
+            edit.get_examples_label(),
+            case["loading"]["text"].as_str().unwrap()
+        );
+        assert!(!edit.get_examples_enabled());
+        crate::parser_editors::until_fetch(|| edit.get_examples_label() != "loading\u{2026}");
+        assert!(edit.get_error().is_empty());
+        assert_eq!(
+            edit.get_examples_label(),
+            case["finished"]["text"].as_str().unwrap()
+        );
+        assert!(!edit.get_examples_enabled());
+        edit.invoke_edit_sidecars();
+        let queue = slots.routers.borrow().as_ref().unwrap().clone_strong();
+        queue.invoke_row_clicked(0, false, false);
+        queue.invoke_edit();
+        let router = slots.router.borrow().as_ref().unwrap().clone_strong();
+        let rows = test_table(&router.get_test_rows());
+        assert_eq!(
+            rows.iter().map(|r| r[0].clone()).collect::<Vec<_>>(),
+            case["finished"]["media"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|m| m["hash"].as_str().unwrap().to_owned())
+                .collect::<Vec<_>>()
+        );
+        router.invoke_row_clicked(0, false, false);
+        router.invoke_edit();
+        let source = slots.node.borrow().as_ref().unwrap().clone_strong();
+        source.invoke_edit_processing();
+        let processor = slots
+            .strings
+            .processor
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        assert_eq!(
+            serde_json::to_value(table(&processor.get_starting())).unwrap(),
+            case["finished"]["source_strings"]
+        );
+        processor.invoke_cancel();
+        source.invoke_cancel();
+        router.invoke_cancel();
+        queue.invoke_cancel();
+    }
+    let pixels = headless::render(&rendered.get(2).unwrap(), 760, 820);
+    assert_eq!(pixels.len(), 760 * 820 * 4);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("export-folder-examples.png"),
+        &pixels,
+        760,
+        820,
+    )
+    .unwrap();
+    // A query edit keeps the last examples until refresh, as the reference does.
+    let previous = slots.test_objects.borrow().clone();
+    while edit.get_predicates().row_count() > 0 {
+        edit.invoke_predicate_removed(0);
+    }
+    edit.set_typed("synthetic:export-example-no-match".into());
+    edit.invoke_typed_accepted();
+    assert!(edit.get_examples_enabled());
+    edit.invoke_edit_sidecars();
+    assert_eq!(*slots.test_objects.borrow(), previous);
+    edit.invoke_apply();
+    assert!(
+        bound.folders.export_edit.borrow().is_some(),
+        "a modal router owns the staged edit"
+    );
+    slots.cancel();
+    // Close the list while the real query is pending. Old callbacks cannot publish
+    // examples, reopen children or commit a folder into a subsequent owner.
+    edit.invoke_update_examples();
+    assert_eq!(edit.get_examples_label(), "loading\u{2026}");
+    list.invoke_cancel();
+    assert!(bound.folders.export_edit.borrow().is_none());
+    edit.invoke_apply();
+    edit.invoke_edit_sidecars();
+    edit.invoke_update_examples();
+    slint::platform::update_timers_and_animations();
+    assert_eq!(edit.get_examples_label(), "loading\u{2026}");
+    assert!(slots.routers.borrow().is_none());
+    assert_eq!(
+        store
+            .read(settings::get::<settings::ExportFolders>)
+            .unwrap(),
+        original
+    );
+    open(&ui, "manage export folders\u{2026}");
+    let list = bound
+        .folders
+        .export_list
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_edit();
+    let reopened = bound
+        .folders
+        .export_edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(reopened.get_examples_label(), "update test example files");
+    assert!(slots.test_objects.borrow().is_empty());
+    let destination = tempfile::tempdir().unwrap();
+    reopened.set_path(destination.path().to_string_lossy().into_owned().into());
+    reopened.set_typed("system:limit=2".into());
+    reopened.invoke_typed_accepted();
+    reopened.invoke_update_examples();
+    crate::parser_editors::until_fetch(|| reopened.get_examples_label() != "loading\u{2026}");
+    assert_eq!(reopened.get_examples_label(), "got 2 files!");
+    assert_eq!(std::fs::read_dir(destination.path()).unwrap().count(), 0);
+    reopened.invoke_apply();
+    assert!(bound.folders.export_edit.borrow().is_none());
+    assert_eq!(
+        store
+            .read(settings::get::<settings::ExportFolders>)
+            .unwrap(),
+        original
+    );
+    list.invoke_apply();
+    let written = store
+        .read(settings::get::<settings::ExportFolders>)
+        .unwrap();
+    assert_eq!(written.0.len(), 1);
+    let ids =
+        hydrus_gui_model::folders::export_test_examples(&store, &written.0[0].search).unwrap();
+    assert_eq!(
+        ids.iter().map(|id| u64::from(id.0)).collect::<Vec<_>>(),
+        reference["cases"][1]["finished"]["media"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|m| m["id"].as_u64().unwrap())
+            .collect::<Vec<_>>()
+    );
+}

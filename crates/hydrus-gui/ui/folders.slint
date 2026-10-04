@@ -487,6 +487,9 @@ export component ExportFolderWindow inherits Window {
     in-out property <bool> overwrite-next;
     in-out property <bool> overwrite-always;
     in property <string> sidecars;
+    in property <string> examples-label: "update test example files";
+    in property <bool> examples-enabled: true;
+    callback update-examples();
     // the sidecars button clicked
     callback edit-sidecars();
     in property <bool> asking;
@@ -624,6 +627,11 @@ export component ExportFolderWindow inherits Window {
                         Button {
                             text: root.sidecars;
                             clicked => { root.edit-sidecars(); }
+                        }
+                        Button {
+                            text: root.examples-label;
+                            enabled: root.examples-enabled;
+                            clicked => { root.update-examples(); }
                         }
                     }
                 }

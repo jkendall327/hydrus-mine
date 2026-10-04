@@ -720,7 +720,12 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   reference asks which in a dialog), and edited in the "filename tagging"
   dialog's boxes (see "review files to import"). An export folder's
   query is typed as the Client API's tags rather than through the search
-  autocomplete, and its sidecars can't be tested on example files. They
+  autocomplete. Its example refresh now queries actual stored media and supplies
+  up to 25 results to the sidecar test panel. Unlimited example queries use stable
+  file-id order (the reference returns a Python set); limited local queries use
+  the recorded size ordering. All-known-file limited queries use the native
+  search's deterministic size ordering rather than the reference's random sample
+  when that domain cannot sort at database level. They
   don't pause the folders while open, as the reference does.
 - **The duplicates page's preparation tab** has no "regenerate search
   tree" or "regenerate search numbers" (hydrus-rs builds its search index

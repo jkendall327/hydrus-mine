@@ -336,6 +336,12 @@ exports supply up to 25 local files or media results; previews read their
 sidecars or metadata without exporting. Source/formula and router processor
 children inherit the reference's first-example strings. `oracle/record_sidecar_testing.py`
 records seven file/media, empty-input, processing and parse-error states.
+Export folders also have **update test example files**: their current query runs
+in the background, uses ascending file size when a system limit removes results,
+and supplies up to 25 media results to router/source previews. The button says
+**loading…**, then **got N files!**; editing the query resets it while retaining
+previous examples. Closing the owner discards pending results. This is recorded
+against actual reference database queries in `oracle/record_export_folder_examples.py`.
 
 Router queues also import and export selected routers through clipboard text or
 reference PNGs, duplicate selected rows, and ask before deleting them. Imports
