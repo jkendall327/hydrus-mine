@@ -674,7 +674,7 @@
       "implementationCommit": "4a81784b",
       "exactBehavior": "Select blank, last session or any frozen saved name in GUI Sessions; cancel and invalid choices retain persisted startup. Ordinary boot restores the selected saved tree with independent ordered media, selection and importer queues, falls back to blank for a missing name, and schedules the first configured autosave.",
       "limits": [
-        "The bad-shutdown recovery question and large-session warning are separate deferred workflows.",
+        "The bad-shutdown recovery question is a separate deferred workflow.",
         "The native loads before showing the window instead of a quarter-second deferred Qt callback; empty named trees retain one native blank search page."
       ],
       "sourceAnchors": [
@@ -695,6 +695,12 @@
           "line": 129,
           "commit": "4a81784b",
           "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/mod.rs",
+          "line": 1248,
+          "commit": "97d9074b",
+          "kind": "import_named_identity"
         }
       ],
       "testAnchors": [
@@ -715,6 +721,12 @@
           "line": 192,
           "commit": "4a81784b",
           "kind": "independent_state_regression"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/mod.rs",
+          "line": 2027,
+          "commit": "97d9074b",
+          "kind": "legacy_import_snapshot_isolation"
         }
       ],
       "referenceRecording": {
@@ -732,20 +744,87 @@
         },
         "observed": "Actual _InitialiseSession with real controller/DB saved trees, clean shutdown: blank/missing/Last/named tree, shown child and initial 0.25-second load/300-second autosave callbacks. Exact selector labels/order/value compare against existing real Options Dialog fixture."
       }
+    },
+    {
+      "reference_id": "audit-options-gui-sessions-sessions-show-warning-popup-if-session-size-exceeds-10-000-000",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "588e39f0",
+      "exactBehavior": "Apply the exact GUI Sessions warning preference to active Pages::session_weight; more than ten million triggers the exact reference message through the rendered native popup stack once per boot. Closed pages are excluded, seeds contribute twenty, disabled checks do not consume the allowance, and dismissal/re-enabling does not repeat the warning in the same boot.",
+      "limits": [
+        "The native checks active weight on its one-second monitor, while the reference checks when its page-count menu becomes dirty."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1589,
+          "commit": "588e39f0",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/session_lifecycle.rs",
+          "line": 90,
+          "commit": "588e39f0",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 175,
+          "commit": "588e39f0",
+          "kind": "popup_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 2390,
+          "commit": "588e39f0",
+          "kind": "active_weight_source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 133,
+          "commit": "588e39f0",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 315,
+          "commit": "588e39f0",
+          "kind": "cancel_apply_rendered_popup_dismiss_reopen"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_session_warning.py",
+          "line": 1,
+          "commit": "588e39f0",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/session_warning.json",
+          "line": 1,
+          "commit": "588e39f0",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _UpdateMenuPagesCountIfDirty on real Qt menu items with scripted counts: six threshold/disabled/closed-page/seed-weight/repeated/new-boot cases; exact ShowText message and warning latch outputs."
+      }
     }
   ],
-  "completedOriginalLeafCount": 11,
+  "completedOriginalLeafCount": 12,
   "validation": {
     "reference": "Real-client recorder completed cleanly.",
     "local": [
       "cargo fmt --all",
-      "git diff --check"
+      "git diff --check",
+      "/workspace/parallel/parity-slint-syntax.sh /workspace/parallel/parity-sessions"
     ],
     "cargo": "Deferred to root hosted CI; no local builds or mutation tests."
   },
   "remaining": [
     "Outside-application global OS cursor polling; idle-only claim remains partial.",
-    "Legacy historical GUI-session snapshot import, bad-shutdown recovery dialog and large-session warnings.",
+    "Legacy historical GUI-session snapshot import and bad-shutdown recovery dialog.",
     "Remaining page selector and drag workflows."
   ]
 }
