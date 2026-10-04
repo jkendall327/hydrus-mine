@@ -33,6 +33,9 @@ pub(super) struct TestDocuments {
 }
 impl TestDocuments {
     pub fn start() -> Self {
+        Self::start_with_image(Vec::new())
+    }
+    pub(super) fn start_with_image(image: Vec<u8>) -> Self {
         use std::io::{Read as _, Write as _};
         let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
         let base = format!("http://{}", listener.local_addr().unwrap());
@@ -72,18 +75,26 @@ impl TestDocuments {
                     let request = String::from_utf8_lossy(&bytes[..count]).into_owned();
                     let hold = request.starts_with("GET /hold ");
                     let error = request.starts_with("GET /error ");
+                    let image_request = request.starts_with("GET /png ");
                     requests.lock().unwrap().push(request);
                     if hold {
                         held.push(stream);
                         continue;
                     }
-                    let (status, body): (&str, &[u8]) = if error {
+                    let (status, body): (&str, &[u8]) = if image_request {
+                        ("200 OK", &image)
+                    } else if error {
                         ("404 Not Found", b"missing")
                     } else {
                         ("200 OK", b"<p>fetched caf\xe9</p>")
                     };
+                    let content_type = if image_request {
+                        "image/png"
+                    } else {
+                        "text/html; charset=iso-8859-1"
+                    };
                     let response = format!(
-                        "HTTP/1.1 {status}\r\nContent-Type: text/html; charset=iso-8859-1\r\nContent-Length: {}\r\nSet-Cookie: test-document=saved; Path=/\r\nConnection: close\r\n\r\n",
+                        "HTTP/1.1 {status}\r\nContent-Type: {content_type}\r\nContent-Length: {}\r\nSet-Cookie: test-document=saved; Path=/\r\nConnection: close\r\n\r\n",
                         body.len()
                     );
                     let _ = stream.write_all(response.as_bytes());
@@ -1383,4 +1394,175 @@ fn subsidiary_queue_exchange_is_staged_preserves_wrappers_and_reaches_saved_pars
     import.invoke_action("accept".into());
     list.invoke_action("cancel".into());
     assert_eq!(definitions(&store), persisted);
+}
+
+#[test]
+fn raw_content_preview_preserves_clipboard_context_and_detects_fetched_png_bytes() {
+    use hydrus_gui::{Clip, formula_window};
+    use hydrus_gui_model::formula_editors::FormulaTestData;
+    use std::{cell::RefCell, rc::Rc};
+    let reference = hydrus_testkit::fixture_json("parser_raw_preview.json");
+    let server = TestDocuments::start_with_image(
+        hex::decode(reference["png_hex"].as_str().unwrap()).unwrap(),
+    );
+    let (_dir, store, slots) = setup();
+    let rendered = headless::init();
+    let original = definitions(&store);
+    let mut test = FormulaTestData {
+        text: "original".into(),
+        ..FormulaTestData::default()
+    };
+    test.context
+        .insert("url".into(), "https://raw-preview.example/original".into());
+    test.context.insert("post_index".into(), "7".into());
+    test.context.insert("custom".into(), "kept".into());
+    let mut parser = new_content();
+    parser.formula = hydrus_parse::formula::Formula::new(FormulaKind::ContextVariable {
+        variable: "url".into(),
+    });
+    let content = windows::open_content(
+        &store,
+        &parser,
+        test.clone(),
+        &slots,
+        &[0, 1, 2, 3, 4, 5, 6, 7, 8],
+        Rc::new(|_| Ok(())),
+    )
+    .unwrap();
+    *slots.content.borrow_mut() = Some(content.clone_strong());
+    let pasted = reference["states"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|s| s["case"] == "paste")
+        .unwrap();
+    let raw = pasted["input"]["text"].as_str().unwrap().to_owned();
+    hydrus_gui::set_clipboard_reader({
+        let raw = raw.clone();
+        move || Ok(Some(raw.clone()))
+    });
+    content.invoke_raw_action("paste".into());
+    assert_eq!(content.get_document(), raw);
+    assert_eq!(
+        content.get_raw_description(),
+        pasted["description"].as_str().unwrap()
+    );
+    assert_eq!(
+        content.get_raw_preview(),
+        pasted["preview"].as_str().unwrap()
+    );
+    assert!(content.get_parse_enabled());
+    assert_eq!(content.get_post_index(), "7");
+    assert_eq!(content.get_variables(), "custom=kept");
+    assert_eq!(
+        content.get_test_url(),
+        "https://raw-preview.example/original"
+    );
+    let copied = Rc::new(RefCell::new(String::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let Clip::Text(text) = clip {
+                *copied.borrow_mut() = text.clone();
+            }
+        }
+    });
+    content.invoke_raw_action("copy".into());
+    assert_eq!(*copied.borrow(), raw);
+    assert_ne!(*copied.borrow(), content.get_raw_preview().as_str());
+    hydrus_gui::set_clipboard_reader(|| Err("synthetic clipboard error".into()));
+    content.invoke_raw_action("paste".into());
+    assert!(content.get_error().contains("Problem loading!"));
+    assert_eq!(content.get_document(), raw);
+    content.set_fetch_url(format!("{}/png", server.base).into());
+    content.invoke_fetch_from_url();
+    until_fetch(|| !content.get_fetching());
+    assert_eq!(content.get_raw_description(), "That looked like a png!");
+    assert_eq!(content.get_raw_preview(), "no preview");
+    assert!(!content.get_parse_enabled());
+    assert_eq!(content.get_test_url(), format!("{}/png", server.base));
+    assert_eq!(content.get_post_index(), "0");
+    assert_eq!(content.get_variables(), "custom=kept");
+    let before = content.get_preview();
+    content.invoke_action("test".into());
+    assert_eq!(content.get_preview(), before);
+    content.invoke_action("formula".into());
+    let child = slots
+        .formula
+        .formula
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    // Child inheritance is text-only in Qt; its own raw MIME inspection does not leak.
+    assert!(child.get_parse_enabled());
+    assert_eq!(child.get_document(), content.get_document());
+    child.invoke_cancel();
+    let pixels = headless::render(&rendered.get(0).unwrap(), 920, 700);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("parser_raw_preview.png"),
+        &pixels,
+        920,
+        700,
+    )
+    .unwrap();
+    let old = content.clone_strong();
+    slots.cancel();
+    hydrus_gui::set_clipboard_reader(|| Ok(Some("stale replacement".into())));
+    old.invoke_raw_action("paste".into());
+    assert_ne!(old.get_document(), "stale replacement");
+    assert_eq!(definitions(&store), original);
+    // The standalone formula owner detects bytes independently and restores examples.
+    let formula_slots = formula_window::Slots::default();
+    let formula = formula_window::open(
+        &store,
+        &parser.formula,
+        test,
+        &formula_slots,
+        Rc::new(|_| {}),
+    )
+    .unwrap();
+    *formula_slots.formula.borrow_mut() = Some(formula.clone_strong());
+    formula.set_fetch_url(format!("{}/png", server.base).into());
+    formula.invoke_fetch();
+    until_fetch(|| !formula.get_fetching());
+    assert_eq!(formula.get_raw_description(), "That looked like a png!");
+    assert!(!formula.get_parse_enabled());
+    assert_eq!(formula.get_results().row_count(), 0);
+    formula.set_example(0);
+    formula.invoke_example_chosen();
+    assert!(formula.get_parse_enabled());
+    assert_eq!(formula.get_document(), "original");
+    formula.set_example(1);
+    formula.invoke_example_chosen();
+    assert!(!formula.get_parse_enabled());
+    formula.invoke_test();
+    assert_eq!(formula.get_results().row_count(), 0);
+    hydrus_gui::set_clipboard_reader({
+        let raw = raw.clone();
+        move || Ok(Some(raw.clone()))
+    });
+    formula.invoke_raw_action("paste".into());
+    assert_eq!(formula.get_document(), raw);
+    assert_eq!(
+        formula.get_raw_preview(),
+        pasted["preview"].as_str().unwrap()
+    );
+    assert!(formula.get_parse_enabled());
+    assert_eq!(
+        formula
+            .get_results()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(0)
+            .unwrap(),
+        format!("{}/png", server.base)
+    );
+    formula.invoke_raw_action("copy".into());
+    assert_eq!(*copied.borrow(), raw);
+    formula_slots.cancel();
+    hydrus_gui::set_clipboard_reader(|| Ok(Some("stale replacement".into())));
+    formula.invoke_raw_action("paste".into());
+    assert_eq!(formula.get_document(), raw);
 }

@@ -246,6 +246,8 @@ pub struct FormulaEditor {
     pub selection: ListSelection<usize>,
     /// Current document in the inherited examples.
     pub example: usize,
+    /// Byte detection retained only by the raw fetch owner.
+    pub raw_mimes: crate::parser_test_data::ExampleMimes,
 }
 impl FormulaEditor {
     /// Start an isolated edit, preserving recursive fields and auxiliary data.
@@ -256,6 +258,7 @@ impl FormulaEditor {
             test,
             selection: ListSelection::default(),
             example: 0,
+            raw_mimes: crate::parser_test_data::ExampleMimes::default(),
         }
     }
     /// Whether the current kind has native editing controls.

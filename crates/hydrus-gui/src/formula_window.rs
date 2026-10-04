@@ -138,9 +138,21 @@ fn show(w: &FormulaWindow, e: &FormulaEditor) {
         format!("example {} ({} characters)", i + 1, t.chars().count())
     })));
     w.set_example(int(e.example));
+    let raw = hydrus_gui_model::parser_test_data::preview(
+        &e.test.text,
+        e.raw_mimes.get(e.example, &e.test.text),
+    );
+    w.set_raw_description(raw.description.into());
+    w.set_raw_preview(raw.text.into());
+    w.set_parse_enabled(raw.parse_enabled);
     w.set_selected(!e.selected().is_empty());
     w.set_processing(e.formula.processor.button_label().into());
     w.set_newline_note(if e.test.collapse_newlines { "Newlines are removed from parsed strings right after parsing, before string processing." } else { "Newlines are not collapsed here (probably a note parser)" }.into());
+    if e.raw_mimes.get(e.example, &e.test.text).is_some() {
+        w.set_results(rows(Vec::new(), &[]));
+        w.set_status("no preview".into());
+        return;
+    }
     match e.results() {
         Ok(results) => {
             w.set_status(format!("{} parsed strings", results.len()).into());
@@ -248,6 +260,40 @@ pub fn open(
             }
         }
     });
+    w.on_raw_action({
+        let weak = w.as_weak();
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move |action| {
+            if blocked() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else {
+                return;
+            };
+            match action.as_str() {
+                "copy" => crate::copy_to_clipboard(w.get_document().as_str()),
+                "paste" => match crate::from_clipboard() {
+                    Ok(text) => {
+                        let mut e = state.borrow_mut();
+                        read(&w, &mut e);
+                        let index = e.example;
+                        e.test.remember_example(index, text.clone());
+                        e.raw_mimes.remember(index, &text, None);
+                        w.set_document(text.into());
+                        w.set_fetch_status("Pasted!".into());
+                        drop(e);
+                        refresh();
+                    }
+                    Err(error) => {
+                        w.set_veto(format!("Problem loading!\n\n{error}").into());
+                    }
+                },
+                _ => {}
+            }
+        }
+    });
     w.on_cancel_fetch({
         let fetch = fetch.clone();
         move || fetch.cancel()
@@ -304,6 +350,9 @@ pub fn open(
                     };
                     let mut editor = state.borrow_mut();
                     editor.example = editor.test.fetched(url.clone(), outcome.document, false);
+                    let index = editor.example;
+                    let text = editor.test.text.clone();
+                    editor.raw_mimes.remember(index, &text, outcome.mime);
                     w.set_document(editor.test.text.as_str().into());
                     w.set_context(
                         editor
@@ -421,6 +470,9 @@ pub fn open(
                     e.test.add_example(String::new(), url)
                 } else {
                     let old = e.example;
+                    if e.test.examples.len() > 1 {
+                        e.raw_mimes.remove(old);
+                    }
                     e.test.remove_example(old)
                 };
                 w.set_document(e.test.text.as_str().into());
@@ -775,7 +827,11 @@ pub fn open(
             }
             if let Some(w) = weak.upgrade() {
                 read(&w, &mut state.borrow_mut());
-                match state.borrow().results() {
+                let e = state.borrow();
+                if e.raw_mimes.get(e.example, &e.test.text).is_some() {
+                    return;
+                }
+                match e.results() {
                     Ok(results) => {
                         w.set_status(format!("{} parsed strings", results.len()).into());
                         w.set_results(rows(results, &[]));

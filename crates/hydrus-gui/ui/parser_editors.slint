@@ -70,6 +70,10 @@ export component ParserEditWindow inherits Window {
     in property <bool> subsidiary-exportable;
     in-out property <bool> subsidiary-sorted;
     in-out property <string> document;
+    in property <string> raw-description;
+    in property <string> raw-preview;
+    in property <bool> parse-enabled;
+    callback raw-action(string);
     in property <[string]> examples;
     in-out property <int> example;
     in-out property <string> test-url;
@@ -172,7 +176,12 @@ export component ParserEditWindow inherits Window {
                     Button { text: "add example"; enabled: !root.child-open; clicked => { root.action("add-example"); } }
                     Button { text: "remove example"; enabled: root.examples.length > 1 && !root.child-open; clicked => { root.action("remove-example"); } }
                 }
-                TextEdit { height: 130px; text <=> root.document; enabled: !root.child-open; }
+                HorizontalLayout {
+                    Button { text: "copy data"; enabled: !root.child-open; clicked => { root.raw-action("copy"); } }
+                    Button { text: "paste data"; enabled: !root.child-open; clicked => { root.raw-action("paste"); } }
+                }
+                Text { text: root.raw-description; color: Theme.text; wrap: word-wrap; }
+                TextEdit { height: 130px; text: root.raw-preview; read-only: true; }
                 HorizontalLayout {
                     Text { text: "page URL"; color: Theme.text; vertical-alignment: center; }
                     LineEdit { text <=> root.test-url; enabled: !root.child-open; }
@@ -198,7 +207,7 @@ export component ParserEditWindow inherits Window {
                 if root.fetch-status != "": Text { text: root.fetch-status; color: Theme.text; wrap: word-wrap; }
                 Text { text: "context variables (one key=value per line)"; color: Theme.text; }
                 TextEdit { height: 60px; text <=> root.variables; enabled: !root.child-open; }
-                Button { text: "test parse"; enabled: !root.child-open; clicked => { root.action("test"); } }
+                Button { text: "test parse"; enabled: root.parse-enabled && !root.child-open; clicked => { root.action("test"); } }
                 TextEdit { height: 140px; text: root.preview; read-only: true; }
             }
         }

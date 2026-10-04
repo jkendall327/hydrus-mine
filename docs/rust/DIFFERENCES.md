@@ -1317,6 +1317,12 @@ so the broad favourites item is not yet complete.
 Page-parser network error popups use native Rust failure diagnostics and response
 text instead of Python traceback frames. Error ownership, show/copy, completion
 retention and clearing on the next example request match the recorded Qt owner.
+
+Raw parsing-data clipboard failures appear inline with **Problem loading!** rather
+than opening Qt's critical message box. Paste feedback stays in the native status
+line until the next request rather than using a temporary icon notification.
+The raw preview matches Python JSON formatting and Unicode clipping; the existing
+PyJson limits for duplicate object keys and lone UTF-16 surrogates still apply.
 The native viewer's resize-recentering, checkerboard/greenscreen transparency,
 and seek-bar height/hidden-height/nub-width preferences have real canvas
 consumers. The unchecked transparency preference uses the native viewer's
