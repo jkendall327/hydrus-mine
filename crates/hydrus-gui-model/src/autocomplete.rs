@@ -323,7 +323,10 @@ fn searchable_mimes() -> std::rc::Rc<Vec<rusqlite::types::Value>> {
 /// Where tag counts come from for a page's file domains: each current
 /// domain exactly, and, for deleted files, "deleted from anywhere" as an
 /// upper bound (as the Client API's tag search does).
-fn count_domains(registry: &ServiceRegistry, location: &LocationContext) -> Vec<CountDomain> {
+pub(crate) fn count_domains(
+    registry: &ServiceRegistry,
+    location: &LocationContext,
+) -> Vec<CountDomain> {
     let mut domains: Vec<CountDomain> = location
         .current()
         .iter()

@@ -916,7 +916,7 @@ warning (the display graph ignores such pairs anyway). Batches creating loops
 or conflicting sibling ideals are rejected with an explicit message; enter
 the pairs separately to perform the ordinary automatic repairs. Already corrupt
 reference graph cycles are traversed safely, but do not raise its detailed
-pre-existing-loop warning. Tag display application editing, tag migration and
+pre-existing-loop warning. Tag migration and
 manual background sibling/parent synchronization remain separate future work.
 
 ## Detailed embedded file metadata (`hydrus-gui`, `hydrus-media`)
@@ -941,8 +941,10 @@ Tag display configuration uses immediate atomic graph/count publication instead
 of the reference's background sibling/parent sync. The native application table
 uses a zero source id solely to represent an explicitly empty queue; absent queues
 retain the default of applying the service's own rules. Native settings preserve
-unknown JSON fields and unedited service settings. Display/search and application
-window integration is being completed in the second slate.
+unknown JSON fields and unedited service settings. The application
+window uses ordered native lists and an inline source selector. Display/search
+uses a numeric zero for the reference's nullable "always autocomplete" threshold.
+Tag migration and manual/background sibling/parent sync remain unimplemented.
 
 The native parser editor model supports all nine content kinds and typed test
 context. Parser windows are still being integrated. Subsidiary parser editing,

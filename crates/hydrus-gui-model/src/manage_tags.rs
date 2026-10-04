@@ -10,7 +10,7 @@ use std::sync::Arc;
 use hydrus_core::{HashId, ServiceId, ServiceType, Tag};
 use hydrus_store::Store;
 use hydrus_store::autocomplete::{
-    self, AutocompleteInput, AutocompleteSettings, CountDomain, TagDisplayType, TagSearchScope,
+    self, AutocompleteInput, AutocompleteSettings, TagDisplayType, TagSearchScope,
 };
 use hydrus_store::content::MappingAction;
 
@@ -20,6 +20,7 @@ const SUGGESTIONS: usize = 12;
 pub struct ManageTags {
     store: Arc<Store>,
     files: Vec<HashId>,
+    location: hydrus_core::search::context::LocationContext,
     /// The local tag services, by name.
     services: Vec<(ServiceId, String)>,
     service: usize,
@@ -65,6 +66,7 @@ impl ManageTags {
             staged: vec![BTreeMap::new(); services.len()],
             store,
             files,
+            location: hydrus_core::search::context::LocationContext::default(),
             services,
             service: 0,
             stored,
@@ -74,6 +76,10 @@ impl ManageTags {
         })
     }
 
+    /// File domain of the page/viewer that launched this editor.
+    pub fn set_location(&mut self, location: hydrus_core::search::context::LocationContext) {
+        self.location = location;
+    }
     pub fn store(&self) -> &Arc<Store> {
         &self.store
     }
@@ -277,16 +283,12 @@ impl ManageTags {
             )
             .ok()?
             .options(&key);
-        let domains = options
-            .write_location
-            .current()
-            .iter()
-            .filter_map(|key| registry.by_key(key).ok())
-            .map(|s| CountDomain {
-                service: s.id,
-                exact: true,
-            })
-            .collect();
+        let location = if options.override_location {
+            &options.write_location
+        } else {
+            &self.location
+        };
+        let domains = crate::autocomplete::count_domains(registry, location);
         let scope = TagSearchScope {
             domains,
             tag_service: registry

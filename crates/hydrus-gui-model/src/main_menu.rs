@@ -119,6 +119,8 @@ impl Pause {
 #[derive(Debug, Clone, PartialEq)]
 pub enum Command {
     /// Open tags > siblings or parents.
+    /// Display/search (false) or relationship application (true).
+    TagDisplay(bool),
     TagRelationships(hydrus_store::display::RelationKind),
     /// Copy a label's text (the reference's `AppendMenuLabel`).
     Copy(String),
@@ -901,7 +903,7 @@ fn tags_menu() -> Entry {
         vec![
             todo(dots("migrate")),
             SEP,
-            todo(dots("display/search")),
+            item(dots("display/search"), Command::TagDisplay(false)),
             SEP,
             item(
                 dots("siblings"),
@@ -913,7 +915,10 @@ fn tags_menu() -> Entry {
             ),
             menu(
                 "advanced",
-                vec![todo(dots("manage where tag siblings and parents apply"))],
+                vec![item(
+                    dots("manage where tag siblings and parents apply"),
+                    Command::TagDisplay(true),
+                )],
             ),
             menu(
                 "sync",

@@ -1416,13 +1416,18 @@ the reference panels' labels and local/remote action-context transitions;
 model replay, snapshot/count rollback checks, and real-store menu/window tests
 cover the implementation.
 
-
-Tag display configuration now has a typed staged model for per-service single
-file/selection filters, autocomplete query rules and widget defaults, and ordered
-sibling/parent source queues (`hydrus-gui-model/src/tag_display.rs`). Applying
-commits settings, changed display graphs and derived counts atomically. Empty
-application queues survive reopening and daemon refresh. The real reference
-panels and checkbox interlocks are recorded in `oracle/record_tag_display.py`.
+**Tag display/search** (`tags > display/search`) edits each tag service's single
+file and selection display filters with the native tag-filter editor, plus
+fetch-as-you-type, character threshold, query rules and write autocomplete
+file/tag domains. Domain changes use the native location selector. Ctrl+Space
+fetches search/manage-tags suggestions manually. The advanced `manage where tag
+siblings and parents apply` window edits ordered source queues in ListTable;
+empty queues disable that relationship kind. Both dialogs stage changes until
+Apply, close owned nested editors on cancel and preserve unrelated settings.
+Applying updates selection tags on all open pages (including locked pages),
+viewer tags, search suggestions, graphs and counts. The real reference panels
+and checkbox interlocks are recorded in `oracle/record_tag_display.py`; pure model
+and real-store GUI regressions cover persistence and publication.
 
 The parser editor foundation (`hydrus-gui-model::parser_editors`) owns native
 page/content drafts and direct URL-class links. Its nine typed content kinds,

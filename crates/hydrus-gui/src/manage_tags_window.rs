@@ -94,6 +94,14 @@ pub(crate) fn open(
             refresh();
         }
     });
+    window.on_fetch({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        move || {
+            model.borrow_mut().fetch();
+            refresh();
+        }
+    });
     window.on_text_edited({
         let model = model.clone();
         let refresh = refresh.clone();

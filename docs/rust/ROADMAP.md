@@ -31,7 +31,8 @@ The next breadth work, in the owner's existing order:
 
 1. **Services**: remote repositories/IPFS/account administration, Client API
    service configuration, live rating previews and review bulk maintenance.
-2. **Tags**: display/search configuration, migration and sibling/parent sync.
+2. **Tags**: migration and sibling/parent sync. Display/search and ordered
+   relationship application configuration are implemented in the second slate.
    Existing relationship editors still need write autocomplete, asynchronous
    loading, default service tabs and repository permission/reason suggestions.
 3. **Downloader definitions**: page/content parser editors, URL class links,

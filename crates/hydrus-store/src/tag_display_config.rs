@@ -152,7 +152,11 @@ pub fn apply(store: &Store, edits: Vec<ServiceEdit>) -> Result<()> {
                     .iter()
                     .chain(value.write_location.deleted())
                 {
-                    registry.by_key(key)?;
+                    if !registry.by_key(key)?.service_type().is_file_service() {
+                        return Err(StoreError::Invalid(
+                            "autocomplete location requires file domains".into(),
+                        ));
+                    }
                 }
                 widgets.services.insert(key, value);
             }

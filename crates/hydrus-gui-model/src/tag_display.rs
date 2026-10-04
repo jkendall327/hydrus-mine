@@ -87,6 +87,12 @@ impl TagDisplayEditor {
             selected,
         })
     }
+    /// Application dialogs show only real tag services.
+    pub fn application_only(&mut self) {
+        self.services.retain(|s| s.real);
+        self.original.retain(|s| s.real);
+        self.selected = 0;
+    }
     pub fn store(&self) -> &Arc<Store> {
         &self.store
     }

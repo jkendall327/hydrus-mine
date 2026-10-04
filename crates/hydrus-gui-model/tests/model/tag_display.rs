@@ -100,6 +100,20 @@ fn queues_disable_reorder_reopen_counts_daemon_and_clear_filter() {
             Ok(())
         })
         .unwrap();
+    tag_relations::apply(
+        &store,
+        RelationKind::Parents,
+        vec![RelationUpdate {
+            service: source,
+            left: Tag::new("other ideal").unwrap(),
+            right: Tag::new("ancestor").unwrap(),
+            action: RelationAction::Add,
+        }],
+    )
+    .unwrap();
+    let ancestor = store
+        .read(|c| hydrus_store::master::intern_tag(c, &Tag::new("ancestor").unwrap()))
+        .unwrap();
     let domain = snap.services.by_name("all known files").unwrap().id;
     let count = |tag| {
         store
@@ -114,11 +128,13 @@ fn queues_disable_reorder_reopen_counts_daemon_and_clear_filter() {
         .position(|s| s.key == mine.key)
         .unwrap();
     editor.choose(i);
+    editor.current_mut().parents = vec![other.key.clone()];
     editor.add_source(false, other.key.clone());
     editor.change_source(false, 1, Some(-1));
     editor.apply().unwrap();
     assert_eq!(store.snapshot().display.get(own).ideal(bad), other_ideal);
     assert_eq!(count(other_ideal), 1);
+    assert_eq!(count(ancestor), 1);
     assert_eq!(count(bad), 0);
     assert!(daemon.refresh_if_changed().unwrap());
     assert_eq!(daemon.snapshot().display.get(own).ideal(bad), other_ideal);
@@ -126,9 +142,11 @@ fn queues_disable_reorder_reopen_counts_daemon_and_clear_filter() {
     editor.choose(i);
     editor.change_source(false, 0, None);
     editor.change_source(false, 0, None);
+    editor.current_mut().parents.clear();
     editor.apply().unwrap();
     assert_eq!(store.snapshot().display.get(own).ideal(bad), bad);
     assert_eq!(count(other_ideal), 0);
+    assert_eq!(count(ancestor), 0);
     assert_eq!(count(bad), 1);
     let app = store
         .read(|c| load_application(c, &store.snapshot().services))
@@ -185,4 +203,105 @@ fn widget_options_gate_gui_queries_only() {
     assert!(options.query(&input, &rules, false).is_none());
     assert_eq!(options.query(&input, &rules, true).unwrap().text, "ab*");
     assert_eq!(input.tag_query(&rules).unwrap().text, "ab*");
+}
+
+#[test]
+fn write_autocomplete_uses_override_or_launcher_domain_and_rejects_tag_locations() {
+    use hydrus_core::search::context::LocationContext;
+    use hydrus_store::tag_display_config::AutocompleteWidgetSettings;
+    let dir = tempfile::tempdir().unwrap();
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let empty_key = hydrus_core::ServiceKey::new(vec![29; 16]);
+    let key = empty_key.clone();
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::services::insert(
+                ctx.conn(),
+                &key,
+                "empty domain",
+                &hydrus_store::services::ServiceKind::LocalFiles,
+            )?;
+            Ok(())
+        })
+        .unwrap();
+    let snap = store.snapshot();
+    let mine = snap.services.by_name("my tags").unwrap();
+    let other = snap.services.by_name("downloader tags").unwrap();
+    let file = store
+        .read(|c| {
+            Ok(c.query_row("SELECT hash_id FROM files LIMIT 1", [], |r| {
+                r.get::<_, hydrus_core::HashId>(0)
+            })?)
+        })
+        .unwrap();
+    let other_id = other.id;
+    store
+        .write_content(move |w| {
+            let tag = hydrus_store::master::intern_tag(
+                w.conn(),
+                &Tag::new("other service suggestion").unwrap(),
+            )?;
+            w.update_mappings(
+                other_id,
+                &hydrus_store::content::MappingAction::Add,
+                tag,
+                &[file],
+            )?;
+            Ok(())
+        })
+        .unwrap();
+    let mut editor = TagDisplayEditor::new(store.clone()).unwrap();
+    let i = editor
+        .services()
+        .iter()
+        .position(|s| s.key == mine.key)
+        .unwrap();
+    editor.choose(i);
+    editor.current_mut().autocomplete.write_tag_service = other.key.clone();
+    editor.current_mut().autocomplete.write_location = LocationContext::single(
+        hydrus_core::ServiceKey::new(hydrus_core::service::builtin_keys::COMBINED_FILE.to_vec()),
+    );
+    editor.apply().unwrap();
+    let mut manage =
+        hydrus_gui_model::manage_tags::ManageTags::new(store.clone(), vec![file]).unwrap();
+    let i = manage
+        .service_names()
+        .iter()
+        .position(|n| n == "my tags")
+        .unwrap();
+    manage.choose_service(i);
+    manage.set_location(LocationContext::single(empty_key));
+    manage.set_text("other service");
+    assert!(
+        manage
+            .suggestions()
+            .iter()
+            .any(|(t, _)| t == "other service suggestion")
+    );
+    let mut editor = TagDisplayEditor::new(store.clone()).unwrap();
+    let i = editor
+        .services()
+        .iter()
+        .position(|s| s.key == mine.key)
+        .unwrap();
+    editor.choose(i);
+    editor.current_mut().autocomplete.override_location = false;
+    editor.apply().unwrap();
+    manage.set_text("other service");
+    assert!(
+        !manage
+            .suggestions()
+            .iter()
+            .any(|(t, _)| t == "other service suggestion")
+    );
+    editor.current_mut().autocomplete.write_location = LocationContext::single(mine.key.clone());
+    assert!(editor.apply().is_err());
+    let settings: AutocompleteWidgetSettings = store.read(settings::get).unwrap();
+    assert!(!settings.options(&mine.key).override_location);
 }
