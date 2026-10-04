@@ -84,6 +84,33 @@ export component WriteTagInput inherits FocusScope {
 }
 
 
+// Shared root overlay: menu and confirmation capture pointer input above the owner.
+export component TagMenuOverlay inherits Rectangle {
+    in property <[MenuPane]> panes;
+    in property <string> question;
+    callback hovered(int,int,length,length,length);
+    callback clicked(int,int,length,length,length);
+    callback placed(int,length,length,length);
+    callback dismissed();
+    callback answered(bool);
+    if root.question == "": MenuPanes {
+        width: root.width; height: root.height; top: 0px; panes: root.panes;
+        line-hovered(p,l,r,t,x) => { root.hovered(p,l,r,t,x); }
+        line-clicked(p,l,r,t,x) => { root.clicked(p,l,r,t,x); }
+        placed(p,x,y,w) => { root.placed(p,x,y,w); }
+        dismiss => { root.dismissed(); }
+    }
+    if root.question != "": Rectangle {
+        background: Theme.window;
+        TouchArea { }
+        VerticalLayout {
+            padding: 16px;
+            alignment: center;
+            Question { text: root.question; answered(yes) => { root.answered(yes); } }
+        }
+    }
+}
+
 export component WriteTagsWindow inherits Window {
     in property <[MenuPane]> tag-menu-panes;
     in property <string> tag-menu-question;
@@ -170,33 +197,6 @@ export component WriteTagsWindow inherits Window {
             placed(p,x,y,w) => { root.tag-menu-placed(p,x,y,w); }
             dismissed => { root.tag-menu-dismissed(); }
             answered(yes) => { root.tag-menu-answered(yes); }
-        }
-    }
-}
-
-// Shared root overlay: menu and confirmation capture pointer input above the owner.
-export component TagMenuOverlay inherits Rectangle {
-    in property <[MenuPane]> panes;
-    in property <string> question;
-    callback hovered(int,int,length,length,length);
-    callback clicked(int,int,length,length,length);
-    callback placed(int,length,length,length);
-    callback dismissed();
-    callback answered(bool);
-    if root.question == "": MenuPanes {
-        width: root.width; height: root.height; top: 0px; panes: root.panes;
-        line-hovered(p,l,r,t,x) => { root.hovered(p,l,r,t,x); }
-        line-clicked(p,l,r,t,x) => { root.clicked(p,l,r,t,x); }
-        placed(p,x,y,w) => { root.placed(p,x,y,w); }
-        dismiss => { root.dismissed(); }
-    }
-    if root.question != "": Rectangle {
-        background: Theme.window;
-        TouchArea { }
-        VerticalLayout {
-            padding: 16px;
-            alignment: center;
-            Question { text: root.question; answered(yes) => { root.answered(yes); } }
         }
     }
 }
