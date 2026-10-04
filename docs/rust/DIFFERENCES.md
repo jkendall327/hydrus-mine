@@ -1947,5 +1947,7 @@ preferences are not yet native settings. Named SVG rendering retains the existin
 fallback. Numerical examples retain the reference opening click conversion while
 star-count changes repaint the stored fraction; the allow-zero checkbox changes
 the saved service configuration, without changing the opening preview conversion.
+This includes the one-star boundary: the preview keeps its opening nonzero scale,
+while the saved one-star configuration separately normalizes to allow zero.
 This implements the local example-panel leaf; broader service management and
 rating sizing/preferences remain partial.
