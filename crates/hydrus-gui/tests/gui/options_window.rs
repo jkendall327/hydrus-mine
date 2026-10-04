@@ -4087,6 +4087,30 @@ fn default_export_directory_browse_apply_cancel_and_manual_open_use_shared_prefe
     show_page(&window, "exporting");
     let (index, shown) = row(&window, reference["label"].as_str().unwrap());
     assert_eq!(shown.text, selected.to_string_lossy().as_ref());
+    window.invoke_text_edited(index, "relative exports".into());
+    window.invoke_apply();
+    let relative = store.dir().join("relative exports");
+    assert_eq!(
+        store
+            .read(settings::get::<ExportSettings>)
+            .unwrap()
+            .default_directory
+            .as_deref(),
+        relative.to_str()
+    );
+    let export =
+        export_files_window::open(&store, vec![HashId(1)], &bound.export_files, Rc::new(|| {}))
+            .unwrap();
+    assert_eq!(
+        export.get_destination(),
+        relative.to_string_lossy().as_ref()
+    );
+    export.invoke_dismissed();
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "exporting");
+    let (index, shown) = row(&window, reference["label"].as_str().unwrap());
+    assert_eq!(shown.text, relative.to_string_lossy().as_ref());
     window.invoke_text_edited(index, " \t ".into());
     window.invoke_apply();
     assert!(

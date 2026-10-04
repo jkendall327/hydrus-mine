@@ -39,6 +39,15 @@
    "manual": "<DB>/synthetic exports 日本 "
   },
   {
+   "case": "relative",
+   "stored_before": null,
+   "shown": "",
+   "entered": "relative exports",
+   "staged": null,
+   "saved": "relative exports",
+   "manual": "<DB>/relative exports"
+  },
+  {
    "case": "portable",
    "stored_before": "synthetic exports 日本",
    "shown": "<DB>/synthetic exports 日本",
