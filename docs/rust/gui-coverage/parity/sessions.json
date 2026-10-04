@@ -482,9 +482,139 @@
         },
         "observed": "Actual _ChooseNewPage11 cases: four default positions, explicit here overriding each position, cancellation, names/order/selection/blank children. Exact GUI Pages dropdown labels/default additionally from options_dialog.json."
       }
+    },
+    {
+      "reference_id": "audit-options-gui-sessions-sessions-if-last-session-above-autosave-it-how-often-minutes",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Exact1..1440-minute GUI Sessions control imports, cancels invalid/pending edits, applies to real historical timer; scheduled saves retain immutable media/importer history and reschedule current period while unchanged or selection-only data creates no new backup.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 84,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "timer_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1536,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "option_registration"
+        },
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 87,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "snapshot_hash_consumer"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 51,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "gui_control_timer_archive_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 142,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "real_input_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_model_replay"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_session_autosave.py",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/session_autosave.json",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual AutoSaveLastSession cadence/retry/stopping/serialized-hash suppression and independent backup timestamps; actual CurrentlyIdle boot, user, mouse, API and disabled-mode boundaries."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-sessions-sessions-if-last-session-above-only-autosave-during-idle-time",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "exactBehavior": "Real GUI Sessions checkbox imports/applies and gates historical autosaves with120-second boot guard and imported user/mouse/API idle timeouts; active ticks retry60seconds, eligible ticks save/reschedule. Real main-window key/mouse activity and Client API page commands reach idle state.",
+      "countAsCompletedLeaf": false,
+      "implementationCommit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+      "limits": [
+        "Auxiliary-window input and non-page-command Client API requests do not yet reset idle timestamps, so application-wide idle parity is incomplete."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 84,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "timer_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1536,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "option_registration"
+        },
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 87,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "snapshot_hash_consumer"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 51,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "gui_control_timer_archive_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 142,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "real_input_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_model_replay"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_session_autosave.py",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/session_autosave.json",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual AutoSaveLastSession cadence/retry/stopping/serialized-hash suppression and independent backup timestamps; actual CurrentlyIdle boot, user, mouse, API and disabled-mode boundaries."
+      }
     }
   ],
-  "completedOriginalLeafCount": 9,
+  "completedOriginalLeafCount": 10,
   "validation": {
     "reference": "Real-client recorder completed cleanly.",
     "local": [
