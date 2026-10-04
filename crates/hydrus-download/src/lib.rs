@@ -97,12 +97,20 @@ impl Downloader {
     /// engine's, if they have changed (as the reference reads its options
     /// as it goes); whether they had.
     pub fn reload_settings(&self) -> Result<bool, WorkError> {
-        let network: hydrus_store::network::NetworkSettings =
-            self.store.read(hydrus_store::settings::get)?;
+        let (network, definitions) = self.store.read(|conn| {
+            Ok((
+                hydrus_store::settings::get::<hydrus_store::network::NetworkSettings>(conn)?,
+                hydrus_store::settings::get::<Downloaders>(conn)?,
+            ))
+        })?;
         let mut changed = self.net.reload_settings().map_err(WorkError::Network)?;
         if network != *self.network.read() {
             changed = true;
             *self.network.write() = network;
+        }
+        if definitions != **self.definitions.read() {
+            changed = true;
+            *self.definitions.write() = Arc::new(definitions);
         }
         Ok(changed)
     }

@@ -68,4 +68,5 @@ pub mod urls_editor;
 
 pub mod tag_relationships;
 
+pub mod parser_editors;
 pub mod tag_display;

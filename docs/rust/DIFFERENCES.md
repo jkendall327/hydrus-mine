@@ -936,9 +936,16 @@ non-local behavior.
 - A missing or unreadable local file shows its read error within the window;
   the reference logs an exception while opening the window with basics alone.
 
+
 Tag display configuration uses immediate atomic graph/count publication instead
 of the reference's background sibling/parent sync. The native application table
 uses a zero source id solely to represent an explicitly empty queue; absent queues
 retain the default of applying the service's own rules. Native settings preserve
 unknown JSON fields and unedited service settings. Display/search and application
 window integration is being completed in the second slate.
+
+The native parser editor model supports all nine content kinds and typed test
+context. Parser windows are still being integrated. Subsidiary parser editing,
+formula kinds beyond the existing HTML/JSON editors, downloader import/export,
+and remote test-data fetching remain deferred; existing subsidiary parsers and
+unsupported formulas are preserved intact.

@@ -1,0 +1,900 @@
+[
+  {
+    "case": "content",
+    "kind": "urls",
+    "text": "../image.png",
+    "tuple": [
+      30,
+      7,
+      [
+        "urls",
+        7,
+        [
+          27,
+          8,
+          [
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    62,
+                    3,
+                    [
+                      0,
+                      "p",
+                      {},
+                      null,
+                      null,
+                      false,
+                      [
+                        51,
+                        1,
+                        [
+                          3,
+                          "",
+                          null,
+                          null,
+                          "example string"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            1,
+            "href",
+            "",
+            [
+              84,
+              1,
+              [
+                26,
+                3,
+                []
+              ]
+            ]
+          ]
+        ],
+        [
+          7,
+          50
+        ]
+      ]
+    ],
+    "results": [
+      "https://example.com/image.png"
+    ],
+    "error": null,
+    "preview": "*** 1 RESULTS BEGIN ***\ndownloadable/pursuable url (priority 50): https://example.com/image.png\n*** RESULTS END ***",
+    "collapse_newlines": true
+  },
+  {
+    "case": "content",
+    "kind": "tags",
+    "text": "Samus",
+    "tuple": [
+      30,
+      7,
+      [
+        "tags",
+        0,
+        [
+          27,
+          8,
+          [
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    62,
+                    3,
+                    [
+                      0,
+                      "p",
+                      {},
+                      null,
+                      null,
+                      false,
+                      [
+                        51,
+                        1,
+                        [
+                          3,
+                          "",
+                          null,
+                          null,
+                          "example string"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            1,
+            "href",
+            "",
+            [
+              84,
+              1,
+              [
+                26,
+                3,
+                []
+              ]
+            ]
+          ]
+        ],
+        "artist"
+      ]
+    ],
+    "results": [
+      "Samus"
+    ],
+    "error": null,
+    "preview": "*** 1 RESULTS BEGIN ***\ntag: artist:samus\n*** RESULTS END ***",
+    "collapse_newlines": true
+  },
+  {
+    "case": "content",
+    "kind": "notes",
+    "text": "first\n\nsecond",
+    "tuple": [
+      30,
+      7,
+      [
+        "notes",
+        18,
+        [
+          27,
+          8,
+          [
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    62,
+                    3,
+                    [
+                      0,
+                      "p",
+                      {},
+                      null,
+                      null,
+                      false,
+                      [
+                        51,
+                        1,
+                        [
+                          3,
+                          "",
+                          null,
+                          null,
+                          "example string"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            1,
+            "href",
+            "",
+            [
+              84,
+              1,
+              [
+                26,
+                3,
+                []
+              ]
+            ]
+          ]
+        ],
+        "note"
+      ]
+    ],
+    "results": [
+      "first\n\nsecond"
+    ],
+    "error": null,
+    "preview": "*** 1 RESULTS BEGIN ***\nnote \"note\":\nfirst\n\nsecond\n*** RESULTS END ***",
+    "collapse_newlines": false
+  },
+  {
+    "case": "content",
+    "kind": "file hash",
+    "text": "0000000000000000000000000000000000000000000000000000000000000000",
+    "tuple": [
+      30,
+      7,
+      [
+        "file hash",
+        15,
+        [
+          27,
+          8,
+          [
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    62,
+                    3,
+                    [
+                      0,
+                      "p",
+                      {},
+                      null,
+                      null,
+                      false,
+                      [
+                        51,
+                        1,
+                        [
+                          3,
+                          "",
+                          null,
+                          null,
+                          "example string"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            1,
+            "href",
+            "",
+            [
+              84,
+              1,
+              [
+                26,
+                3,
+                []
+              ]
+            ]
+          ]
+        ],
+        [
+          "sha256",
+          "hex"
+        ]
+      ]
+    ],
+    "results": [
+      "0000000000000000000000000000000000000000000000000000000000000000"
+    ],
+    "error": null,
+    "preview": "*** 1 RESULTS BEGIN ***\nsha256 hash: 0000000000000000000000000000000000000000000000000000000000000000\n*** RESULTS END ***",
+    "collapse_newlines": true
+  },
+  {
+    "case": "content",
+    "kind": "timestamp",
+    "text": "1700000000",
+    "tuple": [
+      30,
+      7,
+      [
+        "timestamp",
+        16,
+        [
+          27,
+          8,
+          [
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    62,
+                    3,
+                    [
+                      0,
+                      "p",
+                      {},
+                      null,
+                      null,
+                      false,
+                      [
+                        51,
+                        1,
+                        [
+                          3,
+                          "",
+                          null,
+                          null,
+                          "example string"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            1,
+            "href",
+            "",
+            [
+              84,
+              1,
+              [
+                26,
+                3,
+                []
+              ]
+            ]
+          ]
+        ],
+        0
+      ]
+    ],
+    "results": [
+      "1700000000"
+    ],
+    "error": null,
+    "preview": "*** 1 RESULTS BEGIN ***\nsource/post time: 2023-11-14 22:13:20\n*** RESULTS END ***",
+    "collapse_newlines": true
+  },
+  {
+    "case": "content",
+    "kind": "watcher title",
+    "text": "a &amp; b",
+    "tuple": [
+      30,
+      7,
+      [
+        "watcher title",
+        17,
+        [
+          27,
+          8,
+          [
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    62,
+                    3,
+                    [
+                      0,
+                      "p",
+                      {},
+                      null,
+                      null,
+                      false,
+                      [
+                        51,
+                        1,
+                        [
+                          3,
+                          "",
+                          null,
+                          null,
+                          "example string"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            1,
+            "href",
+            "",
+            [
+              84,
+              1,
+              [
+                26,
+                3,
+                []
+              ]
+            ]
+          ]
+        ],
+        75
+      ]
+    ],
+    "results": [
+      "a & b"
+    ],
+    "error": null,
+    "preview": "*** 1 RESULTS BEGIN ***\nwatcher page title (priority 75): a & b\n*** RESULTS END ***",
+    "collapse_newlines": true
+  },
+  {
+    "case": "content",
+    "kind": "http headers",
+    "text": "token",
+    "tuple": [
+      30,
+      7,
+      [
+        "http headers",
+        22,
+        [
+          27,
+          8,
+          [
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    62,
+                    3,
+                    [
+                      0,
+                      "p",
+                      {},
+                      null,
+                      null,
+                      false,
+                      [
+                        51,
+                        1,
+                        [
+                          3,
+                          "",
+                          null,
+                          null,
+                          "example string"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            1,
+            "href",
+            "",
+            [
+              84,
+              1,
+              [
+                26,
+                3,
+                []
+              ]
+            ]
+          ]
+        ],
+        "Authorization"
+      ]
+    ],
+    "results": [
+      "token"
+    ],
+    "error": null,
+    "preview": "*** 1 RESULTS BEGIN ***\nhttp header \"Authorization\": token\n*** RESULTS END ***",
+    "collapse_newlines": true
+  },
+  {
+    "case": "content",
+    "kind": "temporary variable",
+    "text": "abc",
+    "tuple": [
+      30,
+      7,
+      [
+        "temporary variable",
+        14,
+        [
+          27,
+          8,
+          [
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    62,
+                    3,
+                    [
+                      0,
+                      "p",
+                      {},
+                      null,
+                      null,
+                      false,
+                      [
+                        51,
+                        1,
+                        [
+                          3,
+                          "",
+                          null,
+                          null,
+                          "example string"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            1,
+            "href",
+            "",
+            [
+              84,
+              1,
+              [
+                26,
+                3,
+                []
+              ]
+            ]
+          ]
+        ],
+        "token"
+      ]
+    ],
+    "results": [
+      "abc"
+    ],
+    "error": null,
+    "preview": "*** 1 RESULTS BEGIN ***\ntemp variable \"token\": abc\n*** RESULTS END ***",
+    "collapse_newlines": true
+  },
+  {
+    "case": "content",
+    "kind": "veto",
+    "text": "blocked",
+    "tuple": [
+      30,
+      7,
+      [
+        "veto",
+        8,
+        [
+          27,
+          8,
+          [
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    62,
+                    3,
+                    [
+                      0,
+                      "p",
+                      {},
+                      null,
+                      null,
+                      false,
+                      [
+                        51,
+                        1,
+                        [
+                          3,
+                          "",
+                          null,
+                          null,
+                          "example string"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            1,
+            "href",
+            "",
+            [
+              84,
+              1,
+              [
+                26,
+                3,
+                []
+              ]
+            ]
+          ]
+        ],
+        [
+          true,
+          [
+            51,
+            1,
+            [
+              3,
+              "",
+              null,
+              null,
+              "example string"
+            ]
+          ]
+        ]
+      ]
+    ],
+    "results": null,
+    "error": "veto: veto",
+    "preview": "*** 1 RESULTS BEGIN ***\nveto: veto: veto\n*** RESULTS END ***",
+    "collapse_newlines": true
+  },
+  {
+    "case": "page",
+    "tuple": [
+      58,
+      "edited page",
+      3,
+      [
+        "edited page",
+        "d7ee607b869e4c91dbb899832fd03558213daa8157d2cd4aabc83a5bb921c09d",
+        [
+          55,
+          2,
+          [
+            [],
+            "example string"
+          ]
+        ],
+        [
+          26,
+          3,
+          []
+        ],
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                30,
+                7,
+                [
+                  "notes",
+                  18,
+                  [
+                    27,
+                    8,
+                    [
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              62,
+                              3,
+                              [
+                                0,
+                                "p",
+                                {},
+                                null,
+                                null,
+                                false,
+                                [
+                                  51,
+                                  1,
+                                  [
+                                    3,
+                                    "",
+                                    null,
+                                    null,
+                                    "example string"
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      1,
+                      "href",
+                      "",
+                      [
+                        84,
+                        1,
+                        [
+                          26,
+                          3,
+                          []
+                        ]
+                      ]
+                    ]
+                  ],
+                  "note"
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                30,
+                7,
+                [
+                  "tags",
+                  0,
+                  [
+                    27,
+                    8,
+                    [
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              62,
+                              3,
+                              [
+                                0,
+                                "p",
+                                {},
+                                null,
+                                null,
+                                false,
+                                [
+                                  51,
+                                  1,
+                                  [
+                                    3,
+                                    "",
+                                    null,
+                                    null,
+                                    "example string"
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      1,
+                      "href",
+                      "",
+                      [
+                        84,
+                        1,
+                        [
+                          26,
+                          3,
+                          []
+                        ]
+                      ]
+                    ]
+                  ],
+                  "artist"
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                30,
+                7,
+                [
+                  "urls",
+                  7,
+                  [
+                    27,
+                    8,
+                    [
+                      [
+                        26,
+                        3,
+                        [
+                          [
+                            2,
+                            [
+                              62,
+                              3,
+                              [
+                                0,
+                                "p",
+                                {},
+                                null,
+                                null,
+                                false,
+                                [
+                                  51,
+                                  1,
+                                  [
+                                    3,
+                                    "",
+                                    null,
+                                    null,
+                                    "example string"
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      1,
+                      "href",
+                      "",
+                      [
+                        84,
+                        1,
+                        [
+                          26,
+                          3,
+                          []
+                        ]
+                      ]
+                    ]
+                  ],
+                  [
+                    7,
+                    50
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "https://example.com/post/1"
+        ],
+        {
+          "url": "https://example.com/posts/index.php?id=123456"
+        }
+      ]
+    ],
+    "example_urls": [
+      "https://example.com/post/1"
+    ],
+    "content_count": 3
+  },
+  {
+    "case": "list",
+    "row": [
+      "test page",
+      "https://example.com/post/1",
+      "notes: note, tag mappings: artist, urls: downloadable/pursuable url"
+    ]
+  },
+  {
+    "case": "link",
+    "row": [
+      "test post",
+      "post url",
+      "test page"
+    ],
+    "linked": 1
+  },
+  {
+    "case": "clear_link",
+    "linked": 0
+  }
+]

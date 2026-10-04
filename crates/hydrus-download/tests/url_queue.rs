@@ -713,3 +713,58 @@ async fn missing_files_download_again_in_their_own_queue() {
         .unwrap();
     assert_eq!(all.len(), 1);
 }
+
+#[tokio::test(flavor = "multi_thread")]
+async fn existing_downloader_uses_edited_parser_and_new_link_after_reload() {
+    let s = setup().await;
+    let existing = s.runner.downloader().clone();
+    assert!(existing.definitions().parser("edited").is_none());
+    let mut edited = booru_parser();
+    edited.key = "edited".into();
+    edited.content_parsers[2].kind = ContentKind::Tag {
+        namespace: Some("edited".into()),
+    };
+    s.store
+        .write_and_refresh(move |ctx| {
+            let conn = ctx.conn();
+            let mut definitions: Downloaders = hydrus_store::settings::get(conn)?;
+            definitions.parsers.push(edited);
+            let mut classes: UrlClassSettings = hydrus_store::settings::get(conn)?;
+            classes.parser_keys.push("edited".into());
+            classes.parser_links[0].1 = Some("edited".into());
+            hydrus_store::settings::set(conn, &definitions)?;
+            hydrus_store::settings::set(conn, &classes)
+        })
+        .unwrap();
+    assert!(s.runner.reload_settings().unwrap());
+    assert!(existing.definitions().parser("edited").is_some());
+    s.runner.start_all().unwrap();
+    let queue = s
+        .runner
+        .url_queue_for(Some("edited parser"), None, None)
+        .unwrap();
+    s.runner
+        .pend_urls(
+            queue.id,
+            &[format!("{}/post/1", s.base)],
+            &BTreeSet::new(),
+            &[],
+        )
+        .unwrap();
+    wait_until_done(&s.store, queue.id).await;
+    let seeds = s
+        .store
+        .read(|conn| queues::file_seeds(conn, queue.id))
+        .unwrap();
+    assert_eq!(seeds[0].status, SeedStatus::SuccessfulAndNew);
+    assert_eq!(
+        seeds[0].meta.tags,
+        [
+            "edited:blue eyes",
+            "edited:creator:someone",
+            "edited:post 1"
+        ]
+        .map(str::to_owned)
+        .into()
+    );
+}

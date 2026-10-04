@@ -52,4 +52,5 @@ mod tag_relationships;
 
 mod services_editor;
 
+mod parser_editors;
 mod tag_display;

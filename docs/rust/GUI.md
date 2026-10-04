@@ -1416,9 +1416,21 @@ the reference panels' labels and local/remote action-context transitions;
 model replay, snapshot/count rollback checks, and real-store menu/window tests
 cover the implementation.
 
+
 Tag display configuration now has a typed staged model for per-service single
 file/selection filters, autocomplete query rules and widget defaults, and ordered
 sibling/parent source queues (`hydrus-gui-model/src/tag_display.rs`). Applying
 commits settings, changed display graphs and derived counts atomically. Empty
 application queues survive reopening and daemon refresh. The real reference
 panels and checkbox interlocks are recorded in `oracle/record_tag_display.py`.
+
+The parser editor foundation (`hydrus-gui-model::parser_editors`) owns native
+page/content drafts and direct URL-class links. Its nine typed content kinds,
+URL/post-index/context-variable tests and real parser previews replay
+`oracle/record_parser_editors.py`, which drives the reference's content,
+page, named parser and URL-class link panels. Persistence updates parser keys
+and links in one transaction, preserves generators and unrelated URL settings,
+and rejects concurrent parser/link edits. The existing downloader reloads
+changed parser definitions through its normal settings refresh; a local site
+regression proves an existing downloader follows an edited parser and link.
+Native parser windows are the next integration milestone.
