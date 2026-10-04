@@ -201,7 +201,7 @@ fn replay(fixture: &str) {
                     usize::try_from(action[1].as_u64().unwrap()).unwrap(),
                     action[2].as_bool().unwrap(),
                 ),
-                "example" => editor.example = action[1].as_str().unwrap().to_owned(),
+                "example" => action[1].as_str().unwrap().clone_into(&mut editor.example),
                 "add" => {
                     assert_eq!(said[0], json!({"dialog": "edit conversion"}), "{context}");
                     let adding = editor.adding(last_used.as_ref());
