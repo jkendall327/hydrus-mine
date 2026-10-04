@@ -1420,3 +1420,9 @@ selection is single-row, and deletion asks before removing that row. Existing
 credential/static/temporary dictionary precedence and duplicate-name/blank-value
 semantics match the reference. Step/global cookie matcher and example-domain
 editors remain incomplete, so broad login script/step pages stay partial.
+
+Subscription import-options favourites have reference menu actions and overwrite
+semantics through the native shared editors. Their warnings use the existing
+native information panel, and their popup style follows the native theme. Global
+import-options default management and external-program command editing still have
+separate incomplete coverage; this does not complete those broader controls.

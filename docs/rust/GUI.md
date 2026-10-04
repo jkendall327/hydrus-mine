@@ -2177,3 +2177,12 @@ nonblank and unique within that dictionary, while values can be blank. Rename,
 confirmed deletion, row Cancel and parent Cancel preserve the expected draft
 boundaries. The loopback consumer regression edits a static query argument through
 the native step window and observes it on the actual HTTP request.
+
+Subscription import-options favourites now use the shared star menu. Loading
+replaces the selected subscriptions' staged options; custom loading shows the
+reference's multiple-selection information before opening the shared three-column
+overwrite chooser. Cancel preserves the subscription draft, and Apply writes the
+chosen result to every selected subscription, including the reference's behavior
+after its topmost-selection warning. Profile edits persist independently of the
+subscription dialog. The list offers no save-current action, and closing it cancels
+its open profile/overwrite children and invalidates retained callbacks.

@@ -32,6 +32,7 @@ pub struct Controller {
     busy_changed: Rc<dyn Fn(bool)>,
     active: Cell<bool>,
     busy: Cell<bool>,
+    save_current_allowed: Cell<bool>,
     editor: Rc<RefCell<Option<ImportOptionsWindow>>>,
     prompt: Rc<RefCell<Option<ImportFavouritePromptWindow>>>,
     overwrite: crate::import_options_overwrite_window::Slot,
@@ -65,6 +66,7 @@ impl Controller {
             busy_changed,
             active: Cell::new(true),
             busy: Cell::new(false),
+            save_current_allowed: Cell::new(true),
             editor: Rc::default(),
             prompt: Rc::default(),
             overwrite: Rc::default(),
@@ -73,6 +75,11 @@ impl Controller {
 
     pub fn busy(&self) -> bool {
         self.busy.get()
+    }
+
+    /// Subscription lists have no singular current value to save as a profile.
+    pub fn set_save_current_allowed(&self, allowed: bool) {
+        self.save_current_allowed.set(allowed);
     }
 
     pub fn editing_window(&self) -> Option<ImportOptionsWindow> {
@@ -255,6 +262,9 @@ impl Controller {
                 self.set_busy(true);
             }
             5 => {
+                if !self.save_current_allowed.get() {
+                    return Ok(());
+                }
                 let Some(options) = (self.current)() else {
                     return Ok(());
                 };

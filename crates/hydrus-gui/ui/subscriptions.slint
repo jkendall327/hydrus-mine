@@ -6,6 +6,7 @@
 
 import { Button, CheckBox, LineEdit, ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
+import { ImportFavouriteRow, ImportFavouritesButton } from "import_options_favourites.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 
 // A question asked in a window (the reference's quick dialogs): its title
@@ -181,6 +182,10 @@ export component SubscriptionsWindow inherits Window {
     callback select-subscriptions();
     callback deduplicate();
     callback duplicate();
+    in property <[ImportFavouriteRow]> favourites;
+    in property <bool> import-child-open;
+    callback refresh-favourites();
+    callback favourite(int, string);
     callback copy-import-options();
     callback paste-import-options(int);
     callback clear-import-options();
@@ -250,23 +255,23 @@ export component SubscriptionsWindow inherits Window {
                 alignment: end;
                 Button {
                     text: "add";
-                    enabled: !root.asking && !root.gallery-open;
+                    enabled: !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.add(); }
                 }
                 Button {
                     text: "edit";
-                    enabled: root.one-selected && !root.asking && !root.gallery-open;
+                    enabled: root.one-selected && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.edit(); }
                 }
                 Button {
                     text: "delete";
-                    enabled: root.any-selected && !root.asking && !root.gallery-open;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.delete(); }
                 }
                 Rectangle { width: 12px; }
                 Button {
                     text: "duplicate";
-                    enabled: root.any-selected && !root.asking && !root.gallery-open;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.duplicate(); }
                 }
             }
@@ -275,53 +280,53 @@ export component SubscriptionsWindow inherits Window {
                 alignment: end;
                 Button {
                     text: "merge";
-                    enabled: root.can-merge && !root.asking && !root.gallery-open;
+                    enabled: root.can-merge && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.merge(); }
                 }
                 Button {
                     text: "separate";
-                    enabled: root.can-separate && !root.asking && !root.gallery-open;
+                    enabled: root.can-separate && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.separate(); }
                 }
                 Button {
                     text: "deduplicate";
-                    enabled: root.can-dedupe && !root.asking && !root.gallery-open;
+                    enabled: root.can-dedupe && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.deduplicate(); }
                 }
                 Button {
                     text: "lowercase";
-                    enabled: root.can-lowercase && !root.asking && !root.gallery-open;
+                    enabled: root.can-lowercase && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.lowercase(); }
                 }
                 Rectangle { width: 12px; }
                 Button {
                     text: "pause/resume";
-                    enabled: root.any-selected && !root.asking && !root.gallery-open;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.pause-resume(); }
                 }
                 Button {
                     text: "scrub delays";
-                    enabled: root.can-scrub-delays && !root.asking && !root.gallery-open;
+                    enabled: root.can-scrub-delays && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.scrub-delays(); }
                 }
                 Button {
                     text: "check queries now";
-                    enabled: root.can-check-now && !root.asking && !root.gallery-open;
+                    enabled: root.can-check-now && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.check-now(); }
                 }
                 if root.can-retry-failed: Button {
                     text: "retry failed";
-                    enabled: !root.asking && !root.gallery-open;
+                    enabled: !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.retry-failed(); }
                 }
                 if root.can-retry-ignored: Button {
                     text: "retry ignored";
-                    enabled: !root.asking && !root.gallery-open;
+                    enabled: !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.retry-ignored(); }
                 }
                 Button {
                     text: "reset";
-                    enabled: root.can-reset && !root.asking && !root.gallery-open;
+                    enabled: root.can-reset && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.reset(); }
                 }
             }
@@ -330,28 +335,34 @@ export component SubscriptionsWindow inherits Window {
                 alignment: end;
                 Button {
                     text: "select subscriptions";
-                    enabled: !root.asking && !root.gallery-open;
+                    enabled: !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.select-subscriptions(); }
                 }
                 Button {
                     text: "overwrite downloader";
-                    enabled: root.any-selected && !root.asking && !root.gallery-open;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.overwrite-downloader(); }
                 }
                 Button {
                     text: "overwrite checker options";
-                    enabled: root.any-selected && !root.asking && !root.gallery-open;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.overwrite-checker(); }
                 }
             }
             HorizontalLayout {
                 spacing: 6px;
                 alignment: end;
+                ImportFavouritesButton {
+                    rows: root.favourites; save-current-allowed: false;
+                    enabled: !root.asking && !root.gallery-open && !root.import-child-open;
+                    refresh => { root.refresh-favourites(); }
+                    selected(action, name) => { root.favourite(action, name); }
+                }
                 Text { text: "import options:"; color: Theme.text; vertical-alignment: center; }
                 Text { text: root.import-status; color: Theme.text; vertical-alignment: center; }
                 Button {
                     text: "copy";
-                    enabled: root.one-selected && !root.asking && !root.gallery-open;
+                    enabled: root.one-selected && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.copy-import-options(); }
                 }
                 Rectangle {
@@ -361,7 +372,7 @@ export component SubscriptionsWindow inherits Window {
                         width: parent.width;
                         height: parent.height;
                         text: "paste";
-                        enabled: root.any-selected && !root.asking && !root.gallery-open;
+                        enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open;
                         clicked => { paste-menu.show(); }
                     }
                     paste-menu := PopupWindow {
@@ -386,7 +397,7 @@ export component SubscriptionsWindow inherits Window {
                 }
                 Button {
                     text: "clear";
-                    enabled: root.any-selected && !root.asking && !root.gallery-open;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.clear-import-options(); }
                 }
             }
@@ -406,12 +417,12 @@ export component SubscriptionsWindow inherits Window {
                 spacing: 6px;
                 Button {
                     text: "apply";
-                    enabled: !root.asking && !root.gallery-open;
+                    enabled: !root.asking && !root.gallery-open && !root.import-child-open;
                     clicked => { root.apply(); }
                 }
                 Button {
                     text: "cancel";
-                    enabled: !root.gallery-open;
+                    enabled: !root.gallery-open && !root.import-child-open;
                     clicked => { root.cancel(); }
                 }
             }

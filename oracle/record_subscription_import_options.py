@@ -260,6 +260,46 @@ def record(session):
         template.deleteLater()
         out['ui_favourites'] = ui_record
         button.deleteLater()
+        subscription_favourites = {'steps': [], 'information': [], 'dialogs': []}
+        old_information = G.ClientGUIDialogsMessage.ShowInformation
+        G.ClientGUIDialogsMessage.ShowInformation = lambda parent, message: subscription_favourites['information'].append(message)
+        panel._subscriptions.SelectDatas([], deselect_others=True)
+        panel._LoadFavouriteImportOptionsContainer(incoming)
+        subscription_favourites['steps'].append({'action': 'load without selection', 'rows': rows()})
+        for subscription in selected:
+            subscription.SetImportOptionsContainer(existing.Duplicate())
+        panel._subscriptions.UpdateDatas(selected)
+        panel._subscriptions.SelectDatas(selected, deselect_others=True)
+        panel._LoadFavouriteImportOptionsContainer(incoming)
+        subscription_favourites['steps'].append({'action': 'load selected', 'rows': rows()})
+        for subscription in selected:
+            subscription.SetImportOptionsContainer(existing.Duplicate())
+        panel._subscriptions.UpdateDatas(selected)
+        custom_answers = [False, True]
+        class OverwriteDialog(W.QDialog):
+            def __init__(self, parent, title):
+                super().__init__(parent)
+                self.title = title
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                self.panel.deleteLater()
+            def SetPanel(self, value):
+                self.panel = value
+            def exec(self):
+                self.panel._SetUpOverwrite(O.PASTE_FILL_IN)
+                accepted = custom_answers.pop(0)
+                subscription_favourites['dialogs'].append({'title': self.title,
+                    'accepted': accepted,
+                    'options': normalise(json.loads(self.panel.GetValue().DumpToString()))})
+                return W.QDialog.DialogCode.Accepted if accepted else W.QDialog.DialogCode.Rejected
+        O.ClientGUITopLevelWindowsPanels.DialogEdit = OverwriteDialog
+        for action in ['custom cancel', 'custom accept']:
+            panel._LoadFavouriteImportOptionsContainerCustom(incoming)
+            subscription_favourites['steps'].append({'action': action, 'rows': rows()})
+        O.ClientGUITopLevelWindowsPanels.DialogEdit = old_dialog
+        G.ClientGUIDialogsMessage.ShowInformation = old_information
+        out['subscription_favourites'] = subscription_favourites
         panel.deleteLater()
         return out
     return session.controller.CallBlockingToQt(session.controller.gui, qt)
