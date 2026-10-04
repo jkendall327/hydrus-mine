@@ -1,0 +1,812 @@
+{
+  "initial": {
+    "limit": null,
+    "refresh_sort": true
+  },
+  "queries": [
+    {
+      "implicit": null,
+      "explicit": null,
+      "effective": null,
+      "hashes": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+      ]
+    },
+    {
+      "implicit": null,
+      "explicit": 1,
+      "effective": 1,
+      "hashes": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b"
+      ]
+    },
+    {
+      "implicit": null,
+      "explicit": 8,
+      "effective": 8,
+      "hashes": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189"
+      ]
+    },
+    {
+      "implicit": 3,
+      "explicit": null,
+      "effective": 3,
+      "hashes": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+      ]
+    },
+    {
+      "implicit": 3,
+      "explicit": 1,
+      "effective": 1,
+      "hashes": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b"
+      ]
+    },
+    {
+      "implicit": 3,
+      "explicit": 8,
+      "effective": 8,
+      "hashes": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189"
+      ]
+    }
+  ],
+  "sort_eligibility": [
+    {
+      "enabled": false,
+      "local": true,
+      "code": 0,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 1,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 2,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 3,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 4,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 5,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 6,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 7,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 8,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 9,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 10,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 11,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 12,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 13,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 14,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 15,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 16,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 17,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 18,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 19,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 20,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 21,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 22,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 23,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 24,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 25,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 26,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": true,
+      "code": 27,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 0,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 1,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 2,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 3,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 4,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 5,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 6,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 7,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 8,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 9,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 10,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 11,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 12,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 13,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 14,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 15,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 16,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 17,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 18,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 19,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 20,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 21,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 22,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 23,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 24,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 25,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 26,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": false,
+      "local": false,
+      "code": 27,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 0,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 1,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 2,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 3,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 4,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 5,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 6,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 7,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 8,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 9,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 10,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 11,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 12,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 13,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 14,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 15,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 16,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 17,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 18,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 19,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 20,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 21,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 22,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 23,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 24,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 25,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 26,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": true,
+      "code": 27,
+      "can_sort_at_db": true
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 0,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 1,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 2,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 3,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 4,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 5,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 6,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 7,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 8,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 9,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 10,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 11,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 12,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 13,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 14,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 15,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 16,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 17,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 18,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 19,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 20,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 21,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 22,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 23,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 24,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 25,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 26,
+      "can_sort_at_db": false
+    },
+    {
+      "enabled": true,
+      "local": false,
+      "code": 27,
+      "can_sort_at_db": false
+    }
+  ],
+  "refreshes": [
+    {
+      "enabled": true,
+      "sync": true,
+      "explicit": true,
+      "code": 20,
+      "refresh_count": 1
+    },
+    {
+      "enabled": false,
+      "sync": true,
+      "explicit": true,
+      "code": 20,
+      "refresh_count": 0
+    },
+    {
+      "enabled": true,
+      "sync": false,
+      "explicit": true,
+      "code": 20,
+      "refresh_count": 0
+    },
+    {
+      "enabled": true,
+      "sync": true,
+      "explicit": false,
+      "code": 20,
+      "refresh_count": 0
+    },
+    {
+      "enabled": true,
+      "sync": true,
+      "explicit": true,
+      "code": 3,
+      "refresh_count": 0
+    }
+  ]
+}

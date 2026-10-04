@@ -1197,3 +1197,9 @@ existing pages retain the values captured at construction, as in the reference.
 Native list rows use the desktop client's 22-pixel text-row spacing rather than
 Qt's platform font-metric size hint. Floating results share their highlighting,
 scrolling and selection behavior with embedded results.
+
+The implicit search limit and explicit-limit sort-refresh controls now reach the
+shared search engine and native search pages. Sort-refresh eligibility matches
+the reference's supported system sorts and excludes all-known-file searches;
+namespace/rating sorts and the other unsupported system sorts only reorder the
+current subset. The executor's existing explicit-limit semantics are preserved.

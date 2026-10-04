@@ -378,6 +378,8 @@ pub struct FileSearchSettings {
     pub active_predicate_rows: u32,
     pub autocomplete_rows: u32,
     pub float_autocomplete: bool,
+    pub implicit_limit: Option<u64>,
+    pub refresh_limited_sort: bool,
 }
 
 impl Default for FileSearchSettings {
@@ -388,6 +390,8 @@ impl Default for FileSearchSettings {
             active_predicate_rows: 6,
             autocomplete_rows: 22,
             float_autocomplete: true,
+            implicit_limit: None,
+            refresh_limited_sort: true,
         }
     }
 }

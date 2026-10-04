@@ -1822,3 +1822,10 @@ by default), results height (22 rows), and floating policy when each page is
 created. Both heights accept 1–128 text rows and scroll additional entries. The
 active predicates appear above the search input. Floating results overlay the
 page while the input is focused; embedded results reserve sidebar space.
+
+File Search can set an implicit search limit (none by default; 1–100,000,000).
+The shared query engine applies it only without an explicit `system:limit`, so an
+explicit larger limit overrides it. The sort-refresh preference defaults on:
+changing a supported database sort reruns a synchronized, explicitly limited
+local search to choose its new sorted subset. Paused searches, implicit-only
+limits, all-known-file locations, and unsupported sorts keep the current subset.
