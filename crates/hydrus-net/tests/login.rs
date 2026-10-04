@@ -801,6 +801,7 @@ async fn global_process_cancel_uses_its_owner_id_and_persists_reference_delay_wi
     use hydrus_net::Request;
     use hydrus_store::network_runtime::{Command, JobAction};
     let site = site().await;
+    let sibling = NetEngine::new(site.store.clone(), site.engine.options()).unwrap();
     let fixture = hydrus_testkit::fixture_json("login_demand.json");
     let case = &fixture["cancelled_process"];
     let mut manager = demand_manager(&site.domain, true);
@@ -832,7 +833,7 @@ async fn global_process_cancel_uses_its_owner_id_and_persists_reference_delay_wi
         job: process.id + 100,
         action: JobAction::CancelLogin
     }));
-    assert!(site.engine.runtime_command(&Command {
+    assert!(sibling.runtime_command(&Command {
         epoch: process.epoch.clone(),
         job: process.id,
         action: JobAction::CancelLogin

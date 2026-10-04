@@ -675,9 +675,6 @@ impl NetEngine {
 
     /// Apply a command only to the live request and daemon that were reviewed.
     pub fn runtime_command(&self, command: &network_runtime::Command) -> bool {
-        if command.epoch != self.epoch {
-            return false;
-        }
         if command.action == network_runtime::JobAction::CancelLogin {
             let active = self.login.active.lock();
             if let Some(active) = active
@@ -687,6 +684,9 @@ impl NetEngine {
                 active.job.cancel();
                 return true;
             }
+            return false;
+        }
+        if command.epoch != self.epoch {
             return false;
         }
         let Some(job) = self
