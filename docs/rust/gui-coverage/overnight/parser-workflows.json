@@ -6,12 +6,15 @@
     "40e44a63",
     "3515423e",
     "e4e49485",
-    "811b4cbf"
+    "811b4cbf",
+    "3d45e648",
+    "eea3c644"
   ],
   "validation": {
     "reference_recording": "passed; 27 recursive/scalar/subsidiary states plus 10 parser/formula test-data callback states",
     "formatting": "cargo fmt --all and git diff --check passed",
-    "rust_tests": "authored; root-owned asynchronous CI pending; no heavy local Cargo build"
+    "rust_tests": "authored: recorded model replay, real loopback HTTP GUI consumers and two-engine/reset accounting regression; root asynchronous CI pending; no heavy local Cargo build",
+    "rendered_ui": "headless render assertions authored for formula/page fetch panels; execution through root CI pending"
   },
   "entries": [
     {
@@ -23,27 +26,27 @@
         {
           "relativepath": "crates/hydrus-gui/src/formula_window.rs",
           "line": 155,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "read"
         },
         {
           "relativepath": "crates/hydrus-gui/ui/formula_editors.slint",
           "line": 6,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "FormulaWindow"
         }
       ],
       "test_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/formula_editors.rs",
-          "line": 342,
-          "commit": "811b4cbf",
+          "line": 386,
+          "commit": "eea3c644",
           "symbol": "scalar_formula_controls_match_reference"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/formula_editors.rs",
-          "line": 706,
-          "commit": "811b4cbf",
+          "line": 805,
+          "commit": "eea3c644",
           "symbol": "scalar_formula_controls_preview_processing_cancel_and_save"
         }
       ],
@@ -63,27 +66,27 @@
         {
           "relativepath": "crates/hydrus-gui/src/formula_window.rs",
           "line": 155,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "read"
         },
         {
           "relativepath": "crates/hydrus-gui/ui/formula_editors.slint",
           "line": 6,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "FormulaWindow"
         }
       ],
       "test_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/formula_editors.rs",
-          "line": 342,
-          "commit": "811b4cbf",
+          "line": 386,
+          "commit": "eea3c644",
           "symbol": "scalar_formula_controls_match_reference"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/formula_editors.rs",
-          "line": 706,
-          "commit": "811b4cbf",
+          "line": 805,
+          "commit": "eea3c644",
           "symbol": "scalar_formula_controls_preview_processing_cancel_and_save"
         }
       ],
@@ -103,45 +106,45 @@
         {
           "relativepath": "crates/hydrus-gui/src/formula_window.rs",
           "line": 195,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "open"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/formula_editors.rs",
-          "line": 286,
-          "commit": "811b4cbf",
+          "line": 309,
+          "commit": "eea3c644",
           "symbol": "child_test_data"
         },
         {
           "relativepath": "crates/hydrus-gui/ui/formula_editors.slint",
           "line": 6,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "FormulaWindow"
         }
       ],
       "test_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/formula_editors.rs",
-          "line": 421,
-          "commit": "811b4cbf",
+          "line": 465,
+          "commit": "eea3c644",
           "symbol": "recursive_formula_fields_and_transformed_child_data_match_reference"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/formula_editors.rs",
-          "line": 835,
-          "commit": "811b4cbf",
+          "line": 934,
+          "commit": "eea3c644",
           "symbol": "recursive_nested_children_preview_transformed_examples_and_save"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/formula_editors.rs",
-          "line": 1135,
-          "commit": "811b4cbf",
+          "line": 1234,
+          "commit": "eea3c644",
           "symbol": "recursive_owner_cancel_invalidates_every_depth_and_retained_handle"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
-          "line": 362,
-          "commit": "811b4cbf",
+          "line": 617,
+          "commit": "eea3c644",
           "symbol": "recursive_formula_edits_reach_saved_page_parser_and_consumer"
         }
       ],
@@ -161,39 +164,39 @@
         {
           "relativepath": "crates/hydrus-gui/src/formula_window.rs",
           "line": 195,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "open"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/formula_editors.rs",
-          "line": 269,
-          "commit": "811b4cbf",
+          "line": 292,
+          "commit": "eea3c644",
           "symbol": "put_child"
         },
         {
           "relativepath": "crates/hydrus-gui/ui/formula_editors.slint",
           "line": 6,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "FormulaWindow"
         }
       ],
       "test_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/formula_editors.rs",
-          "line": 495,
-          "commit": "811b4cbf",
+          "line": 539,
+          "commit": "eea3c644",
           "symbol": "zipper_member_queue_and_substitution_match_reference"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/formula_editors.rs",
-          "line": 1016,
-          "commit": "811b4cbf",
+          "line": 1115,
+          "commit": "eea3c644",
           "symbol": "recursive_zipper_queue_matches_reference_and_blocks_parent_mutations"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/formula_editors.rs",
-          "line": 1202,
-          "commit": "811b4cbf",
+          "line": 1301,
+          "commit": "eea3c644",
           "symbol": "zipper_components_exchange_appends_only_formulae_and_exports_selection"
         }
       ],
@@ -212,40 +215,40 @@
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/formula_editors.rs",
-          "line": 257,
-          "commit": "811b4cbf",
+          "line": 280,
+          "commit": "eea3c644",
           "symbol": "child"
         },
         {
           "relativepath": "crates/hydrus-gui/src/formula_window.rs",
           "line": 195,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "open"
         }
       ],
       "test_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/formula_editors.rs",
-          "line": 421,
-          "commit": "811b4cbf",
+          "line": 465,
+          "commit": "eea3c644",
           "symbol": "recursive_formula_fields_and_transformed_child_data_match_reference"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/formula_editors.rs",
-          "line": 835,
-          "commit": "811b4cbf",
+          "line": 934,
+          "commit": "eea3c644",
           "symbol": "recursive_nested_children_preview_transformed_examples_and_save"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/formula_editors.rs",
-          "line": 1135,
-          "commit": "811b4cbf",
+          "line": 1234,
+          "commit": "eea3c644",
           "symbol": "recursive_owner_cancel_invalidates_every_depth_and_retained_handle"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
-          "line": 362,
-          "commit": "811b4cbf",
+          "line": 617,
+          "commit": "eea3c644",
           "symbol": "recursive_formula_edits_reach_saved_page_parser_and_consumer"
         }
       ],
@@ -264,46 +267,46 @@
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/formula_editors.rs",
-          "line": 286,
-          "commit": "811b4cbf",
+          "line": 309,
+          "commit": "eea3c644",
           "symbol": "child_test_data"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/formula_editors.rs",
-          "line": 97,
-          "commit": "811b4cbf",
+          "line": 102,
+          "commit": "eea3c644",
           "symbol": "selected_first"
         },
         {
           "relativepath": "crates/hydrus-gui/src/formula_window.rs",
           "line": 195,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "open"
         }
       ],
       "test_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/formula_editors.rs",
-          "line": 421,
-          "commit": "811b4cbf",
+          "line": 465,
+          "commit": "eea3c644",
           "symbol": "recursive_formula_fields_and_transformed_child_data_match_reference"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/formula_editors.rs",
-          "line": 947,
-          "commit": "811b4cbf",
+          "line": 1046,
+          "commit": "eea3c644",
           "symbol": "recursive_second_formula_can_select_every_transformed_example"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/formula_editors.rs",
-          "line": 835,
-          "commit": "811b4cbf",
+          "line": 934,
+          "commit": "eea3c644",
           "symbol": "recursive_nested_children_preview_transformed_examples_and_save"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
-          "line": 362,
-          "commit": "811b4cbf",
+          "line": 617,
+          "commit": "eea3c644",
           "symbol": "recursive_formula_edits_reach_saved_page_parser_and_consumer"
         }
       ],
@@ -322,40 +325,40 @@
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/formula_editors.rs",
-          "line": 269,
-          "commit": "811b4cbf",
+          "line": 292,
+          "commit": "eea3c644",
           "symbol": "put_child"
         },
         {
           "relativepath": "crates/hydrus-gui/src/formula_window.rs",
           "line": 195,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "open"
         }
       ],
       "test_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/formula_editors.rs",
-          "line": 495,
-          "commit": "811b4cbf",
+          "line": 539,
+          "commit": "eea3c644",
           "symbol": "zipper_member_queue_and_substitution_match_reference"
         },
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/formula_editors.rs",
-          "line": 572,
-          "commit": "811b4cbf",
+          "line": 616,
+          "commit": "eea3c644",
           "symbol": "six_kind_chooser_defaults_match_reference"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/formula_editors.rs",
-          "line": 1016,
-          "commit": "811b4cbf",
+          "line": 1115,
+          "commit": "eea3c644",
           "symbol": "recursive_zipper_queue_matches_reference_and_blocks_parent_mutations"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/formula_editors.rs",
-          "line": 1135,
-          "commit": "811b4cbf",
+          "line": 1234,
+          "commit": "eea3c644",
           "symbol": "recursive_owner_cancel_invalidates_every_depth_and_retained_handle"
         }
       ],
@@ -375,21 +378,21 @@
         {
           "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
           "line": 327,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "open_editor"
         },
         {
           "relativepath": "crates/hydrus-gui/ui/parser_editors.slint",
           "line": 55,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "ParserEditWindow"
         }
       ],
       "test_anchors": [
         {
           "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
-          "line": 463,
-          "commit": "811b4cbf",
+          "line": 718,
+          "commit": "eea3c644",
           "symbol": "subsidiary_separator_uses_converted_data_preserves_newlines_and_saves"
         }
       ],
@@ -411,46 +414,46 @@
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/formula_editors.rs",
-          "line": 97,
-          "commit": "811b4cbf",
+          "line": 102,
+          "commit": "eea3c644",
           "symbol": "selected_first"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/formula_editors.rs",
-          "line": 44,
-          "commit": "811b4cbf",
+          "line": 49,
+          "commit": "eea3c644",
           "symbol": "remember_example"
         },
         {
           "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
           "line": 224,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "test_data"
         },
         {
           "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
           "line": 327,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "open_editor"
         },
         {
           "relativepath": "crates/hydrus-gui/ui/parser_editors.slint",
           "line": 55,
-          "commit": "811b4cbf",
+          "commit": "eea3c644",
           "symbol": "ParserEditWindow"
         }
       ],
       "test_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/formula_editors.rs",
-          "line": 620,
-          "commit": "811b4cbf",
+          "line": 664,
+          "commit": "eea3c644",
           "symbol": "multiple_test_documents_retain_edits_sources_and_selected_child_order"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
-          "line": 619,
-          "commit": "811b4cbf",
+          "line": 874,
+          "commit": "eea3c644",
           "symbol": "multiple_examples_restore_sources_and_propagate_converted_selected_child_data"
         }
       ],
@@ -462,6 +465,138 @@
         ]
       },
       "limitations": []
+    },
+    {
+      "reference_id": "parser-fetch",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Page and content test panels fetch URLs through actual background downloader HTTP jobs with live progress and cancellation. The page example fetch percent-encodes its URL, accepts a referral URL and uses one connection attempt; blank input supplies the first saved example URL without issuing a request. Generic fetch controls use TestPanel semantics. Stored network options, approved headers, cookies and decoded response text reach the test document. HTTP errors retain the page response document; success/error/cancel reset URL/post index while preserving context variables. Fetched examples remain selectable and reach formula/content/separation children through the page converter. Closing an owner cancels and invalidates late results; independent engine bandwidth deltas preserve daemon totals and deleted-history generations.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "line": 327,
+          "commit": "eea3c644",
+          "symbol": "open_editor"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/parser_editors.slint",
+          "line": 55,
+          "commit": "eea3c644",
+          "symbol": "ParserEditWindow"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_test_fetch.rs",
+          "line": 44,
+          "commit": "eea3c644",
+          "symbol": "start"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/formula_editors.rs",
+          "line": 35,
+          "commit": "eea3c644",
+          "symbol": "fetched"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 156,
+          "commit": "eea3c644",
+          "symbol": "fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 106,
+          "commit": "eea3c644",
+          "symbol": "content_test_panel_fetches_raw_data_and_hands_it_to_its_formula"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/formula_editors.rs",
+          "line": 14,
+          "commit": "eea3c644",
+          "symbol": "fetched_documents_replay_reference_success_error_and_cancellation_context"
+        },
+        {
+          "relativepath": "crates/hydrus-net/tests/engine.rs",
+          "line": 1000,
+          "commit": "eea3c644",
+          "symbol": "independent_engines_add_new_usage_without_replacing_each_other_or_double_counting"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_parser_test_data.py",
+        "fixture": "oracle/fixtures/parser_test_data.json",
+        "cases": [
+          "parser_fetch",
+          "parser_default_url",
+          "formula_fetch"
+        ]
+      },
+      "limitations": [
+        "Fetch controls use an inline URL field instead of the reference prompt. Window-local jobs show progress in their test panel rather than the daemon jobs review."
+      ]
+    },
+    {
+      "reference_id": "formula-fetch",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Formula test panels fetch a trimmed URL through actual background downloader HTTP jobs with live progress and cancellation. Requests use the stored network settings, headers, cookies and bandwidth accounting; decoded documents update live formula previews. Successful, failed and cancelled documents preserve variables while assigning requested URL/post index zero. Fetched and pasted examples remain selectable with their source URLs. Parent Apply is blocked during fetching; owner cancellation discards late worker results and leaves the formula draft unapplied.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/formula_window.rs",
+          "line": 195,
+          "commit": "eea3c644",
+          "symbol": "open"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/formula_editors.slint",
+          "line": 6,
+          "commit": "eea3c644",
+          "symbol": "FormulaWindow"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_test_fetch.rs",
+          "line": 44,
+          "commit": "eea3c644",
+          "symbol": "start"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/formula_editors.rs",
+          "line": 35,
+          "commit": "eea3c644",
+          "symbol": "fetched"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/formula_editors.rs",
+          "line": 27,
+          "commit": "eea3c644",
+          "symbol": "formula_fetch_decodes_real_documents_updates_preview_and_discards_closed_owner_results"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/formula_editors.rs",
+          "line": 14,
+          "commit": "eea3c644",
+          "symbol": "fetched_documents_replay_reference_success_error_and_cancellation_context"
+        },
+        {
+          "relativepath": "crates/hydrus-net/tests/engine.rs",
+          "line": 1000,
+          "commit": "eea3c644",
+          "symbol": "independent_engines_add_new_usage_without_replacing_each_other_or_double_counting"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_parser_test_data.py",
+        "fixture": "oracle/fixtures/parser_test_data.json",
+        "cases": [
+          "formula_fetch"
+        ]
+      },
+      "limitations": [
+        "Fetch controls use an inline URL field instead of the reference prompt. Window-local jobs show progress in their test panel rather than the daemon jobs review."
+      ]
     }
   ],
   "uncompleted_parent_progress": [
@@ -475,5 +610,5 @@
       ]
     }
   ],
-  "source_anchor_audit": "All source/test anchors re-reviewed together against committed 811b4cbf; implementation anchors use stable named functions/components."
+  "source_anchor_audit": "All source/test anchors re-reviewed together against committed eea3c644; anchors use stable named functions/components."
 }
