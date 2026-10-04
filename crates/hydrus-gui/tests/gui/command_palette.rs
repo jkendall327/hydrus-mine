@@ -434,7 +434,7 @@ fn persisted_unicode_thresholds_reach_the_async_palette_after_reopening() {
     let page = bound.pages.borrow().shown().key;
     for (threshold, query) in [(2, "ß"), (2, "ﬀ"), (3, "ﬃ")] {
         store
-            .write(|ctx| {
+            .write(move |ctx| {
                 hydrus_store::settings::set(
                     ctx.conn(),
                     &CommandPaletteSettings {
