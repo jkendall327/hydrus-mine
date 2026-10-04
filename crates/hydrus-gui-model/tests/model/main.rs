@@ -82,5 +82,5 @@ mod write_autocomplete;
 
 mod network_job_control;
 
-mod subscription_quality;
 mod gallery_source;
+mod subscription_quality;
