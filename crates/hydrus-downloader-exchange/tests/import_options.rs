@@ -20,14 +20,11 @@ fn recorded_containers_round_trip_all_native_fields_and_pngs() {
 }
 
 #[test]
-fn wrong_objects_future_versions_and_unrepresentable_locations_are_rejected() {
+fn wrong_objects_and_future_versions_are_rejected() {
     let fixture = hydrus_testkit::fixture_json("subscription_import_options.json");
     assert!(import_options::decode_text("[26,3,[]]").is_err());
     assert!(import_options::decode_text("not json").is_err());
     let mut future = fixture["tuples"][0].clone();
     future[1] = json!(999);
     assert!(import_options::decode_text(&future.to_string()).is_err());
-    let mut deleted = fixture["tuples"][0].clone();
-    deleted[2][2][3][1][1][2][0][2][1] = json!(["aa"]);
-    assert!(import_options::decode_text(&deleted.to_string()).is_err());
 }

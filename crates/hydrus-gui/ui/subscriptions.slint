@@ -134,6 +134,7 @@ export component SubscriptionsWindow inherits Window {
     preferred-height: 560px;
     background: Theme.window;
     in property <bool> gallery-open;
+    in-out property <string> import-status;
     // subscriptions paused from the network menu
     in property <bool> globally-paused;
     in property <[TableRow]> rows;
@@ -190,6 +191,11 @@ export component SubscriptionsWindow inherits Window {
     callback cancel();
 
     forward-focus: keys;
+    Timer {
+        interval: 2s;
+        running: root.import-status != "";
+        triggered => { root.import-status = ""; }
+    }
     keys := FocusScope {
         capture-key-pressed(event) => {
             if root.gallery-open { return accept; }
@@ -342,19 +348,26 @@ export component SubscriptionsWindow inherits Window {
                 spacing: 6px;
                 alignment: end;
                 Text { text: "import options:"; color: Theme.text; vertical-alignment: center; }
+                Text { text: root.import-status; color: Theme.text; vertical-alignment: center; }
                 Button {
                     text: "copy";
                     enabled: root.one-selected && !root.asking && !root.gallery-open;
                     clicked => { root.copy-import-options(); }
                 }
-                Button {
-                    text: "paste";
-                    enabled: root.any-selected && !root.asking && !root.gallery-open;
-                    clicked => { paste-menu.show(); }
+                Rectangle {
+                    width: 66px;
+                    height: 28px;
+                    Button {
+                        width: parent.width;
+                        height: parent.height;
+                        text: "paste";
+                        enabled: root.any-selected && !root.asking && !root.gallery-open;
+                        clicked => { paste-menu.show(); }
+                    }
                     paste-menu := PopupWindow {
                         y: parent.height;
-                        width: 245px;
-                        height: 112px;
+                        width: 300px;
+                        height: 148px;
                         Rectangle {
                             background: Theme.panel;
                             border-width: 1px;
@@ -362,6 +375,8 @@ export component SubscriptionsWindow inherits Window {
                             VerticalLayout {
                                 padding: 4px;
                                 spacing: 2px;
+                                Button { text: "custom paste: choose what you want"; clicked => { paste-menu.close(); root.paste-import-options(3); } }
+                                Rectangle { height: 1px; background: Theme.border; }
                                 Button { text: "merge-paste"; clicked => { paste-menu.close(); root.paste-import-options(0); } }
                                 Button { text: "fill-in-gaps-paste"; clicked => { paste-menu.close(); root.paste-import-options(1); } }
                                 Button { text: "replace-paste"; clicked => { paste-menu.close(); root.paste-import-options(2); } }

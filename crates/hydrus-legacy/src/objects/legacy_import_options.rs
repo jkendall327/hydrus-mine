@@ -26,8 +26,8 @@ use hydrus_core::mime::{Mime, specific_filetype_codes, summarise_filetype_codes}
 
 use super::domain::expect;
 use super::import_options::{
-    check, core_tag_filter, file_filtering, keys, locations, notes_from, opt_resolution, opt_u64,
-    prefetch, presentation, service_tags, tag_filtering, tags,
+    check, core_tag_filter, deleted_keys, file_filtering, keys, locations, notes_from,
+    opt_resolution, opt_u64, prefetch, presentation, service_tags, tag_filtering, tags,
 };
 use super::location::LocationContext;
 use super::tag_filter::TagFilter;
@@ -254,6 +254,7 @@ fn location_options(
     };
     Ok(LocationOptions {
         destinations: keys(context),
+        deleted_destinations: deleted_keys(context),
         automatically_archive,
         associate_primary_urls,
         associate_source_urls,

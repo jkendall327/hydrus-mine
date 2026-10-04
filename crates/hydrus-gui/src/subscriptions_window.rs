@@ -82,6 +82,7 @@ struct AsRead {
 
 /// The dialog's state while it is open.
 struct Open {
+    services: Arc<hydrus_store::store::Snapshot>,
     dialog: Subscriptions,
     /// Each subscription as read, by id.
     read: HashMap<i64, AsRead>,
@@ -133,6 +134,7 @@ fn read(store: &Store) -> hydrus_store::Result<Open> {
         }
         let naming: hydrus_core::pages::PageNameSettings = hydrus_store::settings::get(conn)?;
         Ok(Open {
+            services: store.snapshot(),
             dialog: Subscriptions::new(loaded),
             read,
             short: ShortSummary {
@@ -365,7 +367,23 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
     let rows: Vec<TableRow> = dialog
         .rows(now, open.short)
         .into_iter()
-        .map(|(_, cells, selected)| {
+        .map(|(key, mut cells, selected)| {
+            if let Some(subscription) = dialog.get(key) {
+                cells[8] = crate::import_options_editor::container_summary(
+                    &subscription.settings.import_options,
+                    &|key| {
+                        hex::decode(key)
+                            .ok()
+                            .and_then(|key| {
+                                open.services
+                                    .services
+                                    .by_key(&hydrus_core::ServiceKey::new(key))
+                                    .ok()
+                            })
+                            .map_or_else(|| "unknown service".into(), |s| s.name.clone())
+                    },
+                );
+            }
             let cells: Vec<SharedString> = cells.into_iter().map(Into::into).collect();
             TableRow {
                 cells: ModelRc::new(VecModel::from(cells)),
@@ -1193,6 +1211,7 @@ pub(crate) fn open(
         }
     });
     window.on_copy_import_options({
+        let weak = window.as_weak();
         let state = state.clone();
         let change = change.clone();
         let active = active.clone();
@@ -1212,7 +1231,12 @@ pub(crate) fn open(
                 return;
             };
             match hydrus_downloader_exchange::import_options::encode_text(&options) {
-                Ok(text) => crate::to_clipboard(&crate::Clip::Text(text)),
+                Ok(text) => {
+                    crate::to_clipboard(&crate::Clip::Text(text));
+                    if let Some(window) = weak.upgrade() {
+                        window.set_import_status("Copied!".into());
+                    }
+                }
                 Err(error) => {
                     change(&|open| open.asking = Some(Asking::Message(error.to_string())))
                 }
@@ -1220,6 +1244,7 @@ pub(crate) fn open(
         }
     });
     window.on_paste_import_options({
+        let weak = window.as_weak();
         let state = state.clone();
         let change = change.clone();
         let active = active.clone();
@@ -1232,7 +1257,10 @@ pub(crate) fn open(
                 hydrus_downloader_exchange::import_options::decode_text(&text).map_err(|e|
                     format!("Could not understand the clipboard as JSON-serialised Import Options Container.\n\n{e}")));
             match decoded {
-                Ok(options) => change(&|open| open.dialog.paste_import_options(&keys, mode, &options)),
+                Ok(options) => {
+                    change(&|open| open.dialog.paste_import_options(&keys, mode, &options));
+                    if let Some(window) = weak.upgrade() { window.set_import_status("Pasted!".into()); }
+                }
                 Err(error) => change(&|open| open.asking = Some(Asking::Message(error.clone()))),
             }
         }

@@ -30,14 +30,17 @@ fn filter(value: &TagFilter) -> Value {
         .collect::<Vec<_>>();
     json!([44, 1, rows])
 }
-fn location(keys: &[String]) -> Result<Value> {
-    for key in keys {
+fn location(keys: &[String], deleted: &[String]) -> Result<Value> {
+    for key in keys.iter().chain(deleted) {
         crate::encode::valid_key(key)?;
     }
     let mut keys = keys.to_vec();
     keys.sort();
     keys.dedup();
-    Ok(json!([103, 1, [keys, []]]))
+    let mut deleted = deleted.to_vec();
+    deleted.sort();
+    deleted.dedup();
+    Ok(json!([103, 1, [keys, deleted]]))
 }
 
 /// Encode all present kinds, leaving inherited kinds absent.
@@ -89,7 +92,7 @@ pub fn tuple(slice: &ImportOptionsSlice) -> Result<Value> {
                 149,
                 1,
                 [
-                    location(&o.destinations)?,
+                    location(&o.destinations, &o.deleted_destinations)?,
                     o.automatically_archive,
                     o.associate_primary_urls,
                     o.associate_source_urls,
@@ -156,7 +159,14 @@ pub fn tuple(slice: &ImportOptionsSlice) -> Result<Value> {
             PresentationInbox::RequireInbox => 1,
             PresentationInbox::AndIncludeAllInbox => 2,
         };
-        add(6, json!([108, 2, [location(&o.location)?, status, inbox]]));
+        add(
+            6,
+            json!([
+                108,
+                2,
+                [location(&o.location, &o.deleted_location)?, status, inbox]
+            ]),
+        );
     }
     if let Some(o) = &slice.external_programs {
         let entries: Value = o.stored.as_ref().map_or_else(
@@ -179,31 +189,13 @@ pub fn encode_text(slice: &ImportOptionsSlice) -> Result<String> {
     Ok(text)
 }
 
-/// Decode atomically; reject location contexts the native importer cannot represent.
+/// Decode every kind atomically, retaining current and deleted location contexts.
 pub fn decode_text(text: &str) -> Result<ImportOptionsSlice> {
     if text.len() > MAX_BYTES {
         return Err(Error::Limit);
     }
     let object =
         SerialisableObject::from_tuple_str(text).map_err(|e| Error::Invalid(e.to_string()))?;
-    let value: Value = serde_json::from_str(text).map_err(|e| Error::Invalid(e.to_string()))?;
-    if let Some(rows) = value.pointer("/2/2").and_then(Value::as_array) {
-        for row in rows {
-            let context = match row.pointer("/0/1").and_then(Value::as_u64) {
-                Some(3 | 6) => row.pointer("/1/1/2/0"),
-                _ => None,
-            };
-            if context
-                .and_then(|v| v.pointer("/2/1"))
-                .and_then(Value::as_array)
-                .is_some_and(|keys| !keys.is_empty())
-            {
-                return Err(Error::Unsupported(
-                    "deleted file-domain import contexts are not yet supported".into(),
-                ));
-            }
-        }
-    }
     import_options::slice(&object).map_err(|e| Error::Unsupported(e.to_string()))
 }
 

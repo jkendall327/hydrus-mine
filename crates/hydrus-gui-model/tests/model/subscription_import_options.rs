@@ -34,7 +34,7 @@ fn subscription_paste_modes_and_clear_match_recorded_reference_outputs() {
         .as_array()
         .unwrap()
         .iter()
-        .take(3)
+        .take(4)
         .enumerate()
     {
         for subscription in &mut dialog.subscriptions {
@@ -55,6 +55,7 @@ fn subscription_paste_modes_and_clear_match_recorded_reference_outputs() {
                 import_options::tuple(&subscription.settings.import_options).unwrap(),
                 row["options"]
             );
+            assert_eq!(subscription.facts().import_options, row["summary"]);
         }
     }
     dialog.clear_import_options(&keys[..1]);

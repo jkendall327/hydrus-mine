@@ -35,10 +35,11 @@ def record(session):
     def qt():
         from qtpy import QtWidgets as W
         from hydrus.core import HydrusConstants as HC
-        from hydrus.client import ClientConstants as CC
+        from hydrus.client import ClientLocation
         from hydrus.client.gui import ClientGUISubscriptions as G
         from hydrus.client.gui import ClientGUIDialogsQuick as Q
         from hydrus.client.importing import ClientImportSubscriptions as Subs
+        from hydrus.client.importing.options import ImportOptionsConstants as IOC
         from hydrus.client.importing.options import ImportOptionsContainer as C
         from hydrus.client.importing.options import PrefetchImportOptions as PF
         from hydrus.client.importing.options import FileFilteringImportOptions as FF
@@ -88,6 +89,15 @@ def record(session):
         presentation._presentation_inbox = 1
         varied.SetImportOptions(presentation)
         variants.append(varied.GetSerialisableTuple())
+        with_deleted = varied.Duplicate()
+        deleted_context = ClientLocation.LocationContext(current_service_keys=[], deleted_service_keys=list(L.LocationImportOptions().GetDestinationLocationContext().current_service_keys))
+        deleted_presentation = presentation.Duplicate()
+        deleted_presentation._location_context = deleted_context
+        with_deleted.SetImportOptions(deleted_presentation)
+        deleted_locations = L.LocationImportOptions()
+        deleted_locations.SetDestinationLocationContext(deleted_context)
+        with_deleted.SetImportOptions(deleted_locations)
+        variants.append(with_deleted.GetSerialisableTuple())
 
         existing = C.ImportOptionsContainer()
         existing.SetImportOptions(PF.PrefetchImportOptions())
@@ -120,6 +130,7 @@ def record(session):
         Q.GetYesNo = ask
         def rows():
             return [{'name': subscription.GetName(),
+                     'summary': subscription.GetImportOptionsContainer().GetSummary(IOC.IMPORT_OPTIONS_CALLER_TYPE_SUBSCRIPTION),
                      'options': normalise(json.loads(subscription.GetImportOptionsContainer().DumpToString()))}
                     for subscription in panel._subscriptions.GetData()]
         selected = panel._subscriptions.GetData()
@@ -132,7 +143,8 @@ def record(session):
         panel._subscriptions.SelectDatas(selected)
         for label, method in [('merge-paste', panel._PasteImportOptionsContainers),
                               ('fill-in-gaps-paste', panel._PasteImportOptionsContainersMerge),
-                              ('replace-paste', panel._PasteImportOptionsContainersFillIn)]:
+                              ('replace-paste', panel._PasteImportOptionsContainersFillIn),
+                              ('custom paste: choose what you want', panel._PasteImportOptionsContainerCustom)]:
             for subscription in selected:
                 subscription.SetImportOptionsContainer(existing)
             clipboard['text'] = incoming.DumpToString()

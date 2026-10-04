@@ -185,7 +185,10 @@ impl DialogSubscription {
                 .iter()
                 .map(|q| q.facts(&self.settings))
                 .collect(),
-            import_options: String::new(),
+            import_options: crate::import_options_editor::container_summary(
+                &self.settings.import_options,
+                &str::to_owned,
+            ),
         }
     }
 
@@ -234,7 +237,7 @@ impl ImportOptionsPaste {
     /// The actual v688 subscription popup binding, verified by the recorder.
     pub fn from_menu_index(index: usize) -> Option<Self> {
         match index {
-            0 => Some(Self::Replace),
+            0 | 3 => Some(Self::Replace),
             1 => Some(Self::Merge),
             2 => Some(Self::FillIn),
             _ => None,
