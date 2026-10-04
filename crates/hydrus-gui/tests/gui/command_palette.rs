@@ -2,7 +2,10 @@
 use hydrus_core::pages::FavouriteSearch;
 use hydrus_gui::{CommandPaletteWindow, MainWindow, Pages, bind, headless};
 use hydrus_store::command_palette::{CommandPaletteSettings, Provider};
-use slint::{ComponentHandle as _, Model as _};
+use slint::{
+    ComponentHandle as _, Model as _,
+    platform::{Key, PointerEventButton, WindowEvent},
+};
 use std::time::{Duration, Instant};
 
 fn names(window: &CommandPaletteWindow) -> Vec<String> {
@@ -68,7 +71,7 @@ fn ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions() {
     let favourite = FavouriteSearch {
         folder: Some("Palette Folder".into()),
         name: "Favourite Alpha".into(),
-        search: Default::default(),
+        search: hydrus_core::search::FileSearchContext::default(),
         synchronised: false,
         sort: None,
         collect: None,
@@ -84,7 +87,6 @@ fn ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions() {
         .unwrap();
     ui.show().unwrap();
     let _image = headless::render(&windows.get(0).unwrap(), 1000, 700);
-    use slint::platform::{Key, PointerEventButton, WindowEvent};
     // Changing pages deliberately retains focus by default. Give the actual
     // search input focus through a rendered mouse click before sending keys.
     assert!(ui.get_autocomplete_anchor_width() > 64.0);
@@ -370,7 +372,7 @@ fn saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palet
     let favourite = FavouriteSearch {
         name: "Favourite Beta".into(),
         folder: None,
-        search: Default::default(),
+        search: hydrus_core::search::FileSearchContext::default(),
         synchronised: false,
         sort: None,
         collect: None,

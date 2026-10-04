@@ -1152,7 +1152,7 @@ fn subscription_missing_history_asks_original_question_before_staging_or_persist
         assert!(rows(&dialog).is_empty());
         dialog.invoke_apply();
         assert!(bound.subscriptions.borrow().is_some());
-        dialog.invoke_chosen(if accepted { 0 } else { 1 });
+        dialog.invoke_chosen(i32::from(!accepted));
         assert_eq!(rows(&dialog).len(), usize::from(accepted));
         assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
         if accepted {

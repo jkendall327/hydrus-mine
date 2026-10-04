@@ -3,7 +3,7 @@ use hydrus_gui::{MainWindow, Pages, bind, headless};
 use hydrus_store::import_folders;
 use slint::{ComponentHandle as _, Model as _};
 
-fn rows(rows: slint::ModelRc<hydrus_gui::TableRow>) -> Vec<Vec<String>> {
+fn rows(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<Vec<String>> {
     (0..rows.row_count())
         .map(|i| {
             let row = rows.row_data(i).unwrap();
@@ -14,7 +14,7 @@ fn rows(rows: slint::ModelRc<hydrus_gui::TableRow>) -> Vec<Vec<String>> {
         .collect()
 }
 
-fn selected(rows: slint::ModelRc<hydrus_gui::TableRow>) -> Vec<usize> {
+fn selected(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<usize> {
     (0..rows.row_count())
         .filter(|&i| rows.row_data(i).unwrap().selected)
         .collect()
@@ -91,21 +91,21 @@ fn real_lists_replay_reference_and_save_folder_consumers_without_stale_callbacks
                 step["calls"][0]["initial"][1].as_str().unwrap()
             );
             // The child freezes service, selection and parent Apply callbacks.
-            let before = rows(dialog.get_quick_rows());
+            let before = rows(&dialog.get_quick_rows());
             dialog.invoke_service_chosen(99);
             dialog.invoke_rule_clicked(true, 99, false, false);
             dialog.invoke_apply();
             assert!(bound.folders.filename_tagging.borrow().is_some());
-            assert_eq!(rows(dialog.get_quick_rows()), before);
+            assert_eq!(rows(&dialog.get_quick_rows()), before);
             if let Some(attempts) = step["attempts"].as_array() {
                 for attempt in attempts {
-                    let before = rows(dialog.get_quick_rows());
+                    let before = rows(&dialog.get_quick_rows());
                     dialog.set_rule_namespace(attempt[0].as_str().unwrap().into());
                     dialog.set_rule_regex(attempt[1].as_str().unwrap().into());
                     dialog.invoke_rule_entered();
                     if dialog.get_rule_child() {
                         assert!(!dialog.get_errors().is_empty());
-                        assert_eq!(rows(dialog.get_quick_rows()), before);
+                        assert_eq!(rows(&dialog.get_quick_rows()), before);
                     }
                 }
             } else {
@@ -129,13 +129,13 @@ fn real_lists_replay_reference_and_save_folder_consumers_without_stale_callbacks
         }
         let expected = &step["state"];
         assert_eq!(
-            serde_json::json!(rows(dialog.get_quick_rows())),
+            serde_json::json!(rows(&dialog.get_quick_rows())),
             expected["quick"],
             "{step}"
         );
         assert_eq!(
             serde_json::json!(
-                rows(dialog.get_regex_rows())
+                rows(&dialog.get_regex_rows())
                     .into_iter()
                     .flatten()
                     .collect::<Vec<_>>()
@@ -143,8 +143,8 @@ fn real_lists_replay_reference_and_save_folder_consumers_without_stale_callbacks
             expected["regexes"],
             "{step}"
         );
-        let quick = rows(dialog.get_quick_rows());
-        let chosen: Vec<_> = selected(dialog.get_quick_rows())
+        let quick = rows(&dialog.get_quick_rows());
+        let chosen: Vec<_> = selected(&dialog.get_quick_rows())
             .into_iter()
             .map(|i| quick[i].clone())
             .collect();
@@ -154,7 +154,7 @@ fn real_lists_replay_reference_and_save_folder_consumers_without_stale_callbacks
             "{step}"
         );
         assert_eq!(
-            serde_json::json!(selected(dialog.get_regex_rows())),
+            serde_json::json!(selected(&dialog.get_regex_rows())),
             expected["regex_selected"],
             "{step}"
         );
@@ -261,7 +261,7 @@ fn real_lists_replay_reference_and_save_folder_consumers_without_stale_callbacks
         .unwrap()
         .clone_strong();
     assert_eq!(
-        serde_json::json!(rows(canceled.get_quick_rows())),
+        serde_json::json!(rows(&canceled.get_quick_rows())),
         fixture["reopened"]["quick"]
     );
     canceled.invoke_rule_action("quick_add".into());

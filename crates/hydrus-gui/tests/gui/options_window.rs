@@ -4351,7 +4351,7 @@ fn viewing_menu_preferences_apply_to_real_menu_lines_and_cancel_preserves_them()
         show_page(&options, "file viewing statistics");
         let (menu, control) = row(&options, "Show viewing stats on media right-click menus?:");
         assert_eq!(control.kind, 5);
-        options.invoke_choice_chosen(menu, if event["style"] == 3 { 1 } else { 0 });
+        options.invoke_choice_chosen(menu, i32::from(event["style"] == 3));
         let (ticks, control) = row(&options, "Which views to show?:");
         assert_eq!(control.kind, 23);
         assert_eq!(control.items.row_count(), 3);
@@ -4389,7 +4389,7 @@ fn viewing_menu_preferences_apply_to_real_menu_lines_and_cancel_preserves_them()
             &store,
             Some(file),
             (&[file], hydrus_gui::status::Items::files(1)),
-            &Default::default(),
+            &hydrus_core::media_viewer::InfoLineSettings::default(),
             now,
         )
         .unwrap();
