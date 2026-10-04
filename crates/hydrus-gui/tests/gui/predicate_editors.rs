@@ -650,6 +650,79 @@ fn the_editor_window_adds_what_it_makes_to_the_search() {
 }
 
 #[test]
+fn native_viewtime_milliseconds_survive_accept_recent_reopen_and_cancel() {
+    use hydrus_core::search::{predicate::ViewingStat, recent::RecentPredicates};
+    let fixture = hydrus_testkit::fixture_json("viewtime_milliseconds.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("".into());
+    for milliseconds in [345, 1001] {
+        let case = fixture["cases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|case| {
+                case["milliseconds"] == milliseconds
+                    && case["operator"] == "="
+                    && case["locations"] == serde_json::json!(["media"])
+            })
+            .unwrap();
+        ui.invoke_suggestion_chosen(suggestion(&ui, "system:file viewing statistics"));
+        let window = bound
+            .predicate_editor
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        window.invoke_chose(1, 2, 2);
+        for (field, value) in [
+            (3, 0),
+            (4, 0),
+            (5, 0),
+            (6, milliseconds / 1000),
+            (7, milliseconds % 1000),
+        ] {
+            window.invoke_number_edited(1, field, value);
+        }
+        window.invoke_ok(1);
+        assert!(bound.predicate_editor.borrow().is_none());
+        assert!(shown_predicates(&ui).contains(&case["text"].as_str().unwrap().to_owned()));
+        let recent: RecentPredicates = store.read(hydrus_store::settings::get).unwrap();
+        let hydrus_search::SystemPredicate::FileViewingStats { stat, value, .. } =
+            recent.by_type[&29][0]
+        else {
+            panic!("missing viewing predicate");
+        };
+        assert_eq!(stat, ViewingStat::ViewTimeMilliseconds);
+        assert_eq!(value, u64::try_from(milliseconds).unwrap());
+    }
+    let before: RecentPredicates = store.read(hydrus_store::settings::get).unwrap();
+    ui.invoke_suggestion_chosen(suggestion(&ui, "system:file viewing statistics"));
+    let window = bound
+        .predicate_editor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        window.get_recent().row_data(0).unwrap(),
+        "system:viewtime in media = 1.0 seconds"
+    );
+    window.invoke_number_edited(1, 7, 999);
+    window.invoke_cancel();
+    window.invoke_ok(1);
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<RecentPredicates>)
+            .unwrap(),
+        before
+    );
+    assert_eq!(shown_predicates(&ui).len(), 2);
+}
+
+#[test]
 fn the_editor_window_shows_what_trees_and_buttons_change() {
     let boundaries = hydrus_testkit::fixture_json("predicate_boundaries.json");
     let (_dirs, store) = store();

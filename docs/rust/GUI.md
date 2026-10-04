@@ -2568,6 +2568,14 @@ late results cannot revive a closed palette or replace a newer query. Native
 window and launch wiring is still being added; these helpers alone do not yet
 expose a command palette in the client.
 
+System viewing-time predicates retain the millisecond field, including when
+importing stored Python predicates or reopening recent entries. The labels and
+actual matching file hashes are recorded from the real editor and database in
+`oracle/fixtures/viewtime_milliseconds.json`: 96 combinations of thresholds,
+comparisons and canvas selections. Whole-second predicates keep their existing
+stored representation. Queries reproduce the reference's conversion back to
+integer milliseconds, including its 1.001-second floating-point boundary.
+
 A shared write autocomplete selection can now copy tags, subtags, underscore
 variants, counts and deduplicated parents together. Its context menu opens the
 selection as an AND or OR search, one search page per tag, or a duplicate-filter

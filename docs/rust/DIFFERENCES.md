@@ -215,10 +215,14 @@ search.
   such as "ß", which we fold to "ss" as it does).
 
 - **System predicate editors type dates** ("2011-06-04", and "13:05") where
-  the reference's have a calendar and a time box, and a viewing time is
-  kept to the second (the reference keeps its milliseconds, though it
-  never shows them; one stored by hydrus comes across to the nearest
-  second). A file size in terabytes, which the reference's editor offers
+  the reference's have a calendar and a time box. Viewing-time predicates
+  now preserve the millisecond fields through creation, reference import,
+  recent predicates and database searches, including the reference's
+  floating-point truncation at the query boundary. The free-text parser
+  continues to accept whole-second viewtime intervals. Legacy viewtimes
+  with submillisecond precision round to the nearest millisecond; exact
+  arbitrary-float import parity remains unfinished. A file size in
+  terabytes, which the reference's editor offers
   but can't write out ("error:cannot render this predicate"), is written
   "200TB"; neither parser takes "TB". Their radio buttons are drop-downs
   (as are the like/dislike and star controls of "system:rating"), and an

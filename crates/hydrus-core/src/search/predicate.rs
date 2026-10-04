@@ -155,7 +155,8 @@ pub enum SystemPredicate {
     },
     /// Whether the file is the best quality file (king) of its duplicate group.
     BestQualityOfGroup { is_best: bool },
-    /// File viewing statistics: view count, or total view time in seconds.
+    /// File viewing statistics; `stat` determines whether `value` is a count,
+    /// whole seconds or milliseconds.
     FileViewingStats {
         stat: ViewingStat,
         canvases: ViewCanvases,
@@ -397,6 +398,20 @@ pub enum ViewingStat {
     Views,
     /// Total view time, in seconds.
     ViewTime,
+    /// Total view time, in milliseconds, for fractional-second predicates.
+    /// Whole-second predicates retain `ViewTime` for stored compatibility.
+    ViewTimeMilliseconds,
+}
+
+impl ViewingStat {
+    /// Keep the editor's precision while preserving existing whole-second values.
+    pub fn from_viewtime_milliseconds(milliseconds: u64) -> (Self, u64) {
+        if milliseconds.is_multiple_of(1000) {
+            (Self::ViewTime, milliseconds / 1000)
+        } else {
+            (Self::ViewTimeMilliseconds, milliseconds)
+        }
+    }
 }
 
 /// Where views are counted.
