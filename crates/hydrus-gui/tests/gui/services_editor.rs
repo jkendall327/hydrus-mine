@@ -160,6 +160,19 @@ fn open(ui: &MainWindow) {
 #[test]
 fn staged_rating_config_applies_and_cancel_writes_nothing() {
     let (_dirs, store) = crate::subscriptions::store();
+    store
+        .write_and_refresh(|ctx| {
+            hydrus_store::services::insert(
+                ctx.conn(),
+                &hydrus_core::ServiceKey::new(vec![91; 32]),
+                "protected IPFS",
+                &hydrus_store::services::ServiceKind::Ipfs(
+                    hydrus_store::services::RepositoryConfig::default(),
+                ),
+            )
+            .map(|_| ())
+        })
+        .unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
@@ -173,15 +186,41 @@ fn staged_rating_config_applies_and_cancel_writes_nothing() {
         .unwrap()
         .clone_strong();
     assert_eq!(manage.get_window_title(), "edit services");
-    let unavailable = manage
+    let api = manage
         .get_rows()
         .iter()
         .position(|r| r.cells.row_data(0).unwrap() == "client api")
         .unwrap();
+    manage.invoke_row_clicked(i32::try_from(api).unwrap(), false, false);
+    assert!(manage.get_can_edit(), "supported API settings are editable");
+    assert!(
+        !manage.get_can_delete(),
+        "the built-in API service remains protected"
+    );
+    let rows = manage.get_rows().row_count();
+    manage.invoke_delete_clicked();
+    assert!(manage.get_question().is_empty());
+    assert_eq!(manage.get_rows().row_count(), rows);
+    manage.invoke_edit_clicked();
+    let api_edit = bound
+        .services_editor
+        .edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(api_edit.get_client_api());
+    assert!(!api_edit.get_rating());
+    api_edit.invoke_cancel_clicked();
+    let unavailable = manage
+        .get_rows()
+        .iter()
+        .position(|r| r.cells.row_data(0).unwrap() == "protected IPFS")
+        .unwrap();
     manage.invoke_row_clicked(i32::try_from(unavailable).unwrap(), false, false);
     assert!(!manage.get_can_edit());
-    // Row activation invokes the same callback as the edit button: it must
-    // respect unavailable service kinds even when a caller bypasses the button.
+    assert!(!manage.get_can_delete());
+    // Direct activation still respects unsupported remote-service protection.
     manage.invoke_edit_clicked();
     assert!(bound.services_editor.edit.borrow().is_none());
     assert!(manage.get_error().contains("not available here yet"));
