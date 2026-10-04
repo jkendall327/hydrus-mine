@@ -1,0 +1,139 @@
+{
+  "agent": "cookies",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "claims": [
+    {
+      "reference_id": "cookies-export",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "exact_behavior": "Both browser and session-cookie windows export only selected cookies using the reference five-field JSON shape. Empty selection does not overwrite clipboard; browser combines cookies from selected sessions. Secure/rest attributes are omitted by the reference format.",
+      "implementation_commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/network_sessions_window.rs",
+          "line": 386,
+          "symbol": "window.on_export_clicked",
+          "commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_sessions.rs",
+          "line": 396,
+          "symbol": "fn cookie_exchange_widgets_confirm",
+          "commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/network_sessions.rs",
+          "line": 207,
+          "symbol": "pub fn import_cookie_clipboard",
+          "commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/network_sessions.rs",
+          "line": 342,
+          "symbol": "fn cookie_exchange_replays",
+          "commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/cookie_exchange.json",
+      "limitations": [
+        "Cookie-list imports are detached drafts, unlike immediate Qt writes.",
+        "No drag/drop; file picker accepts UTF-8 and caps each input at 8 MiB/10,000 identities. Expired cookies remain visible but are not sent."
+      ],
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    },
+    {
+      "reference_id": "cookies-file",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "exact_behavior": "Both windows expose real system cookies.txt file selection; cancellation changes nothing. Mozilla/Netscape tab-separated decoding preserves domain/path/value-or-null, secure and HTTPOnly; expiry zero/empty becomes session. Duplicate domain/path/name uses last value; malformed or unreadable selections reject atomically. Browser commits domain silos immediately; cookie list stages until Apply.",
+      "implementation_commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/network_sessions_window.rs",
+          "line": 440,
+          "symbol": "window.on_import_file_clicked",
+          "commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_sessions.rs",
+          "line": 396,
+          "symbol": "fn cookie_exchange_widgets_confirm",
+          "commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/network_sessions.rs",
+          "line": 207,
+          "symbol": "pub fn import_cookie_clipboard",
+          "commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/network_sessions.rs",
+          "line": 342,
+          "symbol": "fn cookie_exchange_replays",
+          "commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/cookie_exchange.json",
+      "limitations": [
+        "Cookie-list imports are detached drafts, unlike immediate Qt writes.",
+        "No drag/drop; file picker accepts UTF-8 and caps each input at 8 MiB/10,000 identities. Expired cookies remain visible but are not sent."
+      ],
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    },
+    {
+      "reference_id": "cookies-clipboard",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "exact_behavior": "Both windows read and validate reference JSON before presenting a separate confirmation window. Session mismatch dialog offers matching cookies, everything or cancellation, then confirmation; replacement identities and empty/error messages work. Browser commits directly; cookie list retains existing Apply/Cancel and same-key concurrent-change protection.",
+      "implementation_commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/network_sessions_window.rs",
+          "line": 416,
+          "symbol": "window.on_import_clipboard_clicked",
+          "commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_sessions.rs",
+          "line": 396,
+          "symbol": "fn cookie_exchange_widgets_confirm",
+          "commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/network_sessions.rs",
+          "line": 207,
+          "symbol": "pub fn import_cookie_clipboard",
+          "commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/network_sessions.rs",
+          "line": 342,
+          "symbol": "fn cookie_exchange_replays",
+          "commit": "3b13840e2ab3552fdb4bef994564d9b60ad89224"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/cookie_exchange.json",
+      "limitations": [
+        "Cookie-list imports are detached drafts, unlike immediate Qt writes.",
+        "No drag/drop; file picker accepts UTF-8 and caps each input at 8 MiB/10,000 identities. Expired cookies remain visible but are not sent."
+      ],
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    }
+  ],
+  "counting": "Three existing concrete workflow leaves; browser/session variants do not add IDs or parent counts."
+}
