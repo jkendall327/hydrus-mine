@@ -181,6 +181,11 @@ fn show(window: &TagFilterWindow, state: &State, store: &Store) {
     let view = editor.view();
     let tabs: Vec<String> = editor.tabs().iter().map(|t| t.label().to_owned()).collect();
     window.set_tabs(strings(tabs));
+    let advanced = store
+        .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
+        .unwrap_or_default()
+        .0;
+    window.set_show_other_panels(editor.show_other_panels_offered(advanced));
     let namespaces: Vec<String> = editor.namespaces().to_vec();
     let global = || GLOBAL_BOXES.iter().map(|&b| b.to_owned());
     window.set_white_enabled(view.whitelist.enabled);
@@ -442,6 +447,32 @@ pub fn open(
             });
         }
     });
+    window.on_show_panels({
+        let change = change.clone();
+        move || change(&|state| state.editor.show_other_panels())
+    });
+    window.on_paste({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        move |list| {
+            let Ok(list) = usize::try_from(list) else {
+                return;
+            };
+            let mut s = state.borrow_mut();
+            if s.closed || s.asking.is_some() || list >= 4 {
+                return;
+            }
+            match crate::from_clipboard() {
+                Ok(text) => {
+                    s.editor.paste_slices(list, &text);
+                    s.changed();
+                }
+                Err(e) => s.asking = Some(Asking::Error(format!("Problem pasting! {e}"))),
+            }
+            drop(s);
+            refresh();
+        }
+    });
     window.on_block_everything({
         let change = change.clone();
         move || {
@@ -479,8 +510,16 @@ pub fn open(
                     }
                     "import" => {
                         w.set_exchange_importing(true);
-                        w.set_exchange_error("".into());
-                        w.set_exchange_text(crate::from_clipboard().unwrap_or_default().into());
+                        match crate::from_clipboard() {
+                            Ok(text) => {
+                                w.set_exchange_text(text.into());
+                                w.set_exchange_error("".into());
+                            }
+                            Err(error) => {
+                                w.set_exchange_text("".into());
+                                w.set_exchange_error(format!("Problem importing! {error}").into());
+                            }
+                        }
                         w.set_exchange_path("".into());
                         Ok(Asking::Exchange(true))
                     }

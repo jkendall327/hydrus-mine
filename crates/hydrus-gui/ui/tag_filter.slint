@@ -61,6 +61,7 @@ component Simple inherits VerticalLayout {
     callback row-clicked(int, bool, bool);
     callback row-activated(int);
     callback typed(string);
+    callback paste();
     callback remove();
     callback block();
     spacing: 4px;
@@ -113,6 +114,11 @@ component Simple inherits VerticalLayout {
                         }
                     }
                     Button {
+                        text: "paste";
+                        enabled: root.enabled && !root.asking;
+                        clicked => { root.paste(); }
+                    }
+                    Button {
                         text: "remove";
                         enabled: root.enabled && !root.asking;
                         clicked => { root.remove(); }
@@ -137,6 +143,7 @@ component Rules inherits Box {
     callback row-clicked(int, bool, bool);
     callback row-activated(int);
     callback typed(string);
+    callback paste();
     callback delete();
     callback block();
     ListTable {
@@ -156,6 +163,11 @@ component Rules inherits Box {
                 root.typed(text);
                 self.text = "";
             }
+        }
+        Button {
+            text: "paste";
+            enabled: root.input-enabled && !root.asking;
+            clicked => { root.paste(); }
         }
         Button {
             text: "delete";
@@ -223,6 +235,9 @@ export component TagFilterWindow inherits Window {
     callback favourite(string);
     callback favourite-named(string);
     callback exchange-action(string);
+    in property <bool> show-other-panels;
+    callback show-panels();
+    callback paste(int);
     callback tab-chosen(int);
     // a list's events: 0 whitelist, 1 blacklist, 2 exclude these, 3 except
     // for these
@@ -286,6 +301,11 @@ export component TagFilterWindow inherits Window {
                 horizontal-alignment: center;
                 color: Theme.text;
             }
+            if root.show-other-panels: Button {
+                text: "show other panels";
+                enabled: !root.asking;
+                clicked => { root.show-panels(); }
+            }
             HorizontalLayout {
                 spacing: 0px;
                 alignment: start;
@@ -310,6 +330,7 @@ export component TagFilterWindow inherits Window {
                 row-clicked(r, ctrl, shift) => { root.row-clicked(0, r, ctrl, shift); }
                 row-activated(r) => { root.row-activated(0, r); }
                 typed(t) => { root.typed(0, t); }
+                paste => { root.paste(0); }
                 remove => { root.remove(0); }
             }
             if root.tabs[root.tab] == "blacklist": Simple {
@@ -328,6 +349,7 @@ export component TagFilterWindow inherits Window {
                 row-clicked(r, ctrl, shift) => { root.row-clicked(1, r, ctrl, shift); }
                 row-activated(r) => { root.row-activated(1, r); }
                 typed(t) => { root.typed(1, t); }
+                paste => { root.paste(1); }
                 remove => { root.remove(1); }
                 block => { root.block-everything(); }
             }
@@ -342,6 +364,7 @@ export component TagFilterWindow inherits Window {
                     row-clicked(r, ctrl, shift) => { root.row-clicked(2, r, ctrl, shift); }
                     row-activated(r) => { root.row-activated(2, r); }
                     typed(t) => { root.typed(2, t); }
+                paste => { root.paste(2); }
                     delete => { root.remove(2); }
                     block => { root.block-everything(); }
                 }
@@ -353,6 +376,7 @@ export component TagFilterWindow inherits Window {
                     row-clicked(r, ctrl, shift) => { root.row-clicked(3, r, ctrl, shift); }
                     row-activated(r) => { root.row-activated(3, r); }
                     typed(t) => { root.typed(3, t); }
+                paste => { root.paste(3); }
                     delete => { root.remove(3); }
                 }
             }

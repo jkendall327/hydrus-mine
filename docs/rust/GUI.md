@@ -272,7 +272,10 @@ asks before replacing or deleting a name, and imports/exports reference Tag Filt
 JSON through clipboard text or a JSON file. Cancelling a pending name or import
 leaves the draft and favourites untouched; cancelling the editor leaves the
 caller untouched while keeping favourites already saved. These actions are
-recorded by `oracle/record_tag_filter_favourites.py`.
+recorded by `oracle/record_tag_filter_favourites.py`. Each rule input has a
+paste button for newline-separated slices; advanced mode offers a blacklist
+"show other panels" button that reveals whitelist/advanced tabs while retaining
+blacklist testing against siblings and namespaced tags.
 
 A gallery or watcher page's list has the reference's right-click menu
 (`src/importer_list_menu.rs`, `hydrus-gui-model/src/importer_menu.rs`):

@@ -155,3 +155,70 @@ fn shared_favourites_exchange_and_cancel_preserve_the_owner_and_persist_on_reope
     );
     deleted.invoke_cancel();
 }
+
+#[test]
+fn blacklist_extra_panels_and_all_four_paste_controls_follow_the_recording() {
+    let fixture = hydrus_testkit::fixture_json("tag_filter_favourites.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Arc::new(Store::open(dir.path()).unwrap());
+    headless::init();
+    store
+        .write(|ctx| {
+            hydrus_store::settings::set(ctx.conn(), &hydrus_store::settings::AdvancedMode(true))
+        })
+        .unwrap();
+    let slot = Rc::new(RefCell::new(None));
+    let w = tag_filter_window::open(
+        &store,
+        &TagFilter::new().with_rule("goblin", FilterRule::Blacklist),
+        true,
+        "blacklist",
+        "",
+        &slot,
+        Rc::new(|_| {}),
+    )
+    .unwrap();
+    assert!(w.get_show_other_panels());
+    w.invoke_show_panels();
+    assert!(!w.get_show_other_panels());
+    let tabs = w.get_tabs();
+    assert_eq!(
+        (0..tabs.row_count())
+            .map(|i| tabs.row_data(i).unwrap().to_string())
+            .collect::<Vec<_>>(),
+        ["blacklist", "whitelist", "advanced"]
+    );
+    w.set_test_input("creator:goblin".into());
+    w.invoke_test_edited();
+    assert_eq!(
+        w.get_test_result().as_str(),
+        fixture["extra_panels"][1]["test"].as_str().unwrap()
+    );
+    w.invoke_cancel();
+    for (list, case) in fixture["paste"].as_array().unwrap().iter().enumerate() {
+        let payload = case["text"].as_str().unwrap().to_owned();
+        set_paster(move || payload.clone());
+        let value = Rc::new(RefCell::new(None));
+        let result = value.clone();
+        let w = tag_filter_window::open(
+            &store,
+            &TagFilter::new().with_rule(":", FilterRule::Blacklist),
+            false,
+            "filter",
+            "",
+            &slot,
+            Rc::new(move |f| *result.borrow_mut() = Some(f)),
+        )
+        .unwrap();
+        w.invoke_paste(i32::try_from(list).unwrap());
+        w.invoke_apply();
+        let filter = value.borrow().clone().unwrap();
+        let rules = serde_json::json!(
+            filter
+                .rules()
+                .map(|(s, r)| (s, if r == FilterRule::Blacklist { 1 } else { 0 }))
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(case["rules"], rules, "paste list {list}");
+    }
+}

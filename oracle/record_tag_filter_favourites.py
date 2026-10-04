@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Drive real Qt tag-filter favourites: menus, save/import collisions, cancel,
-load/delete, serialized clipboard payload, cleaned rules and immediate settings.
+load/delete, serialized clipboard payload, cleaned rules, immediate settings,
+actual bulk-paste buttons and advanced blacklist extra-panel visibility.
 Run through the shared with-oracle helper on the basic reference fixture.
 """
 import json
@@ -14,6 +15,7 @@ OUT = os.path.join(HERE, 'fixtures', 'tag_filter_favourites.json')
 def record(session):
     from qtpy import QtWidgets as W
     from hydrus.client import ClientGlobals as G
+    from hydrus.client.gui import ClientGUIAsync as A
     from hydrus.client.gui import ClientGUICore as C
     from hydrus.client.gui import ClientGUIDialogsQuick as Q
     from hydrus.client.gui import ClientGUIDialogsMessage as M
@@ -21,6 +23,11 @@ def record(session):
     from hydrus.core import HydrusTags as H, HydrusConstants as HC, HydrusExceptions as E
     controller = session.controller
     def qt():
+        class Now:
+            def __init__(self, parent, work_callable, publish_callable, **kwargs):
+                self.work, self.publish = work_callable, publish_callable
+            def start(self): self.publish(self.work())
+        A.AsyncQtJob = Now
         opts = controller.new_options
         opts.SetFavouriteTagFilters({})
         current = H.TagFilter()
@@ -76,7 +83,26 @@ def record(session):
         reopened = T.EditTagFilterPanel(controller.gui, current, namespaces=[])
         reopen_menu = menu(reopened._LoadFavourite)
         reopened.deleteLater()
-        return {'empty_menu': empty, 'load_menu': load_menu, 'delete_menu': delete_menu, 'export_menu': export_menu, 'reopen_menu': reopen_menu, 'payload': payload, 'dirty_payload': dirty.DumpToString(), 'events': events}
+        # Actual TextAndPasteCtrl buttons, including empty/BOM lines.
+        pasted = []
+        for attr in ['_simple_whitelist_input', '_simple_blacklist_input', '_advanced_blacklist_input', '_advanced_whitelist_input']:
+            paste_panel = T.EditTagFilterPanel(controller.gui, replacement, namespaces=[])
+            raw = '\ufeff  ORC  \r\n\nSeries:*\norc\n*:*\n'
+            clipboard[0] = raw
+            getattr(paste_panel, attr)._Paste()
+            pasted.append({'input': attr, 'text': raw, 'rules': rules(paste_panel.GetValue())})
+            paste_panel.deleteLater()
+        extra_panels = []
+        for advanced in [False, True]:
+            opts.SetBoolean('advanced_mode', advanced)
+            extra = T.EditTagFilterPanel(controller.gui, current, only_show_blacklist=True, namespaces=[])
+            before = {'tabs': [extra._notebook.tabText(i) for i in range(extra._notebook.count())], 'offered': not extra._show_all_panels_button.isHidden()}
+            if advanced: extra._ShowAllPanels()
+            after = {'tabs': [extra._notebook.tabText(i) for i in range(extra._notebook.count())], 'offered': not extra._show_all_panels_button.isHidden()}
+            extra._test_input.setPlainText('creator:goblin')
+            extra_panels.append({'advanced': advanced, 'before': before, 'after': after, 'test': extra._test_result_st.text(), 'rules': rules(extra.GetValue())})
+            extra.deleteLater()
+        return {'empty_menu': empty, 'load_menu': load_menu, 'delete_menu': delete_menu, 'export_menu': export_menu, 'reopen_menu': reopen_menu, 'payload': payload, 'dirty_payload': dirty.DumpToString(), 'events': events, 'paste': pasted, 'extra_panels': extra_panels}
     return controller.CallBlockingToQt(controller.gui, qt)
 
 def child(out):

@@ -151,6 +151,7 @@ pub struct View {
 #[derive(Debug, Clone)]
 pub struct TagFilterEditor {
     blacklist_only: bool,
+    extra_panels: bool,
     /// The namespaces offered a box each (not the empty one).
     namespaces: Vec<String>,
     /// "exclude these" and "except for these", sorted.
@@ -164,6 +165,7 @@ impl TagFilterEditor {
     pub fn new(filter: &TagFilter, blacklist_only: bool, namespaces: &[String]) -> Self {
         let mut editor = Self {
             blacklist_only,
+            extra_panels: false,
             namespaces: namespaces
                 .iter()
                 .filter(|n| !n.is_empty())
@@ -211,10 +213,46 @@ impl TagFilterEditor {
     }
 
     pub fn tabs(&self) -> Vec<Tab> {
-        if self.blacklist_only {
+        if self.blacklist_only && !self.extra_panels {
             vec![Tab::Blacklist]
+        } else if self.blacklist_only {
+            vec![Tab::Blacklist, Tab::Whitelist, Tab::Advanced]
         } else {
             vec![Tab::Whitelist, Tab::Blacklist, Tab::Advanced]
+        }
+    }
+
+    /// Whether advanced mode can offer the blacklist's extra tabs.
+    pub fn show_other_panels_offered(&self, advanced: bool) -> bool {
+        self.blacklist_only && advanced && !self.extra_panels
+    }
+
+    /// Reveal the whitelist and advanced tabs while keeping blacklist testing.
+    pub fn show_other_panels(&mut self) {
+        self.extra_panels = true;
+    }
+
+    /// Paste the reference's newline-separated inputs into one rule list.
+    /// Empty/whitespace-only lines are ignored, even in the global-slice inputs.
+    pub fn paste_slices(&mut self, list: usize, text: &str) {
+        let slices: Vec<String> = text
+            .split([
+                '\n', '\r', '\u{b}', '\u{c}', '\u{85}', '\u{2028}', '\u{2029}', '\u{1c}', '\u{1d}',
+                '\u{1e}',
+            ])
+            .map(|line| line.trim_start_matches('\u{feff}').trim())
+            .filter(|line| !line.is_empty())
+            .map(str::to_owned)
+            .collect();
+        if slices.is_empty() {
+            return;
+        }
+        match list {
+            0 => self.add_simple_whitelist(&slices),
+            1 => self.add_simple_blacklist(&slices),
+            2 => self.add_advanced_blacklist(&slices),
+            3 => self.add_advanced_whitelist(&slices),
+            _ => (),
         }
     }
 

@@ -735,8 +735,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **The tag filter editor** imports/exports reference JSON with an additional
   inline clipboard/file panel before naming an import. It does not yet offer
   repository serverside tag filters in the load menu (remote repositories are
-  not functional), advanced mode's "show other panels" for a blacklist, or
-  input paste buttons and tooltips. Favourite names/save/delete persist
+  not functional), or explanatory control tooltips. Favourite names/save/delete persist
   immediately as in the reference; filter changes reach the owner on Apply.
 - **"clear and load" a session**: when pages object to closing, the
   question has "yes" and "no" (the reference's also has "no, but show me

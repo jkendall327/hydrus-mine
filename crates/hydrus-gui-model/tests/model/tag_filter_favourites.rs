@@ -152,3 +152,50 @@ fn concurrent_favourite_saves_merge_and_invalid_exchange_cannot_change_settings(
     FavouriteTagFilters::delete(&store, "A".into()).unwrap();
     assert_eq!(names(&FavouriteTagFilters::load(&store).unwrap()), ["a"]);
 }
+
+#[test]
+fn reference_bulk_paste_and_extra_blacklist_panels_keep_rule_and_test_semantics() {
+    let f = hydrus_testkit::fixture_json("tag_filter_favourites.json");
+    for (list, case) in f["paste"].as_array().unwrap().iter().enumerate() {
+        let mut editor = TagFilterEditor::new(
+            &TagFilter::new().with_rule(":", FilterRule::Blacklist),
+            false,
+            &[],
+        );
+        editor.paste_slices(list, case["text"].as_str().unwrap());
+        assert_eq!(case["rules"], rules(&editor.value()), "list {list}");
+        let before = editor.value();
+        editor.paste_slices(list, "\u{feff} \r\n\t\n");
+        assert_eq!(
+            before,
+            editor.value(),
+            "blank pasted input cannot add a global rule"
+        );
+    }
+    for case in f["extra_panels"].as_array().unwrap() {
+        let advanced = case["advanced"].as_bool().unwrap();
+        let mut editor = TagFilterEditor::new(
+            &TagFilter::new().with_rule("goblin", FilterRule::Blacklist),
+            true,
+            &[],
+        );
+        let tabs =
+            |e: &TagFilterEditor| json!(e.tabs().iter().map(|t| t.label()).collect::<Vec<_>>());
+        assert_eq!(case["before"]["tabs"], tabs(&editor));
+        assert_eq!(
+            case["before"]["offered"],
+            json!(editor.show_other_panels_offered(advanced))
+        );
+        if advanced {
+            editor.show_other_panels();
+        }
+        assert_eq!(case["after"]["tabs"], tabs(&editor));
+        assert_eq!(
+            case["after"]["offered"],
+            json!(editor.show_other_panels_offered(advanced))
+        );
+        assert_eq!(case["rules"], rules(&editor.value()));
+        let alone = |tags: &[String]| tags.iter().map(|t| vec![t.clone()]).collect();
+        assert_eq!(case["test"], json!(editor.test("creator:goblin", &alone).0));
+    }
+}

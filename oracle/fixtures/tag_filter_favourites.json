@@ -388,5 +388,119 @@
         ]
       }
     }
+  ],
+  "paste": [
+    {
+      "input": "_simple_whitelist_input",
+      "text": "﻿  ORC  \r\n\nSeries:*\norc\n*:*\n",
+      "rules": [
+        [
+          "orc",
+          0
+        ],
+        [
+          "series:",
+          0
+        ]
+      ]
+    },
+    {
+      "input": "_simple_blacklist_input",
+      "text": "﻿  ORC  \r\n\nSeries:*\norc\n*:*\n",
+      "rules": [
+        [
+          ":",
+          1
+        ],
+        [
+          "orc",
+          1
+        ],
+        [
+          "series:",
+          1
+        ]
+      ]
+    },
+    {
+      "input": "_advanced_blacklist_input",
+      "text": "﻿  ORC  \r\n\nSeries:*\norc\n*:*\n",
+      "rules": [
+        [
+          ":",
+          1
+        ],
+        [
+          "orc",
+          1
+        ],
+        [
+          "series:",
+          1
+        ]
+      ]
+    },
+    {
+      "input": "_advanced_whitelist_input",
+      "text": "﻿  ORC  \r\n\nSeries:*\norc\n*:*\n",
+      "rules": [
+        [
+          "orc",
+          0
+        ],
+        [
+          "series:",
+          0
+        ]
+      ]
+    }
+  ],
+  "extra_panels": [
+    {
+      "advanced": false,
+      "before": {
+        "tabs": [
+          "blacklist"
+        ],
+        "offered": false
+      },
+      "after": {
+        "tabs": [
+          "blacklist"
+        ],
+        "offered": false
+      },
+      "test": "tag blocked!",
+      "rules": [
+        [
+          "goblin",
+          1
+        ]
+      ]
+    },
+    {
+      "advanced": true,
+      "before": {
+        "tabs": [
+          "blacklist"
+        ],
+        "offered": true
+      },
+      "after": {
+        "tabs": [
+          "blacklist",
+          "whitelist",
+          "advanced"
+        ],
+        "offered": false
+      },
+      "test": "tag blocked!",
+      "rules": [
+        [
+          "goblin",
+          1
+        ]
+      ]
+    }
   ]
 }
