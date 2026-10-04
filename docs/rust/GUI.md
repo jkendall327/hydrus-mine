@@ -1426,7 +1426,8 @@ empty queues disable that relationship kind. Both dialogs stage changes until
 Apply, disable parent editing while a nested editor is open, close owned nested
 editors on cancel and preserve unrelated settings.
 Applying updates selection tags on all open pages (including locked pages),
-viewer tags, search suggestions, graphs and counts. The real reference panels
+viewer tags, search suggestions (including an open manage-tags draft), graphs
+and counts. The real reference panels
 and checkbox interlocks are recorded in `oracle/record_tag_display.py`; pure model
 and real-store GUI regressions cover persistence and publication.
 

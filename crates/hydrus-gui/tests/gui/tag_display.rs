@@ -124,6 +124,7 @@ fn dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer() {
             .any(|r| r.text == "display lane own")
     );
     let w2 = open(&ui, &bound, false);
+    let display_adapter = windows.get(windows.count() - 1).unwrap();
     mine(&w2);
     // Old parent close callbacks cannot remove a replacement window.
     w.invoke_cancel();
@@ -132,11 +133,28 @@ fn dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer() {
     let nested = hydrus_gui::tag_filter_window::last_opened().unwrap();
     nested.invoke_typed(2, "display lane own".into());
     nested.invoke_apply();
+    viewer.invoke_manage_tags();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    let my_service = manage
+        .get_service_names()
+        .iter()
+        .position(|s| s == "my tags")
+        .unwrap();
+    manage.invoke_service_chosen(i32::try_from(my_service).unwrap());
+    manage.invoke_text_edited("unsaved draft tag".into());
+    manage.invoke_entered();
+    manage.invoke_text_edited("display lane".into());
+    assert!(
+        manage
+            .get_suggestions()
+            .iter()
+            .any(|r| r.text.starts_with("display lane old"))
+    );
     w2.set_fetch_automatically(false);
     w2.set_threshold(0);
     w2.invoke_options_changed();
     w2.invoke_rule_changed(4, true);
-    let pixels = headless::render(&windows.get(windows.count() - 2).unwrap(), 820, 660);
+    let pixels = headless::render(&display_adapter, 820, 660);
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("tag-display-search.png"),
         &pixels,
@@ -150,6 +168,37 @@ fn dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer() {
             .get_tags()
             .iter()
             .any(|r| r.text == "display lane own")
+    );
+    assert_eq!(manage.get_text(), "display lane");
+    assert!(
+        manage
+            .get_tags()
+            .iter()
+            .any(|r| r.text.starts_with("unsaved draft tag"))
+    );
+    assert!(
+        !manage
+            .get_suggestions()
+            .iter()
+            .any(|r| r.text.starts_with("display lane old"))
+    );
+    manage.invoke_fetch();
+    assert!(
+        manage
+            .get_suggestions()
+            .iter()
+            .any(|r| r.text.starts_with("display lane old"))
+    );
+    manage.invoke_cancel();
+    page.borrow_mut()
+        .choose_tag_service(snapshot.services.by_name("my tags").unwrap().key.clone());
+    ui.invoke_search_edited("display lane".into());
+    assert_eq!(ui.get_suggestions().row_count(), 0);
+    ui.invoke_search_fetch();
+    assert!(
+        ui.get_suggestions()
+            .iter()
+            .any(|r| r.text.starts_with("display lane own"))
     );
     let w3 = open(&ui, &bound, false);
     mine(&w3);

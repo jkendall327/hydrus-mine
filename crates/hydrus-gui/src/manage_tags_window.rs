@@ -94,6 +94,17 @@ pub(crate) fn open(
             refresh();
         }
     });
+    window.on_refresh_autocomplete({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        move || {
+            let mut model = model.borrow_mut();
+            let text = model.text().to_owned();
+            model.set_text(&text);
+            drop(model);
+            refresh();
+        }
+    });
     window.on_fetch({
         let model = model.clone();
         let refresh = refresh.clone();

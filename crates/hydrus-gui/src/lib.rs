@@ -1266,12 +1266,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let shown = shown.clone();
                     let viewer = viewer.clone();
                     let rows = rows.clone();
+                    let manage_tags = manage_tags.clone();
                     move || {
                         for page in pages.borrow().open_pages() {
                             page.borrow_mut().refresh_tags();
                         }
                         rows.forget_files();
                         shown(false);
+                        if let Some(w) = manage_tags.borrow().as_ref() {
+                            w.invoke_refresh_autocomplete();
+                        }
                         if let Some(w) = viewer.borrow().as_ref() {
                             w.invoke_refresh_tags();
                         }
