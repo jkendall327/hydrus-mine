@@ -1373,7 +1373,7 @@ fn clipboard_additions_keep_existing_text_and_result_selection() {
             manage
                 .rows()
                 .iter()
-                .any(|(text, count)| text == &tag && *count == 1)
+                .any(|(text, label)| text == &tag && label == &tag)
         );
     }
     drop(manage);
