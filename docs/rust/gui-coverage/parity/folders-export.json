@@ -6,7 +6,9 @@
   "implementationCommits": [
     "2912cca8",
     "9f2b317f",
-    "afd062329395b25562ddde8ee7841a60a76cdfe3"
+    "afd062329395b25562ddde8ee7841a60a76cdfe3",
+    "9913c5f3",
+    "933255e2"
   ],
   "claims": [
     {
@@ -131,6 +133,93 @@
         "executed_utc": "2026-10-04 17:43 UTC",
         "observed": "21 actual FilenameTaggingOptionsPanel advanced list handler states: owned namespace/regex child defaults and validation, cancel, casefold namespace/regex sorting with retained selection, duplicate namespace de-duplication, literal colons/whitespace and empty compiled patterns, frozen edits/deletion questions, raw regex Enter/add duplicates and single-selection removal-to-input, exact generated tags and reopened rules. Both actual RegexButton menu trees, all help URL/component/favourite clipboard outputs, no replacement group menu and unchanged inputs. Real ManageFavourites/_Add user-facing dialog responses, cancelled/accepted immediate global favourites mutations; filename options remain unchanged. Private basic reference client; no imports, exports or remote requests."
       }
+    },
+    {
+      "reference_id": "audit-network-tagging-simple",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "933255e2",
+      "exactBehavior": "Replace text-only simple tag editing with real-service shared additive autocomplete children and direct paste buttons. All-file and selected-file entry clean and deduplicate tags without toggling an existing tag off. The selected editor starts with the union of selected path tags, freezes service and selected path identities, retains untouched per-file differences on no-op Apply, spreads explicitly re-entered existing tags to each selected file, skips existing union members on autocomplete paste, applies every direct-paste tag to the selected files, and removes deleted union members from all selected files. Empty selections disable selected actions. Filename/directory text edits check nonempty fields without trimming their literal namespace or unchecking on clear. Child Apply updates only the filename draft; Cancel, owner closure, stale confirmations and retained callbacks do not save. Manual Apply reaches actual local-import seed metadata; folder tags save and reopen on the actual service, and cancelled descendants cannot alter persisted folder settings.",
+      "limits": [
+        "Native simple tag lists launch an owned shared write editor with Apply/Cancel, rather than inline Qt autocomplete/tag-list widgets. Shared autocomplete recent-tag history and complete tag-list keyboard/context operations are independently incomplete and not newly claimed here.",
+        "Qt unavailable clipboard shows a critical message and subsequently raises TypeError in the original SimplePanel handler; native preserves the draft and displays the recorded error title/text without that crash.",
+        "Native UI presentation and shared autocomplete child are reused; no new exported windows or shared autocomplete reference leaves counted.",
+        "Rust model/GUI regressions are authored for root hosted CI; no local Cargo builds/tests were run."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/filename_tagging.rs",
+          "line": 87,
+          "commit": "933255e2",
+          "kind": "source",
+          "symbol": "pub fn apply_selected"
+        },
+        {
+          "path": "crates/hydrus-gui/src/write_tag_window.rs",
+          "line": 46,
+          "commit": "933255e2",
+          "kind": "source",
+          "symbol": "pub fn open_additions"
+        },
+        {
+          "path": "crates/hydrus-gui/src/filename_tagging_window.rs",
+          "line": 365,
+          "commit": "933255e2",
+          "kind": "source",
+          "symbol": "fn bind_tags"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/filename_tagging.slint",
+          "line": 53,
+          "commit": "933255e2",
+          "kind": "source",
+          "symbol": "export component FilenameTaggingWindow"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/filename_simple.rs",
+          "line": 20,
+          "commit": "933255e2",
+          "kind": "reference_replay",
+          "symbol": "fn additive_entry_and_selected_union_replay_real_simple_panel_without_spreading_untouched_tags"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/filename_simple.rs",
+          "line": 44,
+          "commit": "933255e2",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_simple_actions_replay_selection_paste_and_removal_then_reach_manual_import_seeds"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/filename_simple.rs",
+          "line": 292,
+          "commit": "933255e2",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn folder_tag_child_is_staged_reopens_and_is_cancelled_with_its_owner"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_filename_simple.py",
+          "line": 18,
+          "commit": "933255e2",
+          "kind": "reference_recorder",
+          "symbol": "def record("
+        },
+        "fixture": {
+          "path": "oracle/fixtures/filename_simple.json",
+          "line": 1,
+          "commit": "933255e2",
+          "kind": "reference_fixture"
+        },
+        "executed": true,
+        "command": "/workspace/parallel/with-oracle python oracle/record_filename_simple.py",
+        "executed_utc": "2026-10-04 17:59 UTC",
+        "observed": "24 actual SimplePanel handler states under the real manual-import dialog: all/selected additive entry, repeated existing entry, direct and autocomplete paste, list removal, real path-list selection and union/context, no-selection disabling, filename/directory textEdited/check behavior, unavailable clipboard critical publication and native reference TypeError, exact per-path GetValue output, all-tags/misc folder options reopened with selected panel hidden. Private basic reference client; no imports, exports or remote requests."
+      }
     }
   ],
   "nativeComponents": [
@@ -145,15 +234,18 @@
         "owned embedded namespace/regex editor and frozen deletion question",
         "raw single-selection regex ListTable and Enter/add/remove-to-input",
         "two owned RegexButton popup menus: help/components/favourites",
-        "existing shared RegexFavouritesWindow child, immediate Apply, independent Cancel and owner closure"
+        "existing shared RegexFavouritesWindow child, immediate Apply, independent Cancel and owner closure",
+        "simple all/selected tag review lists and direct paste buttons",
+        "owned existing shared WriteTagsWindow additive editor, frozen service/path selection and owner cancellation"
       ],
       "referenceRoots": [
-        "audit-network-tagging-regex"
+        "audit-network-tagging-regex",
+        "audit-network-tagging-simple"
       ],
       "source": {
         "path": "crates/hydrus-gui/ui/filename_tagging.slint",
         "line": 53,
-        "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+        "commit": "933255e2",
         "kind": "source",
         "symbol": "export component FilenameTaggingWindow"
       },
@@ -173,6 +265,26 @@
           "symbol": "fn attached_regex_menus_copy_without_edits_and_favourites_commit_independently"
         }
       ]
+    },
+    {
+      "name": "WriteTagsWindow",
+      "existingNativeId": "catalog.writetagswindow",
+      "file": "crates/hydrus-gui/ui/write_autocomplete.slint",
+      "newExportedWindows": 0,
+      "title": "tags for all / tags just for selected files",
+      "controls": [
+        "existing shared service-aware autocomplete, additive choices, review list removal and clipboard child confirmation"
+      ],
+      "referenceRoots": [
+        "audit-network-tagging-simple"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui/src/write_tag_window.rs",
+        "line": 46,
+        "commit": "933255e2",
+        "kind": "source",
+        "symbol": "pub fn open_additions"
+      }
     }
   ],
   "validation": {
