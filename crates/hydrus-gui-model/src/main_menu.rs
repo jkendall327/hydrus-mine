@@ -256,6 +256,7 @@ pub enum Command {
     ManageDownloaderDefinitions(bool),
     /// Manage native login script definitions.
     ManageLoginScripts,
+    ManageLogins,
     ManageDownloaderDisplay,
     /// Parser definitions (`false`) or URL-class parser links (`true`).
     ManageParsers(bool),
@@ -1014,7 +1015,7 @@ fn network_menu(facts: &Facts) -> Entry {
                     copy_label("THIS SYSTEM IS LEGACY"),
                     copy_label("TRY TO MIGRATE AWAY FROM IT"),
                     SEP,
-                    todo(dots("logins")),
+                    item(dots("logins"), Command::ManageLogins),
                     SEP,
                     item(dots("login scripts"), Command::ManageLoginScripts),
                 ],

@@ -281,3 +281,72 @@ impl StepEditor {
         step
     }
 }
+
+/// Domain credential edits preserve scripts and all unrelated domain fields.
+#[derive(Debug, Clone)]
+pub struct DomainsEditor {
+    pub draft: LoginManager,
+    original_domains: BTreeMap<String, hydrus_parse::login::DomainLogin>,
+    pub selection: ListSelection<String>,
+}
+impl DomainsEditor {
+    pub fn new(draft: LoginManager) -> Self {
+        Self {
+            original_domains: draft.domains.clone(),
+            draft,
+            selection: ListSelection::default(),
+        }
+    }
+    pub fn order(&self) -> Vec<String> {
+        self.draft.domains.keys().cloned().collect()
+    }
+    pub fn replace_credentials(
+        &mut self,
+        domain: &str,
+        credentials: BTreeMap<String, String>,
+    ) -> Result<bool, String> {
+        use hydrus_parse::login::Validity;
+        let old = self
+            .draft
+            .domains
+            .get(domain)
+            .ok_or("The login domain no longer exists.")?;
+        let script=self.draft.script(old).ok_or_else(||format!("Could not find a login script for \"{domain}\"! Please re-add the login script in the other dialog or update the entry here to a new one!"))?;
+        let result = script.check_credentials_for_entry(&credentials);
+        let good = result.is_ok()
+            && (credentials.is_empty() || credentials.values().any(|v| !v.is_empty()));
+        let login = self.draft.domains.get_mut(domain).expect("existing domain");
+        login.credentials = credentials;
+        match result {
+            Ok(()) => {
+                login.validity = Validity::Untested;
+                login.validity_error.clear();
+            }
+            Err(error) => {
+                login.validity = Validity::Invalid;
+                login.validity_error = error;
+            }
+        }
+        if !good {
+            login.active = false;
+        }
+        login.no_work_until = 0;
+        login.delay_reason.clear();
+        Ok(good && !login.active)
+    }
+    pub fn save(&self, store: &hydrus_store::Store) -> hydrus_store::Result<()> {
+        let domains = self.draft.domains.clone();
+        let original = self.original_domains.clone();
+        store.write_and_refresh(move |ctx| {
+            let mut current = hydrus_store::logins::load(ctx.conn())?;
+            if current.domains != original {
+                return Err(hydrus_store::StoreError::Invalid(
+                    "Domain logins changed in another editor. Reopen this dialog before applying."
+                        .into(),
+                ));
+            }
+            current.domains = domains;
+            hydrus_store::logins::save(ctx.conn(), &current)
+        })
+    }
+}

@@ -225,6 +225,30 @@ impl LoginScript {
     }
     /// Validate required credential presence, then each supplied defined value.
     pub fn check_credentials(&self, credentials: &BTreeMap<String, String>) -> Result<(), String> {
+        self.check_credentials_in_order(
+            credentials,
+            &credentials.keys().cloned().collect::<Vec<_>>(),
+        )
+    }
+    /// Credential entry creates values in normal-before-hidden display order.
+    pub fn check_credentials_for_entry(
+        &self,
+        credentials: &BTreeMap<String, String>,
+    ) -> Result<(), String> {
+        let mut definitions = self.credentials.iter().collect::<Vec<_>>();
+        definitions.sort_by_key(|definition| definition.kind == CredentialKind::Hidden);
+        let names = definitions
+            .into_iter()
+            .map(|definition| definition.name.clone())
+            .collect::<Vec<_>>();
+        self.check_credentials_in_order(credentials, &names)
+    }
+    /// Preserve the UI's entered credential order when selecting the first error.
+    pub fn check_credentials_in_order(
+        &self,
+        credentials: &BTreeMap<String, String>,
+        names: &[String],
+    ) -> Result<(), String> {
         self.check_valid()?;
         let missing: BTreeSet<_> = self
             .steps
@@ -239,7 +263,13 @@ impl LoginScript {
                 missing.into_iter().collect::<Vec<_>>().join(", ")
             ));
         }
-        for (name, value) in credentials {
+        let names = names
+            .iter()
+            .chain(credentials.keys().filter(|name| !names.contains(name)));
+        for name in names {
+            let Some(value) = credentials.get(name) else {
+                continue;
+            };
             if let Some(definition) = self
                 .credentials
                 .iter()

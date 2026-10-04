@@ -54,6 +54,7 @@ mod import_window;
 mod importer_list_menu;
 pub mod locations_window;
 pub mod login_credential_window;
+pub mod login_domains_window;
 pub mod login_step_window;
 pub mod login_workflows_window;
 mod manage_notes_window;
@@ -1563,6 +1564,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let store = pages.borrow().store().clone();
                     if let Err(e) = downloader_display_window::open(&store, &slots) {
                         eprintln!("could not open downloader display: {e}");
+                    }
+                })
+            },
+            manage_logins: {
+                let pages = pages.clone();
+                let slots = login_workflows.domains.clone();
+                Rc::new(move || {
+                    let store = pages.borrow().store().clone();
+                    if let Err(error) = login_domains_window::open(&store, &slots) {
+                        eprintln!("could not open domain logins: {error}");
                     }
                 })
             },

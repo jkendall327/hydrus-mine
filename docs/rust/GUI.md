@@ -1963,3 +1963,13 @@ The error menu shows the full native diagnostic or copies it unchanged; the next
 validated example request clears the retained failure. Closing the parser also
 closes its error popup and invalidates retained callbacks. Raw formula/content
 URL fetching uses its own test text, as in the reference.
+
+
+Network > logins > logins opens preserved or saved domain entries. Edit credentials
+uses the script's definition order and masks passwords, with the recorded live
+labels and advisory invalid/blank confirmation. Accepted values reset delays and
+validity, deactivate invalid credentials and ask before activating a valid inactive
+domain. Domain Apply saves its draft while preserving concurrent script edits;
+Cancel closes credential children and ignores stale handles. Flip active, scrub
+delays and scrub invalidity work on extended selection. Adding domains, changing
+scripts, logged-in cookie status/reset and executing login attempts are still absent.

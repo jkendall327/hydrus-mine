@@ -350,3 +350,86 @@ fn script_step_content_preview_apply_and_parent_cancel_are_owned_and_restricted(
     script.invoke_action("apply".into());
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
 }
+
+#[test]
+fn domain_menu_credentials_stage_activation_and_persist_only_at_parent_apply() {
+    let (_dir, store, original) = store();
+    let _rendered = headless::init();
+    let ui = hydrus_gui::MainWindow::new().unwrap();
+    let bound = hydrus_gui::bind(&ui, hydrus_gui::Pages::open(store.clone()).unwrap());
+    let titles = ui.get_menu_titles();
+    let at = (0..titles.row_count())
+        .position(|i| titles.row_data(i).unwrap().label == "network")
+        .unwrap();
+    ui.invoke_menu_title_pressed(i32::try_from(at).unwrap(), 20.0, 22.0);
+    let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
+    let at = (0..lines.row_count())
+        .position(|i| lines.row_data(i).unwrap().label == "logins")
+        .unwrap();
+    ui.invoke_menu_line_hovered(0, i32::try_from(at).unwrap(), 300.0, 100.0, 10.0);
+    let lines = ui.get_menu_panes().row_data(1).unwrap().lines;
+    let at = (0..lines.row_count())
+        .position(|i| lines.row_data(i).unwrap().label == "logins…")
+        .unwrap();
+    ui.invoke_menu_line_clicked(1, i32::try_from(at).unwrap(), 0.0, 0.0, 0.0);
+    let slots = &bound.login_workflows.domains;
+    let domains = slots.domains.borrow().as_ref().unwrap().clone_strong();
+    domains.invoke_row_clicked(0, false, false);
+    assert!(domains.get_can_edit());
+    domains.invoke_action("credentials".into());
+    let child = slots.credentials.borrow().as_ref().unwrap().clone_strong();
+    assert!(child.get_rows().row_data(1).unwrap().hidden);
+    child.invoke_edited(0, "1?!".into());
+    child.invoke_edited(1, "x".into());
+    child.invoke_action("apply".into());
+    child.invoke_action("confirm".into());
+    assert_eq!(
+        domains
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(3)
+            .unwrap(),
+        "no"
+    );
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+    domains.invoke_action("credentials".into());
+    let valid = slots.credentials.borrow().as_ref().unwrap().clone_strong();
+    valid.invoke_edited(0, "bob".into());
+    valid.invoke_edited(1, "dummy-pass".into());
+    valid.invoke_action("apply".into());
+    assert_eq!(
+        domains.get_question(),
+        "Activate this login script for this domain?"
+    );
+    domains.invoke_action("leave-inactive".into());
+    domains.invoke_action("cancel".into());
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+    let domains = hydrus_gui::login_domains_window::open(&store, slots).unwrap();
+    domains.invoke_row_clicked(0, false, false);
+    domains.invoke_action("flip-active".into());
+    domains.invoke_action("credentials".into());
+    let child = slots.credentials.borrow().as_ref().unwrap().clone_strong();
+    child.invoke_edited(0, "bob".into());
+    child.invoke_action("apply".into());
+    domains.invoke_action("activate".into());
+    domains.invoke_action("apply".into());
+    let saved = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(
+        saved.domains["login.example"].credentials["username"],
+        "bob"
+    );
+    assert!(saved.domains["login.example"].active);
+    assert_eq!(saved.scripts, original.scripts);
+    let domains = hydrus_gui::login_domains_window::open(&store, slots).unwrap();
+    domains.invoke_row_clicked(0, false, false);
+    domains.invoke_action("credentials".into());
+    let child = slots.credentials.borrow().as_ref().unwrap().clone_strong();
+    domains.invoke_action("cancel".into());
+    assert!(slots.credentials.borrow().is_none());
+    child.invoke_edited(0, "cancelled".into());
+    child.invoke_action("apply".into());
+    domains.invoke_action("apply".into());
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
+}

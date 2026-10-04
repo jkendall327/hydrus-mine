@@ -1,0 +1,31 @@
+import { Button } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+export component LoginDomainsWindow inherits Window {
+    title: "manage logins";
+    preferred-width: 1080px;
+    preferred-height: 520px;
+    background: Theme.window;
+    in property <[TableRow]> rows;
+    in property <bool> can-edit;
+    in property <bool> any-selected;
+    in property <bool> child-open;
+    in property <string> question;
+    in property <string> error;
+    callback row-clicked(int,bool,bool);
+    callback action(string);
+    callback closed();
+    VerticalLayout { padding: 12px; spacing: 8px;
+        Text { text: "WARNING: Never use important accounts with hydrus. Hydrus does not store credentials securely. Always use a throwaway account you don't care much about.\nIf you are looking for your login cookies, go to network > data > review session cookies."; color: Theme.error; wrap: word-wrap; }
+        ListTable { vertical-stretch: 1; columns: [{title: "domain", width: 160px}, {title: "login script", width: 180px}, {title: "access", width: 270px, stretch: true}, {title: "active", width: 60px}, {title: "validity", width: 180px}, {title: "delay", width: 170px}]; rows: root.rows; row-clicked(i,c,s) => { if !root.child-open && root.question == "" { root.row-clicked(i,c,s); } } row-activated(i) => { if !root.child-open && root.question == "" { root.row-clicked(i,false,false); root.action("credentials"); } } }
+        HorizontalLayout { spacing: 6px;
+            Button { text: "edit credentials"; enabled: root.can-edit && !root.child-open && root.question == ""; clicked => { root.action("credentials"); } }
+            Button { text: "flip active"; enabled: root.any-selected && !root.child-open && root.question == ""; clicked => { root.action("flip-active"); } }
+            Button { text: "scrub delays"; enabled: root.any-selected && !root.child-open && root.question == ""; clicked => { root.action("scrub-delays"); } }
+            Button { text: "scrub invalidity"; enabled: root.any-selected && !root.child-open && root.question == ""; clicked => { root.action("scrub-invalidity"); } }
+        }
+        if root.question != "": HorizontalLayout { spacing: 6px; Text { text: root.question; color: Theme.text; wrap: word-wrap; } Button { text: "yes"; clicked => { root.action("activate"); } } Button { text: "no"; clicked => { root.action("leave-inactive"); } } }
+        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        HorizontalLayout { alignment: end; spacing: 6px; Button { text: "apply"; enabled: !root.child-open && root.question == ""; clicked => { root.action("apply"); } } Button { text: "cancel"; clicked => { root.action("cancel"); } } }
+    }
+}

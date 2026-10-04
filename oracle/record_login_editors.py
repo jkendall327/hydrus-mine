@@ -76,6 +76,7 @@ def record(session):
         manager = L.NetworkLoginManager()
         manager._login_scripts = HydrusSerialisable.SerialisableList([script])
         manager._domains_to_login_info = {'login.example': ((script.GetLoginScriptKey(), script.GetName()), {'username': 'alice', 'password': 'dummy-pass'}, 0, 'Login required to access any content.', True, 1, '', 0, '')}
+        original_manager = manager.GetSerialisableTuple()
         script_panel = G.EditLoginScriptPanel(gui, script)
         def table(control):
             model = control.model()
@@ -139,7 +140,31 @@ def record(session):
         step_states.append({'do': 'request fields', 'state': step_state()})
         step_panel.deleteLater()
 
-        return {'step_states': step_states, 'permitted_content_types': permitted, 'manager': manager.GetSerialisableTuple(), 'script_rows': script_rows, 'script_list': script_list, 'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
+        domains_panel = G.EditLoginsPanel(gui, controller.network_engine, [script], manager._domains_to_login_info)
+        domains_control = domains_panel._domains_and_login_info
+        def domain_state():
+            manager._domains_to_login_info = domains_panel.GetValue()
+            return {'value': manager.GetSerialisableTuple()[2][1], 'rows': table(domains_control)}
+        domain_states = [{'state': domain_state()}]
+        domain_action = [{'username': '1?!', 'password': 'x'}, True, True]
+        class CredentialsDialog(QW.QWidget):
+            def __init__(self, *args, **kwargs): super().__init__(gui)
+            def __enter__(self): return self
+            def __exit__(self, *args): return False
+            def SetPanel(self, panel): self.panel = panel
+            def exec(self):
+                for cd, edit, label in self.panel._control_data: edit.setText(domain_action[0][cd.GetName()])
+                if not domain_action[2]: return QW.QDialog.DialogCode.Rejected
+                return QW.QDialog.DialogCode.Accepted if self.panel.UserIsOKToOK() else QW.QDialog.DialogCode.Rejected
+        G.ClientGUITopLevelWindowsPanels.DialogEdit = CredentialsDialog
+        for values, allow, accept in [({'username': '1?!', 'password': 'x'}, True, True), ({'username': 'alice', 'password': 'dummy-pass'}, True, True), ({'username': 'cancelled', 'password': 'cancelled-pass'}, True, False), ({'username': '', 'password': ''}, True, True)]:
+            domain_action[:] = [values, allow, accept]; answer[0] = allow; questions.clear()
+            domains_control.SelectDatas([domains_control.GetData()[0]], deselect_others=True)
+            domains_panel._EditCredentials()
+            domain_states.append({'do': values, 'accepted': accept, 'questions': list(questions), 'state': domain_state()})
+        domains_panel.deleteLater()
+
+        return {'domain_states': domain_states, 'step_states': step_states, 'permitted_content_types': permitted, 'manager': original_manager, 'script_rows': script_rows, 'script_list': script_list, 'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
                 'credential_types': [[i, L.credential_type_str_lookup[i]] for i in [0, 1]], 'access_types': [[i, L.login_access_type_str_lookup[i], L.login_access_type_default_description_lookup[i]] for i in range(4)]}
     return controller.CallBlockingToQt(gui, qt)
 recorder.record = record

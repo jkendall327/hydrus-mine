@@ -19,6 +19,7 @@ use std::{
 #[derive(Clone, Default)]
 pub struct Slots {
     pub scripts: Rc<RefCell<Option<LoginScriptsWindow>>>,
+    pub domains: crate::login_domains_window::Slots,
     pub script: Rc<RefCell<Option<LoginScriptWindow>>>,
     pub step: crate::login_step_window::Slots,
     pub definition: crate::login_credential_window::DefinitionSlot,
@@ -52,6 +53,7 @@ impl Slots {
         if let Some(window) = script {
             window.invoke_action("cancel".into());
         }
+        self.domains.cancel();
         self.step.cancel();
         crate::login_credential_window::cancel_definition(&self.definition);
         crate::login_credential_window::cancel_credentials(&self.credentials);
@@ -531,7 +533,10 @@ pub fn open_script(
                             if !active.get() {
                                 return Err("The script editor has closed.".into());
                             }
-                            let result = state.borrow().script.check_credentials(&credentials);
+                            let result = state
+                                .borrow()
+                                .script
+                                .check_credentials_for_entry(&credentials);
                             if let Some(window) = weak.upgrade() {
                                 window.set_check_result(
                                     result
@@ -621,6 +626,7 @@ pub fn open_scripts(store: &Arc<Store>, slots: &Slots) -> Result<LoginScriptsWin
     });
     let children = Slots {
         scripts: Rc::default(),
+        domains: slots.domains.clone(),
         script: slots.script.clone(),
         step: slots.step.clone(),
         definition: slots.definition.clone(),

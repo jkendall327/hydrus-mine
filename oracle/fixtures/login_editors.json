@@ -1,4 +1,206 @@
 {
+ "domain_states": [
+  {
+   "state": {
+    "value": {
+     "login.example": [
+      [
+       "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+       "synthetic login"
+      ],
+      {
+       "username": "alice",
+       "password": "dummy-pass"
+      },
+      0,
+      "Login required to access any content.",
+      true,
+      1,
+      "",
+      0,
+      ""
+     ]
+    },
+    "rows": [
+     [
+      "login.example",
+      "synthetic login",
+      "Everything - Login required to access any content.",
+      "yes",
+      "no",
+      "untested",
+      ""
+     ]
+    ]
+   }
+  },
+  {
+   "do": {
+    "username": "1?!",
+    "password": "x"
+   },
+   "accepted": true,
+   "questions": [
+    "These values are invalid--are you sure this is ok?\n\nFor username: Could not validate \"username\" credential: \"1?!\" did not match \"^[a-z]+$\"\nFor password: Could not validate \"password\" credential: \"x\" had fewer than 4 characters"
+   ],
+   "state": {
+    "value": {
+     "login.example": [
+      [
+       "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+       "synthetic login"
+      ],
+      {
+       "username": "1?!",
+       "password": "x"
+      },
+      0,
+      "Login required to access any content.",
+      false,
+      2,
+      "Could not validate \"username\" credential: \"1?!\" did not match \"^[a-z]+$\"",
+      0,
+      ""
+     ]
+    },
+    "rows": [
+     [
+      "login.example",
+      "synthetic login",
+      "Everything - Login required to access any content.",
+      "no",
+      "no",
+      "",
+      ""
+     ]
+    ]
+   }
+  },
+  {
+   "do": {
+    "username": "alice",
+    "password": "dummy-pass"
+   },
+   "accepted": true,
+   "questions": [
+    "Activate this login script for this domain?"
+   ],
+   "state": {
+    "value": {
+     "login.example": [
+      [
+       "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+       "synthetic login"
+      ],
+      {
+       "username": "alice",
+       "password": "dummy-pass"
+      },
+      0,
+      "Login required to access any content.",
+      true,
+      1,
+      "",
+      0,
+      ""
+     ]
+    },
+    "rows": [
+     [
+      "login.example",
+      "synthetic login",
+      "Everything - Login required to access any content.",
+      "yes",
+      "no",
+      "untested",
+      ""
+     ]
+    ]
+   }
+  },
+  {
+   "do": {
+    "username": "cancelled",
+    "password": "cancelled-pass"
+   },
+   "accepted": false,
+   "questions": [],
+   "state": {
+    "value": {
+     "login.example": [
+      [
+       "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+       "synthetic login"
+      ],
+      {
+       "username": "alice",
+       "password": "dummy-pass"
+      },
+      0,
+      "Login required to access any content.",
+      true,
+      1,
+      "",
+      0,
+      ""
+     ]
+    },
+    "rows": [
+     [
+      "login.example",
+      "synthetic login",
+      "Everything - Login required to access any content.",
+      "yes",
+      "no",
+      "untested",
+      ""
+     ]
+    ]
+   }
+  },
+  {
+   "do": {
+    "username": "",
+    "password": ""
+   },
+   "accepted": true,
+   "questions": [
+    "These values are invalid--are you sure this is ok?\n\nValue for username is blank!\nValue for password is blank!"
+   ],
+   "state": {
+    "value": {
+     "login.example": [
+      [
+       "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+       "synthetic login"
+      ],
+      {
+       "username": "",
+       "password": ""
+      },
+      0,
+      "Login required to access any content.",
+      false,
+      2,
+      "Could not validate \"username\" credential: \"\" had fewer than 3 characters",
+      0,
+      ""
+     ]
+    },
+    "rows": [
+     [
+      "login.example",
+      "synthetic login",
+      "Everything - Login required to access any content.",
+      "no",
+      "no",
+      "",
+      ""
+     ]
+    ]
+   }
+  }
+ ],
  "step_states": [
   {
    "state": {

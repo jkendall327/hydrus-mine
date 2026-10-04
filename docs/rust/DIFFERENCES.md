@@ -1036,8 +1036,14 @@ questions appear inline instead of in Qt modal dialogs. Credential checks in the
 script window validate the entered values without making network requests. Step request
 identity and VARIABLE/VETO response parsers are editable; request argument
 dictionaries and cookie requirements remain read-only. Script cookie/example-domain
-editing, domain credential management, test results and HTTP login execution
-remain unimplemented. Full preserved domain credentials are
+editing, domain add/script-choice and session-status/reset controls, test results and HTTP
+login execution remain unimplemented. Existing domain credentials are editable
+from the native menu; accepted edits reproduce validity/delay/activation behavior
+and wait for domain Apply. The domain list currently omits logged-in cookie status
+and uses a raw expiry timestamp for a future delay. Native map storage does not
+preserve arbitrary imported credential dictionary iteration order; credential
+entry and its first validation error follow the recorded normal-before-hidden
+control order. Full preserved domain credentials are
 loaded without discarding their fields, and script-list Apply preserves concurrent
 domain changes. Requests continue using their existing cookies until a login
 execution consumer is implemented.

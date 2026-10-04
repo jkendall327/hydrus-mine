@@ -183,3 +183,87 @@ fn login_step_content_replays_reference_unique_import_cancel_sort_and_request_cl
     assert_eq!(editor.value().content_parsers.len(), 1);
     assert_eq!(editor.value().content_parsers[0].name, "renamed response");
 }
+
+#[test]
+fn domain_credentials_replay_reference_validity_activation_cancel_and_delay_reset() {
+    use hydrus_gui_model::login_workflows::DomainsEditor;
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let mut editor = DomainsEditor::new(manager(&fixture));
+    let states = fixture["domain_states"].as_array().unwrap();
+    for state in states.iter().skip(1) {
+        if state["accepted"] == true {
+            let values = serde_json::from_value(state["do"].clone()).unwrap();
+            let activation = editor.replace_credentials("login.example", values).unwrap();
+            if activation {
+                assert_eq!(
+                    state["questions"],
+                    json!(["Activate this login script for this domain?"])
+                );
+                editor
+                    .draft
+                    .domains
+                    .get_mut("login.example")
+                    .unwrap()
+                    .active = true;
+            }
+        }
+        let mut expected = fixture.clone();
+        expected["manager"][2][1] = state["state"]["value"].clone();
+        assert_eq!(editor.draft, manager(&expected));
+    }
+    let login = editor.draft.domains.get_mut("login.example").unwrap();
+    login.no_work_until = 4_000_000_000;
+    login.delay_reason = "synthetic wait".into();
+    editor
+        .replace_credentials(
+            "login.example",
+            [
+                ("username".into(), "alice".into()),
+                ("password".into(), "dummy-pass".into()),
+            ]
+            .into(),
+        )
+        .unwrap();
+    assert_eq!(editor.draft.domains["login.example"].no_work_until, 0);
+    assert!(
+        editor.draft.domains["login.example"]
+            .delay_reason
+            .is_empty()
+    );
+}
+
+#[test]
+fn domain_apply_preserves_concurrent_script_edits_and_rejects_domain_conflicts() {
+    use hydrus_gui_model::login_workflows::DomainsEditor;
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let initial = manager(&fixture);
+    let dir = tempfile::tempdir().unwrap();
+    let store = hydrus_store::Store::open(dir.path()).unwrap();
+    let saved = initial.clone();
+    store
+        .write_and_refresh(move |ctx| hydrus_store::logins::save(ctx.conn(), &saved))
+        .unwrap();
+    let mut editor = DomainsEditor::new(initial.clone());
+    editor
+        .draft
+        .domains
+        .get_mut("login.example")
+        .unwrap()
+        .active = false;
+    store
+        .write_and_refresh(|ctx| {
+            let mut current = hydrus_store::logins::load(ctx.conn())?;
+            current.scripts[0].name = "concurrent script".into();
+            hydrus_store::logins::save(ctx.conn(), &current)
+        })
+        .unwrap();
+    editor.save(&store).unwrap();
+    let saved = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(saved.scripts[0].name, "concurrent script");
+    assert!(!saved.domains["login.example"].active);
+    assert!(
+        editor.save(&store).is_err(),
+        "an old domain draft must not overwrite a newer save"
+    );
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
+}
