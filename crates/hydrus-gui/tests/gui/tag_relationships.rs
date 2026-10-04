@@ -151,7 +151,9 @@ fn dialogs_stage_cancel_apply_questions_and_update_display() {
     let w = open(&ui, &bound, "parents");
     w.invoke_service_chosen(i32::try_from(mine).unwrap());
     w.invoke_enter_tags(false, "window old".into());
-    w.invoke_enter_tags(true, "parent one\nparent two".into());
+    // The shared autocomplete Enter callback submits one manual tag at a time.
+    w.invoke_enter_tags(true, "parent one".into());
+    w.invoke_enter_tags(true, "parent two".into());
     w.invoke_add();
     assert!(w.get_rows().row_count() >= 2);
     let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 850, 660);
