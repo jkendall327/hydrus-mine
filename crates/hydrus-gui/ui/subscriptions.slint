@@ -4,7 +4,7 @@
 // hydrus-rs has so far (add and edit open `edit_subscription.slint`), and
 // the questions they ask, held until "apply".
 
-import { Button, CheckBox, LineEdit } from "std-widgets.slint";
+import { Button, CheckBox, LineEdit, ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 
@@ -68,12 +68,72 @@ export component Asking inherits Rectangle {
     }
 }
 
+// SelectGUGKeyAndName uses a separate list dialog, even for one gallery.
+export component SubscriptionGalleryWindow inherits Window {
+    in property <string> window-title: "select gallery";
+    title: root.window-title;
+    preferred-width: 420px;
+    preferred-height: root.message == "" ? 320px : 180px;
+    background: Theme.window;
+    in property <[string]> galleries;
+    in-out property <int> selected: 0;
+    in property <string> message;
+    callback accept-clicked();
+    callback cancel();
+    forward-focus: keys;
+    keys := FocusScope {
+        capture-key-pressed(event) => {
+            if event.text == Key.Escape { root.cancel(); return accept; }
+            if event.text == Key.Return { root.accept-clicked(); return accept; }
+            if event.text == Key.DownArrow { root.selected = min(root.galleries.length - 1, root.selected + 1); return accept; }
+            if event.text == Key.UpArrow { root.selected = max(0, root.selected - 1); return accept; }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            if root.message != "": Text {
+                text: root.message;
+                wrap: word-wrap;
+                color: Theme.text;
+            }
+            if root.message == "": ScrollView {
+                vertical-stretch: 1;
+                VerticalLayout {
+                    alignment: start;
+                    for gallery[index] in root.galleries: Rectangle {
+                        height: 26px;
+                        background: index == root.selected ? Theme.highlight : Theme.panel;
+                        Text {
+                            x: 6px;
+                            text: gallery;
+                            vertical-alignment: center;
+                            color: index == root.selected ? Theme.highlight-text : Theme.text;
+                        }
+                        TouchArea {
+                            clicked => { root.selected = index; }
+                            double-clicked => { root.selected = index; root.accept-clicked(); }
+                        }
+                    }
+                }
+            }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Button { text: "ok"; clicked => { root.accept-clicked(); } }
+                if root.message == "": Button { text: "cancel"; clicked => { root.cancel(); } }
+            }
+        }
+    }
+}
+
 export component SubscriptionsWindow inherits Window {
     in property <string> window-title: "manage subscriptions";
     title: root.window-title;
     preferred-width: 1180px;
     preferred-height: 520px;
     background: Theme.window;
+    in property <bool> gallery-open;
     // subscriptions paused from the network menu
     in property <bool> globally-paused;
     in property <[TableRow]> rows;
@@ -128,6 +188,10 @@ export component SubscriptionsWindow inherits Window {
 
     forward-focus: keys;
     keys := FocusScope {
+        capture-key-pressed(event) => {
+            if root.gallery-open { return accept; }
+            reject
+        }
         key-pressed(event) => {
             if (event.text == Key.Escape) {
                 if (root.asking) {
@@ -166,10 +230,10 @@ export component SubscriptionsWindow inherits Window {
                 rows: root.rows;
                 sort-column: root.sort-column;
                 ascending: root.ascending;
-                sort(column, ascending) => { root.sort(column, ascending); }
-                row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
-                row-activated(row) => { if !root.asking { root.row-activated(row); } }
-                delete-pressed => { if root.any-selected { root.delete(); } }
+                sort(column, ascending) => { if !root.gallery-open { root.sort(column, ascending); } }
+                row-clicked(row, ctrl, shift) => { if !root.gallery-open { root.row-clicked(row, ctrl, shift); } }
+                row-activated(row) => { if !root.asking && !root.gallery-open { root.row-activated(row); } }
+                delete-pressed => { if root.any-selected && !root.gallery-open { root.delete(); } }
             }
             // the reference's button rows, as far as hydrus-rs has them
             HorizontalLayout {
@@ -177,23 +241,23 @@ export component SubscriptionsWindow inherits Window {
                 alignment: end;
                 Button {
                     text: "add";
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.gallery-open;
                     clicked => { root.add(); }
                 }
                 Button {
                     text: "edit";
-                    enabled: root.one-selected && !root.asking;
+                    enabled: root.one-selected && !root.asking && !root.gallery-open;
                     clicked => { root.edit(); }
                 }
                 Button {
                     text: "delete";
-                    enabled: root.any-selected && !root.asking;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open;
                     clicked => { root.delete(); }
                 }
                 Rectangle { width: 12px; }
                 Button {
                     text: "duplicate";
-                    enabled: root.any-selected && !root.asking;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open;
                     clicked => { root.duplicate(); }
                 }
             }
@@ -202,53 +266,53 @@ export component SubscriptionsWindow inherits Window {
                 alignment: end;
                 Button {
                     text: "merge";
-                    enabled: root.can-merge && !root.asking;
+                    enabled: root.can-merge && !root.asking && !root.gallery-open;
                     clicked => { root.merge(); }
                 }
                 Button {
                     text: "separate";
-                    enabled: root.can-separate && !root.asking;
+                    enabled: root.can-separate && !root.asking && !root.gallery-open;
                     clicked => { root.separate(); }
                 }
                 Button {
                     text: "deduplicate";
-                    enabled: root.can-dedupe && !root.asking;
+                    enabled: root.can-dedupe && !root.asking && !root.gallery-open;
                     clicked => { root.deduplicate(); }
                 }
                 Button {
                     text: "lowercase";
-                    enabled: root.can-lowercase && !root.asking;
+                    enabled: root.can-lowercase && !root.asking && !root.gallery-open;
                     clicked => { root.lowercase(); }
                 }
                 Rectangle { width: 12px; }
                 Button {
                     text: "pause/resume";
-                    enabled: root.any-selected && !root.asking;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open;
                     clicked => { root.pause-resume(); }
                 }
                 Button {
                     text: "scrub delays";
-                    enabled: root.can-scrub-delays && !root.asking;
+                    enabled: root.can-scrub-delays && !root.asking && !root.gallery-open;
                     clicked => { root.scrub-delays(); }
                 }
                 Button {
                     text: "check queries now";
-                    enabled: root.can-check-now && !root.asking;
+                    enabled: root.can-check-now && !root.asking && !root.gallery-open;
                     clicked => { root.check-now(); }
                 }
                 if root.can-retry-failed: Button {
                     text: "retry failed";
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.gallery-open;
                     clicked => { root.retry-failed(); }
                 }
                 if root.can-retry-ignored: Button {
                     text: "retry ignored";
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.gallery-open;
                     clicked => { root.retry-ignored(); }
                 }
                 Button {
                     text: "reset";
-                    enabled: root.can-reset && !root.asking;
+                    enabled: root.can-reset && !root.asking && !root.gallery-open;
                     clicked => { root.reset(); }
                 }
             }
@@ -257,17 +321,17 @@ export component SubscriptionsWindow inherits Window {
                 alignment: end;
                 Button {
                     text: "select subscriptions";
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.gallery-open;
                     clicked => { root.select-subscriptions(); }
                 }
                 Button {
                     text: "overwrite downloader";
-                    enabled: root.any-selected && !root.asking;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open;
                     clicked => { root.overwrite-downloader(); }
                 }
                 Button {
                     text: "overwrite checker options";
-                    enabled: root.any-selected && !root.asking;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open;
                     clicked => { root.overwrite-checker(); }
                 }
             }
@@ -287,11 +351,12 @@ export component SubscriptionsWindow inherits Window {
                 spacing: 6px;
                 Button {
                     text: "apply";
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.gallery-open;
                     clicked => { root.apply(); }
                 }
                 Button {
                     text: "cancel";
+                    enabled: !root.gallery-open;
                     clicked => { root.cancel(); }
                 }
             }

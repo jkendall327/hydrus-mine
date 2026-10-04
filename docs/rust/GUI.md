@@ -169,7 +169,12 @@ some text, and overwrite the selected's downloader or checker options
 only what changed; "cancel" writes nothing. The rows and the questions
 are as `oracle/record_subscriptions_list.py` recorded the reference's.
 
-"add" (asking which downloader, or saying there are none) and "edit"
+"add" opens a separate gallery list, even with one configured downloader,
+then the subscription editor. The chooser reads the current saved downloader
+definitions and preselects the saved default; cancelling adds nothing. With
+no definitions it shows a separate warning. "overwrite downloader" uses
+the same list. `oracle/record_subscription_add.py` records the real Qt
+chooser and editor flow; GUI regressions save both native windows. "edit"
 (or a double-click) open the edit subscription dialog
 (`src/edit_subscription_window.rs`, `hydrus-gui-model/src/edit_subscription.rs`),
 the reference's `EditSubscriptionPanel`: the name, the delay line, the
@@ -1482,3 +1487,104 @@ listener reconfiguration and uses that same session after bind-failure recovery.
 Opening the API base URL uses the daemon's reported listening address, so CLI
 port and binding overrides are honored even when the saved service is off.
 Wildcard binds open through loopback; IPv6 URLs retain their brackets.
+
+## Clipboard URL monitoring
+
+Network > downloaders > watch clipboard for urls has independent persistent
+switches for watcher URLs and other recognised URLs. The desktop checks changed
+clipboard text once a second, ignores unknown URLs and recognised URLs without
+a required parser, and sends accepted URLs to the current compatible importer
+or the first open one. A new importer is created when needed, leaving the page
+already selected in view; an empty notebook selects its first new child.
+Unchanged text is routed only once, and switching either option lets the current
+clipboard be examined again. An access failure produces a global popup and
+suspends reads until a switch is toggled. Imported reference options carry both
+switches over. The real Qt watcher and URL-routing policy are recorded by
+`oracle/record_clipboard_urls.py`; native tests cover page routing, nested
+notebooks, menu persistence and failure recovery.
+
+## Network sessions and HTTP headers
+
+Network > data > review session cookies browses persisted domain and imported
+service sessions, with a text filter, show-empty toggle, cookie count and latest
+expiry. Create new establishes a domain silo; review opens its cookie list.
+Clear asks the reference's deletion question and removes the selected sessions.
+The cookie window stages add/edit/delete until Apply, including domain/path/name
+changes, session or UTC expiry, a time delta from now, and HTTPS-only cookies.
+Other attributes, including HttpOnly and SameSite, survive an edit. Cancel closes
+child editors and discards the draft. Empty sessions persist across reopen.
+
+Network > data > manage http headers stages global and domain header names,
+values, approval and reasons, with filter, sorting, duplicate and confirmed
+delete. Pending headers keep jobs waiting until approved or denied; approved
+values affect the next request from an already-running engine. Cookie and header
+Apply merges only edited keys and rejects a concurrent change to those keys
+atomically, preserving unrelated cookies received from websites or API writes.
+
+`oracle/record_network_sessions.py` records real Qt session/cookie/header rows,
+trim/newline validation and cancelled delete/clear questions. Model and native
+widget tests cover cancellation, persistence, stale editor callbacks, concurrent
+writes and actual outgoing cookie/header values through an existing NetEngine.
+
+## Bandwidth and current network jobs
+
+Network > data opens native bandwidth usage/rule and current network-job reviews.
+Bandwidth review shows global and known contexts, current speed, day/history/month
+usage, specific-rule ownership and blocked time; selecting a context shows its
+all-time total and usage against each rule. Detached rule editors add, replace
+and delete data/request limits with rolling-second or calendar-month periods.
+Apply preserves unrelated context edits and pacing settings; Cancel leaves them
+untouched. Default/global rules can be edited by kind or reset with the reference
+confirmation, and specific domains can inherit their defaults again.
+
+Current jobs show every active engine request, including subscriptions, with
+URL, status, typed wait reason, speed and progress. Extended selection supports
+cancel and bandwidth override, with selected-job context details and manual or
+live refresh. The daemon publishes usage and jobs through typed local store IPC,
+independent of the Client API listener. Heartbeats expire after five seconds;
+offline bandwidth review falls back to saved history. Commands identify the
+reviewed daemon and request, so finished jobs or replacement daemons ignore them.
+The real Qt controls/rows/questions are recorded in `network_data.json`.
+Backend/model regressions cover cancellation, dropped futures, live overrides,
+settings reload, stale heartbeat, concurrent edits and persistence. GUI regressions
+cover draft cancellation, owner closure, invalid values, Apply/reopen and local
+commands, and render the review, rules and current-jobs windows.
+
+
+## Service-to-service tag migration
+
+Service review's local/repository tag pages and Manage Tags' selected files open
+"migrate tags…". Choose mappings, siblings or parents; a real source and
+destination; current/deleted source content (also pending or current and pending
+for repositories); and the actions available for the destination. Local services
+support add/delete, plus clear deletion records for mappings. Repository actions
+pend/petition local proposals, with an editable petition reason. Mapping scopes
+use selected files or the existing multiple/current/deleted file-domain selector.
+Mappings and each side of pairs use the reusable tag-filter editor.
+
+The window shows the reference summary and its second confirmation outside
+advanced mode. Migration runs on a worker in bounded atomic batches, with live
+progress and cancellation. Cancelling retains committed batches; closing a
+running job requests cancellation and waits for its final committed progress.
+Services are resolved by key again on every batch. Graph/count publication occurs atomically per batch; displayed tags and review
+counts refresh after completion or cancellation. Reference controls, questions and actual DB mapping
+and pair destinations are recorded in `oracle/fixtures/tag_migration.json`.
+
+## Downloader definition interchange
+
+Network > downloaders > import/export downloaders exchanges URL classes,
+page parsers and single/nested gallery URL generators with the reference
+client's clipboard JSON and real downloader PNGs. Imports review the concrete
+objects and exact duplicates before saving all definitions, generated keys,
+nested members and parser links atomically. Exact parser duplicates merge
+example URLs; imported parser examples link the appropriate URL classes.
+Concurrent changes reject a stale import without partial writes. Native
+URL/GUG/parser lists, page/content editors, reusable formula editors and the
+simple downloader formula list also expose import/export; their imports remain
+in their owner's draft until Apply. Cancel drops pending imports and invalidates
+closed child callbacks. All six formula kinds and subsidiary parsers retain
+reference editor data through native edits and export. The exchange codec is
+separate from the read-only legacy reader. `record_downloader_interchange.py`
+checks real reference PNG/JSON -> native encoders -> real reference loads;
+codec/model/GUI regressions cover bounds, unsupported data, cancellation,
+duplicates, stale snapshots and live downloader settings reload.

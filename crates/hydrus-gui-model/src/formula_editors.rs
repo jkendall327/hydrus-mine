@@ -281,6 +281,7 @@ impl FormulaEditor {
 /// Default HTML/JSON formula for a new formula or a deliberate type change.
 pub fn new_formula(json: bool) -> Formula {
     Formula {
+        reference_auxiliary: None,
         name: String::new(),
         kind: if json {
             FormulaKind::Json {

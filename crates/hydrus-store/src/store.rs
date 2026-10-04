@@ -6,7 +6,7 @@
 //! uncommitted state.
 
 use std::path::{Path, PathBuf};
-use std::sync::Arc;
+use std::sync::{Arc, atomic::AtomicBool};
 
 use arc_swap::ArcSwap;
 use rusqlite::Connection;
@@ -168,6 +168,7 @@ pub struct Store {
     db: Db,
     snapshot: Arc<ArcSwap<Snapshot>>,
     claims: MediaClaims,
+    migration_active: Arc<AtomicBool>,
 }
 
 impl Store {
@@ -199,7 +200,13 @@ impl Store {
             db,
             snapshot: Arc::new(ArcSwap::from_pointee(snapshot)),
             claims: MediaClaims::default(),
+            migration_active: Arc::new(AtomicBool::new(false)),
         }))
+    }
+
+    /// Reserve one migration while leaving at least one pooled reader for the UI.
+    pub(crate) fn claim_tag_migration(&self) -> Result<crate::tag_migration::Guard> {
+        crate::tag_migration::Guard::claim(self.migration_active.clone())
     }
 
     pub fn dir(&self) -> &Path {

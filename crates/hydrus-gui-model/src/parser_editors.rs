@@ -201,6 +201,7 @@ pub fn new_content() -> ContentParser {
 /// New named page parser with an independent stable runtime key.
 pub fn new_page() -> PageParser {
     PageParser {
+        reference_auxiliary: None,
         name: "new page parser".into(),
         key: PageKey::random().to_hex(),
         converter: StringConverter::default(),
@@ -212,6 +213,7 @@ pub fn new_page() -> PageParser {
 /// Staged parser list and class links loaded together from the native store.
 #[derive(Debug, Clone)]
 pub struct Draft {
+    pub auxiliary: crate::downloader_interchange::Auxiliary,
     pub parsers: Vec<PageParser>,
     pub classes: UrlClassSettings,
     original_parsers: Vec<PageParser>,
@@ -223,17 +225,39 @@ impl Draft {
         store.read(|conn| {
             let definitions: Downloaders = settings::get(conn)?;
             let classes: UrlClassSettings = settings::get(conn)?;
-            Ok(Self::new(definitions.parsers, classes))
+            let mut draft = Self::new(definitions.parsers, classes);
+            draft.auxiliary = settings::get(conn)?;
+            Ok(draft)
         })
     }
     /// Construct a draft for fixture replay.
     pub fn new(parsers: Vec<PageParser>, classes: UrlClassSettings) -> Self {
         Self {
+            auxiliary: crate::downloader_interchange::Auxiliary::default(),
             original_parsers: parsers.clone(),
             original_links: classes.parser_links.clone(),
             parsers,
             classes,
         }
+    }
+    /// Import a list of reference page parsers without partial draft changes.
+    pub fn import(
+        &mut self,
+        definitions: Vec<crate::downloader_interchange::Definition>,
+    ) -> Result<crate::downloader_interchange::Review, String> {
+        let mut next = self.clone();
+        let mut review = crate::downloader_interchange::Review::default();
+        for mut definition in definitions {
+            let crate::downloader_interchange::Native::Page(parser) = &mut definition.native else {
+                return Err("Import page parsers here; use the downloader package importer for mixed bundles.".into());
+            };
+            next.put(None, parser.clone())?;
+            *parser = next.parsers.last().ok_or("No parser imported.")?.clone();
+            review.added.push(parser.name.clone());
+            next.auxiliary.retain(&definition);
+        }
+        *self = next;
+        Ok(review)
     }
     /// Replace a parser by stable key, never a potentially stale row index.
     pub fn put(&mut self, replacing: Option<&str>, mut parser: PageParser) -> Result<(), String> {
@@ -314,6 +338,7 @@ impl Draft {
         let draft = self.clone();
         store.write_and_refresh(move |ctx| {
             let conn = ctx.conn();
+            draft.auxiliary.save(conn)?;
             let mut current: Downloaders = settings::get(conn)?;
             let mut classes: UrlClassSettings = settings::get(conn)?;
             let parsers_changed = draft.parsers != draft.original_parsers;

@@ -16,6 +16,7 @@ hydrus-core.workspace = true
 hydrus-gui-model.workspace = true
 hydrus-store.workspace = true
 hydrus-parse.workspace = true
+hydrus-downloader-exchange = { path = "../hydrus-downloader-exchange" }
 rusqlite.workspace = true
 hydrus-search.workspace = true
 hydrus-duplicates.workspace = true
@@ -31,15 +32,17 @@ rand.workspace = true
 arboard = { version = "3", default-features = false }
 # the system's file and folder pickers (on Linux, the desktop portal)
 rfd = { version = "0.17", default-features = false, features = ["xdg-portal"] }
+tempfile.workspace = true
 slint = { version = "1.18", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software", "unstable-winit-030"] }
 
 [build-dependencies]
 slint-build = "1.18"
 
 [dev-dependencies]
+hydrus-net.workspace = true
+tokio.workspace = true
 hydrus-legacy.workspace = true
 hydrus-testkit.workspace = true
-tempfile.workspace = true
 
 [lints]
 workspace = true

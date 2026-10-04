@@ -10,6 +10,7 @@ use std::{cell::RefCell, rc::Rc, sync::Arc};
 /// List and child formula windows while they are open.
 #[derive(Clone, Default)]
 pub struct Slots {
+    pub exchange: crate::downloader_interchange_window::Slots,
     pub list: Rc<RefCell<Option<SimpleFormulaeWindow>>>,
     pub formula: crate::formula_window::Slots,
 }
@@ -18,7 +19,7 @@ impl std::fmt::Debug for Slots {
         f.debug_struct("Slots")
             .field("list", &self.list.borrow().is_some())
             .field("formula", &self.formula)
-            .finish()
+            .finish_non_exhaustive()
     }
 }
 struct State {
@@ -79,6 +80,83 @@ pub fn open(
         move || {
             if let Some(w) = weak.upgrade() {
                 show(&w, &state.borrow());
+            }
+        }
+    });
+    w.on_exchange({
+        let state = state.clone();
+        let slots = slots.clone();
+        let refresh = refresh.clone();
+        let weak = w.as_weak();
+        move |importing| {
+            use hydrus_gui_model::downloader_interchange::{Definition, Native};
+            if state.borrow().child_open
+                || state.borrow().editing.is_some()
+                || state.borrow().deleting
+            {
+                return;
+            }
+            let s = state.borrow();
+            let definitions = s
+                .selection
+                .in_order(&(0..s.values.formulae.len()).collect::<Vec<_>>())
+                .into_iter()
+                .map(|i| Definition::new(Native::Simple(s.values.formulae[i].clone())))
+                .collect();
+            drop(s);
+            let preview = Rc::new(|definitions: Vec<Definition>| {
+                if definitions
+                    .iter()
+                    .any(|d| !matches!(d.native, Native::Simple(_)))
+                {
+                    return Err("Import named simple downloader formulas into this list.".into());
+                }
+                Ok(format!(
+                    "Add {} simple downloader formula(s):\n{}",
+                    definitions.len(),
+                    definitions
+                        .iter()
+                        .map(Definition::name)
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                ))
+            });
+            let applied = Rc::new({
+                let state = state.clone();
+                move |definitions: Vec<Definition>| {
+                    let mut next = state.borrow().values.clone();
+                    for d in definitions {
+                        let Native::Simple(f) = d.native else {
+                            return Err("Import named simple downloader formulas.".into());
+                        };
+                        crate::formula_editors::put_simple_formula(&mut next.formulae, None, f);
+                    }
+                    state.borrow_mut().values = next;
+                    Ok(())
+                }
+            });
+            match crate::downloader_interchange_window::open(
+                &slots.exchange,
+                importing,
+                definitions,
+                preview,
+                applied,
+            ) {
+                Ok(child) => {
+                    state.borrow_mut().child_open = true;
+                    let state = state.clone();
+                    let child_closed = refresh.clone();
+                    child.on_closed(move || {
+                        state.borrow_mut().child_open = false;
+                        child_closed();
+                    });
+                    refresh();
+                }
+                Err(error) => {
+                    if let Some(w) = weak.upgrade() {
+                        w.set_error(error.into());
+                    }
+                }
             }
         }
     });
@@ -290,6 +368,7 @@ pub fn open(
         let weak = w.as_weak();
         let slots = slots.clone();
         move || {
+            slots.exchange.cancel();
             slots.formula.cancel();
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
@@ -303,6 +382,9 @@ pub fn open(
         let state = state.clone();
         let close = close.clone();
         move || {
+            if state.borrow().child_open {
+                return;
+            }
             let formulae = state.borrow().values.formulae.clone();
             match store.write_and_refresh(move |ctx| {
                 let mut saved = settings::get::<SimpleDownloaderFormulae>(ctx.conn())?;

@@ -25,27 +25,35 @@ supported server settings; tag display/search and relationship application
 configuration; and page/content parser editors with URL-class links. It uses
 three feature worktrees with staged integration and batched GUI validation.
 Reference recordings, behavioral regressions and independent review replace
-mutation runs at the owner's request. Review this slate before starting more.
+mutation runs at the owner's request. This slate was reviewed and merged.
+
+The third parallel slate (2026-10-04) adds bandwidth usage/rules and live network
+jobs, cookie/session and HTTP-header management, clipboard URL monitoring,
+service-to-service tag migration, and reference-compatible downloader definition
+text/PNG import/export. The subscription Add flow now uses a separate gallery
+list followed by the editor. Definitions come from saved configuration; new
+recordings use synthetic domains. See the area sections in `GUI.md` and
+`DIFFERENCES.md` for coverage and remaining first-pass limitations.
 
 The next breadth work, in the owner's existing order:
 
-1. **Services**: remote repositories/IPFS/account administration, Client API
-   request-registration capture dialog, HTTPS/UPnP support, live rating previews
-   and review bulk maintenance. Native access-key administration and supported
-   listener settings are implemented in the second slate.
-2. **Tags**: migration and sibling/parent sync. Display/search and ordered
-   relationship application configuration are implemented in the second slate.
-   Existing relationship editors still need write autocomplete, asynchronous
-   loading, default service tabs and repository permission/reason suggestions.
-3. **Downloader definitions**: logins and serialized downloader import/export.
-   Native page/content parser editors and direct URL-class parser links are
-   implemented; subsidiary editing and auto-link/review controls remain
-   follow-up. The reusable formula editor covers HTML/JSON;
-   nested/zipper/context/static editing, formula
-   import/export and fetch/multiple-example test controls remain.
+1. **Network management**: remaining usage/history views and scheduling controls,
+   automatic pending-header approval questions, and cookie clipboard/Netscape
+   file import/export. Remote repositories, IPFS and account administration are
+   outside the owner's current priorities.
+2. **Tags**: sibling/parent sync, migration archives/hash conversion and pair
+   mapping-count filters. Native service-to-service mappings/siblings/parents
+   migration is implemented. Existing relationship editors still need write
+   autocomplete, asynchronous loading, default service tabs and repository
+   permission/reason suggestions.
+3. **Downloader definitions**: login management/execution, subsidiary editing,
+   additional formula-kind editors and fetch/multiple-example test controls.
+   Native page/content parser editors, URL-class parser links and definition
+   text/PNG interchange are implemented. HTML/JSON have full formula editors;
+   the remaining formula kinds can be preserved through interchange.
 
 Then the gaps listed under "Later", and the half-done items below. Review
-the second parallel slate before starting another one.
+the third parallel slate before starting another one.
 
 ## 1. Manage subscriptions (network > subscriptions…)
 

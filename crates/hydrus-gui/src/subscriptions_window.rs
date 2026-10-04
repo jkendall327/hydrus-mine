@@ -8,7 +8,7 @@
 //! "apply", which writes what changed back to the store (only that, as the
 //! daemon may have run a subscription meanwhile).
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -29,19 +29,13 @@ use crate::subscriptions_dialog::{
     SEPARATE_PICK, SEPARATE_QUESTION, Separate, Subscriptions, added_message, picked,
 };
 use crate::subscriptions_list::ShortSummary;
-use crate::{SubscriptionsWindow, TableRow, Tick};
+use crate::{SubscriptionGalleryWindow, SubscriptionsWindow, TableRow, Tick};
 
 /// What a question waits on.
 enum Asking {
     Delete,
     Select,
     Check(CheckNow),
-    /// A downloader, from these: (key, name), for "add" (a new
-    /// subscription) or "overwrite downloader" (the selected).
-    Downloader {
-        gugs: Vec<(String, String)>,
-        for_add: bool,
-    },
     /// A message with only "ok".
     Message(String),
     /// Information with only "ok".
@@ -509,14 +503,6 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             true,
         )),
         Some(Asking::Check(check)) => check.question(dialog).map(|c| (c, false)),
-        Some(Asking::Downloader { gugs, .. }) => Some((
-            Choice {
-                title: "select gallery".into(),
-                message: String::new(),
-                choices: gugs.iter().map(|(_, name)| name.clone()).collect(),
-            },
-            false,
-        )),
         Some(Asking::Message(message)) => Some((
             Choice {
                 title: "Warning".into(),
@@ -629,11 +615,111 @@ fn ask_dedupe(open: &mut Open, dedupe: Dedupe, question: Option<Question>) {
     }
 }
 
+/// Ask for a gallery in the reference's separate list dialog, then continue.
+fn select_gallery(
+    store: &Store,
+    slot: &Rc<RefCell<Option<SubscriptionGalleryWindow>>>,
+    parent: &slint::Weak<SubscriptionsWindow>,
+    current: Option<(String, String)>,
+    for_add: bool,
+    done: Rc<dyn Fn(String, String)>,
+) {
+    if slot.borrow().is_some() {
+        return;
+    }
+    let gugs = store
+        .read(hydrus_store::settings::get::<hydrus_parse::Downloaders>)
+        .map(|d| crate::gallery::offered_gugs(&d.gugs))
+        .unwrap_or_default();
+    let Ok(window) = SubscriptionGalleryWindow::new() else {
+        return;
+    };
+    if gugs.is_empty() {
+        window.set_window_title("Warning".into());
+        window.set_message(
+            if for_add {
+                NO_DOWNLOADERS
+            } else {
+                NOTHING_TO_SELECT
+            }
+            .into(),
+        );
+    } else {
+        let selected = current
+            .and_then(|(key, name)| {
+                gugs.iter()
+                    .position(|g| g.0 == key)
+                    .or_else(|| gugs.iter().position(|g| g.1 == name))
+            })
+            .unwrap_or(0);
+        window.set_selected(i32::try_from(selected).unwrap_or(0));
+        window.set_galleries(ModelRc::new(VecModel::from(
+            gugs.iter()
+                .map(|g| SharedString::from(g.1.as_str()))
+                .collect::<Vec<_>>(),
+        )));
+    }
+    let active = Rc::new(Cell::new(true));
+    let close: Rc<dyn Fn()> = {
+        let slot = Rc::downgrade(slot);
+        let parent = parent.clone();
+        let active = active.clone();
+        Rc::new(move || {
+            if !active.replace(false) {
+                return;
+            }
+            if let Some(slot) = slot.upgrade()
+                && let Some(window) = slot.borrow_mut().take()
+            {
+                let _ = window.hide();
+            }
+            if let Some(parent) = parent.upgrade() {
+                parent.set_gallery_open(false);
+            }
+        })
+    };
+    window.on_accept_clicked({
+        let weak = window.as_weak();
+        let close = close.clone();
+        move || {
+            if !active.get() {
+                return;
+            }
+            let selected = weak
+                .upgrade()
+                .and_then(|w| usize::try_from(w.get_selected()).ok());
+            let picked = selected.and_then(|i| gugs.get(i).cloned());
+            close();
+            if let Some((key, name, _)) = picked {
+                done(key, name);
+            }
+        }
+    });
+    window.on_cancel({
+        let close = close.clone();
+        move || close()
+    });
+    window.window().on_close_requested({
+        let close = close.clone();
+        move || {
+            close();
+            slint::CloseRequestResponse::HideWindow
+        }
+    });
+    if window.show().is_ok() {
+        *slot.borrow_mut() = Some(window);
+        if let Some(parent) = parent.upgrade() {
+            parent.set_gallery_open(true);
+        }
+    }
+}
+
 /// Open the dialog on the store's subscriptions; it forgets itself from
 /// `slot` when closed.
 pub(crate) fn open(
     store: &Arc<Store>,
     slot: &Rc<RefCell<Option<SubscriptionsWindow>>>,
+    gallery_slot: &Rc<RefCell<Option<SubscriptionGalleryWindow>>>,
     edit_slots: Slots,
 ) -> Result<SubscriptionsWindow, String> {
     let edit_slots = Rc::new(edit_slots);
@@ -647,11 +733,19 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let slot = slot.clone();
         let edit = edit_slots.edit.clone();
+        let gallery = gallery_slot.clone();
         move || {
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
+            let chooser = gallery
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(window) = chooser {
+                window.invoke_cancel();
+            }
             // (the edit dialog goes with it)
             if let Some(window) = edit.borrow_mut().take() {
                 let _ = window.hide();
@@ -755,23 +849,35 @@ pub(crate) fn open(
         }
     });
     window.on_add({
-        let change = change.clone();
         let store = store.clone();
+        let slot = gallery_slot.clone();
+        let weak = window.as_weak();
+        let edit = edit.clone();
         move || {
-            let gugs = store
-                .read(hydrus_store::settings::get::<hydrus_parse::Downloaders>)
-                .map(|d| crate::gallery::offered_gugs(&d.gugs))
-                .unwrap_or_default();
-            change(&|open| {
-                open.asking = Some(if gugs.is_empty() {
-                    Asking::Message(NO_DOWNLOADERS.into())
-                } else {
-                    Asking::Downloader {
-                        gugs: gugs.iter().map(|g| (g.0.clone(), g.1.clone())).collect(),
-                        for_add: true,
-                    }
-                });
+            let current = store
+                .read(hydrus_store::settings::get::<hydrus_core::subscriptions::GalleryDefaults>)
+                .ok()
+                .and_then(|d| d.gug);
+            let store_for_edit = store.clone();
+            let edit = edit.clone();
+            let done = Rc::new(move |gug_key: String, gug_name: String| {
+                let checker = store_for_edit
+                    .read(
+                        hydrus_store::settings::get::<hydrus_core::subscriptions::CheckerDefaults>,
+                    )
+                    .map(|d| d.subscriptions)
+                    .unwrap_or_default();
+                edit(
+                    None,
+                    SubscriptionSettings {
+                        gug_key,
+                        gug_name,
+                        checker,
+                        ..SubscriptionSettings::default()
+                    },
+                );
             });
+            select_gallery(&store, &slot, &weak, current, true, done);
         }
     });
     window.on_pause_resume({
@@ -812,8 +918,6 @@ pub(crate) fn open(
     });
     window.on_chosen({
         let change = change.clone();
-        let edit = edit.clone();
-        let store = store.clone();
         let weak = window.as_weak();
         move |index| {
             let Ok(index) = usize::try_from(index) else {
@@ -823,15 +927,7 @@ pub(crate) fn open(
                 .upgrade()
                 .map(|w| w.get_asked_text().to_string())
                 .unwrap_or_default();
-            let new_sub = RefCell::new(None);
             change(&|open| match open.asking.take() {
-                Some(Asking::Downloader { gugs, for_add }) => {
-                    if for_add {
-                        *new_sub.borrow_mut() = gugs.get(index).cloned();
-                    } else if let Some((key, name)) = gugs.get(index) {
-                        open.dialog.set_downloader_selected(now(), key, name);
-                    }
-                }
                 Some(Asking::Reset) => {
                     if index == 0 {
                         open.dialog.reset_selected(now());
@@ -939,25 +1035,6 @@ pub(crate) fn open(
                 }
                 Some(Asking::Message(_) | Asking::Information(_)) | None => {}
             });
-            // "add": a new subscription on the downloader chosen, with the
-            // client's checker timings for subscriptions
-            if let Some((gug_key, gug_name)) = new_sub.into_inner() {
-                let checker = store
-                    .read(
-                        hydrus_store::settings::get::<hydrus_core::subscriptions::CheckerDefaults>,
-                    )
-                    .map(|d| d.subscriptions)
-                    .unwrap_or_default();
-                edit(
-                    None,
-                    SubscriptionSettings {
-                        gug_key,
-                        gug_name,
-                        checker,
-                        ..SubscriptionSettings::default()
-                    },
-                );
-            }
         }
     });
     window.on_cancelled({
@@ -1052,22 +1129,25 @@ pub(crate) fn open(
     });
     window.on_overwrite_downloader({
         let change = change.clone();
+        let state = state.clone();
         let store = store.clone();
+        let slot = gallery_slot.clone();
+        let weak = window.as_weak();
         move || {
-            let gugs = store
-                .read(hydrus_store::settings::get::<hydrus_parse::Downloaders>)
-                .map(|d| crate::gallery::offered_gugs(&d.gugs))
-                .unwrap_or_default();
-            change(&|open| {
-                open.asking = Some(if gugs.is_empty() {
-                    Asking::Message(NOTHING_TO_SELECT.into())
-                } else {
-                    Asking::Downloader {
-                        gugs: gugs.iter().map(|g| (g.0.clone(), g.1.clone())).collect(),
-                        for_add: false,
-                    }
-                });
+            let current = {
+                let open = state.borrow();
+                open.dialog
+                    .selection
+                    .in_order(&open.dialog.order(now()))
+                    .first()
+                    .and_then(|key| open.dialog.get(*key))
+                    .map(|s| (s.settings.gug_key.clone(), s.settings.gug_name.clone()))
+            };
+            let change = change.clone();
+            let done = Rc::new(move |key: String, name: String| {
+                change(&|open| open.dialog.set_downloader_selected(now(), &key, &name));
             });
+            select_gallery(&store, &slot, &weak, current, false, done);
         }
     });
     window.on_overwrite_checker({

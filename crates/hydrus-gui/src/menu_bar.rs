@@ -24,6 +24,7 @@ pub(crate) struct Hooks {
     pub tag_display: Rc<dyn Fn(bool)>,
     pub tag_relationships: Rc<dyn Fn(hydrus_store::display::RelationKind)>,
     pub pages: Rc<RefCell<Pages>>,
+    pub network_data: crate::network_data_window::Slots,
     pub change_pages: ChangePages,
     pub ask: Ask,
     /// Show the page shown again, its files changed.
@@ -36,6 +37,9 @@ pub(crate) struct Hooks {
     pub manage_downloader_definitions: Rc<dyn Fn(bool)>,
     /// Open native parser definitions or URL-class links.
     pub manage_parsers: Rc<dyn Fn(bool)>,
+    pub manage_network_sessions: Rc<dyn Fn(bool)>,
+    /// Open reference downloader bundle interchange.
+    pub exchange_downloaders: Rc<dyn Fn(bool)>,
     /// Open the manage import folders (`true`) or export folders dialog.
     pub manage_folders: Rc<dyn Fn(bool)>,
     /// Open the "review files to import" window.
@@ -62,6 +66,8 @@ pub(crate) struct Hooks {
     pub review_services: Rc<dyn Fn()>,
     /// Open staged service management.
     pub manage_services: Rc<dyn Fn()>,
+    /// Toggle watcher or other recognised clipboard URL imports.
+    pub watch_clipboard: Rc<dyn Fn(bool)>,
 }
 
 /// What the menus show now: the store's facts and the pages'.
@@ -516,6 +522,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         }
         Command::ChooseNewPage => window.invoke_new_page(),
         Command::NewPage(page) => change_pages(&|pages| pages.new_page(&page)),
+        Command::WatchClipboard(watchers) => (hooks.watch_clipboard)(watchers),
         Command::ClearWatcherHighlights => {
             hooks.pages.borrow_mut().clear_watcher_highlights();
             (hooks.reshow)();
@@ -570,7 +577,19 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::ManageDownloaderDefinitions(classes) => {
             (hooks.manage_downloader_definitions)(classes);
         }
+        Command::ManageNetworkSessions(headers) => (hooks.manage_network_sessions)(headers),
         Command::ManageParsers(links) => (hooks.manage_parsers)(links),
+        Command::NetworkData(bandwidth) => {
+            let result = if bandwidth {
+                crate::network_data_window::open_bandwidth(store, &hooks.network_data).map(|_| ())
+            } else {
+                crate::network_data_window::open_jobs(store, &hooks.network_data).map(|_| ())
+            };
+            if let Err(e) = result {
+                eprintln!("could not open network review: {e}");
+            }
+        }
+        Command::ExchangeDownloaders(importing) => (hooks.exchange_downloaders)(importing),
         Command::ManageSubscriptions => (hooks.manage_subscriptions)(),
         Command::ManageImportFolders => (hooks.manage_folders)(true),
         Command::ManageExportFolders => (hooks.manage_folders)(false),

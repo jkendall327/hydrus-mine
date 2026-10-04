@@ -809,6 +809,26 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 }
             });
         }
+        // The full network engine (including subscriptions), independent of
+        // whether the optional Client API listener is enabled.
+        let (network_stop, mut network_stopped) = tokio::sync::watch::channel(false);
+        let network_publisher = state.downloads.clone().map(|downloads| {
+            let net = downloads.downloader().net().clone();
+            tokio::spawn(async move {
+                loop {
+                    let net = net.clone();
+                    match tokio::task::spawn_blocking(move || net.publish_runtime()).await {
+                        Ok(Err(e)) => tracing::warn!(error = %e, "publishing network runtime failed"),
+                        Err(e) => tracing::warn!(error = %e, "network runtime worker failed"),
+                        Ok(Ok(())) => {}
+                    }
+                    tokio::select! {
+                        () = tokio::time::sleep(Duration::from_millis(250)) => {},
+                        _ = network_stopped.changed() => break,
+                    }
+                }
+            })
+        });
         // what the queues are doing, for their pages: what changed, four
         // times a second (until the daemon stops, when it is cleared)
         let publisher = state.downloads.clone().map(|downloads| {
@@ -927,6 +947,18 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         let served = client_api_listener::run(state, port, bind, stopped, say).await;
         // (the queues' live state stops being kept before it is cleared,
         // so it isn't kept again after)
+        let _ = network_stop.send(true);
+        if let Some(publisher) = network_publisher {
+            let _ = publisher.await;
+        }
+        if let Err(e) = store.write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::network_runtime::Snapshot::default(),
+            )
+        }) {
+            tracing::warn!(error = %e, "clearing network runtime failed");
+        }
         if let Some(publisher) = publisher {
             publisher.abort();
             let _ = publisher.await;

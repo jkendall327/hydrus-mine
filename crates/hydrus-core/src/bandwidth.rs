@@ -518,6 +518,17 @@ impl Manager {
         self.dirty.clear();
     }
 
+    /// Current context trackers, including ephemeral page contexts, for live review.
+    pub fn all_trackers(&self) -> Vec<(NetworkContext, Tracker)> {
+        let mut trackers: Vec<_> = self
+            .trackers
+            .iter()
+            .map(|(c, t)| (c.clone(), t.clone()))
+            .collect();
+        trackers.sort_by(|a, b| a.0.cmp(&b.0));
+        trackers
+    }
+
     /// Every context's rules (defaults included).
     pub fn all_rules(&self) -> Vec<(NetworkContext, Rules)> {
         let mut all: Vec<_> = self

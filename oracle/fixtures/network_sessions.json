@@ -1,0 +1,162 @@
+{
+  "session_row": [
+    "web domain: example.com",
+    "2",
+    "expires in 76 years 1 month"
+  ],
+  "cookie_rows": [
+    [
+      "session",
+      "abc",
+      ".example.com",
+      "/",
+      "session"
+    ],
+    [
+      "token",
+      "123",
+      ".example.com",
+      "/private",
+      "expires in 76 years 1 month"
+    ]
+  ],
+  "cookie_cases": [
+    {
+      "input": [
+        " name ",
+        " value ",
+        " .example.com ",
+        " / ",
+        null
+      ],
+      "value": [
+        "name",
+        "value",
+        ".example.com",
+        "/",
+        null
+      ],
+      "error": null,
+      "expiry": "does not expire",
+      "timestamp": "None"
+    },
+    {
+      "input": [
+        "bad\nname",
+        "value",
+        ".example.com",
+        "/",
+        null
+      ],
+      "value": null,
+      "error": "Hey, it looks like the \"name\" has a newline!",
+      "expiry": "does not expire",
+      "timestamp": "None"
+    },
+    {
+      "input": [
+        "name",
+        "bad\nvalue",
+        ".example.com",
+        "/",
+        null
+      ],
+      "value": null,
+      "error": "Hey, it looks like the \"value\" has a newline!",
+      "expiry": "does not expire",
+      "timestamp": "None"
+    }
+  ],
+  "header_cases": [
+    {
+      "input": [
+        " Authorization ",
+        " token ",
+        1
+      ],
+      "value": [
+        "web domain: example.com",
+        "Authorization",
+        "token",
+        "approved - will use it",
+        "login reason"
+      ],
+      "error": null
+    },
+    {
+      "input": [
+        "X-Denied",
+        "no",
+        0
+      ],
+      "value": [
+        "web domain: example.com",
+        "X-Denied",
+        "no",
+        "denied - will not use it",
+        "login reason"
+      ],
+      "error": null
+    },
+    {
+      "input": [
+        "X-Pending",
+        "later",
+        2
+      ],
+      "value": [
+        "web domain: example.com",
+        "X-Pending",
+        "later",
+        "pending - will ask the user on next use",
+        "login reason"
+      ],
+      "error": null
+    },
+    {
+      "input": [
+        "Bad\nKey",
+        "token",
+        0
+      ],
+      "value": null,
+      "error": "Hey, it looks like the \"key\" has a newline!"
+    },
+    {
+      "input": [
+        "X-Test",
+        "bad\nvalue",
+        2
+      ],
+      "value": null,
+      "error": "Hey, it looks like the \"value\" has a newline!"
+    }
+  ],
+  "questions": [
+    "Delete all selected cookies?",
+    "Clear these sessions? This will delete them completely."
+  ],
+  "header_row": [
+    "web domain: example.com",
+    "Authorization: token",
+    "approved - will use it",
+    "login reason"
+  ],
+  "after_cancel": 2,
+  "show_empty_counts": [
+    1,
+    2
+  ],
+  "after_renamed_write": [
+    "renamed",
+    "session",
+    "token"
+  ],
+  "after_delete": [
+    "session",
+    "token"
+  ],
+  "after_clear": [
+    "web domain: example.org"
+  ]
+}

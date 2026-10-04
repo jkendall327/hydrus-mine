@@ -139,5 +139,8 @@ box. Each one is a commit that passes CI on its own.
 - **Disk**: `target/` grows past 20 GB. Delete `target/debug/incremental`
   when space runs low; `HYDRUS_CHECK_LOW_DISK=1 scripts/check.sh` deletes
   test executables as it goes.
+- **Memory**: on a 16 GB machine, use `CARGO_BUILD_JOBS=1` for GUI test
+  code generation. Compiling the large GUI library and its test target at
+  once can exhaust memory; two workers suffice for the smaller crates.
 - **Watch loops**: `pgrep -f <pattern>` inside a shell loop matches the
   loop's own command line and never ends. Wait on an output file instead.

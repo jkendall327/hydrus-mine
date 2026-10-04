@@ -528,8 +528,8 @@ deletes its files from the client, migrated from the reference's database.
 
 - **A simple downloader page** uses an "edit formulae" button beside its
   chooser rather than a cog menu. The saved list supports editing, removal
-  and adding defaults; PNG/clipboard formula import/export is not yet
-  exposed. Download controls sit under its boxes, not inside them.
+  and adding defaults, plus reference PNG and clipboard-text import/export.
+  Download controls sit under its boxes, not inside them.
 - **Formula editors** support HTML and JSON. Existing nested, zipper,
   context-variable and static formulae are preserved and can be tested;
   their editing controls are not yet available. The test panel accepts
@@ -652,7 +652,10 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   doesn't pause subscriptions while open, as the reference does: "apply"
   writes only what the dialog changed, so a subscription the daemon ran
   meanwhile keeps what the run found, unless the dialog changed the same
-  query.
+  query. Add and overwrite downloader use a separate gallery list; Slint
+  has no native modal-parent API, so the subscriptions window disables its
+  controls while that list is open. Like the editor's existing chooser,
+  it currently flattens hidden and non-functional galleries into one list.
 - **The edit subscription dialog** has no multi-site downloader warning, and
   no "additional tags" or file log compaction number in the query editor.
   Its downloader choice is one list (the reference puts the downloaders
@@ -755,8 +758,8 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line, and nested generators
   select members with checkboxes. Page/content parsers and direct URL-class links
-  have native editors. Definition import/export and login editors remain
-  follow-up work.
+  have native editors and reference JSON/PNG import/export. Login editors
+  remain follow-up work.
 - Invalid example details use the native URL rules' error wording. The
   reference retains stale referral/next-page examples after a match failure;
   the native editor clears all derived output. A changed list asks before
@@ -837,10 +840,10 @@ Checked by the `popups` conformance scenario.
   reference's popups all go when it closes.
 - **A popup's `network_job`** says its URL, status, speed, bytes read and to
   read, whether it is done and whether it failed, as the reference's does;
-  hydrus-rs's network jobs don't say whether they are waiting on a
-  connection error, the domain, the server's bandwidth or the engine, so
-  those read `false`, `true`, `false` and `false` (as for a job that
-  isn't), and `total_data_used` is what this request has read.
+  the popup/API shape does not yet carry the network review's typed wait
+  reasons. Its connection/domain/server-bandwidth/engine flags still read
+  `false`, `true`, `false` and `false`, and `total_data_used` is what this
+  request has read.
 - **An error's "traceback" is its text**, and its title is "Exception", as
   the reference titles the errors it raises itself: hydrus-rs has no
   Python traceback to show.
@@ -867,7 +870,7 @@ Checked by the `popups` conformance scenario.
   `false` for a numerical or inc/dec rating service (Python counts a bool as
   an int, so the reference stores `true` as one star).
 
-- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, repository/IPFS account administration, tag migration and bulk clear/undelete maintenance actions remain unavailable and are described in the window.
+- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, repository/IPFS account administration, archive tag migration and bulk clear/undelete maintenance actions remain unavailable and are described in the window.
 
 - **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields and there is no live rating preview; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available; HTTPS, normie Eris and external URL overrides are preserved imported values, with an explicit control to disable unsupported HTTPS. A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
 
@@ -917,7 +920,7 @@ warning (the display graph ignores such pairs anyway). Batches creating loops
 or conflicting sibling ideals are rejected with an explicit message; enter
 the pairs separately to perform the ordinary automatic repairs. Already corrupt
 reference graph cycles are traversed safely, but do not raise its detailed
-pre-existing-loop warning. Tag migration and
+pre-existing-loop warning. Archive tag migration and
 manual background sibling/parent synchronization remain separate future work.
 
 ## Detailed embedded file metadata (`hydrus-gui`, `hydrus-media`)
@@ -946,7 +949,7 @@ from an explicit queue preserves its empty intent. Native settings preserve
 unknown JSON fields and unedited service settings. The application
 window uses ordered native lists and an inline source selector. Display/search
 uses a numeric zero for the reference's nullable "always autocomplete" threshold.
-Tag migration and manual/background sibling/parent sync remain unimplemented.
+Archive tag migration and manual/background sibling/parent sync remain unimplemented.
 Autocomplete configuration refresh preserves any open manage-tags draft; its
 location editor always exposes the permitted file domains.
 Display/search edits merge unedited services and setting areas from the current
@@ -955,13 +958,14 @@ database. Concurrent edits to the same area use the last successful Apply.
 
 The native parser editor model supports all nine content kinds and typed test
 context. Native page/content/parser-list and direct URL-class-link windows are available. Subsidiary parser editing,
-formula kinds beyond the existing HTML/JSON editors, downloader import/export,
-and remote test-data fetching remain deferred; existing subsidiary parsers and
-unsupported formulas are preserved intact.
+formula editing beyond the existing HTML/JSON controls and remote test-data
+fetching remain deferred. All six native formula kinds and subsidiary parsers
+can be imported/exported; their editor-only reference data is preserved.
 
 The URL-class links panel uses a parser chooser and explicit staged link/clear
-actions. Automatic gap filling and the reference API/redirect review tab are
-deferred; API/redirect source classes are excluded because their targets own
+actions. Downloader package import automatically links parser example URLs;
+the reference API/redirect review tab remains deferred. API/redirect source
+classes are excluded because their targets own
 the parser. The temporary-variable content kind is also editable here, while
 the reference page editor normally limits its creation to lookup scripts.
 
@@ -991,3 +995,93 @@ to use the current permissions after rebind; revocation still invalidates them.
 The base-URL button prefers the daemon's actual listener over the service's
 configured port to support native CLI overrides. It falls back to the saved
 configuration when the daemon does not report a listening address.
+
+Clipboard URL monitoring runs while the desktop is open. Fatal clipboard access
+errors use the shared popup queue so they remain visible on downloader and
+notebook pages. The reference watcher policy and toggle resets are replayed from
+`oracle/fixtures/clipboard_urls.json`.
+
+## Network session and HTTP-header management
+
+Cookie and HTTP-header editing uses detached native drafts with Apply/Cancel;
+Qt cookie-list actions take effect immediately, while its header list is staged.
+Changing a cookie's name/domain/path replaces the old identity, while Qt adds the
+new identity and leaves the old cookie. Native editing preserves secure and
+other attributes and exposes the secure flag; the reference's cookie editor
+recreates a cookie without exposing these attributes. Native validation also
+rejects invalid HTTP field names, cookie delimiters, relative paths and impossible
+UTC expiry values; empty cookie/header values are accepted as valid HTTP data.
+Expired cookies remain visible until manually removed, while Qt periodically
+clears expired cookies when opening a session. Header duplicates use valid `-2`, `-3` suffixes instead of
+Qt's human-name suffixes containing spaces. Pending approval still waits for
+a manual approval change; its automatic question popup is not implemented.
+
+The browser can inspect imported service sessions and create domain sessions;
+creating new service sessions, cookie clipboard/Netscape cookies.txt import and
+export, and drag/drop cookie imports remain deferred. Empty sessions are
+explicitly persisted in the native store. Refresh preserves a cookie/header
+draft; reopen reloads committed changes. Browser create and confirmed clear
+actions take effect immediately. Passwords and cookie values remain ordinary
+local database fields, as in the reference.
+
+## Bandwidth and current network jobs
+
+Native bandwidth review uses numeric bytes/requests and seconds with a monthly
+switch in one detached rules window, rather than the reference's nested amount
+and time widgets. Rule usage is textual; monthly history charts and deleting
+selected history are deferred. The review lists known contexts and specific
+rules together, with selectable history spans, rather than Qt's usage/rules
+filters. New explicit contexts can be added by domain; existing subscription
+and service contexts remain editable through their usage rows.
+
+Current network-job review refreshes live by default (Qt starts with manual
+snapshots). Native typed wait reasons distinguish pauses, header approval, wake,
+bandwidth, domain, gallery, connection and server waits from transfers; Qt's
+engine-position strings/debug menu use different categories. Selected-job debug
+context/obeys-bandwidth details are inline, and cancel/override controls are
+explicit buttons. Login-script waits remain outside the implemented engine.
+Local snapshots are published by the daemon without requiring its Client API;
+expiry disables stale controls and saved bandwidth history remains available.
+
+## Service-to-service tag migration
+
+Migration opens from service review or Manage Tags; the main Tags > migrate
+entry remains a placeholder.
+
+Service-to-service tag migration uses a stable WAL reader snapshot and bounded
+atomic destination batches rather than the reference's temporary source tables.
+This prevents source-equals-destination deletions from skipping rows and fixes the
+source membership for the entire job. A long job retains a SQLite read snapshot,
+so concurrent writes can grow the WAL until migration completes or is cancelled.
+One migration runs per open Store; a second job is rejected promptly so a normal
+reader remains available to the UI. The reservation is released on error or cancel.
+Display graph/count publication happens after each relationship batch, following
+the existing native immediate-sync design; large graph rebuilds occupy the writer
+but run outside the UI thread. Cancellation is available; pausing is deferred.
+Hydrus Tag Archive/tag-pair archive import/export and non-SHA256 conversion remain
+unimplemented. Pair left/right filters are available; the reference's optional
+"side/ideal has mappings count" gates are deferred. Repository migration retains
+pending/petitioned content locally; uploading is outside this window's scope.
+The reference's fixed Mass Migration Job reason is offered as an editable petition
+reason in the native window. Progress reports scanned and accepted source entries,
+including destination entries already in the requested state.
+
+Go freezes the entire migration request. Applying an already-open filter or location
+child after the confirmation appears changes only the next job's settings.
+
+## Downloader definition interchange
+
+Downloader interchange uses text clipboard contents and selected PNG/text files;
+clipboard bitmap and drag/drop ingestion are not exposed. Exported PNGs carry
+the real reference pixel/payload format with a small plain header. A malformed
+or unsupported item rejects the whole package, with an actionable error, rather
+than the reference importer's partial skips. Payloads/pixels are capped at
+16 MiB, bundles at 4096 objects, and recursive formats at bounded depth. Old
+container versions and recent URL/parser/formula versions are upgraded;
+earlier unsupported versions must first be re-exported by the reference client.
+Unknown processing steps/conversions are rejected before staging because their
+native execution forms cannot retain all original data. Native/runtime fields
+take precedence over preserved auxiliary editor fields when exporting edits.
+Mixed downloader package import accepts URL classes, GUGs and page parsers;
+standalone formulas/content nodes belong in their matching native editors.
+Login scripts and domain metadata packages are explicitly unsupported here.

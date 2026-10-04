@@ -10,6 +10,7 @@ mod archive_delete;
 mod auto_resolution_preview;
 mod auto_resolution_review;
 mod auto_resolution_rules;
+mod clipboard_urls;
 mod collect;
 mod downloader_definitions;
 mod downloader_lists;
@@ -81,3 +82,10 @@ mod services_editor;
 mod client_api_admin;
 mod parser_editors;
 mod tag_display;
+
+mod network_sessions;
+
+mod network_data;
+
+mod downloader_interchange;
+mod tag_migration;

@@ -878,6 +878,10 @@ impl Pages {
     /// Open a page of the kind chosen, at the far right of the current
     /// notebook (as the reference's page chooser does).
     pub fn new_page(&mut self, chosen: &NewPage) -> Result<(), String> {
+        self.new_page_selected(chosen, true)
+    }
+
+    fn new_page_selected(&mut self, chosen: &NewPage, select: bool) -> Result<(), String> {
         let page = match chosen {
             NewPage::Search { domain, .. } => new_search_page_on(
                 &self.store,
@@ -1043,7 +1047,73 @@ impl Pages {
                 }
             }
         };
-        self.add(page);
+        if select {
+            self.add(page);
+        } else {
+            let depth = self.current_depth();
+            let notebook = self.notebook_mut(depth);
+            let was_empty = notebook.is_empty();
+            notebook.push(page);
+            if was_empty {
+                // Qt selects the first tab in a formerly empty notebook, even
+                // when an automatic import does not request selecting a page.
+                self.select(depth, 0);
+            }
+        }
+        Ok(())
+    }
+
+    /// Add a recognised clipboard URL to the current compatible importer, or the
+    /// first open one. A new importer leaves an existing selected page in view;
+    /// the first child of an empty notebook becomes its selected page.
+    pub fn import_clipboard_url(
+        &mut self,
+        routed: &hydrus_gui_model::clipboard_urls::Routed,
+    ) -> Result<(), String> {
+        fn first(pages: &[Page], kind: DownloaderKind) -> Option<PageKey> {
+            for page in pages {
+                match &page.content {
+                    PageContent::Downloader {
+                        kind: page_kind, ..
+                    } if *page_kind == kind => {
+                        return Some(page.key);
+                    }
+                    PageContent::Pages(children) => {
+                        if let Some(key) = first(children, kind) {
+                            return Some(key);
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            None
+        }
+        use hydrus_gui_model::clipboard_urls::Destination;
+        let (kind, choice) = match routed.destination {
+            Destination::Urls => (DownloaderKind::Urls, NewPage::Urls),
+            Destination::Watchers => (DownloaderKind::Watchers, NewPage::Watcher),
+        };
+        let compatible = |page: &Page| {
+            matches!(
+                &page.content, PageContent::Downloader { kind: page_kind, .. } if *page_kind == kind
+            )
+        };
+        let mut key = if compatible(self.shown()) {
+            Some(self.shown().key)
+        } else {
+            first(&self.session.pages, kind)
+        };
+        if key.is_none() {
+            self.new_page_selected(&choice, false)?;
+            key = first(&self.session.pages, kind);
+        }
+        let importer = key
+            .and_then(|key| self.page(&key))
+            .ok_or("Could not find a new page to place the clipboard URL.")?;
+        match routed.destination {
+            Destination::Urls => importer.borrow_mut().pend_urls(&routed.url),
+            Destination::Watchers => importer.borrow_mut().pend_watchers(&routed.url),
+        }
         Ok(())
     }
 

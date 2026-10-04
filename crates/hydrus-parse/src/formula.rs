@@ -28,6 +28,9 @@ pub struct ParseError(pub String);
 /// A formula, with its name and the processing of what it finds.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Formula {
+    /// Reference editor fields not used by parsing, retained through native edits.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reference_auxiliary: Option<serde_json::Value>,
     pub name: String,
     pub kind: FormulaKind,
     pub processor: StringProcessor,

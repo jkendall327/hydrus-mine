@@ -99,6 +99,7 @@ async fn file(State(site): State<Arc<Site>>, Path(name): Path<String>) -> Respon
 
 fn html_formula(tag: &str, attrs: &[(&str, &str)], content: HtmlContent) -> Formula {
     Formula {
+        reference_auxiliary: None,
         name: String::new(),
         kind: FormulaKind::Html {
             rules: vec![HtmlRule {
@@ -120,6 +121,7 @@ fn html_formula(tag: &str, attrs: &[(&str, &str)], content: HtmlContent) -> Form
 
 fn booru_parser() -> PageParser {
     PageParser {
+        reference_auxiliary: None,
         name: "local booru post".into(),
         key: "ab".into(),
         converter: hydrus_core::url::StringConverter::default(),
@@ -161,6 +163,7 @@ fn booru_parser() -> PageParser {
 
 fn gallery_parser() -> PageParser {
     PageParser {
+        reference_auxiliary: None,
         name: "local booru gallery".into(),
         key: "ac".into(),
         converter: hydrus_core::url::StringConverter::default(),
@@ -720,24 +723,35 @@ async fn existing_downloader_uses_edited_parser_and_new_link_after_reload() {
     let existing = s.runner.downloader().clone();
     assert!(existing.definitions().parser("edited").is_none());
     let mut edited = booru_parser();
-    edited.key = "edited".into();
+    edited.key = "ee".repeat(32);
     edited.content_parsers[2].kind = ContentKind::Tag {
         namespace: Some("edited".into()),
     };
+    let text =
+        hydrus_downloader_exchange::encode_text(&[hydrus_downloader_exchange::Definition::new(
+            hydrus_downloader_exchange::Native::Page(edited),
+        )])
+        .unwrap();
+    let definitions = hydrus_downloader_exchange::decode_text(&text).unwrap();
+    let hydrus_downloader_exchange::Native::Page(edited) = definitions[0].native.clone() else {
+        unreachable!()
+    };
+    let imported_key = edited.key.clone();
     s.store
         .write_and_refresh(move |ctx| {
             let conn = ctx.conn();
             let mut definitions: Downloaders = hydrus_store::settings::get(conn)?;
+            let edited_key = edited.key.clone();
             definitions.parsers.push(edited);
             let mut classes: UrlClassSettings = hydrus_store::settings::get(conn)?;
-            classes.parser_keys.push("edited".into());
-            classes.parser_links[0].1 = Some("edited".into());
+            classes.parser_keys.push(edited_key.clone());
+            classes.parser_links[0].1 = Some(edited_key);
             hydrus_store::settings::set(conn, &definitions)?;
             hydrus_store::settings::set(conn, &classes)
         })
         .unwrap();
     assert!(s.runner.reload_settings().unwrap());
-    assert!(existing.definitions().parser("edited").is_some());
+    assert!(existing.definitions().parser(&imported_key).is_some());
     s.runner.start_all().unwrap();
     let queue = s
         .runner

@@ -121,6 +121,7 @@ async fn file(Path(name): Path<String>) -> Response {
 
 fn html_formula(tag: &str, attrs: &[(&str, &str)], content: HtmlContent) -> Formula {
     Formula {
+        reference_auxiliary: None,
         name: String::new(),
         kind: FormulaKind::Html {
             rules: vec![HtmlRule {
@@ -160,6 +161,7 @@ fn url_parser(
 fn parsers() -> Vec<PageParser> {
     vec![
         PageParser {
+            reference_auxiliary: None,
             name: "post".into(),
             key: "ab".into(),
             converter: hydrus_core::url::StringConverter::default(),
@@ -175,6 +177,7 @@ fn parsers() -> Vec<PageParser> {
             example_urls: Vec::new(),
         },
         PageParser {
+            reference_auxiliary: None,
             name: "search".into(),
             key: "ac".into(),
             converter: hydrus_core::url::StringConverter::default(),

@@ -15,6 +15,7 @@ use std::{
 /// Retain parser dialogs and all their child formula/string windows.
 #[derive(Clone, Default)]
 pub struct Slots {
+    pub exchange: crate::downloader_interchange_window::Slots,
     pub list: Rc<RefCell<Option<ParserListWindow>>>,
     pub links: Rc<RefCell<Option<ParserListWindow>>>,
     pub page: Rc<RefCell<Option<ParserEditWindow>>>,
@@ -81,7 +82,7 @@ fn check(id: i32, label: &str, value: bool) -> DefinitionField {
 }
 #[derive(Clone)]
 enum Value {
-    Page(PageParser),
+    Page(Box<PageParser>),
     Content(Box<ContentEditor>),
 }
 struct Editor {
@@ -300,6 +301,7 @@ fn child_open(slots: &Slots, page: bool) -> bool {
     (page && slots.content.borrow().is_some())
         || slots.formula.formula.borrow().is_some()
         || slots.formula.strings.has_open()
+        || slots.exchange.has_open()
 }
 type Done = Rc<dyn Fn(Value) -> Result<(), String>>;
 fn open_editor(
@@ -462,6 +464,7 @@ fn open_editor(
                     child.invoke_force_close();
                 }
             }
+            slots.exchange.cancel();
             slots.formula.cancel();
             if page {
                 slots.page.borrow_mut().take();
@@ -498,7 +501,14 @@ fn open_editor(
         let result = (|| -> Result<(),String> {
             match action.as_str() {
                 "apply" => { if !state.borrow().errors.is_empty() { return Err(state.borrow().errors.values().cloned().collect::<Vec<_>>().join("\n")); } let value = match &state.borrow().value { Value::Content(e) => Value::Content(Box::new(ContentEditor::new(&e.value(),e.test.clone()))), v @ Value::Page(_) => v.clone() }; applied(value)?; close(); }
-                "cancel" => { let changed = { let e = state.borrow(); match (&e.value,&e.original) { (Value::Page(p),Value::Page(o)) => p != o, (Value::Content(e),_) => e.changed(), _ => false } }; if changed { w.set_question(if page { "It looks like you have made changes to the parser--are you sure you want to cancel?" } else { model::CONTENT_CANCEL }.into()); } else { close(); } }
+                "cancel" => { let changed = { let e = state.borrow(); match (&e.value,&e.original) { (Value::Page(p),Value::Page(o)) => p != o, (Value::Content(e),Value::Content(o)) => e.value()!=o.value(), _ => false } }; if changed { w.set_question(if page { "It looks like you have made changes to the parser--are you sure you want to cancel?" } else { model::CONTENT_CANCEL }.into()); } else { close(); } }
+                "import" | "export" => {
+                    use hydrus_gui_model::downloader_interchange::{Definition,Native};
+                    let native=match &state.borrow().value{Value::Page(p)=>Native::Page((**p).clone()),Value::Content(c)=>Native::Content(c.value())};
+                    let preview=Rc::new(move |definitions:Vec<Definition>| { if definitions.len()!=1 || !matches!((page,&definitions[0].native),(true,Native::Page(_))|(false,Native::Content(_))) { return Err("Import one matching page or content parser into this editor.".into()); } Ok(format!("Replace this draft with parser: {}",definitions[0].name())) });
+                    let applied=Rc::new({let state=state.clone();let refresh=refresh.clone();move |mut definitions:Vec<Definition>| {let definition=definitions.pop().ok_or("No parser to import.")?;let mut e=state.borrow_mut();match (page,definition.native){(true,Native::Page(p))=>e.value=Value::Page(Box::new(p)),(false,Native::Content(c))=>{let test=if let Value::Content(old)=&e.value{old.test.clone()}else{FormulaTestData::default()};e.value=Value::Content(Box::new(ContentEditor::new(&c,test)));},_=>return Err("Import one matching parser.".into())}e.errors.clear();e.selected=None;drop(e);refresh();Ok(())}});
+                    let child=crate::downloader_interchange_window::open(&slots.exchange,action=="import",vec![Definition::new(native)],preview,applied)?; let refresh=refresh.clone(); child.on_closed(move||refresh());
+                }
                 "test" => { let mut test = test_data(&w,true)?; let mut e = state.borrow_mut(); let parsed = match &mut e.value { Value::Page(p) => p.parse(&mut test.context,&test.text), Value::Content(c) => { c.test = test; c.preview().map(|p| vec![p]) } }; w.set_preview(match parsed { Ok(posts) => model::preview_text(&posts), Err(error) => error.to_string() }.into()); }
                 "delete-content" => { let mut e = state.borrow_mut(); if let Some(index) = e.selected.take() && let Value::Page(p) = &mut e.value && index < p.content_parsers.len() { p.content_parsers.remove(index); } }
                 "add-content"|"edit-content" => {
@@ -521,7 +531,9 @@ fn open_editor(
     } });
     w.window().on_close_requested({
         let weak = w.as_weak();
+        let exchange = slots.exchange.clone();
         move || {
+            exchange.cancel();
             if let Some(w) = weak.upgrade() {
                 w.invoke_action("cancel".into());
             }
@@ -592,7 +604,7 @@ fn show_list(w: &ParserListWindow, s: &mut ListState, slots: &Slots) {
             .map(|(i, row)| (row, s.selection.is_selected(i))),
     ));
     w.set_selected(!s.selection.in_order(&s.order).is_empty());
-    w.set_child_open(slots.page.borrow().is_some());
+    w.set_child_open(slots.page.borrow().is_some() || slots.exchange.has_open());
     w.set_parser_choices(strings(s.draft.parsers.iter().map(|p| p.name.clone())));
 }
 /// Open either named page parsers or direct URL-class links on native settings.
@@ -646,6 +658,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
         move || {
             !active.get()
                 || slots.page.borrow().is_some()
+                || slots.exchange.has_open()
                 || state.borrow().pending_delete.is_some()
         }
     });
@@ -653,7 +666,9 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
         let active = active.clone();
         let weak = w.as_weak();
         let slot = slot.clone();
+        let exchange = slots.exchange.clone();
         move || {
+            exchange.cancel();
             active.set(false);
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
@@ -789,6 +804,46 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                             s.draft.link(&key, parser.as_deref())?;
                         }
                     }
+                    "import" | "export" => {
+                        let preview = Rc::new({
+                            let state = state.clone();
+                            move |definitions| {
+                                let mut next = state.borrow().draft.clone();
+                                next.import(definitions).map(|r| r.text())
+                            }
+                        });
+                        let applied = Rc::new({
+                            let state = state.clone();
+                            let refresh = refresh.clone();
+                            move |definitions| {
+                                state.borrow_mut().draft.import(definitions)?;
+                                refresh();
+                                Ok(())
+                            }
+                        });
+                        let s = state.borrow();
+                        let definitions = s
+                            .selection
+                            .in_order(&s.order)
+                            .iter()
+                            .map(|&i| {
+                                s.draft.auxiliary.definition(
+                                    hydrus_gui_model::downloader_interchange::Native::Page(
+                                        s.draft.parsers[i].clone(),
+                                    ),
+                                )
+                            })
+                            .collect();
+                        let child = crate::downloader_interchange_window::open(
+                            &slots.exchange,
+                            action == "import",
+                            definitions,
+                            preview,
+                            applied,
+                        )?;
+                        let refresh = refresh.clone();
+                        child.on_closed(move || refresh());
+                    }
                     "add" | "edit" | "duplicate" => {
                         let s = state.borrow();
                         let selected = s.selection.in_order(&s.order).first().copied();
@@ -818,13 +873,14 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                                     return Ok(());
                                 }
                                 if let Value::Page(p) = v {
-                                    state.borrow_mut().draft.put(replacing.as_deref(), p)?;
+                                    state.borrow_mut().draft.put(replacing.as_deref(), *p)?;
                                 }
                                 Ok(())
                             }
                         });
-                        let child = open_editor(&store, Value::Page(page), test, &slots, done)
-                            .map_err(|e| e.to_string())?;
+                        let child =
+                            open_editor(&store, Value::Page(Box::new(page)), test, &slots, done)
+                                .map_err(|e| e.to_string())?;
                         let refresh = refresh.clone();
                         child.on_closed(move || refresh());
                         *slots.page.borrow_mut() = Some(child);
@@ -841,7 +897,9 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
     });
     w.window().on_close_requested({
         let weak = w.as_weak();
+        let exchange = slots.exchange.clone();
         move || {
+            exchange.cancel();
             if let Some(w) = weak.upgrade() {
                 w.invoke_action("cancel".into());
             }

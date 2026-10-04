@@ -1,0 +1,80 @@
+import { Button, CheckBox, ComboBox, LineEdit, VerticalBox, HorizontalBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export component TagMigrationWindow inherits Window {
+    title: "migrate tags";
+    width: 760px; height: 590px;
+    background: Theme.window;
+    in property <[string]> services;
+    in property <[string]> statuses;
+    in property <[string]> actions;
+    in-out property <int> source;
+    in-out property <int> destination;
+    in-out property <int> content;
+    in-out property <int> status;
+    in-out property <int> action;
+    in-out property <bool> selected-files;
+    in property <bool> have-files;
+    in property <string> file-label;
+    in property <string> location-label;
+    in property <string> left-label;
+    in property <string> right-label;
+    in-out property <string> reason: "Mass Migration Job";
+    in property <bool> petition;
+    in property <bool> running;
+    in property <string> progress;
+    in property <string> error;
+    in property <string> question;
+    in property <bool> last-chance;
+    callback choices-changed();
+    callback edit-filter(bool);
+    callback edit-location();
+    callback go();
+    callback answer(bool);
+    callback cancel-job();
+    callback close-clicked();
+    VerticalBox {
+        padding: 16px; spacing: 10px;
+        Text { text: "The content from the source that the filter allows is applied using the action to the destination."; color: Theme.text; wrap: word-wrap; }
+        VerticalBox {
+
+            HorizontalBox {
+                Text { text: "content"; color: Theme.text; }
+                ComboBox { enabled: !root.running && root.question == ""; model: ["tag mappings", "tag siblings", "tag parents"]; current-index <=> root.content; selected => { root.choices-changed(); } }
+                Text { text: "source"; color: Theme.text; }
+                ComboBox { enabled: !root.running && root.question == ""; model: root.services; current-index <=> root.source; selected => { root.choices-changed(); } }
+            }
+            HorizontalBox {
+                Text { text: "status"; color: Theme.text; }
+                ComboBox { enabled: !root.running && root.question == ""; model: root.statuses; current-index <=> root.status; selected => { root.choices-changed(); } }
+                Text { text: "action"; color: Theme.text; }
+                ComboBox { enabled: !root.running && root.question == ""; model: root.actions; current-index <=> root.action; selected => { root.choices-changed(); } }
+            }
+            HorizontalBox {
+                Text { text: "destination"; color: Theme.text; }
+                ComboBox { enabled: !root.running && root.question == ""; model: root.services; current-index <=> root.destination; selected => { root.choices-changed(); } }
+            }
+            if root.content == 0: HorizontalBox {
+                if root.have-files: CheckBox { enabled: !root.running && root.question == ""; text: root.file-label; checked <=> root.selected-files; toggled => {root.choices-changed();} }
+                Button { text: root.location-label; enabled: !root.selected-files && !root.running && root.question == ""; clicked => {root.edit-location();} }
+            }
+            Button { enabled: !root.running && root.question == ""; text: root.left-label; clicked => {root.edit-filter(false);} }
+            if root.content != 0: Button { enabled: !root.running && root.question == ""; text: root.right-label; clicked => {root.edit-filter(true);} }
+            if root.petition: HorizontalBox {
+                Text { text: "petition reason"; color: Theme.text; }
+                LineEdit { enabled: !root.running && root.question == ""; text <=> root.reason; }
+            }
+        }
+        if root.question != "": Text { text: root.question; color: Theme.text; wrap: word-wrap; }
+        Text { text: root.progress; color: Theme.text; wrap: word-wrap; }
+        Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        Rectangle { vertical-stretch: 1; }
+        HorizontalBox {
+            if root.question != "": Button { text: root.last-chance ? "yes" : "looks good"; clicked => {root.answer(true);} }
+            if root.question != "": Button { text: root.last-chance ? "no" : "go back"; clicked => {root.answer(false);} }
+            if root.question == "" && !root.running: Button { text: "Go!"; clicked => {root.go();} }
+            if root.running: Button { text: "cancel migration"; clicked => {root.cancel-job();} }
+            Rectangle { horizontal-stretch: 1; }
+            Button { text: "close"; clicked => {root.close-clicked();} }
+        }
+    }
+}

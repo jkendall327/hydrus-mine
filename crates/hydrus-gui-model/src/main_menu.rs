@@ -133,6 +133,8 @@ pub enum Command {
     ClearAndLoadSession(String),
     /// Switch a pause on or off.
     Pause(Pause),
+    /// Switch automatic clipboard imports for watchers (true) or other recognised URLs.
+    WatchClipboard(bool),
     /// Check an import folder now (none: all of them).
     CheckImportFolder(Option<String>),
     /// Run an export folder now (none: all of them).
@@ -173,10 +175,16 @@ pub enum Command {
     Options,
     /// Open the manage subscriptions dialog.
     ManageSubscriptions,
+    /// Review live network usage/rules (`true`) or current jobs.
+    NetworkData(bool),
     /// Manage URL classes (true) or gallery URL generators (false).
     ManageDownloaderDefinitions(bool),
     /// Parser definitions (`false`) or URL-class parser links (`true`).
     ManageParsers(bool),
+    /// Review network sessions (`false`) or edit custom HTTP headers (`true`).
+    ManageNetworkSessions(bool),
+    /// Import (`true`) or export a reference downloader bundle.
+    ExchangeDownloaders(bool),
     /// Open the manage import folders dialog.
     ManageImportFolders,
     /// Open the manage export folders dialog.
@@ -226,6 +234,7 @@ pub struct Facts {
     pub search_domains: Vec<(ServiceKey, String)>,
     pub maintenance: FileMaintenanceSettings,
     pub pauses: Pauses,
+    pub clipboard_urls: hydrus_store::settings::ClipboardUrls,
     /// The repositories, and their pending content (none: no repositories).
     pub pending: Option<Vec<Pending>>,
 }
@@ -287,6 +296,7 @@ impl Facts {
                 search_domains,
                 maintenance: settings::get(conn)?,
                 pauses: settings::get(conn)?,
+                clipboard_urls: settings::get(conn)?,
                 pending,
                 ..Facts::default()
             })
@@ -820,30 +830,53 @@ fn network_menu(facts: &Facts) -> Entry {
             menu(
                 "data",
                 vec![
-                    todo("review bandwidth usage and edit rules"),
-                    todo("review current network jobs"),
-                    todo("review session cookies"),
-                    todo(dots("manage http headers")),
+                    item(
+                        "review bandwidth usage and edit rules",
+                        Command::NetworkData(true),
+                    ),
+                    item("review current network jobs", Command::NetworkData(false)),
+                    item(
+                        "review session cookies",
+                        Command::ManageNetworkSessions(false),
+                    ),
+                    item(
+                        dots("manage http headers"),
+                        Command::ManageNetworkSessions(true),
+                    ),
                 ],
             ),
             menu(
                 "downloaders",
                 vec![
-                    todo(dots("import downloaders")),
+                    item(
+                        dots("import downloaders"),
+                        Command::ExchangeDownloaders(true),
+                    ),
                     item(
                         "user-run downloader repository",
                         Command::OpenUrl(
                             "https://github.com/CuddleBear92/Hydrus-Presets-and-Scripts",
                         ),
                     ),
-                    todo(dots("export downloaders")),
+                    item(
+                        dots("export downloaders"),
+                        Command::ExchangeDownloaders(false),
+                    ),
                     SEP,
                     todo(dots("downloader and url display")),
                     menu(
                         "watch clipboard for urls",
                         vec![
-                            check("watcher urls", None, false),
-                            check("other recognised urls", None, false),
+                            check(
+                                "watcher urls",
+                                Some(Command::WatchClipboard(true)),
+                                facts.clipboard_urls.watchers,
+                            ),
+                            check(
+                                "other recognised urls",
+                                Some(Command::WatchClipboard(false)),
+                                facts.clipboard_urls.other_recognised,
+                            ),
                         ],
                     ),
                     SEP,

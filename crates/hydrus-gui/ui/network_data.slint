@@ -1,0 +1,158 @@
+import { Button, CheckBox, ComboBox, LineEdit, VerticalBox } from "std-widgets.slint";
+import { ListTable, TableColumn, TableRow } from "list_table.slint";
+import { Theme } from "theme.slint";
+
+export component BandwidthWindow inherits Window {
+    title: "review bandwidth usage and edit rules";
+    width: 1120px;
+    height: 720px;
+    background: Theme.window;
+    in property <[TableColumn]> columns;
+    in property <[TableRow]> rows;
+    in-out property <int> sort-column: -1;
+    in-out property <bool> ascending: true;
+    in property <string> status;
+    in property <string> detail;
+    in property <bool> can-edit;
+    in property <bool> can-revert;
+    in property <bool> busy;
+    in-out property <int> default-kind: 0;
+    in-out property <int> history: 0;
+    in-out property <string> domain;
+    in-out property <string> question;
+    callback row-clicked(int, bool, bool);
+    callback sort(int, bool);
+    callback edit-clicked();
+    callback revert-clicked();
+    callback default-clicked();
+    callback domain-clicked();
+    callback reset-clicked();
+    callback answer(bool);
+    callback refresh();
+    callback close-clicked();
+    VerticalBox {
+        Text { text: "Every context normally relies on the default bandwidth rules for its type. Select a row to review or override its rules."; wrap: word-wrap; color: Theme.text; }
+        HorizontalLayout {
+            Text { text: "History:"; color: Theme.text; vertical-alignment: center; }
+            ComboBox { model: ["past 7 days", "past day", "this month", "all time"]; current-index <=> root.history; selected(_) => { root.refresh(); } }
+            Button { text: "refresh snapshot"; clicked => { root.refresh(); } }
+        }
+        ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
+            row-clicked(r,c,s) => { root.row-clicked(r,c,s); }
+            row-activated(_) => { root.edit-clicked(); }
+            sort(c,a) => { root.sort(c,a); }
+        }
+        Text { text: root.detail; wrap: word-wrap; color: Theme.text; min-height: 90px; }
+        HorizontalLayout {
+            Button { text: "edit rules"; enabled: root.can-edit && !root.busy; clicked => { root.edit-clicked(); } }
+            Button { text: "use default rules"; enabled: root.can-revert && !root.busy; clicked => { root.revert-clicked(); } }
+            Rectangle { horizontal-stretch: 1; }
+            ComboBox { model: ["global", "web domain", "hydrus service", "downloader page", "subscription", "watcher page"]; current-index <=> root.default-kind; }
+            Button { text: "edit default bandwidth rules"; enabled: !root.busy; clicked => { root.default-clicked(); } }
+        }
+        HorizontalLayout {
+            LineEdit { text <=> root.domain; placeholder-text: "domain (for example example.com)"; horizontal-stretch: 1; }
+            Button { text: "set domain rules"; enabled: !root.busy; clicked => { root.domain-clicked(); } }
+            Button { text: "reset default bandwidth rules"; enabled: !root.busy; clicked => { root.reset-clicked(); } }
+        }
+        if root.question != "": HorizontalLayout {
+            Text { text: root.question; wrap: word-wrap; color: Theme.text; horizontal-stretch: 1; }
+            Button { text: "yes"; clicked => { root.answer(true); } }
+            Button { text: "no"; clicked => { root.answer(false); } }
+        }
+        HorizontalLayout {
+            Text { text: root.status; color: Theme.text; horizontal-stretch: 1; wrap: word-wrap; }
+            Button { text: "close"; clicked => { root.close-clicked(); } }
+        }
+    }
+}
+
+export component EditBandwidthRulesWindow inherits Window {
+    in property <string> window-title;
+    title: root.window-title;
+    width: 670px;
+    height: 460px;
+    background: Theme.window;
+    in property <[TableColumn]> columns;
+    in property <[TableRow]> rows;
+    in property <bool> busy;
+    in-out property <bool> requests;
+    in-out property <bool> monthly;
+    in-out property <string> amount: "104857600";
+    in-out property <string> seconds: "86400";
+    in property <string> error;
+    callback row-clicked(int, bool, bool);
+    callback add-rule();
+    callback replace-rule();
+    callback delete-rule();
+    callback apply-clicked();
+    callback cancel-clicked();
+    VerticalBox {
+        Text { text: "bandwidth rules"; color: Theme.text; font-weight: 700; }
+        ListTable { columns: root.columns; rows: root.rows; vertical-stretch: 1;
+            row-clicked(r,c,s) => { root.row-clicked(r,c,s); }
+            delete-pressed => { root.delete-rule(); }
+        }
+        HorizontalLayout {
+            spacing: 8px;
+            CheckBox { text: "requests (otherwise bytes)"; checked <=> root.requests; }
+            LineEdit { text <=> root.amount; placeholder-text: "maximum allowed"; horizontal-stretch: 1; }
+        }
+        HorizontalLayout {
+            spacing: 8px;
+            CheckBox { text: "monthly"; checked <=> root.monthly; }
+            Text { text: "every (seconds):"; color: Theme.text; vertical-alignment: center; }
+            LineEdit { text <=> root.seconds; enabled: !root.monthly; horizontal-stretch: 1; }
+        }
+        HorizontalLayout {
+            Button { text: "add"; enabled: !root.busy; clicked => { root.add-rule(); } }
+            Button { text: "replace selected"; enabled: !root.busy; clicked => { root.replace-rule(); } }
+            Button { text: "delete selected"; enabled: !root.busy; clicked => { root.delete-rule(); } }
+        }
+        Text { text: root.error; wrap: word-wrap; color: Theme.text; }
+        HorizontalLayout {
+            Rectangle { horizontal-stretch: 1; }
+            Button { text: "apply"; enabled: !root.busy; clicked => { root.apply-clicked(); } }
+            Button { text: "cancel"; enabled: !root.busy; clicked => { root.cancel-clicked(); } }
+        }
+    }
+}
+
+export component NetworkJobsWindow inherits Window {
+    title: "review current network jobs";
+    width: 1100px;
+    height: 590px;
+    background: Theme.window;
+    in property <[TableColumn]> columns;
+    in property <[TableRow]> rows;
+    in-out property <int> sort-column: -1;
+    in-out property <bool> ascending: true;
+    in-out property <bool> auto-refresh: true;
+    in property <string> detail;
+    in property <string> status;
+    in property <bool> can-act;
+    callback row-clicked(int, bool, bool);
+    callback sort(int, bool);
+    callback refresh();
+    callback cancel-jobs();
+    callback override-jobs();
+    callback close-clicked();
+    VerticalBox {
+        Text { text: "Current requests, including subscription and downloader work. Select jobs to see network contexts or cancel them."; wrap: word-wrap; color: Theme.text; }
+        ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
+            row-clicked(r,c,s) => { root.row-clicked(r,c,s); }
+            sort(c,a) => { root.sort(c,a); }
+        }
+        Text { text: root.detail; wrap: word-wrap; color: Theme.text; min-height: 75px; }
+        HorizontalLayout {
+            spacing: 8px;
+            Button { text: "refresh snapshot"; clicked => { root.refresh(); } }
+            CheckBox { text: "auto-refresh"; checked <=> root.auto-refresh; }
+            Button { text: "cancel selected"; enabled: root.can-act; clicked => { root.cancel-jobs(); } }
+            Button { text: "override bandwidth"; enabled: root.can-act; clicked => { root.override-jobs(); } }
+            Rectangle { horizontal-stretch: 1; }
+            Button { text: "close"; clicked => { root.close-clicked(); } }
+        }
+        Text { text: root.status; wrap: word-wrap; color: Theme.text; }
+    }
+}

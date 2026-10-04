@@ -30,6 +30,7 @@ export component ManageTagsWindow inherits Window {
     callback entered();
     callback move-highlight(int);
     callback tag-activated(int);
+    callback migrate-tags();
     callback apply();
     callback cancel();
 
@@ -118,6 +119,7 @@ export component ManageTagsWindow inherits Window {
             HorizontalLayout {
                 spacing: 6px;
                 alignment: end;
+                Button {text: "migrate tags…"; clicked => {root.migrate-tags();}}
                 Button {
                     text: "apply";
                     clicked => { root.apply(); }

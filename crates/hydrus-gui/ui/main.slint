@@ -23,8 +23,10 @@ export { ListText }
 export { Palette } from "std-widgets.slint";
 export { MediaViewerWindow, NoteRow, RatingRow, RatingShape } from "viewer.slint";
 export { ArchiveDeleteWindow } from "archive_delete.slint";
+export { BandwidthWindow, EditBandwidthRulesWindow, NetworkJobsWindow } from "network_data.slint";
 export { TagDisplayWindow } from "tag_display.slint";
 export { TagRelationshipsWindow } from "tag_relationships.slint";
+export { TagMigrationWindow } from "tag_migration.slint";
 export { ManageTagsWindow } from "manage_tags.slint";
 export { ManageNotesWindow } from "manage_notes.slint";
 export { ManageUrlsWindow } from "manage_urls.slint";
@@ -41,6 +43,7 @@ export { ServicesEditorWindow, EditServiceWindow, ServiceColourRow } from "servi
 export { ServicesReviewWindow } from "services_review.slint";
 export { AboutWindow } from "about.slint";
 export { SimpleFormulaeWindow } from "simple_formulae.slint";
+export { DownloaderExchangeWindow } from "downloader_interchange.slint";
 export { FormulaWindow, FormulaRuleWindow } from "formula_editors.slint";
 export { ConversionWindow, StringConverterWindow, StringProcessorWindow, StringStepWindow } from "string_processor.slint";
 export { AutoResolutionReviewWindow, PairRow } from "auto_resolution_review.slint";
@@ -55,7 +58,7 @@ export { EditorTreeRow } from "filetype_tree.slint";
 export { ImportRow, ReviewImportsWindow } from "import_files.slint";
 export { UnlockWindow } from "unlock.slint";
 export { DuplicateFilterWindow, Statement } from "duplicate_filter.slint";
-export { SubscriptionsWindow, Tick } from "subscriptions.slint";
+export { SubscriptionGalleryWindow, SubscriptionsWindow, Tick } from "subscriptions.slint";
 export { EditSubscriptionWindow } from "edit_subscription.slint";
 export { FileLogWindow } from "file_log.slint";
 export { AutoResolutionRulesWindow, AutoResolutionRuleWindow, ComparatorWindow } from "auto_resolution_rules.slint";
@@ -1920,3 +1923,5 @@ export component MainWindow inherits Window {
 
 export { ParserListWindow, ParserEditWindow } from "parser_editors.slint";
 export { ClientApiKeysWindow, EditApiPermissionsWindow, ApiPermissionRow } from "client_api_admin.slint";
+
+export { NetworkDataWindow, EditNetworkValueWindow } from "network_sessions.slint";

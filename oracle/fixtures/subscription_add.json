@@ -1,0 +1,131 @@
+[
+ {
+  "case": "no downloaders",
+  "dialogs": [
+   {
+    "title": "Warning",
+    "message": "Hey, you do not have any downloaders set up in this client, so you cannot create a new subscription yet!\n\nCheck the _network->downloaders_ menu to find downloaders made by users."
+   }
+  ],
+  "subscriptions": []
+ },
+ {
+  "case": "single cancel",
+  "dialogs": [
+   {
+    "title": "select gallery",
+    "panel": "EditSelectFromListPanel",
+    "choices": [
+     "alpha"
+    ],
+    "selected": [
+     "alpha"
+    ],
+    "answer": null
+   }
+  ],
+  "subscriptions": []
+ },
+ {
+  "case": "single editor cancel",
+  "dialogs": [
+   {
+    "title": "select gallery",
+    "panel": "EditSelectFromListPanel",
+    "choices": [
+     "alpha"
+    ],
+    "selected": [
+     "alpha"
+    ],
+    "answer": 0
+   },
+   {
+    "title": "edit subscription",
+    "panel": "EditSubscriptionPanel",
+    "name": "new subscription",
+    "gug": "alpha",
+    "answer": null
+   }
+  ],
+  "subscriptions": []
+ },
+ {
+  "case": "single editor accept",
+  "dialogs": [
+   {
+    "title": "select gallery",
+    "panel": "EditSelectFromListPanel",
+    "choices": [
+     "alpha"
+    ],
+    "selected": [
+     "alpha"
+    ],
+    "answer": 0
+   },
+   {
+    "title": "edit subscription",
+    "panel": "EditSubscriptionPanel",
+    "name": "new subscription",
+    "gug": "alpha",
+    "answer": 0
+   }
+  ],
+  "subscriptions": [
+   "new subscription"
+  ]
+ },
+ {
+  "case": "multiple editor cancel",
+  "dialogs": [
+   {
+    "title": "select gallery",
+    "panel": "EditSelectFromListPanel",
+    "choices": [
+     "alpha",
+     "zed"
+    ],
+    "selected": [
+     "zed"
+    ],
+    "answer": 0
+   },
+   {
+    "title": "edit subscription",
+    "panel": "EditSubscriptionPanel",
+    "name": "new subscription",
+    "gug": "alpha",
+    "answer": null
+   }
+  ],
+  "subscriptions": []
+ },
+ {
+  "case": "multiple choose zed",
+  "dialogs": [
+   {
+    "title": "select gallery",
+    "panel": "EditSelectFromListPanel",
+    "choices": [
+     "alpha",
+     "zed"
+    ],
+    "selected": [
+     "zed"
+    ],
+    "answer": 1
+   },
+   {
+    "title": "edit subscription",
+    "panel": "EditSubscriptionPanel",
+    "name": "new subscription",
+    "gug": "zed",
+    "answer": 0
+   }
+  ],
+  "subscriptions": [
+   "new subscription"
+  ]
+ }
+]

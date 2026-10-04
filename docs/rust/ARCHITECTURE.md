@@ -113,6 +113,7 @@ unknown or not-yet-supported objects are preserved verbatim in a
 |---|---|
 | `hydrus-core` | Domain vocabulary: ids, hashes, file types, services, tags, time. No I/O. |
 | `hydrus-legacy` | Read-only access to reference (v688) databases and serialised objects. |
+| `hydrus-downloader-exchange` | Reference-compatible downloader definition text/PNG encoding and bounded decoding, separate from database import. |
 | `hydrus-store` | Native SQLite schema, migrations, writer actor + reader pool, derived data. |
 | `hydrus-media` | File type detection, metadata, thumbnails, perceptual/pixel hashes, blurhash. |
 | `hydrus-search` | Predicates, the system-predicate text parser, query planning and execution. |

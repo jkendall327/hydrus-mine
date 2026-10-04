@@ -1,0 +1,27 @@
+[package]
+name = "hydrus-downloader-exchange"
+description = "Bounded reference downloader JSON and PNG interchange"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+hydrus-core.workspace = true
+hydrus-parse.workspace = true
+hydrus-legacy.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+hex.workspace = true
+flate2.workspace = true
+png.workspace = true
+
+[dev-dependencies]
+hydrus-testkit.workspace = true
+anyhow.workspace = true
+proptest.workspace = true
+
+[lints]
+workspace = true

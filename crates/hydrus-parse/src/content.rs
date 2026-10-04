@@ -349,6 +349,9 @@ pub fn title(posts: &[ParsedPost]) -> Option<String> {
 /// A page parser.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PageParser {
+    /// Reference-only example context and editor data, preserved through edits.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reference_auxiliary: Option<serde_json::Value>,
     pub name: String,
     /// The reference's parser key, in hex.
     pub key: String,

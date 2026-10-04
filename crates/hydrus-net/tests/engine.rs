@@ -17,6 +17,232 @@ use hydrus_net::{Job, NetEngine, NetError, NetOptions, Request, StatusKind};
 use hydrus_store::Store;
 use hydrus_store::network::{self, Approval, NetworkContext};
 
+#[tokio::test]
+async fn runtime_registry_cancellation_ipc_and_dropped_fetch() {
+    use hydrus_store::{
+        network_runtime::{self, Command, JobAction, Snapshot, WaitReason},
+        settings,
+    };
+    let s = setup(|_| Vec::new()).await;
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &settings::Pauses {
+                    network_traffic: true,
+                    ..settings::Pauses::default()
+                },
+            )
+        })
+        .unwrap();
+    let job = Job::new();
+    let request = Request::get(format!("{}/echo", s.base));
+    let mut fetch = Box::pin(s.engine.fetch(&request, &job));
+    tokio::select! { _ = &mut fetch => panic!("paused job ran"), () = tokio::time::sleep(std::time::Duration::from_millis(30)) => {} }
+    let snapshot = s.engine.runtime_snapshot();
+    assert_eq!(snapshot.jobs.len(), 1);
+    assert_eq!(snapshot.jobs[0].wait, WaitReason::Paused);
+    assert!(
+        snapshot.jobs[0]
+            .contexts
+            .contains(&NetworkContext::global())
+    );
+    assert!(!s.engine.runtime_command(&Command {
+        epoch: "previous daemon".into(),
+        job: snapshot.jobs[0].id,
+        action: JobAction::Cancel
+    }));
+    assert!(!job.is_cancelled());
+    let command = Command {
+        epoch: snapshot.epoch.clone(),
+        job: snapshot.jobs[0].id,
+        action: JobAction::Cancel,
+    };
+    s.store
+        .write(move |ctx| network_runtime::send(ctx.conn(), command))
+        .unwrap();
+    s.engine.publish_runtime().unwrap();
+    assert_eq!(fetch.await.unwrap_err(), NetError::Cancelled);
+    assert!(s.engine.runtime_snapshot().jobs.is_empty());
+    s.engine.publish_runtime().unwrap();
+    assert!(
+        s.store
+            .read(settings::get::<Snapshot>)
+            .unwrap()
+            .jobs
+            .is_empty()
+    );
+    let job = Job::new();
+    let mut abandoned = Box::pin(s.engine.fetch(&request, &job));
+    tokio::select! { _ = &mut abandoned => panic!("paused job ran"), () = tokio::time::sleep(std::time::Duration::from_millis(30)) => {} }
+    assert_eq!(s.engine.runtime_snapshot().jobs.len(), 1);
+    drop(abandoned);
+    assert!(s.engine.runtime_snapshot().jobs.is_empty());
+    assert!(!s.engine.runtime_command(&Command {
+        epoch: snapshot.epoch,
+        job: snapshot.jobs[0].id,
+        action: JobAction::Cancel
+    }));
+}
+
+#[tokio::test]
+async fn runtime_override_releases_a_live_bandwidth_wait_and_counts_usage() {
+    use hydrus_core::bandwidth::{BandwidthType, Rule, Rules};
+    use hydrus_store::{
+        bandwidth::BandwidthSettings,
+        network_runtime::{Command, JobAction, WaitReason},
+        settings,
+    };
+    let s = setup(|_| Vec::new()).await;
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &BandwidthSettings {
+                    rules: vec![(
+                        NetworkContext::global(),
+                        Rules::new([Rule::new(BandwidthType::Requests, Some(3600), 1)]),
+                    )],
+                    ..BandwidthSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let engine = NetEngine::new(
+        s.store.clone(),
+        NetOptions {
+            obey_bandwidth: true,
+            ..s.engine.options()
+        },
+    )
+    .unwrap();
+    let request = Request::get(format!("{}/echo", s.base));
+    engine.fetch(&request, &Job::new()).await.unwrap();
+    let job = Job::new();
+    let mut fetch = Box::pin(engine.fetch(&request, &job));
+    tokio::select! { _ = &mut fetch => panic!("bandwidth-limited job ran"), () = tokio::time::sleep(std::time::Duration::from_millis(30)) => {} }
+    let snapshot = engine.runtime_snapshot();
+    assert_eq!(snapshot.jobs[0].wait, WaitReason::Bandwidth);
+    assert!(engine.runtime_command(&Command {
+        epoch: snapshot.epoch,
+        job: snapshot.jobs[0].id,
+        action: JobAction::OverrideBandwidth
+    }));
+    tokio::time::timeout(std::time::Duration::from_secs(1), fetch)
+        .await
+        .unwrap()
+        .unwrap();
+    engine.save_bandwidth().unwrap();
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    let (_, mut global) = s
+        .store
+        .read(|conn| hydrus_store::bandwidth::usage(conn, now))
+        .unwrap()
+        .into_iter()
+        .find(|(c, _)| c == &NetworkContext::global())
+        .unwrap();
+    assert_eq!(global.usage(BandwidthType::Requests, None, now), 2);
+    // Rule writes reach the running engine without destroying its usage.
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &BandwidthSettings {
+                    rules: Vec::new(),
+                    ..BandwidthSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    assert!(engine.reload_settings().unwrap());
+    engine.fetch(&request, &Job::new()).await.unwrap();
+    let mut global = engine
+        .runtime_snapshot()
+        .usage
+        .into_iter()
+        .find(|(c, _)| c == &NetworkContext::global())
+        .unwrap()
+        .1;
+    assert_eq!(global.usage(BandwidthType::Requests, None, now), 3);
+}
+
+#[tokio::test]
+async fn runtime_live_transfer_progress_and_usage_precede_the_durable_save() {
+    use hydrus_core::bandwidth::BandwidthType;
+    use hydrus_store::{
+        bandwidth::BandwidthSettings,
+        network_runtime::{Command, JobAction, WaitReason},
+        settings,
+    };
+    let s = setup(|_| Vec::new()).await;
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &BandwidthSettings {
+                    rules: Vec::new(),
+                    ..BandwidthSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let engine = NetEngine::new(
+        s.store.clone(),
+        NetOptions {
+            obey_bandwidth: true,
+            ..s.engine.options()
+        },
+    )
+    .unwrap();
+    let request = Request::get(format!("{}/progressive", s.base));
+    let job = Job::new();
+    let mut fetch = Box::pin(engine.fetch(&request, &job));
+    let start = std::time::Instant::now();
+    loop {
+        tokio::select! { _ = &mut fetch => panic!("finished before its live progress was read"), () = tokio::time::sleep(std::time::Duration::from_millis(10)) => {} }
+        if job.state().bytes_read > 0 {
+            break;
+        }
+        assert!(start.elapsed() < std::time::Duration::from_secs(3));
+    }
+    let snapshot = engine.runtime_snapshot();
+    let live = &snapshot.jobs[0];
+    assert_eq!(live.wait, WaitReason::Downloading);
+    assert_eq!(live.bytes_read, 512);
+    assert_eq!(live.bytes_total, Some(2048));
+    assert!(
+        s.store
+            .read(|conn| hydrus_store::bandwidth::usage(conn, snapshot.at))
+            .unwrap()
+            .is_empty()
+    );
+    let mut global = snapshot
+        .usage
+        .iter()
+        .find(|(c, _)| c == &NetworkContext::global())
+        .unwrap()
+        .1
+        .clone();
+    assert_eq!(global.usage(BandwidthType::Data, None, snapshot.at), 512);
+    assert!(engine.runtime_command(&Command {
+        epoch: snapshot.epoch,
+        job: live.id,
+        action: JobAction::Cancel
+    }));
+    assert_eq!(fetch.await.unwrap_err(), NetError::Cancelled);
+    assert!(engine.runtime_snapshot().jobs.is_empty());
+    engine.save_bandwidth().unwrap();
+    let mut saved = s
+        .store
+        .read(|conn| hydrus_store::bandwidth::usage(conn, snapshot.at))
+        .unwrap()
+        .into_iter()
+        .find(|(c, _)| c == &NetworkContext::global())
+        .unwrap()
+        .1;
+    assert_eq!(saved.usage(BandwidthType::Data, None, snapshot.at), 512);
+}
+
 #[derive(Default)]
 struct Server {
     hits: Mutex<HashMap<String, usize>>,
@@ -128,6 +354,25 @@ async fn slow() -> &'static str {
     "late"
 }
 
+async fn progressive() -> Response {
+    let stream = futures_util::stream::unfold(0u8, |part| async move {
+        if part >= 4 {
+            return None;
+        }
+        if part > 0 {
+            tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+        }
+        Some((
+            Ok::<_, std::io::Error>(bytes::Bytes::from(vec![part; 512])),
+            part + 1,
+        ))
+    });
+    Response::builder()
+        .header(header::CONTENT_LENGTH, "2048")
+        .body(Body::from_stream(stream))
+        .unwrap()
+}
+
 struct Setup {
     engine: NetEngine,
     store: Arc<Store>,
@@ -146,6 +391,7 @@ async fn setup(make_classes: impl FnOnce(&str) -> Vec<UrlClass>) -> Setup {
         .route("/file.png", get(ranged))
         .route("/loop/{n}", get(redirect_loop))
         .route("/slow", get(slow))
+        .route("/progressive", get(progressive))
         .route("/uri", get(whole_uri))
         .with_state(Arc::clone(&server));
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();

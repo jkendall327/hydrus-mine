@@ -2439,6 +2439,7 @@ dependencies = [
  "axum",
  "hex",
  "hydrus-core",
+ "hydrus-downloader-exchange",
  "hydrus-import",
  "hydrus-media",
  "hydrus-net",
@@ -2455,6 +2456,24 @@ dependencies = [
  "thiserror 2.0.21",
  "tokio",
  "tracing",
+]
+
+[[package]]
+name = "hydrus-downloader-exchange"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "flate2",
+ "hex",
+ "hydrus-core",
+ "hydrus-legacy",
+ "hydrus-parse",
+ "hydrus-testkit",
+ "png",
+ "proptest",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.21",
 ]
 
 [[package]]
@@ -2485,11 +2504,13 @@ dependencies = [
  "crossbeam-channel",
  "hex",
  "hydrus-core",
+ "hydrus-downloader-exchange",
  "hydrus-duplicates",
  "hydrus-gui-model",
  "hydrus-import",
  "hydrus-legacy",
  "hydrus-media",
+ "hydrus-net",
  "hydrus-parse",
  "hydrus-search",
  "hydrus-store",
@@ -2504,6 +2525,7 @@ dependencies = [
  "slint",
  "slint-build",
  "tempfile",
+ "tokio",
 ]
 
 [[package]]
@@ -2514,6 +2536,7 @@ dependencies = [
  "hex",
  "hydrus-core",
  "hydrus-download",
+ "hydrus-downloader-exchange",
  "hydrus-duplicates",
  "hydrus-import",
  "hydrus-legacy",

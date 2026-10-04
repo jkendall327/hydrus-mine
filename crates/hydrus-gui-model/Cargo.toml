@@ -17,6 +17,7 @@ hydrus-duplicates.workspace = true
 hydrus-media.workspace = true
 hydrus-import.workspace = true
 hydrus-parse.workspace = true
+hydrus-downloader-exchange = { path = "../hydrus-downloader-exchange" }
 rusqlite.workspace = true
 anyhow.workspace = true
 hex.workspace = true

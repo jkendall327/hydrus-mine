@@ -27,8 +27,10 @@ mod auto_resolution_preview_window;
 mod auto_resolution_review_window;
 mod auto_resolution_rules_window;
 mod checker_options_window;
+pub mod clipboard_monitor;
 pub mod daemon;
 pub mod downloader_definitions_window;
+pub mod downloader_interchange_window;
 mod drops;
 mod duplicates_sidebar;
 mod edit_subscription_window;
@@ -76,6 +78,7 @@ pub mod string_processor_window;
 mod subscriptions_window;
 pub(crate) mod tag_display_window;
 pub mod tag_filter_window;
+pub mod tag_migration_window;
 pub(crate) mod tag_relationships_window;
 pub mod thumbnail_menu;
 mod thumbnails;
@@ -209,6 +212,8 @@ pub struct Bound {
     pub options: Rc<RefCell<Option<OptionsWindow>>>,
     /// The about window while it is open.
     pub about: Rc<RefCell<Option<AboutWindow>>>,
+    /// Live network reviews and their detached rules editor.
+    pub network_data: network_data_window::Slots,
     /// The review services window while it is open.
     pub services_review: Rc<RefCell<Option<ServicesReviewWindow>>>,
     /// Staged local service editors while open.
@@ -221,10 +226,13 @@ pub struct Bound {
     pub session_dialog: Rc<RefCell<Option<SessionDialog>>>,
     /// The manage subscriptions dialog while it is open.
     pub subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>>,
+    /// The subscriptions gallery chooser, before adding or overwriting.
+    pub subscription_gallery: Rc<RefCell<Option<SubscriptionGalleryWindow>>>,
     /// URL class and gallery URL generator definition editors.
     pub downloader_definitions: downloader_definitions_window::Slots,
     /// Native parser and URL-class link windows.
     pub parser_editors: parser_editors_window::Slots,
+    pub network_sessions: network_sessions_window::Slots,
     /// The edit subscription dialog while it is open (from the manage
     /// subscriptions dialog).
     pub edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>>,
@@ -272,6 +280,8 @@ pub struct Bound {
     _menu_titles: Rc<slint::Timer>,
     /// Shows the popup messages (held likewise).
     _popups: Rc<slint::Timer>,
+    /// Automatic recognised URL imports while this desktop window is bound.
+    pub clipboard_monitor: clipboard_monitor::Monitor,
 }
 
 impl std::fmt::Debug for Bound {
@@ -1243,11 +1253,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
     let services_review: Rc<RefCell<Option<ServicesReviewWindow>>> = Rc::default();
     let services_editor = services_editor_window::Slots::default();
+    let network_data = network_data_window::Slots::default();
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
+    let subscription_gallery: Rc<RefCell<Option<SubscriptionGalleryWindow>>> = Rc::default();
     let downloader_definitions = downloader_definitions_window::Slots::default();
     let parser_editors = parser_editors_window::Slots::default();
+    let network_sessions = network_sessions_window::Slots::default();
     let edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>> = Rc::default();
     // a downloader list's menu's actions, as last opened
     let importer_actions: Rc<RefCell<Vec<importer_menu::Action>>> = Rc::default();
@@ -1255,9 +1268,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         open_files: open_files.clone(),
         ..folders_window::Slots::default()
     };
+    let clipboard_monitor = clipboard_monitor::Monitor::bind(
+        window,
+        pages.clone(),
+        Rc::new({
+            let change_pages = change_pages.clone();
+            move || change_pages(&|_| Ok(()))
+        }),
+    );
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
+            watch_clipboard: Rc::new({
+                let monitor = clipboard_monitor.clone();
+                move |watchers| monitor.toggle(watchers)
+            }),
             tag_display: {
                 let slot = tag_display.clone();
                 let pages = pages.clone();
@@ -1331,6 +1356,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 })
             },
             pages: pages.clone(),
+            network_data: network_data.clone(),
             change_pages: Rc::new(change_pages.clone()),
             ask: {
                 let ask = ask.clone();
@@ -1380,6 +1406,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 })
             },
+            manage_network_sessions: {
+                let pages = pages.clone();
+                let slots = network_sessions.clone();
+                Rc::new(move |headers| {
+                    let store = pages.borrow().store().clone();
+                    if let Err(e) = network_sessions_window::open(&store, &slots, headers) {
+                        eprintln!("could not open network data: {e}");
+                    }
+                })
+            },
             manage_parsers: {
                 let pages = pages.clone();
                 let slots = parser_editors.clone();
@@ -1387,6 +1423,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let store = pages.borrow().store().clone();
                     if let Err(e) = parser_editors_window::open(&store, &slots, links) {
                         eprintln!("could not open parser definitions: {e}");
+                    }
+                })
+            },
+            exchange_downloaders: {
+                let pages = pages.clone();
+                let slots = downloader_interchange_window::Slots::default();
+                Rc::new(move |importing| {
+                    let store = pages.borrow().store().clone();
+                    if let Err(e) =
+                        downloader_interchange_window::package(&store, &slots, importing)
+                    {
+                        eprintln!("could not open downloader interchange: {e}");
                     }
                 })
             },
@@ -1405,6 +1453,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let pages = pages.clone();
                 let slot = subscriptions.clone();
                 let edit_slot = edit_subscription.clone();
+                let gallery_slot = subscription_gallery.clone();
                 let checker_slot = checker_options.clone();
                 let log_slot = folders.log.clone();
                 let import_options_slot = folders.import_options.clone();
@@ -1421,7 +1470,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         open_files: open_files.clone(),
                         import_options: import_options_slot.clone(),
                     };
-                    match subscriptions_window::open(&store, &slot, slots) {
+                    match subscriptions_window::open(&store, &slot, &gallery_slot, slots) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not open the subscriptions: {e}"),
                     }
@@ -1501,8 +1550,19 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             review_services: {
                 let pages = pages.clone();
                 let slot = services_review.clone();
+                let tags_changed = tags_changed.clone();
+                let viewer = viewer.clone();
+                let changed: Rc<dyn Fn()> = Rc::new(move || {
+                    tags_changed();
+                    if let Some(window) = viewer.borrow().as_ref() {
+                        window.invoke_refresh_tags();
+                    }
+                });
                 Rc::new(move || {
-                    match services_review_window::open(pages.borrow().store().clone()) {
+                    match services_review_window::open_with_changed(
+                        pages.borrow().store().clone(),
+                        changed.clone(),
+                    ) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not review services: {e}"),
                     }
@@ -3043,12 +3103,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         options,
         about,
         services_review,
+        network_data,
         services_editor,
         checker_options,
         session_dialog,
         subscriptions,
+        subscription_gallery,
         downloader_definitions,
         parser_editors,
+        network_sessions,
         edit_subscription,
         folders,
         simple_formulae,
@@ -3070,6 +3133,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         _thumbnails: thumbnails,
         _menu_titles: menu_titles,
         _popups: popup_timer,
+        clipboard_monitor,
     }
 }
 
@@ -3589,12 +3653,33 @@ pub fn set_paster(paster: impl Fn() -> String + 'static) {
 
 /// The clipboard's text (or the paster's).
 pub(crate) fn from_clipboard() -> Result<String, String> {
-    if let Some(paster) = PASTER.with(|p| p.borrow().clone()) {
-        return Ok(paster());
+    clipboard_text()?.ok_or_else(|| arboard::Error::ContentNotAvailable.to_string())
+}
+
+/// Text reads distinguish an empty/non-text clipboard from an access failure.
+pub(crate) fn clipboard_text() -> Result<Option<String>, String> {
+    if let Some(reader) = CLIPBOARD_READER.with(|reader| reader.borrow().clone()) {
+        return reader();
     }
-    arboard::Clipboard::new()
-        .and_then(|mut c| c.get_text())
-        .map_err(|e| e.to_string())
+    if let Some(paster) = PASTER.with(|p| p.borrow().clone()) {
+        return Ok(Some(paster()));
+    }
+    match arboard::Clipboard::new().and_then(|mut c| c.get_text()) {
+        Ok(text) => Ok(Some(text)),
+        Err(arboard::Error::ContentNotAvailable) => Ok(None),
+        Err(error) => Err(error.to_string()),
+    }
+}
+
+type ClipboardReader = Rc<dyn Fn() -> Result<Option<String>, String>>;
+thread_local! {
+    static CLIPBOARD_READER: RefCell<Option<ClipboardReader>> = RefCell::new(None);
+}
+
+/// Substitute clipboard reads, including unavailable text and access failures,
+/// on this thread for deterministic monitoring tests.
+pub fn set_clipboard_reader(reader: impl Fn() -> Result<Option<String>, String> + 'static) {
+    CLIPBOARD_READER.with(|slot| *slot.borrow_mut() = Some(Rc::new(reader)));
 }
 
 /// Give what is copied to `clipper` rather than the clipboard (for tests,
@@ -5172,3 +5257,7 @@ mod tests {
 }
 
 pub mod client_api_admin_window;
+
+pub mod network_sessions_window;
+
+pub mod network_data_window;

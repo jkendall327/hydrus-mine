@@ -244,12 +244,20 @@ fn the_dialog_edits_a_subscription_and_the_list_writes_it() {
     // "add", with no downloaders: it says so
     let list = open_dialog(&ui, &bound);
     list.invoke_add();
-    assert!(list.get_asking());
+    assert!(!list.get_asking(), "no embedded Add panel");
+    let warning = bound
+        .subscription_gallery
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(warning.get_window_title(), "Warning");
     assert!(
-        list.get_asking_message()
+        warning
+            .get_message()
             .starts_with("Hey, you do not have any downloaders set up in this client")
     );
-    list.invoke_chosen(0);
-    assert!(!list.get_asking());
+    warning.invoke_accept_clicked();
+    assert!(!list.get_gallery_open());
     assert!(bound.edit_subscription.borrow().is_none());
 }

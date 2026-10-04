@@ -112,6 +112,27 @@ transaction, commits the batch, then acknowledges each closure's result
 
 Readers borrow connections from a pool and see a consistent WAL snapshot.
 
+Service-to-service tag migration retains one reader snapshot while destination
+batches commit through the writer. Only one migration can reserve a reader per
+Store, leaving capacity for ordinary GUI reads. Cancellation retains the committed
+prefix; every destination batch resolves service keys again. Mapping counts and
+relationship graphs are updated with the same transaction as their primary data.
+
+## Network state
+
+`network_cookies` retains cookie identity, expiry, secure and additional attributes;
+`network_headers` retains context, exact field name, value, approval and reason.
+Schema version 16 adds `network_sessions` for explicitly created empty session
+silos. Session enumeration unions these with cookie contexts, preserving sessions
+imported before this migration. Clearing a session removes both its silo and jar.
+
+The daemon publishes typed `network_runtime` settings containing its epoch,
+heartbeat, active jobs and current bandwidth trackers. `network_runtime_commands`
+is appended and drained in writer transactions. Epoch/job identifiers prevent
+commands from targeting a replacement daemon or a later request. Snapshots expire
+after five seconds; persisted bandwidth history remains available independently
+of the Client API listener.
+
 ### Cached domain files
 
 Most searches are limited to a file domain and sorted by import time, and

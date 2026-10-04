@@ -17,12 +17,15 @@ export component SimpleFormulaeWindow inherits Window {
     callback add(); callback edit(); callback delete(); callback defaults();
     callback named(); callback name-cancelled(); callback chosen(int); callback cancelled();
     callback apply(); callback cancel();
+    callback exchange(bool);
     VerticalLayout { padding: 10px; spacing: 6px;
         ListTable { vertical-stretch: 1; columns: [{title: "formula", width: 600px, stretch: true}]; rows: root.rows; row-clicked(r,c,s) => { if !root.naming && !root.deleting && !root.editing-formula { root.row-clicked(r,c,s); } } row-activated(r) => { if !root.naming && !root.deleting && !root.editing-formula { root.row-activated(r); } } }
         HorizontalLayout { spacing: 6px;
             Button { text: "add"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.add(); } }
             Button { text: "edit"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula; clicked => { root.edit(); } }
             Button { text: "delete"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula; clicked => { root.delete(); } }
+            Button { text: "import"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.exchange(true); } }
+            Button { text: "export"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula; clicked => { root.exchange(false); } }
             Button { text: "add defaults"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.defaults(); } }
         }
         if root.naming: VerticalLayout {

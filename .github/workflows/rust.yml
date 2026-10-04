@@ -34,6 +34,9 @@ jobs:
       - name: clippy
         run: cargo clippy --workspace --all-targets --locked
       - name: test
+        # Slint's GUI library and test target together exceeded 16 GiB locally.
+        env:
+          CARGO_BUILD_JOBS: 1
         run: cargo test --workspace --locked
       - name: parity ratchet
         run: cargo xtask ratchet --check
@@ -62,6 +65,10 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install ffmpeg
       - name: build
+        env:
+          CARGO_BUILD_JOBS: 1
         run: cargo build --workspace --all-targets --locked
       - name: test
+        env:
+          CARGO_BUILD_JOBS: 1
         run: cargo test --workspace --locked --no-fail-fast
