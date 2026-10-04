@@ -1,0 +1,451 @@
+{
+  "agent": "tag-autocomplete",
+  "baseline": "d50df26b",
+  "commits": [
+    "1b81bd15fce1ab176660460c0d1524e744e82503"
+  ],
+  "implementation_leaf_count": 6,
+  "partial_improvements": 1,
+  "validation": "Real Qt recording and Python syntax, cargo fmt and git diff --check passed. Root GitHub CI pending; no local Cargo build/tests or mutation tests.",
+  "claims": [
+    {
+      "reference_id": "audit-options-tag-editing-tag-edit-autocomplete-by-default-select-the-first-tag-result-with-actual-count-in-write-autocomplete",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Default false checkbox; when enabled skips raw/countless tags and expanded-parent rows to highlight the first counted logical suggestion. Typed/ideal tags preserve actual counts. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings.",
+      "limits": "Runtime consumer currently Manage Tags; shared helper is ready for relationship and import tag inputs, whose full autocomplete parent entries remain partial/missing. Declining multiline paste preserves current text rather than replaying Qt normal line-editor paste. Native layout differs from Qt.",
+      "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1857,
+          "symbol": "\"tag edit autocomplete\"",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/tag_editing.rs",
+          "line": 10,
+          "symbol": "pub struct TagEditingSettings",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 131,
+          "symbol": "let mut tag_editing",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 220,
+          "symbol": "fn six_write_options",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 64,
+          "symbol": "pub struct WriteAutocomplete",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 85,
+          "symbol": "fn exact_rows",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 275,
+          "symbol": "window.on_paste_requested",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 12,
+          "symbol": "def record",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "oracle/fixtures/write_tag_autocomplete.json",
+          "line": 2,
+          "symbol": "\"controls\"",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ]
+    },
+    {
+      "reference_id": "audit-options-tag-editing-tag-edit-autocomplete-when-pasting-multiline-content-into-a-write-autocomplete-skip-the-yes-no-check",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Default false checkbox; two or more cleaned distinct pasted tags ask the recorded question. Enabled bypasses it; explicit paste button always adds tags without asking. Paste is add-only and staged. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings.",
+      "limits": "Runtime consumer currently Manage Tags; shared helper is ready for relationship and import tag inputs, whose full autocomplete parent entries remain partial/missing. Declining multiline paste preserves current text rather than replaying Qt normal line-editor paste. Native layout differs from Qt.",
+      "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1857,
+          "symbol": "\"tag edit autocomplete\"",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/tag_editing.rs",
+          "line": 10,
+          "symbol": "pub struct TagEditingSettings",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 131,
+          "symbol": "let mut tag_editing",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 220,
+          "symbol": "fn six_write_options",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 64,
+          "symbol": "pub struct WriteAutocomplete",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 157,
+          "symbol": "fn paste_questions",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 275,
+          "symbol": "window.on_paste_requested",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 12,
+          "symbol": "def record",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "oracle/fixtures/write_tag_autocomplete.json",
+          "line": 2,
+          "symbol": "\"controls\"",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ]
+    },
+    {
+      "reference_id": "audit-options-tag-editing-tag-edit-autocomplete-show-parent-info-by-default-on-edit-write-autocomplete-taglists",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Default true checkbox controls the parent-count suffix when parent rows are collapsed; expanding parents shows transitive named rows belonging to the source tag. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings.",
+      "limits": "Runtime consumer currently Manage Tags; shared helper is ready for relationship and import tag inputs, whose full autocomplete parent entries remain partial/missing. Declining multiline paste preserves current text rather than replaying Qt normal line-editor paste. Native layout differs from Qt.",
+      "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1857,
+          "symbol": "\"tag edit autocomplete\"",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/tag_editing.rs",
+          "line": 10,
+          "symbol": "pub struct TagEditingSettings",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 131,
+          "symbol": "let mut tag_editing",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 220,
+          "symbol": "fn six_write_options",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 64,
+          "symbol": "pub struct WriteAutocomplete",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 85,
+          "symbol": "fn exact_rows",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 275,
+          "symbol": "window.on_paste_requested",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 12,
+          "symbol": "def record",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "oracle/fixtures/write_tag_autocomplete.json",
+          "line": 2,
+          "symbol": "\"controls\"",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ]
+    },
+    {
+      "reference_id": "audit-options-tag-editing-tag-edit-autocomplete-show-parents-expanded-by-default-on-edit-write-autocomplete-taglists",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Default true checkbox controls expanded transitive parent rows versus the collapsed parent-count suffix. Clicking an expanded parent row enters its originating tag. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings.",
+      "limits": "Runtime consumer currently Manage Tags; shared helper is ready for relationship and import tag inputs, whose full autocomplete parent entries remain partial/missing. Declining multiline paste preserves current text rather than replaying Qt normal line-editor paste. Native layout differs from Qt.",
+      "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1857,
+          "symbol": "\"tag edit autocomplete\"",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/tag_editing.rs",
+          "line": 10,
+          "symbol": "pub struct TagEditingSettings",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 131,
+          "symbol": "let mut tag_editing",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 220,
+          "symbol": "fn six_write_options",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 64,
+          "symbol": "pub struct WriteAutocomplete",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 85,
+          "symbol": "fn exact_rows",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 275,
+          "symbol": "window.on_paste_requested",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 12,
+          "symbol": "def record",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "oracle/fixtures/write_tag_autocomplete.json",
+          "line": 2,
+          "symbol": "\"controls\"",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ]
+    },
+    {
+      "reference_id": "audit-options-tag-editing-tag-edit-autocomplete-show-sibling-info-by-default-on-edit-write-autocomplete-taglists",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Default true checkbox controls the ideal-sibling arrow decoration using the edited/display service even when counting all known tags. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings.",
+      "limits": "Runtime consumer currently Manage Tags; shared helper is ready for relationship and import tag inputs, whose full autocomplete parent entries remain partial/missing. Declining multiline paste preserves current text rather than replaying Qt normal line-editor paste. Native layout differs from Qt.",
+      "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1857,
+          "symbol": "\"tag edit autocomplete\"",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/tag_editing.rs",
+          "line": 10,
+          "symbol": "pub struct TagEditingSettings",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 131,
+          "symbol": "let mut tag_editing",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 220,
+          "symbol": "fn six_write_options",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 64,
+          "symbol": "pub struct WriteAutocomplete",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 85,
+          "symbol": "fn exact_rows",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 275,
+          "symbol": "window.on_paste_requested",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 12,
+          "symbol": "def record",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "oracle/fixtures/write_tag_autocomplete.json",
+          "line": 2,
+          "symbol": "\"controls\"",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ]
+    },
+    {
+      "reference_id": "audit-options-tag-editing-tag-edit-autocomplete-autocomplete-list-height",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Integer control 1\u2013128, default 11; visible Manage Tags suggestion rows use the setting, scrolling retains every result beyond that height and the old twelve-result cap is removed. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings.",
+      "limits": "Runtime consumer currently Manage Tags; shared helper is ready for relationship and import tag inputs, whose full autocomplete parent entries remain partial/missing. Declining multiline paste preserves current text rather than replaying Qt normal line-editor paste. Native layout differs from Qt.",
+      "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1857,
+          "symbol": "\"tag edit autocomplete\"",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/tag_editing.rs",
+          "line": 10,
+          "symbol": "pub struct TagEditingSettings",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 131,
+          "symbol": "let mut tag_editing",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 220,
+          "symbol": "fn six_write_options",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 64,
+          "symbol": "pub struct WriteAutocomplete",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 8,
+          "symbol": "fn paste_confirmation_skip",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 275,
+          "symbol": "window.on_paste_requested",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 12,
+          "symbol": "def record",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "oracle/fixtures/write_tag_autocomplete.json",
+          "line": 2,
+          "symbol": "\"controls\"",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ]
+    },
+    {
+      "reference_id": "audit-media-tags-autocomplete",
+      "previous_status": "partial",
+      "proposed_status": "partial",
+      "change_kind": "implementation",
+      "exact_behavior": "Replaced capped storage suggestions with shared zero-count aware, domain/service aware write search; raw/ideal elevation, counts, parent/sibling decorations, click/highlight entry, manual fetch, multiline/add-only clipboard questions and height controls.",
+      "limits": "Favourite/children panels and context menus remain absent; declined multiline paste leaves native input unchanged. Not a completed implementation leaf.",
+      "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 268,
+          "symbol": "pub fn set_text",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/autocomplete/search.rs",
+          "line": 441,
+          "symbol": "pub fn search_tags_for_write",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 8,
+          "symbol": "fn paste_confirmation_skip",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 12,
+          "symbol": "def record",
+          "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        }
+      ]
+    }
+  ]
+}
