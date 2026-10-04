@@ -69,7 +69,10 @@ fn tags_are_added_and_removed_as_the_reference_does() {
     assert!(listed(&manage).contains(&"brand new".to_owned()));
     manage.enter("brand new").unwrap();
     assert!(!listed(&manage).contains(&"brand new".to_owned()));
-    assert!(!manage.has_changes());
+    assert!(
+        manage.has_changes(),
+        "adding then removing creates a deleted mapping, as the reference does"
+    );
     // an existing tag is removed
     manage.enter(&its_tag).unwrap();
     assert!(!listed(&manage).contains(&its_tag));

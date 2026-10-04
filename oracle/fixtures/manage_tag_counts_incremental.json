@@ -789,5 +789,56 @@
         ]
       ]
     }
-  ]
+  ],
+  "fresh_cycle": {
+    "state": {
+      "show_deleted": true,
+      "services": [
+        {
+          "service": "downloader tags",
+          "label": "0 deleted mappings",
+          "visible": false,
+          "tooltip": "hide deleted mappings",
+          "rows": []
+        },
+        {
+          "service": "my tags",
+          "label": "8 deleted mappings",
+          "visible": true,
+          "tooltip": "hide deleted mappings",
+          "rows": [
+            {
+              "tag": "checkpoint:both",
+              "label": "checkpoint:both (1) (X1)"
+            },
+            {
+              "tag": "checkpoint:cycle",
+              "label": "checkpoint:cycle (X3)"
+            },
+            {
+              "tag": "checkpoint:live",
+              "label": "checkpoint:live (X3)"
+            },
+            {
+              "tag": "checkpoint:old",
+              "label": "checkpoint:old (3)"
+            }
+          ]
+        },
+        {
+          "service": "second tags",
+          "label": "1 deleted mappings",
+          "visible": true,
+          "tooltip": "hide deleted mappings",
+          "rows": [
+            {
+              "tag": "checkpoint:other",
+              "label": "checkpoint:other (X1)"
+            }
+          ]
+        }
+      ]
+    },
+    "has_changes": true
+  }
 }

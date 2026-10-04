@@ -68,12 +68,16 @@ export component ManageTagsWindow inherits Window {
     callback navigate(int,bool,bool);
     callback results-action(int) -> bool;
     callback tag-activated(int);
+    in property <bool> incremental-available;
+    in property <bool> incremental-open;
+    callback incremental-tags();
     callback migrate-tags();
     callback apply();
     callback cancel();
 
     forward-focus: input;
     FocusScope {
+        enabled: !root.incremental-open;
         capture-key-pressed(event) => {
             if (event.text == Key.Escape) {
                 if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else if !input.escape-results() { root.cancel(); }
@@ -112,6 +116,7 @@ export component ManageTagsWindow inherits Window {
                         }
                     }
                 }
+                if root.incremental-available: Button { text: "± Incremental Tagging"; enabled: root.question == ""; clicked => { root.incremental-tags(); } }
                 if root.deleted-count-visible: HorizontalLayout {
                     alignment: end;
                     spacing: 6px;
@@ -179,4 +184,5 @@ export component ManageTagsWindow inherits Window {
             answered(yes) => { root.tag-menu-answered(yes); }
         }
     }
+    if root.incremental-open: Rectangle { width: root.width; height: root.height; background: transparent; TouchArea { } }
 }

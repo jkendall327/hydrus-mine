@@ -13,6 +13,7 @@ use crate::{ListText, ManageTagsWindow, list_text};
 pub(crate) fn open(
     model: ManageTags,
     slot: &Rc<RefCell<Option<ManageTagsWindow>>>,
+    incremental_slot: &crate::incremental_tagging_window::Slot,
     applied: Rc<dyn Fn()>,
 ) -> Result<ManageTagsWindow, slint::PlatformError> {
     let window = ManageTagsWindow::new()?;
@@ -23,6 +24,8 @@ pub(crate) fn open(
         .map(|n| n.as_str().into())
         .collect();
     window.set_service_names(ModelRc::new(VecModel::from(names)));
+    window.set_incremental_available(model.files().len() > 1);
+    let incremental_open = Rc::new(Cell::new(false));
     let model = Rc::new(RefCell::new(model));
     let refresh = {
         let model = model.clone();
@@ -86,8 +89,9 @@ pub(crate) fn open(
         model.borrow().store().clone(),
         Rc::new({
             let active = active.clone();
+            let incremental_open = incremental_open.clone();
             let pending = pending_paste.clone();
-            move || active.get() && pending.borrow().is_none()
+            move || active.get() && !incremental_open.get() && pending.borrow().is_none()
         }),
         Rc::new({
             let model = model.clone();
@@ -135,9 +139,14 @@ pub(crate) fn open(
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         move |i, x, y| {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return;
             }
             if let Ok(i) = usize::try_from(i) {
@@ -152,18 +161,25 @@ pub(crate) fn open(
         }
     });
     window.on_domain_menu({
+        let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let menu = tag_menu.clone();
         let model = model.clone();
         move |tags, x, y| {
+            if !active.get() || incremental_open.get() {
+                return;
+            }
             let entries = model.borrow().write_input().domain_menu(tags);
             menu.open(&entries, x, y);
         }
     });
     let preference_timer = Rc::new(slint::Timer::default());
     let close = {
+        let incremental_slot = incremental_slot.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending_paste = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         let preference_timer = preference_timer.clone();
@@ -171,6 +187,8 @@ pub(crate) fn open(
             if !active.replace(false) {
                 return;
             }
+            incremental_open.set(false);
+            crate::incremental_tagging_window::cancel(&incremental_slot);
             preference_timer.stop();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
@@ -180,14 +198,77 @@ pub(crate) fn open(
             slot.borrow_mut().take();
         }
     };
+    window.on_incremental_tags({
+        let model = model.clone();
+        let slot = incremental_slot.clone();
+        let active = active.clone();
+        let incremental_open = incremental_open.clone();
+        let pending = pending_paste.clone();
+        let menu = tag_menu.clone();
+        let weak = window.as_weak();
+        let refresh = refresh.clone();
+        move || {
+            if !active.get() || incremental_open.get() || pending.borrow().is_some() || menu.busy()
+            {
+                return;
+            }
+            let Some(editor) = model.borrow().incremental() else {
+                return;
+            };
+            let service = model.borrow().service();
+            let accepted: crate::incremental_tagging_window::Applied = Rc::new({
+                let model = model.clone();
+                let active = active.clone();
+                move |pairs| {
+                    if !active.get() {
+                        return Err("The Manage Tags owner is closed.".into());
+                    }
+                    model.borrow_mut().apply_incremental(service, pairs)
+                }
+            });
+            let closed: Rc<dyn Fn()> = Rc::new({
+                let active = active.clone();
+                let incremental_open = incremental_open.clone();
+                let weak = weak.clone();
+                let refresh = refresh.clone();
+                move || {
+                    incremental_open.set(false);
+                    if active.get()
+                        && let Some(window) = weak.upgrade()
+                    {
+                        window.set_incremental_open(false);
+                        refresh();
+                    }
+                }
+            });
+            match crate::incremental_tagging_window::open(editor, &slot, accepted, closed) {
+                Ok(_) => {
+                    incremental_open.set(true);
+                    if let Some(window) = weak.upgrade() {
+                        window.set_incremental_open(true);
+                    }
+                }
+                Err(error) => {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_error(error.to_string().into());
+                    }
+                }
+            }
+        }
+    });
     let migration_slot = crate::tag_migration_window::Slot::default();
     window.on_migrate_tags({
+        let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let model = model.clone();
         let slot = migration_slot.clone();
         let weak = window.as_weak();
         let refresh = refresh.clone();
         let applied = applied.clone();
         move || {
+            if !active.get() || incremental_open.get() {
+                return;
+            }
             let m = model.borrow();
             let Some(key) = m.migration_service_key() else {
                 if let Some(w) = weak.upgrade() {
@@ -222,10 +303,15 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let close = close.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         move || {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return;
             }
             if let Err(e) = model.borrow().apply() {
@@ -243,10 +329,15 @@ pub(crate) fn open(
         let refresh = refresh.clone();
         let weak = window.as_weak();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         move || {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return;
             }
             if let Err(error) = model.borrow().flip_show_deleted()
@@ -269,8 +360,10 @@ pub(crate) fn open(
             let model = model.clone();
             let refresh = refresh.clone();
             let active = active.clone();
+            let incremental_open = incremental_open.clone();
             move || {
                 if active.get()
+                    && !incremental_open.get()
                     && let Some(window) = weak.upgrade()
                     && window.get_show_deleted() != model.borrow().show_deleted()
                 {
@@ -284,10 +377,15 @@ pub(crate) fn open(
         let refresh = refresh.clone();
         let weak = window.as_weak();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         move |i| {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return;
             }
             if let Err(error) = model
@@ -304,10 +402,15 @@ pub(crate) fn open(
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         move || {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return;
             }
             let mut model = model.borrow_mut();
@@ -321,10 +424,15 @@ pub(crate) fn open(
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         move |i| {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return;
             }
             model.borrow_mut().choose_autocomplete_tab(
@@ -339,10 +447,15 @@ pub(crate) fn open(
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         move || {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return;
             }
             model.borrow_mut().fetch();
@@ -353,10 +466,15 @@ pub(crate) fn open(
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         move |text| {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return;
             }
             model.borrow_mut().set_text(&text);
@@ -367,10 +485,15 @@ pub(crate) fn open(
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         move |by| {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return;
             }
             model.borrow_mut().move_highlight(by as isize);
@@ -381,10 +504,15 @@ pub(crate) fn open(
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         move |direction, ctrl, shift| {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return;
             }
             model
@@ -398,10 +526,15 @@ pub(crate) fn open(
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         move |action| {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return false;
             }
             let handled =
@@ -414,10 +547,15 @@ pub(crate) fn open(
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         move |i, ctrl, shift| {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return;
             }
             if let Ok(i) = usize::try_from(i) {
@@ -432,10 +570,15 @@ pub(crate) fn open(
         let refresh = refresh.clone();
         let apply = apply.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         move || {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return;
             }
             // (enter with nothing typed applies, as in the reference)
@@ -459,10 +602,15 @@ pub(crate) fn open(
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         move |i| {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return;
             }
             model
@@ -475,10 +623,15 @@ pub(crate) fn open(
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         move |i| {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return;
             }
             let _ = model
@@ -491,11 +644,16 @@ pub(crate) fn open(
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         let weak = window.as_weak();
         move |button| {
-            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
                 return true;
             }
             let Some(w) = weak.upgrade() else {
@@ -534,10 +692,11 @@ pub(crate) fn open(
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let weak = window.as_weak();
         move |yes| {
-            if !active.get() {
+            if !active.get() || incremental_open.get() {
                 return;
             }
             let Some(tags) = pending.borrow_mut().take() else {
