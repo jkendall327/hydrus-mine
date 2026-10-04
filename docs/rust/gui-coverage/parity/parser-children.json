@@ -18,14 +18,15 @@
     "5dcebda9c905e12d8c6fc4da87fe9ee96b732f64",
     "ef2baf6b241220e1f4b241c26b1aa515d75cbaca",
     "6ba6d6017eb0deb18d9bd12f468806caf501647b",
-    "2142abbc0c616e3ea084d340d0e90510131d729c"
+    "2142abbc0c616e3ea084d340d0e90510131d729c",
+    "c4bf50cee0bfe5244edb198a03c23b7c22e86781"
   ],
   "validation": {
-    "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states; real router queues in import/export contexts, six node kinds, exact vetoes, duplication, PNG and sidecar worker output; export-folder four real database query refreshes, states, media IDs/hashes and first-example source strings; shared real Qt export-pattern menu and all eight clipboard payloads; actual manual-export tag sidebar ten media/sort/removal states, pending/petitioned counts, exact copy menus and native page launch inputs; double-click confirmed no-op; real JSON sidecar exporter object-name queue 14 states, nine text entries and two deletion questions with actual EditTextPanel validation",
+    "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states; real router queues in import/export contexts, six node kinds, exact vetoes, duplication, PNG and sidecar worker output; export-folder four real database query refreshes, states, media IDs/hashes and first-example source strings; shared real Qt export-pattern menu and all eight clipboard payloads; actual manual-export tag sidebar ten media/sort/removal states, pending/petitioned counts, exact copy menus and native page launch inputs; double-click confirmed no-op; real JSON sidecar exporter object-name queue 14 states, nine text entries and two deletion questions with actual EditTextPanel validation; original timestamp content editor four type/date-processing variants, exact single-choice fields and 18 parsed-text/typed-metadata/source-time outcomes; extraction clock controlled only for deterministic future clamp",
     "formatting": "cargo fmt --all, git diff --check and Python recorder syntax check passed",
     "rust_tests": "authored exact model reference replays, real-store GUI persistence, recursive/stale owner regressions and saved router consumer assertions; root asynchronous CI pending; no local Cargo builds",
     "rendered_ui": "reference screenshot inspected; native headless render assertions authored and pending root CI",
-    "slint_source_check": "passed with cached Slint compiler after 2142abbc; no Cargo build"
+    "slint_source_check": "passed with cached Slint compiler after c4bf50ce; no Cargo build"
   },
   "entries": [
     {
@@ -932,6 +933,71 @@
       "limits": [
         "The native queue uses the existing ListTable/SessionDialog geometry and omits the reference explanatory queue hover tooltip; no native window or reference alias is counted as a second implementation leaf.",
         "Sidecar source/exporter/router parent assessments remain Partial for their independent boundaries. Native Rust regressions are authored for root asynchronous CI; reference recording and cached Slint compilation passed locally."
+      ]
+    },
+    {
+      "reference_id": "content-time",
+      "previous_status": "partial",
+      "before": "partial",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Timestamp content parsers expose the exact original single timestamp-type choice source time (modified-domain type 0). Optional/unset or obsolete imported numeric types normalise to 0 when the editor computes its value, as Qt does; original snapshots still detect this change for Cancel, and formula/processor/auxiliary data remain intact. The old free-integer/blank text path is removed; invalid selection and stale owner callbacks cannot author timestamp metadata. Model/GUI persistence and actual parsing assert raw text plus typed name/type metadata, earliest source time, nonnumeric omission and controlled future clamping, including real datestring conversion. The downloader decodes the recorded saved content parser and runs actual seeds_from_posts, carrying sensible earliest source times and referral URLs into generated file seeds while rejecting zero/negative values and clamping future times.",
+      "exactBehavior": "Timestamp content parsers expose the exact original single timestamp-type choice source time (modified-domain type 0). Optional/unset or obsolete imported numeric types normalise to 0 when the editor computes its value, as Qt does; original snapshots still detect this change for Cancel, and formula/processor/auxiliary data remain intact. The old free-integer/blank text path is removed; invalid selection and stale owner callbacks cannot author timestamp metadata. Model/GUI persistence and actual parsing assert raw text plus typed name/type metadata, earliest source time, nonnumeric omission and controlled future clamping, including real datestring conversion. The downloader decodes the recorded saved content parser and runs actual seeds_from_posts, carrying sensible earliest source times and referral URLs into generated file seeds while rejecting zero/negative values and clamping future times.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "line": 70,
+          "commit": "c4bf50cee0bfe5244edb198a03c23b7c22e86781",
+          "symbol": "value"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "line": 127,
+          "commit": "c4bf50cee0bfe5244edb198a03c23b7c22e86781",
+          "symbol": "fields"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "line": 363,
+          "commit": "c4bf50cee0bfe5244edb198a03c23b7c22e86781",
+          "symbol": "edit_choice"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_editors.rs",
+          "line": 326,
+          "commit": "c4bf50cee0bfe5244edb198a03c23b7c22e86781",
+          "symbol": "timestamp_editor_normalises_recorded_source_choice_and_preserves_converted_metadata"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1635,
+          "commit": "c4bf50cee0bfe5244edb198a03c23b7c22e86781",
+          "symbol": "timestamp_content_has_only_source_choice_and_persists_real_parsed_metadata"
+        },
+        {
+          "relativepath": "crates/hydrus-download/src/seeds.rs",
+          "line": 718,
+          "commit": "c4bf50cee0bfe5244edb198a03c23b7c22e86781",
+          "symbol": "recorded_saved_timestamp_parser_and_date_conversion_reach_actual_file_seeds"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_content_time.py",
+        "fixture": "oracle/fixtures/content_time.json",
+        "visual": "oracle/fixtures/content_time_editor.png",
+        "recording": "passed: actual EditContentParserPanel timestamp choice, ContentParser.GetValue/Parse and ParsedPost.GetTimestamp; types 0/unset/obsolete plus real StringConverter date decode in Formula processing, synthetic context URLs and locally generated HTML only; deterministic extraction clock, no requests/publications"
+      },
+      "limitations": [
+        "The existing shared native parser-test panel shows compact raw content summaries, whereas Qt decorates timestamp strings as source/post time and formatted dates. The one-choice metadata editor and actual consumer behavior are covered here; parser/content/formula test-panel parents retain their independent Partial boundaries.",
+        "The fixture controls only HydrusTime.GetNow during actual ParsedPost.GetTimestamp to fix the future-clamp reference value; native file-seed regression checks its actual monotonic before/after wall-clock interval without extending any deadline. Existing date-converter support is consumed, not counted again.",
+        "Rust model/GUI/downloader regressions are authored for root asynchronous CI; reference recording, cached Slint compilation, formatting and Python syntax checks passed locally."
+      ],
+      "limits": [
+        "The existing shared native parser-test panel shows compact raw content summaries, whereas Qt decorates timestamp strings as source/post time and formatted dates. The one-choice metadata editor and actual consumer behavior are covered here; parser/content/formula test-panel parents retain their independent Partial boundaries.",
+        "The fixture controls only HydrusTime.GetNow during actual ParsedPost.GetTimestamp to fix the future-clamp reference value; native file-seed regression checks its actual monotonic before/after wall-clock interval without extending any deadline. Existing date-converter support is consumed, not counted again.",
+        "Rust model/GUI/downloader regressions are authored for root asynchronous CI; reference recording, cached Slint compilation, formatting and Python syntax checks passed locally."
       ]
     }
   ],

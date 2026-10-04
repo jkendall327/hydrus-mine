@@ -800,6 +800,11 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   select members with checkboxes. Page/content parsers and direct URL-class links
   have native editors and reference JSON/PNG import/export. Login editors
   remain follow-up work.
+- Timestamp content editing now uses the original single source-time choice,
+  including normalisation of unset/obsolete saved types and real date-converted
+  metadata reaching file seeds. Native shared parser test panels still present
+  compact raw content summaries instead of Qt's per-kind human-readable result
+  decorations; this timestamp slice does not complete those parent test panels.
 - Invalid example details use the native URL rules' error wording. The
   reference retains stale referral/next-page examples after a match failure;
   the native editor clears all derived output. A changed list asks before
