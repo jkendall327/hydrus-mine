@@ -964,9 +964,14 @@ impl DomainEntry {
 }
 impl DomainsEditor {
     pub fn put(&mut self, domain: String, login: hydrus_parse::login::DomainLogin) {
-        self.draft.domains.insert(domain.clone(), login);
-        self.selection
-            .select_only(self.draft.domains.keys().position(|key| key == &domain));
+        let index = self
+            .draft
+            .domains
+            .keys()
+            .filter(|key| *key < &domain)
+            .count();
+        self.draft.domains.insert(domain, login);
+        self.selection.select_only(Some(index));
     }
     pub fn delete(&mut self) {
         for domain in self.selected_domains() {
