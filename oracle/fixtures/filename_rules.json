@@ -1,0 +1,908 @@
+{
+  "paths": [
+    "/srv/import/artist/0012 - page 3.jpg",
+    "/srv/import/artist/0001.png",
+    "/srv/import/Some_File (v2).webm"
+  ],
+  "initial": {
+    "quick": [],
+    "regexes": [],
+    "quick_selected": [],
+    "regex_selected": [],
+    "input": "",
+    "tags": [
+      [],
+      [],
+      []
+    ]
+  },
+  "steps": [
+    {
+      "action": "quick_add",
+      "selected": null,
+      "attempts": null,
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "",
+            ""
+          ],
+          "attempts": null
+        }
+      ],
+      "state": {
+        "quick": [],
+        "regexes": [],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [],
+          [],
+          []
+        ]
+      }
+    },
+    {
+      "action": "quick_add",
+      "selected": null,
+      "attempts": [
+        [
+          "",
+          "\\d+"
+        ],
+        [
+          "page",
+          "(?<=page )\\d+"
+        ]
+      ],
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "",
+            ""
+          ],
+          "attempts": [
+            [
+              "",
+              "\\d+"
+            ],
+            [
+              "page",
+              "(?<=page )\\d+"
+            ]
+          ]
+        },
+        {
+          "kind": "warning",
+          "text": "Please enter something for the namespace."
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "page",
+            "(?<=page )\\d+"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "page",
+            "(?<=page )\\d+"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "page:3"
+          ],
+          [],
+          []
+        ]
+      }
+    },
+    {
+      "action": "quick_add",
+      "selected": null,
+      "attempts": [
+        [
+          "version",
+          "[unclosed"
+        ],
+        [
+          "version",
+          "(?<=\\(v)\\d+(?=\\))"
+        ]
+      ],
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "",
+            ""
+          ],
+          "attempts": [
+            [
+              "version",
+              "[unclosed"
+            ],
+            [
+              "version",
+              "(?<=\\(v)\\d+(?=\\))"
+            ]
+          ]
+        },
+        {
+          "kind": "critical",
+          "title": "Error",
+          "text": "That regex would not compile!\n\nunterminated character set at position 0"
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "page:3"
+          ],
+          [],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_add",
+      "selected": null,
+      "attempts": [
+        [
+          "page",
+          "(?<=page )\\d+"
+        ]
+      ],
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "",
+            ""
+          ],
+          "attempts": [
+            [
+              "page",
+              "(?<=page )\\d+"
+            ]
+          ]
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "page",
+            "(?<=page )\\d+"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "page:3"
+          ],
+          [],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_add",
+      "selected": null,
+      "attempts": [
+        [
+          "creator:name",
+          "artist"
+        ]
+      ],
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "",
+            ""
+          ],
+          "attempts": [
+            [
+              "creator:name",
+              "artist"
+            ]
+          ]
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "creator:name",
+            "artist"
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "creator:name",
+            "artist"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "creator:name:artist",
+            "page:3"
+          ],
+          [
+            "creator:name:artist"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_edit",
+      "selected": [
+        0
+      ],
+      "attempts": null,
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "creator:name",
+            "artist"
+          ],
+          "attempts": null
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "creator:name",
+            "artist"
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "creator:name",
+            "artist"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "creator:name:artist",
+            "page:3"
+          ],
+          [
+            "creator:name:artist"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_edit",
+      "selected": [
+        0
+      ],
+      "attempts": [
+        [
+          "  SOURCE  ",
+          "artist"
+        ]
+      ],
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "creator:name",
+            "artist"
+          ],
+          "attempts": [
+            [
+              "  SOURCE  ",
+              "artist"
+            ]
+          ]
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "  SOURCE  ",
+            "artist"
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "  SOURCE  ",
+            "artist"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "page:3",
+            "source:artist"
+          ],
+          [
+            "source:artist"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_edit",
+      "selected": [
+        0,
+        1
+      ],
+      "attempts": [
+        [
+          "all",
+          ""
+        ]
+      ],
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "  SOURCE  ",
+            "artist"
+          ],
+          "attempts": [
+            [
+              "all",
+              ""
+            ]
+          ]
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "all",
+            ""
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "all",
+            ""
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "page:3"
+          ],
+          [],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_delete",
+      "selected": [
+        0,
+        1
+      ],
+      "attempts": null,
+      "text": null,
+      "answer": false,
+      "calls": [
+        {
+          "kind": "question",
+          "text": "Remove all selected?",
+          "answer": false
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "all",
+            ""
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "all",
+            ""
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "page:3"
+          ],
+          [],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_delete",
+      "selected": [
+        0,
+        1
+      ],
+      "attempts": null,
+      "text": null,
+      "answer": true,
+      "calls": [
+        {
+          "kind": "question",
+          "text": "Remove all selected?",
+          "answer": true
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [],
+          [],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_add",
+      "selected": null,
+      "attempts": null,
+      "text": "",
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [],
+          [],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_add",
+      "selected": null,
+      "attempts": null,
+      "text": "[unclosed",
+      "answer": null,
+      "calls": [
+        {
+          "kind": "warning",
+          "text": "That regex would not compile!\n\nunterminated character set at position 0"
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "[unclosed",
+        "tags": [
+          [],
+          [],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_add",
+      "selected": null,
+      "attempts": null,
+      "text": "(\\d{4})",
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [
+          "(\\d{4})"
+        ],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "0012"
+          ],
+          [
+            "0001"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_add",
+      "selected": null,
+      "attempts": null,
+      "text": "(?<=page )\\d+",
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [
+          "(\\d{4})",
+          "(?<=page )\\d+"
+        ],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "0012",
+            "3"
+          ],
+          [
+            "0001"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_add",
+      "selected": null,
+      "attempts": null,
+      "text": "(\\d{4})",
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [
+          "(\\d{4})",
+          "(?<=page )\\d+",
+          "(\\d{4})"
+        ],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "0012",
+            "3"
+          ],
+          [
+            "0001"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_remove",
+      "selected": [
+        0,
+        2
+      ],
+      "attempts": null,
+      "text": null,
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [
+          "(\\d{4})",
+          "(?<=page )\\d+"
+        ],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "(\\d{4})",
+        "tags": [
+          [
+            "0012",
+            "3"
+          ],
+          [
+            "0001"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_add",
+      "selected": null,
+      "attempts": null,
+      "text": "(\\d{4})",
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [
+          "(\\d{4})",
+          "(?<=page )\\d+",
+          "(\\d{4})"
+        ],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "0012",
+            "3"
+          ],
+          [
+            "0001"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_remove",
+      "selected": [],
+      "attempts": null,
+      "text": null,
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [
+          "(\\d{4})",
+          "(?<=page )\\d+",
+          "(\\d{4})"
+        ],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "0012",
+            "3"
+          ],
+          [
+            "0001"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    }
+  ],
+  "applied": {
+    "quick": [
+      [
+        "version",
+        "(?<=\\(v)\\d+(?=\\))"
+      ]
+    ],
+    "regexes": [
+      "(\\d{4})",
+      "(?<=page )\\d+",
+      "(\\d{4})"
+    ],
+    "quick_selected": [],
+    "regex_selected": [],
+    "input": "",
+    "tags": [
+      [
+        "0012",
+        "3"
+      ],
+      [
+        "0001"
+      ],
+      [
+        "version:2"
+      ]
+    ]
+  },
+  "reopened": {
+    "quick": [
+      [
+        "version",
+        "(?<=\\(v)\\d+(?=\\))"
+      ]
+    ],
+    "regexes": [
+      "(\\d{4})",
+      "(?<=page )\\d+",
+      "(\\d{4})"
+    ]
+  },
+  "draft_isolated": true
+}
