@@ -3,10 +3,11 @@
   "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
   "implementation_commits": [
     "6da6cf09",
-    "40e44a63"
+    "40e44a63",
+    "3515423e"
   ],
   "validation": {
-    "reference_recording": "passed; 25 actual Qt scalar/recursive formula states",
+    "reference_recording": "passed; 27 actual Qt scalar/recursive/subsidiary formula states",
     "formatting": "cargo fmt --all and git diff --check passed",
     "rust_tests": "authored; root-owned asynchronous CI pending; no heavy local Cargo build"
   },
@@ -246,6 +247,12 @@
           "relativepath": "crates/hydrus-gui/ui/formula_editors.slint",
           "line": 107,
           "commit": "40e44a63"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/formula_editors.rs",
+          "line": 213,
+          "commit": "3515423e",
+          "symbol": "child_test_data"
         }
       ],
       "test_anchors": [
@@ -272,6 +279,12 @@
           "line": 362,
           "commit": "40e44a63",
           "symbol": "recursive_formula_edits_reach_saved_page_parser_and_consumer"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/formula_editors.rs",
+          "line": 947,
+          "commit": "3515423e",
+          "symbol": "recursive_second_formula_can_select_every_transformed_example"
         }
       ],
       "reference_evidence": {
@@ -330,6 +343,52 @@
         "visual_reference": "oracle/fixtures/recursive_formula_editors.png"
       },
       "limitations": []
+    },
+    {
+      "reference_id": "subsidiary-separator",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Existing subsidiary page-parser rows expose the reusable six-kind separation formula editor. Its test document is the owning page converter output, parsing preserves newlines, accepted formulas stage in the owning page, and save/reopen reaches the live subsidiary parse consumer. Child page-parser definitions are preserved. The subsidiary row also exposes source-time sorting.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "line": 573,
+          "commit": "3515423e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/parser_editors.slint",
+          "line": 129,
+          "commit": "3515423e"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 463,
+          "commit": "3515423e",
+          "symbol": "subsidiary_separator_uses_converted_data_preserves_newlines_and_saves"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_recursive_formula_editors.py",
+        "fixture": "oracle/fixtures/recursive_formula_editors.json",
+        "cases": [
+          "subsidiary_separator",
+          "subsidiary_separator_edit"
+        ]
+      },
+      "limitations": []
+    }
+  ],
+  "uncompleted_parent_progress": [
+    {
+      "reference_id": "subsidiary",
+      "previous_status": "missing",
+      "proposed_status": "partial",
+      "behavior": "Existing subsidiary rows expose separation formula edits and source-time sorting.",
+      "limitations": [
+        "Adding subsidiaries and editing recursive child page parser definitions remain deferred."
+      ]
     }
   ]
 }
