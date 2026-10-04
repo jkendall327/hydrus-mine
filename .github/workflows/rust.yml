@@ -44,6 +44,9 @@ jobs:
       - name: clippy
         run: cargo clippy --workspace --all-targets --locked
       - name: test
+        # Keep behavioral feedback flowing even when a lint needs repair.
+        # The job still fails if formatting or strict Clippy fails.
+        if: ${{ !cancelled() }}
         # Slint's GUI library and test target together exceeded 16 GiB locally.
         env:
           CARGO_BUILD_JOBS: 1
