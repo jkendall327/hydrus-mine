@@ -337,6 +337,7 @@ fn open_editor(
     w.set_page(page);
     w.set_document(test.text.as_str().into());
     w.set_test_url(test.context.get("url").cloned().unwrap_or_default().into());
+    w.set_fetch_url(test.context.get("url").cloned().unwrap_or_default().into());
     w.set_post_index(
         test.context
             .get("post_index")
@@ -363,22 +364,138 @@ fn open_editor(
         example: 0,
     }));
     let active = Rc::new(Cell::new(true));
+    let fetch = crate::parser_test_fetch::Slot::default();
     let refresh: Rc<dyn Fn()> = Rc::new({
         let weak = w.as_weak();
         let state = state.clone();
         let slots = slots.clone();
+        let fetch = fetch.clone();
         move || {
             if let Some(w) = weak.upgrade() {
                 show_editor(&w, &state.borrow());
-                w.set_child_open(child_open(&slots, page));
+                w.set_fetching(fetch.busy());
+                w.set_child_open(child_open(&slots, page) || fetch.busy());
             }
         }
     });
     let blocked: Rc<dyn Fn() -> bool> = Rc::new({
         let active = active.clone();
         let slots = slots.clone();
-        move || !active.get() || child_open(&slots, page)
+        let fetch = fetch.clone();
+        move || !active.get() || child_open(&slots, page) || fetch.busy()
     });
+    w.on_cancel_fetch({
+        let fetch = fetch.clone();
+        move || fetch.cancel()
+    });
+    let fetch_request: Rc<dyn Fn(bool)> = Rc::new({
+        let weak = w.as_weak();
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        let active = active.clone();
+        let fetch = fetch.clone();
+        let store = store.clone();
+        move |example_url| {
+            if blocked() || (example_url && !page) {
+                return;
+            }
+            let Some(w) = weak.upgrade() else {
+                return;
+            };
+            let raw = if example_url {
+                w.get_test_url()
+            } else {
+                w.get_fetch_url()
+            }
+            .trim()
+            .to_owned();
+            if raw.is_empty() {
+                if example_url
+                    && let Value::Page(parser) = &state.borrow().value
+                    && let Some(url) = parser.example_urls.first()
+                {
+                    w.set_test_url(url.as_str().into());
+                }
+                return;
+            }
+            let url = if example_url {
+                hydrus_core::url::ensure_url_is_encoded(&raw, true, false)
+            } else {
+                raw
+            };
+            if let Err(error) = hydrus_core::url::check_full_url(&url) {
+                w.set_error(error.to_string().into());
+                return;
+            }
+            {
+                let mut editor = state.borrow_mut();
+                match test_data(&w, &editor, true) {
+                    Ok(mut test) => {
+                        test.examples.rotate_right(editor.example);
+                        test.source_urls.rotate_right(editor.example);
+                        editor.test = test;
+                    }
+                    Err(error) => {
+                        w.set_error(error.into());
+                        return;
+                    }
+                }
+            }
+            let mut request = hydrus_net::Request::get(url.clone());
+            request.one_shot = example_url;
+            let referral = w.get_referral_url().trim().to_owned();
+            request.referral_url = (example_url && !referral.is_empty()).then_some(referral);
+            w.set_fetch_status("initialising…".into());
+            w.set_error(SharedString::new());
+            let progress = Rc::new({
+                let weak = weak.clone();
+                let active = active.clone();
+                move |status: String| {
+                    if active.get()
+                        && let Some(w) = weak.upgrade()
+                    {
+                        w.set_fetch_status(status.into());
+                    }
+                }
+            });
+            let completed = Rc::new({
+                let weak = weak.clone();
+                let active = active.clone();
+                let state = state.clone();
+                let refresh = refresh.clone();
+                move |outcome: crate::parser_test_fetch::Outcome| {
+                    if !active.get() {
+                        return;
+                    }
+                    let Some(w) = weak.upgrade() else {
+                        return;
+                    };
+                    let mut editor = state.borrow_mut();
+                    editor.example =
+                        editor
+                            .test
+                            .fetched(url.clone(), outcome.document, example_url);
+                    w.set_document(editor.test.text.as_str().into());
+                    w.set_test_url(url.as_str().into());
+                    w.set_post_index("0".into());
+                    w.set_fetch_status("fetch finished".into());
+                    if let Some(error) = outcome.accounting_error {
+                        w.set_error(format!("Could not save bandwidth usage: {error}").into());
+                    }
+                    drop(editor);
+                    refresh();
+                }
+            });
+            fetch.start(store.clone(), request, progress, completed);
+            refresh();
+        }
+    });
+    w.on_fetch({
+        let fetch_request = fetch_request.clone();
+        move || fetch_request(true)
+    });
+    w.on_fetch_from_url(move || fetch_request(false));
     w.on_text_edited({
         let state = state.clone();
         let weak = w.as_weak();
@@ -546,10 +663,12 @@ fn open_editor(
         let weak = w.as_weak();
         let active = active.clone();
         let slots = slots.clone();
+        let fetch = fetch.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
+            fetch.stop();
             if page {
                 let child = slots
                     .content
@@ -592,12 +711,12 @@ fn open_editor(
             }
         }
     });
-    w.on_action({ let weak = w.as_weak(); let state = state.clone(); let slots = slots.clone(); let store = store.clone(); let refresh = refresh.clone(); let blocked = blocked.clone(); let active = active.clone(); let close = close.clone(); move |action| {
-        if blocked() { return; } let Some(w) = weak.upgrade() else { return; };
+    w.on_action({ let weak = w.as_weak(); let state = state.clone(); let slots = slots.clone(); let store = store.clone(); let refresh = refresh.clone(); let blocked = blocked.clone(); let active = active.clone(); let close = close.clone(); let fetch = fetch.clone(); move |action| {
+        if blocked() && !(action == "cancel" && fetch.busy() && active.get()) { return; } let Some(w) = weak.upgrade() else { return; };
         let result = (|| -> Result<(),String> {
             match action.as_str() {
                 "apply" => { if !state.borrow().errors.is_empty() { return Err(state.borrow().errors.values().cloned().collect::<Vec<_>>().join("\n")); } let value = match &state.borrow().value { Value::Content(e) => Value::Content(Box::new(ContentEditor::new(&e.value(),e.test.clone()))), v @ Value::Page(_) => v.clone() }; applied(value)?; close(); }
-                "cancel" => { let changed = { let e = state.borrow(); match (&e.value,&e.original) { (Value::Page(p),Value::Page(o)) => p != o, (Value::Content(e),Value::Content(o)) => e.value()!=o.value(), _ => false } }; if changed { w.set_question(if page { "It looks like you have made changes to the parser--are you sure you want to cancel?" } else { model::CONTENT_CANCEL }.into()); } else { close(); } }
+                "cancel" => { fetch.stop();let changed = { let e = state.borrow(); match (&e.value,&e.original) { (Value::Page(p),Value::Page(o)) => p != o, (Value::Content(e),Value::Content(o)) => e.value()!=o.value(), _ => false } }; if changed { w.set_question(if page { "It looks like you have made changes to the parser--are you sure you want to cancel?" } else { model::CONTENT_CANCEL }.into()); } else { close(); } }
                 "import" | "export" => {
                     use hydrus_gui_model::downloader_interchange::{Definition,Native};
                     let native=match &state.borrow().value{Value::Page(p)=>Native::Page((**p).clone()),Value::Content(c)=>Native::Content(c.value())};

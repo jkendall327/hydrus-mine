@@ -201,10 +201,20 @@ pub fn open(
 ) -> Result<FormulaWindow, slint::PlatformError> {
     let w = FormulaWindow::new()?;
     let active = Rc::new(Cell::new(true));
+    let fetch = crate::parser_test_fetch::Slot::default();
+    w.set_fetch_url(
+        test_data
+            .context
+            .get("url")
+            .cloned()
+            .unwrap_or_default()
+            .into(),
+    );
     let blocked: Rc<dyn Fn() -> bool> = Rc::new({
         let active = active.clone();
         let slots = slots.clone();
-        move || !active.get() || slots.has_children()
+        let fetch = fetch.clone();
+        move || !active.get() || slots.has_children() || fetch.busy()
     });
     w.set_document(
         test_data
@@ -228,11 +238,97 @@ pub fn open(
         let weak = w.as_weak();
         let state = state.clone();
         let slots = slots.clone();
+        let fetch = fetch.clone();
         move || {
             if let Some(w) = weak.upgrade() {
                 show(&w, &state.borrow());
-                w.set_child_open(slots.has_children());
+                w.set_fetching(fetch.busy());
+                w.set_child_open(slots.has_children() || fetch.busy());
             }
+        }
+    });
+    w.on_cancel_fetch({
+        let fetch = fetch.clone();
+        move || fetch.cancel()
+    });
+    w.on_fetch({
+        let weak = w.as_weak();
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        let active = active.clone();
+        let fetch = fetch.clone();
+        let store = store.clone();
+        move || {
+            if blocked() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else {
+                return;
+            };
+            let url = w.get_fetch_url().trim().to_owned();
+            if url.is_empty() {
+                return;
+            }
+            if let Err(error) = hydrus_core::url::check_full_url(&url) {
+                w.set_veto(error.to_string().into());
+                return;
+            }
+            read(&w, &mut state.borrow_mut());
+            w.set_fetch_status("initialising…".into());
+            w.set_veto(SharedString::new());
+            let progress = Rc::new({
+                let weak = weak.clone();
+                let active = active.clone();
+                move |status: String| {
+                    if active.get()
+                        && let Some(w) = weak.upgrade()
+                    {
+                        w.set_fetch_status(status.into());
+                    }
+                }
+            });
+            let completed = Rc::new({
+                let weak = weak.clone();
+                let active = active.clone();
+                let state = state.clone();
+                let refresh = refresh.clone();
+                let url = url.clone();
+                move |outcome: crate::parser_test_fetch::Outcome| {
+                    if !active.get() {
+                        return;
+                    }
+                    let Some(w) = weak.upgrade() else {
+                        return;
+                    };
+                    let mut editor = state.borrow_mut();
+                    editor.example = editor.test.fetched(url.clone(), outcome.document, false);
+                    w.set_document(editor.test.text.as_str().into());
+                    w.set_context(
+                        editor
+                            .test
+                            .context
+                            .iter()
+                            .map(|(k, v)| format!("{k}={v}"))
+                            .collect::<Vec<_>>()
+                            .join("\n")
+                            .into(),
+                    );
+                    w.set_fetch_status("fetch finished".into());
+                    if let Some(error) = outcome.accounting_error {
+                        w.set_veto(format!("Could not save bandwidth usage: {error}").into());
+                    }
+                    drop(editor);
+                    refresh();
+                }
+            });
+            fetch.start(
+                store.clone(),
+                hydrus_net::Request::get(url),
+                progress,
+                completed,
+            );
+            refresh();
         }
     });
     w.on_exchange({
@@ -741,10 +837,12 @@ pub fn open(
         let weak = w.as_weak();
         let slots = slots.clone();
         let active = active.clone();
+        let fetch = fetch.clone();
         move |accepted| {
             if !active.replace(false) {
                 return;
             }
+            fetch.stop();
             slots.cancel_children();
             let window = weak.upgrade();
             if let Some(w) = &window {

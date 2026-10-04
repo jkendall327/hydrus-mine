@@ -12,6 +12,261 @@ use hydrus_parse::{
 };
 use hydrus_store::{Store, settings};
 use slint::{ComponentHandle as _, Model as _};
+pub(super) fn until_fetch(mut condition: impl FnMut() -> bool) {
+    let start = std::time::Instant::now();
+    while !condition() {
+        assert!(
+            start.elapsed() < std::time::Duration::from_secs(8),
+            "test fetch did not finish"
+        );
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+}
+/// Loopback-only HTTP boundary; /hold retains the socket until owner cancellation.
+#[derive(Debug)]
+pub(super) struct TestDocuments {
+    pub base: String,
+    pub requests: std::sync::Arc<std::sync::Mutex<Vec<String>>>,
+    stop: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    thread: Option<std::thread::JoinHandle<()>>,
+}
+impl TestDocuments {
+    pub fn start() -> Self {
+        use std::io::{Read as _, Write as _};
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let base = format!("http://{}", listener.local_addr().unwrap());
+        listener.set_nonblocking(true).unwrap();
+        let stop = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+        let requests = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
+        let thread = std::thread::spawn({
+            let stop = stop.clone();
+            let requests = requests.clone();
+            move || {
+                let mut held = Vec::new();
+                while !stop.load(std::sync::atomic::Ordering::Relaxed) {
+                    let Ok((mut stream, _)) = listener.accept() else {
+                        std::thread::sleep(std::time::Duration::from_millis(10));
+                        continue;
+                    };
+                    stream
+                        .set_read_timeout(Some(std::time::Duration::from_secs(2)))
+                        .unwrap();
+                    let mut bytes = [0; 8192];
+                    let mut count = 0;
+                    while count < bytes.len()
+                        && !bytes[..count].windows(4).any(|v| v == b"\r\n\r\n")
+                    {
+                        match stream.read(&mut bytes[count..]) {
+                            Ok(0) | Err(_) => break,
+                            Ok(read) => count += read,
+                        }
+                    }
+                    if count == 0 {
+                        continue;
+                    }
+                    let request = String::from_utf8_lossy(&bytes[..count]).into_owned();
+                    let hold = request.starts_with("GET /hold ");
+                    let error = request.starts_with("GET /error ");
+                    requests.lock().unwrap().push(request);
+                    if hold {
+                        held.push(stream);
+                        continue;
+                    }
+                    let (status, body): (&str, &[u8]) = if error {
+                        ("404 Not Found", b"missing")
+                    } else {
+                        ("200 OK", b"<p>fetched caf\xe9</p>")
+                    };
+                    let response = format!(
+                        "HTTP/1.1 {status}\r\nContent-Type: text/html; charset=iso-8859-1\r\nContent-Length: {}\r\nSet-Cookie: test-document=saved; Path=/\r\nConnection: close\r\n\r\n",
+                        body.len()
+                    );
+                    let _ = stream.write_all(response.as_bytes());
+                    let _ = stream.write_all(body);
+                }
+            }
+        });
+        Self {
+            base,
+            requests,
+            stop,
+            thread: Some(thread),
+        }
+    }
+}
+impl Drop for TestDocuments {
+    fn drop(&mut self) {
+        self.stop.store(true, std::sync::atomic::Ordering::Relaxed);
+        self.thread.take().unwrap().join().unwrap();
+    }
+}
+
+#[test]
+fn content_test_panel_fetches_raw_data_and_hands_it_to_its_formula() {
+    let server = TestDocuments::start();
+    let (_dir, store, slots) = setup();
+    headless::init();
+    let original = definitions(&store);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.invoke_row_clicked(0, false, false);
+    page.invoke_action("edit-content".into());
+    let content = child(&slots.content);
+    content.set_fetch_url(format!(" {}/document ", server.base).into());
+    content.set_post_index("7".into());
+    content.set_variables("token=preserved".into());
+    content.invoke_fetch_from_url();
+    until_fetch(|| !content.get_fetching());
+    assert_eq!(content.get_document(), "<p>fetched café</p>");
+    assert_eq!(content.get_post_index(), "0");
+    assert_eq!(content.get_variables(), "token=preserved");
+    content.invoke_action("formula".into());
+    let formula = slots
+        .formula
+        .formula
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(formula.get_document(), content.get_document());
+    assert!(
+        formula
+            .get_context()
+            .contains(&format!("url={}/document", server.base))
+    );
+    assert_eq!(formula.get_examples().row_count(), 2);
+    formula.invoke_cancel();
+    content.set_fetch_url(format!("{}/error", server.base).into());
+    content.invoke_fetch_from_url();
+    until_fetch(|| !content.get_fetching());
+    assert_eq!(content.get_document(), "fetch failed:\n\n404: missing");
+    assert!(
+        !server.requests.lock().unwrap()[0]
+            .to_lowercase()
+            .contains("referer:")
+    );
+    page.invoke_force_close();
+    list.invoke_action("cancel".into());
+    assert_eq!(definitions(&store), original);
+}
+#[test]
+fn fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter() {
+    use hydrus_core::{
+        network::NetworkContext,
+        url::strings::{Conversion, StringConverter},
+    };
+    use hydrus_store::network::{self, Approval};
+    let server = TestDocuments::start();
+    let (_dir, store, slots) = setup();
+    let rendered = headless::init();
+    let mut saved = definitions(&store);
+    saved.parsers[0].example_urls = vec![format!("{}/a b", server.base)];
+    saved.parsers[0].converter = StringConverter {
+        conversions: vec![Conversion::Append("<!-- converted -->".into())],
+        ..StringConverter::default()
+    };
+    store
+        .write_and_refresh(move |ctx| {
+            settings::set(ctx.conn(), &saved)?;
+            network::set_header(
+                ctx.conn(),
+                &NetworkContext::global(),
+                "X-Test-Document",
+                Some("approved"),
+                Some(Approval::Approved),
+                Some("synthetic test document"),
+            )
+        })
+        .unwrap();
+    let original = definitions(&store);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.set_test_url("".into());
+    page.invoke_fetch();
+    assert_eq!(page.get_test_url(), format!("{}/a b", server.base));
+    assert!(!page.get_fetching());
+    assert!(server.requests.lock().unwrap().is_empty());
+    page.set_document("previous paste".into());
+    page.set_post_index("12".into());
+    page.set_variables("token=preserved".into());
+    page.set_referral_url("https://referral.example/from".into());
+    page.invoke_fetch();
+    assert!(page.get_fetching() && page.get_child_open());
+    page.invoke_action("apply".into());
+    assert!(slots.page.borrow().is_some());
+    until_fetch(|| !page.get_fetching());
+    assert_eq!(page.get_document(), "<p>fetched café</p>");
+    assert_eq!(page.get_test_url(), format!("{}/a%20b", server.base));
+    assert_eq!(page.get_post_index(), "0");
+    assert_eq!(page.get_variables(), "token=preserved");
+    assert_eq!(page.get_examples().row_count(), 2);
+    screenshot(&rendered, 1, "parser-fetch.png", &page);
+    let request = server.requests.lock().unwrap()[0].to_lowercase();
+    assert!(request.starts_with("get /a%20b "));
+    assert!(request.contains("referer: https://referral.example/from"));
+    assert!(request.contains("x-test-document: approved"));
+    page.invoke_row_clicked(0, false, false);
+    page.invoke_action("edit-content".into());
+    let content = child(&slots.content);
+    assert_eq!(
+        content.get_document(),
+        "<p>fetched café</p><!-- converted -->"
+    );
+    assert_eq!(content.get_test_url(), page.get_test_url());
+    assert_eq!(content.get_examples().row_count(), 2);
+    content.invoke_action("cancel".into());
+    page.set_example(0);
+    page.invoke_example_chosen();
+    assert_eq!(page.get_document(), "previous paste");
+    page.set_example(1);
+    page.invoke_example_chosen();
+    assert_eq!(page.get_document(), "<p>fetched café</p>");
+    page.set_test_url(format!("{}/error", server.base).into());
+    page.invoke_fetch();
+    until_fetch(|| !page.get_fetching());
+    assert_eq!(page.get_document(), "fetch failed: 404: missing\n\nmissing");
+    assert!(server.requests.lock().unwrap()[1].contains("test-document=saved"));
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    let mut usage = store
+        .read(|conn| hydrus_store::bandwidth::usage(conn, now))
+        .unwrap()
+        .into_iter()
+        .find(|(c, _)| *c == NetworkContext::global())
+        .unwrap()
+        .1;
+    assert_eq!(
+        usage.all_usage(hydrus_core::bandwidth::BandwidthType::Requests),
+        2
+    );
+    page.set_test_url("invalid".into());
+    page.invoke_fetch();
+    assert!(!page.get_error().is_empty());
+    assert!(!page.get_fetching());
+    assert_eq!(server.requests.lock().unwrap().len(), 2);
+    page.set_test_url(format!("{}/hold", server.base).into());
+    page.invoke_fetch();
+    until_fetch(|| server.requests.lock().unwrap().len() == 3);
+    page.invoke_cancel_fetch();
+    until_fetch(|| !page.get_fetching());
+    assert_eq!(page.get_document(), "fetch cancelled");
+    page.set_test_url(format!("{}/hold", server.base).into());
+    page.invoke_fetch();
+    until_fetch(|| server.requests.lock().unwrap().len() == 4);
+    page.invoke_force_close();
+    list.invoke_action("edit".into());
+    let reopened = child(&slots.page);
+    slint::platform::update_timers_and_animations();
+    assert_eq!(reopened.get_document(), "");
+    assert!(!reopened.get_fetching());
+    assert_eq!(definitions(&store), original);
+    reopened.invoke_force_close();
+    list.invoke_action("cancel".into());
+}
 fn child(slot: &std::rc::Rc<std::cell::RefCell<Option<ParserEditWindow>>>) -> ParserEditWindow {
     slot.borrow().as_ref().unwrap().clone_strong()
 }

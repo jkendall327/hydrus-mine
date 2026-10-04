@@ -31,6 +31,11 @@ impl Default for FormulaTestData {
     }
 }
 impl FormulaTestData {
+    /// Select a fetched document, preserving the previous example and variables.
+    pub fn fetched(&mut self, url: String, result: FetchedDocument, page: bool) -> usize {
+        self.context.insert("post_index".into(), "0".into());
+        self.add_example(result.document(page), Some(url))
+    }
     /// Prepare inherited documents for a selectable test panel.
     pub fn prepare_examples(&mut self) {
         if self.examples.is_empty() {
@@ -103,6 +108,24 @@ impl FormulaTestData {
             test.source_urls.rotate_left(index);
         }
         test
+    }
+}
+/// A test document's network result, independent of its GUI worker.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum FetchedDocument {
+    Text(String),
+    Failed { error: String, text: String },
+    Cancelled,
+}
+impl FetchedDocument {
+    /// The reference test panel's successful, failed or cancelled document.
+    pub fn document(self, page: bool) -> String {
+        match self {
+            Self::Text(text) => text,
+            Self::Cancelled => "fetch cancelled".into(),
+            Self::Failed { error, text } if page => format!("fetch failed: {error}\n\n{text}"),
+            Self::Failed { error, .. } => format!("fetch failed:\n\n{error}"),
+        }
     }
 }
 /// One editable rule; HTML and JSON rules cannot be mixed in a formula.

@@ -11,6 +11,50 @@ fn fixture() -> Vec<Value> {
     serde_json::from_value(hydrus_testkit::fixture_json("formula_editors.json")).unwrap()
 }
 #[test]
+fn fetched_documents_replay_reference_success_error_and_cancellation_context() {
+    use hydrus_gui_model::formula_editors::FetchedDocument;
+    let cases: Vec<Value> =
+        serde_json::from_value(hydrus_testkit::fixture_json("parser_test_data.json")).unwrap();
+    for case in cases.into_iter().filter(|c| c["mode"].is_string()) {
+        let mut test = FormulaTestData {
+            text: "previous pasted document".into(),
+            context: [
+                ("url".into(), "https://test-docs.example/original".into()),
+                ("post_index".into(), "12".into()),
+                ("token".into(), "preserved".into()),
+            ]
+            .into(),
+            ..FormulaTestData::default()
+        };
+        test.prepare_examples();
+        let result = match case["mode"].as_str().unwrap() {
+            "success" => FetchedDocument::Text("<p>fetched café</p>".into()),
+            "cancel" => FetchedDocument::Cancelled,
+            "error" => FetchedDocument::Failed {
+                error: "scripted failure".into(),
+                text: "<p>fetched café</p>".into(),
+            },
+            _ => unreachable!(),
+        };
+        let index = test.fetched(
+            case["request"]["url"].as_str().unwrap().into(),
+            result,
+            case["case"] == "parser_fetch",
+        );
+        assert_eq!(index, 1);
+        assert_eq!(test.text, case["text"].as_str().unwrap());
+        assert_eq!(
+            serde_json::to_value(&test.context).unwrap(),
+            case["context"]
+        );
+        assert_eq!(test.selected_first(index).examples[0], test.text);
+        assert!(test.choose_example(0));
+        assert_eq!(test.text, "previous pasted document");
+        assert_eq!(test.context["url"], "https://test-docs.example/original");
+        assert_eq!(test.context["token"], "preserved");
+    }
+}
+#[test]
 fn formula_editor_controls_and_parses_match_reference() {
     for case in fixture() {
         let mut e = FormulaEditor::new(

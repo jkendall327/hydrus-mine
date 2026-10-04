@@ -26,6 +26,9 @@ export component FormulaWindow inherits Window {
     in-out property <int> example;
     in-out property <string> document;
     in-out property <string> context;
+    in-out property <string> fetch-url;
+    in property <bool> fetching;
+    in property <string> fetch-status;
     in property <string> newline-note;
     in property <string> processing;
     in property <[TableRow]> results;
@@ -39,6 +42,7 @@ export component FormulaWindow inherits Window {
     callback row-activated(int); callback add(); callback edit(); callback delete(); callback shift(bool);
     callback edit-processing(); callback test(); callback apply(); callback cancel();
     callback closed(bool);
+    callback fetch(); callback cancel-fetch();
     callback exchange(bool); callback member-exchange(bool); callback edit-child(bool); callback example-chosen(); callback add-example(); callback remove-example();
     VerticalLayout {
         padding: 10px; spacing: 6px;
@@ -104,6 +108,12 @@ export component FormulaWindow inherits Window {
             VerticalLayout {
                 horizontal-stretch: 1; spacing: 6px;
                 Text { text: "test — example document"; font-weight: 700; color: Theme.text; }
+                HorizontalLayout {
+                    LineEdit { text <=> root.fetch-url; placeholder-text: "URL to fetch"; enabled: !root.child-open; }
+                    Button { text: "fetch from URL"; enabled: !root.child-open; clicked => { root.fetch(); } }
+                    Button { text: "cancel fetch"; enabled: root.fetching; clicked => { root.cancel-fetch(); } }
+                }
+                if root.fetch-status != "": Text { text: root.fetch-status; color: Theme.text; wrap: word-wrap; }
                 HorizontalLayout {
                     ComboBox { model: root.examples; current-index <=> root.example; enabled: !root.child-open; selected => { root.example-chosen(); } }
                     Button { text: "add example"; enabled: !root.child-open; clicked => { root.add-example(); } }

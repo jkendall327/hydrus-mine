@@ -520,7 +520,16 @@ selected components, and edit the substitution phrase. Every depth supports all
 six formula kinds. Parsed previews update when controls, documents, context,
 children or processors change. Parent edits and Apply wait for open descendants;
 owner cancellation invalidates every descendant callback. Saved page/content
-parsers use these formula edits in the live parser engine.
+parsers use these formula edits in the live parser engine. Formula test panels fetch
+URLs with live progress and cancellation. Page parser test panels fetch their page
+URL with an optional referral URL, using the stored network options, approved
+headers and cookies. Response charsets are decoded by the downloader engine;
+failed page fetches retain the server document. Fetches preserve context variables
+and reset the post index to zero. Fetched documents remain selectable alongside
+pasted examples, and selected data reaches child parsers through the page converter.
+Closing an owner cancels its request and discards late results. Bandwidth usage is
+merged with other engines rather than replacing their traffic.
+`oracle/record_parser_test_data.py` records these request and context semantics.
 
 `oracle/record_formula_editors.py` records the real reference controls and
 queue actions, checked by model and headless GUI/store tests.

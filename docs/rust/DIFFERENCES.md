@@ -535,8 +535,9 @@ deletes its files from the client, migrated from the reference's database.
 - **Formula editors** support all six kinds, including recursive nested/zipper
   children and selectable inherited examples. Formula descriptions use compact
   typed summaries. The test panel accepts directly editable document text and
-  key=value context lines, with automatic previews; URL/file fetch controls
-  remain deferred. Rule attributes use
+  key=value context lines, with automatic previews and background URL fetching.
+  File fetch controls remain deferred. Native URL fetch controls use an inline URL
+  field rather than the reference popup. Rule attributes use
   named fields and a list (activate a row to remove), rather than the
   reference's dictionary dialog.
 
@@ -978,8 +979,11 @@ database. Concurrent edits to the same area use the last successful Apply.
 The native parser editor model supports all nine content kinds and typed test
 context. Native page/content/parser-list and direct URL-class-link windows are available.
 Existing subsidiary separation formulae and source-time sorting are editable;
-adding subsidiary parsers, editing their child pages and remote test-data fetching
-remain deferred. All six native formula kinds and subsidiary parsers
+adding subsidiary parsers and editing their child pages remain deferred. Test-data
+URL fetches use a window-local downloader engine: progress appears in the test panel
+rather than the daemon job review. Its requests use the same headers, cookies,
+network settings and accounting machinery, and their usage is merged safely with
+the daemon. All six native formula kinds and subsidiary parsers
 can be imported/exported; their editor-only reference data is preserved.
 
 The URL-class links panel uses a parser chooser and explicit staged link/clear

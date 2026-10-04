@@ -65,6 +65,7 @@ mod options_window;
 mod page;
 mod pages;
 pub mod parser_editors_window;
+mod parser_test_fetch;
 mod playback;
 mod popup_menu;
 mod popups;

@@ -209,6 +209,8 @@ pub struct Job {
     tracker: Arc<Mutex<Option<Tracker>>>,
     /// Why it was cancelled, if it was.
     cancel_reason: Arc<Mutex<Option<String>>>,
+    /// Text returned by the last failed HTTP response, for parser test panels.
+    error_text: Arc<Mutex<Option<String>>>,
 }
 
 /// What a job is doing.
@@ -239,6 +241,10 @@ pub struct JobState {
 }
 
 impl Job {
+    /// The server's decoded error document, when an HTTP response failed.
+    pub fn error_text(&self) -> Option<String> {
+        self.error_text.lock().clone()
+    }
     pub fn new() -> Arc<Self> {
         Arc::new(Self::default())
     }
@@ -1004,6 +1010,7 @@ impl NetEngine {
     /// Make a request, retrying as the reference does, and report progress
     /// on `job`.
     pub async fn fetch(&self, request: &Request, job: &Job) -> Result<Response, NetError> {
+        job.error_text.lock().take();
         {
             let mut state = job.state.lock();
             state.done = false;
@@ -1498,6 +1505,7 @@ impl NetEngine {
                 Sink::Memory(bytes) => bytes.clone(),
                 Sink::File(_) => Vec::new(),
             };
+            *a.job.error_text.lock() = Some(crate::text::decode(&body, content_type.as_deref()));
             return Err(match status_outcome(status, &body) {
                 StatusOutcome::Fail(e) => Failure::Fatal(e),
                 StatusOutcome::ServersideBandwidth(message) => Failure::ServersideBandwidth {

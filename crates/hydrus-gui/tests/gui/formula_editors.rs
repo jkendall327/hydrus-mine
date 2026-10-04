@@ -24,6 +24,105 @@ fn labels(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<String> {
         .collect()
 }
 #[test]
+fn formula_fetch_decodes_real_documents_updates_preview_and_discards_closed_owner_results() {
+    use crate::parser_editors::{TestDocuments, until_fetch};
+    let server = TestDocuments::start();
+    let (_dirs, store) = store();
+    let rendered = headless::init();
+    let slots = formula_window::Slots::default();
+    let mut formula = new_formula(false);
+    if let FormulaKind::Html { rules, content } = &mut formula.kind {
+        rules[0].tag_name = Some("p".into());
+        *content = HtmlContent::Text;
+    }
+    let w = formula_window::open(
+        &store,
+        &formula,
+        FormulaTestData {
+            text: "<p>previous</p>".into(),
+            context: [
+                ("url".into(), "https://test-docs.example/pasted".into()),
+                ("post_index".into(), "12".into()),
+                ("token".into(), "preserved".into()),
+            ]
+            .into(),
+            ..FormulaTestData::default()
+        },
+        &slots,
+        Rc::new(|_| panic!("fetching must not apply formula changes")),
+    )
+    .unwrap();
+    *slots.formula.borrow_mut() = Some(w.clone_strong());
+    w.set_fetch_url(format!(" {}/document ", server.base).into());
+    w.invoke_fetch();
+    assert!(w.get_fetching());
+    w.invoke_apply();
+    until_fetch(|| !w.get_fetching());
+    assert_eq!(w.get_document(), "<p>fetched café</p>");
+    assert_eq!(labels(&w.get_results()), ["fetched café"]);
+    assert!(w.get_context().contains("post_index=0"));
+    assert!(w.get_context().contains("token=preserved"));
+    assert!(
+        w.get_context()
+            .contains(&format!("url={}/document", server.base))
+    );
+    assert_eq!(w.get_examples().row_count(), 2);
+    let pixels = headless::render(&rendered.get(0).unwrap(), 1040, 660);
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("formula-fetch.png"),
+        &pixels,
+        1040,
+        660,
+    )
+    .unwrap();
+    assert!(
+        !server.requests.lock().unwrap()[0]
+            .to_lowercase()
+            .contains("referer:")
+    );
+    w.set_example(0);
+    w.invoke_example_chosen();
+    assert_eq!(labels(&w.get_results()), ["previous"]);
+    assert!(
+        w.get_context()
+            .contains("url=https://test-docs.example/pasted")
+    );
+    w.set_example(1);
+    w.invoke_example_chosen();
+    assert_eq!(labels(&w.get_results()), ["fetched café"]);
+    w.set_fetch_url(format!("{}/error", server.base).into());
+    w.invoke_fetch();
+    until_fetch(|| !w.get_fetching());
+    assert_eq!(w.get_document(), "fetch failed:\n\n404: missing");
+    w.set_fetch_url(format!("{}/hold", server.base).into());
+    w.invoke_fetch();
+    until_fetch(|| server.requests.lock().unwrap().len() == 3);
+    w.invoke_cancel_fetch();
+    until_fetch(|| !w.get_fetching());
+    assert_eq!(w.get_document(), "fetch cancelled");
+    w.set_fetch_url(format!("{}/hold", server.base).into());
+    w.invoke_fetch();
+    until_fetch(|| server.requests.lock().unwrap().len() == 4);
+    slots.cancel();
+    assert!(slots.formula.borrow().is_none());
+    let reopened = formula_window::open(
+        &store,
+        &formula,
+        FormulaTestData::default(),
+        &slots,
+        Rc::new(|_| {}),
+    )
+    .unwrap();
+    *slots.formula.borrow_mut() = Some(reopened.clone_strong());
+    slint::platform::update_timers_and_animations();
+    assert_eq!(reopened.get_document(), "");
+    assert!(!reopened.get_fetching());
+    w.invoke_fetch();
+    assert!(!w.get_fetching() || !w.window().is_visible());
+    reopened.invoke_cancel();
+}
+#[test]
 fn formula_editors_html_rules_validation_processing_and_screenshot() {
     let (_dirs, store) = store();
     let windows = headless::init();
