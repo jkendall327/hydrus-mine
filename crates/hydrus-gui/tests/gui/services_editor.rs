@@ -687,3 +687,130 @@ fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners() {
     );
     assert_eq!(rating_counts(), counts);
 }
+
+#[test]
+fn one_star_rating_preview_replays_four_samples_and_preserves_saved_normalization() {
+    use hydrus_store::services::{self, ServiceKind};
+    let fixture = hydrus_testkit::fixture_json("rating_preview_one_star.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    headless::init();
+    let service = store
+        .snapshot()
+        .services
+        .by_name(fixture["name"].as_str().unwrap())
+        .unwrap()
+        .clone();
+    let mut kind = service.kind.clone();
+    let ServiceKind::RatingNumerical(config) = &mut kind else {
+        panic!("expected numerical configuration")
+    };
+    config.allow_zero = fixture["opening_allow_zero"].as_bool().unwrap();
+    let opening = kind.clone();
+    store
+        .write_and_refresh(move |ctx| services::update_config(ctx.conn(), service.id, &kind))
+        .unwrap();
+    let ratings = store
+        .read(|conn| {
+            Ok(conn
+                .prepare(
+                    "SELECT service_id, hash_id, rating FROM ratings ORDER BY service_id, hash_id",
+                )?
+                .query_map([], |row| {
+                    Ok((
+                        row.get::<_, i64>(0)?,
+                        row.get::<_, i64>(1)?,
+                        row.get::<_, f64>(2)?.to_bits(),
+                    ))
+                })?
+                .collect::<rusqlite::Result<Vec<_>>>()?)
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    open(&ui);
+    let manage = bound
+        .services_editor
+        .manage
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let index = manage
+        .get_rows()
+        .iter()
+        .position(|row| row.cells.row_data(0).unwrap() == fixture["name"].as_str().unwrap())
+        .unwrap();
+    manage.invoke_row_clicked(i32::try_from(index).unwrap(), false, false);
+    manage.invoke_edit_clicked();
+    let edit = bound
+        .services_editor
+        .edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        edit.get_stars(),
+        i32::try_from(fixture["opening_num_stars"].as_i64().unwrap()).unwrap()
+    );
+    for index in 0..4 {
+        edit.invoke_preview_clicked(index, false, 0.5);
+    }
+    for event in fixture["events"].as_array().unwrap() {
+        edit.set_stars(i32::try_from(event["num_stars"].as_i64().unwrap()).unwrap());
+        edit.set_allow_zero(event["checkbox_allow_zero"].as_bool().unwrap());
+        edit.invoke_preview_edited();
+        assert!(edit.get_error().is_empty());
+        for (index, row) in edit.get_examples().iter().enumerate() {
+            assert_eq!(
+                row.fraction,
+                event["samples"][index]["fraction"].as_str().unwrap()
+            );
+            assert_eq!(
+                row.graphic.shapes.row_count(),
+                usize::try_from(event["num_stars"].as_u64().unwrap()).unwrap()
+            );
+        }
+        assert_eq!(
+            store.snapshot().services.by_name("stars").unwrap().kind,
+            opening
+        );
+    }
+    edit.set_stars(1);
+    edit.set_allow_zero(false);
+    edit.invoke_preview_edited();
+    assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "1/1");
+    edit.invoke_apply_clicked();
+    assert_eq!(
+        store.snapshot().services.by_name("stars").unwrap().kind,
+        opening
+    );
+    manage.invoke_apply_clicked();
+    let reopened = hydrus_store::Store::open(store.dir()).unwrap();
+    let saved = reopened
+        .snapshot()
+        .services
+        .by_name("stars")
+        .unwrap()
+        .clone();
+    let ServiceKind::RatingNumerical(config) = &saved.kind else {
+        panic!("expected numerical configuration")
+    };
+    assert_eq!(config.num_stars, 1);
+    assert!(config.allow_zero);
+    assert_eq!(
+        reopened
+            .read(|conn| {
+                Ok(conn
+                    .prepare("SELECT service_id, hash_id, rating FROM ratings ORDER BY service_id, hash_id")?
+                    .query_map([], |row| {
+                        Ok((row.get::<_, i64>(0)?, row.get::<_, i64>(1)?, row.get::<_, f64>(2)?.to_bits()))
+                    })?
+                    .collect::<rusqlite::Result<Vec<_>>>()?)
+            })
+            .unwrap(),
+        ratings
+    );
+    ui.hide().unwrap();
+}

@@ -607,3 +607,41 @@ fn rating_examples_replay_qt_samples_live_configuration_and_no_saved_values() {
     assert_eq!(registry(&store), before);
     assert!(Example::new(&ServiceKind::LocalTags).is_none());
 }
+
+#[test]
+fn numerical_example_one_star_retains_live_conversion_but_saves_normalized_scale() {
+    use hydrus_gui_model::rating_example::Example;
+    let recorded = hydrus_testkit::fixture_json("rating_preview_one_star.json");
+    let mut kind = services_editor::default_kind(ServiceType::LocalRatingNumerical).unwrap();
+    let ServiceKind::RatingNumerical(config) = &mut kind else {
+        panic!("expected numerical configuration")
+    };
+    config.num_stars = u32::try_from(recorded["opening_num_stars"].as_u64().unwrap()).unwrap();
+    config.allow_zero = recorded["opening_allow_zero"].as_bool().unwrap();
+    let mut example = Example::new(&kind).unwrap();
+    for index in 0..4 {
+        example.click(index, false, 0.5);
+    }
+    for event in recorded["events"].as_array().unwrap() {
+        let ServiceKind::RatingNumerical(config) = &mut kind else {
+            panic!("expected numerical configuration")
+        };
+        config.num_stars = u32::try_from(event["num_stars"].as_u64().unwrap()).unwrap();
+        config.allow_zero = event["live_allow_zero"].as_bool().unwrap();
+        let mut saved = config.clone();
+        saved.allow_zero = event["checkbox_allow_zero"].as_bool().unwrap();
+        services_editor::normalize_numerical(&mut saved);
+        assert_eq!(json!(saved.allow_zero), event["saved_allow_zero"]);
+        for index in 0..4 {
+            assert_eq!(
+                json!(example.fraction(index, &kind)),
+                event["samples"][index]["fraction"]
+            );
+            assert_eq!(
+                example.control(index, &kind).unwrap().shapes().len(),
+                usize::try_from(event["num_stars"].as_u64().unwrap()).unwrap()
+            );
+        }
+    }
+    assert_eq!(recorded["original_unchanged"], true);
+}

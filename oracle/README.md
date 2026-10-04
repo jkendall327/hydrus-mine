@@ -143,6 +143,13 @@ record-clear decisions, accepted store updates, local domain counts and import
 status of a permanent deletion versus a trash file (executed 2026-10-04 21:43:09
 UTC on a freshly unpacked basic fixture). The review panel PNG is recorded too.
 
+`record_rating_preview_one_star.py` records four actual numerical example controls
+on an uncommitted duplicate of the imported service with allow-zero disabled.
+Centre clicks, one/seven-star changes and checkbox toggles capture both rendered
+fractions and the separate saved one-star normalization. Executed 2026-10-04
+22:14:39–22:14:41 UTC on a freshly unpacked basic fixture; no preview/conversion
+hooks or registered services were changed. Fixture: `rating_preview_one_star.json`.
+
 
 `record_service_rating_preview.py` opens the actual local like/dislike, numerical
 and inc/dec service configuration panels on a copied basic fixture. It records

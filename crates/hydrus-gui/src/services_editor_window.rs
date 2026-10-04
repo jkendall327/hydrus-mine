@@ -279,9 +279,7 @@ fn edit(
             if let (ServiceKind::RatingNumerical(c), ServiceKind::RatingNumerical(initial)) =
                 (&mut kind, &original)
             {
-                if c.num_stars > 1 {
-                    c.allow_zero = initial.allow_zero;
-                }
+                c.allow_zero = initial.allow_zero;
             }
             let rows = (0..4)
                 .filter_map(|i| {
