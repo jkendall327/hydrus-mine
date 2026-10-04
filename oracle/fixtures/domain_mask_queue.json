@@ -1,0 +1,446 @@
+{
+ "steps": [
+  {
+   "action": "initial",
+   "state": {
+    "raw_rows": [
+     "mask.example"
+    ],
+    "regex_rows": [],
+    "raw_mask": [
+     "mask.example"
+    ],
+    "regex_mask": [],
+    "mode_enabled": true
+   }
+  },
+  {
+   "action": "add",
+   "regex": false,
+   "indices": null,
+   "response": [
+    [
+     " second.example ",
+     true
+    ]
+   ],
+   "dialogs": [
+    {
+     "title": "Enter Text",
+     "initial": "",
+     "entered": " second.example ",
+     "yes": true,
+     "accepted": true
+    }
+   ],
+   "said": [],
+   "state": {
+    "raw_rows": [
+     "mask.example",
+     "second.example"
+    ],
+    "regex_rows": [],
+    "raw_mask": [
+     "mask.example",
+     "second.example"
+    ],
+    "regex_mask": [],
+    "mode_enabled": false
+   }
+  },
+  {
+   "action": "add",
+   "regex": false,
+   "indices": null,
+   "response": [
+    [
+     "discard.example",
+     false
+    ]
+   ],
+   "dialogs": [
+    {
+     "title": "Enter Text",
+     "initial": "",
+     "entered": "discard.example",
+     "yes": false,
+     "accepted": false
+    }
+   ],
+   "said": [],
+   "state": {
+    "raw_rows": [
+     "mask.example",
+     "second.example"
+    ],
+    "regex_rows": [],
+    "raw_mask": [
+     "mask.example",
+     "second.example"
+    ],
+    "regex_mask": [],
+    "mode_enabled": false
+   }
+  },
+  {
+   "action": "add",
+   "regex": false,
+   "indices": null,
+   "response": [
+    [
+     "",
+     true
+    ]
+   ],
+   "dialogs": [
+    {
+     "title": "Enter Text",
+     "initial": "",
+     "entered": "",
+     "yes": true,
+     "accepted": false
+    }
+   ],
+   "said": [
+    {
+     "warning": "Cannot enter blank text here!"
+    }
+   ],
+   "state": {
+    "raw_rows": [
+     "mask.example",
+     "second.example"
+    ],
+    "regex_rows": [],
+    "raw_mask": [
+     "mask.example",
+     "second.example"
+    ],
+    "regex_mask": [],
+    "mode_enabled": false
+   }
+  },
+  {
+   "action": "add",
+   "regex": false,
+   "indices": null,
+   "response": [
+    [
+     "   ",
+     true
+    ]
+   ],
+   "dialogs": [
+    {
+     "title": "Enter Text",
+     "initial": "",
+     "entered": "   ",
+     "yes": true,
+     "accepted": true
+    }
+   ],
+   "said": [],
+   "state": {
+    "raw_rows": [
+     "mask.example",
+     "second.example"
+    ],
+    "regex_rows": [],
+    "raw_mask": [
+     "mask.example",
+     "second.example"
+    ],
+    "regex_mask": [],
+    "mode_enabled": false
+   }
+  },
+  {
+   "action": "edit",
+   "regex": false,
+   "indices": [
+    0,
+    1
+   ],
+   "response": [
+    [
+     "renamed.example",
+     true
+    ],
+    [
+     "discard.example",
+     false
+    ]
+   ],
+   "dialogs": [
+    {
+     "title": "Enter Text",
+     "initial": "mask.example",
+     "entered": "renamed.example",
+     "yes": true,
+     "accepted": true
+    },
+    {
+     "title": "Enter Text",
+     "initial": "second.example",
+     "entered": "discard.example",
+     "yes": false,
+     "accepted": false
+    }
+   ],
+   "said": [],
+   "state": {
+    "raw_rows": [
+     "renamed.example",
+     "second.example"
+    ],
+    "regex_rows": [],
+    "raw_mask": [
+     "renamed.example",
+     "second.example"
+    ],
+    "regex_mask": [],
+    "mode_enabled": false
+   }
+  },
+  {
+   "action": "add",
+   "regex": true,
+   "indices": null,
+   "response": [
+    [
+     " img\\d+\\.cdn\\.example ",
+     true
+    ]
+   ],
+   "dialogs": [
+    {
+     "title": "Enter domain regex.",
+     "initial": "",
+     "entered": " img\\d+\\.cdn\\.example ",
+     "yes": true,
+     "accepted": true
+    }
+   ],
+   "said": [],
+   "state": {
+    "raw_rows": [
+     "renamed.example",
+     "second.example"
+    ],
+    "regex_rows": [
+     "img\\d+\\.cdn\\.example"
+    ],
+    "raw_mask": [
+     "renamed.example",
+     "second.example"
+    ],
+    "regex_mask": [
+     "img\\d+\\.cdn\\.example"
+    ],
+    "mode_enabled": false
+   }
+  },
+  {
+   "action": "add",
+   "regex": true,
+   "indices": null,
+   "response": [
+    [
+     "[",
+     true
+    ]
+   ],
+   "dialogs": [
+    {
+     "title": "Enter domain regex.",
+     "initial": "",
+     "entered": "[",
+     "yes": true,
+     "accepted": true
+    }
+   ],
+   "said": [],
+   "state": {
+    "raw_rows": [
+     "renamed.example",
+     "second.example"
+    ],
+    "regex_rows": [
+     "img\\d+\\.cdn\\.example",
+     "["
+    ],
+    "raw_mask": [
+     "renamed.example",
+     "second.example"
+    ],
+    "regex_mask": [
+     "[",
+     "img\\d+\\.cdn\\.example"
+    ],
+    "mode_enabled": false
+   }
+  },
+  {
+   "action": "add",
+   "regex": true,
+   "indices": null,
+   "response": [
+    [
+     "   ",
+     true
+    ]
+   ],
+   "dialogs": [
+    {
+     "title": "Enter domain regex.",
+     "initial": "",
+     "entered": "   ",
+     "yes": true,
+     "accepted": true
+    }
+   ],
+   "said": [],
+   "state": {
+    "raw_rows": [
+     "renamed.example",
+     "second.example"
+    ],
+    "regex_rows": [
+     "img\\d+\\.cdn\\.example",
+     "["
+    ],
+    "raw_mask": [
+     "renamed.example",
+     "second.example"
+    ],
+    "regex_mask": [
+     "[",
+     "img\\d+\\.cdn\\.example"
+    ],
+    "mode_enabled": false
+   }
+  },
+  {
+   "action": "delete",
+   "regex": true,
+   "indices": [
+    1
+   ],
+   "response": false,
+   "dialogs": [],
+   "said": [
+    {
+     "question": "Remove 1 selected?"
+    }
+   ],
+   "state": {
+    "raw_rows": [
+     "renamed.example",
+     "second.example"
+    ],
+    "regex_rows": [
+     "img\\d+\\.cdn\\.example",
+     "["
+    ],
+    "raw_mask": [
+     "renamed.example",
+     "second.example"
+    ],
+    "regex_mask": [
+     "[",
+     "img\\d+\\.cdn\\.example"
+    ],
+    "mode_enabled": false
+   }
+  },
+  {
+   "action": "delete",
+   "regex": true,
+   "indices": [
+    1
+   ],
+   "response": true,
+   "dialogs": [],
+   "said": [
+    {
+     "question": "Remove 1 selected?"
+    }
+   ],
+   "state": {
+    "raw_rows": [
+     "renamed.example",
+     "second.example"
+    ],
+    "regex_rows": [
+     "img\\d+\\.cdn\\.example"
+    ],
+    "raw_mask": [
+     "renamed.example",
+     "second.example"
+    ],
+    "regex_mask": [
+     "img\\d+\\.cdn\\.example"
+    ],
+    "mode_enabled": false
+   }
+  },
+  {
+   "action": "delete",
+   "regex": false,
+   "indices": [
+    0,
+    1
+   ],
+   "response": false,
+   "dialogs": [],
+   "said": [
+    {
+     "question": "Remove 2 selected?"
+    }
+   ],
+   "state": {
+    "raw_rows": [
+     "renamed.example",
+     "second.example"
+    ],
+    "regex_rows": [
+     "img\\d+\\.cdn\\.example"
+    ],
+    "raw_mask": [
+     "renamed.example",
+     "second.example"
+    ],
+    "regex_mask": [
+     "img\\d+\\.cdn\\.example"
+    ],
+    "mode_enabled": false
+   }
+  },
+  {
+   "action": "delete",
+   "regex": false,
+   "indices": [
+    0,
+    1
+   ],
+   "response": true,
+   "dialogs": [],
+   "said": [
+    {
+     "question": "Remove 2 selected?"
+    }
+   ],
+   "state": {
+    "raw_rows": [],
+    "regex_rows": [
+     "img\\d+\\.cdn\\.example"
+    ],
+    "raw_mask": [],
+    "regex_mask": [
+     "img\\d+\\.cdn\\.example"
+    ],
+    "mode_enabled": false
+   }
+  }
+ ]
+}

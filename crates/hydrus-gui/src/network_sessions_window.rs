@@ -1,5 +1,5 @@
 //! Session browser and detached cookie/header editors over native network storage.
-use crate::{EditNetworkValueWindow, NetworkDataWindow, TableColumn, TableRow};
+use crate::{CookieImportWindow, EditNetworkValueWindow, NetworkDataWindow, TableColumn, TableRow};
 use hydrus_gui_model::{
     list_selection::ListSelection,
     network_sessions::{self as model, CookieDraft, HeaderDraft, HeaderRow},
@@ -54,11 +54,18 @@ impl std::fmt::Debug for Slots {
     }
 }
 thread_local! {
+    static LAST_IMPORT: RefCell<Option<slint::Weak<CookieImportWindow>>> = const { RefCell::new(None) };
     static LAST_EDIT: RefCell<Option<slint::Weak<EditNetworkValueWindow>>> = const { RefCell::new(None) };
 }
 /// Most recently opened child editor, for interaction tests.
 pub fn last_edit_opened() -> Option<EditNetworkValueWindow> {
     LAST_EDIT
+        .with(|s| s.borrow().as_ref().and_then(slint::Weak::upgrade))
+        .filter(|w| w.window().is_visible())
+}
+/// Most recently opened import choice/confirmation dialog, for interaction tests.
+pub fn last_import_opened() -> Option<CookieImportWindow> {
+    LAST_IMPORT
         .with(|s| s.borrow().as_ref().and_then(slint::Weak::upgrade))
         .filter(|w| w.window().is_visible())
 }
@@ -230,9 +237,11 @@ fn open_data(
     refresh(&window, &mut state.borrow_mut());
     let active = Rc::new(Cell::new(true));
     let child: Rc<RefCell<Option<EditNetworkValueWindow>>> = Rc::default();
+    let import_child: Rc<RefCell<Option<CookieImportWindow>>> = Rc::default();
     let close = Rc::new({
         let weak = window.as_weak();
         let child = child.clone();
+        let import_child = import_child.clone();
         let active = active.clone();
         let owner = Rc::downgrade(&slots.owner);
         let slot = Rc::downgrade(slot);
@@ -243,6 +252,13 @@ fn open_data(
             let edit = child.borrow().as_ref().map(ComponentHandle::clone_strong);
             if let Some(w) = edit {
                 w.invoke_cancel_clicked();
+            }
+            let importing = import_child
+                .borrow()
+                .as_ref()
+                .map(ComponentHandle::clone_strong);
+            if let Some(w) = importing {
+                w.invoke_action("cancel".into());
             }
             if let Some(w) = weak.upgrade() {
                 if w.get_browser()
@@ -367,6 +383,99 @@ fn open_data(
         move || launch(false)
     });
     window.on_edit_clicked(move || launch(true));
+    window.on_export_clicked({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let active = active.clone();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return;
+            };
+            if !active.get() || w.get_editing() || !w.get_question().is_empty() {
+                return;
+            }
+            let st = state.borrow();
+            let selected = st.selection.in_order(&st.order);
+            let cookies: Vec<_> = match &st.data {
+                Data::Cookies(d) => selected.iter().map(|&i| d.cookies[i].clone()).collect(),
+                Data::Sessions(rows) => selected.iter().flat_map(|&i| rows[i].1.clone()).collect(),
+                Data::Headers(_) => return,
+            };
+            if cookies.is_empty() {
+                return;
+            }
+            match model::export_cookies(&cookies) {
+                Ok(text) => {
+                    crate::copy_to_clipboard(&text);
+                    w.set_error("".into());
+                }
+                Err(e) => w.set_error(e.into()),
+            }
+        }
+    });
+    window.on_import_clipboard_clicked({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let child = import_child.clone();
+        let active = active.clone();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return;
+            };
+            if !active.get() || w.get_editing() || !w.get_question().is_empty() {
+                return;
+            }
+            let result = crate::from_clipboard()
+                .and_then(|text| model::import_cookie_clipboard(&text))
+                .and_then(|cookies| {
+                    show_cookie_import(&w, &state, store.clone(), &child, active.clone(), cookies)
+                });
+            match result {
+                Ok(()) => w.set_error("".into()),
+                Err(e) => w.set_error(e.into()),
+            }
+        }
+    });
+    window.on_import_file_clicked({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let active = active.clone();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return;
+            };
+            if !active.get() || w.get_editing() || !w.get_question().is_empty() {
+                return;
+            }
+            let paths = crate::pick(crate::Pick::Files, "select cookies.txt");
+            if paths.is_empty() {
+                return;
+            }
+            let result = (|| -> Result<(), String> {
+                let mut cookies = Vec::new();
+                for path in paths {
+                    use std::io::Read as _;
+                    let file = std::fs::File::open(&path)
+                        .map_err(|e| format!("{}: {e}", path.display()))?;
+                    let mut text = String::new();
+                    file.take(u64::try_from(model::COOKIE_EXCHANGE_LIMIT).unwrap_or(u64::MAX) + 1)
+                        .read_to_string(&mut text)
+                        .map_err(|e| format!("{}: {e}", path.display()))?;
+                    cookies.extend(
+                        model::import_netscape_cookies(&text)
+                            .map_err(|e| format!("{}: {e}", path.display()))?,
+                    );
+                }
+                accept_cookie_import(&w, &mut state.borrow_mut(), &store, cookies)
+            })();
+            match result {
+                Ok(()) => w.set_error("".into()),
+                Err(e) => w.set_error(e.into()),
+            }
+        }
+    });
     window.on_delete_clicked({
         let weak = window.as_weak();
         let active = active.clone();
@@ -517,6 +626,155 @@ fn open_data(
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }
+fn accept_cookie_import(
+    window: &NetworkDataWindow,
+    state: &mut State,
+    store: &Store,
+    cookies: Vec<Cookie>,
+) -> Result<(), String> {
+    let count = cookies.len();
+    match &mut state.data {
+        Data::Cookies(draft) => {
+            draft.import(cookies)?;
+        }
+        Data::Sessions(_) => {
+            model::import_cookie_sessions(store, cookies).map_err(|e| e.to_string())?;
+            state.data = sessions(store)?;
+        }
+        Data::Headers(_) => return Err("Headers cannot import cookies.".into()),
+    }
+    state.selection = ListSelection::default();
+    window.set_message(format!("Added {count} cookies!").into());
+    refresh(window, state);
+    Ok(())
+}
+fn show_cookie_import(
+    parent: &NetworkDataWindow,
+    state: &Rc<RefCell<State>>,
+    store: Arc<Store>,
+    child: &Rc<RefCell<Option<CookieImportWindow>>>,
+    parent_active: Rc<Cell<bool>>,
+    cookies: Vec<Cookie>,
+) -> Result<(), String> {
+    let (browser, matching) = match &state.borrow().data {
+        Data::Sessions(_) => (true, cookies.clone()),
+        Data::Cookies(draft) => (false, model::matching_cookies(&cookies, &draft.session)),
+        Data::Headers(_) => return Ok(()),
+    };
+    if cookies.is_empty() {
+        parent.set_message(
+            if browser {
+                "There were no cookies in the clipboard!"
+            } else {
+                "There were no cookies in the clipboard for this domain!"
+            }
+            .into(),
+        );
+        return Ok(());
+    }
+    let window = CookieImportWindow::new().map_err(|e| e.to_string())?;
+    let choosing = matching.len() != cookies.len();
+    window.set_choosing(choosing);
+    window.set_message(if choosing {
+        format!("Of the {} cookies in your clipboard, {} match this domain. What do you want to import?", cookies.len(), matching.len())
+    } else { model::cookie_import_question(&cookies, browser) }.into());
+    window.set_matching_label(
+        if matching.is_empty() {
+            "nothing to import--bail out now"
+        } else {
+            "import only the matching cookies"
+        }
+        .into(),
+    );
+    let pending = Rc::new(RefCell::new(cookies));
+    let active = Rc::new(Cell::new(true));
+    let close = Rc::new({
+        let weak = window.as_weak();
+        let parent = parent.as_weak();
+        let active = active.clone();
+        let child = child.clone();
+        move || {
+            if !active.replace(false) {
+                return;
+            }
+            if let Some(w) = weak.upgrade() {
+                let _ = w.hide();
+            }
+            if let Some(p) = parent.upgrade() {
+                p.set_editing(false);
+            }
+            child.borrow_mut().take();
+        }
+    });
+    window.window().on_close_requested({
+        let close = close.clone();
+        move || {
+            close();
+            slint::CloseRequestResponse::HideWindow
+        }
+    });
+    window.on_action({
+        let weak = window.as_weak();
+        let parent = parent.as_weak();
+        let state = state.clone();
+        let close = close.clone();
+        move |action| {
+            if !active.get() {
+                return;
+            }
+            if action == "cancel" {
+                close();
+                return;
+            }
+            if !parent_active.get() {
+                close();
+                return;
+            }
+            let (Some(w), Some(parent)) = (weak.upgrade(), parent.upgrade()) else {
+                close();
+                return;
+            };
+            if w.get_choosing() {
+                if action == "matching" {
+                    pending.borrow_mut().clone_from(&matching);
+                } else if action != "all" {
+                    return;
+                }
+                if pending.borrow().is_empty() {
+                    close();
+                    return;
+                }
+                w.set_choosing(false);
+                w.set_message(model::cookie_import_question(&pending.borrow(), browser).into());
+                return;
+            }
+            if action != "import" {
+                return;
+            }
+            let result = accept_cookie_import(
+                &parent,
+                &mut state.borrow_mut(),
+                &store,
+                pending.borrow().clone(),
+            );
+            match result {
+                Ok(()) => parent.set_error("".into()),
+                Err(e) => parent.set_error(e.into()),
+            }
+            close();
+        }
+    });
+    parent.set_message("".into());
+    parent.set_editing(true);
+    *child.borrow_mut() = Some(window.clone_strong());
+    LAST_IMPORT.with(|s| *s.borrow_mut() = Some(window.as_weak()));
+    if let Err(e) = window.show() {
+        close();
+        return Err(e.to_string());
+    }
+    Ok(())
+}
+
 fn edit_value(
     parent: &NetworkDataWindow,
     state: &Rc<RefCell<State>>,

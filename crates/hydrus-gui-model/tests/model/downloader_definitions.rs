@@ -67,20 +67,7 @@ fn reference_rows_previews_and_vetoes_are_replayed() {
     for case in fixture["class_cases"].as_array().unwrap() {
         let class = domain::url_class(&object(&case["definition"])).unwrap();
         let preview = definitions::class_preview(&class, false);
-        if case["veto"].is_null() {
-            assert_eq!(preview.status, case["status"]);
-        } else {
-            assert!(
-                case["status"]
-                    .as_str()
-                    .unwrap()
-                    .starts_with("Example does not match - ")
-            );
-            assert_eq!(
-                preview.status,
-                "Example does not match - wrong.example did not match the domain mask"
-            );
-        }
+        assert_eq!(preview.status, case["status"]);
         assert_eq!(preview.normalised, case["normalised"]);
         assert_eq!(preview.request, case["request"]);
         assert_eq!(preview.api, case["api"]);
@@ -473,6 +460,12 @@ fn editor_controls_change_matching_normalisation_and_validate_pagination() {
     let mut editor =
         DefinitionEditor::new(EditValue::Class(Box::new(definitions::new_class())), &draft);
     assert!(editor.validate().is_ok());
+    editor.text(3, "gallery.example.com".into());
+    editor.text(
+        40,
+        "https://gallery.example.com/post/page.php?id=123456&s=view".into(),
+    );
+    assert!(editor.validate().is_ok());
     editor.choose(1, 1);
     editor.choose(2, 0);
     editor.choose(20, 2);
@@ -482,7 +475,7 @@ fn editor_controls_change_matching_normalisation_and_validate_pagination() {
     editor.toggle(6, true);
     editor.text(
         40,
-        "https://sub.hostname.com/post/page.php?s=view&id=123456".into(),
+        "https://sub.gallery.example.com/post/page.php?s=view&id=123456".into(),
     );
     assert!(editor.validate().is_ok());
     let EditValue::Class(class) = &editor.value else {
@@ -496,11 +489,11 @@ fn editor_controls_change_matching_normalisation_and_validate_pagination() {
     let preview = definitions::class_preview(class, false);
     assert_eq!(
         preview.normalised,
-        "http://sub.hostname.com/post/page.php?id=123456&s=view"
+        "http://sub.gallery.example.com/post/page.php?id=123456&s=view"
     );
     assert_eq!(
         preview.next,
-        "http://sub.hostname.com/post/page.php?id=123458&s=view"
+        "http://sub.gallery.example.com/post/page.php?id=123458&s=view"
     );
     editor.text(22, "0".into());
     assert_eq!(
@@ -522,7 +515,7 @@ fn editor_controls_change_matching_normalisation_and_validate_pagination() {
     assert!(editor.validate().is_err());
     editor.text(
         40,
-        "https://hostname.com/post/page.php?id=123456&s=view".into(),
+        "https://gallery.example.com/post/page.php?id=123456&s=view".into(),
     );
     assert!(editor.validate().is_ok());
 
@@ -542,4 +535,183 @@ fn editor_controls_change_matching_normalisation_and_validate_pagination() {
         gug.validate().unwrap_err(),
         "Please ensure your generator can make an example url!"
     );
+}
+
+#[test]
+fn domain_mode_and_independent_tester_replay_reference_and_preserve_disabled_values() {
+    use definitions::{DefinitionEditor, EditValue};
+    let fixture = hydrus_testkit::fixture_json("url_domain_preview.json");
+    let mut class = domain::url_class(&object(&fixture["preview_steps"][0]["class"])).unwrap();
+    class.domain_mask =
+        hydrus_core::url::DomainMask::new(vec!["mask.example".into()], Vec::new(), false, false);
+    let draft = Draft::new(
+        UrlClassSettings::default(),
+        Downloaders::default(),
+        Kind::Classes,
+    );
+    let mut editor = DefinitionEditor::new(EditValue::Class(Box::new(class)), &draft);
+    for step in fixture["domain_steps"].as_array().unwrap() {
+        let mode = usize::try_from(step["mode"].as_u64().unwrap()).unwrap();
+        if mode == 1 {
+            editor.choose(30, mode);
+        }
+        editor.text(
+            3,
+            step["raw"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|s| s.as_str().unwrap())
+                .collect::<Vec<_>>()
+                .join("\n"),
+        );
+        editor.text(
+            4,
+            step["regex"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|s| s.as_str().unwrap())
+                .collect::<Vec<_>>()
+                .join("\n"),
+        );
+        if mode == 0 {
+            editor.choose(30, mode);
+        }
+        editor.toggle(5, true);
+        editor.toggle(6, step["keep"].as_bool().unwrap());
+        editor.toggle(5, step["match"].as_bool().unwrap());
+        editor.text(31, step["test"].as_str().unwrap().into());
+        assert_eq!(editor.domain_mode, mode);
+        let (status, normalised) = editor.domain_preview();
+        assert_eq!(status, step["status"].as_str().unwrap());
+        assert_eq!(normalised, step["normalised"].as_str().unwrap());
+        let EditValue::Class(c) = &editor.value else {
+            panic!("class");
+        };
+        assert_eq!(json!(c.domain_mask.raw_domains), step["raw"]);
+        assert_eq!(json!(c.domain_mask.domain_regexes), step["regex"]);
+        assert_eq!(
+            c.domain_mask.keep_matched_subdomains,
+            step["keep"].as_bool().unwrap()
+        );
+    }
+    editor.choose(30, 1);
+    editor.text(3, "mask.example\nother.example".into());
+    editor.choose(30, 0);
+    assert_eq!(
+        editor.domain_mode, 1,
+        "multiple domains cannot be discarded by mode switch"
+    );
+    editor.text(4, "[".into());
+    editor.text(31, "mask.example".into());
+    assert_eq!(
+        editor.domain_preview(),
+        ("Does not match.".into(), String::new())
+    );
+    assert!(editor.validate().is_err());
+}
+
+#[test]
+fn selectable_preview_values_use_recorded_api_referral_and_gallery_consumers() {
+    let fixture = hydrus_testkit::fixture_json("url_domain_preview.json");
+    for case in fixture["domain_errors"].as_array().unwrap() {
+        let mask = hydrus_core::url::DomainMask::new(
+            serde_json::from_value(case["raw"].clone()).unwrap(),
+            serde_json::from_value(case["regex"].clone()).unwrap(),
+            case["subdomains"].as_bool().unwrap(),
+            false,
+        );
+        assert_eq!(
+            mask.test("other.example").unwrap_err().to_string(),
+            case["error"].as_str().unwrap()
+        );
+    }
+    for step in fixture["preview_steps"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .chain(fixture["extra_previews"].as_array().unwrap())
+    {
+        let class = domain::url_class(&object(&step["class"])).unwrap();
+        let preview = definitions::class_preview(&class, false);
+        assert_eq!(preview.status, step["status"].as_str().unwrap());
+        if step["name"] == "invalid" {
+            assert!(preview.normalised.is_empty());
+            assert!(preview.request.is_empty());
+            assert!(preview.api.is_empty());
+        } else {
+            assert_eq!(
+                json!([
+                    preview.normalised,
+                    preview.request,
+                    preview.api,
+                    preview.referral,
+                    preview.next
+                ]),
+                step["outputs"]
+            );
+        }
+        assert_eq!(step["readonly"], json!(vec![true; 5]));
+    }
+}
+
+#[test]
+fn domain_mask_queue_replays_staged_crud_and_insertion_order() {
+    use definitions::{DefinitionEditor, EditValue};
+    let fixture = hydrus_testkit::fixture_json("domain_mask_queue.json");
+    let mut class = definitions::new_class();
+    class.domain_mask =
+        hydrus_core::url::DomainMask::new(vec!["mask.example".into()], Vec::new(), false, false);
+    let draft = Draft::new(
+        UrlClassSettings::default(),
+        Downloaders::default(),
+        Kind::Classes,
+    );
+    let mut editor = DefinitionEditor::new(EditValue::Class(Box::new(class)), &draft);
+    editor.choose(30, 1);
+    for step in fixture["steps"].as_array().unwrap() {
+        let regex = step["regex"].as_bool().unwrap_or(false);
+        let indices = step["indices"].as_array().map_or_else(Vec::new, |indices| {
+            indices
+                .iter()
+                .map(|i| usize::try_from(i.as_u64().unwrap()).unwrap())
+                .collect::<Vec<_>>()
+        });
+        if step["action"] == "delete" {
+            if step["response"] == true {
+                editor.domain_remove(regex, &indices);
+            }
+        } else if let Some(dialogs) = step["dialogs"].as_array() {
+            for (n, dialog) in dialogs.iter().enumerate() {
+                if dialog["accepted"] != true {
+                    break;
+                }
+                let index = (step["action"] == "edit").then(|| indices[n]);
+                if !editor.domain_put(regex, index, dialog["entered"].as_str().unwrap()) {
+                    break;
+                }
+            }
+        }
+        assert_eq!(
+            json!(editor.domain_values(false)),
+            step["state"]["raw_rows"]
+        );
+        assert_eq!(
+            json!(editor.domain_values(true)),
+            step["state"]["regex_rows"]
+        );
+        let EditValue::Class(c) = &editor.value else {
+            panic!("class");
+        };
+        assert_eq!(json!(c.domain_mask.raw_domains), step["state"]["raw_mask"]);
+        assert_eq!(
+            json!(c.domain_mask.domain_regexes),
+            step["state"]["regex_mask"]
+        );
+    }
+    assert!(!editor.domain_put(false, Some(999), "stale.example"));
+    let before = editor.domain_values(false).to_vec();
+    assert!(!editor.domain_put(false, None, "   "));
+    assert_eq!(editor.domain_values(false), before);
 }

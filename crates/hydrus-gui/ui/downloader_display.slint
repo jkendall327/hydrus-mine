@@ -1,0 +1,55 @@
+import { Button, CheckBox, ComboBox, VerticalBox } from "std-widgets.slint";
+import { ListTable, TableColumn, TableRow } from "list_table.slint";
+import { Theme } from "theme.slint";
+
+export component DownloaderDisplayWindow inherits Window {
+    title: "downloader and url display";
+    width: 800px;
+    height: 600px;
+    background: Theme.window;
+    in property <[TableColumn]> columns;
+    in property <[TableRow]> rows;
+    in-out property <int> tab: 0;
+    in property <int> sort-column;
+    in property <bool> ascending;
+    in-out property <bool> show-unmatched;
+    in property <bool> can-edit;
+    in property <string> question;
+    in property <string> question-title;
+    in property <string> error;
+    callback tab-changed();
+    callback row-clicked(int, bool, bool);
+    callback sort(int, bool);
+    callback edit-clicked();
+    // 1 yes, 0 no, -1 cancel
+    callback answer(int);
+    callback apply-clicked();
+    callback cancel-clicked();
+    VerticalBox {
+        padding: 12px; spacing: 8px;
+        ComboBox { model: ["downloaders selector", "media viewer urls"]; current-index <=> root.tab; enabled: root.question == ""; selected(_) => { root.tab-changed(); } }
+        Text { text: root.tab == 0 ? "Choose which downloaders appear in the main selector list." : "Choose which URL classes appear as links in the media viewer."; color: Theme.text; wrap: word-wrap; }
+        ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
+            row-clicked(r,c,s) => { if root.question == "" { root.row-clicked(r,c,s); } }
+            row-activated(r) => { if root.question == "" { root.row-clicked(r,false,false); root.edit-clicked(); } }
+            sort(c,a) => { if root.question == "" { root.sort(c,a); } }
+        }
+        Button { text: "edit"; enabled: root.can-edit && root.question == ""; clicked => { root.edit-clicked(); } }
+        if root.tab == 1: CheckBox { text: "show urls that do not have a matching url class?: "; checked <=> root.show-unmatched; enabled: root.question == ""; }
+        if root.question != "": VerticalBox {
+            Text { text: root.question-title; color: Theme.text; font-weight: 700; }
+            Text { text: root.question; color: Theme.text; wrap: word-wrap; }
+            HorizontalLayout {
+                Button { text: "yes"; clicked => { root.answer(1); } }
+                Button { text: "no"; clicked => { root.answer(0); } }
+                Button { text: "cancel"; clicked => { root.answer(-1); } }
+            }
+        }
+        Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        HorizontalLayout {
+            Rectangle { horizontal-stretch: 1; }
+            Button { text: "apply"; enabled: root.question == ""; clicked => { root.apply-clicked(); } }
+            Button { text: "cancel"; clicked => { root.cancel-clicked(); } }
+        }
+    }
+}

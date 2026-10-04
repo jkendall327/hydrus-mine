@@ -49,6 +49,7 @@ fn unhex(text: &str) -> Vec<u8> {
 fn page_sort(recorded: &Value) -> PageSort {
     let data = &recorded["data"];
     PageSort {
+        tag_context: hydrus_core::search::context::TagContext::default(),
         by: match recorded["type"].as_str().unwrap() {
             "system" => PageSortBy::System(data.as_i64().unwrap()),
             "namespaces" => PageSortBy::Namespaces {
@@ -85,6 +86,7 @@ fn page_collect(recorded: &Value) -> PageCollect {
             .map(|k| hydrus_core::ServiceKey::new(unhex(k.as_str().unwrap())))
             .collect(),
         collect_unmatched: recorded["collect_unmatched"].as_bool().unwrap(),
+        tag_context: hydrus_core::search::context::TagContext::default(),
     }
 }
 
@@ -327,6 +329,7 @@ fn a_page_opened_from_a_collected_page_collects_as_it_did() {
         namespaces: vec!["creator".into()],
         ratings: Vec::new(),
         collect_unmatched: false,
+        tag_context: hydrus_core::search::context::TagContext::default(),
     });
     let files = page.borrow().files();
     bound.pages.borrow_mut().open_files(
@@ -365,6 +368,7 @@ fn a_session_page_keeps_how_it_collects() {
         namespaces: vec!["series".into()],
         ratings: Vec::new(),
         collect_unmatched: false,
+        tag_context: hydrus_core::search::context::TagContext::default(),
     };
     // a page collecting by series, and one collecting nothing (though
     // leaving unmatched files separate)
@@ -443,4 +447,41 @@ fn a_session_page_keeps_how_it_collects() {
             })
         ]
     );
+}
+
+#[test]
+fn restoring_and_refreshing_searches_preserves_absent_and_explicit_collect_settings() {
+    use hydrus_core::pages::PageContent;
+    let f = fixture();
+    for collect in [None, Some(PageCollect::default())] {
+        let original = PageContent::Search {
+            search: FileSearchContext::default(),
+            synchronised: true,
+            sort: None,
+            lock: None,
+            collect: collect.clone(),
+        };
+        let mut page = SearchPage::restored(
+            f.store.clone(),
+            FileSearchContext::default(),
+            true,
+            None,
+            Vec::new(),
+        )
+        .with_collect(collect);
+        assert_eq!(page.content(&original), original);
+        page.refresh();
+        assert_eq!(page.content(&original), original);
+        // An explicit collect action is serialized even when no files are shown.
+        let changed = PageCollect {
+            namespaces: vec!["series".into()],
+            collect_unmatched: false,
+            ..PageCollect::default()
+        };
+        page.set_collect(changed.clone());
+        let PageContent::Search { collect, .. } = page.content(&original) else {
+            panic!("a restored search remains a search");
+        };
+        assert_eq!(collect, Some(changed));
+    }
 }

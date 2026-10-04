@@ -1,0 +1,1779 @@
+{
+  "domain_preferences": {
+    "current": [
+      "6c6f63616c2066696c6573"
+    ],
+    "deleted": []
+  },
+  "favourite_options": {
+    "initial": [
+      "parity:favourite 10",
+      "parity:favourite 2"
+    ],
+    "events": [
+      {
+        "action": "initial",
+        "tags": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ],
+        "rows": [
+          "parity:favourite 2",
+          "parity:favourite 10"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "manual",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 2",
+          "parity:favourite 10"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "repeat_manual",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 2",
+          "parity:favourite 10"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "paste",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 2",
+          "parity:favourite 3",
+          "parity:favourite pasted"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 2",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "repeat_paste",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 2",
+          "parity:favourite 3",
+          "parity:favourite pasted"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 2",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "remove",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 3",
+          "parity:favourite pasted"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ],
+        "saved": [
+          "parity:favourite 10",
+          "parity:favourite 2"
+        ]
+      },
+      {
+        "action": "apply",
+        "tags": [
+          "parity:favourite 1",
+          "parity:favourite 10",
+          "parity:favourite 3",
+          "parity:favourite pasted"
+        ],
+        "rows": [
+          "parity:favourite 1",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ],
+        "saved": [
+          "parity:favourite 1",
+          "parity:favourite 3",
+          "parity:favourite 10",
+          "parity:favourite pasted"
+        ]
+      }
+    ],
+    "cancelled_saved": [
+      "parity:favourite 1",
+      "parity:favourite 3",
+      "parity:favourite 10",
+      "parity:favourite pasted"
+    ]
+  },
+  "domains": [
+    {
+      "tags": true,
+      "choose": null,
+      "rows": [
+        {
+          "label": "downloader tags",
+          "checked": false
+        },
+        {
+          "label": "my tags",
+          "checked": true
+        },
+        {
+          "label": "second tags",
+          "checked": false
+        },
+        {
+          "label": "all known tags",
+          "checked": false
+        }
+      ],
+      "after": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": [],
+        "service": "6c6f63616c2074616773",
+        "display": "6c6f63616c2074616773",
+        "current_tags": true,
+        "pending_tags": true,
+        "file_label": "my files",
+        "tag_label": "my tags"
+      }
+    },
+    {
+      "tags": false,
+      "choose": null,
+      "rows": [
+        {
+          "label": "art",
+          "checked": false
+        },
+        {
+          "label": "my files",
+          "checked": true
+        },
+        {
+          "label": "combined local file domains",
+          "checked": false
+        },
+        {
+          "label": "trash",
+          "checked": false
+        },
+        {
+          "label": "all files ever imported or deleted",
+          "checked": false
+        },
+        {
+          "label": "all known files with tags",
+          "checked": false
+        },
+        {
+          "label": "multiple/deleted locations",
+          "checked": false
+        }
+      ],
+      "after": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": [],
+        "service": "6c6f63616c2074616773",
+        "display": "6c6f63616c2074616773",
+        "current_tags": true,
+        "pending_tags": true,
+        "file_label": "my files",
+        "tag_label": "my tags"
+      }
+    },
+    {
+      "tags": true,
+      "choose": "all known tags",
+      "rows": [
+        {
+          "label": "downloader tags",
+          "checked": false
+        },
+        {
+          "label": "my tags",
+          "checked": true
+        },
+        {
+          "label": "second tags",
+          "checked": false
+        },
+        {
+          "label": "all known tags",
+          "checked": false
+        }
+      ],
+      "after": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": [],
+        "service": "616c6c206b6e6f776e2074616773",
+        "display": "6c6f63616c2074616773",
+        "current_tags": true,
+        "pending_tags": true,
+        "file_label": "my files",
+        "tag_label": "all known tags"
+      }
+    },
+    {
+      "tags": false,
+      "choose": "all known files with tags",
+      "rows": [
+        {
+          "label": "art",
+          "checked": false
+        },
+        {
+          "label": "my files",
+          "checked": true
+        },
+        {
+          "label": "combined local file domains",
+          "checked": false
+        },
+        {
+          "label": "trash",
+          "checked": false
+        },
+        {
+          "label": "all files ever imported or deleted",
+          "checked": false
+        },
+        {
+          "label": "all known files with tags",
+          "checked": false
+        },
+        {
+          "label": "multiple/deleted locations",
+          "checked": false
+        }
+      ],
+      "after": {
+        "current": [
+          "616c6c206b6e6f776e2066696c6573"
+        ],
+        "deleted": [],
+        "service": "646f776e6c6f616465722074616773",
+        "display": "6c6f63616c2074616773",
+        "current_tags": true,
+        "pending_tags": true,
+        "file_label": "all known files with tags",
+        "tag_label": "downloader tags"
+      }
+    },
+    {
+      "tags": true,
+      "choose": "all known tags",
+      "rows": [
+        {
+          "label": "downloader tags",
+          "checked": true
+        },
+        {
+          "label": "my tags",
+          "checked": false
+        },
+        {
+          "label": "second tags",
+          "checked": false
+        },
+        {
+          "label": "all known tags",
+          "checked": false
+        }
+      ],
+      "after": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": [],
+        "service": "616c6c206b6e6f776e2074616773",
+        "display": "6c6f63616c2074616773",
+        "current_tags": true,
+        "pending_tags": true,
+        "file_label": "my files",
+        "tag_label": "all known tags"
+      }
+    },
+    {
+      "tags": true,
+      "choose": "my tags",
+      "rows": [
+        {
+          "label": "downloader tags",
+          "checked": false
+        },
+        {
+          "label": "my tags",
+          "checked": false
+        },
+        {
+          "label": "second tags",
+          "checked": false
+        },
+        {
+          "label": "all known tags",
+          "checked": true
+        }
+      ],
+      "after": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": [],
+        "service": "6c6f63616c2074616773",
+        "display": "6c6f63616c2074616773",
+        "current_tags": true,
+        "pending_tags": true,
+        "file_label": "my files",
+        "tag_label": "my tags"
+      }
+    },
+    {
+      "tags": false,
+      "choose": "all files ever imported or deleted",
+      "rows": [
+        {
+          "label": "art",
+          "checked": false
+        },
+        {
+          "label": "my files",
+          "checked": true
+        },
+        {
+          "label": "combined local file domains",
+          "checked": false
+        },
+        {
+          "label": "trash",
+          "checked": false
+        },
+        {
+          "label": "all files ever imported or deleted",
+          "checked": false
+        },
+        {
+          "label": "all known files with tags",
+          "checked": false
+        },
+        {
+          "label": "multiple/deleted locations",
+          "checked": false
+        }
+      ],
+      "after": {
+        "current": [
+          "616c6c206c6f63616c206d65646961"
+        ],
+        "deleted": [
+          "616c6c206c6f63616c206d65646961"
+        ],
+        "service": "6c6f63616c2074616773",
+        "display": "6c6f63616c2074616773",
+        "current_tags": true,
+        "pending_tags": true,
+        "file_label": "current and deleted files of combined local file domains",
+        "tag_label": "my tags"
+      }
+    }
+  ],
+  "seeded_dialogs": [
+    {
+      "kind": "siblings",
+      "initial": "my tags",
+      "seeds": [
+        {
+          "service": "downloader tags",
+          "tags": [
+            "parity:amber old"
+          ]
+        },
+        {
+          "service": "my tags",
+          "tags": [
+            "parity:amber old"
+          ]
+        },
+        {
+          "service": "second tags",
+          "tags": [
+            "parity:amber old"
+          ]
+        }
+      ],
+      "remembered": "downloader tags",
+      "disabled_memory": "downloader tags"
+    },
+    {
+      "kind": "parents",
+      "initial": "my tags",
+      "seeds": [
+        {
+          "service": "downloader tags",
+          "tags": [
+            "parity:amber old"
+          ]
+        },
+        {
+          "service": "my tags",
+          "tags": [
+            "parity:amber old"
+          ]
+        },
+        {
+          "service": "second tags",
+          "tags": [
+            "parity:amber old"
+          ]
+        }
+      ],
+      "remembered": "downloader tags",
+      "disabled_memory": "downloader tags"
+    }
+  ],
+  "menus": [
+    {
+      "action": "open",
+      "paths": [
+        [
+          "collapse parent rows"
+        ],
+        [
+          "hide parent decorators"
+        ],
+        [
+          "hide sibling decorators"
+        ],
+        [
+          "copy",
+          "parity:amber old"
+        ],
+        [
+          "copy",
+          "amber old"
+        ],
+        [
+          "copy",
+          "amber_old"
+        ],
+        [
+          "copy",
+          "parity:amber old with counts"
+        ],
+        [
+          "copy",
+          "amber old with counts"
+        ],
+        [
+          "copy",
+          "parity:amber old and 2 parents"
+        ],
+        [
+          "copy",
+          "all tags"
+        ],
+        [
+          "copy",
+          "all subtags"
+        ],
+        [
+          "copy",
+          "all tags with counts"
+        ],
+        [
+          "copy",
+          "all subtags with counts"
+        ],
+        [
+          "1 siblings",
+          "add siblings to parity:amber old"
+        ],
+        [
+          "1 siblings",
+          "ideal is \"parity:amber\" on: downloader tags, my tags"
+        ],
+        [
+          "2 parents, 0 children",
+          "add parents to parity:amber old"
+        ],
+        [
+          "2 parents, 0 children",
+          "--downloader tags, my tags--"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:colour"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:root"
+        ],
+        [
+          "open",
+          "open a new search page for parity:amber old and 2 parents"
+        ],
+        [
+          "open",
+          "open a new duplicate filter page for parity:amber old and 2 parents"
+        ],
+        [
+          "favourites",
+          "remove \"parity:amber old\" from favourites"
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"downloader tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"my tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"second tags\""
+        ],
+        [
+          "maintenance",
+          "regenerate tag display"
+        ]
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "parity:amber old",
+      "copied": [
+        "parity:amber old"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "amber old",
+      "copied": [
+        "amber old"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "amber_old",
+      "copied": [
+        "amber_old"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "parity:amber old with counts",
+      "copied": [
+        "parity:amber old (1)"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "amber old with counts",
+      "copied": [
+        "amber old (1)"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "parity:amber old and 2 parents",
+      "copied": [
+        "parity:amber old\nparity:root\nparity:colour"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "all tags",
+      "copied": [
+        "parity:amber\nparity:amber old"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "all subtags",
+      "copied": [
+        "amber\namber old"
+      ]
+    },
+    {
+      "action": "launch",
+      "label": "open a new search page for parity:amber old and 2 parents",
+      "launched": [
+        {
+          "topic": "new_page_query",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:amber old"
+          ],
+          "page_name": "parity:amber old",
+          "activate_window": false
+        }
+      ]
+    },
+    {
+      "action": "launch",
+      "label": "open a new duplicate filter page for parity:amber old and 2 parents",
+      "launched": [
+        {
+          "topic": "new_page_duplicates",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:amber old"
+          ],
+          "page_name": "duplicates: parity:amber old",
+          "activate_window": false
+        }
+      ]
+    },
+    {
+      "action": "favourite",
+      "label": "add \"parity:menu new\" to favourites",
+      "answer": false,
+      "asked": [],
+      "favourites": [
+        "parity:amber old",
+        "parity:favorite new",
+        "parity:menu new",
+        "parity:root"
+      ],
+      "most_used": []
+    },
+    {
+      "action": "favourite",
+      "label": "remove \"parity:menu new\" from favourites",
+      "answer": false,
+      "asked": [
+        {
+          "message": "Remove \"parity:menu new\" from the favourites list?",
+          "title": null
+        }
+      ],
+      "favourites": [
+        "parity:amber old",
+        "parity:favorite new",
+        "parity:menu new",
+        "parity:root"
+      ],
+      "most_used": []
+    },
+    {
+      "action": "favourite",
+      "label": "remove \"parity:menu new\" from favourites",
+      "answer": true,
+      "asked": [
+        {
+          "message": "Remove \"parity:menu new\" from the favourites list?",
+          "title": null
+        }
+      ],
+      "favourites": [
+        "parity:amber old",
+        "parity:favorite new",
+        "parity:root"
+      ],
+      "most_used": []
+    },
+    {
+      "action": "favourite",
+      "label": "add \"parity:menu new\" to most used for \"my tags\"",
+      "answer": false,
+      "asked": [],
+      "favourites": [
+        "parity:amber old",
+        "parity:favorite new",
+        "parity:root"
+      ],
+      "most_used": [
+        "parity:menu new"
+      ]
+    },
+    {
+      "action": "favourite",
+      "label": "remove \"parity:menu new\" from most used for \"my tags\"",
+      "answer": false,
+      "asked": [
+        {
+          "message": "Remove \"parity:menu new\" from the most used list for \"my tags\"?",
+          "title": null
+        }
+      ],
+      "favourites": [
+        "parity:amber old",
+        "parity:favorite new",
+        "parity:root"
+      ],
+      "most_used": [
+        "parity:menu new"
+      ]
+    },
+    {
+      "action": "favourite",
+      "label": "remove \"parity:menu new\" from most used for \"my tags\"",
+      "answer": true,
+      "asked": [
+        {
+          "message": "Remove \"parity:menu new\" from the most used list for \"my tags\"?",
+          "title": null
+        }
+      ],
+      "favourites": [
+        "parity:amber old",
+        "parity:favorite new",
+        "parity:root"
+      ],
+      "most_used": []
+    },
+    {
+      "action": "decorator",
+      "label": "collapse parent rows",
+      "paths": [
+        [
+          "expand parent rows"
+        ],
+        [
+          "hide parent decorators"
+        ],
+        [
+          "hide sibling decorators"
+        ],
+        [
+          "copy",
+          "parity:amber old"
+        ],
+        [
+          "copy",
+          "amber old"
+        ],
+        [
+          "copy",
+          "amber_old"
+        ],
+        [
+          "copy",
+          "parity:amber old with counts"
+        ],
+        [
+          "copy",
+          "amber old with counts"
+        ],
+        [
+          "copy",
+          "parity:amber old and 2 parents"
+        ],
+        [
+          "copy",
+          "all tags"
+        ],
+        [
+          "copy",
+          "all subtags"
+        ],
+        [
+          "copy",
+          "all tags with counts"
+        ],
+        [
+          "copy",
+          "all subtags with counts"
+        ],
+        [
+          "1 siblings",
+          "add siblings to parity:amber old"
+        ],
+        [
+          "1 siblings",
+          "ideal is \"parity:amber\" on: downloader tags, my tags"
+        ],
+        [
+          "2 parents, 0 children",
+          "add parents to parity:amber old"
+        ],
+        [
+          "2 parents, 0 children",
+          "--downloader tags, my tags--"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:colour"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:root"
+        ],
+        [
+          "open",
+          "open a new search page for parity:amber old and 2 parents"
+        ],
+        [
+          "open",
+          "open a new duplicate filter page for parity:amber old and 2 parents"
+        ],
+        [
+          "favourites",
+          "remove \"parity:amber old\" from favourites"
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"downloader tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"my tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"second tags\""
+        ],
+        [
+          "maintenance",
+          "regenerate tag display"
+        ]
+      ]
+    },
+    {
+      "action": "decorator",
+      "label": "hide parent decorators",
+      "paths": [
+        [
+          "show parent decorators"
+        ],
+        [
+          "hide sibling decorators"
+        ],
+        [
+          "copy",
+          "parity:amber old"
+        ],
+        [
+          "copy",
+          "amber old"
+        ],
+        [
+          "copy",
+          "amber_old"
+        ],
+        [
+          "copy",
+          "parity:amber old with counts"
+        ],
+        [
+          "copy",
+          "amber old with counts"
+        ],
+        [
+          "copy",
+          "parity:amber old and 2 parents"
+        ],
+        [
+          "copy",
+          "all tags"
+        ],
+        [
+          "copy",
+          "all subtags"
+        ],
+        [
+          "copy",
+          "all tags with counts"
+        ],
+        [
+          "copy",
+          "all subtags with counts"
+        ],
+        [
+          "1 siblings",
+          "add siblings to parity:amber old"
+        ],
+        [
+          "1 siblings",
+          "ideal is \"parity:amber\" on: downloader tags, my tags"
+        ],
+        [
+          "2 parents, 0 children",
+          "add parents to parity:amber old"
+        ],
+        [
+          "2 parents, 0 children",
+          "--downloader tags, my tags--"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:colour"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:root"
+        ],
+        [
+          "open",
+          "open a new search page for parity:amber old and 2 parents"
+        ],
+        [
+          "open",
+          "open a new duplicate filter page for parity:amber old and 2 parents"
+        ],
+        [
+          "favourites",
+          "remove \"parity:amber old\" from favourites"
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"downloader tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"my tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"second tags\""
+        ],
+        [
+          "maintenance",
+          "regenerate tag display"
+        ]
+      ]
+    },
+    {
+      "action": "decorator",
+      "label": "hide sibling decorators",
+      "paths": [
+        [
+          "show parent decorators"
+        ],
+        [
+          "show sibling decorators"
+        ],
+        [
+          "copy",
+          "parity:amber old"
+        ],
+        [
+          "copy",
+          "amber old"
+        ],
+        [
+          "copy",
+          "amber_old"
+        ],
+        [
+          "copy",
+          "parity:amber old with counts"
+        ],
+        [
+          "copy",
+          "amber old with counts"
+        ],
+        [
+          "copy",
+          "parity:amber old and 2 parents"
+        ],
+        [
+          "copy",
+          "all tags"
+        ],
+        [
+          "copy",
+          "all subtags"
+        ],
+        [
+          "copy",
+          "all tags with counts"
+        ],
+        [
+          "copy",
+          "all subtags with counts"
+        ],
+        [
+          "1 siblings",
+          "add siblings to parity:amber old"
+        ],
+        [
+          "1 siblings",
+          "ideal is \"parity:amber\" on: downloader tags, my tags"
+        ],
+        [
+          "2 parents, 0 children",
+          "add parents to parity:amber old"
+        ],
+        [
+          "2 parents, 0 children",
+          "--downloader tags, my tags--"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:colour"
+        ],
+        [
+          "2 parents, 0 children",
+          "parent: parity:root"
+        ],
+        [
+          "open",
+          "open a new search page for parity:amber old and 2 parents"
+        ],
+        [
+          "open",
+          "open a new duplicate filter page for parity:amber old and 2 parents"
+        ],
+        [
+          "favourites",
+          "remove \"parity:amber old\" from favourites"
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"downloader tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"my tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"second tags\""
+        ],
+        [
+          "maintenance",
+          "regenerate tag display"
+        ]
+      ]
+    }
+  ],
+  "tabs": [
+    {
+      "tab": "favourites",
+      "service": "my tags",
+      "tags": [
+        "parity:root",
+        "parity:amber old",
+        "parity:favorite new"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old → parity:amber",
+            "    parity:root",
+            "    parity:colour"
+          ]
+        },
+        {
+          "tag": "parity:favorite new",
+          "rows": [
+            "parity:favorite new"
+          ]
+        },
+        {
+          "tag": "parity:root",
+          "rows": [
+            "parity:root"
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "favourites",
+      "service": "all known tags",
+      "tags": [
+        "parity:root",
+        "parity:amber old",
+        "parity:favorite new"
+      ],
+      "rows": [
+        {
+          "tag": "parity:amber old",
+          "rows": [
+            "parity:amber old"
+          ]
+        },
+        {
+          "tag": "parity:favorite new",
+          "rows": [
+            "parity:favorite new"
+          ]
+        },
+        {
+          "tag": "parity:root",
+          "rows": [
+            "parity:root"
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "children",
+      "context": [
+        "parity:root"
+      ],
+      "limit": 40,
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber"
+          ]
+        },
+        {
+          "tag": "parity:colour",
+          "rows": [
+            "parity:colour"
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "children",
+      "context": [
+        "parity:root"
+      ],
+      "limit": 1,
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber"
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "children",
+      "context": [
+        "parity:root"
+      ],
+      "limit": null,
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber"
+          ]
+        },
+        {
+          "tag": "parity:colour",
+          "rows": [
+            "parity:colour"
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "children",
+      "context": [
+        "parity:root",
+        "parity:colour"
+      ],
+      "limit": 40,
+      "rows": [
+        {
+          "tag": "parity:amber",
+          "rows": [
+            "parity:amber"
+          ]
+        }
+      ]
+    }
+  ],
+  "children_control": {
+    "value": 40,
+    "min": 1,
+    "max": 1000000
+  },
+  "detached_inputs": [
+    {
+      "kind": "additional",
+      "action": "initial",
+      "tags": [
+        "parity:caller initial"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "additional",
+      "action": "paste",
+      "tags": [
+        "parity:caller initial",
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "additional",
+      "action": "repeat_paste",
+      "tags": [
+        "parity:caller initial",
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "additional",
+      "action": "typed_toggle",
+      "tags": [
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "additional",
+      "action": "cancel",
+      "tags": [
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "initial",
+      "tags": [
+        "parity:caller initial"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "paste",
+      "tags": [
+        "parity:caller initial",
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "repeat_paste",
+      "tags": [
+        "parity:caller initial",
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "typed_toggle",
+      "tags": [
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "cancel",
+      "tags": [
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    }
+  ],
+  "relationship_inputs": [
+    {
+      "kind": "siblings",
+      "action": "paste_left",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": []
+    },
+    {
+      "kind": "siblings",
+      "action": "repeat_left",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": []
+    },
+    {
+      "kind": "siblings",
+      "action": "paste_right",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste right"
+      ]
+    },
+    {
+      "kind": "siblings",
+      "action": "repeat_right",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste right"
+      ]
+    },
+    {
+      "kind": "siblings",
+      "action": "move_to_right",
+      "left": [
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste left a"
+      ]
+    },
+    {
+      "kind": "parents",
+      "action": "paste_left",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": []
+    },
+    {
+      "kind": "parents",
+      "action": "repeat_left",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": []
+    },
+    {
+      "kind": "parents",
+      "action": "paste_right",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste right a",
+        "parity:paste right b"
+      ]
+    },
+    {
+      "kind": "parents",
+      "action": "repeat_right",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste right a",
+        "parity:paste right b"
+      ]
+    },
+    {
+      "kind": "parents",
+      "action": "move_to_right",
+      "left": [
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste left a",
+        "parity:paste right a",
+        "parity:paste right b"
+      ]
+    }
+  ],
+  "controls": {
+    "values": [
+      false,
+      false,
+      true,
+      true,
+      true
+    ],
+    "height": 11,
+    "minimum": 1,
+    "maximum": 128
+  },
+  "corpus": [
+    {
+      "tag": "parity:amber",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
+    },
+    {
+      "tag": "parity:amber old",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    },
+    {
+      "tag": "parity:amethyst",
+      "hashes": [
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    },
+    {
+      "tag": "parity:amaranth",
+      "hashes": [
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
+    }
+  ],
+  "queries": [
+    {
+      "text": "parity:amb",
+      "first_with_count": false,
+      "expanded": true,
+      "parents": true,
+      "siblings": true,
+      "service": "my tags",
+      "suggestions": [
+        {
+          "tag": "parity:amb",
+          "count": false,
+          "rows": [
+            "parity:amb"
+          ]
+        },
+        {
+          "tag": "parity:amber",
+          "count": true,
+          "rows": [
+            "parity:amber (3)",
+            "    parity:root",
+            "    parity:colour"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "count": true,
+          "rows": [
+            "parity:amber old (1) → parity:amber",
+            "    parity:root",
+            "    parity:colour"
+          ]
+        }
+      ],
+      "selected": [
+        "parity:amb"
+      ]
+    },
+    {
+      "text": "parity:amb",
+      "first_with_count": true,
+      "expanded": true,
+      "parents": true,
+      "siblings": true,
+      "service": "my tags",
+      "suggestions": [
+        {
+          "tag": "parity:amb",
+          "count": false,
+          "rows": [
+            "parity:amb"
+          ]
+        },
+        {
+          "tag": "parity:amber",
+          "count": true,
+          "rows": [
+            "parity:amber (3)",
+            "    parity:root",
+            "    parity:colour"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "count": true,
+          "rows": [
+            "parity:amber old (1) → parity:amber",
+            "    parity:root",
+            "    parity:colour"
+          ]
+        }
+      ],
+      "selected": [
+        "parity:amber"
+      ]
+    },
+    {
+      "text": "parity:am",
+      "first_with_count": false,
+      "expanded": true,
+      "parents": true,
+      "siblings": true,
+      "service": "my tags",
+      "suggestions": [
+        {
+          "tag": "parity:am",
+          "count": false,
+          "rows": [
+            "parity:am"
+          ]
+        }
+      ],
+      "selected": [
+        "parity:am"
+      ]
+    },
+    {
+      "text": "parity:amber old",
+      "first_with_count": false,
+      "expanded": false,
+      "parents": true,
+      "siblings": true,
+      "service": "my tags",
+      "suggestions": [
+        {
+          "tag": "parity:amber",
+          "count": true,
+          "rows": [
+            "parity:amber (3) (2 parents)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "count": true,
+          "rows": [
+            "parity:amber old (1) → parity:amber (2 parents)"
+          ]
+        }
+      ],
+      "selected": [
+        "parity:amber"
+      ]
+    },
+    {
+      "text": "parity:amber old",
+      "first_with_count": false,
+      "expanded": false,
+      "parents": false,
+      "siblings": false,
+      "service": "my tags",
+      "suggestions": [
+        {
+          "tag": "parity:amber",
+          "count": true,
+          "rows": [
+            "parity:amber (3)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "count": true,
+          "rows": [
+            "parity:amber old (1)"
+          ]
+        }
+      ],
+      "selected": [
+        "parity:amber"
+      ]
+    },
+    {
+      "text": "parity:amb",
+      "first_with_count": false,
+      "expanded": false,
+      "parents": true,
+      "siblings": true,
+      "service": "all known tags",
+      "suggestions": [
+        {
+          "tag": "parity:amb",
+          "count": false,
+          "rows": [
+            "parity:amb"
+          ]
+        },
+        {
+          "tag": "parity:amber",
+          "count": true,
+          "rows": [
+            "parity:amber (3) (2 parents)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "count": true,
+          "rows": [
+            "parity:amber old (1) → parity:amber (2 parents)"
+          ]
+        }
+      ],
+      "selected": [
+        "parity:amb"
+      ]
+    },
+    {
+      "text": "parity:amber old",
+      "first_with_count": false,
+      "expanded": true,
+      "parents": true,
+      "siblings": true,
+      "service": "my tags",
+      "suggestions": [
+        {
+          "tag": "parity:amber",
+          "count": true,
+          "rows": [
+            "parity:amber (3)",
+            "    parity:root",
+            "    parity:colour"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "count": true,
+          "rows": [
+            "parity:amber old (1) → parity:amber",
+            "    parity:root",
+            "    parity:colour"
+          ]
+        }
+      ],
+      "selected": [
+        "parity:amber"
+      ]
+    }
+  ],
+  "paste": [
+    {
+      "text": " Parity:Amber \nparity:new\nparity:new\n\n",
+      "skip": false,
+      "answer": false,
+      "button": false,
+      "consumed": false,
+      "asked": [
+        {
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
+          "title": "Want to paste everything?"
+        }
+      ],
+      "pasted": []
+    },
+    {
+      "text": " Parity:Amber \nparity:new\nparity:new\n\n",
+      "skip": false,
+      "answer": true,
+      "button": false,
+      "consumed": true,
+      "asked": [
+        {
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
+          "title": "Want to paste everything?"
+        }
+      ],
+      "pasted": [
+        [
+          "parity:amber",
+          "parity:new"
+        ]
+      ]
+    },
+    {
+      "text": "parity:skip a\nparity:skip b",
+      "skip": true,
+      "answer": false,
+      "button": false,
+      "consumed": true,
+      "asked": [],
+      "pasted": [
+        [
+          "parity:skip a",
+          "parity:skip b"
+        ]
+      ]
+    },
+    {
+      "text": "parity:button a\nparity:button b",
+      "skip": false,
+      "answer": false,
+      "button": true,
+      "consumed": null,
+      "asked": [],
+      "pasted": [
+        [
+          "parity:button a",
+          "parity:button b"
+        ]
+      ]
+    },
+    {
+      "text": "parity:single",
+      "skip": false,
+      "answer": false,
+      "button": false,
+      "consumed": false,
+      "asked": [],
+      "pasted": []
+    }
+  ]
+}

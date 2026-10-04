@@ -11,6 +11,50 @@ fn fixture() -> Vec<Value> {
     serde_json::from_value(hydrus_testkit::fixture_json("formula_editors.json")).unwrap()
 }
 #[test]
+fn fetched_documents_replay_reference_success_error_and_cancellation_context() {
+    use hydrus_gui_model::formula_editors::FetchedDocument;
+    let cases: Vec<Value> =
+        serde_json::from_value(hydrus_testkit::fixture_json("parser_test_data.json")).unwrap();
+    for case in cases.into_iter().filter(|c| c["mode"].is_string()) {
+        let mut test = FormulaTestData {
+            text: "previous pasted document".into(),
+            context: [
+                ("url".into(), "https://test-docs.example/original".into()),
+                ("post_index".into(), "12".into()),
+                ("token".into(), "preserved".into()),
+            ]
+            .into(),
+            ..FormulaTestData::default()
+        };
+        test.prepare_examples();
+        let result = match case["mode"].as_str().unwrap() {
+            "success" => FetchedDocument::Text("<p>fetched café</p>".into()),
+            "cancel" => FetchedDocument::Cancelled,
+            "error" => FetchedDocument::Failed {
+                error: "scripted failure".into(),
+                text: "<p>fetched café</p>".into(),
+            },
+            _ => unreachable!(),
+        };
+        let index = test.fetched(
+            case["request"]["url"].as_str().unwrap().into(),
+            result,
+            case["case"] == "parser_fetch",
+        );
+        assert_eq!(index, 1);
+        assert_eq!(test.text, case["text"].as_str().unwrap());
+        assert_eq!(
+            serde_json::to_value(&test.context).unwrap(),
+            case["context"]
+        );
+        assert_eq!(test.selected_first(index).examples[0], test.text);
+        assert!(test.choose_example(0));
+        assert_eq!(test.text, "previous pasted document");
+        assert_eq!(test.context["url"], "https://test-docs.example/original");
+        assert_eq!(test.context["token"], "preserved");
+    }
+}
+#[test]
 fn formula_editor_controls_and_parses_match_reference() {
     for case in fixture() {
         let mut e = FormulaEditor::new(
@@ -148,7 +192,7 @@ fn formula_editor_rule_queue_matches_reference_actions() {
     }
 }
 #[test]
-fn formula_editors_preserve_unsupported_and_inactive_rule_settings() {
+fn formula_editors_preserve_other_kinds_and_inactive_rule_settings() {
     let mut f = new_formula(false);
     f.kind = FormulaKind::Static {
         text: "kept".into(),
@@ -156,7 +200,7 @@ fn formula_editors_preserve_unsupported_and_inactive_rule_settings() {
     };
     f.name = "original".into();
     let mut e = FormulaEditor::new(&f, FormulaTestData::default());
-    assert!(!e.supported());
+    assert!(e.supported());
     e.put(None, e.new_rule());
     e.delete();
     e.shift(false);
@@ -336,4 +380,333 @@ fn formula_editor_bulk_name_conflicts_match_reference() {
         values.iter().map(|f| f.name.as_str()).collect::<Vec<_>>(),
         ["kept", "at end", "past end"]
     );
+}
+
+#[test]
+fn scalar_formula_controls_match_reference() {
+    let cases: Vec<Value> = serde_json::from_value(hydrus_testkit::fixture_json(
+        "recursive_formula_editors.json",
+    ))
+    .unwrap();
+    for case in cases {
+        let kind = match case["case"].as_str().unwrap() {
+            "context_formula" => 4,
+            "static_formula" => 5,
+            _ => continue,
+        };
+        let mut e = FormulaEditor::new(
+            &hydrus_gui_model::formula_editors::new_formula_kind(kind),
+            FormulaTestData {
+                context: serde_json::from_value(case["context"].clone()).unwrap_or_default(),
+                collapse_newlines: case["collapse"].as_bool().unwrap(),
+                ..FormulaTestData::default()
+            },
+        );
+        e.formula.name = case["name"].as_str().unwrap().into();
+        e.formula.processor = StringProcessor {
+            steps: vec![ProcessingStep::Convert(StringConverter {
+                conversions: vec![Conversion::Append("!".into())],
+                example: String::new(),
+            })],
+        };
+        match &mut e.formula.kind {
+            FormulaKind::ContextVariable { variable } => {
+                *variable = case["variable"].as_str().unwrap().into();
+            }
+            FormulaKind::Static { text, count } => {
+                *text = case["text"].as_str().unwrap().into();
+                *count = case["count"].as_u64().unwrap().try_into().unwrap();
+                assert_eq!(case["minimum"], 1);
+                assert_eq!(case["maximum"], 65535);
+            }
+            _ => panic!(),
+        }
+        assert_eq!(e.kind_index(), kind);
+        assert_eq!(json!(e.results().unwrap()), case["results"]);
+        if kind == 4 {
+            assert_eq!(json!(e.processor_texts()), case["before"]);
+            e.formula.kind = FormulaKind::ContextVariable {
+                variable: "absent".into(),
+            };
+            assert!(e.results().unwrap().is_empty());
+        }
+    }
+}
+
+fn recursive_cases() -> Vec<Value> {
+    serde_json::from_value(hydrus_testkit::fixture_json(
+        "recursive_formula_editors.json",
+    ))
+    .unwrap()
+}
+fn embedded_pair() -> hydrus_parse::formula::Formula {
+    let mut formula = hydrus_gui_model::formula_editors::new_formula_kind(2);
+    let FormulaKind::Nested { main, sub } = &mut formula.kind else {
+        panic!()
+    };
+    let FormulaKind::Html { rules, content } = &mut main.kind else {
+        panic!()
+    };
+    rules[0].tag_name = Some("script".into());
+    *content = HtmlContent::Text;
+    let FormulaKind::Json { rules, .. } = &mut sub.kind else {
+        panic!()
+    };
+    rules.push(JsonRule::AllItems);
+    formula.processor = StringProcessor {
+        steps: vec![ProcessingStep::Convert(StringConverter {
+            conversions: vec![Conversion::Append("!".into())],
+            example: String::new(),
+        })],
+    };
+    formula
+}
+#[test]
+fn recursive_formula_fields_and_transformed_child_data_match_reference() {
+    use hydrus_gui_model::formula_editors::{FormulaChild, new_formula_kind};
+    let cases = recursive_cases();
+    let case = cases
+        .iter()
+        .find(|c| c["case"] == "nested_formula")
+        .unwrap();
+    let original = embedded_pair();
+    let mut editor = FormulaEditor::new(
+        &original,
+        FormulaTestData {
+            context: serde_json::from_value(case["context"].clone()).unwrap(),
+            text: case["text"].as_str().unwrap().into(),
+            ..FormulaTestData::default()
+        },
+    );
+    editor.formula.name = case["name"].as_str().unwrap().into();
+    assert_eq!(json!(editor.results().unwrap()), case["results"]);
+    assert_eq!(
+        json!(editor.child_test_data(FormulaChild::Sub).examples),
+        case["sub_texts"]
+    );
+    assert_eq!(editor.child_test_data(FormulaChild::Main), editor.test);
+    let mut main = new_formula_kind(5);
+    main.kind = FormulaKind::Static {
+        text: "{\"posts\":[\"changed\"]}".into(),
+        count: 1,
+    };
+    let staged = editor.child(FormulaChild::Main).unwrap();
+    assert_ne!(staged, main);
+    assert_eq!(editor.results().unwrap(), ["alpha!", "beta!"]);
+    editor.put_child(FormulaChild::Main, main);
+    let case = cases
+        .iter()
+        .find(|c| c["case"] == "nested_main_edit")
+        .unwrap();
+    assert_eq!(json!(editor.results().unwrap()), case["results"]);
+    assert_eq!(
+        json!(editor.child_test_data(FormulaChild::Sub).examples),
+        case["sub_texts"]
+    );
+    editor.put_child(FormulaChild::Sub, new_formula_kind(4));
+    let case = cases
+        .iter()
+        .find(|c| c["case"] == "nested_sub_edit")
+        .unwrap();
+    assert_eq!(json!(editor.results().unwrap()), case["results"]);
+    assert_eq!(original, embedded_pair());
+    for case in cases.iter().filter(|c| c["case"] == "nested_sub_test") {
+        let mut formula = embedded_pair();
+        if case["type"] == "error_fallback" {
+            let FormulaKind::Nested { main, .. } = &mut formula.kind else {
+                panic!()
+            };
+            **main = new_formula(true);
+        }
+        let editor = FormulaEditor::new(
+            &formula,
+            FormulaTestData {
+                context: serde_json::from_value(case["context"].clone()).unwrap(),
+                examples: serde_json::from_value(case["texts"].clone()).unwrap(),
+                ..FormulaTestData::default()
+            },
+        );
+        let child_data = editor.child_test_data(FormulaChild::Sub);
+        assert_eq!(json!(child_data.examples), case["sub_texts"]);
+        assert_eq!(json!(child_data.context), case["context"]);
+        assert_eq!(
+            child_data.text,
+            child_data.examples.first().cloned().unwrap_or_default()
+        );
+    }
+}
+#[test]
+fn zipper_member_queue_and_substitution_match_reference() {
+    use hydrus_gui_model::formula_editors::{FormulaChild, new_formula_kind};
+    let mut formula = new_formula_kind(3);
+    let mut constant = new_formula_kind(5);
+    constant.kind = FormulaKind::Static {
+        text: "first".into(),
+        count: 1,
+    };
+    let FormulaKind::Zipper { formulae, .. } = &mut formula.kind else {
+        panic!()
+    };
+    *formulae = vec![constant];
+    let mut editor = FormulaEditor::new(&formula, FormulaTestData::default());
+    for case in recursive_cases()
+        .into_iter()
+        .filter(|c| c["case"] == "zipper_queue")
+    {
+        match case["action"].as_str().unwrap() {
+            "add" => {
+                let mut child = new_formula_kind(5);
+                child.kind = FormulaKind::Static {
+                    text: "second".into(),
+                    count: 1,
+                };
+                editor.put_child(FormulaChild::Member(None), child);
+            }
+            "edit" => {
+                editor.click(1, false, false);
+                let mut child = editor.child(FormulaChild::Member(Some(1))).unwrap();
+                child.kind = FormulaKind::Static {
+                    text: "replacement".into(),
+                    count: 1,
+                };
+                editor.put_child(FormulaChild::Member(Some(1)), child);
+            }
+            "up" => editor.shift(false),
+            "down" => editor.shift(true),
+            "delete" => editor.delete(),
+            "cancel_add" | "cancel_edit" => {}
+            other => panic!("{other}"),
+        }
+        let FormulaKind::Zipper { formulae, .. } = &editor.formula.kind else {
+            panic!()
+        };
+        let texts = formulae
+            .iter()
+            .map(|f| {
+                let FormulaKind::Static { text, .. } = &f.kind else {
+                    panic!()
+                };
+                text.clone()
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(json!(texts), case["texts"]);
+        assert_eq!(json!(editor.selected()), case["selected"]);
+    }
+    let original = editor.formula.clone();
+    editor.put_child(FormulaChild::Member(Some(usize::MAX)), new_formula_kind(4));
+    assert_eq!(editor.formula, original);
+    let case = recursive_cases()
+        .into_iter()
+        .find(|c| c["case"] == "zipper_formula")
+        .unwrap();
+    let mut left = new_formula_kind(5);
+    left.kind = FormulaKind::Static {
+        text: "left".into(),
+        count: 2,
+    };
+    editor.formula.kind = FormulaKind::Zipper {
+        formulae: vec![left, new_formula_kind(4)],
+        phrase: case["phrase"].as_str().unwrap().into(),
+    };
+    editor.formula.processor = embedded_pair().processor;
+    editor.test.context = serde_json::from_value(case["context"].clone()).unwrap();
+    assert_eq!(json!(editor.results().unwrap()), case["results"]);
+}
+#[test]
+fn six_kind_chooser_defaults_match_reference() {
+    use hydrus_gui_model::formula_editors::new_formula_kind;
+    for case in recursive_cases()
+        .into_iter()
+        .filter(|c| c["case"] == "change_recursive_type")
+    {
+        let mut original = new_formula(false);
+        original.name = "reset".into();
+        original.processor = embedded_pair().processor;
+        let mut editor = FormulaEditor::new(&original, FormulaTestData::default());
+        let kind = match case["type"].as_str().unwrap() {
+            "nested" => 2,
+            "zipper" => 3,
+            "context" => 4,
+            "static" => 5,
+            _ => panic!(),
+        };
+        editor.change_kind(kind);
+        assert_eq!(editor.formula, new_formula_kind(kind));
+        assert_eq!(editor.formula.name, case["name"]);
+        assert_eq!(
+            json!(editor.formula.processor.processing_strings()),
+            case["processing"]
+        );
+        match &editor.formula.kind {
+            FormulaKind::Nested { main, sub } => {
+                assert_eq!(**main, new_formula(false));
+                assert_eq!(**sub, new_formula(true));
+                assert_eq!(case["main_type"], "ParseFormulaHTML");
+                assert_eq!(case["sub_type"], "ParseFormulaJSON");
+            }
+            FormulaKind::Zipper { formulae, phrase } => {
+                assert_eq!(phrase, case["phrase"].as_str().unwrap());
+                assert_eq!(json!(formulae.len()), case["children"]);
+            }
+            FormulaKind::ContextVariable { variable } => {
+                assert_eq!(variable, case["variable"].as_str().unwrap());
+            }
+            FormulaKind::Static { text, count } => {
+                assert_eq!(text, case["text"].as_str().unwrap());
+                assert_eq!(json!(count), case["count"]);
+            }
+            _ => panic!(),
+        }
+    }
+}
+
+#[test]
+fn multiple_test_documents_retain_edits_sources_and_selected_child_order() {
+    let cases: Vec<Value> =
+        serde_json::from_value(hydrus_testkit::fixture_json("parser_test_data.json")).unwrap();
+    let first = cases
+        .iter()
+        .find(|c| c["case"] == "converted_example" && c["sequence"] == 0)
+        .unwrap();
+    let second = cases
+        .iter()
+        .find(|c| c["case"] == "converted_example" && c["sequence"] == 1)
+        .unwrap();
+    let mut test = FormulaTestData {
+        context: serde_json::from_value(first["context"].clone()).unwrap(),
+        text: first["raw"].as_str().unwrap().into(),
+        ..FormulaTestData::default()
+    };
+    test.prepare_examples();
+    let original_url = test.context["url"].clone();
+    let index = test.add_example(
+        second["raw"].as_str().unwrap().into(),
+        Some("https://test-docs.example/second".into()),
+    );
+    assert_eq!(index, 1);
+    assert_eq!(test.context["url"], "https://test-docs.example/second");
+    assert_eq!(test.context["token"], "preserved");
+    test.remember_example(1, "<p>edited second</p>".into());
+    assert!(test.choose_example(0));
+    assert_eq!(test.text, first["raw"].as_str().unwrap());
+    assert_eq!(test.context["url"], original_url);
+    assert!(test.choose_example(1));
+    assert_eq!(test.text, "<p>edited second</p>");
+    let child = test.selected_first(1);
+    assert_eq!(child.examples, ["<p>edited second</p>", "<p>first</p>"]);
+    assert_eq!(
+        child.source_urls,
+        [
+            Some("https://test-docs.example/second".into()),
+            Some(original_url.clone())
+        ]
+    );
+    assert_eq!(child.context, test.context);
+    assert!(!test.choose_example(usize::MAX));
+    assert_eq!(test.text, "<p>edited second</p>");
+    assert_eq!(test.remove_example(1), 0);
+    assert_eq!(test.text, first["raw"].as_str().unwrap());
+    assert_eq!(test.context["url"], original_url);
+    assert_eq!(test.remove_example(0), 0);
+    assert_eq!(test.examples.len(), 1);
 }

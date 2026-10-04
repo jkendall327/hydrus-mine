@@ -49,6 +49,7 @@ fn unhex(text: &str) -> Vec<u8> {
 fn page_sort(recorded: &Value) -> PageSort {
     let data = &recorded["data"];
     PageSort {
+        tag_context: hydrus_core::search::context::TagContext::default(),
         by: match recorded["type"].as_str().unwrap() {
             "system" => PageSortBy::System(data.as_i64().unwrap()),
             "namespaces" => PageSortBy::Namespaces {

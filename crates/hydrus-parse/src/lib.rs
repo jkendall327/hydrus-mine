@@ -6,6 +6,7 @@ pub mod dom;
 pub mod downloaders;
 pub mod folders;
 pub mod formula;
+pub mod login;
 pub mod sidecar;
 pub mod simple;
 pub mod text;

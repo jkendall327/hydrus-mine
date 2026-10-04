@@ -1,0 +1,1806 @@
+{
+  "menus": [
+    {
+      "selected": 0,
+      "clicked": 0,
+      "entries": [
+        "close page",
+        "close other pages",
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "page to the right",
+            "last page"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "right",
+            "to right end"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 0,
+      "clicked": 1,
+      "entries": [
+        "close page",
+        {
+          "menu": "close",
+          "entries": [
+            "other pages",
+            "pages to the left",
+            "pages to the right"
+          ]
+        },
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "page to the right",
+            "last page"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "left",
+            "right",
+            "to right end"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 0,
+      "clicked": 2,
+      "entries": [
+        "close page",
+        {
+          "menu": "close",
+          "entries": [
+            "other pages",
+            "pages to the left",
+            "pages to the right"
+          ]
+        },
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "page to the right",
+            "last page"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "to left end",
+            "left",
+            "right"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 0,
+      "clicked": 3,
+      "entries": [
+        "close page",
+        "close other pages",
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "page to the right",
+            "last page"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "to left end",
+            "left"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 1,
+      "clicked": 0,
+      "entries": [
+        "close page",
+        "close other pages",
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "page to the left",
+            "page to the right",
+            "last page"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "right",
+            "to right end"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 1,
+      "clicked": 1,
+      "entries": [
+        "close page",
+        {
+          "menu": "close",
+          "entries": [
+            "other pages",
+            "pages to the left",
+            "pages to the right"
+          ]
+        },
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "page to the left",
+            "page to the right",
+            "last page"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "left",
+            "right",
+            "to right end"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 1,
+      "clicked": 2,
+      "entries": [
+        "close page",
+        {
+          "menu": "close",
+          "entries": [
+            "other pages",
+            "pages to the left",
+            "pages to the right"
+          ]
+        },
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "page to the left",
+            "page to the right",
+            "last page"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "to left end",
+            "left",
+            "right"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 1,
+      "clicked": 3,
+      "entries": [
+        "close page",
+        "close other pages",
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "page to the left",
+            "page to the right",
+            "last page"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "to left end",
+            "left"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 2,
+      "clicked": 0,
+      "entries": [
+        "close page",
+        "close other pages",
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "first page",
+            "page to the left",
+            "page to the right"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "right",
+            "to right end"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 2,
+      "clicked": 1,
+      "entries": [
+        "close page",
+        {
+          "menu": "close",
+          "entries": [
+            "other pages",
+            "pages to the left",
+            "pages to the right"
+          ]
+        },
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "first page",
+            "page to the left",
+            "page to the right"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "left",
+            "right",
+            "to right end"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 2,
+      "clicked": 2,
+      "entries": [
+        "close page",
+        {
+          "menu": "close",
+          "entries": [
+            "other pages",
+            "pages to the left",
+            "pages to the right"
+          ]
+        },
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "first page",
+            "page to the left",
+            "page to the right"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "to left end",
+            "left",
+            "right"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 2,
+      "clicked": 3,
+      "entries": [
+        "close page",
+        "close other pages",
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "first page",
+            "page to the left",
+            "page to the right"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "to left end",
+            "left"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 3,
+      "clicked": 0,
+      "entries": [
+        "close page",
+        "close other pages",
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "first page",
+            "page to the left"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "right",
+            "to right end"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 3,
+      "clicked": 1,
+      "entries": [
+        "close page",
+        {
+          "menu": "close",
+          "entries": [
+            "other pages",
+            "pages to the left",
+            "pages to the right"
+          ]
+        },
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "first page",
+            "page to the left"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "left",
+            "right",
+            "to right end"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 3,
+      "clicked": 2,
+      "entries": [
+        "close page",
+        {
+          "menu": "close",
+          "entries": [
+            "other pages",
+            "pages to the left",
+            "pages to the right"
+          ]
+        },
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "first page",
+            "page to the left"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "to left end",
+            "left",
+            "right"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page",
+            "pages from here to the right",
+            "pages to the right"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    },
+    {
+      "selected": 3,
+      "clicked": 3,
+      "entries": [
+        "close page",
+        "close other pages",
+        "---",
+        {
+          "menu": "pages",
+          "entries": [
+            "page 0",
+            "page 1",
+            "page 2",
+            "page 3"
+          ]
+        },
+        {
+          "menu": "select",
+          "entries": [
+            "first page",
+            "page to the left"
+          ]
+        },
+        "---",
+        "new page",
+        "new page here",
+        "---",
+        {
+          "menu": "move page",
+          "entries": [
+            "to left end",
+            "left"
+          ]
+        },
+        "rename page",
+        "duplicate page",
+        "---",
+        {
+          "menu": "sort pages",
+          "entries": [
+            "by most files first",
+            "by fewest files first",
+            "by largest total file size first",
+            "by smallest total file size first",
+            "by name a-z",
+            "by name z-a"
+          ]
+        },
+        "---",
+        {
+          "menu": "collapse to a single page",
+          "entries": [
+            "this page"
+          ]
+        },
+        {
+          "menu": "send down to a new page of pages",
+          "entries": [
+            "this page"
+          ]
+        },
+        "---",
+        "refresh this page",
+        "---",
+        {
+          "menu": "append session",
+          "entries": [
+            "exit session",
+            "last session"
+          ]
+        }
+      ]
+    }
+  ],
+  "close": [
+    {
+      "side": "other",
+      "index": 2,
+      "accepted": false,
+      "asked": [
+        "Close 5 other pages?"
+      ],
+      "pages": [
+        "a",
+        "nested",
+        "c",
+        "d"
+      ],
+      "closed_indices": []
+    },
+    {
+      "side": "other",
+      "index": 2,
+      "accepted": true,
+      "asked": [
+        "Close 5 other pages?"
+      ],
+      "pages": [
+        "c"
+      ],
+      "closed_indices": [
+        3,
+        1,
+        0
+      ]
+    },
+    {
+      "side": "left",
+      "index": 2,
+      "accepted": false,
+      "asked": [
+        "Close 4 pages to the left?"
+      ],
+      "pages": [
+        "a",
+        "nested",
+        "c",
+        "d"
+      ],
+      "closed_indices": []
+    },
+    {
+      "side": "left",
+      "index": 2,
+      "accepted": true,
+      "asked": [
+        "Close 4 pages to the left?"
+      ],
+      "pages": [
+        "c",
+        "d"
+      ],
+      "closed_indices": [
+        1,
+        0
+      ]
+    },
+    {
+      "side": "right",
+      "index": 1,
+      "accepted": false,
+      "asked": [
+        "Close 2 pages to the right?"
+      ],
+      "pages": [
+        "a",
+        "nested",
+        "c",
+        "d"
+      ],
+      "closed_indices": []
+    },
+    {
+      "side": "right",
+      "index": 1,
+      "accepted": true,
+      "asked": [
+        "Close 2 pages to the right?"
+      ],
+      "pages": [
+        "a",
+        "nested"
+      ],
+      "closed_indices": [
+        3,
+        2
+      ]
+    }
+  ],
+  "navigation": [
+    {
+      "movement": "first",
+      "selected": 0
+    },
+    {
+      "movement": "left",
+      "selected": 1
+    },
+    {
+      "movement": "right",
+      "selected": 3
+    },
+    {
+      "movement": "last",
+      "selected": 3
+    }
+  ],
+  "send": [
+    {
+      "scope": "this",
+      "index": 1,
+      "accepted": true,
+      "rename": false,
+      "name": null,
+      "asked": [],
+      "text": [],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "pages",
+          "children": [
+            {
+              "name": "page 1"
+            }
+          ]
+        },
+        {
+          "name": "page 2"
+        },
+        {
+          "name": "page 3"
+        }
+      ],
+      "shown": "page 1"
+    },
+    {
+      "scope": "this",
+      "index": 1,
+      "accepted": true,
+      "rename": true,
+      "name": null,
+      "asked": [],
+      "text": [
+        {
+          "message": "Enter the name for the new page of pages.",
+          "default": "pages",
+          "answer": null
+        }
+      ],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "pages",
+          "children": [
+            {
+              "name": "page 1"
+            }
+          ]
+        },
+        {
+          "name": "page 2"
+        },
+        {
+          "name": "page 3"
+        }
+      ],
+      "shown": "page 1"
+    },
+    {
+      "scope": "this",
+      "index": 1,
+      "accepted": true,
+      "rename": true,
+      "name": "named pages",
+      "asked": [],
+      "text": [
+        {
+          "message": "Enter the name for the new page of pages.",
+          "default": "pages",
+          "answer": "named pages"
+        }
+      ],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "named pages",
+          "children": [
+            {
+              "name": "page 1"
+            }
+          ]
+        },
+        {
+          "name": "page 2"
+        },
+        {
+          "name": "page 3"
+        }
+      ],
+      "shown": "page 1"
+    },
+    {
+      "scope": "from_here",
+      "index": 1,
+      "accepted": false,
+      "rename": false,
+      "name": null,
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "page 1"
+        },
+        {
+          "name": "page 2"
+        },
+        {
+          "name": "page 3"
+        }
+      ],
+      "shown": "page 2"
+    },
+    {
+      "scope": "from_here",
+      "index": 1,
+      "accepted": true,
+      "rename": false,
+      "name": null,
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "pages",
+          "children": [
+            {
+              "name": "page 1"
+            },
+            {
+              "name": "page 2"
+            },
+            {
+              "name": "page 3"
+            }
+          ]
+        }
+      ],
+      "shown": "page 3"
+    },
+    {
+      "scope": "from_here",
+      "index": 1,
+      "accepted": true,
+      "rename": true,
+      "name": null,
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [
+        {
+          "message": "Enter the name for the new page of pages.",
+          "default": "pages",
+          "answer": null
+        }
+      ],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "pages",
+          "children": [
+            {
+              "name": "page 1"
+            },
+            {
+              "name": "page 2"
+            },
+            {
+              "name": "page 3"
+            }
+          ]
+        }
+      ],
+      "shown": "page 3"
+    },
+    {
+      "scope": "from_here",
+      "index": 1,
+      "accepted": true,
+      "rename": true,
+      "name": "named pages",
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [
+        {
+          "message": "Enter the name for the new page of pages.",
+          "default": "pages",
+          "answer": "named pages"
+        }
+      ],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "named pages",
+          "children": [
+            {
+              "name": "page 1"
+            },
+            {
+              "name": "page 2"
+            },
+            {
+              "name": "page 3"
+            }
+          ]
+        }
+      ],
+      "shown": "page 3"
+    },
+    {
+      "scope": "right",
+      "index": 2,
+      "accepted": false,
+      "rename": false,
+      "name": null,
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "page 1"
+        },
+        {
+          "name": "page 2"
+        },
+        {
+          "name": "page 3"
+        }
+      ],
+      "shown": "page 2"
+    },
+    {
+      "scope": "right",
+      "index": 2,
+      "accepted": true,
+      "rename": false,
+      "name": null,
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "page 1"
+        },
+        {
+          "name": "pages",
+          "children": [
+            {
+              "name": "page 2"
+            },
+            {
+              "name": "page 3"
+            }
+          ]
+        }
+      ],
+      "shown": "page 3"
+    },
+    {
+      "scope": "right",
+      "index": 2,
+      "accepted": true,
+      "rename": true,
+      "name": null,
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [
+        {
+          "message": "Enter the name for the new page of pages.",
+          "default": "pages",
+          "answer": null
+        }
+      ],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "page 1"
+        },
+        {
+          "name": "pages",
+          "children": [
+            {
+              "name": "page 2"
+            },
+            {
+              "name": "page 3"
+            }
+          ]
+        }
+      ],
+      "shown": "page 3"
+    },
+    {
+      "scope": "right",
+      "index": 2,
+      "accepted": true,
+      "rename": true,
+      "name": "named pages",
+      "asked": [
+        "Send all pages to the right to a new page of pages?"
+      ],
+      "text": [
+        {
+          "message": "Enter the name for the new page of pages.",
+          "default": "pages",
+          "answer": "named pages"
+        }
+      ],
+      "tree": [
+        {
+          "name": "page 0"
+        },
+        {
+          "name": "page 1"
+        },
+        {
+          "name": "named pages",
+          "children": [
+            {
+              "name": "page 2"
+            },
+            {
+              "name": "page 3"
+            }
+          ]
+        }
+      ],
+      "shown": "page 3"
+    }
+  ],
+  "rename": [
+    {
+      "name": null,
+      "text": [
+        {
+          "message": "Enter the new name.",
+          "default": "page 1",
+          "answer": null
+        }
+      ],
+      "pages": [
+        "page 0",
+        "page 1",
+        "page 2",
+        "page 3"
+      ],
+      "selected": 2
+    },
+    {
+      "name": "renamed page",
+      "text": [
+        {
+          "message": "Enter the new name.",
+          "default": "page 1",
+          "answer": "renamed page"
+        }
+      ],
+      "pages": [
+        "page 0",
+        "renamed page",
+        "page 2",
+        "page 3"
+      ],
+      "selected": 2
+    }
+  ],
+  "default_close_focus": 1,
+  "default_rename_sent": false
+}

@@ -50,7 +50,7 @@ pub enum NewPage {
     Watcher,
     Gallery,
     SimpleDownloader,
-    /// An empty page of pages.
+    /// A page of pages containing one initial blank search page.
     Pages,
     Duplicates,
     /// A saved session's pages, in a page of pages named after it.
@@ -88,8 +88,7 @@ impl NewPage {
 /// top left) does what.
 #[derive(Debug, Clone)]
 pub struct PageChooser {
-    /// File search pages it offers: the local file domains, then "all my
-    /// files", then the trash (the reference's defaults).
+    /// The configured file domains, in their reference chooser order.
     domains: Vec<(ServiceKey, String)>,
     /// The saved sessions there are to load (not the one open), a-z.
     sessions: Vec<String>,
@@ -109,14 +108,39 @@ impl PageChooser {
             .collect();
         // (by name, as the reference's services manager sorts them)
         domains.sort_by_key(|(_, name)| name.to_lowercase());
-        for key in [
-            builtin_keys::COMBINED_LOCAL_FILE_DOMAINS,
-            builtin_keys::TRASH,
-        ] {
-            if let Ok(service) = services.builtin(key) {
-                domains.push((service.key.clone(), service.name.clone()));
+        let settings = store
+            .read(hydrus_store::settings::get::<hydrus_store::settings::PageChooserSettings>)
+            .unwrap_or_default();
+        if domains.len() > 1
+            && settings.show_combined
+            && let Ok(service) = services.builtin(builtin_keys::COMBINED_LOCAL_FILE_DOMAINS)
+        {
+            let entry = (service.key.clone(), service.name.clone());
+            if settings.combined_at_top {
+                domains.insert(0, entry);
+            } else {
+                domains.push(entry);
             }
         }
+        if let Ok(service) = services.builtin(builtin_keys::TRASH) {
+            domains.push((service.key.clone(), service.name.clone()));
+        }
+        if settings.show_storage
+            && let Ok(service) = services.builtin(builtin_keys::HYDRUS_LOCAL_FILE_STORAGE)
+        {
+            let entry = (service.key.clone(), service.name.clone());
+            if settings.storage_at_top {
+                domains.insert(0, entry);
+            } else {
+                domains.push(entry);
+            }
+        }
+        let mut repositories: Vec<_> = services
+            .of_type(ServiceType::FileRepository)
+            .map(|service| (service.key.clone(), service.name.clone()))
+            .collect();
+        repositories.sort_by_key(|(_, name)| name.to_lowercase());
+        domains.extend(repositories);
         let sessions = store
             .read(hydrus_store::sessions::names)
             .unwrap_or_default()
@@ -236,8 +260,8 @@ mod tests {
         assert_eq!(chooser.press(5), None, "an empty button does nothing");
         assert_eq!(chooser.press(8), None, "a menu");
         assert_eq!(chooser.labels()[7], "my files");
-        assert_eq!(chooser.labels()[3], "combined local file domains");
-        assert_eq!(chooser.labels()[5], "trash");
+        assert_eq!(chooser.labels()[3], "trash");
+        assert!(chooser.labels()[5].is_empty());
         let Some(NewPage::Search { domain, .. }) = chooser.enter() else {
             panic!("enter chooses the first button");
         };

@@ -4,30 +4,55 @@
 // through the suggestions. Changes wait: enter with nothing typed (or
 // "apply") applies them, escape (or "cancel") forgets them.
 
-import { Button, ComboBox, LineEdit, ListView } from "std-widgets.slint";
+import { Button, ListView } from "std-widgets.slint";
+import { WriteTagInput, TagMenuOverlay } from "write_autocomplete.slint";
+import { Question } from "favourites.slint";
+import { MenuPane } from "main_menu.slint";
 import { ListText, Theme } from "theme.slint";
+import { TagServicePanels } from "tag_service_panels.slint";
 
 export component ManageTagsWindow inherits Window {
+    in property <[MenuPane]> tag-menu-panes;
+    in property <string> tag-menu-question;
+    callback tag-menu-hovered(int,int,length,length,length);
+    callback tag-menu-clicked(int,int,length,length,length);
+    callback tag-menu-placed(int,length,length,length);
+    callback tag-menu-dismissed();
+    callback tag-menu-answered(bool);
+
     // ("manage tags for 3 files" from the thumbnails, as the reference has it)
     in property <string> window-title: "manage tags";
     title: root.window-title;
-    preferred-width: 420px;
+    preferred-width: root.use-listbook ? 580px : 420px;
     preferred-height: 560px;
     background: Theme.window;
 
     in property <[string]> service-names;
+    in property <bool> use-listbook;
+    out property <float> service-content-offset: services.content-offset;
     in-out property <int> service-index;
     in property <[ListText]> tags;
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
+    in property <int> autocomplete-tab;
     in property <string> error;
+    in property <string> question;
+    in property <int> autocomplete-height: 11;
     in-out property <string> text;
 
     callback service-chosen(int);
     callback text-edited(string);
     callback fetch();
+    callback tab-chosen(int);
     callback refresh-autocomplete();
     callback entered();
+    callback suggestion-chosen(int);
+    callback context-menu(int,length,length);
+    callback domain-menu(bool,length,length);
+    in property <string> file-label;
+    in property <string> tag-label;
+    callback paste-requested(bool) -> bool;
+    callback paste-answered(bool);
     callback move-highlight(int);
     callback tag-activated(int);
     callback migrate-tags();
@@ -38,97 +63,92 @@ export component ManageTagsWindow inherits Window {
     FocusScope {
         capture-key-pressed(event) => {
             if (event.text == Key.Escape) {
-                root.cancel();
-                return accept;
-            }
-            if event.modifiers.control && event.text == " " { root.fetch(); return accept; }
-            if (event.text == Key.UpArrow) {
-                root.move-highlight(-1);
-                return accept;
-            }
-            if (event.text == Key.DownArrow) {
-                root.move-highlight(1);
+                if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else { root.cancel(); }
                 return accept;
             }
             reject
         }
-        VerticalLayout {
-            padding: 8px;
-            spacing: 6px;
-            ComboBox {
-                model: root.service-names;
-                current-index <=> root.service-index;
-                selected => { root.service-chosen(self.current-index); }
-            }
-            Rectangle {
-                border-width: 1px;
-                border-color: Theme.border;
-                background: Theme.panel;
-                vertical-stretch: 1;
-                ListView {
-                    for tag[i] in root.tags: Rectangle {
-                        height: 20px;
-                        background: pick.has-hover ? Theme.hover : transparent;
-                        Text {
-                            x: 4px;
-                            text: tag.text;
-                            color: tag.colour;
-                            vertical-alignment: center;
-                            overflow: elide;
-                            width: parent.width - 8px;
-                        }
-                        pick := TouchArea {
-                            double-clicked => { root.tag-activated(i); }
-                        }
-                    }
-                }
-            }
-            input := LineEdit {
-                text <=> root.text;
-                placeholder-text: "enter a tag";
-                edited(text) => { root.text-edited(text); }
-                accepted => { root.entered(); }
-            }
-            if root.suggestions.length > 0: Rectangle {
-                border-width: 1px;
-                border-color: Theme.border;
-                background: Theme.panel;
-                height: min(root.suggestions.length, 8) * 22px + 4px;
-                VerticalLayout {
-                    padding: 2px;
-                    alignment: start;
-                    for suggestion[i] in root.suggestions: Rectangle {
-                        height: 22px;
-                        background: i == root.highlighted ? Theme.highlight : transparent;
-                        Text {
-                            x: 4px;
-                            text: suggestion.text;
-                            color: i == root.highlighted ? Theme.highlight-text : suggestion.colour;
-                            vertical-alignment: center;
-                            overflow: elide;
-                            width: parent.width - 8px;
-                        }
-                    }
-                }
-            }
-            if root.error != "": Text {
-                text: root.error;
-                color: Theme.error;
-                wrap: word-wrap;
-            }
-            HorizontalLayout {
+        services := TagServicePanels {
+            names: root.service-names;
+            index: root.service-index;
+            use-listbook: root.use-listbook;
+            chosen(i) => { root.service-chosen(i); }
+            VerticalLayout {
+                padding: 8px;
                 spacing: 6px;
-                alignment: end;
-                Button {text: "migrate tags…"; clicked => {root.migrate-tags();}}
-                Button {
-                    text: "apply";
-                    clicked => { root.apply(); }
+                Rectangle {
+                    border-width: 1px;
+                    border-color: Theme.border;
+                    background: Theme.panel;
+                    vertical-stretch: 1;
+                    ListView {
+                        for tag[i] in root.tags: Rectangle {
+                            height: 20px;
+                            background: pick.has-hover ? Theme.hover : transparent;
+                            Text {
+                                x: 4px;
+                                text: tag.text;
+                                color: tag.colour;
+                                vertical-alignment: center;
+                                overflow: elide;
+                                width: parent.width - 8px;
+                            }
+                            pick := TouchArea {
+                                double-clicked => { root.tag-activated(i); }
+                            }
+                        }
+                    }
                 }
-                Button {
-                    text: "cancel";
-                    clicked => { root.cancel(); }
+                input := WriteTagInput {
+                    enabled: root.question == "";
+                    text <=> root.text;
+                    suggestions: root.suggestions;
+                    highlighted: root.highlighted;
+                    tab-index: root.autocomplete-tab;
+                    tab-chosen(i) => { root.tab-chosen(i); }
+                    list-height: root.autocomplete-height;
+                    edited(text) => { root.text-edited(text); }
+                    entered => { root.entered(); }
+                    fetch => { root.fetch(); }
+                    move-highlight(by) => { root.move-highlight(by); }
+                    chosen(i) => { root.suggestion-chosen(i); }
+                    context-menu(i,x,y) => { root.context-menu(i,x,y); }
+                    file-label:root.file-label;tag-label:root.tag-label;
+                    domain-menu(tags,x,y)=>{root.domain-menu(tags,x,y);}
+                    paste(button) => { root.paste-requested(button) }
+                }
+                if root.question != "": Text { text: "Want to paste everything?"; color: Theme.text; }
+                if root.question != "": Question { text: root.question; answered(yes) => { root.paste-answered(yes); } }
+                if root.error != "": Text {
+                    text: root.error;
+                    color: Theme.error;
+                    wrap: word-wrap;
+                }
+                HorizontalLayout {
+                    spacing: 6px;
+                    alignment: end;
+                    Button {text: "migrate tags…"; clicked => {root.migrate-tags();}}
+                    Button {
+                        enabled: root.question == "";
+                        text: "apply";
+                        clicked => { root.apply(); }
+                    }
+                    Button {
+                        text: "cancel";
+                        clicked => { root.cancel(); }
+                    }
                 }
             }
+        }
+
+        if root.tag-menu-panes.length > 0 || root.tag-menu-question != "": TagMenuOverlay {
+            width: root.width; height: root.height;
+            panes: root.tag-menu-panes; question: root.tag-menu-question;
+            hovered(p,l,r,t,x) => { root.tag-menu-hovered(p,l,r,t,x); }
+            clicked(p,l,r,t,x) => { root.tag-menu-clicked(p,l,r,t,x); }
+            placed(p,x,y,w) => { root.tag-menu-placed(p,x,y,w); }
+            dismissed => { root.tag-menu-dismissed(); }
+            answered(yes) => { root.tag-menu-answered(yes); }
         }
     }
 }

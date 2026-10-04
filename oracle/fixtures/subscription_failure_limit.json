@@ -1,0 +1,189 @@
+{
+  "options": {
+    "states": [
+      {
+        "given": 5,
+        "value": 5,
+        "saved_before": 5,
+        "saved_after": 5
+      },
+      {
+        "given": null,
+        "value": null,
+        "saved_before": 5,
+        "saved_after": null
+      },
+      {
+        "given": 2,
+        "value": 2,
+        "saved_before": null,
+        "saved_after": 2
+      },
+      {
+        "given": 1000000,
+        "value": 1000000,
+        "saved_before": 2,
+        "saved_after": 1000000
+      }
+    ],
+    "none_phrase": "no limit",
+    "minimum": 1,
+    "maximum": 1000000,
+    "unit": "errors"
+  },
+  "cases": [
+    {
+      "case": "cross-query threshold",
+      "run": 0,
+      "threshold": 2,
+      "calls": [
+        "error1",
+        "missing2",
+        "4043",
+        "other4"
+      ],
+      "file_errors": 2,
+      "statuses": [
+        [
+          4
+        ],
+        [
+          4,
+          7,
+          4,
+          0
+        ]
+      ],
+      "sleeps": [
+        5,
+        0.1,
+        0.1,
+        0.1,
+        5
+      ],
+      "delay": 37,
+      "reason": "error: The subscription synthetic failures encountered several errors when downloading files, so it abandoned its sync.",
+      "messages": [
+        "The subscription \"synthetic failures\" encountered an exception when trying to sync:",
+        "The subscription synthetic failures encountered several errors when downloading files, so it abandoned its sync."
+      ]
+    },
+    {
+      "case": "cross-query threshold",
+      "run": 1,
+      "threshold": 2,
+      "calls": [
+        "ok5"
+      ],
+      "file_errors": 0,
+      "statuses": [
+        [
+          4
+        ],
+        [
+          4,
+          7,
+          4,
+          1
+        ]
+      ],
+      "sleeps": [
+        0.1
+      ],
+      "delay": 0,
+      "reason": "",
+      "messages": []
+    },
+    {
+      "case": "one",
+      "run": 0,
+      "threshold": 1,
+      "calls": [
+        "missing1",
+        "4042",
+        "veto3",
+        "error4"
+      ],
+      "file_errors": 1,
+      "statuses": [
+        [
+          4,
+          7,
+          7,
+          4,
+          0
+        ]
+      ],
+      "sleeps": [
+        0.1,
+        0.1,
+        0.1,
+        5
+      ],
+      "delay": 37,
+      "reason": "error: The subscription synthetic failures encountered several errors when downloading files, so it abandoned its sync.",
+      "messages": [
+        "The subscription \"synthetic failures\" encountered an exception when trying to sync:",
+        "The subscription synthetic failures encountered several errors when downloading files, so it abandoned its sync."
+      ]
+    },
+    {
+      "case": "unlimited",
+      "run": 0,
+      "threshold": null,
+      "calls": [
+        "error1",
+        "missing2",
+        "4043",
+        "other4",
+        "ok5"
+      ],
+      "file_errors": 2,
+      "statuses": [
+        [
+          4,
+          4,
+          7,
+          4,
+          1
+        ]
+      ],
+      "sleeps": [
+        5,
+        0.1,
+        0.1,
+        0.1,
+        5,
+        0.1,
+        0.1
+      ],
+      "delay": 0,
+      "reason": "",
+      "messages": []
+    }
+  ],
+  "handled_work_on_url": [
+    {
+      "kind": "500",
+      "status": 4,
+      "file_errors": 0,
+      "sleeps": [
+        3,
+        0.1
+      ],
+      "delay": 0,
+      "reason": ""
+    },
+    {
+      "kind": "404",
+      "status": 7,
+      "file_errors": 0,
+      "sleeps": [
+        2,
+        0.1
+      ],
+      "delay": 0,
+      "reason": ""
+    }
+  ]
+}

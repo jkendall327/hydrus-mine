@@ -122,6 +122,8 @@ pub enum Command {
     /// Display/search (false) or relationship application (true).
     TagDisplay(bool),
     TagRelationships(hydrus_store::display::RelationKind),
+    /// Open the service-to-service tag migration window.
+    TagMigrate,
     /// Copy a label's text (the reference's `AppendMenuLabel`).
     Copy(String),
     /// An entry of a window's own popup menu: its index among that menu's
@@ -131,8 +133,77 @@ pub enum Command {
     NudgeSubscriptions,
     /// Close every page (asking first) and load the saved session.
     ClearAndLoadSession(String),
+    /// Refresh a clicked page or all initialized descendants of a notebook.
+    RefreshTab(PageKey),
+    /// Open the chooser in a frozen notebook, optionally before a clicked tab.
+    ChooseNotebookPage {
+        parent: Option<PageKey>,
+        before: Option<PageKey>,
+    },
+    /// Append a fresh named session into this notebook's sibling row.
+    AppendNotebookSession {
+        notebook: Option<PageKey>,
+        name: String,
+    },
+    /// Save only the clicked notebook's contents, with its own name suggestion.
+    SaveNotebookSession {
+        key: PageKey,
+        name: Option<String>,
+        suggested_name: String,
+    },
+    /// Ask a new name for the clicked page/notebook.
+    RenameTab {
+        depth: usize,
+        index: usize,
+    },
+    /// Independently duplicate the clicked page or notebook beside it.
+    DuplicateTab {
+        depth: usize,
+        index: usize,
+    },
+    /// Harvest frozen siblings into one search page after confirmation.
+    CollapseTabs {
+        depth: usize,
+        index: usize,
+        scope: crate::tab_context::Send,
+    },
+    /// Move frozen siblings into a new notebook, optionally naming it.
+    SendTabs {
+        depth: usize,
+        index: usize,
+        scope: crate::tab_context::Send,
+    },
+    /// Close one clicked tab through the existing confirmation/undo path.
+    CloseTab {
+        depth: usize,
+        index: usize,
+    },
+    /// Close a group of sibling tabs after one aggregate confirmation.
+    CloseTabs {
+        depth: usize,
+        index: usize,
+        side: crate::tab_context::Close,
+    },
+    /// Navigate from the selected tab within this notebook row.
+    NavigateTabs {
+        depth: usize,
+        movement: crate::tab_context::Move,
+    },
+    /// Reorder the siblings of the clicked tab.
+    SortTabs {
+        depth: usize,
+        by: crate::tab_context::Sort,
+        ascending: bool,
+    },
+    /// Move the clicked tab within its own notebook.
+    MoveTab {
+        depth: usize,
+        index: usize,
+        movement: crate::tab_context::Move,
+    },
     /// Switch a pause on or off.
     Pause(Pause),
+    NetworkBootPause,
     /// Switch automatic clipboard imports for watchers (true) or other recognised URLs.
     WatchClipboard(bool),
     /// Check an import folder now (none: all of them).
@@ -156,6 +227,11 @@ pub enum Command {
     Refresh,
     /// Add this session's pages to those open.
     AppendSession(String),
+    /// Append an exact historical session snapshot.
+    AppendSessionBackup {
+        name: String,
+        timestamp: i64,
+    },
     /// Delete this saved session, asking first.
     DeleteSession(String),
     /// Save the open pages as this session (asking first whether to
@@ -179,6 +255,10 @@ pub enum Command {
     NetworkData(bool),
     /// Manage URL classes (true) or gallery URL generators (false).
     ManageDownloaderDefinitions(bool),
+    /// Manage native login script definitions.
+    ManageLoginScripts,
+    ManageLogins,
+    ManageDownloaderDisplay,
     /// Parser definitions (`false`) or URL-class parser links (`true`).
     ManageParsers(bool),
     /// Review network sessions (`false`) or edit custom HTTP headers (`true`).
@@ -227,13 +307,17 @@ pub struct Facts {
     pub session_weight: u64,
     /// The pages shown, the latest last; none before any has been.
     pub history: Option<Vec<(PageKey, String)>>,
+    pub page_navigation: hydrus_store::settings::PageNavigationSettings,
     /// The saved sessions' names, a-z.
     pub sessions: Vec<String>,
+    /// Historical snapshots grouped by saved-session name.
+    pub session_backups: Vec<(String, Vec<i64>)>,
     /// File search pages offered: the local file domains, the trash and
     /// the file repositories.
     pub search_domains: Vec<(ServiceKey, String)>,
     pub maintenance: FileMaintenanceSettings,
     pub pauses: Pauses,
+    pub network_boot_pause: hydrus_store::settings::NetworkBootPause,
     pub clipboard_urls: hydrus_store::settings::ClipboardUrls,
     /// The repositories, and their pending content (none: no repositories).
     pub pending: Option<Vec<Pending>>,
@@ -293,9 +377,12 @@ impl Facts {
                     .into_iter()
                     .map(|(name, _)| name)
                     .collect(),
+                session_backups: hydrus_store::session_backups::names(conn)?,
+                page_navigation: settings::get(conn)?,
                 search_domains,
                 maintenance: settings::get(conn)?,
                 pauses: settings::get(conn)?,
+                network_boot_pause: settings::get(conn)?,
                 clipboard_urls: settings::get(conn)?,
                 pending,
                 ..Facts::default()
@@ -542,7 +629,9 @@ fn pages_menu(facts: &Facts) -> Entry {
                 .rev()
                 .enumerate()
                 // (page_nav_history_max_entries)
-                .take(20)
+                .take(usize::from(
+                    facts.page_navigation.history_entries.clamp(1, 1000),
+                ))
                 .map(|(i, (key, name))| item(format!("{}: {name}", i + 1), Command::ShowPage(*key)))
                 .collect();
             entries.push(SEP);
@@ -582,6 +671,35 @@ fn pages_menu(facts: &Facts) -> Entry {
                 .sessions
                 .iter()
                 .map(|name| item(name.clone(), Command::AppendSession(name.clone())))
+                .collect(),
+        ));
+    }
+    if !facts.session_backups.is_empty() {
+        sessions.push(menu(
+            "append backup",
+            facts
+                .session_backups
+                .iter()
+                .map(|(name, timestamps)| {
+                    menu(
+                        name.clone(),
+                        timestamps
+                            .iter()
+                            .map(|&timestamp| {
+                                item(
+                                    crate::session_saving::backup_timestamp(
+                                        timestamp,
+                                        &jiff::tz::TimeZone::system(),
+                                    ),
+                                    Command::AppendSessionBackup {
+                                        name: name.clone(),
+                                        timestamp,
+                                    },
+                                )
+                            })
+                            .collect(),
+                    )
+                })
                 .collect(),
         ));
     }
@@ -800,8 +918,8 @@ fn network_menu(facts: &Facts) -> Entry {
         pause("all new network traffic", Pause::NetworkTraffic, facts),
         check(
             "always boot the client with paused network traffic",
-            None,
-            false,
+            Some(Command::NetworkBootPause),
+            facts.network_boot_pause.0,
         ),
         SEP,
         pause("subscriptions", Pause::Subscriptions, facts),
@@ -863,7 +981,10 @@ fn network_menu(facts: &Facts) -> Entry {
                         Command::ExchangeDownloaders(false),
                     ),
                     SEP,
-                    todo(dots("downloader and url display")),
+                    item(
+                        dots("downloader and url display"),
+                        Command::ManageDownloaderDisplay,
+                    ),
                     menu(
                         "watch clipboard for urls",
                         vec![
@@ -901,9 +1022,9 @@ fn network_menu(facts: &Facts) -> Entry {
                     copy_label("THIS SYSTEM IS LEGACY"),
                     copy_label("TRY TO MIGRATE AWAY FROM IT"),
                     SEP,
-                    todo(dots("logins")),
+                    item(dots("logins"), Command::ManageLogins),
                     SEP,
-                    todo(dots("login scripts")),
+                    item(dots("login scripts"), Command::ManageLoginScripts),
                 ],
             ),
         ],
@@ -936,7 +1057,7 @@ fn tags_menu() -> Entry {
     menu(
         "&tags",
         vec![
-            todo(dots("migrate")),
+            item(dots("migrate"), Command::TagMigrate),
             SEP,
             item(dots("display/search"), Command::TagDisplay(false)),
             SEP,
@@ -1507,6 +1628,7 @@ mod tests {
     #[test]
     fn the_history_is_numbered_latest_first_and_kept_to_twenty() {
         let mut facts = facts();
+        facts.page_navigation.history_entries = 20;
         let keys: Vec<PageKey> = (0..25).map(|_| PageKey::random()).collect();
         facts.history = Some(
             keys.iter()

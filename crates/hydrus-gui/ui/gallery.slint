@@ -6,7 +6,7 @@
 import { Button, CheckBox, ComboBox, LineEdit, SpinBox } from "std-widgets.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
-import { DownloadLine, ImporterBoxes } from "importing.slint";
+import { JobCogMenu, DownloadLine, ImporterBoxes } from "importing.slint";
 
 export struct GalleryData {
     // "3 queries - 12/40" and the total status, or "waiting for new queries"
@@ -26,6 +26,8 @@ export struct GalleryData {
     // the downloader for new queries, among those offered
     gug-names: [string],
     gug-index: int,
+    show-other-gugs: bool,
+    has-other-gugs: bool,
     initial-search-text: string,
     // the file limit for new queries
     no-limit: bool,
@@ -42,6 +44,21 @@ export struct GalleryData {
 }
 
 export component GallerySidebar inherits VerticalLayout {
+    in property <int> focus-requests;
+    in property <bool> focus-on-show;
+    callback input-focus-changed(bool);
+    // Match Qt's SetFocusLater: the conditional sidebar must finish its
+    // layout before Slint can retain focus on the new text input.
+    property <bool> focus-pending: root.focus-on-show;
+    changed focus-requests => { root.focus-pending = true; }
+    Timer {
+        interval: 0ms;
+        running: root.focus-pending;
+        triggered => {
+            root.focus-pending = false;
+            input-box.focus();
+        }
+    }
     in property <GalleryData> data;
     in property <[TableRow]> rows;
     in property <int> sort-column: -1;
@@ -76,7 +93,12 @@ export component GallerySidebar inherits VerticalLayout {
     callback queries-entered(string);
     callback paste();
     callback gug-chosen(int);
+    callback other-gugs(bool);
     callback limit-changed(bool, int);
+    in property <JobCogMenu> file-cog;
+    in property <JobCogMenu> search-cog;
+    callback control-action(bool, int);
+    callback control-menu(bool);
     callback cancel-download(bool);
     // the highlighted query's file log
     callback file-log();
@@ -166,7 +188,8 @@ export component GallerySidebar inherits VerticalLayout {
             }
             HorizontalLayout {
                 spacing: 4px;
-                LineEdit {
+                input-box := LineEdit {
+                    changed has-focus => { root.input-focus-changed(self.has-focus); }
                     horizontal-stretch: 1;
                     placeholder-text: root.data.initial-search-text;
                     accepted(text) => {
@@ -185,6 +208,11 @@ export component GallerySidebar inherits VerticalLayout {
                 model: root.data.gug-names;
                 current-index: root.data.gug-index;
                 selected => { root.gug-chosen(self.current-index); }
+            }
+            if root.data.has-other-gugs: CheckBox {
+                text: "show other downloaders";
+                checked: root.data.show-other-gugs;
+                toggled => { root.other-gugs(self.checked); }
             }
             HorizontalLayout {
                 spacing: 4px;
@@ -244,6 +272,10 @@ export component GallerySidebar inherits VerticalLayout {
                 search-download: root.search-download;
                 pause-play-files => { root.pause-play(false, true); }
                 pause-play-search => { root.pause-play(true, true); }
+                file-cog: root.file-cog;
+                search-cog: root.search-cog;
+                control-action(gallery, id) => { root.control-action(gallery, id); }
+                        control-menu(gallery) => { root.control-menu(gallery); }
                 cancel-download(gallery) => { root.cancel-download(gallery); }
                 file-log => { root.file-log(); }
                 search-log => { root.search-log(); }

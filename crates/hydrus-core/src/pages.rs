@@ -419,6 +419,10 @@ pub enum DownloaderKind {
 /// How a page sorts its files (the reference's `MediaSort`).
 #[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct PageSort {
+    /// Independent tag service for namespace and number-of-tags sorting.
+    /// Sorting always reads current and pending tags; preserve the full context.
+    #[serde(default)]
+    pub tag_context: crate::search::context::TagContext,
     pub by: PageSortBy,
     pub ascending: bool,
 }
@@ -448,6 +452,8 @@ pub struct PageCollect {
     pub ratings: Vec<ServiceKey>,
     /// Whether the files that match none collect together, or stay single.
     pub collect_unmatched: bool,
+    /// Persisted collect context; namespace groups use its service with current and pending tags.
+    pub tag_context: crate::search::context::TagContext,
 }
 
 impl Default for PageCollect {
@@ -457,6 +463,7 @@ impl Default for PageCollect {
             namespaces: Vec::new(),
             ratings: Vec::new(),
             collect_unmatched: true,
+            tag_context: crate::search::context::TagContext::default(),
         }
     }
 }
@@ -499,6 +506,7 @@ impl Default for SortSettings {
     /// creator-series-title-volume-chapter-page, as displayed.
     fn default() -> Self {
         let namespaces = |names: [&str; 6]| PageSort {
+            tag_context: crate::search::context::TagContext::default(),
             by: PageSortBy::Namespaces {
                 namespaces: names.iter().map(|&n| n.to_owned()).collect(),
                 tag_display_type: 1,
@@ -507,10 +515,12 @@ impl Default for SortSettings {
         };
         Self {
             default_sort: PageSort {
+                tag_context: crate::search::context::TagContext::default(),
                 by: PageSortBy::System(0),
                 ascending: true,
             },
             fallback_sort: PageSort {
+                tag_context: crate::search::context::TagContext::default(),
                 by: PageSortBy::System(2),
                 ascending: true,
             },
@@ -631,6 +641,7 @@ mod tests {
                         search: FileSearchContext::default(),
                         synchronised: true,
                         sort: Some(PageSort {
+                            tag_context: crate::search::context::TagContext::default(),
                             by: PageSortBy::System(2),
                             ascending: false,
                         }),
@@ -642,6 +653,7 @@ mod tests {
                             namespaces: vec!["series".into()],
                             ratings: Vec::new(),
                             collect_unmatched: false,
+                            tag_context: crate::search::context::TagContext::default(),
                         }),
                     },
                 }]),

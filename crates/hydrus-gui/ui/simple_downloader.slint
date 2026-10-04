@@ -6,10 +6,25 @@
 
 import { Button, ComboBox, LineEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
-import { DownloadLine, DownloadControl } from "importing.slint";
+import { DownloadLine, DownloadControl, JobCogMenu } from "importing.slint";
 import { ListTable, TableRow } from "list_table.slint";
 
 export component SimpleParsingBox inherits Rectangle {
+    in property <int> focus-requests;
+    in property <bool> focus-on-show;
+    callback input-focus-changed(bool);
+    // Match Qt's SetFocusLater: the conditional sidebar must finish its
+    // layout before Slint can retain focus on the new text input.
+    property <bool> focus-pending: root.focus-on-show;
+    changed focus-requests => { root.focus-pending = true; }
+    Timer {
+        interval: 0ms;
+        running: root.focus-pending;
+        triggered => {
+            root.focus-pending = false;
+            input-box.focus();
+        }
+    }
     in property <string> parser-status;
     in property <bool> queue-paused;
     in property <string> log-status;
@@ -20,6 +35,9 @@ export component SimpleParsingBox inherits Rectangle {
     in-out property <int> formula;
     callback pause-play-queue();
     callback parsing-log();
+    in property <JobCogMenu> cog;
+    callback control-action(int);
+    callback control-menu();
     callback cancel-download();
     callback job-clicked(int, bool, bool);
     callback move-jobs(int);
@@ -66,6 +84,10 @@ export component SimpleParsingBox inherits Rectangle {
         }
         DownloadControl {
             line: root.page-download;
+            advanced: true;
+            cog: root.cog;
+            action(id) => { root.control-action(id); }
+            open-menu => { root.control-menu(); }
             cancel => { root.cancel-download(); }
         }
         HorizontalLayout {
@@ -102,7 +124,8 @@ export component SimpleParsingBox inherits Rectangle {
         }
         HorizontalLayout {
             spacing: 4px;
-            url-box := LineEdit {
+            input-box := LineEdit {
+                    changed has-focus => { root.input-focus-changed(self.has-focus); }
                 horizontal-stretch: 1;
                 placeholder-text: "url to be parsed by the selected formula";
                 accepted(text) => {

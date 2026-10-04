@@ -20,7 +20,7 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     .unwrap();
     let store = Store::open(native.path()).unwrap();
 
-    let mut page = SearchPage::new(store.clone());
+    let mut page = super::common::all_local_page(store.clone());
     assert!(page.results().is_empty(), "nothing until searched");
     // before anything is typed, the system predicates that need nothing
     // more, then those that open an editor
@@ -189,7 +189,7 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     assert_eq!(viewer.index(), 0);
     // its tags as the hover frame lists them: the selection list's, for
     // that one file, without counts
-    let mut single = SearchPage::new(store.clone());
+    let mut single = super::common::all_local_page(store.clone());
     single.enter();
     single.set_sort_by(SortBy::ImportTime);
     single.select(0);
@@ -237,7 +237,7 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let main_window = windows.get(0).unwrap();
-    let bound = bind(&ui, Pages::single(SearchPage::new(store)));
+    let bound = bind(&ui, Pages::single(super::common::all_local_page(store)));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     // newest first (a new page sorts by the options' default, file size)

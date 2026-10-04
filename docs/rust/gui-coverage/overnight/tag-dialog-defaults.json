@@ -1,0 +1,176 @@
+{
+  "agent": "tag-filters/tag-dialog-defaults",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "commits": [
+    "59c40226208aedd7d649da469006f1eb40989ad9",
+    "bb3bd22862a6befd6f160754959d4b25dedd511f",
+    "944e602b6825d9a91280c6ceabcff391ecd9a5e9"
+  ],
+  "implementation_leaf_count": 2,
+  "implementation_parent_count": 0,
+  "evidence_only_count": 0,
+  "claims": [
+    {
+      "reference_id": "audit-options-tag-editing-tag-dialogs-remember-last-used-default-tag-service-in-manage-tag-dialogs",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Edit the reference remember-service checkbox, disabling the fixed-service chooser while enabled. Tab changes in real native ManageTags consumers remember their stable service key immediately, independently of tag Apply/Cancel, and honour preferences applied while a consumer remains open. Native CloseRequested invalidates stale preference/Apply/Cancel callbacks; staged tags never persist through cancellation.",
+      "implementation_commit": "944e602b6825d9a91280c6ceabcff391ecd9a5e9",
+      "depends_on": [
+        "59c40226208aedd7d649da469006f1eb40989ad9",
+        "bb3bd22862a6befd6f160754959d4b25dedd511f"
+      ],
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1842,
+          "symbol": "Remember last used default tag service",
+          "commit": "944e602b6825d9a91280c6ceabcff391ecd9a5e9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 131,
+          "symbol": "pub fn choose_service",
+          "commit": "bb3bd22862a6befd6f160754959d4b25dedd511f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 62,
+          "symbol": "let active =",
+          "commit": "bb3bd22862a6befd6f160754959d4b25dedd511f"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/tag_editing.rs",
+          "line": 10,
+          "symbol": "pub struct TagEditingSettings",
+          "commit": "bb3bd22862a6befd6f160754959d4b25dedd511f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_dialog_defaults.rs",
+          "line": 41,
+          "symbol": "fn tag_service_defaults_and_immediate_memory",
+          "commit": "bb3bd22862a6befd6f160754959d4b25dedd511f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_dialog_defaults.rs",
+          "line": 27,
+          "symbol": "fn remembered_tag_service_survives",
+          "commit": "bb3bd22862a6befd6f160754959d4b25dedd511f"
+        },
+        {
+          "relativepath": "oracle/record_tag_dialog_defaults.py",
+          "line": 16,
+          "symbol": "def record(session):",
+          "commit": "bb3bd22862a6befd6f160754959d4b25dedd511f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 831,
+          "symbol": "fn tag_service_controls_match_reference",
+          "commit": "944e602b6825d9a91280c6ceabcff391ecd9a5e9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 1244,
+          "symbol": "fn tag_dialog_service_dropdown_tracks",
+          "commit": "944e602b6825d9a91280c6ceabcff391ecd9a5e9"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/tag_dialog_defaults.json",
+      "limitations": [
+        "The options selector preserves all real tag-service keys. Native ManageTags offers local services; a repository default falls back to the first local tab until repository tag dialogs are implemented."
+      ],
+      "validation": {
+        "reference_recording_executed": true,
+        "reference_run_completed_utc": "2026-10-04 07:09:03",
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "python_py_compile_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI for coordinated runtime and options controls."
+      }
+    },
+    {
+      "reference_id": "audit-options-tag-editing-tag-dialogs-default-tag-service-in-tag-dialogs",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Choose among real tag service keys in the Tag Editing options page when remembering is off; options remain staged until parent Apply. Import legacy default_tag_service_tab/save_default_tag_service_tab_on_change and retain stable native typed settings. ManageTags opens on the configured local service, or its first local service by reference lowercase name order if the configured service is unavailable or unsupported.",
+      "implementation_commit": "944e602b6825d9a91280c6ceabcff391ecd9a5e9",
+      "depends_on": [
+        "59c40226208aedd7d649da469006f1eb40989ad9",
+        "bb3bd22862a6befd6f160754959d4b25dedd511f"
+      ],
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1847,
+          "symbol": "Default tag service in tag dialogs",
+          "commit": "944e602b6825d9a91280c6ceabcff391ecd9a5e9"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 135,
+          "symbol": "default_tag_service_tab",
+          "commit": "944e602b6825d9a91280c6ceabcff391ecd9a5e9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 62,
+          "symbol": "let preference =",
+          "commit": "bb3bd22862a6befd6f160754959d4b25dedd511f"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/tag_editing.rs",
+          "line": 10,
+          "symbol": "pub struct TagEditingSettings",
+          "commit": "bb3bd22862a6befd6f160754959d4b25dedd511f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_dialog_defaults.rs",
+          "line": 41,
+          "symbol": "fn tag_service_defaults_and_immediate_memory",
+          "commit": "bb3bd22862a6befd6f160754959d4b25dedd511f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_dialog_defaults.rs",
+          "line": 27,
+          "symbol": "fn remembered_tag_service_survives",
+          "commit": "bb3bd22862a6befd6f160754959d4b25dedd511f"
+        },
+        {
+          "relativepath": "oracle/record_tag_dialog_defaults.py",
+          "line": 16,
+          "symbol": "def record(session):",
+          "commit": "bb3bd22862a6befd6f160754959d4b25dedd511f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 831,
+          "symbol": "fn tag_service_controls_match_reference",
+          "commit": "944e602b6825d9a91280c6ceabcff391ecd9a5e9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 1244,
+          "symbol": "fn tag_dialog_service_dropdown_tracks",
+          "commit": "944e602b6825d9a91280c6ceabcff391ecd9a5e9"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/tag_dialog_defaults.json",
+      "limitations": [
+        "The options selector preserves all real tag-service keys. Native ManageTags offers local services; a repository default falls back to the first local tab until repository tag dialogs are implemented."
+      ],
+      "validation": {
+        "reference_recording_executed": true,
+        "reference_run_completed_utc": "2026-10-04 07:09:03",
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "python_py_compile_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI for coordinated runtime and options controls."
+      }
+    }
+  ]
+}

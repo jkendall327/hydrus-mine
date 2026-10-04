@@ -6,6 +6,7 @@
 
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::sync::Arc;
 use std::time::Duration;
 
 use crossbeam_channel::{Receiver, Sender, TryRecvError};
@@ -32,6 +33,7 @@ struct Decoded {
 pub(crate) struct Animator {
     timer: slint::Timer,
     running: RefCell<Option<Running>>,
+    store: Option<Arc<hydrus_store::Store>>,
 }
 
 /// Where playing is: the frame shown, its place in time (ms), how many
@@ -59,6 +61,7 @@ struct Running {
     /// How many times it has come round from its last frame to its first
     /// (`_playthrough_count`).
     playthroughs: u32,
+    times_to_play: u32,
     /// Whether it stops on its last frame rather than come round
     /// (`StopForSlideshow`), and the first frame, held there until it
     /// plays on.
@@ -69,10 +72,20 @@ struct Running {
 }
 
 impl Animator {
+    #[cfg(test)]
     pub fn new() -> Rc<Self> {
         Rc::new(Self {
             timer: slint::Timer::default(),
             running: RefCell::new(None),
+            store: None,
+        })
+    }
+
+    pub fn for_store(store: Arc<hydrus_store::Store>) -> Rc<Self> {
+        Rc::new(Self {
+            timer: slint::Timer::default(),
+            running: RefCell::new(None),
+            store: Some(store),
         })
     }
 
@@ -83,6 +96,7 @@ impl Animator {
             return;
         };
         let count = frames.len();
+        let times_to_play = frames.times_to_play();
         let total_ms = frames.total_ms();
         let durations = frames.durations().to_vec();
         let (sender, receiver) = crossbeam_channel::bounded(AHEAD);
@@ -142,6 +156,7 @@ impl Animator {
             },
             durations,
             playthroughs: 0,
+            times_to_play,
             stop_at_end: false,
             held: None,
             last_shown: None,
@@ -173,7 +188,21 @@ impl Animator {
                         && running.last_shown == Some(frames.saturating_sub(1))
                     {
                         running.playthroughs += 1;
-                        if running.stop_at_end {
+                        let always_loop = self.store.as_ref().is_none_or(|store| {
+                            store
+                                .read(
+                                    hydrus_store::settings::get::<
+                                        hydrus_store::settings::ViewerPlaybackSettings,
+                                    >,
+                                )
+                                .unwrap_or_default()
+                                .always_loop
+                        });
+                        if running.stop_at_end
+                            || (!always_loop
+                                && running.times_to_play != 0
+                                && running.playthroughs >= running.times_to_play)
+                        {
                             running.paused = true;
                             running.held = Some(frame);
                             return;
@@ -358,6 +387,79 @@ mod tests {
             std::thread::sleep(Duration::from_millis(2));
         }
         false
+    }
+
+    #[test]
+    fn animation_loop_preference_reaches_decoded_frames_and_live_playthrough_limits() {
+        let _windows = crate::headless::init();
+        let directory = tempfile::tempdir().unwrap();
+        let store = hydrus_store::Store::open(directory.path()).unwrap();
+        let fixture = hydrus_testkit::fixture_json("viewer_zoom_loop_options.json");
+        let original = hex::decode(fixture["animation_bytes"].as_str().unwrap()).unwrap();
+        let offset = original
+            .windows(4)
+            .position(|bytes| bytes == b"ANIM")
+            .unwrap()
+            + 12;
+        let animator = Animator::for_store(store.clone());
+        for case in fixture["loops"].as_array().unwrap() {
+            let count = case["count"].as_u64().unwrap() as u16;
+            let always_loop = case["always"].as_bool().unwrap();
+            store
+                .write(move |ctx| {
+                    hydrus_store::settings::set(
+                        ctx.conn(),
+                        &hydrus_store::settings::ViewerPlaybackSettings {
+                            always_loop,
+                            ..Default::default()
+                        },
+                    )
+                })
+                .unwrap();
+            let mut data = original.clone();
+            data[offset..offset + 2].copy_from_slice(&count.to_le_bytes());
+            let path = directory.path().join("animation.webp");
+            std::fs::write(&path, data).unwrap();
+            let frames = Frames::open(&path, hydrus_core::Mime::AnimationWebp, &[], None).unwrap();
+            let frames_count = frames.len();
+            animator.play(Some(frames), |_| {});
+            if !always_loop && count != 0 {
+                assert!(until(&animator, |a| a.status().is_some_and(|s| s.paused)));
+                let status = animator.status().unwrap();
+                let last = case["states"].as_array().unwrap().last().unwrap();
+                assert_eq!(status.index as u64, last["frame"].as_u64().unwrap());
+                assert_eq!(status.index, frames_count - 1);
+                assert_eq!(
+                    u64::from(animator.running.borrow().as_ref().unwrap().playthroughs),
+                    last["playthroughs"].as_u64().unwrap()
+                );
+            } else {
+                assert!(until(&animator, |a| a
+                    .running
+                    .borrow()
+                    .as_ref()
+                    .unwrap()
+                    .playthroughs
+                    >= 3));
+                assert!(!animator.status().unwrap().paused, "{case:?}");
+            }
+        }
+        // Native Qt checks the preference at the end of each play, so changing
+        // it while an existing finite animation plays takes effect next wrap.
+        store
+            .write(|ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_store::settings::ViewerPlaybackSettings {
+                        always_loop: false,
+                        ..Default::default()
+                    },
+                )
+            })
+            .unwrap();
+        assert!(until(&animator, |a| a.status().is_some_and(|s| s.paused)));
+        animator.stop();
+        assert!(animator.status().is_none());
     }
 
     #[test]

@@ -36,6 +36,13 @@ pub(crate) fn num_frames(first_256: &[u8]) -> Option<u32> {
     Some(u32::from_be_bytes(d.get(..4)?.try_into().ok()?))
 }
 
+pub(crate) fn times_to_play(first_256: &[u8]) -> u32 {
+    actl(first_256)
+        .and_then(|data| data.get(4..8))
+        .and_then(|bytes| bytes.try_into().ok())
+        .map_or(0, u32::from_be_bytes)
+}
+
 /// `IsPNGAnimated`: an acTL in the first 256 bytes declaring more than one frame.
 pub(crate) fn is_animated(first_256: &[u8]) -> bool {
     num_frames(first_256).is_some_and(|n| n > 1)

@@ -358,7 +358,7 @@ mod tests {
         let jar = vec![
             cookie("a", ".example.com", "/"),
             cookie("b", "www.example.com", "/posts"),
-            cookie("c", ".other.com", "/"),
+            cookie("c", ".other.example", "/"),
             Cookie {
                 secure: true,
                 ..cookie("d", ".example.com", "/")
@@ -386,7 +386,7 @@ mod tests {
                 "sid=abc; Path=/; Domain=example.com; HttpOnly; Max-Age=60",
                 "pref=1",
                 "gone=x; Expires=Thu, 01 Jan 1970 00:00:00 GMT",
-                "evil=1; Domain=other.com",
+                "evil=1; Domain=other.example",
             ],
             &u,
             1000,

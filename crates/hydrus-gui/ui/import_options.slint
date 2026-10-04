@@ -9,6 +9,7 @@
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { EditorTreeRow, FiletypeTree } from "filetype_tree.slint";
+import { ImportFavouriteRow, ImportFavouritesButton } from "import_options_favourites.slint";
 
 // a file size limit: whether there is one, its number and unit (B, KB,
 // MB, GB)
@@ -60,7 +61,8 @@ component Row inherits HorizontalLayout {
 }
 
 export component ImportOptionsWindow inherits Window {
-    title: "edit import options";
+    in property <string> window-title: "edit import options";
+    title: root.window-title;
     preferred-width: 900px;
     preferred-height: 620px;
     background: Theme.window;
@@ -72,6 +74,7 @@ export component ImportOptionsWindow inherits Window {
     in property <string> kind-description;
     in property <[string]> custom-choices;
     in-out property <int> custom-index;
+    in property <bool> default-choice-enabled: true;
     // (a kind with no editor here yet: its options' summary)
     in property <string> summary;
     // presentation
@@ -120,6 +123,9 @@ export component ImportOptionsWindow inherits Window {
     // a tag service's "get tags" filter button clicked
     callback edit-get-tags-filter(int);
     in-out property <string> tag-whitelist;
+    in property <bool> tag-child-open;
+    callback edit-whitelist();
+    callback edit-additional-tags(int);
     // tags
     in property <[TagServiceRow]> tag-services;
     in property <bool> gets-no-tags;
@@ -132,6 +138,16 @@ export component ImportOptionsWindow inherits Window {
     callback resolution-edited(int, bool, int, int);
     callback apply();
     callback cancel();
+    callback copy-options();
+    callback paste-options(int);
+    in property <string> clipboard-error;
+    in property <bool> overwrite-open;
+    in property <[ImportFavouriteRow]> favourites;
+    in property <bool> favourite-editor;
+    in property <bool> favourite-child-open;
+    in-out property <string> favourite-name;
+    callback refresh-favourites();
+    callback favourite(int, string);
 
     VerticalLayout {
         padding: 10px;
@@ -139,6 +155,11 @@ export component ImportOptionsWindow inherits Window {
         Label {
             text: root.description;
             horizontal-alignment: center;
+        }
+        if root.favourite-editor: HorizontalLayout {
+            spacing: 6px;
+            Label { text: "name: "; }
+            LineEdit { horizontal-stretch: 1; text <=> root.favourite-name; }
         }
         HorizontalLayout {
             spacing: 10px;
@@ -182,6 +203,7 @@ export component ImportOptionsWindow inherits Window {
                         horizontal-alignment: center;
                     }
                     ComboBox {
+                        enabled: root.default-choice-enabled;
                         model: root.custom-choices;
                         current-index <=> root.custom-index;
                         selected => { root.changed(); }
@@ -429,6 +451,7 @@ export component ImportOptionsWindow inherits Window {
                             }
                         }
                         Label { text: "file whitelist (a file must have one of these tags, if any are set; a tag a line): "; }
+                        Button { text: "edit whitelist tags…"; enabled: !root.tag-child-open; clicked => { root.edit-whitelist(); } }
                         TextEdit {
                             height: 100px;
                             text <=> root.tag-whitelist;
@@ -468,6 +491,7 @@ export component ImportOptionsWindow inherits Window {
                                     }
                                 }
                                 Label { text: "additional tags, one a line: "; }
+                                Button { text: "edit additional tags…"; enabled: !root.tag-child-open; clicked => { root.edit-additional-tags(i); } }
                                 TextEdit {
                                     height: 60px;
                                     text: service.additional;
@@ -512,11 +536,45 @@ export component ImportOptionsWindow inherits Window {
                 }
             }
         }
+        if root.clipboard-error != "": Text { text: root.clipboard-error; color: Theme.error; wrap: word-wrap; }
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
+            ImportFavouritesButton {
+                rows: root.favourites;
+                edit-allowed: !root.favourite-editor;
+                enabled: !root.favourite-child-open && !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open;
+                refresh => { root.refresh-favourites(); }
+                selected(action, name) => { root.favourite(action, name); }
+            }
+            Button { text: "copy"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open; clicked => { root.copy-options(); } }
+            Rectangle {
+                width: 66px;
+                height: 28px;
+                Button { width: parent.width; height: parent.height; text: "paste"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open; clicked => { clipboard-menu.show(); } }
+                clipboard-menu := PopupWindow {
+                    y: parent.height;
+                    width: 320px;
+                    height: 148px;
+                    Rectangle {
+                        background: Theme.panel;
+                        border-color: Theme.border;
+                        border-width: 1px;
+                        VerticalLayout {
+                            padding: 4px;
+                            spacing: 2px;
+                            Button { text: "custom paste: choose what you want"; clicked => { clipboard-menu.close(); root.paste-options(3); } }
+                            Rectangle { height: 1px; background: Theme.border; }
+                            Button { text: "merge-paste"; clicked => { clipboard-menu.close(); root.paste-options(0); } }
+                            Button { text: "fill-in-gaps-paste"; clicked => { clipboard-menu.close(); root.paste-options(1); } }
+                            Button { text: "replace-paste"; clicked => { clipboard-menu.close(); root.paste-options(2); } }
+                        }
+                    }
+                }
+            }
             Button {
                 text: "apply";
+                enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open;
                 clicked => { root.apply(); }
             }
             Button {

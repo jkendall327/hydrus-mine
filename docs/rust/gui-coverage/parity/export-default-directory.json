@@ -1,0 +1,100 @@
+{
+  "agent": "parity_parser_children",
+  "baseline": "d50df26b",
+  "implementation_commits": [
+    "6fbdb33c4c14bfae1deac83d9ce401f5653b35de",
+    "ddbded27da7f0b7dda8bccb6674b71f7ec12d0cc"
+  ],
+  "validation": {
+    "reference_recording": "passed: actual Qt options and manual export consumers with synthetic local paths; screenshot inspected",
+    "formatting": "rustfmt --edition 2024, git diff --check and recorder Python syntax passed",
+    "slint_source_check": "passed via cached compiler, no Cargo",
+    "rust_tests": "authored reference model replay, actual legacy YAML import, real-store options persistence/reopen and live filename preview/closed-owner consumers; root asynchronous CI pending"
+  },
+  "entries": [
+    {
+      "reference_id": "audit-options-exporting-export-folder-default-export-directory",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Exporting > export folder exposes the original Default export directory path and browse controls. Text and picker results remain staged until options Apply; cancel/closed-owner callbacks cannot change stored defaults. Blank/whitespace input clears the preference; nonblank literal spaces and Unicode paths are retained. Legacy YAML export_path portable values resolve against the source database, and native relative entries resolve against its database. New real manual-export panels read the configured shared directory instead of a separate last-used preference, render filenames there, and keep it after one-off destinations. A blank preference resolves and creates the home hydrus_export folder, including Windows USERPROFILE fallback when HOME is unavailable. Export phrase persistence merges against current settings in the writer so it retains directory changes.",
+      "exactBehavior": "Exporting > export folder exposes the original Default export directory path and browse controls. Text and picker results remain staged until options Apply; cancel/closed-owner callbacks cannot change stored defaults. Blank/whitespace input clears the preference; nonblank literal spaces and Unicode paths are retained. Legacy YAML export_path portable values resolve against the source database, and native relative entries resolve against its database. New real manual-export panels read the configured shared directory instead of a separate last-used preference, render filenames there, and keep it after one-off destinations. A blank preference resolves and creates the home hydrus_export folder, including Windows USERPROFILE fallback when HOME is unavailable. Export phrase persistence merges against current settings in the writer so it retains directory changes.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExportingPanel.py",
+        "line": 127,
+        "symbol": "ExportingPanel"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 964,
+          "commit": "6fbdb33c4c14bfae1deac83d9ce401f5653b35de",
+          "symbol": "pub fn pages("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_window.rs",
+          "line": 611,
+          "commit": "6fbdb33c4c14bfae1deac83d9ce401f5653b35de",
+          "symbol": "window.on_directory_browse("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/export_files.rs",
+          "line": 82,
+          "commit": "6fbdb33c4c14bfae1deac83d9ce401f5653b35de",
+          "symbol": "pub fn default_directory("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/export_files_window.rs",
+          "line": 49,
+          "commit": "6fbdb33c4c14bfae1deac83d9ce401f5653b35de",
+          "symbol": "pub fn open("
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 35,
+          "commit": "6fbdb33c4c14bfae1deac83d9ce401f5653b35de",
+          "symbol": "pub fn decode_input("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 1619,
+          "commit": "6fbdb33c4c14bfae1deac83d9ce401f5653b35de",
+          "symbol": "fn export_default_directory_matches_recorded_blank_literal_and_portable_paths("
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 3612,
+          "commit": "6fbdb33c4c14bfae1deac83d9ce401f5653b35de",
+          "symbol": "fn export_default_directory_import_resolves_recorded_portable_paths("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 3390,
+          "commit": "ddbded27da7f0b7dda8bccb6674b71f7ec12d0cc",
+          "symbol": "fn default_export_directory_browse_apply_cancel_and_manual_open_use_shared_preference("
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_export_default_directory.py",
+        "fixture": "oracle/fixtures/export_default_directory.json",
+        "screenshot": "oracle/fixtures/export_default_directory_editor.png",
+        "commit": "ddbded27da7f0b7dda8bccb6674b71f7ec12d0cc",
+        "result": "passed; six actual ExportingPanel UpdateOptions cases and real ReviewExportFilesPanel opening-directory consumers, picker accept/cancel and cancelled-option/one-off-directory boundaries; only picker answers and synthetic fallback home controlled; no export jobs"
+      },
+      "limitations": [
+        "Native settings persist resolved paths rather than Qt portable text. Relative imports retain the source database base; newly typed relative paths use the native database base.",
+        "Native folder browsing uses the existing OS picker rather than Qt; no new window/component, alias leaf, or broad exporting/manual-export parent completion is claimed.",
+        "Rust model/GUI/store regressions are authored for root asynchronous CI; no local Cargo build/test was run."
+      ],
+      "limits": [
+        "Native settings persist resolved paths rather than Qt portable text. Relative imports retain the source database base; newly typed relative paths use the native database base.",
+        "Native folder browsing uses the existing OS picker rather than Qt; no new window/component, alias leaf, or broad exporting/manual-export parent completion is claimed.",
+        "Rust model/GUI/store regressions are authored for root asynchronous CI; no local Cargo build/test was run."
+      ]
+    }
+  ],
+  "native_component_notes": "Existing OptionsWindow and ExportFilesWindow; Directory option row kind20, no new native Window, reference alias or navigation edge."
+}

@@ -27,6 +27,7 @@ fn recorded_content_kinds_and_runtime_previews() {
                     .values(),
                 text: format!("<p>{}</p>", case["text"].as_str().unwrap()),
                 collapse_newlines: case["collapse_newlines"].as_bool().unwrap(),
+                ..FormulaTestData::default()
             },
         );
         assert!(!editor.changed());
@@ -202,5 +203,357 @@ fn changed_links_revalidate_current_class_capability_and_rollback_atomically() {
             assert_eq!(after.url_classes[0].name, "new class name");
             assert_eq!(after.parser_links, vec![("01".into(), Some("page".into()))]);
         }
+    }
+}
+
+#[test]
+fn recorded_recursive_subsidiaries_preserve_context_documents_and_runtime_outputs() {
+    let cases = hydrus_testkit::fixture_json("parser_children.json");
+    let cases = cases.as_array().unwrap();
+    let defaults = &cases[0];
+    let child = editors::new_subsidiary();
+    assert_eq!(child.parser.name, defaults["name"].as_str().unwrap());
+    assert_eq!(
+        child.sort_by_source_time,
+        defaults["sort"].as_bool().unwrap()
+    );
+    let raw = "<div class=\"thumb\"><p>first\n\nnote</p></div><div class=\"thumb\"><p>second note</p></div>";
+    let context = TestContext::parse(
+        "https://children.example/post".into(),
+        "7",
+        "token=preserved",
+    )
+    .unwrap()
+    .values();
+    let object = SerialisableObject::from_tuple_str(&defaults["formula"].to_string()).unwrap();
+    let formula = parsers::formula(&object).unwrap();
+    assert_eq!(child.formula.kind, formula.kind);
+    assert_eq!(
+        serde_json::to_value(child.formula.parse(&context, raw, false).unwrap()).unwrap(),
+        defaults["separated"]
+    );
+    for case in cases.iter().filter(|case| case["case"] == "parent_action") {
+        let object = SerialisableObject::from_tuple_str(&case["tuple"].to_string()).unwrap();
+        let page = parsers::page_parser(&object).unwrap();
+        let posts = page.parse(&mut context.clone(), raw).unwrap();
+        let texts = posts
+            .iter()
+            .map(|post| {
+                post.contents
+                    .iter()
+                    .map(|content| content.text.clone())
+                    .collect::<Vec<_>>()
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            serde_json::to_value(texts).unwrap(),
+            case["outputs"],
+            "{}",
+            case["action"]
+        );
+        for child in &page.subsidiary {
+            let details = editors::SubsidiaryEditor::new(child);
+            assert_eq!(details.value(child.parser.clone()), *child);
+            let inherited = page.converter.convert(raw).unwrap();
+            let test = FormulaTestData {
+                context: context.clone(),
+                text: inherited,
+                collapse_newlines: false,
+                ..FormulaTestData::default()
+            };
+            let data = details.child_test_data(&child.parser, &test).unwrap();
+            let expected = cases
+                .iter()
+                .find(|case| {
+                    case["case"] == "child_data"
+                        && case["name"].as_str() == Some(child.parser.name.as_str())
+                })
+                .unwrap();
+            assert_eq!(
+                serde_json::to_value(&data.examples).unwrap(),
+                expected["texts"]
+            );
+            assert_eq!(data.context, context);
+            assert!(
+                data.source_urls
+                    .iter()
+                    .all(|source| source.as_deref() == Some("https://children.example/post"))
+            );
+            assert!(!data.collapse_newlines);
+        }
+    }
+}
+
+#[test]
+fn recorded_subsidiary_queue_import_and_duplicate_preserve_keys_and_select_new_rows() {
+    let reference = hydrus_testkit::fixture_json("subsidiary_exchange.json");
+    let parsers =
+        hydrus_downloader_exchange::subsidiaries::decode_text(&reference["bundle"].to_string())
+            .unwrap();
+    let mut page = editors::new_page();
+    let added = editors::append_subsidiaries(&mut page, parsers.clone());
+    assert_eq!(added, [0, 1]);
+    assert_eq!(
+        serde_json::json!(
+            page.subsidiary
+                .iter()
+                .map(|p| &p.parser.name)
+                .collect::<Vec<_>>()
+        ),
+        reference["imported_names"]
+    );
+    let duplicated = editors::append_subsidiaries(&mut page, parsers.clone());
+    assert_eq!(duplicated, [1, 3]);
+    assert_eq!(
+        serde_json::json!(
+            page.subsidiary
+                .iter()
+                .map(|p| &p.parser.name)
+                .collect::<Vec<_>>()
+        ),
+        reference["duplicated_names"]
+    );
+    for (row, original) in duplicated.iter().zip(&parsers) {
+        assert_eq!(page.subsidiary[*row].parser.key, original.parser.key);
+        assert_eq!(
+            hydrus_downloader_exchange::subsidiaries::tuple(&page.subsidiary[*row]).unwrap(),
+            hydrus_downloader_exchange::subsidiaries::tuple(original).unwrap()
+        );
+    }
+}
+
+#[test]
+fn auto_fill_reference_owner_leaves_candidates_unapplied_and_reviews_api_pairs() {
+    use hydrus_legacy::objects::domain;
+    let fixture = hydrus_testkit::fixture_json("parser_auto_links.json");
+    let classes = fixture["classes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| {
+            domain::url_class(&SerialisableObject::from_tuple_str(&value.to_string()).unwrap())
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let parsers = fixture["parsers"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| {
+            parsers::page_parser(&SerialisableObject::from_tuple_str(&value.to_string()).unwrap())
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let invalid = fixture["invalid_classes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| {
+            domain::url_class(&SerialisableObject::from_tuple_str(&value.to_string()).unwrap())
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let draft = Draft::new(
+        parsers.clone(),
+        UrlClassSettings {
+            url_classes: invalid,
+            ..UrlClassSettings::default()
+        },
+    );
+    assert_eq!(
+        serde_json::json!(draft.api_pairs()),
+        fixture["invalid_api_pairs"]
+    );
+    for case in fixture["cases"].as_array().unwrap() {
+        let links = case["existing"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|pair| {
+                (
+                    hex::encode(
+                        &classes
+                            .iter()
+                            .find(|class| class.name == pair[0].as_str().unwrap())
+                            .unwrap()
+                            .key,
+                    ),
+                    Some(
+                        parsers
+                            .iter()
+                            .find(|parser| parser.name == pair[1].as_str().unwrap())
+                            .unwrap()
+                            .key
+                            .clone(),
+                    ),
+                )
+            })
+            .collect();
+        let mut draft = Draft::new(
+            parsers.clone(),
+            UrlClassSettings {
+                url_classes: classes.clone(),
+                parser_links: links,
+                ..UrlClassSettings::default()
+            },
+        );
+        let mut candidates = draft
+            .auto_link_candidates()
+            .iter()
+            .map(|(class, parser)| {
+                (
+                    classes
+                        .iter()
+                        .find(|value| hex::encode(&value.key) == *class)
+                        .unwrap()
+                        .name
+                        .clone(),
+                    parsers
+                        .iter()
+                        .find(|value| value.key == *parser)
+                        .unwrap()
+                        .name
+                        .clone(),
+                )
+            })
+            .collect::<Vec<_>>();
+        candidates.sort();
+        assert_eq!(serde_json::json!(candidates), case["candidates"]);
+        assert_eq!(
+            draft.gaps_exist(),
+            case["steps"][0]["gaps_exist"].as_bool().unwrap()
+        );
+        let pairs = draft
+            .api_pairs()
+            .iter()
+            .map(|(source, target)| (&classes[*source].name, &classes[*target].name))
+            .collect::<Vec<_>>();
+        assert_eq!(serde_json::json!(pairs), case["api_pairs"]);
+        let before = draft.classes.clone();
+        draft.try_fill_gaps();
+        assert_eq!(
+            draft.classes, before,
+            "actual Qt owner does not install its new candidates"
+        );
+    }
+}
+
+#[test]
+fn per_class_parser_choices_replay_matching_groups_and_validate_stable_keys() {
+    use hydrus_legacy::objects::domain;
+    let fixture = hydrus_testkit::fixture_json("parser_link_picker.json");
+    let class = domain::url_class(
+        &SerialisableObject::from_tuple_str(&fixture["classes"][0].to_string()).unwrap(),
+    )
+    .unwrap();
+    let parsers = fixture["parsers"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| {
+            parsers::page_parser(&SerialisableObject::from_tuple_str(&value.to_string()).unwrap())
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let class_key = hex::encode(&class.key);
+    let mut draft = Draft::new(
+        parsers.clone(),
+        UrlClassSettings {
+            url_classes: vec![class],
+            ..UrlClassSettings::default()
+        },
+    );
+    let choices = draft.parser_choices(&class_key).unwrap();
+    assert_eq!(
+        serde_json::json!(choices.iter().map(|(name, _)| name).collect::<Vec<_>>()),
+        fixture["steps"][0]["choices"]
+    );
+    assert!(choices[2].1.is_none());
+    assert!(draft.parser_choices("missing").is_err());
+    assert!(draft.link(&class_key, Some("missing")).is_err());
+    for (_, key) in choices.iter().filter(|(_, key)| key.is_some()) {
+        draft.link(&class_key, key.as_deref()).unwrap();
+        assert_eq!(
+            draft.classes.parser_links,
+            vec![(class_key.clone(), key.clone())]
+        );
+    }
+    draft.link(&class_key, None).unwrap();
+    assert_eq!(draft.classes.parser_links, vec![(class_key, None)]);
+}
+
+#[test]
+fn timestamp_editor_normalises_recorded_source_choice_and_preserves_converted_metadata() {
+    let reference = hydrus_testkit::fixture_json("content_time.json");
+    let now = reference["now"].as_i64().unwrap();
+    for case in reference["cases"].as_array().unwrap() {
+        let object = SerialisableObject::from_tuple_str(&case["tuple"].to_string()).unwrap();
+        let mut original = parsers::content_parser(&object).unwrap();
+        if case["input_type"] != "datestring" {
+            original.kind = ContentKind::Timestamp {
+                timestamp_type: case["input_type"].as_i64(),
+            };
+        }
+        let mut editor = ContentEditor::new(&original, FormulaTestData::default());
+        assert_eq!(editor.kind_index(), 4);
+        assert_eq!(
+            editor.value().kind,
+            ContentKind::Timestamp {
+                timestamp_type: Some(reference["timestamp_type"].as_i64().unwrap())
+            }
+        );
+        assert_eq!(
+            editor.changed(),
+            case["input_type"].is_null() || case["input_type"] == 7
+        );
+        assert_eq!(editor.value().formula, original.formula);
+        for parsed in case["cases"].as_array().unwrap() {
+            editor.test.text = parsed["document"].as_str().unwrap().into();
+            editor
+                .test
+                .context
+                .insert("url".into(), "https://source-time.example/post/1".into());
+            let post = editor.preview().unwrap();
+            assert_eq!(
+                serde_json::json!(
+                    post.contents
+                        .iter()
+                        .map(|c| c.text.as_str())
+                        .collect::<Vec<_>>()
+                ),
+                parsed["texts"]
+            );
+            for (content, metadata) in post
+                .contents
+                .iter()
+                .zip(parsed["metadata"].as_array().unwrap())
+            {
+                assert_eq!(content.name, metadata["name"]);
+                assert_eq!(
+                    content.kind,
+                    ContentKind::Timestamp {
+                        timestamp_type: metadata["timestamp_type"].as_i64()
+                    }
+                );
+            }
+            assert_eq!(
+                serde_json::json!(
+                    post.timestamp(hydrus_parse::content::TIMESTAMP_MODIFIED_DOMAIN, now)
+                ),
+                parsed["source_time"]
+            );
+        }
+        assert_eq!(
+            original.kind,
+            if case["input_type"] == "datestring" {
+                ContentKind::Timestamp {
+                    timestamp_type: Some(0),
+                }
+            } else {
+                ContentKind::Timestamp {
+                    timestamp_type: case["input_type"].as_i64(),
+                }
+            }
+        );
     }
 }

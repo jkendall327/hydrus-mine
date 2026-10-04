@@ -1,0 +1,112 @@
+{
+  "mime": [
+    {
+      "action": "empty",
+      "state": 0,
+      "children": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "action": "one child",
+      "state": 1,
+      "children": [
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "action": "whole group",
+      "state": 2,
+      "children": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "action": "remove one child",
+      "state": 1,
+      "children": [
+        0,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "action": "clear group",
+      "state": 0,
+      "children": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "hash": [
+    {
+      "accepted": false,
+      "questions": [
+        "You sure?"
+      ],
+      "text": "d41d8cd98f00b204e9800998ecf8427e\nnot a hash",
+      "type": "sha256"
+    },
+    {
+      "accepted": true,
+      "questions": [
+        "You sure?"
+      ],
+      "text": "d41d8cd98f00b204e9800998ecf8427e",
+      "type": "md5"
+    }
+  ]
+}

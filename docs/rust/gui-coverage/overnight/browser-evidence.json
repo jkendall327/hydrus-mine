@@ -1,0 +1,28 @@
+{
+  "source_commit": "a1a997cd3a64232b65f0b1b1bad16499487af79e",
+  "ci_run_id": 37216336747,
+  "artifact": "docs/rust/gui-progress.html",
+  "html_sha256": "aa37aed3f8a9cb4bb51bd587a232165271e08b660c97187614e8b72686f91702",
+  "browser": "system Chromium through Playwright",
+  "checked_at_utc": "2026-10-04T17:02:02.429706+00:00",
+  "checks": [
+    "inventory/status cards",
+    "189-original-feature completion filter",
+    "search",
+    "reference/native navigation",
+    "reset",
+    "desktop/mobile no horizontal overflow"
+  ],
+  "page_errors": [],
+  "runtime_requests": [],
+  "counts": [
+    790,
+    375,
+    647
+  ],
+  "completed_original_leaves": 189,
+  "layouts": [
+    "desktop",
+    "mobile"
+  ]
+}

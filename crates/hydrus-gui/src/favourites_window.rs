@@ -6,7 +6,7 @@
 //! the list keeps its searches in the store, where the star button's menu
 //! reads them.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::collections::BTreeSet;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -26,6 +26,8 @@ use crate::{FavouriteEditWindow, FavouriteListRow, FavouritesWindow};
 pub struct Slots {
     pub list: Rc<RefCell<Option<FavouritesWindow>>>,
     pub edit: Rc<RefCell<Option<FavouriteEditWindow>>>,
+    /// The system-predicate child, cancelled with its favourite owner.
+    pub predicate_editor: Rc<RefCell<Option<crate::PredicateEditorWindow>>>,
     /// The open list's searches, for "save this search" to add to.
     open: Rc<RefCell<Option<Opened>>>,
 }
@@ -310,8 +312,13 @@ fn open_list(slots: &Slots, store: Arc<Store>) -> Result<(), String> {
         let weak = window.as_weak();
         let slots = slots.clone();
         move || {
-            if let Some(edit) = slots.edit.borrow_mut().take() {
-                let _ = edit.hide();
+            let editing = slots
+                .edit
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(edit) = editing {
+                edit.invoke_cancel();
             }
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
@@ -391,8 +398,13 @@ fn open_edit(
     target: Target,
     row: &FavouriteSearch,
 ) -> Result<(), String> {
-    if let Some(old) = slots.edit.borrow_mut().take() {
-        let _ = old.hide();
+    let old = slots
+        .edit
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong);
+    if let Some(old) = old {
+        old.invoke_cancel();
     }
     let window = FavouriteEditWindow::new().map_err(|e| e.to_string())?;
     let sorts: SortSettings = words
@@ -405,6 +417,65 @@ fn open_edit(
         &sorts.default_collect,
     )));
     let existing = list.borrow().manager.existing();
+    let active = Rc::new(Cell::new(true));
+    // Each favourite owns a distinct child slot: stale child callbacks cannot
+    // clear a newly opened favourite's predicate editor.
+    let child = Rc::new(RefCell::new(None::<crate::PredicateEditorWindow>));
+    let visible_child = slots.predicate_editor.clone();
+    let autocomplete = Rc::new(RefCell::new(crate::autocomplete::Autocomplete::new(
+        words.store.clone(),
+    )));
+    let sort_choices = Rc::new(crate::sort::page_choices(
+        &words.store,
+        &edit.borrow().sort.by,
+    ));
+    let collect_choices = Rc::new(crate::collect::choices(&words.store));
+    let registry = words.store.snapshot().services.clone();
+    let advanced = words
+        .store
+        .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
+        .unwrap_or_default()
+        .0;
+    let location_choices: Rc<Vec<crate::domains::Row>> = Rc::new(
+        crate::domains::location_menu(&registry, advanced, &edit.borrow().search.location)
+            .into_iter()
+            .flatten()
+            .collect(),
+    );
+    let tag_choices: Rc<Vec<crate::domains::Row>> = Rc::new(
+        crate::domains::tag_menu(&registry, &edit.borrow().search.tags)
+            .into_iter()
+            .flatten()
+            .collect(),
+    );
+    let location_ticks = Rc::new(crate::domains::multiple_ticks(&registry, advanced));
+    let pending_locations = Rc::new(RefCell::new(Vec::<(bool, hydrus_core::ServiceKey)>::new()));
+    let text_model = |items: Vec<String>| {
+        ModelRc::new(VecModel::from(
+            items
+                .into_iter()
+                .map(SharedString::from)
+                .collect::<Vec<_>>(),
+        ))
+    };
+    window.set_location_choices(text_model(
+        location_choices.iter().map(|r| r.label.clone()).collect(),
+    ));
+    window.set_tag_choices(text_model(
+        tag_choices.iter().map(|r| r.label.clone()).collect(),
+    ));
+    window.set_sort_choices(text_model(
+        sort_choices.iter().map(|r| r.name.clone()).collect(),
+    ));
+    window.set_location_ticks(ModelRc::new(VecModel::from(
+        location_ticks
+            .iter()
+            .map(|t| crate::Tick {
+                label: t.label.as_str().into(),
+                on: false,
+            })
+            .collect::<Vec<_>>(),
+    )));
     {
         let edit = edit.borrow();
         window.set_folder(edit.folder.as_str().into());
@@ -421,9 +492,63 @@ fn open_edit(
         let weak = window.as_weak();
         let edit = edit.clone();
         let words = words.clone();
+        let autocomplete = autocomplete.clone();
+        let location_choices = location_choices.clone();
+        let tag_choices = tag_choices.clone();
+        let sort_choices = sort_choices.clone();
+        let collect_choices = collect_choices.clone();
         move || {
             let Some(window) = weak.upgrade() else { return };
             let edit = edit.borrow();
+            let snapshot = words.store.snapshot();
+            window.set_location_label(
+                crate::domains::location_label(&snapshot.services, &edit.search.location).into(),
+            );
+            window.set_tags_label(
+                crate::domains::tag_label(&snapshot.services, &edit.search.tags).into(),
+            );
+            window.set_location_index(location_choices.iter().position(|r| matches!(&r.choice, crate::domains::Choice::Location(l) if *l == edit.search.location)).or_else(|| location_choices.iter().position(|r| matches!(r.choice, crate::domains::Choice::Multiple))).and_then(|i| i32::try_from(i).ok()).unwrap_or(-1));
+            window.set_tag_index(tag_choices.iter().position(|r| matches!(&r.choice, crate::domains::Choice::Tags(t) if *t == edit.search.tags.service)).and_then(|i| i32::try_from(i).ok()).unwrap_or(-1));
+            window.set_include_current(edit.search.tags.include_current);
+            window.set_include_pending(edit.search.tags.include_pending);
+            let si = sort_choices
+                .iter()
+                .position(|c| c.by == edit.sort.by)
+                .unwrap_or(0);
+            window.set_sort_index(i32::try_from(si).unwrap_or(0));
+            window.set_sort_orders(ModelRc::new(VecModel::from(
+                sort_choices[si]
+                    .orders
+                    .iter()
+                    .map(|o| SharedString::from(*o))
+                    .collect::<Vec<_>>(),
+            )));
+            window.set_sort_order(i32::from(!edit.sort.ascending));
+            window.set_collect_choices(ModelRc::new(VecModel::from(
+                collect_choices
+                    .iter()
+                    .map(|c| crate::Tick {
+                        label: c.name.as_str().into(),
+                        on: c.checked(&edit.collect),
+                    })
+                    .collect::<Vec<_>>(),
+            )));
+            window.set_collect_unmatched(edit.collect.collect_unmatched);
+            window.set_collect_tag_index(tag_choices.iter().position(|r| matches!(&r.choice, crate::domains::Choice::Tags(t) if *t == edit.collect.tag_context.service)).and_then(|i| i32::try_from(i).ok()).unwrap_or(-1));
+            let mut ac = autocomplete.borrow_mut();
+            ac.set_context(&edit.search.location, &edit.search.tags);
+            ac.set_text(window.get_typed().as_str());
+            window.set_suggestion_highlight(
+                ac.highlighted()
+                    .and_then(|i| i32::try_from(i).ok())
+                    .unwrap_or(-1),
+            );
+            window.set_suggestions(ModelRc::new(VecModel::from(
+                ac.suggestions()
+                    .iter()
+                    .map(|s| SharedString::from(s.label.as_str()))
+                    .collect::<Vec<_>>(),
+            )));
             window.set_predicates(ModelRc::new(VecModel::from(
                 words
                     .predicates(&edit.search)
@@ -439,33 +564,383 @@ fn open_edit(
         }
     };
     show();
-    window.on_typed_accepted({
+    window.on_location_chosen({
+        let edit = edit.clone();
+        let show = show.clone();
+        let choices = location_choices.clone();
+        let registry = registry.clone();
+        let ticks = location_ticks.clone();
+        let pending = pending_locations.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        move |i| {
+            if !active.get() {
+                return;
+            }
+            let Some(row) = usize::try_from(i).ok().and_then(|i| choices.get(i)) else {
+                return;
+            };
+            match &row.choice {
+                crate::domains::Choice::Location(location) => edit
+                    .borrow_mut()
+                    .choose_location(&registry, location.clone()),
+                crate::domains::Choice::Multiple => {
+                    let location = edit.borrow().search.location.clone();
+                    *pending.borrow_mut() = ticks
+                        .iter()
+                        .filter(|t| {
+                            if t.deleted {
+                                location.deleted()
+                            } else {
+                                location.current()
+                            }
+                            .contains(&t.service)
+                        })
+                        .map(|t| (t.deleted, t.service.clone()))
+                        .collect();
+                    if let Some(w) = weak.upgrade() {
+                        w.set_selecting_locations(true);
+                        w.set_location_ticks(ModelRc::new(VecModel::from(
+                            ticks
+                                .iter()
+                                .map(|t| crate::Tick {
+                                    label: t.label.as_str().into(),
+                                    on: pending.borrow().contains(&(t.deleted, t.service.clone())),
+                                })
+                                .collect::<Vec<_>>(),
+                        )));
+                    }
+                }
+                crate::domains::Choice::Tags(_) => (),
+            }
+            show();
+        }
+    });
+    window.on_location_ticked({
+        let pending = pending_locations.clone();
+        let ticks = location_ticks.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        move |i, on| {
+            if !active.get() {
+                return;
+            }
+            let Some(tick) = usize::try_from(i).ok().and_then(|i| ticks.get(i)) else {
+                return;
+            };
+            let key = (tick.deleted, tick.service.clone());
+            pending.borrow_mut().retain(|k| *k != key);
+            if on {
+                pending.borrow_mut().push(key);
+            }
+            if let Some(w) = weak.upgrade() {
+                w.set_location_ticks(ModelRc::new(VecModel::from(
+                    ticks
+                        .iter()
+                        .map(|t| crate::Tick {
+                            label: t.label.as_str().into(),
+                            on: pending.borrow().contains(&(t.deleted, t.service.clone())),
+                        })
+                        .collect::<Vec<_>>(),
+                )));
+            }
+        }
+    });
+    window.on_locations_answered({
+        let pending = pending_locations.clone();
+        let registry = registry.clone();
+        let edit = edit.clone();
+        let weak = window.as_weak();
+        let show = show.clone();
+        let active = active.clone();
+        move |yes| {
+            if !active.get() {
+                return;
+            }
+            if yes {
+                edit.borrow_mut().choose_location(
+                    &registry,
+                    crate::domains::ticked_location(&registry, &pending.borrow()),
+                );
+            }
+            if let Some(w) = weak.upgrade() {
+                w.set_selecting_locations(false);
+            }
+            show();
+        }
+    });
+    window.on_tag_chosen({
+        let choices = tag_choices.clone();
+        let edit = edit.clone();
+        let show = show.clone();
+        let store = words.store.clone();
+        let active = active.clone();
+        move |i| {
+            if !active.get() {
+                return;
+            }
+            let Some(row) = usize::try_from(i).ok().and_then(|i| choices.get(i)) else {
+                return;
+            };
+            if let crate::domains::Choice::Tags(key) = &row.choice {
+                let defaults = store
+                    .read(hydrus_store::settings::get::<hydrus_store::settings::SearchDefaults>)
+                    .unwrap_or_default();
+                edit.borrow_mut()
+                    .choose_tags(key.clone(), &defaults.local_location);
+            }
+            show();
+        }
+    });
+    window.on_tag_status_ticked({
+        let edit = edit.clone();
+        let show = show.clone();
+        let active = active.clone();
+        move |pending, on| {
+            if !active.get() {
+                return;
+            }
+            if pending {
+                edit.borrow_mut().search.tags.include_pending = on;
+            } else {
+                edit.borrow_mut().search.tags.include_current = on;
+            }
+            show();
+        }
+    });
+    window.on_sort_chosen({
+        let choices = sort_choices.clone();
+        let edit = edit.clone();
+        let show = show.clone();
+        let active = active.clone();
+        move |i| {
+            if !active.get() {
+                return;
+            }
+            if let Some(choice) = usize::try_from(i).ok().and_then(|i| choices.get(i)) {
+                edit.borrow_mut().choose_sort(choice);
+            }
+            show();
+        }
+    });
+    window.on_sort_order_chosen({
+        let edit = edit.clone();
+        let show = show.clone();
+        let active = active.clone();
+        move |i| {
+            if !active.get() {
+                return;
+            }
+            edit.borrow_mut().sort.ascending = i == 0;
+            show();
+        }
+    });
+    window.on_collect_ticked({
+        let choices = collect_choices.clone();
+        let edit = edit.clone();
+        let show = show.clone();
+        let active = active.clone();
+        move |i, on| {
+            if !active.get() {
+                return;
+            }
+            if let Ok(i) = usize::try_from(i) {
+                let mut e = edit.borrow_mut();
+                e.collect = crate::collect::toggled(&choices, &e.collect, i, on);
+            }
+            show();
+        }
+    });
+    window.on_collect_tag_chosen({
+        let choices = tag_choices.clone();
+        let edit = edit.clone();
+        let show = show.clone();
+        let active = active.clone();
+        move |i| {
+            if !active.get() {
+                return;
+            }
+            if let Some(row) = usize::try_from(i).ok().and_then(|i| choices.get(i))
+                && let crate::domains::Choice::Tags(key) = &row.choice
+            {
+                let mut e = edit.borrow_mut();
+                e.collect.tag_context.service = key.clone();
+                e.collect.tag_context.display_service = key.clone();
+            }
+            show();
+        }
+    });
+    window.on_collect_unmatched_ticked({
+        let choices = collect_choices.clone();
+        let edit = edit.clone();
+        let show = show.clone();
+        let active = active.clone();
+        move |on| {
+            if !active.get() {
+                return;
+            }
+            let mut e = edit.borrow_mut();
+            e.collect = crate::collect::with_unmatched(&choices, &e.collect, on);
+            drop(e);
+            show();
+        }
+    });
+    window.on_typed_edited({
+        let show = show.clone();
+        move || show()
+    });
+    window.on_suggestion_moved({
+        let ac = autocomplete.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        move |by| {
+            if !active.get() {
+                return;
+            }
+            let mut ac = ac.borrow_mut();
+            ac.move_highlight(isize::try_from(by).unwrap_or(0));
+            if let Some(w) = weak.upgrade() {
+                w.set_suggestion_highlight(
+                    ac.highlighted()
+                        .and_then(|i| i32::try_from(i).ok())
+                        .unwrap_or(-1),
+                );
+            }
+        }
+    });
+    let choose_suggestion: Rc<dyn Fn(Option<usize>)> = Rc::new({
         let weak = window.as_weak();
         let edit = edit.clone();
         let words = words.clone();
+        let autocomplete = autocomplete.clone();
+        let child = child.clone();
+        let visible_child = visible_child.clone();
+        let active = active.clone();
         let show = show.clone();
-        move || {
-            let Some(window) = weak.upgrade() else { return };
-            let typed = window.get_typed().trim().to_owned();
+        move |index| {
+            if !active.get() || child.borrow().is_some() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let mut ac = autocomplete.borrow_mut();
+            if ac.text() != window.get_typed().as_str() {
+                ac.set_text(window.get_typed().as_str());
+            }
+            let suggestion = index
+                .or_else(|| ac.highlighted())
+                .and_then(|i| ac.suggestions().get(i))
+                .cloned();
+            drop(ac);
+            if let Some(blank) = suggestion.as_ref().and_then(|s| s.editor) {
+                let store = words.store.clone();
+                let snapshot = store.snapshot();
+                let classes = snapshot
+                    .url_classes
+                    .settings()
+                    .url_classes
+                    .iter()
+                    .filter(|c| c.should_be_associated_with_files)
+                    .map(|c| c.name.clone())
+                    .collect();
+                let context = crate::predicate_editors::Context::new(
+                    &snapshot.services,
+                    classes,
+                    hydrus_search::Clock::system().today(),
+                );
+                let editor = crate::predicate_editors::Editor::new(blank, &context);
+                let chosen: Rc<dyn Fn(Vec<hydrus_search::Predicate>)> = Rc::new({
+                    let active = active.clone();
+                    let edit = edit.clone();
+                    let words = words.clone();
+                    let show = show.clone();
+                    let weak = weak.clone();
+                    let visible_child = visible_child.clone();
+                    move |predicates| {
+                        if !active.get() {
+                            return;
+                        }
+                        visible_child.borrow_mut().take();
+                        hydrus_search::enter_predicates(
+                            &mut edit.borrow_mut().search.predicates,
+                            &predicates,
+                            &words.text,
+                        );
+                        if let Some(w) = weak.upgrade() {
+                            w.set_child_open(false);
+                            w.set_typed("".into());
+                            w.set_error("".into());
+                        }
+                        show();
+                    }
+                });
+                match crate::predicate_editor_window::open(
+                    &child,
+                    store,
+                    editor,
+                    context,
+                    words.text.clone(),
+                    chosen,
+                ) {
+                    Ok(()) => {
+                        window.set_child_open(true);
+                        *visible_child.borrow_mut() = child
+                            .borrow()
+                            .as_ref()
+                            .map(slint::ComponentHandle::clone_strong);
+                    }
+                    Err(error) => window.set_error(error.into()),
+                }
+                return;
+            }
+            let typed =
+                suggestion.map_or_else(|| window.get_typed().trim().to_owned(), |s| s.predicate);
             if typed.is_empty() {
                 return;
             }
             match parse_api_search(&serde_json::json!([typed])) {
                 Ok(parsed) => {
-                    let mut edit = edit.borrow_mut();
                     hydrus_search::enter_predicates(
-                        &mut edit.search.predicates,
+                        &mut edit.borrow_mut().search.predicates,
                         &parsed,
                         &words.text,
                     );
-                    window.set_typed(SharedString::new());
-                    window.set_error(SharedString::new());
+                    window.set_typed("".into());
+                    window.set_error("".into());
                 }
-                Err(e) => window.set_error(e.to_string().into()),
+                Err(error) => window.set_error(error.to_string().into()),
             }
             show();
         }
     });
+    window.on_typed_accepted({
+        let choose = choose_suggestion.clone();
+        move || choose(None)
+    });
+    window.on_suggestion_chosen({
+        let choose = choose_suggestion;
+        move |i| choose(usize::try_from(i).ok())
+    });
+    let child_timer = Rc::new(slint::Timer::default());
+    child_timer.start(
+        slint::TimerMode::Repeated,
+        std::time::Duration::from_millis(100),
+        {
+            let weak = window.as_weak();
+            let child = child.clone();
+            let visible_child = visible_child.clone();
+            move || {
+                if let Some(w) = weak.upgrade() {
+                    w.set_child_open(child.borrow().is_some());
+                    *visible_child.borrow_mut() = child
+                        .borrow()
+                        .as_ref()
+                        .map(slint::ComponentHandle::clone_strong);
+                }
+            }
+        },
+    );
     window.on_predicate_removed({
         let edit = edit.clone();
         let show = show.clone();
@@ -509,7 +984,23 @@ fn open_edit(
     let close = {
         let weak = window.as_weak();
         let slot = slots.edit.clone();
+        let child = child.clone();
+        let active = active.clone();
+        let child_timer = child_timer.clone();
+        let visible_child = visible_child.clone();
         move || {
+            if !active.replace(false) {
+                return;
+            }
+            child_timer.stop();
+            visible_child.borrow_mut().take();
+            let pred = child
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(pred) = pred {
+                pred.invoke_cancel();
+            }
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -524,7 +1015,12 @@ fn open_edit(
         let list_window = slots.list.clone();
         let words = words.clone();
         let close = close.clone();
+        let active = active.clone();
+        let child = child.clone();
         move || {
+            if !active.get() || child.borrow().is_some() {
+                return;
+            }
             let value = edit.borrow().value();
             {
                 let mut list = list.borrow_mut();
@@ -546,8 +1042,16 @@ fn open_edit(
         let weak = window.as_weak();
         let edit = edit.clone();
         let finish = finish.clone();
+        let active = active.clone();
+        let child = child.clone();
         move || {
+            if !active.get() || child.borrow().is_some() {
+                return;
+            }
             let Some(window) = weak.upgrade() else { return };
+            if window.get_selecting_locations() {
+                return;
+            }
             let question = {
                 let mut edit = edit.borrow_mut();
                 edit.folder = window.get_folder().to_string();

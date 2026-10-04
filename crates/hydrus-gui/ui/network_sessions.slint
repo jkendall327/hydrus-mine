@@ -8,10 +8,11 @@ export component NetworkDataWindow inherits Window {
     in property <bool> browser; in property <bool> cookies; in property <bool> editing;
     in property <bool> can-edit; in property <bool> can-delete;
     in property <int> sort-column; in property <bool> ascending: true;
-    in property <string> description; in property <string> error; in property <string> question;
+    in property <string> message; in property <string> description; in property <string> error; in property <string> question;
     in-out property <string> filter; in-out property <bool> show-empty;
     callback row-clicked(int,bool,bool); callback sort(int,bool); callback filter-changed();
     callback add-clicked(); callback edit-clicked(); callback duplicate-clicked(); callback delete-clicked();
+    callback export-clicked(); callback import-clipboard-clicked(); callback import-file-clicked();
     callback refresh-clicked(); callback answered(bool); callback apply-clicked(); callback cancel-clicked();
     VerticalBox { padding: 12px; spacing: 8px;
         Text { text: root.description; color: Theme.text; wrap: word-wrap; }
@@ -33,6 +34,12 @@ export component NetworkDataWindow inherits Window {
             Rectangle { horizontal-stretch: 1; }
             Button { text: "refresh"; enabled: !root.editing; clicked => { root.refresh-clicked(); } }
         }
+        if root.browser || root.cookies: HorizontalBox {
+            Button { text: "export to clipboard"; enabled: root.can-delete && !root.editing && root.question == ""; clicked => { root.export-clicked(); } }
+            Button { text: "import from clipboard"; enabled: !root.editing && root.question == ""; clicked => { root.import-clipboard-clicked(); } }
+            Button { text: "import cookies.txt"; enabled: !root.editing && root.question == ""; clicked => { root.import-file-clicked(); } }
+        }
+        Text { text: root.message; color: Theme.text; wrap: word-wrap; }
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         if root.question != "": VerticalBox {
             Text { text: root.question; color: Theme.text; wrap: word-wrap; }
@@ -74,5 +81,41 @@ export component EditNetworkValueWindow inherits Window {
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         Rectangle { vertical-stretch: 1; }
         HorizontalBox { Rectangle { horizontal-stretch: 1; } Button { text: "ok"; clicked => { root.apply-clicked(); } } Button { text: "cancel"; clicked => { root.cancel-clicked(); } } }
+    }
+}
+
+export component CookieImportWindow inherits Window {
+    title: "import cookies"; width: 700px; height: 350px; background: Theme.window;
+    in property <string> message; in property <bool> choosing;
+    in property <string> matching-label;
+    callback action(string);
+    VerticalBox { padding: 16px; spacing: 12px;
+        Text { text: root.message; color: Theme.text; wrap: word-wrap; }
+        Rectangle { vertical-stretch: 1; }
+        if root.choosing: VerticalBox {
+            Button { text: root.matching-label; clicked => { root.action("matching"); } }
+            Button { text: "import everything--I intend to rename the domains"; clicked => { root.action("all"); } }
+        }
+        HorizontalBox {
+            Rectangle { horizontal-stretch: 1; }
+            if !root.choosing: Button { text: "yes"; clicked => { root.action("import"); } }
+            Button { text: root.choosing ? "cancel" : "no"; clicked => { root.action("cancel"); } }
+        }
+    }
+}
+
+export component HeaderApprovalWindow inherits Window {
+    title: "custom HTTP header approval"; width: 700px; height: 360px; background: Theme.window;
+    in property <string> question; in property <string> error; in property <bool> busy;
+    callback answer(bool); callback later();
+    VerticalBox { padding: 18px; spacing: 12px;
+        Text { text: root.question; wrap: word-wrap; color: Theme.text; }
+        Text { text: root.error; wrap: word-wrap; color: Theme.error; }
+        Rectangle { vertical-stretch: 1; }
+        HorizontalBox { Rectangle { horizontal-stretch: 1; }
+            Button { text: "yes"; enabled: !root.busy; clicked => { root.answer(true); } }
+            Button { text: "no"; enabled: !root.busy; clicked => { root.answer(false); } }
+            Button { text: "later"; enabled: !root.busy; clicked => { root.later(); } }
+        }
     }
 }

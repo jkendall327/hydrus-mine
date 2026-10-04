@@ -144,6 +144,7 @@ fn fresh_live_usage_wins_until_the_daemon_heartbeat_expires() {
                     at: 100,
                     usage: vec![(NetworkContext::global(), tracker)],
                     jobs: Vec::new(),
+                    ..Snapshot::default()
                 },
             )
         })
@@ -160,5 +161,132 @@ fn fresh_live_usage_wins_until_the_daemon_heartbeat_expires() {
             .unwrap()
             .row(&NetworkContext::global(), None, 106)[4],
         "0B in 0 requests"
+    );
+}
+
+#[test]
+fn reference_bandwidth_age_rule_filters_months_and_history_deletion() {
+    use hydrus_store::bandwidth::{self, HistoryResets};
+    use std::collections::BTreeMap;
+    let f = hydrus_testkit::fixture_json("bandwidth_history.json");
+    let now = f["now"].as_i64().unwrap();
+    let context = |name: &str| {
+        if name == "page" {
+            NetworkContext::downloader_page("91".repeat(16))
+        } else {
+            NetworkContext::domain(format!("{name}.example.com"))
+        }
+    };
+    let mut trackers = BTreeMap::new();
+    for event in f["events"].as_array().unwrap() {
+        let at = event[0].as_i64().unwrap();
+        let name = event[1].as_str().unwrap();
+        let tracker = trackers
+            .entry(context(name))
+            .or_insert_with(|| Tracker::new(at));
+        tracker.report_data(event[2].as_u64().unwrap(), at);
+        tracker.report_requests(event[3].as_u64().unwrap(), at);
+    }
+    let rules = Rules::new([Rule::new(BandwidthType::Data, Some(86400), 100_000)]);
+    let review = Review {
+        settings: BandwidthSettings {
+            rules: vec![(context("rules"), rules.clone())],
+            ..BandwidthSettings::default()
+        },
+        runtime: Snapshot::default(),
+        usage: trackers.into_iter().collect(),
+        live: false,
+    };
+    for filter in f["filters"].as_array().unwrap() {
+        let mut visible = review
+            .filtered_contexts(
+                filter["span"].as_u64(),
+                filter["include_rules"].as_bool().unwrap(),
+                now,
+            )
+            .iter()
+            .map(NetworkContext::to_human_string)
+            .collect::<Vec<_>>();
+        visible.sort();
+        assert_eq!(serde_json::json!(visible), filter["contexts"]);
+    }
+    let mut live_sort = review.clone();
+    live_sort.live = true;
+    for name in ["recent", "old", "bytes"] {
+        let recorded = &f["sort_rows"][name];
+        assert_eq!(
+            live_sort.sort_key(&context(name), 2, None, now),
+            model::SortKey::Counts(recorded[2].as_u64().unwrap(), 0)
+        );
+        for column in [3, 4, 5] {
+            assert_eq!(
+                live_sort.sort_key(&context(name), column, None, now),
+                model::SortKey::Counts(
+                    recorded[column][0].as_u64().unwrap(),
+                    recorded[column][1].as_u64().unwrap()
+                )
+            );
+        }
+    }
+    let months = model::monthly_history(&review.tracker(&context("recent"), now));
+    assert_eq!(
+        serde_json::json!(
+            months
+                .iter()
+                .map(|m| (&m.month, m.bytes))
+                .collect::<Vec<_>>()
+        ),
+        f["months"]
+    );
+    assert!(months.windows(2).all(|pair| pair[0].month < pair[1].month));
+    assert!((months[2].fraction - 1.0 / 1.2).abs() < 0.0001);
+    assert_eq!(model::DELETE_HISTORY_QUESTION, f["questions"][0]);
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let usage = review.usage.clone();
+    let options = review.settings.clone();
+    store
+        .write(move |ctx| {
+            bandwidth::save_usage(ctx.conn(), &usage)?;
+            settings::set(ctx.conn(), &options)
+        })
+        .unwrap();
+    let original = store.read(|c| bandwidth::usage(c, now)).unwrap();
+    let delete = vec![context("recent"), context("rules")];
+    store
+        .write(move |ctx| bandwidth::delete_history(ctx.conn(), &delete))
+        .unwrap();
+    // A delayed pre-delete engine flush cannot restore the deleted usage.
+    store
+        .write(move |ctx| {
+            bandwidth::save_usage_after_resets(ctx.conn(), &original, &HistoryResets::default())
+        })
+        .unwrap();
+    let fresh = Review::load(&store, now).unwrap();
+    assert!(model::monthly_history(&fresh.tracker(&context("recent"), now)).is_empty());
+    assert_eq!(fresh.rules(&context("rules")), rules);
+    assert!(fresh.usage.iter().any(|(c, _)| c == &context("old")));
+    let mut remaining = fresh
+        .filtered_contexts(None, false, now)
+        .iter()
+        .map(NetworkContext::to_human_string)
+        .collect::<Vec<_>>();
+    remaining.sort();
+    assert_eq!(serde_json::json!(remaining), f["contexts_after_delete"]);
+    let revisions = store.read(settings::get::<HistoryResets>).unwrap();
+    assert_eq!(revisions.generation(&context("recent")), 1);
+    drop(store);
+    let store = Store::open(dir.path()).unwrap();
+    assert_eq!(
+        store.read(settings::get::<HistoryResets>).unwrap(),
+        revisions
+    );
+    assert!(
+        model::monthly_history(
+            &Review::load(&store, now)
+                .unwrap()
+                .tracker(&context("recent"), now)
+        )
+        .is_empty()
     );
 }

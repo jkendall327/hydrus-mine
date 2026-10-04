@@ -64,6 +64,7 @@ fn ctrl_r_and_ctrl_e() {
         namespaces: vec!["series".into()],
         ratings: Vec::new(),
         collect_unmatched: true,
+        tag_context: hydrus_core::search::context::TagContext::default(),
     });
     page.borrow_mut().hit(Some(0), false, false);
     launched.borrow_mut().clear();

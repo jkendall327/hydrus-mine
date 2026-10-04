@@ -1,0 +1,996 @@
+{
+  "initial": {
+    "data": [
+      [
+        [
+          "series",
+          "creator",
+          "title",
+          "volume",
+          "chapter",
+          "page"
+        ],
+        1
+      ],
+      [
+        [
+          "creator",
+          "series",
+          "title",
+          "volume",
+          "chapter",
+          "page"
+        ],
+        1
+      ]
+    ],
+    "labels": [
+      "series-creator-title-volume-chapter-page",
+      "creator-series-title-volume-chapter-page"
+    ],
+    "selected": []
+  },
+  "steps": [
+    {
+      "action": "_Add",
+      "selection": null,
+      "text": null,
+      "view": null,
+      "advanced": false,
+      "accepted": null,
+      "calls": [
+        {
+          "kind": "text",
+          "message": "Write the namespaces you would like to sort by here, separated by hyphens. Any namespace in any of your sort definitions will be added to the collect-by menu.\n\nIf the namespace you want to add has a hyphen, like 'creator-id', instead type it with a backslash escape, like 'creator\\-id-page'.",
+          "default": "creator-series-page",
+          "allow_blank": false,
+          "answer": null
+        }
+      ],
+      "state": {
+        "data": [
+          [
+            [
+              "series",
+              "creator",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator",
+              "series",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ]
+        ],
+        "labels": [
+          "series-creator-title-volume-chapter-page",
+          "creator-series-title-volume-chapter-page"
+        ],
+        "selected": []
+      }
+    },
+    {
+      "action": "_Add",
+      "selection": null,
+      "text": "---",
+      "view": null,
+      "advanced": false,
+      "accepted": null,
+      "calls": [
+        {
+          "kind": "text",
+          "message": "Write the namespaces you would like to sort by here, separated by hyphens. Any namespace in any of your sort definitions will be added to the collect-by menu.\n\nIf the namespace you want to add has a hyphen, like 'creator-id', instead type it with a backslash escape, like 'creator\\-id-page'.",
+          "default": "creator-series-page",
+          "allow_blank": false,
+          "answer": "---"
+        }
+      ],
+      "state": {
+        "data": [
+          [
+            [
+              "series",
+              "creator",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator",
+              "series",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ]
+        ],
+        "labels": [
+          "series-creator-title-volume-chapter-page",
+          "creator-series-title-volume-chapter-page"
+        ],
+        "selected": []
+      }
+    },
+    {
+      "action": "_Add",
+      "selection": null,
+      "text": " CREATOR\\-ID - SERIES - PAGE ",
+      "view": null,
+      "advanced": false,
+      "accepted": null,
+      "calls": [
+        {
+          "kind": "text",
+          "message": "Write the namespaces you would like to sort by here, separated by hyphens. Any namespace in any of your sort definitions will be added to the collect-by menu.\n\nIf the namespace you want to add has a hyphen, like 'creator-id', instead type it with a backslash escape, like 'creator\\-id-page'.",
+          "default": "creator-series-page",
+          "allow_blank": false,
+          "answer": " CREATOR\\-ID - SERIES - PAGE "
+        }
+      ],
+      "state": {
+        "data": [
+          [
+            [
+              "series",
+              "creator",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator",
+              "series",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ]
+        ],
+        "labels": [
+          "series-creator-title-volume-chapter-page",
+          "creator-series-title-volume-chapter-page",
+          "creator-id-series-page"
+        ],
+        "selected": []
+      }
+    },
+    {
+      "action": "_Add",
+      "selection": null,
+      "text": "creator\\-id-series-page",
+      "view": null,
+      "advanced": false,
+      "accepted": null,
+      "calls": [
+        {
+          "kind": "text",
+          "message": "Write the namespaces you would like to sort by here, separated by hyphens. Any namespace in any of your sort definitions will be added to the collect-by menu.\n\nIf the namespace you want to add has a hyphen, like 'creator-id', instead type it with a backslash escape, like 'creator\\-id-page'.",
+          "default": "creator-series-page",
+          "allow_blank": false,
+          "answer": "creator\\-id-series-page"
+        }
+      ],
+      "state": {
+        "data": [
+          [
+            [
+              "series",
+              "creator",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator",
+              "series",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ]
+        ],
+        "labels": [
+          "series-creator-title-volume-chapter-page",
+          "creator-series-title-volume-chapter-page",
+          "creator-id-series-page",
+          "creator-id-series-page"
+        ],
+        "selected": []
+      }
+    },
+    {
+      "action": "_Edit",
+      "selection": [
+        0
+      ],
+      "text": null,
+      "view": null,
+      "advanced": false,
+      "accepted": null,
+      "calls": [
+        {
+          "kind": "text",
+          "message": "Write the namespaces you would like to sort by here, separated by hyphens. Any namespace in any of your sort definitions will be added to the collect-by menu.\n\nIf the namespace you want to add has a hyphen, like 'creator-id', instead type it with a backslash escape, like 'creator\\-id-page'.",
+          "default": "series-creator-title-volume-chapter-page",
+          "allow_blank": false,
+          "answer": null
+        }
+      ],
+      "state": {
+        "data": [
+          [
+            [
+              "series",
+              "creator",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator",
+              "series",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ]
+        ],
+        "labels": [
+          "series-creator-title-volume-chapter-page",
+          "creator-series-title-volume-chapter-page",
+          "creator-id-series-page",
+          "creator-id-series-page"
+        ],
+        "selected": [
+          0
+        ]
+      }
+    },
+    {
+      "action": "_Edit",
+      "selection": [
+        0
+      ],
+      "text": "TITLE-SERIES",
+      "view": null,
+      "advanced": true,
+      "accepted": null,
+      "calls": [
+        {
+          "kind": "text",
+          "message": "Write the namespaces you would like to sort by here, separated by hyphens. Any namespace in any of your sort definitions will be added to the collect-by menu.\n\nIf the namespace you want to add has a hyphen, like 'creator-id', instead type it with a backslash escape, like 'creator\\-id-page'.",
+          "default": "series-creator-title-volume-chapter-page",
+          "allow_blank": false,
+          "answer": "TITLE-SERIES"
+        },
+        {
+          "kind": "view",
+          "title": "select tag view to sort on",
+          "message": "If you filter your different tag views (e.g. hiding the PTR's title tags), sorting on those views may give a different order. If you are not sure on this, set 'display tags'.",
+          "choices": [
+            [
+              "display tags",
+              1,
+              "display tags"
+            ],
+            [
+              "multiple media view tags",
+              3,
+              "multiple media view tags"
+            ],
+            [
+              "single media view tags",
+              2,
+              "single media view tags"
+            ]
+          ],
+          "answer": null
+        }
+      ],
+      "state": {
+        "data": [
+          [
+            [
+              "series",
+              "creator",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator",
+              "series",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ]
+        ],
+        "labels": [
+          "series-creator-title-volume-chapter-page",
+          "creator-series-title-volume-chapter-page",
+          "creator-id-series-page",
+          "creator-id-series-page"
+        ],
+        "selected": [
+          0
+        ]
+      }
+    },
+    {
+      "action": "_Edit",
+      "selection": [
+        0
+      ],
+      "text": "TITLE-SERIES",
+      "view": 1,
+      "advanced": true,
+      "accepted": null,
+      "calls": [
+        {
+          "kind": "text",
+          "message": "Write the namespaces you would like to sort by here, separated by hyphens. Any namespace in any of your sort definitions will be added to the collect-by menu.\n\nIf the namespace you want to add has a hyphen, like 'creator-id', instead type it with a backslash escape, like 'creator\\-id-page'.",
+          "default": "series-creator-title-volume-chapter-page",
+          "allow_blank": false,
+          "answer": "TITLE-SERIES"
+        },
+        {
+          "kind": "view",
+          "title": "select tag view to sort on",
+          "message": "If you filter your different tag views (e.g. hiding the PTR's title tags), sorting on those views may give a different order. If you are not sure on this, set 'display tags'.",
+          "choices": [
+            [
+              "display tags",
+              1,
+              "display tags"
+            ],
+            [
+              "multiple media view tags",
+              3,
+              "multiple media view tags"
+            ],
+            [
+              "single media view tags",
+              2,
+              "single media view tags"
+            ]
+          ],
+          "answer": 1
+        }
+      ],
+      "state": {
+        "data": [
+          [
+            [
+              "title",
+              "series"
+            ],
+            3
+          ],
+          [
+            [
+              "creator",
+              "series",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ]
+        ],
+        "labels": [
+          "title-series",
+          "creator-series-title-volume-chapter-page",
+          "creator-id-series-page",
+          "creator-id-series-page"
+        ],
+        "selected": [
+          0
+        ]
+      }
+    },
+    {
+      "action": "_Add",
+      "selection": null,
+      "text": "title-page",
+      "view": 2,
+      "advanced": true,
+      "accepted": null,
+      "calls": [
+        {
+          "kind": "text",
+          "message": "Write the namespaces you would like to sort by here, separated by hyphens. Any namespace in any of your sort definitions will be added to the collect-by menu.\n\nIf the namespace you want to add has a hyphen, like 'creator-id', instead type it with a backslash escape, like 'creator\\-id-page'.",
+          "default": "creator-series-page",
+          "allow_blank": false,
+          "answer": "title-page"
+        },
+        {
+          "kind": "view",
+          "title": "select tag view to sort on",
+          "message": "If you filter your different tag views (e.g. hiding the PTR's title tags), sorting on those views may give a different order. If you are not sure on this, set 'display tags'.",
+          "choices": [
+            [
+              "display tags",
+              1,
+              "display tags"
+            ],
+            [
+              "multiple media view tags",
+              3,
+              "multiple media view tags"
+            ],
+            [
+              "single media view tags",
+              2,
+              "single media view tags"
+            ]
+          ],
+          "answer": 2
+        }
+      ],
+      "state": {
+        "data": [
+          [
+            [
+              "title",
+              "series"
+            ],
+            3
+          ],
+          [
+            [
+              "creator",
+              "series",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "title",
+              "page"
+            ],
+            2
+          ]
+        ],
+        "labels": [
+          "title-series",
+          "creator-series-title-volume-chapter-page",
+          "creator-id-series-page",
+          "creator-id-series-page",
+          "title-page"
+        ],
+        "selected": [
+          0
+        ]
+      }
+    },
+    {
+      "action": "_Edit",
+      "selection": [
+        0,
+        1
+      ],
+      "text": "character-title",
+      "view": null,
+      "advanced": false,
+      "accepted": null,
+      "calls": [
+        {
+          "kind": "text",
+          "message": "Write the namespaces you would like to sort by here, separated by hyphens. Any namespace in any of your sort definitions will be added to the collect-by menu.\n\nIf the namespace you want to add has a hyphen, like 'creator-id', instead type it with a backslash escape, like 'creator\\-id-page'.",
+          "default": "title-series",
+          "allow_blank": false,
+          "answer": "character-title"
+        }
+      ],
+      "state": {
+        "data": [
+          [
+            [
+              "character",
+              "title"
+            ],
+            1
+          ],
+          [
+            [
+              "creator",
+              "series",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "title",
+              "page"
+            ],
+            2
+          ]
+        ],
+        "labels": [
+          "character-title",
+          "creator-series-title-volume-chapter-page",
+          "creator-id-series-page",
+          "creator-id-series-page",
+          "title-page"
+        ],
+        "selected": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "action": "_Up",
+      "selection": [
+        4
+      ],
+      "text": null,
+      "view": null,
+      "advanced": false,
+      "accepted": null,
+      "calls": [],
+      "state": {
+        "data": [
+          [
+            [
+              "character",
+              "title"
+            ],
+            1
+          ],
+          [
+            [
+              "creator",
+              "series",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "title",
+              "page"
+            ],
+            2
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ]
+        ],
+        "labels": [
+          "character-title",
+          "creator-series-title-volume-chapter-page",
+          "creator-id-series-page",
+          "title-page",
+          "creator-id-series-page"
+        ],
+        "selected": [
+          3
+        ]
+      }
+    },
+    {
+      "action": "_Down",
+      "selection": [
+        0,
+        1
+      ],
+      "text": null,
+      "view": null,
+      "advanced": false,
+      "accepted": null,
+      "calls": [],
+      "state": {
+        "data": [
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "character",
+              "title"
+            ],
+            1
+          ],
+          [
+            [
+              "creator",
+              "series",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "title",
+              "page"
+            ],
+            2
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ]
+        ],
+        "labels": [
+          "creator-id-series-page",
+          "character-title",
+          "creator-series-title-volume-chapter-page",
+          "title-page",
+          "creator-id-series-page"
+        ],
+        "selected": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "action": "_Delete",
+      "selection": [
+        0,
+        1
+      ],
+      "text": null,
+      "view": null,
+      "advanced": false,
+      "accepted": false,
+      "calls": [
+        {
+          "kind": "question",
+          "message": "Remove 2 selected?",
+          "answer": false
+        }
+      ],
+      "state": {
+        "data": [
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "character",
+              "title"
+            ],
+            1
+          ],
+          [
+            [
+              "creator",
+              "series",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "title",
+              "page"
+            ],
+            2
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ]
+        ],
+        "labels": [
+          "creator-id-series-page",
+          "character-title",
+          "creator-series-title-volume-chapter-page",
+          "title-page",
+          "creator-id-series-page"
+        ],
+        "selected": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "action": "_Delete",
+      "selection": [
+        0,
+        1
+      ],
+      "text": null,
+      "view": null,
+      "advanced": false,
+      "accepted": true,
+      "calls": [
+        {
+          "kind": "question",
+          "message": "Remove 2 selected?",
+          "answer": true
+        }
+      ],
+      "state": {
+        "data": [
+          [
+            [
+              "creator",
+              "series",
+              "title",
+              "volume",
+              "chapter",
+              "page"
+            ],
+            1
+          ],
+          [
+            [
+              "title",
+              "page"
+            ],
+            2
+          ],
+          [
+            [
+              "creator-id",
+              "series",
+              "page"
+            ],
+            1
+          ]
+        ],
+        "labels": [
+          "creator-series-title-volume-chapter-page",
+          "title-page",
+          "creator-id-series-page"
+        ],
+        "selected": []
+      }
+    }
+  ],
+  "draft_isolated": true,
+  "applied": [
+    [
+      [
+        "creator",
+        "series",
+        "title",
+        "volume",
+        "chapter",
+        "page"
+      ],
+      1
+    ],
+    [
+      [
+        "title",
+        "page"
+      ],
+      2
+    ],
+    [
+      [
+        "creator-id",
+        "series",
+        "page"
+      ],
+      1
+    ]
+  ],
+  "reopened": [
+    [
+      [
+        "creator",
+        "series",
+        "title",
+        "volume",
+        "chapter",
+        "page"
+      ],
+      1
+    ],
+    [
+      [
+        "title",
+        "page"
+      ],
+      2
+    ],
+    [
+      [
+        "creator-id",
+        "series",
+        "page"
+      ],
+      1
+    ]
+  ]
+}

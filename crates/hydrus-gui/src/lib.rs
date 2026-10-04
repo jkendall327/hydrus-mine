@@ -27,9 +27,12 @@ mod auto_resolution_preview_window;
 mod auto_resolution_review_window;
 mod auto_resolution_rules_window;
 mod checker_options_window;
+mod client_exit;
 pub mod clipboard_monitor;
 pub mod daemon;
+pub mod domain_mask_entry;
 pub mod downloader_definitions_window;
+pub mod downloader_display_window;
 pub mod downloader_interchange_window;
 mod drops;
 mod duplicates_sidebar;
@@ -44,12 +47,23 @@ mod folders_window;
 mod force_filetype_window;
 pub mod formula_window;
 mod gallery;
+pub mod gallery_source_window;
 mod grid;
 pub mod headless;
+pub mod import_options_favourites_window;
+pub mod import_options_overwrite_window;
+pub mod import_options_panel_window;
 mod import_options_window;
 mod import_window;
 mod importer_list_menu;
 pub mod locations_window;
+pub mod login_cookies_window;
+pub mod login_credential_window;
+pub mod login_domains_window;
+pub mod login_example_window;
+pub mod login_step_window;
+pub mod login_test_window;
+pub mod login_workflows_window;
 mod manage_notes_window;
 mod manage_ratings_window;
 pub(crate) mod manage_tags_window;
@@ -58,24 +72,33 @@ mod manage_urls_window;
 mod menu_bar;
 pub mod merge_options_window;
 pub mod mpv;
+pub mod network_header_approval;
 mod options_window;
 mod page;
 mod pages;
 pub mod parser_editors_window;
+mod parser_test_fetch;
 mod playback;
+pub mod png_export_window;
 mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
+pub mod regex_favourites_window;
+pub mod search_log_import_window;
 mod search_log_window;
 pub mod services_editor_window;
 pub mod services_review_window;
+pub mod session_autosave;
 mod session_dialog;
+pub mod session_startup;
 pub mod sidecars_window;
 pub mod simple_formulae_window;
 pub mod slideshow;
 pub mod still;
 pub mod string_processor_window;
+mod subscription_quality_control;
 mod subscriptions_window;
+mod tab_context_window;
 pub(crate) mod tag_display_window;
 pub mod tag_filter_window;
 pub mod tag_migration_window;
@@ -84,9 +107,15 @@ pub mod thumbnail_menu;
 mod thumbnails;
 mod unlock;
 mod viewer;
+pub mod viewer_closing;
+pub mod viewer_cursor;
+pub mod viewer_focus;
 pub mod viewer_menu;
+mod viewer_presentation;
 mod watcher;
 pub mod windows;
+pub mod write_tag_menu;
+pub mod write_tag_window;
 pub mod zoom;
 
 /// A window's zoomed file ([`zoom::Zoomed`]), drawn in its `media-x`,
@@ -170,7 +199,7 @@ pub use hydrus_gui_model::{
     manage_tags, media_actions, merge_options_editor, notes_editor, options, page_chooser,
     predicate_editors, ratings, ratings_editor, scanbar, search_log, selection, session_saving,
     sidecar_editors, sidecars, simple_downloader, sort, status, string_editors,
-    subscriptions_dedupe, subscriptions_dialog, subscriptions_list, tag_filter_editor,
+    subscriptions_dedupe, subscriptions_dialog, subscriptions_list, tab_context, tag_filter_editor,
     tag_relationships, thumbnail_icons, thumbnail_ratings, times_editor, urls_editor,
 };
 pub use page::SearchPage;
@@ -192,6 +221,8 @@ pub struct Bound {
     pub tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     /// Display/search or relationship application configuration.
     pub tag_display: Rc<RefCell<Option<TagDisplayWindow>>>,
+    /// The global tag migration window while one is open.
+    pub tag_migration: tag_migration_window::Slot,
     /// The manage notes dialog while one is open.
     pub manage_notes: Rc<RefCell<Option<ManageNotesWindow>>>,
     /// The manage ratings dialog while one is open.
@@ -214,6 +245,7 @@ pub struct Bound {
     pub about: Rc<RefCell<Option<AboutWindow>>>,
     /// Live network reviews and their detached rules editor.
     pub network_data: network_data_window::Slots,
+    pub network_controls: network_job_control::Binding,
     /// The review services window while it is open.
     pub services_review: Rc<RefCell<Option<ServicesReviewWindow>>>,
     /// Staged local service editors while open.
@@ -224,12 +256,16 @@ pub struct Bound {
     /// The session saving dialog while it is open (pages > sessions >
     /// save).
     pub session_dialog: Rc<RefCell<Option<SessionDialog>>>,
+    /// The clicked page or newly grouped notebook's text-entry window.
+    pub tab_name_dialog: Rc<RefCell<Option<SessionDialog>>>,
     /// The manage subscriptions dialog while it is open.
     pub subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>>,
     /// The subscriptions gallery chooser, before adding or overwriting.
     pub subscription_gallery: Rc<RefCell<Option<SubscriptionGalleryWindow>>>,
     /// URL class and gallery URL generator definition editors.
     pub downloader_definitions: downloader_definitions_window::Slots,
+    /// Login script lists and their staged descendants.
+    pub login_workflows: login_workflows_window::Slots,
     /// Native parser and URL-class link windows.
     pub parser_editors: parser_editors_window::Slots,
     pub network_sessions: network_sessions_window::Slots,
@@ -282,6 +318,9 @@ pub struct Bound {
     _popups: Rc<slint::Timer>,
     /// Automatic recognised URL imports while this desktop window is bound.
     pub clipboard_monitor: clipboard_monitor::Monitor,
+    /// Historical autosaves, with real input activity and a bounded timer.
+    pub session_autosave: session_autosave::Monitor,
+    _header_approval: network_header_approval::Monitor,
 }
 
 impl std::fmt::Debug for Bound {
@@ -357,6 +396,7 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
 pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     about_window::note_boot();
     let pages = Rc::new(RefCell::new(pages));
+    let session_autosave = session_autosave::bind(window, &pages);
     let first = pages.borrow_mut().current();
     let current = Rc::new(RefCell::new(first.clone()));
     let rows = Rc::new(ThumbnailRows::new(first));
@@ -418,7 +458,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // is in use)
     let scrolls: Rc<RefCell<std::collections::HashMap<hydrus_core::pages::PageKey, f32>>> =
         Rc::default();
+    let viewer_exit_scrolls: Rc<
+        RefCell<std::collections::HashMap<hydrus_core::pages::PageKey, HashId>>,
+    > = Rc::default();
+    let reveal_viewer_exit: Rc<dyn Fn(hydrus_core::pages::PageKey, HashId)> = Rc::new({
+        let pending = viewer_exit_scrolls.clone();
+        move |key, file| {
+            pending.borrow_mut().insert(key, file);
+        }
+    });
     let change_pages = {
+        let viewer_exit_scrolls = viewer_exit_scrolls.clone();
+        let scrolls = scrolls.clone();
         let pages = pages.clone();
         let current = current.clone();
         let rows = rows.clone();
@@ -426,6 +477,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         let after_change = after_change.clone();
         move |change: &dyn Fn(&mut Pages) -> Result<(), String>| {
+            let previous = pages.borrow().shown().key;
             if let Some(window) = weak.upgrade() {
                 let key = pages.borrow().shown().key;
                 scrolls.borrow_mut().insert(key, window.get_grid_scroll());
@@ -440,20 +492,143 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if let Some(after) = after {
                 after();
             }
+            if !Rc::ptr_eq(&opened, &current.borrow()) {
+                // Background pages pick up current tag presentation when activated.
+                opened.borrow_mut().refresh_tags();
+            }
             *current.borrow_mut() = opened.clone();
             let key = pages.borrow().shown().key;
+            let focus_on_change = previous != key && {
+                let settings: hydrus_store::settings::PageNavigationSettings = pages
+                    .borrow()
+                    .store()
+                    .read(hydrus_store::settings::get)
+                    .unwrap_or_default();
+                settings.focus_search_on_change
+            };
             let scroll = scrolls.borrow().get(&key).copied().unwrap_or(0.0);
-            rows.set_page(opened);
+            rows.set_page(opened.clone());
             if let Some(window) = weak.upgrade() {
+                // A conditional sidebar may initialize after the property-change
+                // notification. Its initial input focus uses this same eligibility.
+                window.set_page_focus_on_show(focus_on_change);
                 show_tabs(&window, &pages.borrow());
                 window.set_grid_scroll(scroll);
             }
             shown(false);
+            if focus_on_change && let Some(window) = weak.upgrade() {
+                if window.get_note().is_empty() && !window.get_search_locked() {
+                    window.set_search_focus_requests(
+                        window.get_search_focus_requests().wrapping_add(1),
+                    );
+                } else if !window.get_local_import()
+                    && (window.get_importing()
+                        || window.get_gallery_page()
+                        || window.get_watcher_page())
+                {
+                    window
+                        .set_page_focus_requests(window.get_page_focus_requests().wrapping_add(1));
+                }
+            }
+            if let Some(file) = viewer_exit_scrolls.borrow_mut().remove(&key) {
+                let page = opened.borrow();
+                let index = page
+                    .results()
+                    .iter()
+                    .position(|&item| page.files_of(item).contains(&file));
+                if let (Some(index), Some(window)) = (index, weak.upgrade()) {
+                    window.set_viewer_reveal_index(i32::try_from(index).unwrap_or(i32::MAX));
+                    window.set_viewer_reveal_request(
+                        window.get_viewer_reveal_request().wrapping_add(1),
+                    );
+                }
+            }
             if let (Err(e), Some(window)) = (result, weak.upgrade()) {
                 window.set_error(e.into());
             }
         }
     };
+    // Tag-list menus publish through weak main-window/page handles.
+    write_tag_menu::install_search_launcher(Rc::new({
+        let pages = Rc::downgrade(&pages);
+        let current = Rc::downgrade(&current);
+        let rows = Rc::downgrade(&rows);
+        let duplicates = Rc::downgrade(&duplicates);
+        let after_change = Rc::downgrade(&after_change);
+        let scrolls = Rc::downgrade(&scrolls);
+        let weak = window.as_weak();
+        move |location, tags, predicates, duplicate| {
+            let (
+                Some(window),
+                Some(pages),
+                Some(current),
+                Some(rows),
+                Some(duplicates),
+                Some(after_change),
+                Some(scrolls),
+            ) = (
+                weak.upgrade(),
+                pages.upgrade(),
+                current.upgrade(),
+                rows.upgrade(),
+                duplicates.upgrade(),
+                after_change.upgrade(),
+                scrolls.upgrade(),
+            )
+            else {
+                return;
+            };
+            // OR groups keep their structure in the search. Visit their tags
+            // only to name the new page, just as for top-level AND predicates.
+            let mut pending = predicates.iter().collect::<Vec<_>>();
+            let mut names = Vec::new();
+            while let Some(predicate) = pending.pop() {
+                match predicate {
+                    hydrus_core::search::predicate::Predicate::Tag { tag, .. } => {
+                        names.push(tag.as_str().to_owned());
+                    }
+                    hydrus_core::search::predicate::Predicate::Or(children) => {
+                        pending.extend(children);
+                    }
+                    _ => (),
+                }
+            }
+            if names.is_empty() {
+                return;
+            }
+            names.sort();
+            let name = names.join(", ");
+            let previous = pages.borrow().shown().key;
+            scrolls
+                .borrow_mut()
+                .insert(previous, window.get_grid_scroll());
+            let opened = {
+                let mut pages = pages.borrow_mut();
+                if duplicate {
+                    pages.open_duplicates_with_context(
+                        location,
+                        tags,
+                        predicates,
+                        &format!("duplicates: {name}"),
+                    );
+                } else {
+                    pages.open_search_with_context(location, Some(tags), predicates, &name);
+                }
+                pages.note_shown();
+                pages.current()
+            };
+            let after = after_change.borrow().clone();
+            if let Some(after) = after {
+                after();
+            }
+            *current.borrow_mut() = opened.clone();
+            rows.set_page(opened);
+            show_tabs(&window, &pages.borrow());
+            window.set_grid_scroll(0.0);
+            refresh(&window, &current.borrow().borrow());
+            duplicates.show(&window, &current.borrow().borrow());
+        }
+    }));
     window.on_tab_chosen({
         let change_pages = change_pages.clone();
         move |level, index| {
@@ -551,10 +726,26 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let chooser = chooser.clone();
         let show_chooser = show_chooser.clone();
         let change_pages = change_pages.clone();
+        let pages = pages.clone();
+        let weak = window.as_weak();
         move |choice: Option<page_chooser::NewPage>| {
             if let Some(choice) = choice {
                 chooser.borrow_mut().take();
-                change_pages(&|pages| pages.new_page(&choice));
+                let created = Cell::new(None);
+                change_pages(&|pages| {
+                    created.set(pages.new_page_from_chooser(&choice)?);
+                    Ok(())
+                });
+                let settings: hydrus_store::settings::NotebookCreationSettings = pages
+                    .borrow()
+                    .store()
+                    .read(hydrus_store::settings::get)
+                    .unwrap_or_default();
+                if settings.rename_new_notebooks
+                    && let (Some(key), Some(window)) = (created.get(), weak.upgrade())
+                {
+                    window.invoke_notebook_rename_requested(key.to_hex().into());
+                }
             }
             show_chooser();
         }
@@ -567,6 +758,32 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let store = {
                 let mut pages = pages.borrow_mut();
                 pages.new_page_in(None);
+                pages.store().clone()
+            };
+            *chooser.borrow_mut() = Some(page_chooser::PageChooser::new(&store));
+            show_chooser();
+        }
+    });
+    window.on_tab_new_page_requested({
+        let chooser = chooser.clone();
+        let pages = pages.clone();
+        let show_chooser = show_chooser.clone();
+        move |parent, before| {
+            let parse = |text: slint::SharedString| {
+                if text.is_empty() {
+                    Some(None)
+                } else {
+                    hydrus_core::pages::PageKey::from_hex(text.as_str()).map(Some)
+                }
+            };
+            let (Some(parent), Some(before)) = (parse(parent), parse(before)) else {
+                return;
+            };
+            let store = {
+                let mut pages = pages.borrow_mut();
+                if pages.new_page_at(parent, before).is_err() {
+                    return;
+                }
                 pages.store().clone()
             };
             *chooser.borrow_mut() = Some(page_chooser::PageChooser::new(&store));
@@ -867,18 +1084,37 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     }));
     // logs' files, shown in new pages
-    let open_files = file_log_window::OpenFiles({
-        let change_pages = change_pages.clone();
-        Rc::new(move |files| {
-            let location = hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
-                hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
-            ));
-            change_pages(&|pages| {
-                pages.open_files(location.clone(), files.clone(), None, None);
-                Ok(())
-            });
-        })
-    });
+    let open_files = file_log_window::OpenFiles(
+        {
+            let change_pages = change_pages.clone();
+            Rc::new(move |files| {
+                let location =
+                    hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                        hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+                    ));
+                change_pages(&|pages| {
+                    pages.open_files(location.clone(), files.clone(), None, None);
+                    Ok(())
+                });
+            })
+        },
+        {
+            let change_pages = change_pages.clone();
+            Rc::new(move |urls| {
+                let location =
+                    hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                        hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+                    ));
+                let predicates = crate::file_log::url_search(&urls);
+                change_pages(&|pages| {
+                    pages.open_search(location.clone(), predicates.clone(), "url search");
+                    Ok(())
+                });
+            })
+        },
+        png_export_window::Slots::default(),
+        search_log_import_window::Slots::default(),
+    );
     // the page's importer's file log
     let file_log_slot: Rc<RefCell<Option<FileLogWindow>>> = Rc::default();
     let file_log = file_log_slot.clone();
@@ -892,10 +1128,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let Some(importer) = page.importer() else {
                 return;
             };
-            if let Some(old) = file_log.borrow_mut().take() {
-                let _ = old.hide();
+            let old = file_log.borrow_mut().take();
+            if let Some(old) = old {
+                old.invoke_close_window();
             }
-            match file_log_window::open(page.store(), importer.queue, &file_log, &open_files.0) {
+            match file_log_window::open(page.store(), importer.queue, &file_log, &open_files) {
                 Ok(window) => *file_log.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the file log: {e}"),
             }
@@ -911,8 +1148,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let Some(importer) = page.importer() else {
                 return;
             };
-            if let Some(old) = file_log.borrow_mut().take() {
-                let _ = old.hide();
+            let old = file_log.borrow_mut().take();
+            if let Some(old) = old {
+                old.invoke_close_window();
             }
             match search_log_window::open(page.store(), importer.queue, &file_log) {
                 Ok(window) => *file_log.borrow_mut() = Some(window),
@@ -962,6 +1200,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
     let tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>> = Rc::default();
     let tag_display: Rc<RefCell<Option<TagDisplayWindow>>> = Rc::default();
+    let tag_migration = tag_migration_window::Slot::default();
     let tags_changed: Rc<dyn Fn()> = Rc::new({
         let page = page.clone();
         let shown = shown.clone();
@@ -1120,6 +1359,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let page = page.clone();
         move || page().borrow().selected_files()
     };
+    let exit_confirmation = Rc::new(slint::Timer::default());
     let pending: Rc<RefCell<Option<Asked>>> = Rc::default();
     let ask = {
         let pending = pending.clone();
@@ -1131,6 +1371,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     };
+    client_exit::bind(
+        window,
+        page().borrow().store().clone(),
+        &exit_confirmation,
+        Rc::new({
+            let ask = ask.clone();
+            move |question, then| ask(Asked::Then(question, then))
+        }),
+    );
     // (the status bar counts the selection's inbox)
     let archive_or_inbox = |archive: bool| {
         let page = page.clone();
@@ -1184,12 +1433,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     window.on_answer({
+        let exit_confirmation = exit_confirmation.clone();
         let page = page.clone();
         let weak = window.as_weak();
         let removed = removed.clone();
         let shown = shown.clone();
         let change_pages = change_pages.clone();
         move |yes| {
+            exit_confirmation.stop();
             let asked = pending.borrow_mut().take();
             if let Some(window) = weak.upgrade() {
                 window.set_question(SharedString::new());
@@ -1248,6 +1499,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    let tab_name_dialog = tab_context_window::bind(window, &pages, Rc::new(change_pages.clone()));
     // the menu bar, its titles shown again as what they say changes
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
@@ -1259,6 +1511,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
     let subscription_gallery: Rc<RefCell<Option<SubscriptionGalleryWindow>>> = Rc::default();
     let downloader_definitions = downloader_definitions_window::Slots::default();
+    let login_workflows = login_workflows_window::Slots::default();
     let parser_editors = parser_editors_window::Slots::default();
     let network_sessions = network_sessions_window::Slots::default();
     let edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>> = Rc::default();
@@ -1276,6 +1529,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             move || change_pages(&|_| Ok(()))
         }),
     );
+    let header_approval =
+        network_header_approval::Monitor::bind(window, pages.borrow().store().clone());
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
@@ -1326,6 +1581,46 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 })
             },
+            tag_migrate: Rc::new({
+                let slot = tag_migration.clone();
+                let pages = pages.clone();
+                let changed: Rc<dyn Fn()> = Rc::new({
+                    let pages = pages.clone();
+                    let shown = shown.clone();
+                    let rows = rows.clone();
+                    let viewer = viewer.clone();
+                    let manage_tags = manage_tags.clone();
+                    move || {
+                        for page in pages.borrow().open_pages() {
+                            page.borrow_mut().refresh_tags();
+                        }
+                        rows.forget_files();
+                        shown(false);
+                        if let Some(window) = viewer.borrow().as_ref() {
+                            window.invoke_refresh_tags();
+                        }
+                        if let Some(window) = manage_tags.borrow().as_ref() {
+                            window.invoke_refresh_autocomplete();
+                        }
+                    }
+                });
+                move || {
+                    let store = pages.borrow().store().clone();
+                    let preferences = store
+                        .read(
+                            hydrus_store::settings::get::<
+                                hydrus_store::tag_editing::TagEditingSettings,
+                            >,
+                        )
+                        .unwrap_or_default();
+                    let key = preferences.default_service;
+                    if let Err(error) =
+                        tag_migration_window::open(&store, &key, Vec::new(), &slot, changed.clone())
+                    {
+                        eprintln!("could not open tag migration: {error}");
+                    }
+                }
+            }),
             tag_relationships: {
                 let slot = tag_relationships.clone();
                 let pages = pages.clone();
@@ -1372,6 +1667,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let pages = pages.clone();
                 let slot = options.clone();
                 let checker_slot = checker_options.clone();
+                let viewer = viewer.clone();
                 let change_pages = change_pages.clone();
                 let rows = rows.clone();
                 let weak = window.as_weak();
@@ -1382,6 +1678,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let store = pages.borrow().store().clone();
                     let thumbnails_before = store.snapshot().thumbnails;
                     let applied: Rc<dyn Fn()> = Rc::new({
+                        let viewer = viewer.clone();
                         let pages = pages.clone();
                         let change_pages = change_pages.clone();
                         let rows = rows.clone();
@@ -1389,6 +1686,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         let store = store.clone();
                         move || {
                             pages.borrow_mut().reload_settings();
+                            if let Some(window) = viewer.borrow().as_ref() {
+                                window.invoke_presentation_settings_changed();
+                            }
                             // (the cells as the options now have them; and
                             // thumbnails of another size, every one again)
                             if let Some(window) = weak.upgrade() {
@@ -1397,7 +1697,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             if store.snapshot().thumbnails != thumbnails_before {
                                 rows.thumbnails_changed();
                             }
-                            change_pages(&|_| Ok(()));
+                            change_pages(&|pages| {
+                                pages.current().borrow_mut().refresh_tags();
+                                Ok(())
+                            });
                         }
                     });
                     match options_window::open(&store, &slot, &checker_slot, applied) {
@@ -1435,6 +1738,36 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         downloader_interchange_window::package(&store, &slots, importing)
                     {
                         eprintln!("could not open downloader interchange: {e}");
+                    }
+                })
+            },
+            manage_downloader_display: {
+                let pages = pages.clone();
+                let slots = downloader_display_window::Slots::default();
+                Rc::new(move || {
+                    let store = pages.borrow().store().clone();
+                    if let Err(e) = downloader_display_window::open(&store, &slots) {
+                        eprintln!("could not open downloader display: {e}");
+                    }
+                })
+            },
+            manage_logins: {
+                let pages = pages.clone();
+                let slots = login_workflows.domains.clone();
+                Rc::new(move || {
+                    let store = pages.borrow().store().clone();
+                    if let Err(error) = login_domains_window::open(&store, &slots) {
+                        eprintln!("could not open domain logins: {error}");
+                    }
+                })
+            },
+            manage_login_scripts: {
+                let pages = pages.clone();
+                let slots = login_workflows.clone();
+                Rc::new(move || {
+                    let store = pages.borrow().store().clone();
+                    if let Err(error) = login_workflows_window::open_scripts(&store, &slots) {
+                        eprintln!("could not open login scripts: {error}");
                     }
                 })
             },
@@ -1499,11 +1832,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             save_session: {
                 let pages = pages.clone();
                 let slot = session_dialog.clone();
-                Rc::new(move |name| {
+                Rc::new(move |name, scope| {
                     if slot.borrow().is_some() {
                         return;
                     }
-                    match session_dialog::open(&pages, name.as_deref(), &slot) {
+                    match session_dialog::open(&pages, name.as_deref(), scope, &slot) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not save the session: {e}"),
                     }
@@ -1769,6 +2102,37 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             page().borrow().cancel_download(kind);
         }
     });
+    let network_controls = network_job_control::bind_owned(
+        window,
+        page().borrow().store().clone(),
+        Rc::new({
+            let page = page.clone();
+            move |gallery| {
+                page().borrow().importer().filter(|i| !i.local).map(|i| {
+                    hydrus_gui_model::network_job_control::Target {
+                        queue: i.queue,
+                        gallery,
+                    }
+                })
+            }
+        }),
+        Rc::new({
+            let pages = pages.clone();
+            move || hex::encode(pages.borrow().shown().key.0)
+        }),
+        network_data.clone(),
+    );
+    network_controls.set_owner_alive(Rc::new({
+        let pages = pages.clone();
+        move |key| {
+            pages
+                .borrow()
+                .session()
+                .all_pages()
+                .iter()
+                .any(|page| hex::encode(page.key.0) == key)
+        }
+    }));
     let simple_formulae = simple_formulae_window::Slots::default();
     window.on_simple_edit_formulae({
         let page = page.clone();
@@ -2011,13 +2375,25 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         move |index| {
             let page = page();
-            let chosen = usize::try_from(index)
-                .ok()
-                .and_then(|i| page.borrow().gallery()?.gugs.get(i).cloned());
+            let chosen = usize::try_from(index).ok().and_then(|i| {
+                page.borrow()
+                    .gallery()?
+                    .selector_gugs()
+                    .get(i)
+                    .map(|g| (**g).clone())
+            });
             if let Some((key, name, _)) = chosen {
                 page.borrow_mut().set_gug(&key, &name);
                 shown(false);
             }
+        }
+    });
+    window.on_gallery_other_gugs({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |show| {
+            page().borrow_mut().set_show_other_gugs(show);
+            shown(false);
         }
     });
     window.on_gallery_limit({
@@ -2056,7 +2432,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     log: &log,
                     open_files: &open_files,
                     ask: &ask,
-                    shown: &shown,
+                    shown: Rc::new(shown.clone()),
                 },
                 &action,
             );
@@ -2495,6 +2871,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // the media viewer on files not a page's (a duplicates rule's actioned
     // pair, say)
     *duplicates.open_viewer.borrow_mut() = Some(Rc::new({
+        let weak_main = window.as_weak();
+        let reveal_viewer_exit = reveal_viewer_exit.clone();
         let page = page.clone();
         let viewer = viewer.clone();
         let viewing = viewing.clone();
@@ -2517,6 +2895,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             };
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
+                closing_owner: viewer_closing::Owner::new(
+                    None,
+                    weak_main.clone(),
+                    change_pages.clone(),
+                    reveal_viewer_exit.clone(),
+                ),
                 viewing: viewing.clone(),
                 removed: removed.clone(),
                 tags_changed: tags_changed.clone(),
@@ -2538,6 +2922,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     }));
     window.on_thumbnail_activated({
+        let weak_main = window.as_weak();
+        let origin_pages = pages.clone();
+        let reveal_viewer_exit = reveal_viewer_exit.clone();
         let page = page.clone();
         let viewer = viewer.clone();
         let viewing = viewing.clone();
@@ -2551,8 +2938,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_embedded_metadata = open_embedded_metadata.clone();
         let files_changed = files_changed.clone();
         move |index| {
-            let page = page();
-            let page = page.borrow();
+            let source_page = page();
+            let original_key = origin_pages.borrow().shown().key;
+            let closing_owner = viewer_closing::Owner::new(
+                Some((original_key, Rc::downgrade(&source_page))),
+                weak_main.clone(),
+                change_pages.clone(),
+                reveal_viewer_exit.clone(),
+            );
+            let page = source_page.borrow();
             // (over all the page's files, from the item's first, as the
             // reference's `_LaunchMediaViewer` opens)
             let files = page.files();
@@ -2567,6 +2961,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let model = model.with_location(page.location().clone());
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
+                closing_owner,
                 viewing: viewing.clone(),
                 removed: removed.clone(),
                 tags_changed: tags_changed.clone(),
@@ -2974,6 +3369,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // what the Client API asked of the pages, done, and the pages and media
     // viewer as they are, kept in the store for it
     let sync: Rc<dyn Fn()> = Rc::new({
+        let session_autosave = session_autosave.clone();
         let pages = pages.clone();
         let current = current.clone();
         let shown = shown.clone();
@@ -2990,6 +3386,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     Vec::new()
                 });
             for (key, command) in asked {
+                session_autosave.api_at(hydrus_core::TimestampMs::now().0);
                 let changed = |page: &Rc<RefCell<SearchPage>>| {
                     if Rc::ptr_eq(page, &current.borrow()) {
                         shown(true);
@@ -3085,6 +3482,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     Bound {
+        session_autosave,
         pages,
         current,
         rows,
@@ -3092,6 +3490,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         manage_tags,
         tag_relationships,
         tag_display,
+        tag_migration,
         manage_notes,
         manage_ratings,
         manage_times,
@@ -3104,12 +3503,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         about,
         services_review,
         network_data,
+        network_controls,
         services_editor,
         checker_options,
         session_dialog,
+        tab_name_dialog,
         subscriptions,
         subscription_gallery,
         downloader_definitions,
+        login_workflows,
         parser_editors,
         network_sessions,
         edit_subscription,
@@ -3134,6 +3536,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         _menu_titles: menu_titles,
         _popups: popup_timer,
         clipboard_monitor,
+        _header_approval: header_approval,
     }
 }
 
@@ -3822,6 +4225,7 @@ type OpenOnFiles = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn()>
 /// What a viewer tells its page of, and how it opens manage tags and
 /// notes.
 struct ViewerHooks {
+    closing_owner: Rc<viewer_closing::Owner>,
     /// The viewer and the file it shows, for the Client API.
     viewing: Viewing,
     removed: Removed,
@@ -3868,6 +4272,7 @@ fn open_viewer(
     hooks: ViewerHooks,
 ) -> Result<MediaViewerWindow, slint::PlatformError> {
     let ViewerHooks {
+        closing_owner,
         viewing,
         removed,
         tags_changed,
@@ -3884,8 +4289,8 @@ fn open_viewer(
     } = hooks;
     let window = MediaViewerWindow::new()?;
     let model = Rc::new(RefCell::new(model));
-    let playback = playback::Playback::new(model.borrow().store().dir().join("mpv.conf"));
-    let animator = animation::Animator::new();
+    let playback = playback::Playback::for_store(model.borrow().store().clone());
+    let animator = animation::Animator::for_store(model.borrow().store().clone());
     // (where it opens, and how big: fullscreen, by hydrus's default)
     let settings_frame = windows::settings(model.borrow().store()).media_viewer;
     let settings: hydrus_core::media_viewer::MediaViewerSettings = model
@@ -3894,6 +4299,39 @@ fn open_viewer(
         .read(hydrus_store::settings::get)
         .unwrap_or_default();
     let zoomed = zoom_window!(window, settings.clone());
+    zoomed.set_resize_policy({
+        let store = model.borrow().store().clone();
+        move || {
+            store
+                .read(hydrus_store::settings::get::<hydrus_store::settings::ViewerCanvasSettings>)
+                .unwrap_or_default()
+                .recenter_on_resize
+        }
+    });
+    let native_cursor = viewer_cursor::NativeCursor::new(&window, model.borrow().store().clone());
+    window.on_cursor_menu_starting({
+        let native_cursor = native_cursor.clone();
+        move || native_cursor.menu_starting()
+    });
+    window.on_cursor_menu_returned({
+        let native_cursor = native_cursor.clone();
+        move || native_cursor.menu_returned()
+    });
+    let native_focus = viewer_focus::NativeFocus::new(&window);
+    window.on_presentation_settings_changed({
+        let native_cursor = native_cursor.clone();
+        let native_focus = native_focus.clone();
+        let weak = window.as_weak();
+        let model = model.clone();
+        move || {
+            native_focus.watch_native();
+            native_cursor.refresh();
+            if let Some(window) = weak.upgrade() {
+                let model = model.borrow();
+                viewer_presentation::refresh(&window, model.store(), model.current());
+            }
+        }
+    });
     // the zoom, in the top hover frame
     zoomed.watch({
         let weak = window.as_weak();
@@ -3965,18 +4403,68 @@ fn open_viewer(
             }
         }
     });
-    // the file's info line and buttons, in the top hover frame, and its
-    // notes
-    let show_info = {
+    // Display choices reach an already-open viewer as well as navigation.
+    let show_url_links: Rc<dyn Fn()> = Rc::new({
         let model = model.clone();
         let weak = window.as_weak();
+        let previous = RefCell::new(Vec::<(String, String)>::new());
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
             };
             let model = model.borrow();
+            match downloader_display_window::file_links(model.store(), model.current()) {
+                Ok(links) if *previous.borrow() != links => {
+                    window.set_url_links(ModelRc::new(VecModel::from(
+                        links
+                            .iter()
+                            .map(|(label, url)| ViewerUrlRow {
+                                label: label.as_str().into(),
+                                url: url.as_str().into(),
+                            })
+                            .collect::<Vec<_>>(),
+                    )));
+                    *previous.borrow_mut() = links;
+                }
+                Ok(_) => {}
+                Err(e) => eprintln!("could not read media viewer URLs: {e}"),
+            }
+        }
+    });
+    window.on_url_clicked({
+        let weak = window.as_weak();
+        move |index| {
+            use slint::Model as _;
+            if let (Some(window), Ok(index)) = (weak.upgrade(), usize::try_from(index))
+                && let Some(link) = window.get_url_links().row_data(index)
+                && hydrus_core::url::functions::check_full_url(link.url.as_str()).is_ok()
+            {
+                launch(link.url.as_str());
+            }
+        }
+    });
+    // the file's info line and buttons, in the top hover frame, and its
+    // notes
+    let show_info = {
+        let model = model.clone();
+        let weak = window.as_weak();
+        let show_url_links = show_url_links.clone();
+        move || {
+            show_url_links();
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let model = model.borrow();
+            viewer_presentation::refresh(&window, model.store(), model.current());
             let shown = viewer::shown(model.store(), model.current());
             window.set_info_line(shown.line.into());
+            window.set_location_strings(ModelRc::new(VecModel::from(
+                shown
+                    .locations
+                    .into_iter()
+                    .map(slint::SharedString::from)
+                    .collect::<Vec<_>>(),
+            )));
             window.set_file_inbox(shown.inbox);
             window.set_file_trashed(shown.trashed);
             window.set_file_local(shown.local);
@@ -4105,6 +4593,16 @@ fn open_viewer(
     };
     show();
     bind_zoom!(window, zoomed);
+    window.on_zoom_switch_requested({
+        let zoomed = zoomed.clone();
+        // The reference captures this command when the top hover is built.
+        let preferences = model
+            .borrow()
+            .store()
+            .read(hydrus_store::settings::get::<hydrus_store::settings::ViewerPlaybackSettings>)
+            .unwrap_or_default();
+        move |x, y| zoomed.switch_with_policy(preferences.zoom_switch, Some((x as i32, y as i32)))
+    });
     window.on_audio_changed(show_audio.clone());
     window.on_flip_global_mute({
         let store = model.borrow().store().clone();
@@ -4187,13 +4685,19 @@ fn open_viewer(
         let weak = window.as_weak();
         move |x, width| match scanbar.get() {
             Some((bar, false)) => {
-                let to = bar.seek_to(x, width);
+                let nub = weak
+                    .upgrade()
+                    .map_or(scanbar::NUB_WIDTH, |w| w.get_seek_nub_width());
+                let to = bar.seek_to_with_nub(x, width, nub);
                 playback.seek_ms(to);
                 show_scanbar(to);
             }
             Some((bar, true)) => {
                 // (the frame's text follows once it is shown)
-                let index = bar.frame_at(x, width);
+                let nub = weak
+                    .upgrade()
+                    .map_or(scanbar::NUB_WIDTH, |w| w.get_seek_nub_width());
+                let index = bar.frame_at_with_nub(x, width, nub);
                 animator.goto(index);
                 if let Some(window) = weak.upgrade() {
                     window.set_scanbar_progress(bar.at_frame(index, 0).0);
@@ -4296,6 +4800,8 @@ fn open_viewer(
     };
     let moving = slint::Timer::default();
     moving.start(slint::TimerMode::Repeated, Duration::from_millis(100), {
+        let show_url_links = show_url_links.clone();
+        let url_ticks = Cell::new(0_u8);
         let model = model.clone();
         let show = show.clone();
         let slideshow = slideshow.clone();
@@ -4306,6 +4812,10 @@ fn open_viewer(
         let slideshow_settings = slideshow_settings.clone();
         let weak = window.as_weak();
         move || {
+            url_ticks.set((url_ticks.get() + 1) % 10);
+            if url_ticks.get() == 0 {
+                show_url_links();
+            }
             // (not while the viewer asks something, as the reference's
             // waits while a menu is open)
             let asking = weak.upgrade().is_some_and(|w| {
@@ -4796,10 +5306,23 @@ fn open_viewer(
     });
     let store = model.borrow().store().clone();
     window.on_close_requested({
+        let native_cursor = native_cursor.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
         let viewing = viewing.clone();
+        let model = model.clone();
         move || {
+            let Some(window) = weak.upgrade() else { return };
+            let current = slot
+                .borrow()
+                .as_ref()
+                .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
+            if !current {
+                return;
+            }
+            native_cursor.close();
+            let exit = model.borrow().exit_media();
+            closing_owner.closed(&store, exit);
             viewing.borrow_mut().take();
             // (stops playing at once)
             scanning.stop();
@@ -4831,6 +5354,8 @@ fn open_viewer(
     });
     windows::place(window.window(), &settings_frame);
     window.show()?;
+    native_focus.watch_native();
+    native_cursor.watch_native();
     Ok(window)
 }
 
@@ -5011,14 +5536,13 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
     let own = gallery.gallery();
     // (the downloader among those offered; one not found, or none, after
     // them, as the reference's selector labels it)
-    let found = gallery
-        .gugs
+    let offered = gallery.selector_gugs();
+    let found = offered
         .iter()
         .position(|g| g.0 == own.gug_key)
-        .or_else(|| gallery.gugs.iter().position(|g| g.1 == own.gug_name))
+        .or_else(|| offered.iter().position(|g| g.1 == own.gug_name))
         .filter(|_| !own.gug_name.is_empty());
-    let mut gug_names: Vec<SharedString> =
-        gallery.gugs.iter().map(|g| g.1.as_str().into()).collect();
+    let mut gug_names: Vec<SharedString> = offered.iter().map(|g| g.1.as_str().into()).collect();
     let gug_index = found.unwrap_or_else(|| {
         gug_names.push(if own.gug_name.is_empty() {
             "no downloader set".into()
@@ -5040,8 +5564,13 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
         import_options: edit_subscription::import_options_label(&gallery.state.options).into(),
         gug_names: ModelRc::new(VecModel::from(gug_names)),
         gug_index: i32::try_from(gug_index).unwrap_or(0),
+        show_other_gugs: gallery.show_other_gugs,
+        has_other_gugs: gallery
+            .gugs
+            .iter()
+            .any(|g| !gallery.gug_keys_to_display.contains(&g.0)),
         initial_search_text: found
-            .map(|i| gallery.gugs[i].2.as_str())
+            .map(|i| offered[i].2.as_str())
             .unwrap_or_default()
             .into(),
         no_limit: own.file_limit.is_none(),
@@ -5150,6 +5679,18 @@ pub(crate) fn download_line(line: &hydrus_store::live::JobLine) -> DownloadLine 
 }
 
 fn refresh(window: &MainWindow, page: &SearchPage) {
+    let gui = page
+        .store()
+        .read(hydrus_store::settings::get::<hydrus_store::settings::GuiSettings>)
+        .unwrap_or_default();
+    window.set_window_title(
+        format!(
+            "{} {}",
+            gui.application_display_name,
+            env!("CARGO_PKG_VERSION")
+        )
+        .into(),
+    );
     window.set_note(page.note().unwrap_or_default().into());
     let importer = page.importer();
     window.set_importing(importer.is_some());
@@ -5163,6 +5704,10 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
     window.set_can_filter(page.duplicates().is_some());
     window.set_can_lock_search(page.note().is_none());
     window.set_synchronised(page.synchronised());
+    let presentation = page.autocomplete().presentation_settings();
+    window.set_active_predicate_rows(presentation.active_predicate_rows as i32);
+    window.set_autocomplete_rows(presentation.autocomplete_rows as i32);
+    window.set_float_autocomplete(presentation.float_autocomplete);
     let snapshot = page.store().snapshot();
     window.set_location_label(domains::location_label(&snapshot.services, page.location()).into());
     let tags = page.tag_context();
@@ -5214,6 +5759,7 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
         .map(|(text, rgb)| list_text(text, rgb))
         .collect();
     window.set_tags(ModelRc::new(VecModel::from(tags)));
+    window.set_selection_tags_title(page.tag_list_title().into());
     window.set_error(page.error().unwrap_or_default().into());
     window.set_status(page.status().into());
     let sort = page.sort();
@@ -5261,3 +5807,7 @@ pub mod client_api_admin_window;
 pub mod network_sessions_window;
 
 pub mod network_data_window;
+
+pub mod network_job_control;
+
+pub mod namespace_sorts_window;

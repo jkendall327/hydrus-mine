@@ -4,7 +4,7 @@
 //! the store migrated from each fixture. Entries hydrus-rs can't do yet
 //! are there all the same (greyed out); a tick hydrus-rs doesn't keep is
 //! not compared. Left out of the reference's: help > debug and "about Qt",
-//! and sessions > append backup (hydrus-rs keeps no session backups).
+//! historical imported session backups (not migrated to the native archive).
 
 use std::sync::Arc;
 

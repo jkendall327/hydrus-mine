@@ -25,9 +25,11 @@ mod force_filetype;
 mod formula_editors;
 mod import_files;
 mod import_options;
+mod import_options_panel;
 mod importer_list_menu;
 mod info_lines;
 mod list_drag;
+mod login_workflows;
 mod main_shortcuts;
 mod manage_notes;
 mod manage_ratings;
@@ -40,7 +42,12 @@ mod media_sort;
 mod menu_bar;
 mod merge_options;
 mod mpv;
+mod notebook_new_page;
+mod notebook_refresh;
+mod notebook_sessions;
 mod options_window;
+mod page_chooser_options;
+mod page_navigation_options;
 mod page_scroll;
 mod popups;
 mod predicate_editors;
@@ -52,6 +59,8 @@ mod search_lock;
 mod search_log;
 mod search_page;
 mod session;
+mod session_autosave;
+mod session_startup;
 mod sidecars;
 mod simple_downloader;
 mod slideshow;
@@ -89,3 +98,25 @@ mod network_data;
 
 mod downloader_interchange;
 mod tag_migration;
+
+mod regex_favourites;
+mod tag_filter_favourites;
+
+mod downloader_display;
+mod favourite_search_editor;
+
+mod sibling_connector;
+mod tag_dialog_defaults;
+mod tag_dialog_preferences;
+mod unselected_tag_cap;
+
+mod write_autocomplete;
+
+mod network_job_control;
+
+mod gallery_source;
+
+mod namespace_sorts;
+mod tag_list_display_types;
+
+mod sort_cog;

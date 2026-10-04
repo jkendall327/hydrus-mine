@@ -25,16 +25,25 @@ use hydrus_store::duplicates::DuplicateFilterSettings;
 use hydrus_store::duplicates::auto::AutoResolutionSettings;
 use hydrus_store::file_maintenance::FileMaintenanceSettings;
 use hydrus_store::network::NetworkSettings;
+use hydrus_store::regex_favourites::RegexFavourites;
+use hydrus_store::session_backups::SessionBackupSettings;
+use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
-    AdvancedMode, ExportSettings, FileHandlingSettings, FileViewingStatistics, FolderSettings,
-    PageSettings, ThumbnailLayout,
+    AdvancedMode, ExportSettings, FavouriteTags, FileHandlingSettings, FileSearchSettings,
+    FileViewingStatistics, FolderSettings, GuiSettings, NotebookCreationSettings,
+    OptionsPreferences, PageSettings, SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
+    ViewerBackgroundSettings, ViewerCanvasSettings, ViewerClosingSettings, ViewerCursorSettings,
+    ViewerFocusSettings, ViewerHoverSettings, ViewerPlaybackSettings, ViewerPointerSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
+use hydrus_store::tag_editing::TagEditingSettings;
 use hydrus_store::trash::TrashSettings;
 use rusqlite::Connection;
 
 macro_rules! settings {
-    ($($field:ident: $ty:ty),* $(,)?) => {
+    (@load $conn:ident, $ty:ty, $load:path) => { $load($conn) };
+    (@load $conn:ident, $ty:ty) => { hydrus_store::settings::get::<$ty>($conn) };
+    ($($field:ident: $ty:ty $(=> $load:path)?),* $(,)?) => {
         /// The settings the options window edits, as the store has them.
         #[derive(Debug, Clone, PartialEq)]
         pub struct Settings {
@@ -44,7 +53,7 @@ macro_rules! settings {
         impl Settings {
             pub fn load(conn: &Connection) -> hydrus_store::Result<Self> {
                 Ok(Self {
-                    $($field: hydrus_store::settings::get(conn)?,)*
+                    $($field: settings!(@load conn, $ty $(, $load)?)?,)*
                 })
             }
 
@@ -75,11 +84,28 @@ settings! {
     file_viewing: FileViewingStatistics,
     folders: FolderSettings,
     gallery: GalleryDefaults,
+    gui: GuiSettings,
+    gui_sessions: hydrus_store::settings::GuiSessionSettings,
     info_line: InfoLineSettings,
+    import_options: hydrus_core::import_options::ImportOptionsManager,
+    import_options_ui: hydrus_store::settings::ImportOptionsUiSettings,
     media_viewer: MediaViewerSettings,
     network: NetworkSettings,
+    notebooks: NotebookSettings,
+    notebook_creation: NotebookCreationSettings,
+    page_insertion: hydrus_store::settings::PageInsertion,
+    page_chooser: hydrus_store::settings::PageChooserSettings,
+    page_navigation: hydrus_store::settings::PageNavigationSettings,
+    options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
+    regex_favourites: RegexFavourites => hydrus_store::regex_favourites::load,
+    session_backups: SessionBackupSettings,
+    search_defaults: SearchDefaults,
+    file_search: FileSearchSettings,
+    tag_editing: TagEditingSettings,
+    tag_autocomplete_tabs: TagAutocompleteTabs,
+    favourite_tags: FavouriteTags,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
     sorts: SortSettings,
@@ -90,6 +116,14 @@ settings! {
     trash: TrashSettings,
     url_classes: UrlClassSettings,
     windows: WindowSettings,
+    viewer_canvas: ViewerCanvasSettings,
+    viewer_background: ViewerBackgroundSettings,
+    viewer_hovers: ViewerHoverSettings,
+    viewer_pointer: ViewerPointerSettings,
+    viewer_focus: ViewerFocusSettings,
+    viewer_closing: ViewerClosingSettings,
+    viewer_cursor: ViewerCursorSettings,
+    viewer_playback: ViewerPlaybackSettings,
 }
 
 /// An option's value as its control holds it.
@@ -103,6 +137,8 @@ pub enum Value {
     Float(String),
     /// The index of the item chosen.
     Choice(usize),
+    SavedSession(Option<String>),
+    GallerySource(Option<crate::gallery_source::KeyAndName>),
     Text(String),
     /// Text, or none (the reference's `NoneableTextCtrl`); the text is
     /// kept while none, as its text box keeps it.
@@ -123,6 +159,14 @@ pub enum Value {
     TagSort(TagSort),
     /// Checker options (the reference's `CheckerOptionsButton`).
     Checker(CheckerOptions),
+    /// The editable regular expression/description pairs.
+    RegexFavourites(RegexFavourites),
+    /// Shared favourite tags, staged until the parent options dialog applies.
+    FavouriteTags(FavouriteTags),
+    ImportOptions(crate::import_options_panel::Value),
+    NamespaceSorts(Vec<PageSort>),
+    TagService(hydrus_core::ServiceKey),
+    Location(hydrus_core::search::context::LocationContext),
 }
 
 /// What kind of control an option has.
@@ -146,7 +190,12 @@ pub enum Kind {
         max: f64,
     },
     Choice(&'static [&'static str]),
+    /// Named GUI sessions plus the blank-page startup choice.
+    SavedSession,
+    GallerySource,
     Text,
+    /// An editable folder path with the shared native directory picker.
+    Directory,
     NoneableText {
         none_phrase: &'static str,
     },
@@ -172,6 +221,19 @@ pub enum Kind {
     /// Checker options: a "checker options" button opening their editor
     /// (`checker_options`).
     Checker,
+    /// A button opening the transactional favourites list editor.
+    RegexFavourites,
+    /// Importable current file domains, edited in a child selector.
+    LocalLocation,
+    /// A detached tag list editor sharing write autocomplete.
+    FavouriteTags,
+    /// The transactional manager page, including simple-mode presentation.
+    ImportOptions,
+    NamespaceSorts,
+    /// Real tag services, optionally including all known tags.
+    TagService {
+        combined: bool,
+    },
 }
 
 /// A tag sort's types, as the reference's control names them
@@ -326,6 +388,7 @@ pub struct Opt {
     pub kind: Kind,
     pub get: Get,
     pub set: Set,
+    pub enabled: fn(&Settings) -> bool,
 }
 
 impl std::fmt::Debug for Opt {
@@ -377,6 +440,53 @@ fn opt(label: &'static str, kind: Kind, get: Get, set: Set) -> Item {
         kind,
         get,
         set,
+        enabled: |_| true,
+    })
+}
+
+/// Tag service choices in reference order: all known tags first when offered,
+/// then local tags and repositories, each ordered by lowercase name.
+pub fn tag_service_choices(
+    store: &hydrus_store::Store,
+    combined: bool,
+) -> Vec<(hydrus_core::ServiceKey, String)> {
+    use hydrus_core::service::{ServiceType, builtin_keys};
+    let snapshot = store.snapshot();
+    let mut choices = Vec::new();
+    if combined && let Ok(service) = snapshot.services.builtin(builtin_keys::COMBINED_TAG) {
+        choices.push((service.key.clone(), service.name.clone()));
+    }
+    for kind in [ServiceType::LocalTag, ServiceType::TagRepository] {
+        let mut services = snapshot.services.of_type(kind).collect::<Vec<_>>();
+        services.sort_by_key(|service| service.name.to_lowercase());
+        choices.extend(
+            services
+                .into_iter()
+                .map(|service| (service.key.clone(), service.name.clone())),
+        );
+    }
+    choices
+}
+
+fn tag_service(
+    label: &'static str,
+    combined: bool,
+    get: fn(&Settings) -> hydrus_core::ServiceKey,
+    set: fn(&mut Settings, hydrus_core::ServiceKey),
+    enabled: fn(&Settings) -> bool,
+) -> Item {
+    Item::Opt(Opt {
+        label,
+        kind: Kind::TagService { combined },
+        get: Rc::new(move |settings| Value::TagService(get(settings))),
+        set: Rc::new(move |settings, value| match value {
+            Value::TagService(service) => {
+                set(settings, service.clone());
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+        enabled,
     })
 }
 
@@ -829,6 +939,25 @@ fn signed(n: Option<u64>) -> Option<i64> {
     n.map(|n| i64::try_from(n).unwrap_or(i64::MAX))
 }
 
+/// Choice order from GUISessionsPanel: blank first, ensure last session exists.
+pub fn session_choices(store: &hydrus_store::Store) -> Vec<(Option<String>, String)> {
+    let mut names = store
+        .read(hydrus_store::sessions::names)
+        .unwrap_or_default()
+        .into_iter()
+        .map(|(name, _)| name)
+        .collect::<Vec<_>>();
+    if !names
+        .iter()
+        .any(|name| name == hydrus_store::sessions::LAST_SESSION)
+    {
+        names.insert(0, hydrus_store::sessions::LAST_SESSION.into());
+    }
+    let mut choices = vec![(None, "just a blank page".into())];
+    choices.extend(names.into_iter().map(|name| (Some(name.clone()), name)));
+    choices
+}
+
 fn unsigned(n: Option<i64>) -> Option<u64> {
     n.map(|n| u64::try_from(n).unwrap_or(0))
 }
@@ -840,6 +969,10 @@ fn unsigned(n: Option<i64>) -> Option<u64> {
 pub fn pages(settings: &Settings) -> Vec<Page> {
     // (the thumbnails' rating sizes go up to their width)
     let thumbnail_width = f64::from(settings.thumbnails.bounding_width);
+    let advanced = settings.advanced.0;
+    let timeout_range = if advanced { (1, 30 * 86400) } else { (3, 600) };
+    let retry_range = if advanced { (1, 30 * 86400) } else { (3, 1800) };
+    let error_delay_min = if advanced { 1.0 } else { 600.0 };
     let page = |name, items| Page { name, items };
     vec![
         page(
@@ -873,19 +1006,19 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                         int(
                             "network timeout (seconds): ",
-                            (3, 600),
+                            timeout_range,
                             |s| s.network.network_timeout as i64,
                             |s, v| s.network.network_timeout = v as u64,
                         ),
                         int(
                             "connection error retry wait (seconds): ",
-                            (3, 1800),
+                            retry_range,
                             |s| s.network.connection_error_wait_time as i64,
                             |s, v| s.network.connection_error_wait_time = v as u64,
                         ),
                         int(
                             "serverside bandwidth retry wait (seconds): ",
-                            (3, 1800),
+                            retry_range,
                             |s| s.network.serverside_bandwidth_wait_time as i64,
                             |s, v| s.network.serverside_bandwidth_wait_time = v as u64,
                         ),
@@ -906,13 +1039,13 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                         int(
                             "max number of simultaneous active network jobs: ",
-                            (1, 30),
+                            (1, if advanced { 1000 } else { 30 }),
                             |s| s.network.max_jobs as i64,
                             |s, v| s.network.max_jobs = v as usize,
                         ),
                         int(
                             "max number of simultaneous active network jobs per domain: ",
-                            (1, 5),
+                            (1, if advanced { 100 } else { 5 }),
                             |s| s.network.max_jobs_per_domain as i64,
                             |s, v| s.network.max_jobs_per_domain = v as usize,
                         ),
@@ -954,6 +1087,18 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "gallery downloader",
                     vec![
+                        opt(
+                            "Default download source:",
+                            Kind::GallerySource,
+                            Rc::new(|s| Value::GallerySource(s.gallery.gug.clone())),
+                            Rc::new(|s, v| match v {
+                                Value::GallerySource(value) => {
+                                    s.gallery.gug.clone_from(value);
+                                    Ok(())
+                                }
+                                _ => Err("expected a gallery source".into()),
+                            }),
+                        ),
                         int(
                             "Additional fixed time (in seconds) to wait between gallery page fetches:",
                             (1, 3600),
@@ -986,6 +1131,24 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             (1, 3600),
                             |s| s.bandwidth.gallery_page_wait_subscriptions,
                             |s, v| s.bandwidth.gallery_page_wait_subscriptions = v,
+                        ),
+                        int(
+                            "Maximum number of subscriptions that can sync simultaneously:",
+                            (1, 100),
+                            |s| i64::from(s.network.max_simultaneous_subscriptions),
+                            |s, value| {
+                                s.network.max_simultaneous_subscriptions =
+                                    u32::try_from(value).unwrap_or(1);
+                            },
+                        ),
+                        noneable(
+                            "If a subscription has this many failed file imports, stop and continue later:",
+                            none("no limit", 5, (1, 1_000_000), Some("errors")),
+                            |s| signed(s.network.subscription_file_error_cancel_threshold),
+                            |s, value| {
+                                s.network.subscription_file_error_cancel_threshold =
+                                    unsigned(value);
+                            },
                         ),
                         check(
                             "Sync subscriptions in random order:",
@@ -1051,19 +1214,19 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                         duration(
                             "Delay time on a gallery/watcher network error:",
-                            time(ERROR_DELAY, 600.0),
+                            time(ERROR_DELAY, error_delay_min),
                             |s| s.network.downloader_network_error_delay as f64,
                             |s, v| s.network.downloader_network_error_delay = whole(v),
                         ),
                         duration(
                             "Delay time on a subscription network error:",
-                            time(ERROR_DELAY, 600.0),
+                            time(ERROR_DELAY, error_delay_min),
                             |s| s.network.subscription_network_error_delay as f64,
                             |s, v| s.network.subscription_network_error_delay = whole(v) as i64,
                         ),
                         duration(
                             "Delay time on a subscription other error:",
-                            time(ERROR_DELAY, 600.0),
+                            time(ERROR_DELAY, error_delay_min),
                             |s| s.network.subscription_other_error_delay as f64,
                             |s, v| s.network.subscription_other_error_delay = whole(v) as i64,
                         ),
@@ -1168,34 +1331,138 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "exporting",
-            vec![boxed(
-                "all exports",
-                vec![
-                    check(
-                        "ADVANCED: Always apply NTFS filename rules to export filenames: ",
-                        |s| s.export.always_apply_ntfs_rules,
-                        |s, v| s.export.always_apply_ntfs_rules = v,
-                    ),
-                    noneable(
-                        "ADVANCED: Export path length limit (characters/bytes): ",
-                        none("let hydrus decide", 250, (96, 8192), None),
-                        |s| s.export.path_character_limit,
-                        |s, v| s.export.path_character_limit = v,
-                    ),
-                    noneable(
-                        "ADVANCED: Export dirname length limit (characters/bytes): ",
-                        none("let hydrus decide", 64, (16, 8192), None),
-                        |s| s.export.dirname_character_limit,
-                        |s, v| s.export.dirname_character_limit = v,
-                    ),
-                    int(
-                        "ADVANCED: Export filename length limit (characters/bytes): ",
-                        (16, 8192),
-                        |s| s.export.filename_character_limit,
-                        |s, v| s.export.filename_character_limit = v,
-                    ),
-                ],
-            )],
+            vec![
+                boxed(
+                    "all exports",
+                    vec![
+                        check(
+                            "ADVANCED: Always apply NTFS filename rules to export filenames: ",
+                            |s| s.export.always_apply_ntfs_rules,
+                            |s, v| s.export.always_apply_ntfs_rules = v,
+                        ),
+                        noneable(
+                            "ADVANCED: Export path length limit (characters/bytes): ",
+                            none("let hydrus decide", 250, (96, 8192), None),
+                            |s| s.export.path_character_limit,
+                            |s, v| s.export.path_character_limit = v,
+                        ),
+                        noneable(
+                            "ADVANCED: Export dirname length limit (characters/bytes): ",
+                            none("let hydrus decide", 64, (16, 8192), None),
+                            |s| s.export.dirname_character_limit,
+                            |s, v| s.export.dirname_character_limit = v,
+                        ),
+                        int(
+                            "ADVANCED: Export filename length limit (characters/bytes): ",
+                            (16, 8192),
+                            |s| s.export.filename_character_limit,
+                            |s, v| s.export.filename_character_limit = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "export folder",
+                    vec![opt(
+                        "Default export directory: ",
+                        Kind::Directory,
+                        Rc::new(|s| {
+                            Value::Text(s.export.default_directory.clone().unwrap_or_default())
+                        }),
+                        Rc::new(|s, value| match value {
+                            Value::Text(path) => {
+                                s.export.default_directory =
+                                    (!path.trim().is_empty()).then(|| path.clone());
+                                Ok(())
+                            }
+                            _ => Err(wrong("Default export directory: ")),
+                        }),
+                    )],
+                ),
+            ],
+        ),
+        page(
+            "file search",
+            vec![
+                boxed(
+                    "file search autocomplete",
+                    vec![
+                        int(
+                            "Active Search Predicates list height:",
+                            (1, 128),
+                            |settings| i64::from(settings.file_search.active_predicate_rows),
+                            |settings, value| {
+                                settings.file_search.active_predicate_rows = value as u32;
+                            },
+                        ),
+                        opt(
+                            "Default/Fallback local file search location:",
+                            Kind::LocalLocation,
+                            Rc::new(|settings| {
+                                Value::Location(settings.search_defaults.local_location.clone())
+                            }),
+                            Rc::new(|settings, value| match value {
+                                Value::Location(location) => {
+                                    settings.search_defaults.local_location = location.clone();
+                                    Ok(())
+                                }
+                                _ => Err(wrong("Default/Fallback local file search location:")),
+                            }),
+                        ),
+                        tag_service(
+                            "Default tag service in search pages:",
+                            true,
+                            |settings| settings.search_defaults.tag_service.clone(),
+                            |settings, service| settings.search_defaults.tag_service = service,
+                            |_| true,
+                        ),
+                        check(
+                            "Autocomplete dropdown floats over file search pages:",
+                            |settings| settings.file_search.float_autocomplete,
+                            |settings, value| settings.file_search.float_autocomplete = value,
+                        ),
+                        int(
+                            "Autocomplete list height:",
+                            (1, 128),
+                            |settings| i64::from(settings.file_search.autocomplete_rows),
+                            |settings, value| settings.file_search.autocomplete_rows = value as u32,
+                        ),
+                        check(
+                            "Start new search pages in 'searching immediately':",
+                            |settings| settings.file_search.search_immediately,
+                            |settings, value| settings.file_search.search_immediately = value,
+                        ),
+                        check(
+                            "Show system:everything:",
+                            |settings| settings.file_search.show_system_everything,
+                            |settings, value| settings.file_search.show_system_everything = value,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "file search",
+                    vec![
+                        noneable(
+                            "Implicit system:limit for all searches: ",
+                            none("no limit", 10_000, (1, 100_000_000), None),
+                            |settings| {
+                                settings
+                                    .file_search
+                                    .implicit_limit
+                                    .map(|value| value as i64)
+                            },
+                            |settings, value| {
+                                settings.file_search.implicit_limit =
+                                    value.map(|value| value as u64);
+                            },
+                        ),
+                        check(
+                            "If explicit system:limit, then refresh search when file sort changes: ",
+                            |settings| settings.file_search.refresh_limited_sort,
+                            |settings, value| settings.file_search.refresh_limited_sort = value,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "file sort/collect",
@@ -1222,6 +1489,23 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         |s| s.sorts.default_collect.clone(),
                         |s, v| s.sorts.default_collect = v,
                     ),
+                    boxed(
+                        "namespace file sorting",
+                        vec![opt(
+                            "",
+                            Kind::NamespaceSorts,
+                            Rc::new(|settings| {
+                                Value::NamespaceSorts(settings.sorts.namespace_sorts.clone())
+                            }),
+                            Rc::new(|settings, value| match value {
+                                Value::NamespaceSorts(sorts) => {
+                                    settings.sorts.namespace_sorts.clone_from(sorts);
+                                    Ok(())
+                                }
+                                _ => Err(wrong("namespace file sorting")),
+                            }),
+                        )],
+                    ),
                 ],
             )],
         ),
@@ -1236,6 +1520,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         page(
             "files and trash",
             vec![
+                check(
+                    "When copying file hashes, prefix with booru-friendly hash type: ",
+                    |s| s.file_handling.prefix_hash_when_copying,
+                    |s, v| s.file_handling.prefix_hash_when_copying = v,
+                ),
                 check(
                     "When physically deleting files or folders, send them to the OS's recycle bin: ",
                     |s| s.folders.delete_to_recycle_bin,
@@ -1292,25 +1581,141 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "gui",
-            vec![boxed(
-                "frame locations",
-                vec![check(
-                    "Save media viewer window size and position on close: ",
-                    |s| s.windows.save_media_viewer_on_close,
-                    |s, v| s.windows.save_media_viewer_on_close = v,
-                )],
-            )],
+            vec![
+                boxed(
+                    "main window",
+                    vec![
+                        text(
+                            "Application display name: ",
+                            |s| s.gui.application_display_name.clone(),
+                            |s, value| {
+                                s.gui.application_display_name = if value.is_empty() {
+                                    "hydrus client".into()
+                                } else {
+                                    value.into()
+                                };
+                                Ok(())
+                            },
+                        ),
+                        check(
+                            "Confirm client exit: ",
+                            |s| s.gui.confirm_exit,
+                            |s, value| s.gui.confirm_exit = value,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "misc",
+                    vec![
+                        check(
+                            "Remember last open options panel in this window: ",
+                            |s| s.options_preferences.remember_panel,
+                            |s, v| s.options_preferences.remember_panel = v,
+                        ),
+                        choice(
+                            "Put the options search bar at the: ",
+                            &["top of this window", "bottom of this window"],
+                            |s| usize::from(!s.options_preferences.search_at_top),
+                            |s, v| s.options_preferences.search_at_top = v == 0,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "frame locations",
+                    vec![check(
+                        "Save media viewer window size and position on close: ",
+                        |s| s.windows.save_media_viewer_on_close,
+                        |s, v| s.windows.save_media_viewer_on_close = v,
+                    )],
+                ),
+            ],
         ),
         page(
             "gui pages",
             vec![
                 boxed(
                     "opening and closing",
-                    vec![check(
-                        "Confirm when closing a non-empty importer page: ",
-                        |s| s.downloader_pages.confirm_non_empty_close,
-                        |s, v| s.downloader_pages.confirm_non_empty_close = v,
-                    )],
+                    vec![
+                        choice(
+                            "Put new page tabs on: ",
+                            &[
+                                "the far left",
+                                "left of current page tab",
+                                "right of current page tab",
+                                "the far right",
+                            ],
+                            |s| match s.page_insertion {
+                                hydrus_store::settings::PageInsertion::FarLeft => 0,
+                                hydrus_store::settings::PageInsertion::LeftOfCurrent => 1,
+                                hydrus_store::settings::PageInsertion::RightOfCurrent => 2,
+                                hydrus_store::settings::PageInsertion::FarRight => 3,
+                            },
+                            |s, value| {
+                                s.page_insertion =
+                                    hydrus_store::settings::PageInsertion::from_code(
+                                        i64::try_from(value).unwrap_or(3),
+                                    )
+                                    .unwrap_or_default();
+                            },
+                        ),
+                        check(
+                            "In new page chooser, show \"combined local file domains\" if appropriate:",
+                            |s| s.page_chooser.show_combined,
+                            |s, v| s.page_chooser.show_combined = v,
+                        ),
+                        check(
+                            "  Put it at the top:",
+                            |s| s.page_chooser.combined_at_top,
+                            |s, v| s.page_chooser.combined_at_top = v,
+                        ),
+                        check(
+                            "In new page chooser, show \"hydrus local file storage\":",
+                            |s| s.page_chooser.show_storage,
+                            |s, v| s.page_chooser.show_storage = v,
+                        ),
+                        check(
+                            "  Put it at the top:",
+                            |s| s.page_chooser.storage_at_top,
+                            |s, v| s.page_chooser.storage_at_top = v,
+                        ),
+                        choice(
+                            "When closing the current tab, move focus: ",
+                            &[
+                                "left of the closed page tab",
+                                "right of the closed page tab",
+                            ],
+                            |s| usize::from(!s.notebooks.close_focus_left),
+                            |s, value| s.notebooks.close_focus_left = value == 0,
+                        ),
+                        check(
+                            "Confirm when closing any page: ",
+                            |s| s.page_navigation.confirm_all_closes,
+                            |s, v| s.page_navigation.confirm_all_closes = v,
+                        ),
+                        check(
+                            "Confirm when closing a non-empty importer page: ",
+                            |s| s.downloader_pages.confirm_non_empty_close,
+                            |s, v| s.downloader_pages.confirm_non_empty_close = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "navigation and drag-and-drop",
+                    vec![
+                        int(
+                            "Maximum entries to show in page navigation history: ",
+                            (1, 1000),
+                            |s| i64::from(s.page_navigation.history_entries),
+                            |s, v| {
+                                s.page_navigation.history_entries = u16::try_from(v).unwrap_or(100);
+                            },
+                        ),
+                        check(
+                            "When switching to pages, move keyboard focus to any text input field: ",
+                            |s| s.page_navigation.focus_search_on_change,
+                            |s, v| s.page_navigation.focus_search_on_change = v,
+                        ),
+                    ],
                 ),
                 boxed(
                     "page tab names",
@@ -1333,6 +1738,16 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s, v| s.page_names.import_progress = v,
                         ),
                         check(
+                            "Automatically prompt to rename new 'page of pages' after creation: ",
+                            |s| s.notebook_creation.rename_new_notebooks,
+                            |s, value| s.notebook_creation.rename_new_notebooks = value,
+                        ),
+                        check(
+                            "  Also automatically prompt when sending some pages to one: ",
+                            |s| s.notebooks.rename_sent_notebooks,
+                            |s, value| s.notebooks.rename_sent_notebooks = value,
+                        ),
+                        check(
                             "Suffix 'page of pages' tab names with a decorator string: ",
                             |s| s.page_names.decorate_notebooks,
                             |s, v| s.page_names.decorate_notebooks = v,
@@ -1348,6 +1763,71 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     ],
                 ),
             ],
+        ),
+        page(
+            "gui sessions",
+            vec![boxed(
+                "sessions",
+                vec![
+                    opt(
+                        "Default session on startup: ",
+                        Kind::SavedSession,
+                        Rc::new(|s| Value::SavedSession(s.gui_sessions.startup.clone())),
+                        Rc::new(|s, value| match value {
+                            Value::SavedSession(name) => {
+                                s.gui_sessions.startup.clone_from(name);
+                                Ok(())
+                            }
+                            _ => Err(wrong("Default session on startup: ")),
+                        }),
+                    ),
+                    int(
+                        "If 'last session' above, autosave it how often (minutes)?",
+                        (1, 1440),
+                        |s| i64::from(s.gui_sessions.autosave_minutes),
+                        |s, value| {
+                            s.gui_sessions.autosave_minutes = u16::try_from(value).unwrap_or(5);
+                        },
+                    ),
+                    check(
+                        "If 'last session' above, only autosave during idle time?",
+                        |s| s.gui_sessions.only_during_idle,
+                        |s, value| s.gui_sessions.only_during_idle = value,
+                    ),
+                    int(
+                        "Number of session backups to keep: ",
+                        (1, 32),
+                        |s| s.session_backups.keep as i64,
+                        |s, value| s.session_backups.keep = value as usize,
+                    ),
+                    check(
+                        "Show warning popup if session size exceeds 10,000,000: ",
+                        |s| s.gui_sessions.warn_large_session,
+                        |s, value| s.gui_sessions.warn_large_session = value,
+                    ),
+                ],
+            )],
+        ),
+        page(
+            "import options",
+            vec![opt(
+                "",
+                Kind::ImportOptions,
+                Rc::new(|settings| {
+                    Value::ImportOptions(crate::import_options_panel::Value {
+                        manager: settings.import_options.clone(),
+                        ui: settings.import_options_ui.clone(),
+                    })
+                }),
+                Rc::new(|settings, value| match value {
+                    Value::ImportOptions(value) => {
+                        settings.import_options = value.manager.clone();
+                        settings.import_options_ui = value.ui.clone();
+                        Ok(())
+                    }
+                    _ => Err(wrong("import options")),
+                }),
+            )],
         ),
         page(
             "importing",
@@ -1469,119 +1949,307 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             },
                             |s, i| s.media_viewer.default_zoom_type = ZOOM_TYPE_ORDER[i],
                         ),
+                        check(
+                            "Re-center media on window resize:",
+                            |settings| settings.viewer_canvas.recenter_on_resize,
+                            |settings, value| settings.viewer_canvas.recenter_on_resize = value,
+                        ),
                     ],
                 ),
                 boxed(
                     "transparency",
-                    vec![choice(
-                        "Consider a file as \"having transparency\" when:",
-                        TRANSPARENCY,
-                        |s| {
-                            2_usize.saturating_sub(usize::from(
-                                s.file_handling.transparency_strictness,
-                            ))
-                        },
-                        |s, i| s.file_handling.transparency_strictness = 2 - i.min(2) as u8,
+                    vec![
+                        choice(
+                            "Consider a file as \"having transparency\" when:",
+                            TRANSPARENCY,
+                            |s| {
+                                2_usize.saturating_sub(usize::from(
+                                    s.file_handling.transparency_strictness,
+                                ))
+                            },
+                            |s, i| s.file_handling.transparency_strictness = 2 - i.min(2) as u8,
+                        ),
+                        check(
+                            "Draw image transparency as checkerboard:",
+                            |settings| settings.viewer_canvas.transparency_checkerboard,
+                            |settings, value| {
+                                settings.viewer_canvas.transparency_checkerboard = value;
+                            },
+                        ),
+                        check(
+                            "--Instead of checkerboard, use a bright greenscreen:",
+                            |settings| settings.viewer_canvas.transparency_greenscreen,
+                            |settings, value| {
+                                settings.viewer_canvas.transparency_greenscreen = value;
+                            },
+                        ),
+                    ],
+                ),
+                boxed(
+                    "video/animations",
+                    vec![check(
+                        "Always Loop Animations:",
+                        |s| s.viewer_playback.always_loop,
+                        |s, value| s.viewer_playback.always_loop = value,
                     )],
                 ),
             ],
         ),
         page(
             "media viewer",
-            vec![boxed(
-                "slideshows",
-                vec![
-                    text(
-                        "Slideshow durations:",
-                        |s| numbers_text(&s.slideshow.durations),
-                        |s, t| {
-                            // (none above zero: left as they were)
-                            let durations = parse_numbers(t, "slideshow durations")?;
-                            if !durations.is_empty() {
-                                s.slideshow.durations = durations;
-                            }
-                            Ok(())
-                        },
-                    ),
-                    check(
-                        "Always play media once through before moving on:",
-                        |s| s.slideshow.once_through,
-                        |s, v| s.slideshow.once_through = v,
-                    ),
-                    noneable(
-                        "Slideshow short-media skip seconds threshold:",
-                        none("do not use", 10, (1, 86400), Some("s")),
-                        |s| s.slideshow.short_loop_seconds,
-                        |s, v| s.slideshow.short_loop_seconds = v,
-                    ),
-                    noneable(
-                        "Slideshow short-media skip percentage threshold:",
-                        none("do not use", 20, (1, 99), Some("%")),
-                        |s| s.slideshow.short_loop_percentage,
-                        |s, v| s.slideshow.short_loop_percentage = v,
-                    ),
-                    noneable(
-                        "Slideshow shorter-media cutoff percentage threshold:",
-                        none("do not use", 75, (1, 99), Some("%")),
-                        |s| s.slideshow.short_cutoff_percentage,
-                        |s, v| s.slideshow.short_cutoff_percentage = v,
-                    ),
-                    noneable(
-                        "Slideshow long-media allowed delay percentage threshold:",
-                        none("do not use", 50, (1, 500), Some("%")),
-                        |s| s.slideshow.long_overspill_percentage,
-                        |s, v| s.slideshow.long_overspill_percentage = v,
-                    ),
-                ],
-            )],
+            vec![
+                boxed(
+                    "mouse behaviour",
+                    vec![
+                        noneable(
+                            "Time until mouse cursor autohides on media viewer:",
+                            none("do not autohide", 700, (100, 100_000), Some("ms")),
+                            |settings| settings.viewer_cursor.autohide_ms.map(i64::from),
+                            |settings, value| {
+                                settings.viewer_cursor.autohide_ms =
+                                    value.map(|delay| delay as u32);
+                            },
+                        ),
+                        check(
+                            "Do not allow mouse media drag-panning when the media has duration:",
+                            |settings| settings.viewer_pointer.disallow_duration_drag,
+                            |settings, value| {
+                                settings.viewer_pointer.disallow_duration_drag = value;
+                            },
+                        ),
+                        check(
+                            "Hide mouse cursor during media viewer drags:",
+                            |settings| settings.viewer_pointer.hide_during_drag,
+                            |settings, value| settings.viewer_pointer.hide_during_drag = value,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "animation/audio seek bar",
+                    vec![
+                        int(
+                            "Seek bar height:",
+                            (1, 255),
+                            |settings| i64::from(settings.viewer_canvas.seek_height),
+                            |settings, value| settings.viewer_canvas.seek_height = value as u32,
+                        ),
+                        noneable(
+                            "Seek bar height when mouse away:",
+                            none("no, hide it completely", 5, (1, 255), Some("px")),
+                            |settings| settings.viewer_canvas.seek_hidden_height.map(i64::from),
+                            |settings, value| {
+                                settings.viewer_canvas.seek_hidden_height =
+                                    value.map(|height| height as u32);
+                            },
+                        ),
+                        check(
+                            "Seek bar full-height pop-in requires window focus:",
+                            |settings| settings.viewer_focus.seek_requires_focus,
+                            |settings, value| settings.viewer_focus.seek_requires_focus = value,
+                        ),
+                        int(
+                            "Seek bar nub width:",
+                            (1, 63),
+                            |settings| i64::from(settings.viewer_canvas.seek_nub_width),
+                            |settings, value| settings.viewer_canvas.seek_nub_width = value as u32,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "slideshows",
+                    vec![
+                        text(
+                            "Slideshow durations:",
+                            |s| numbers_text(&s.slideshow.durations),
+                            |s, t| {
+                                // (none above zero: left as they were)
+                                let durations = parse_numbers(t, "slideshow durations")?;
+                                if !durations.is_empty() {
+                                    s.slideshow.durations = durations;
+                                }
+                                Ok(())
+                            },
+                        ),
+                        check(
+                            "Always play media once through before moving on:",
+                            |s| s.slideshow.once_through,
+                            |s, v| s.slideshow.once_through = v,
+                        ),
+                        noneable(
+                            "Slideshow short-media skip seconds threshold:",
+                            none("do not use", 10, (1, 86400), Some("s")),
+                            |s| s.slideshow.short_loop_seconds,
+                            |s, v| s.slideshow.short_loop_seconds = v,
+                        ),
+                        noneable(
+                            "Slideshow short-media skip percentage threshold:",
+                            none("do not use", 20, (1, 99), Some("%")),
+                            |s| s.slideshow.short_loop_percentage,
+                            |s, v| s.slideshow.short_loop_percentage = v,
+                        ),
+                        noneable(
+                            "Slideshow shorter-media cutoff percentage threshold:",
+                            none("do not use", 75, (1, 99), Some("%")),
+                            |s| s.slideshow.short_cutoff_percentage,
+                            |s, v| s.slideshow.short_cutoff_percentage = v,
+                        ),
+                        noneable(
+                            "Slideshow long-media allowed delay percentage threshold:",
+                            none("do not use", 50, (1, 500), Some("%")),
+                            |s| s.slideshow.long_overspill_percentage,
+                            |s, v| s.slideshow.long_overspill_percentage = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "closing focus",
+                    vec![
+                        check(
+                            "When closing the media viewer, re-select original search page: ",
+                            |settings| settings.viewer_closing.reselect_page,
+                            |settings, value| settings.viewer_closing.reselect_page = value,
+                        ),
+                        check(
+                            "When closing the media viewer, tell original search page to select exit media: ",
+                            |settings| settings.viewer_closing.select_exit_media,
+                            |settings, value| {
+                                settings.viewer_closing.select_exit_media = value;
+                            },
+                        ),
+                        check(
+                            "ADVANCED: When closing the media viewer with the above focusing options, activate Main GUI: ",
+                            |settings| settings.viewer_closing.activate_focusing,
+                            |settings, value| {
+                                settings.viewer_closing.activate_focusing = value;
+                            },
+                        ),
+                        check(
+                            "DEBUG: When closing the media viewer at any time, activate Main GUI: ",
+                            |settings| settings.viewer_closing.activate_always,
+                            |settings, value| settings.viewer_closing.activate_always = value,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "media viewer hovers",
-            vec![boxed(
-                "top hover file summary",
-                vec![
-                    check(
-                        "Show archived status: ",
-                        |s| s.info_line.archived_interesting,
-                        |s, v| s.info_line.archived_interesting = v,
-                    ),
-                    check(
-                        "Show archived time: ",
-                        |s| s.info_line.archived_time_interesting,
-                        |s, v| s.info_line.archived_time_interesting = v,
-                    ),
-                    check(
-                        "Show file services: ",
-                        |s| s.info_line.file_services_interesting,
-                        |s, v| s.info_line.file_services_interesting = v,
-                    ),
-                    check(
-                        "Show file service add times: ",
-                        |s| s.info_line.file_services_import_times_interesting,
-                        |s, v| s.info_line.file_services_import_times_interesting = v,
-                    ),
-                    check(
-                        "Show file trash times: ",
-                        |s| s.info_line.trash_time_interesting,
-                        |s, v| s.info_line.trash_time_interesting = v,
-                    ),
-                    check(
-                        "Show file trash reasons: ",
-                        |s| s.info_line.trash_reason_interesting,
-                        |s, v| s.info_line.trash_reason_interesting = v,
-                    ),
-                    check(
-                        "Hide uninteresting modified times: ",
-                        |s| s.info_line.hide_uninteresting_modified_time,
-                        |s, v| s.info_line.hide_uninteresting_modified_time = v,
-                    ),
-                    check(
-                        "Swap in common resolution labels:",
-                        |s| s.info_line.nice_resolutions,
-                        |s, v| s.info_line.nice_resolutions = v,
-                    ),
-                ],
-            )],
+            vec![
+                boxed(
+                    "background",
+                    vec![
+                        check(
+                            "Draw tags (left) in the viewer background:",
+                            |settings| settings.viewer_background.tags,
+                            |settings, value| settings.viewer_background.tags = value,
+                        ),
+                        check(
+                            "Draw file information (top) in the viewer background:",
+                            |settings| settings.viewer_background.information,
+                            |settings, value| settings.viewer_background.information = value,
+                        ),
+                        check(
+                            "Draw ratings and locations (top-right) in the viewer background:",
+                            |settings| settings.viewer_background.ratings,
+                            |settings, value| settings.viewer_background.ratings = value,
+                        ),
+                        check(
+                            "Draw notes (right) in the viewer background:",
+                            |settings| settings.viewer_background.notes,
+                            |settings, value| settings.viewer_background.notes = value,
+                        ),
+                        check(
+                            "Draw index text (bottom-right) in the viewer background:",
+                            |settings| settings.viewer_hovers.index_background,
+                            |settings, value| settings.viewer_hovers.index_background = value,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "hover windows",
+                    vec![
+                        check(
+                            "Hover window pop-in requires window focus:",
+                            |settings| settings.viewer_focus.hovers_require_focus,
+                            |settings, value| settings.viewer_focus.hovers_require_focus = value,
+                        ),
+                        check(
+                            "Pop-in tags (left) hover window on mouseover:",
+                            |settings| settings.viewer_hovers.tags,
+                            |settings, value| settings.viewer_hovers.tags = value,
+                        ),
+                        check(
+                            "Pop-in ratings and locations (top-right) hover window on mouseover:",
+                            |settings| settings.viewer_hovers.ratings,
+                            |settings, value| settings.viewer_hovers.ratings = value,
+                        ),
+                        check(
+                            "Pop-in notes (right) hover window on mouseover:",
+                            |settings| settings.viewer_hovers.notes,
+                            |settings, value| settings.viewer_hovers.notes = value,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "top hover button/menu controls",
+                    vec![choice(
+                        "Zoom switch button switches between:",
+                        &[
+                            "100% and canvas fit",
+                            "100% and canvas fit, and recenter media on switch",
+                            "100% and canvas fit and canvas fill",
+                            "100% and canvas fit and canvas fill, and recenter media on switch",
+                        ],
+                        |s| s.viewer_playback.zoom_switch.min(3),
+                        |s, value| s.viewer_playback.zoom_switch = value,
+                    )],
+                ),
+                boxed(
+                    "top hover file summary",
+                    vec![
+                        check(
+                            "Show archived status: ",
+                            |s| s.info_line.archived_interesting,
+                            |s, v| s.info_line.archived_interesting = v,
+                        ),
+                        check(
+                            "Show archived time: ",
+                            |s| s.info_line.archived_time_interesting,
+                            |s, v| s.info_line.archived_time_interesting = v,
+                        ),
+                        check(
+                            "Show file services: ",
+                            |s| s.info_line.file_services_interesting,
+                            |s, v| s.info_line.file_services_interesting = v,
+                        ),
+                        check(
+                            "Show file service add times: ",
+                            |s| s.info_line.file_services_import_times_interesting,
+                            |s, v| s.info_line.file_services_import_times_interesting = v,
+                        ),
+                        check(
+                            "Show file trash times: ",
+                            |s| s.info_line.trash_time_interesting,
+                            |s, v| s.info_line.trash_time_interesting = v,
+                        ),
+                        check(
+                            "Show file trash reasons: ",
+                            |s| s.info_line.trash_reason_interesting,
+                            |s, v| s.info_line.trash_reason_interesting = v,
+                        ),
+                        check(
+                            "Hide uninteresting modified times: ",
+                            |s| s.info_line.hide_uninteresting_modified_time,
+                            |s, v| s.info_line.hide_uninteresting_modified_time = v,
+                        ),
+                        check(
+                            "Swap in common resolution labels:",
+                            |s| s.info_line.nice_resolutions,
+                            |s, v| s.info_line.nice_resolutions = v,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "ratings",
@@ -1633,8 +2301,158 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             ],
         ),
         page(
+            "regex favourites",
+            vec![opt(
+                "",
+                Kind::RegexFavourites,
+                Rc::new(|settings| Value::RegexFavourites(settings.regex_favourites.clone())),
+                Rc::new(|settings, value| match value {
+                    Value::RegexFavourites(favourites) => {
+                        settings.regex_favourites = favourites.clone();
+                        Ok(())
+                    }
+                    _ => Err(wrong("regex favourites")),
+                }),
+            )],
+        ),
+        page(
+            "system",
+            vec![boxed(
+                "system sleep",
+                vec![
+                    check(
+                        "Allow wake-from-system-sleep detection:",
+                        |s| s.network.detect_sleep,
+                        |s, v| s.network.detect_sleep = v,
+                    ),
+                    int(
+                        "After a wake from system sleep, wait this many seconds before allowing new network access:",
+                        (0, 60),
+                        |s| s.network.wake_delay_period as i64,
+                        |s, v| s.network.wake_delay_period = v as u64,
+                    ),
+                ],
+            )],
+        ),
+        page(
+            "tag autocomplete tabs",
+            vec![
+                boxed(
+                    "children tags",
+                    vec![noneable(
+                        "How many tags to show in the children tab: ",
+                        none("show all", 40, (1, 1_000_000), None),
+                        |s| s.tag_autocomplete_tabs.children_limit.map(|n| n as i64),
+                        |s, n| s.tag_autocomplete_tabs.children_limit = n.map(|n| n as usize),
+                    )],
+                ),
+                boxed(
+                    "favourite tags",
+                    vec![opt(
+                        "These tags will appear in every tag autocomplete results dropdown, under the 'favourites' tab.",
+                        Kind::FavouriteTags,
+                        Rc::new(|settings| Value::FavouriteTags(settings.favourite_tags.clone())),
+                        Rc::new(|settings, value| match value {
+                            Value::FavouriteTags(tags) => {
+                                settings.favourite_tags = tags.clone();
+                                Ok(())
+                            }
+                            _ => Err(wrong("favourite tags")),
+                        }),
+                    )],
+                ),
+            ],
+        ),
+        page(
+            "tag editing",
+            vec![
+                boxed(
+                    "tag dialogs",
+                    vec![
+                        check(
+                            "Use listbook instead of tabbed notebook for tag service panels: ",
+                            |settings| settings.tag_editing.use_listbook,
+                            |settings, value| settings.tag_editing.use_listbook = value,
+                        ),
+                        check(
+                            "Remember last used default tag service in manage tag dialogs: ",
+                            |settings| settings.tag_editing.remember_service,
+                            |settings, value| settings.tag_editing.remember_service = value,
+                        ),
+                        tag_service(
+                            "Default tag service in tag dialogs: ",
+                            false,
+                            |settings| settings.tag_editing.default_service.clone(),
+                            |settings, service| settings.tag_editing.default_service = service,
+                            |settings| !settings.tag_editing.remember_service,
+                        ),
+                        check(
+                            "Show parent info by default on edit/write taglists: ",
+                            |settings| settings.tag_editing.tag_list_show_parents,
+                            |settings, value| settings.tag_editing.tag_list_show_parents = value,
+                        ),
+                        check(
+                            "Show parents expanded by default on edit/write taglists: ",
+                            |settings| settings.tag_editing.tag_list_expand_parents,
+                            |settings, value| settings.tag_editing.tag_list_expand_parents = value,
+                        ),
+                        check(
+                            "Show sibling info by default on edit/write taglists: ",
+                            |settings| settings.tag_editing.tag_list_show_siblings,
+                            |settings, value| settings.tag_editing.tag_list_show_siblings = value,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "tag edit autocomplete",
+                    vec![
+                        check(
+                            "By default, select the first tag result with actual count in write-autocomplete: ",
+                            |s| s.tag_editing.select_first_with_count,
+                            |s, v| s.tag_editing.select_first_with_count = v,
+                        ),
+                        check(
+                            "When pasting multiline content into a write-autocomplete, skip the yes/no check: ",
+                            |s| s.tag_editing.skip_multiline_paste_confirmation,
+                            |s, v| s.tag_editing.skip_multiline_paste_confirmation = v,
+                        ),
+                        check(
+                            "Show parent info by default on edit/write autocomplete taglists: ",
+                            |s| s.tag_editing.autocomplete_show_parents,
+                            |s, v| s.tag_editing.autocomplete_show_parents = v,
+                        ),
+                        check(
+                            "Show parents expanded by default on edit/write autocomplete taglists: ",
+                            |s| s.tag_editing.autocomplete_expand_parents,
+                            |s, v| s.tag_editing.autocomplete_expand_parents = v,
+                        ),
+                        check(
+                            "Show sibling info by default on edit/write autocomplete taglists: ",
+                            |s| s.tag_editing.autocomplete_show_siblings,
+                            |s, v| s.tag_editing.autocomplete_show_siblings = v,
+                        ),
+                        int(
+                            "Autocomplete list height: ",
+                            (1, 128),
+                            |s| i64::from(s.tag_editing.autocomplete_list_height),
+                            |s, v| s.tag_editing.autocomplete_list_height = v as u32,
+                        ),
+                    ],
+                ),
+            ],
+        ),
+        page(
             "tag presentation",
             vec![
+                boxed(
+                    "selection tags",
+                    vec![noneable(
+                        "Max number of thumbnails to compute tags for when none are selected: ",
+                        none("no limit", 4096, (0, 10_000_000), None),
+                        |s| s.tag_presentation.unselected_tag_limit.map(i64::from),
+                        |s, n| s.tag_presentation.unselected_tag_limit = n.map(|n| n as u32),
+                    )],
+                ),
                 boxed(
                     "namespace rendering",
                     vec![
@@ -1666,6 +2484,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "other rendering",
                     vec![
+                        text(
+                            "Sibling connecting string: ",
+                            |s| s.tag_presentation.sibling_connector.clone(),
+                            |s, t| {
+                                t.clone_into(&mut s.tag_presentation.sibling_connector);
+                                Ok(())
+                            },
+                        ),
                         check(
                             "EXPERIMENTAL: Replace all underscores with spaces: ",
                             |s| s.tag_presentation.replace_underscores,
@@ -1675,6 +2501,39 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "EXPERIMENTAL: Replace all emojis with □: ",
                             |s| s.tag_presentation.replace_emojis,
                             |s, v| s.tag_presentation.replace_emojis = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "default taglist display type (advanced)",
+                    vec![
+                        boxed(
+                            "Do not edit these unless you know exactly what they do!",
+                            Vec::new(),
+                        ),
+                        choice(
+                            "Tag display type for new page sidebar taglists: ",
+                            &hydrus_core::tag_presentation::TagDisplayType::LABELS,
+                            |s| s.tag_presentation.sidebar_display_type.choice(),
+                            |s, n| {
+                                if let Some(mode) =
+                                    hydrus_core::tag_presentation::TagDisplayType::from_choice(n)
+                                {
+                                    s.tag_presentation.sidebar_display_type = mode;
+                                }
+                            },
+                        ),
+                        choice(
+                            "Tag display type for new media viewer taglists: ",
+                            &hydrus_core::tag_presentation::TagDisplayType::LABELS,
+                            |s| s.tag_presentation.viewer_display_type.choice(),
+                            |s, n| {
+                                if let Some(mode) =
+                                    hydrus_core::tag_presentation::TagDisplayType::from_choice(n)
+                                {
+                                    s.tag_presentation.viewer_display_type = mode;
+                                }
+                            },
                         ),
                     ],
                 ),
@@ -1778,7 +2637,17 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
 pub fn values(pages: &[Page], settings: &Settings) -> Vec<Vec<Value>> {
     pages
         .iter()
-        .map(|page| page.options().iter().map(|o| (o.get)(settings)).collect())
+        .map(|page| {
+            page.options()
+                .iter()
+                .map(|option| match (&option.kind, (option.get)(settings)) {
+                    (Kind::Int { min, max }, Value::Int(number)) => {
+                        Value::Int(number.clamp(*min, *max))
+                    }
+                    (_, value) => value,
+                })
+                .collect()
+        })
         .collect()
 }
 
@@ -1829,11 +2698,13 @@ pub fn suggestions(pages: &[Page]) -> Vec<Suggestion> {
                 Item::Box(title, _) => title,
                 Item::Opt(option) => option.label,
             };
-            out.push(Suggestion {
-                text: format!("{text} ({name})"),
-                page,
-                row: *row,
-            });
+            if !text.is_empty() {
+                out.push(Suggestion {
+                    text: format!("{text} ({name})"),
+                    page,
+                    row: *row,
+                });
+            }
             *row += 1;
             if let Item::Box(_, items) = item {
                 walk(items, page, name, row, out);
@@ -1843,6 +2714,67 @@ pub fn suggestions(pages: &[Page]) -> Vec<Suggestion> {
     let mut out = Vec::new();
     for (i, page) in pages.iter().enumerate() {
         walk(&page.items, i, page.name, &mut 0, &mut out);
+    }
+    out
+}
+
+/// Searchable auxiliary labels and current combo values, captured on opening as
+/// the reference captures its widget text when building its completer.
+pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Suggestion> {
+    fn walk<'a>(items: &'a [Item], out: &mut Vec<&'a Item>) {
+        for item in items {
+            out.push(item);
+            if let Item::Box(_, children) = item {
+                walk(children, out);
+            }
+        }
+    }
+    let mut out = suggestions(pages);
+    for (page_index, page) in pages.iter().enumerate() {
+        let mut option_index = 0;
+        let mut rows = Vec::new();
+        walk(&page.items, &mut rows);
+        for (row, item) in rows.into_iter().enumerate() {
+            let Item::Opt(option) = item else { continue };
+            let value = &values[page_index][option_index];
+            option_index += 1;
+            let mut labels = Vec::new();
+            match (&option.kind, value) {
+                (Kind::Choice(items), Value::Choice(index)) => {
+                    if let Some(text) = items.get(*index) {
+                        labels.push(*text);
+                    }
+                }
+                (Kind::SavedSession, Value::SavedSession(name)) => {
+                    labels.push(name.as_deref().unwrap_or("just a blank page"));
+                }
+                (
+                    Kind::Noneable {
+                        none_phrase, unit, ..
+                    },
+                    _,
+                ) => {
+                    labels.push(*none_phrase);
+                    labels.extend(*unit);
+                }
+                (Kind::NoneableText { none_phrase }, _) => labels.push(*none_phrase),
+                (Kind::Duration { units, .. }, _) => {
+                    labels.extend(units.iter().map(|unit| unit.label()));
+                }
+                (Kind::Velocity { per, units, .. }, _) => {
+                    labels.push(*per);
+                    labels.extend(units.iter().map(|unit| unit.label()));
+                }
+                _ => {}
+            }
+            for label in labels.into_iter().filter(|label| !label.is_empty()) {
+                out.push(Suggestion {
+                    text: format!("{label} ({})", page.name),
+                    page: page_index,
+                    row,
+                });
+            }
+        }
     }
     out
 }
@@ -1860,6 +2792,7 @@ pub enum Row<'a> {
         value: &'a Value,
         /// For a number that may be none, the number it shows.
         number: i64,
+        enabled: bool,
     },
 }
 
@@ -1899,20 +2832,63 @@ impl Editor {
                     .collect()
             })
             .collect();
-        let suggestions = suggestions(&pages);
+        let suggestions = suggestions_with_values(&pages, &values);
+        let default_page = pages.iter().position(|p| p.name == "gui").unwrap_or(0);
+        let page = if settings.options_preferences.remember_panel {
+            pages
+                .iter()
+                .position(|p| p.name == settings.options_preferences.last_panel)
+                .unwrap_or(default_page)
+        } else {
+            default_page
+        };
         Self {
             pages,
             before: settings,
             values,
             numbers,
-            page: 0,
+            page,
             suggestions,
             found: std::collections::BTreeSet::new(),
         }
     }
 
-    /// The suggestions whose text has `query` in it, ignoring case (as the
-    /// reference's completer matches); none for no query.
+    /// Resolve service controls when opening, as `BetterChoice.SetValue` falls
+    /// back to its first item if a service has been removed. Capture their
+    /// displayed service names for the options search at the same time.
+    pub fn resolve_tag_services(&mut self, store: &hydrus_store::Store) {
+        for (page_index, page) in self.pages.iter().enumerate() {
+            for (option, value) in page.options().iter().zip(&mut self.values[page_index]) {
+                let (Kind::TagService { combined }, Value::TagService(key)) = (&option.kind, value)
+                else {
+                    continue;
+                };
+                let choices = tag_service_choices(store, *combined);
+                let chosen = choices
+                    .iter()
+                    .find(|(service, _)| service == &*key)
+                    .or_else(|| choices.first());
+                if let Some((service, name)) = chosen {
+                    *key = service.clone();
+                    let label = format!("{} ({})", option.label, page.name);
+                    if let Some(row) = self
+                        .suggestions
+                        .iter()
+                        .find(|suggestion| suggestion.text == label)
+                        .map(|suggestion| suggestion.row)
+                    {
+                        self.suggestions.push(Suggestion {
+                            text: format!("{name} ({})", page.name),
+                            page: page_index,
+                            row,
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    /// Suggestions containing the query, ignoring case; none for no query.
     pub fn search(&self, query: &str) -> Vec<&Suggestion> {
         let query = query.to_lowercase();
         if query.is_empty() {
@@ -1933,6 +2909,14 @@ impl Editor {
     /// Whether the page shown's row was gone to from the search.
     pub fn found(&self, row: usize) -> bool {
         self.found.contains(&(self.page, row))
+    }
+
+    /// The page to remember, using the switch captured when this window opened.
+    pub fn remembered_panel(&self) -> Option<&'static str> {
+        self.before
+            .options_preferences
+            .remember_panel
+            .then_some(self.pages[self.page].name)
     }
 
     pub fn page_names(&self) -> Vec<&'static str> {
@@ -1956,6 +2940,7 @@ impl Editor {
             depth: usize,
             values: &'a [Value],
             numbers: &[i64],
+            settings: &Settings,
             next: &mut usize,
             out: &mut Vec<Row<'a>>,
         ) {
@@ -1963,7 +2948,7 @@ impl Editor {
                 match item {
                     Item::Box(title, items) => {
                         out.push(Row::Title { title, depth });
-                        walk(items, depth + 1, values, numbers, next, out);
+                        walk(items, depth + 1, values, numbers, settings, next, out);
                     }
                     Item::Opt(option) => {
                         out.push(Row::Opt {
@@ -1971,6 +2956,7 @@ impl Editor {
                             depth,
                             value: &values[*next],
                             number: numbers[*next],
+                            enabled: (option.enabled)(settings),
                         });
                         *next += 1;
                     }
@@ -1983,6 +2969,7 @@ impl Editor {
             0,
             &self.values[self.page],
             &self.numbers[self.page],
+            &self.applied().0,
             &mut 0,
             &mut out,
         );
@@ -2092,6 +3079,36 @@ impl Editor {
         }
     }
 
+    /// Accept the location selector's draft even if another page is now shown.
+    pub fn set_local_location(&mut self, location: hydrus_core::search::context::LocationContext) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::Location(_)) {
+                *value = Value::Location(location);
+                return;
+            }
+        }
+    }
+
+    pub fn saved_session(&mut self, row: usize, name: Option<String>) {
+        if let Some(index) = self.option_at(row)
+            && matches!(self.kind(index), Kind::SavedSession)
+        {
+            self.values[self.page][index] = Value::SavedSession(name);
+        }
+    }
+
+    /// A service key chosen from the current editable dropdown.
+    pub fn tag_service(&mut self, row: usize, service: hydrus_core::ServiceKey) {
+        if !matches!(self.rows().get(row), Some(Row::Opt { enabled: true, .. })) {
+            return;
+        }
+        if let Some(index) = self.option_at(row)
+            && matches!(self.kind(index), Kind::TagService { .. })
+        {
+            self.values[self.page][index] = Value::TagService(service);
+        }
+    }
+
     /// A sort's type or order chosen.
     pub fn sort(&mut self, row: usize, sort: PageSort) {
         if let Some(i) = self.option_at(row)
@@ -2129,10 +3146,137 @@ impl Editor {
         }
     }
 
+    /// The staged default downloader pair, independent of the selected page.
+    pub fn edited_gallery_source(&self) -> Option<crate::gallery_source::KeyAndName> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| match value {
+                Value::GallerySource(current) => Some(current.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.gallery.gug.clone())
+    }
+
+    pub fn set_gallery_source(&mut self, current: Option<crate::gallery_source::KeyAndName>) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::GallerySource(_)) {
+                *value = Value::GallerySource(current);
+                return;
+            }
+        }
+    }
+
+    /// The current favourites draft, independent of the selected options page.
+    pub fn edited_regex_favourites(&self) -> RegexFavourites {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| {
+                if let Value::RegexFavourites(favourites) = value {
+                    Some(favourites.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| self.before.regex_favourites.clone())
+    }
+
+    /// Accept the child list editor’s draft without writing the parent settings.
+    pub fn set_regex_favourites(&mut self, favourites: RegexFavourites) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::RegexFavourites(_)) {
+                *value = Value::RegexFavourites(favourites);
+                return;
+            }
+        }
+    }
+
+    /// All defaults/profiles and their presentation preference, staged together.
+    pub fn edited_import_options(&self) -> crate::import_options_panel::Value {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| {
+                if let Value::ImportOptions(value) = value {
+                    Some(value.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| crate::import_options_panel::Value {
+                manager: self.before.import_options.clone(),
+                ui: self.before.import_options_ui.clone(),
+            })
+    }
+    pub fn set_import_options(&mut self, draft: crate::import_options_panel::Value) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::ImportOptions(_)) {
+                *value = Value::ImportOptions(draft);
+                return;
+            }
+        }
+    }
+
+    pub fn edited_namespace_sorts(&self) -> Vec<PageSort> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| match value {
+                Value::NamespaceSorts(sorts) => Some(sorts.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.sorts.namespace_sorts.clone())
+    }
+    pub fn set_namespace_sorts(&mut self, sorts: Vec<PageSort>) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::NamespaceSorts(_)) {
+                *value = Value::NamespaceSorts(sorts);
+                return;
+            }
+        }
+    }
+
+    /// The shared favourite tags draft, independent of the selected page.
+    pub fn edited_favourite_tags(&self) -> FavouriteTags {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| {
+                if let Value::FavouriteTags(tags) = value {
+                    Some(tags.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| self.before.favourite_tags.clone())
+    }
+
+    /// Accept the child draft; only the parent Apply writes these tags.
+    pub fn set_favourite_tags(&mut self, tags: &[String]) {
+        let mut tags: Vec<String> = tags
+            .iter()
+            .filter_map(|tag| hydrus_core::Tag::new(tag))
+            .map(|tag| tag.as_str().to_owned())
+            .collect::<std::collections::BTreeSet<_>>()
+            .into_iter()
+            .collect();
+        hydrus_core::sort::human_sort(&mut tags);
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::FavouriteTags(_)) {
+                *value = Value::FavouriteTags(FavouriteTags(tags));
+                return;
+            }
+        }
+    }
+
     /// The settings as edited, those they started as, and why any edits
     /// couldn't be made.
     pub fn applied(&self) -> (Settings, &Settings, Vec<String>) {
-        let (after, problems) = applied(&self.pages, &self.before, &self.values);
+        let (mut after, problems) = applied(&self.pages, &self.before, &self.values);
+        if let Some(name) = self.remembered_panel() {
+            name.clone_into(&mut after.options_preferences.last_panel);
+        }
         (after, &self.before, problems)
     }
 }
@@ -2157,8 +3301,17 @@ mod tests {
             .iter()
             .position(|p| p.name == "files and trash")
             .unwrap();
-        values[trash][1] = Value::Noneable(None);
-        values[trash][3] = Value::Check(true);
+        let trash_options = pages[trash].options();
+        let age = trash_options
+            .iter()
+            .position(|option| {
+                option.label
+                    == "Number of hours a file will stay in the trash before being deleted: "
+            })
+            .unwrap();
+        let copy = trash_options.iter().position(|option| option.label == "TEST: Import local files directly from source, do not copy to temp dir beforehand.").unwrap();
+        values[trash][age] = Value::Noneable(None);
+        values[trash][copy] = Value::Check(true);
         let (after, problems) = applied(&pages, &before, &values);
         assert!(problems.is_empty());
         assert_eq!(after.trash.max_age_hours, None);
@@ -2176,9 +3329,18 @@ mod tests {
         let pages = pages(&before);
         let mut values = values(&pages, &before);
         let viewer = pages.iter().position(|p| p.name == "media viewer").unwrap();
+        let option_index = |page: usize, label: &str| {
+            pages[page]
+                .options()
+                .iter()
+                .position(|option| option.label == label)
+                .unwrap()
+        };
+        let durations = option_index(viewer, "Slideshow durations:");
+        let once = option_index(viewer, "Always play media once through before moving on:");
         // (the rest is set regardless)
-        values[viewer][0] = Value::Text("1.0,soon".into());
-        values[viewer][1] = Value::Check(true);
+        values[viewer][durations] = Value::Text("1.0,soon".into());
+        values[viewer][once] = Value::Check(true);
         let (after, problems) = applied(&pages, &before, &values);
         assert_eq!(
             problems,
@@ -2187,12 +3349,12 @@ mod tests {
         assert_eq!(after.slideshow.durations, before.slideshow.durations);
         assert!(after.slideshow.once_through);
         // those above zero are kept; with none, they are left
-        values[viewer][0] = Value::Text("2.5, 7, 0".into());
+        values[viewer][durations] = Value::Text("2.5, 7, 0".into());
         assert_eq!(
             applied(&pages, &before, &values).0.slideshow.durations,
             [2.5, 7.0]
         );
-        values[viewer][0] = Value::Text("0".into());
+        values[viewer][durations] = Value::Text("0".into());
         assert_eq!(
             applied(&pages, &before, &values).0.slideshow.durations,
             before.slideshow.durations
@@ -2202,19 +3364,24 @@ mod tests {
             .iter()
             .position(|p| p.name == "media playback")
             .unwrap();
-        values[playback][1] = Value::Text("0.5,big".into());
+        let zooms = option_index(playback, "Media zooms:");
+        values[playback][zooms] = Value::Text("0.5,big".into());
         assert_eq!(
             applied(&pages, &before, &values).1,
             ["Could not parse those zooms, so they were not saved!"]
         );
-        values[playback][1] = Value::Text("0.5, 2".into());
+        values[playback][zooms] = Value::Text("0.5, 2".into());
         assert_eq!(
             applied(&pages, &before, &values).0.media_viewer.media_zooms,
             [0.5, 2.0]
         );
         let ratings = pages.iter().position(|p| p.name == "ratings").unwrap();
+        let rating_size = option_index(
+            ratings,
+            "Media viewer like/dislike and numerical rating icon size:",
+        );
         for bad in ["big", "300"] {
-            values[ratings][0] = Value::Float(bad.into());
+            values[ratings][rating_size] = Value::Float(bad.into());
             let (after, problems) = applied(&pages, &before, &values);
             assert_eq!(problems.len(), 1, "{bad}");
             assert_eq!(
@@ -2222,7 +3389,7 @@ mod tests {
                 before.media_viewer.rating_icon_size
             );
         }
-        values[ratings][0] = Value::Float("16.5".into());
+        values[ratings][rating_size] = Value::Float("16.5".into());
         assert_eq!(
             applied(&pages, &before, &values)
                 .0
@@ -2399,19 +3566,30 @@ mod tests {
             })
             .collect();
         assert_eq!(titles, [("delete lock", 0)]);
-        assert!(matches!(rows[6], Row::Opt { depth: 1, .. }));
+        let find = |label: &str| {
+            rows.iter()
+                .position(|row| matches!(row, Row::Opt { option, .. } if option.label == label))
+                .unwrap()
+        };
+        let age = find("Number of hours a file will stay in the trash before being deleted: ");
+        let archived = find("Do not permit archived files to be deleted from the trash: ");
+        let title = rows
+            .iter()
+            .position(|row| matches!(row, Row::Title { title, .. } if *title == "delete lock"))
+            .unwrap();
+        assert!(matches!(rows[archived], Row::Opt { depth: 1, .. }));
         // a noneable number keeps its number while none
-        editor.none(1, true);
-        editor.number(1, 99);
-        editor.check(6, true);
+        editor.none(age, true);
+        editor.number(age, 99);
+        editor.check(archived, true);
         let (after, _, problems) = editor.applied();
         assert!(problems.is_empty());
         assert_eq!(after.trash.max_age_hours, None);
         assert!(after.delete_lock.archived);
-        editor.none(1, false);
+        editor.none(age, false);
         assert_eq!(editor.applied().0.trash.max_age_hours, Some(99));
         // (a title is no option)
-        editor.check(5, true);
+        editor.check(title, true);
         assert_eq!(editor.applied().0.file_handling, before.file_handling);
     }
 }

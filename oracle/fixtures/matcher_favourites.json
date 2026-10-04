@@ -1,0 +1,158 @@
+{
+ "initial": [
+  [
+   "a+",
+   "letters"
+  ],
+  [
+   "[",
+   "fragment"
+  ]
+ ],
+ "menus": [
+  [
+   {
+    "label": "manage favourites",
+    "enabled": true
+   },
+   {
+    "separator": true
+   },
+   {
+    "label": "click below to copy to clipboard",
+    "enabled": true
+   },
+   {
+    "separator": true
+   },
+   {
+    "label": "letters",
+    "enabled": true
+   },
+   {
+    "label": "fragment",
+    "enabled": true
+   }
+  ],
+  [
+   {
+    "label": "manage favourites",
+    "enabled": true
+   },
+   {
+    "separator": true
+   },
+   {
+    "label": "click below to copy to clipboard",
+    "enabled": true
+   },
+   {
+    "separator": true
+   },
+   {
+    "label": "letters",
+    "enabled": true
+   },
+   {
+    "label": "fragment",
+    "enabled": true
+   }
+  ],
+  [
+   {
+    "label": "manage favourites",
+    "enabled": true
+   },
+   {
+    "separator": true
+   },
+   {
+    "label": "click below to copy to clipboard",
+    "enabled": true
+   },
+   {
+    "separator": true
+   },
+   {
+    "label": "letters",
+    "enabled": true
+   },
+   {
+    "label": "fragment",
+    "enabled": true
+   }
+  ],
+  [
+   {
+    "label": "manage favourites",
+    "enabled": true
+   },
+   {
+    "separator": true
+   },
+   {
+    "label": "click below to copy to clipboard",
+    "enabled": true
+   },
+   {
+    "separator": true
+   },
+   {
+    "label": "fragment",
+    "enabled": true
+   },
+   {
+    "label": "letters",
+    "enabled": true
+   },
+   {
+    "label": "new choice",
+    "enabled": true
+   }
+  ]
+ ],
+ "copied": [
+  "a+",
+  "[",
+  "[",
+  "a+",
+  "z+"
+ ],
+ "steps": [
+  {
+   "accepted": false,
+   "saved": [
+    [
+     "a+",
+     "letters"
+    ],
+    [
+     "[",
+     "fragment"
+    ]
+   ],
+   "input": "original+"
+  },
+  {
+   "accepted": true,
+   "saved": [
+    [
+     "[",
+     "fragment"
+    ],
+    [
+     "a+",
+     "letters"
+    ],
+    [
+     "z+",
+     "new choice"
+    ]
+   ],
+   "input": "original+"
+  }
+ ],
+ "unchanged_input": "original+",
+ "dialog_title": "manage regex favourites",
+ "final_input": "original+"
+}

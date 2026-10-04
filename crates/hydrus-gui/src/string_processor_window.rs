@@ -39,6 +39,9 @@ pub struct Slots {
     pub tag_filter: crate::tag_filter_window::Slot,
     pub converter: Rc<RefCell<Option<StringConverterWindow>>>,
     pub conversion: Rc<RefCell<Option<ConversionWindow>>>,
+    pub exchange: crate::downloader_interchange_window::Slots,
+    pub favourites: crate::regex_favourites_window::Slot,
+    preference_store: Rc<RefCell<Option<Arc<Store>>>>,
 }
 
 impl std::fmt::Debug for Slots {
@@ -53,13 +56,19 @@ impl std::fmt::Debug for Slots {
 }
 
 impl Slots {
+    /// Connect converter child preferences to their owning store.
+    pub fn set_store(&self, store: &Arc<Store>) {
+        *self.preference_store.borrow_mut() = Some(store.clone());
+    }
+
     /// Whether any editor in this family is still open.
     pub fn has_open(&self) -> bool {
         self.processor.borrow().is_some() || self.has_processor_children()
     }
     /// Unfinished step, converter, conversion or tag-filter drafts.
     pub fn has_processor_children(&self) -> bool {
-        self.step.borrow().is_some()
+        self.exchange.has_open()
+            || self.step.borrow().is_some()
             || self.converter.borrow().is_some()
             || self.has_converter_children()
             || self.has_step_children()
@@ -67,10 +76,12 @@ impl Slots {
     /// Whether a converter has an unfinished conversion.
     pub fn has_converter_children(&self) -> bool {
         self.conversion.borrow().is_some()
+            || crate::regex_favourites_window::has_open(&self.favourites)
     }
     /// Whether a step has an unfinished tag filter.
     pub fn has_step_children(&self) -> bool {
         self.tag_filter.borrow().is_some()
+            || crate::regex_favourites_window::has_open(&self.favourites)
     }
     /// Cancel the whole family when its owning dialog is discarded.
     pub fn cancel_all(&self) {
@@ -79,6 +90,7 @@ impl Slots {
     }
     /// Discard all processor descendants before disposing of the processor.
     pub fn cancel_processor_children(&self) {
+        self.exchange.cancel();
         self.cancel_step_children();
         self.cancel_converter_children();
         cancel_slot(&self.step, StringStepWindow::invoke_cancel);
@@ -86,10 +98,12 @@ impl Slots {
     }
     /// Discard a converter's unfinished conversion.
     pub fn cancel_converter_children(&self) {
+        crate::regex_favourites_window::cancel(&self.favourites);
         cancel_slot(&self.conversion, ConversionWindow::invoke_cancel);
     }
     /// Discard a step's unfinished tag filter.
     pub fn cancel_step_children(&self) {
+        crate::regex_favourites_window::cancel(&self.favourites);
         cancel_slot(&self.tag_filter, crate::TagFilterWindow::invoke_cancel);
     }
 }
@@ -185,6 +199,7 @@ pub fn open(
     slots: &Slots,
     applied: Rc<dyn Fn(StringProcessor)>,
 ) -> Result<StringProcessorWindow, slint::PlatformError> {
+    slots.set_store(store);
     let window = StringProcessorWindow::new()?;
     let active = Rc::new(Cell::new(true));
     let blocked: Rc<dyn Fn() -> bool> = Rc::new({
@@ -206,6 +221,60 @@ pub fn open(
                 show(&window, &state.borrow());
                 window.set_child_open(slots.has_processor_children());
             }
+        }
+    });
+    window.on_exchange({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let slots = slots.clone();
+        let active = active.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move |action| {
+            if blocked() {
+                return;
+            }
+            let importing = action != "export";
+            let steps = if importing {
+                Vec::new()
+            } else {
+                state.borrow().editor.export_steps()
+            };
+            let applied = Rc::new({
+                let state = state.clone();
+                let active = active.clone();
+                let refresh = refresh.clone();
+                move |steps: Vec<ProcessingStep>| {
+                    if !active.get() {
+                        return Err("This processor editor has closed.".into());
+                    }
+                    for step in steps {
+                        state.borrow_mut().editor.add(step);
+                    }
+                    refresh();
+                    Ok(())
+                }
+            });
+            let result = crate::downloader_interchange_window::open_steps(
+                &slots.exchange,
+                importing,
+                steps,
+                applied,
+            );
+            if let Some(window) = weak.upgrade() {
+                match result {
+                    Ok(child) => {
+                        let refresh = refresh.clone();
+                        child.on_closed(move || refresh());
+                        window.set_exchange_error("".into());
+                        if action == "paste" {
+                            child.invoke_action("paste".into());
+                        }
+                    }
+                    Err(error) => window.set_exchange_error(error.into()),
+                }
+            }
+            refresh();
         }
     });
     let close: Rc<dyn Fn()> = Rc::new({
@@ -640,6 +709,172 @@ fn read_step(window: &StringStepWindow, editor: &mut StepEditor) {
     }
 }
 
+fn regex_tool(category: i32, index: i32) {
+    let (Ok(category), Ok(index)) = (usize::try_from(category), usize::try_from(index)) else {
+        return;
+    };
+    if let Some((_, value)) = hydrus_gui_model::regex_favourites::regex_tools(category).get(index) {
+        crate::copy_to_clipboard(value);
+    }
+}
+
+fn bind_step_favourites(
+    window: &StringStepWindow,
+    store: &Arc<Store>,
+    slots: &Slots,
+    active: &Rc<Cell<bool>>,
+) {
+    let favourites = match store.read(hydrus_store::regex_favourites::load) {
+        Ok(value) => value,
+        Err(error) => {
+            window.set_veto(error.to_string().into());
+            return;
+        }
+    };
+    let favourites = Rc::new(RefCell::new(favourites));
+    window.set_favourites(strings(
+        favourites.borrow().0.iter().map(|row| row.1.clone()),
+    ));
+    let popup = crate::popup_menu::Popup::new();
+    window.set_favourite_panes(popup.model());
+    window.on_favourite_menu({
+        let popup = popup.clone();
+        let favourites = favourites.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        let store = store.clone();
+        let slots = slots.clone();
+        move |x, y| {
+            if !active.get() || slots.has_step_children() {
+                popup.close();
+                return;
+            }
+            let Some(window) = weak.upgrade() else { return };
+            if !window.get_show_match_regex() && window.get_kind() != 3 {
+                return;
+            }
+            match store.read(hydrus_store::regex_favourites::load) {
+                Ok(value) => {
+                    window.set_favourites(strings(value.0.iter().map(|row| row.1.clone())));
+                    let (entries, actions) = hydrus_gui_model::regex_favourites::menu(&value);
+                    *favourites.borrow_mut() = value;
+                    popup.open(entries, actions, x, y);
+                }
+                Err(error) => window.set_veto(error.to_string().into()),
+            }
+        }
+    });
+    window.on_favourite_line_hovered({
+        let popup = popup.clone();
+        move |p, l, r, t, left| popup.hover(p, l, r, t, left)
+    });
+    window.on_favourite_placed({
+        let popup = popup.clone();
+        move |p, x, y, w| popup.placed(p, x, y, w)
+    });
+    window.on_favourite_dismissed({
+        let popup = popup.clone();
+        move || popup.close()
+    });
+    window.on_favourite_line_clicked({
+        let popup = popup.clone();
+        let active = active.clone();
+        let slots = slots.clone();
+        let weak = window.as_weak();
+        move |p, l, r, t, left| {
+            if !active.get() || slots.has_step_children() {
+                popup.close();
+                return;
+            }
+            let Some(crate::popup_menu::Chosen::Action(action)) = popup.click(p, l, r, t, left)
+            else {
+                return;
+            };
+            let Some(window) = weak.upgrade() else { return };
+            match action {
+                hydrus_gui_model::regex_favourites::MenuAction::Manage => {
+                    window.invoke_manage_favourites();
+                }
+                hydrus_gui_model::regex_favourites::MenuAction::Instruction => {}
+                hydrus_gui_model::regex_favourites::MenuAction::Copy(phrase) => {
+                    crate::copy_to_clipboard(&phrase);
+                    window.set_favourite_status("Copied regex phrase to clipboard.".into());
+                }
+            }
+        }
+    });
+    window.on_favourite_copied({
+        let favourites = favourites.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        move |index| {
+            if !active.get() {
+                return;
+            }
+            if let Ok(index) = usize::try_from(index)
+                && let Some((phrase, _)) = favourites.borrow().0.get(index)
+            {
+                crate::copy_to_clipboard(phrase);
+                if let Some(window) = weak.upgrade() {
+                    window.set_favourite_status("Copied regex phrase to clipboard.".into());
+                }
+            }
+        }
+    });
+    window.on_manage_favourites({
+        let weak = window.as_weak();
+        let store = store.clone();
+        let slots = slots.clone();
+        let active = active.clone();
+        move || {
+            if !active.get() || slots.has_step_children() {
+                return;
+            }
+            let applied: crate::regex_favourites_window::Applied = Rc::new({
+                let store = store.clone();
+                let favourites = favourites.clone();
+                let weak = weak.clone();
+                let active = active.clone();
+                move |value| {
+                    if !active.get() {
+                        return Err("The regex input has closed.".into());
+                    }
+                    let saved = value.clone();
+                    store
+                        .write_and_refresh(move |ctx| {
+                            hydrus_store::settings::set(ctx.conn(), &saved)
+                        })
+                        .map_err(|e| e.to_string())?;
+                    if let Some(window) = weak.upgrade() {
+                        window.set_favourites(strings(value.0.iter().map(|row| row.1.clone())));
+                    }
+                    *favourites.borrow_mut() = value;
+                    Ok(())
+                }
+            });
+            let result = crate::regex_favourites_window::open(
+                &favourites.borrow(),
+                &slots.favourites,
+                applied,
+            );
+            if let Some(window) = weak.upgrade() {
+                match result {
+                    Ok(child) => {
+                        window.set_child_open(true);
+                        let weak = weak.clone();
+                        child.on_closed(move || {
+                            if let Some(window) = weak.upgrade() {
+                                window.set_child_open(false);
+                            }
+                        });
+                    }
+                    Err(error) => window.set_veto(error.to_string().into()),
+                }
+            }
+        }
+    });
+}
+
 /// Open a step's editor: a new step (`index` none) or the one at `index`;
 /// "apply" gives it to `put`.
 fn open_step(
@@ -720,6 +955,25 @@ fn open_step(
     window.set_window_title(STEP_TITLE.into());
     let state = Rc::new(RefCell::new(step_editor));
     show_step(&window, &state.borrow());
+    window.set_regex_components(strings(
+        hydrus_gui_model::regex_favourites::regex_tools(1)
+            .into_iter()
+            .map(|row| row.0),
+    ));
+    window.set_regex_groups(strings(
+        hydrus_gui_model::regex_favourites::regex_tools(2)
+            .into_iter()
+            .map(|row| row.0),
+    ));
+    window.on_regex_tool({
+        let active = active.clone();
+        move |category, index| {
+            if active.get() {
+                regex_tool(category, index);
+            }
+        }
+    });
+    bind_step_favourites(&window, store, slots, &active);
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slot = slots.step.clone();
@@ -861,6 +1115,7 @@ pub fn open_match(
     slots: &Slots,
     applied: Rc<dyn Fn(hydrus_core::url::strings::StringMatch)>,
 ) {
+    slots.set_store(store);
     if slots.step.borrow().is_some() {
         return;
     }
@@ -969,6 +1224,7 @@ pub fn open_converter(
         let refresh = refresh.clone();
         let slot = slots.conversion.clone();
         let active = active.clone();
+        let preference_store = slots.preference_store.clone();
         move |index, editor| {
             if !active.get() {
                 return;
@@ -976,13 +1232,24 @@ pub fn open_converter(
             if slot.borrow().is_some() {
                 return;
             }
-            let done: Rc<dyn Fn(Conversion)> = Rc::new({
+            let done: Rc<dyn Fn(Conversion) -> Result<(), String>> = Rc::new({
+                let preference_store = preference_store.clone();
                 let state = state.clone();
                 let refresh = refresh.clone();
                 let active = active.clone();
                 move |conversion| {
                     if !active.get() {
-                        return;
+                        return Err("The converter has closed.".into());
+                    }
+                    if let Some(store) = preference_store.borrow().as_ref() {
+                        let saved = hydrus_store::string_conversion::LastStringConversion(Some(
+                            conversion.clone(),
+                        ));
+                        store
+                            .write_and_refresh(move |ctx| {
+                                hydrus_store::settings::set(ctx.conn(), &saved)
+                            })
+                            .map_err(|error| error.to_string())?;
                     }
                     LAST_CONVERSION.with(|last| *last.borrow_mut() = Some(conversion.clone()));
                     {
@@ -993,6 +1260,7 @@ pub fn open_converter(
                         }
                     }
                     refresh();
+                    Ok(())
                 }
             });
             match open_conversion(editor, &slot, done) {
@@ -1058,12 +1326,29 @@ pub fn open_converter(
         let state = state.clone();
         let open = open.clone();
         let blocked = blocked.clone();
+        let preference_store = slots.preference_store.clone();
+        let weak = window.as_weak();
         move || {
             if blocked() {
                 return;
             }
-            let editor =
-                LAST_CONVERSION.with(|last| state.borrow().0.adding(last.borrow().as_ref()));
+            let last = if let Some(store) = preference_store.borrow().as_ref() {
+                match store.read(hydrus_store::string_conversion::load) {
+                    Ok(value) => value.0,
+                    Err(error) => {
+                        if let Some(window) = weak.upgrade() {
+                            window.set_error(error.to_string().into());
+                        }
+                        return;
+                    }
+                }
+            } else {
+                LAST_CONVERSION.with(|last| last.borrow().clone())
+            };
+            if let Some(window) = weak.upgrade() {
+                window.set_error("".into());
+            }
+            let editor = state.borrow().0.adding(last.as_ref());
             open(None, editor);
         }
     });
@@ -1245,11 +1530,29 @@ fn read_conversion(window: &ConversionWindow, editor: &mut ConversionEditor) {
 fn open_conversion(
     editor: ConversionEditor,
     slot: &Rc<RefCell<Option<ConversionWindow>>>,
-    done: Rc<dyn Fn(Conversion)>,
+    done: Rc<dyn Fn(Conversion) -> Result<(), String>>,
 ) -> Result<ConversionWindow, slint::PlatformError> {
     let window = ConversionWindow::new()?;
     let active = Rc::new(Cell::new(true));
     window.set_window_title(CONVERSION_TITLE.into());
+    window.set_regex_components(strings(
+        hydrus_gui_model::regex_favourites::regex_tools(1)
+            .into_iter()
+            .map(|row| row.0),
+    ));
+    window.set_regex_groups(strings(
+        hydrus_gui_model::regex_favourites::regex_tools(2)
+            .into_iter()
+            .map(|row| row.0),
+    ));
+    window.on_regex_tool({
+        let active = active.clone();
+        move |category, index| {
+            if active.get() {
+                regex_tool(category, index);
+            }
+        }
+    });
     let state = Rc::new(RefCell::new((editor, None::<&'static str>)));
     show_conversion(&window, &state.borrow().0, None);
     let close: Rc<dyn Fn()> = Rc::new({
@@ -1274,13 +1577,20 @@ fn open_conversion(
         let state = state.clone();
         let close = close.clone();
         let active = active.clone();
+        let weak = window.as_weak();
         move || {
             if !active.get() {
                 return;
             }
             let value = state.borrow().0.value();
-            close();
-            done(value);
+            match done(value) {
+                Ok(()) => close(),
+                Err(error) => {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_error(error.into());
+                    }
+                }
+            }
         }
     });
     window.on_changed({

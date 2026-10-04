@@ -1,0 +1,441 @@
+{
+  "controls": {
+    "confirm": false,
+    "focus": false,
+    "history": 100,
+    "min": 1,
+    "max": 1000
+  },
+  "close": [
+    {
+      "enabled": false,
+      "kind": "search",
+      "for_session": false,
+      "accepted": false,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": false,
+      "kind": "search",
+      "for_session": false,
+      "accepted": true,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": false,
+      "kind": "search",
+      "for_session": true,
+      "accepted": false,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": false,
+      "kind": "search",
+      "for_session": true,
+      "accepted": true,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": false,
+      "kind": "empty",
+      "for_session": false,
+      "accepted": false,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": false,
+      "kind": "empty",
+      "for_session": false,
+      "accepted": true,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": false,
+      "kind": "empty",
+      "for_session": true,
+      "accepted": false,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": false,
+      "kind": "empty",
+      "for_session": true,
+      "accepted": true,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": false,
+      "kind": "held",
+      "for_session": false,
+      "accepted": false,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": false,
+      "kind": "held",
+      "for_session": false,
+      "accepted": true,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": false,
+      "kind": "held",
+      "for_session": true,
+      "accepted": false,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": false,
+      "kind": "held",
+      "for_session": true,
+      "accepted": true,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": true,
+      "kind": "search",
+      "for_session": false,
+      "accepted": false,
+      "questions": [
+        "Close \"search\"?"
+      ],
+      "error": "VetoException"
+    },
+    {
+      "enabled": true,
+      "kind": "search",
+      "for_session": false,
+      "accepted": true,
+      "questions": [
+        "Close \"search\"?"
+      ],
+      "error": null
+    },
+    {
+      "enabled": true,
+      "kind": "search",
+      "for_session": true,
+      "accepted": false,
+      "questions": [
+        "Close \"search\"?"
+      ],
+      "error": "VetoException"
+    },
+    {
+      "enabled": true,
+      "kind": "search",
+      "for_session": true,
+      "accepted": true,
+      "questions": [
+        "Close \"search\"?"
+      ],
+      "error": null
+    },
+    {
+      "enabled": true,
+      "kind": "empty",
+      "for_session": false,
+      "accepted": false,
+      "questions": [
+        "Close \"empty\"?\n\nIt is empty."
+      ],
+      "error": "VetoException"
+    },
+    {
+      "enabled": true,
+      "kind": "empty",
+      "for_session": false,
+      "accepted": true,
+      "questions": [
+        "Close \"empty\"?\n\nIt is empty."
+      ],
+      "error": null
+    },
+    {
+      "enabled": true,
+      "kind": "empty",
+      "for_session": true,
+      "accepted": false,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": true,
+      "kind": "empty",
+      "for_session": true,
+      "accepted": true,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": true,
+      "kind": "held",
+      "for_session": false,
+      "accepted": false,
+      "questions": [
+        "Close \"held\"?\n\nIt is holding 3 pages."
+      ],
+      "error": "VetoException"
+    },
+    {
+      "enabled": true,
+      "kind": "held",
+      "for_session": false,
+      "accepted": true,
+      "questions": [
+        "Close \"held\"?\n\nIt is holding 3 pages."
+      ],
+      "error": null
+    },
+    {
+      "enabled": true,
+      "kind": "held",
+      "for_session": true,
+      "accepted": false,
+      "questions": [],
+      "error": null
+    },
+    {
+      "enabled": true,
+      "kind": "held",
+      "for_session": true,
+      "accepted": true,
+      "questions": [],
+      "error": null
+    }
+  ],
+  "focus": [
+    {
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "enabled": true,
+      "calls": [
+        "tag autocomplete"
+      ]
+    },
+    {
+      "enabled": false,
+      "calls": []
+    }
+  ],
+  "history": [
+    {
+      "input": 0,
+      "value": 1,
+      "labels": [
+        "1: page 25",
+        "Clear History"
+      ],
+      "first_bold": true,
+      "applied_confirm": true,
+      "applied_focus": true
+    },
+    {
+      "input": 1,
+      "value": 1,
+      "labels": [
+        "1: page 25",
+        "Clear History"
+      ],
+      "first_bold": true,
+      "applied_confirm": true,
+      "applied_focus": true
+    },
+    {
+      "input": 2,
+      "value": 2,
+      "labels": [
+        "1: page 25",
+        "2: page 24",
+        "Clear History"
+      ],
+      "first_bold": true,
+      "applied_confirm": true,
+      "applied_focus": true
+    },
+    {
+      "input": 20,
+      "value": 20,
+      "labels": [
+        "1: page 25",
+        "2: page 24",
+        "3: page 23",
+        "4: page 22",
+        "5: page 21",
+        "6: page 20",
+        "7: page 19",
+        "8: page 18",
+        "9: page 17",
+        "10: page 16",
+        "11: page 15",
+        "12: page 14",
+        "13: page 13",
+        "14: page 12",
+        "15: page 11",
+        "16: page 10",
+        "17: page 09",
+        "18: page 08",
+        "19: page 07",
+        "20: page 06",
+        "Clear History"
+      ],
+      "first_bold": true,
+      "applied_confirm": true,
+      "applied_focus": true
+    },
+    {
+      "input": 100,
+      "value": 100,
+      "labels": [
+        "1: page 25",
+        "2: page 24",
+        "3: page 23",
+        "4: page 22",
+        "5: page 21",
+        "6: page 20",
+        "7: page 19",
+        "8: page 18",
+        "9: page 17",
+        "10: page 16",
+        "11: page 15",
+        "12: page 14",
+        "13: page 13",
+        "14: page 12",
+        "15: page 11",
+        "16: page 10",
+        "17: page 09",
+        "18: page 08",
+        "19: page 07",
+        "20: page 06",
+        "21: page 05",
+        "22: page 04",
+        "23: page 03",
+        "24: page 02",
+        "25: page 01",
+        "Clear History"
+      ],
+      "first_bold": true,
+      "applied_confirm": true,
+      "applied_focus": true
+    },
+    {
+      "input": 1001,
+      "value": 1000,
+      "labels": [
+        "1: page 25",
+        "2: page 24",
+        "3: page 23",
+        "4: page 22",
+        "5: page 21",
+        "6: page 20",
+        "7: page 19",
+        "8: page 18",
+        "9: page 17",
+        "10: page 16",
+        "11: page 15",
+        "12: page 14",
+        "13: page 13",
+        "14: page 12",
+        "15: page 11",
+        "16: page 10",
+        "17: page 09",
+        "18: page 08",
+        "19: page 07",
+        "20: page 06",
+        "21: page 05",
+        "22: page 04",
+        "23: page 03",
+        "24: page 02",
+        "25: page 01",
+        "Clear History"
+      ],
+      "first_bold": true,
+      "applied_confirm": true,
+      "applied_focus": true
+    }
+  ],
+  "importer_focus": [
+    {
+      "kind": "gallery",
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "kind": "gallery",
+      "enabled": true,
+      "calls": [
+        "TextAndPasteCtrl"
+      ]
+    },
+    {
+      "kind": "gallery",
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "kind": "watchers",
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "kind": "watchers",
+      "enabled": true,
+      "calls": [
+        "TextAndPasteCtrl"
+      ]
+    },
+    {
+      "kind": "watchers",
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "kind": "simple",
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "kind": "simple",
+      "enabled": true,
+      "calls": [
+        "TextAndPasteCtrl"
+      ]
+    },
+    {
+      "kind": "simple",
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "kind": "urls",
+      "enabled": false,
+      "calls": []
+    },
+    {
+      "kind": "urls",
+      "enabled": true,
+      "calls": [
+        "TextAndPasteCtrl"
+      ]
+    },
+    {
+      "kind": "urls",
+      "enabled": false,
+      "calls": []
+    }
+  ]
+}

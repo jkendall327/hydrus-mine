@@ -1,0 +1,43 @@
+{
+ "export": {
+  "initial": {
+   "title": "String - 71B",
+   "summary": "String - 71B",
+   "width": 512,
+   "min": 100,
+   "max": 4096,
+   "enabled": false,
+   "button": "select a path and please select a directory that exists"
+  },
+  "valid": {
+   "enabled": true,
+   "button": "export"
+  },
+  "done": "done!",
+  "payload": "https://png-sources.example/a%20b\nhttps://png-sources.example/%E6%97%A5",
+  "remembered": true
+ },
+ "imports": [
+  {
+   "name": "cancel",
+   "seeds": []
+  },
+  {
+   "name": "valid",
+   "seeds": [
+    "https://png-sources.example/a%20b",
+    "https://png-sources.example/%E6%97%A5"
+   ]
+  },
+  {
+   "name": "malformed",
+   "seeds": []
+  }
+ ],
+ "errors": [
+  [
+   "Could not import!",
+   "\"/tmp/tmpgsrsm7d8/broken.png\" did not appear to be a valid image!"
+  ]
+ ]
+}

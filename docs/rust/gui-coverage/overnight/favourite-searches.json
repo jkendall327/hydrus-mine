@@ -1,0 +1,336 @@
+{
+  "agent": "tag-filters/favourite-searches",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "commits": [
+    "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+  ],
+  "implementation_leaf_count": 4,
+  "implementation_parent_count": 0,
+  "partial_progress_count": 2,
+  "evidence_only_count": 0,
+  "claims": [
+    {
+      "reference_id": "audit-options-favourite-edit-domains",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Edit file and tag services, shared all-known-domain interlocks and independent current/pending tag ticks. Multiple/deleted locations stage their ticks and cancel without mutating the favourite; accepted domains reach saved FavouriteSearches.",
+      "implementation_commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/favourites_window.rs",
+          "line": 567,
+          "symbol": "window.on_location_chosen",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/favourites.rs",
+          "line": 308,
+          "symbol": "pub fn choose_location",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/favourite_search_editor.rs",
+          "line": 60,
+          "symbol": "fn favourite_controls_replay_reference",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/favourite_search_editor.rs",
+          "line": 32,
+          "symbol": "fn favourite_domain_sort_collect",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "oracle/record_favourite_search_editor.py",
+          "line": 10,
+          "symbol": "def record(session):",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/favourite_search_editor.json",
+      "limitations": [
+        "Multiple/deleted selection uses an inline staged panel."
+      ],
+      "validation": {
+        "reference_recording_executed": true,
+        "reference_run_completed_utc": "2026-10-04 06:49:32",
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "python_py_compile_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI; no local heavy Cargo build."
+      }
+    },
+    {
+      "reference_id": "audit-options-favourite-edit-sort",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Choose system, configured namespace and rating sorts and their direction; changing type resets its reference default direction. Save-sort omits the value without discarding the draft. Accepted edits reach saved FavouriteSearches.",
+      "implementation_commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/favourites_window.rs",
+          "line": 711,
+          "symbol": "window.on_sort_chosen",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/favourites.rs",
+          "line": 338,
+          "symbol": "pub fn choose_sort",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/favourite_search_editor.rs",
+          "line": 60,
+          "symbol": "fn favourite_controls_replay_reference",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/favourite_search_editor.rs",
+          "line": 32,
+          "symbol": "fn favourite_domain_sort_collect",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "oracle/record_favourite_search_editor.py",
+          "line": 10,
+          "symbol": "def record(session):",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/favourite_search_editor.json",
+      "limitations": [],
+      "validation": {
+        "reference_recording_executed": true,
+        "reference_run_completed_utc": "2026-10-04 06:49:32",
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "python_py_compile_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI; no local heavy Cargo build."
+      }
+    },
+    {
+      "reference_id": "audit-options-favourite-edit-collect",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Choose namespaces, ratings, independent collect tag service and unmatched grouping. PageCollect persists/imports the tag context, maintains legacy/native defaults, and the collection consumer groups by the saved service. Real reference group assertions cover all-known, local and downloader tags. Reference GetNamespaceSlice always unions current and pending independently of the stored search toggles.",
+      "implementation_commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/favourites_window.rs",
+          "line": 738,
+          "symbol": "window.on_collect_ticked",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/pages.rs",
+          "line": 446,
+          "symbol": "pub struct PageCollect",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 2151,
+          "symbol": "fn page_collect(",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-search/src/exec/collect.rs",
+          "line": 54,
+          "symbol": "let collect_context",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-search/src/exec/tests.rs",
+          "line": 1050,
+          "symbol": "fn saved_collect_tag_domains",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/favourite_search_editor.rs",
+          "line": 60,
+          "symbol": "fn favourite_controls_replay_reference",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/favourite_search_editor.rs",
+          "line": 32,
+          "symbol": "fn favourite_domain_sort_collect",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "oracle/record_favourite_search_editor.py",
+          "line": 10,
+          "symbol": "def record(session):",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/favourite_search_editor.json",
+      "limitations": [],
+      "validation": {
+        "reference_recording_executed": true,
+        "reference_run_completed_utc": "2026-10-04 06:49:32",
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "python_py_compile_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI; no local heavy Cargo build."
+      }
+    },
+    {
+      "reference_id": "audit-options-favourite-edit-autocomplete",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Show shared live search suggestions with counts/context, choose by click or keyboard highlight/Enter, and open shared blank system predicate editors. Child acceptance adds predicates to the favourite draft; owner or manager cancellation closes pending children, and stale child handles cannot mutate a later favourite or close its child.",
+      "implementation_commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/favourites_window.rs",
+          "line": 811,
+          "symbol": "let choose_suggestion",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/favourites.slint",
+          "line": 227,
+          "symbol": "callback suggestion-chosen",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/favourite_search_editor.rs",
+          "line": 60,
+          "symbol": "fn favourite_controls_replay_reference",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/favourite_search_editor.rs",
+          "line": 32,
+          "symbol": "fn favourite_domain_sort_collect",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "oracle/record_favourite_search_editor.py",
+          "line": 10,
+          "symbol": "def record(session):",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/favourite_search_editor.json",
+      "limitations": [
+        "Autocomplete uses the shared native page model. Reference cog, explicit OR construction, favourite predicates and fetch/children tabs remain absent.",
+        "Multiple/deleted domain selection and overwrite questions are inline in the owner."
+      ],
+      "validation": {
+        "reference_recording_executed": true,
+        "reference_run_completed_utc": "2026-10-04 06:49:32",
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "python_py_compile_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI; no local heavy Cargo build."
+      }
+    },
+    {
+      "reference_id": "audit-options-favourite-edit",
+      "previous_status": "partial",
+      "proposed_status": "partial",
+      "change_kind": "implementation_progress",
+      "exact_behavior": "Replace all previously read-only domain/sort/collect labels and typed-only search with editable shared controls. Both add and save-current routes use this editor. Predicate children and multi-domain selection remain drafts until accepted, and FavouriteSearches persistence remains owned by manager Apply.",
+      "implementation_commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/favourites_window.rs",
+          "line": 394,
+          "symbol": "fn open_edit(",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/favourite_search_editor.rs",
+          "line": 60,
+          "symbol": "fn favourite_controls_replay_reference",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/favourite_search_editor.rs",
+          "line": 32,
+          "symbol": "fn favourite_domain_sort_collect",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "oracle/record_favourite_search_editor.py",
+          "line": 10,
+          "symbol": "def record(session):",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/favourite_search_editor.json",
+      "limitations": [
+        "Autocomplete uses the shared native page model. Reference cog, explicit OR construction, favourite predicates and fetch/children tabs remain absent.",
+        "Multiple/deleted domain selection and overwrite questions are inline in the owner."
+      ],
+      "validation": {
+        "reference_recording_executed": true,
+        "reference_run_completed_utc": "2026-10-04 06:49:32",
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "python_py_compile_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI; no local heavy Cargo build."
+      }
+    },
+    {
+      "reference_id": "audit-options-favourites-edit-predicates",
+      "previous_status": "partial",
+      "proposed_status": "partial",
+      "change_kind": "implementation_progress",
+      "exact_behavior": "Typed/removable predicates now also accept shared live autocomplete results and blank system predicate child values with shared exclusive/inverse entry rules. Full Qt autocomplete ancillary tools remain absent.",
+      "implementation_commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/favourites_window.rs",
+          "line": 811,
+          "symbol": "let choose_suggestion",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/favourite_search_editor.rs",
+          "line": 60,
+          "symbol": "fn favourite_controls_replay_reference",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/favourite_search_editor.rs",
+          "line": 32,
+          "symbol": "fn favourite_domain_sort_collect",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        },
+        {
+          "relativepath": "oracle/record_favourite_search_editor.py",
+          "line": 10,
+          "symbol": "def record(session):",
+          "commit": "564f27ae812aebf1183c657586a0f0c1f1e5ffb4"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/favourite_search_editor.json",
+      "limitations": [
+        "Autocomplete uses the shared native page model. Reference cog, explicit OR construction, favourite predicates and fetch/children tabs remain absent.",
+        "Multiple/deleted domain selection and overwrite questions are inline in the owner."
+      ],
+      "validation": {
+        "reference_recording_executed": true,
+        "reference_run_completed_utc": "2026-10-04 06:49:32",
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "python_py_compile_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI; no local heavy Cargo build."
+      }
+    }
+  ]
+}

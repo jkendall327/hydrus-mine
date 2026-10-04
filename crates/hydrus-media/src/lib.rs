@@ -89,3 +89,9 @@ pub mod resample {
         cv::rgb_to_gray(image)
     }
 }
+
+/// Render an SVG bitmap with the native thumbnail renderer and system fonts.
+/// External image references remain disabled, as for imported SVG thumbnails.
+pub fn render_svg(data: &[u8], target: (u32, u32)) -> Option<Raster> {
+    formats::svg::render(data, target)
+}

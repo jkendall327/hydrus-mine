@@ -1,0 +1,116 @@
+[
+  {
+    "advanced": false,
+    "controls": [
+      {
+        "setting": "network_timeout",
+        "min": 3,
+        "max": 600,
+        "initial_from_4000000": 600,
+        "below": 3,
+        "above": 600
+      },
+      {
+        "setting": "connection_error_wait_time",
+        "min": 3,
+        "max": 1800,
+        "initial_from_4000000": 1800,
+        "below": 3,
+        "above": 1800
+      },
+      {
+        "setting": "serverside_bandwidth_wait_time",
+        "min": 3,
+        "max": 1800,
+        "initial_from_4000000": 1800,
+        "below": 3,
+        "above": 1800
+      },
+      {
+        "setting": "max_network_jobs",
+        "min": 1,
+        "max": 30,
+        "initial_from_4000000": 30,
+        "below": 1,
+        "above": 30
+      },
+      {
+        "setting": "max_network_jobs_per_domain",
+        "min": 1,
+        "max": 5,
+        "initial_from_4000000": 5,
+        "below": 1,
+        "above": 5
+      },
+      {
+        "setting": "downloader_network_error_delay",
+        "min": 600
+      },
+      {
+        "setting": "subscription_network_error_delay",
+        "min": 600
+      },
+      {
+        "setting": "subscription_other_error_delay",
+        "min": 600
+      }
+    ]
+  },
+  {
+    "advanced": true,
+    "controls": [
+      {
+        "setting": "network_timeout",
+        "min": 1,
+        "max": 2592000,
+        "initial_from_4000000": 2592000,
+        "below": 1,
+        "above": 2592000
+      },
+      {
+        "setting": "connection_error_wait_time",
+        "min": 1,
+        "max": 2592000,
+        "initial_from_4000000": 2592000,
+        "below": 1,
+        "above": 2592000
+      },
+      {
+        "setting": "serverside_bandwidth_wait_time",
+        "min": 1,
+        "max": 2592000,
+        "initial_from_4000000": 2592000,
+        "below": 1,
+        "above": 2592000
+      },
+      {
+        "setting": "max_network_jobs",
+        "min": 1,
+        "max": 1000,
+        "initial_from_4000000": 1000,
+        "below": 1,
+        "above": 1000
+      },
+      {
+        "setting": "max_network_jobs_per_domain",
+        "min": 1,
+        "max": 100,
+        "initial_from_4000000": 100,
+        "below": 1,
+        "above": 100
+      },
+      {
+        "setting": "downloader_network_error_delay",
+        "min": 1
+      },
+      {
+        "setting": "subscription_network_error_delay",
+        "min": 1
+      },
+      {
+        "setting": "subscription_other_error_delay",
+        "min": 1
+      }
+    ]
+  }
+]

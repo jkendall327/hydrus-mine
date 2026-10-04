@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "agent": "search-options",
+  "baseline_git_head": "d50df26b",
+  "claims": [
+    {
+      "id": "audit-options-media-viewer-mouse-behaviour-time-until-mouse-cursor-autohides-on-media-viewer",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact defaultSome700ms noneable control stages/persists/imports media_viewer_cursor_autohide_time_ms with100..100000ms bounds and do not autohide. The actual native viewer owns a Slint SingleShot timer and weak per-WindowId motion callback in the shared desktop ActivityHandler; focus comes from the existing native application observer. Its strict elapsed>delay policy and100..250ms polling (None1000) match fresh real Qt QCursor/QTimer output. Ordinary motion restores the actual cursor and restarts at100ms; accepted hidden drag pauses until ordinary motion resumes. Inactive windows, interactive hover/volume regions and actual open popup stacks restore the cursor and reset the wait. Synchronous native menu show returns establish a fresh wait after blocking timer delivery. Visibility reaches winit set_cursor_visible and the Slint MouseCursor binding; close stops the actual timer and ignores late input. Apply/Cancel, duplicate/other-ID isolation, dead weak registration, actual context-menu open/cancel lifecycle and reopened persisted control value are covered.",
+      "limits": [
+        "Native canvas and existing Slint hover/volume eligibility apply; backend-specific MPV widget input and cursor anchoring remain separate gaps. Slint1.18 internal popup lifecycle is pinned by the repository dependency; synchronous native popup execution uses actual show start/return callbacks while asynchronous menus use the real popup stack. This leaf does not claim cursor anchoring or other mouse-drag controls."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ViewerCursorSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui-model/src/viewer_cursor.rs::CursorWait",
+        "crates/hydrus-gui/src/viewer_cursor.rs::NativeCursor",
+        "crates/hydrus-gui/src/session_autosave.rs::ActivityHandler",
+        "crates/hydrus-gui/src/session_autosave.rs::observe_native_pointer",
+        "crates/hydrus-gui/src/lib.rs::open_viewer",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/viewer_cursor.rs::actual_cursor_checks_match_reference_clock_focus_menu_and_motion",
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::cursor_autohide_control_matches_reference_default_bounds_and_none",
+        "crates/hydrus-store/src/import/decode.rs::cursor_autohide_import_preserves_timeout_and_do_not_hide",
+        "crates/hydrus-gui/src/session_autosave.rs::pointer_tests::native_motion_targets_one_window_and_releases_dead_viewers",
+        "crates/hydrus-gui/tests/gui/options_window.rs::cursor_timeout_reaches_native_motion_timer_focus_and_actual_popup_lifecycle"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_cursor_options.py",
+        "fixture": "oracle/fixtures/viewer_cursor_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T13:48:16Z",
+        "reference": "Real MediaViewerPanel NoneableSpinCtrl values/bounds/None phrase, displayed real local JPEG CanvasMediaListBrowser; actual _HideCursorCheck QCursor shape and QTimer interval/active observations. Frozen clock only; actual Qt focus changes and real ClientGUICore.PopupMenu QMenu nested execution loop. Real HandleMouseMoveWithoutEvent ordinary/hidden-drag/restore transitions with controlled pointer input. Clean client shutdown."
+      },
+      "implementationCommit": "5e49dbec",
+      "dependencies": [
+        "356566f4",
+        "2d2e162e"
+      ]
+    }
+  ],
+  "counts": {
+    "concrete_first_pass": 1,
+    "parent_or_alias": 0
+  }
+}

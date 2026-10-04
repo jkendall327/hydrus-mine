@@ -8,7 +8,7 @@ use std::rc::Rc;
 
 use slint::{ComponentHandle as _, SharedString};
 
-use crate::session_saving::{NAME_MESSAGE, NAME_TITLE, Saving, Step};
+use crate::session_saving::{NAME_MESSAGE, NAME_TITLE, Saving, Scope, Step};
 use crate::{Pages, SessionDialog};
 
 /// Save the open pages as the session `name` (asking first whether to
@@ -17,6 +17,7 @@ use crate::{Pages, SessionDialog};
 pub(crate) fn open(
     pages: &Rc<RefCell<Pages>>,
     name: Option<&str>,
+    scope: Scope,
     slot: &Rc<RefCell<Option<SessionDialog>>>,
 ) -> Result<SessionDialog, String> {
     let existing: Vec<String> = pages
@@ -55,7 +56,10 @@ pub(crate) fn open(
                     window.set_window_title(NAME_TITLE.into());
                     window.set_message(NAME_MESSAGE.into());
                     window.set_warning(warning.unwrap_or_default().into());
-                    window.set_text(SharedString::new());
+                    window.set_text(match &scope {
+                        Scope::All => SharedString::new(),
+                        Scope::Notebook { suggested_name, .. } => suggested_name.as_str().into(),
+                    });
                     window.set_asking_name(true);
                 }
                 Step::Ask(question) => {
@@ -66,8 +70,14 @@ pub(crate) fn open(
                     window.set_asking_name(false);
                 }
                 Step::Save(name) => {
-                    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
-                    if let Err(e) = pages.borrow_mut().save_session(&name, now) {
+                    let now = hydrus_core::time::TimestampMs::now().millis();
+                    let result = match &scope {
+                        Scope::All => pages.borrow_mut().save_session_at_ms(&name, now),
+                        Scope::Notebook { key, .. } => pages
+                            .borrow_mut()
+                            .save_notebook_session_at_ms(*key, &name, now),
+                    };
+                    if let Err(e) = result {
                         eprintln!("could not save the session: {e}");
                     }
                     close();

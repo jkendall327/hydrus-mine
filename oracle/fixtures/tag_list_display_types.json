@@ -1,0 +1,926 @@
+{
+  "options": {
+    "shown": {
+      "sidebar": 3,
+      "viewer": 2
+    },
+    "choices": {
+      "sidebar": [
+        [
+          "multiple media view tags",
+          3
+        ],
+        [
+          "single media view tags",
+          2
+        ],
+        [
+          "display tags",
+          1
+        ],
+        [
+          "stored tags",
+          0
+        ]
+      ],
+      "viewer": [
+        [
+          "multiple media view tags",
+          3
+        ],
+        [
+          "single media view tags",
+          2
+        ],
+        [
+          "display tags",
+          1
+        ],
+        [
+          "stored tags",
+          0
+        ]
+      ]
+    },
+    "before_apply": {
+      "sidebar": 3,
+      "viewer": 2
+    },
+    "cancelled": {
+      "sidebar": 3,
+      "viewer": 2
+    },
+    "applied": {
+      "sidebar": 0,
+      "viewer": 0
+    }
+  },
+  "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+  ],
+  "corpus": [
+    {
+      "tag": "parity:mode old_tag",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    },
+    {
+      "tag": "parity:mode ideal_tag",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    },
+    {
+      "tag": "parity:mode selection_hidden",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    },
+    {
+      "tag": "parity:mode single_hidden",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    }
+  ],
+  "siblings": [
+    [
+      "parity:mode old_tag",
+      "parity:mode ideal_tag"
+    ]
+  ],
+  "parents": [
+    [
+      "parity:mode ideal_tag",
+      "category:mode parent_tag"
+    ]
+  ],
+  "filters": {
+    "selection": "parity:mode selection_hidden",
+    "single": "parity:mode single_hidden"
+  },
+  "cases": [
+    {
+      "mode": 3,
+      "expanded": false,
+      "sidebar_mode": 3,
+      "viewer_mode": 3,
+      "rows": {
+        "sidebar": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden"
+            ]
+          }
+        ]
+      },
+      "after_default_change": {
+        "sidebar": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "mode": 2,
+      "expanded": false,
+      "sidebar_mode": 2,
+      "viewer_mode": 2,
+      "rows": {
+        "sidebar": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden"
+            ]
+          }
+        ]
+      },
+      "after_default_change": {
+        "sidebar": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "mode": 1,
+      "expanded": false,
+      "sidebar_mode": 1,
+      "viewer_mode": 1,
+      "rows": {
+        "sidebar": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden"
+            ]
+          }
+        ]
+      },
+      "after_default_change": {
+        "sidebar": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "mode": 0,
+      "expanded": false,
+      "sidebar_mode": 0,
+      "viewer_mode": 0,
+      "rows": {
+        "sidebar": [
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "parity:mode ideal_tag (1)"
+            ]
+          },
+          {
+            "tag": "parity:mode old_tag",
+            "rows": [
+              "parity:mode old_tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "parity:mode selection_hidden (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "parity:mode single_hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "parity:mode ideal_tag"
+            ]
+          },
+          {
+            "tag": "parity:mode old_tag",
+            "rows": [
+              "parity:mode old_tag"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "parity:mode selection_hidden"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "parity:mode single_hidden"
+            ]
+          }
+        ]
+      },
+      "after_default_change": {
+        "sidebar": [
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "parity:mode ideal_tag (1)"
+            ]
+          },
+          {
+            "tag": "parity:mode old_tag",
+            "rows": [
+              "parity:mode old_tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "parity:mode selection_hidden (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "parity:mode single_hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "parity:mode ideal_tag"
+            ]
+          },
+          {
+            "tag": "parity:mode old_tag",
+            "rows": [
+              "parity:mode old_tag"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "parity:mode selection_hidden"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "parity:mode single_hidden"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "mode": 3,
+      "expanded": true,
+      "sidebar_mode": 3,
+      "viewer_mode": 3,
+      "rows": {
+        "sidebar": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden"
+            ]
+          }
+        ]
+      },
+      "after_default_change": {
+        "sidebar": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "mode": 2,
+      "expanded": true,
+      "sidebar_mode": 2,
+      "viewer_mode": 2,
+      "rows": {
+        "sidebar": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden"
+            ]
+          }
+        ]
+      },
+      "after_default_change": {
+        "sidebar": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "mode": 1,
+      "expanded": true,
+      "sidebar_mode": 1,
+      "viewer_mode": 1,
+      "rows": {
+        "sidebar": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden"
+            ]
+          }
+        ]
+      },
+      "after_default_change": {
+        "sidebar": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "category:mode parent_tag",
+            "rows": [
+              "mode parent tag"
+            ]
+          },
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "mode ideal tag"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "mode selection hidden"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "mode single hidden"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "mode": 0,
+      "expanded": true,
+      "sidebar_mode": 0,
+      "viewer_mode": 0,
+      "rows": {
+        "sidebar": [
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "parity:mode ideal_tag (1)"
+            ]
+          },
+          {
+            "tag": "parity:mode old_tag",
+            "rows": [
+              "parity:mode old_tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "parity:mode selection_hidden (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "parity:mode single_hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "parity:mode ideal_tag"
+            ]
+          },
+          {
+            "tag": "parity:mode old_tag",
+            "rows": [
+              "parity:mode old_tag"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "parity:mode selection_hidden"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "parity:mode single_hidden"
+            ]
+          }
+        ]
+      },
+      "after_default_change": {
+        "sidebar": [
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "parity:mode ideal_tag (1)"
+            ]
+          },
+          {
+            "tag": "parity:mode old_tag",
+            "rows": [
+              "parity:mode old_tag (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "parity:mode selection_hidden (2)"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "parity:mode single_hidden (2)"
+            ]
+          }
+        ],
+        "viewer": [
+          {
+            "tag": "parity:mode ideal_tag",
+            "rows": [
+              "parity:mode ideal_tag"
+            ]
+          },
+          {
+            "tag": "parity:mode old_tag",
+            "rows": [
+              "parity:mode old_tag"
+            ]
+          },
+          {
+            "tag": "parity:mode selection_hidden",
+            "rows": [
+              "parity:mode selection_hidden"
+            ]
+          },
+          {
+            "tag": "parity:mode single_hidden",
+            "rows": [
+              "parity:mode single_hidden"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

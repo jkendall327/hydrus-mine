@@ -1,6 +1,67 @@
 //! Actual entry points, confirmations, asynchronous writes and rendered controls.
 use hydrus_gui::{MainWindow, Pages, bind, headless, tag_migration_window};
 use slint::{ComponentHandle as _, Model as _};
+
+#[test]
+fn global_tags_menu_opens_unrestricted_migration_and_can_reopen_after_cancel() {
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    let recorded = hydrus_testkit::fixture_json("main_menu.json");
+    assert!(recorded.to_string().contains("migrate…"));
+    let migration = hydrus_testkit::fixture_json("tag_migration.json");
+    for _ in 0..2 {
+        let title = ui
+            .get_menu_titles()
+            .iter()
+            .position(|t| t.label == "tags")
+            .unwrap();
+        ui.invoke_menu_title_pressed(i32::try_from(title).unwrap(), 0.0, 22.0);
+        let pane = ui.get_menu_panes().row_data(0).unwrap();
+        let row = pane
+            .lines
+            .iter()
+            .position(|r| r.label == "migrate…")
+            .unwrap();
+        assert!(pane.lines.row_data(row).unwrap().usable);
+        ui.invoke_menu_line_clicked(0, i32::try_from(row).unwrap(), 0.0, 0.0, 0.0);
+        assert_eq!(ui.get_menu_open(), -1);
+        let window = bound
+            .tag_migration
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        assert!(window.window().is_visible());
+        assert!(!window.get_have_files());
+        assert!(!window.get_selected_files());
+        assert_eq!(
+            window
+                .get_services()
+                .row_data(usize::try_from(window.get_source()).unwrap())
+                .unwrap(),
+            "my tags"
+        );
+        window.invoke_go();
+        let warning = migration["asked"][0]["message"]
+            .as_str()
+            .unwrap()
+            .split("\n\n")
+            .next()
+            .unwrap();
+        assert!(window.get_question().starts_with(warning));
+        window.invoke_answer(false);
+        assert!(window.get_question().is_empty());
+        assert!(!window.get_running());
+        window.invoke_close_clicked();
+        assert!(bound.tag_migration.borrow().is_none());
+    }
+}
+
 #[test]
 fn service_review_opens_migration_with_reference_questions_and_renders() {
     let (_dirs, store) = crate::subscriptions::store();

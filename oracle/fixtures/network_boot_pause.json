@@ -1,0 +1,64 @@
+{
+ "menus": [
+  {
+   "advanced": false,
+   "label": "always boot the client with paused network traffic",
+   "checkable": true,
+   "checked": false,
+   "enabled": true
+  },
+  {
+   "advanced": true,
+   "label": "always boot the client with paused network traffic",
+   "checkable": true,
+   "checked": false,
+   "enabled": true
+  }
+ ],
+ "steps": [
+  {
+   "action": "enable boot preference",
+   "preference": true,
+   "paused": false
+  },
+  {
+   "action": "boot",
+   "preference": true,
+   "paused": true
+  },
+  {
+   "action": "resume traffic",
+   "preference": true,
+   "paused": false
+  },
+  {
+   "action": "disable boot preference",
+   "preference": false,
+   "paused": false
+  }
+ ],
+ "boot": [
+  {
+   "preference": false,
+   "before": false,
+   "after": false
+  },
+  {
+   "preference": false,
+   "before": true,
+   "after": true
+  },
+  {
+   "preference": true,
+   "before": false,
+   "after": true
+  },
+  {
+   "preference": true,
+   "before": true,
+   "after": true
+  }
+ ],
+ "round_trip_preference": true,
+ "reopened_checked": true
+}

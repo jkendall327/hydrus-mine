@@ -30,12 +30,12 @@ pub(crate) fn serialisable_list(values: Vec<Value>) -> Value {
         ),
     )
 }
-fn string_match(m: &StringMatch) -> Value {
+pub(crate) fn string_match(m: &StringMatch) -> Value {
     let (kind, value) = match &m.kind {
         MatchKind::Fixed(s) => (0, json!(s)),
         MatchKind::Flexible(f) => (1, json!(*f as i64)),
         MatchKind::Regex(r) => (2, json!(r.pattern())),
-        MatchKind::Any => (3, Value::Null),
+        MatchKind::Any => (3, json!("")),
     };
     object(
         51,
@@ -43,11 +43,18 @@ fn string_match(m: &StringMatch) -> Value {
         json!([kind, value, m.min_chars, m.max_chars, m.example]),
     )
 }
-fn converter(c: &StringConverter) -> Result<Value> {
+pub(crate) fn converter(c: &StringConverter) -> Result<Value> {
     let conversions = c
         .conversions
         .iter()
         .map(|conversion| {
+            let upgraded = match conversion {
+                Conversion::Unsupported { code, data } => {
+                    Conversion::from_preserved_date(*code, data)
+                }
+                _ => None,
+            };
+            let conversion = upgraded.as_ref().unwrap_or(conversion);
             Ok(match conversion {
                 Conversion::RemoveFromStart(n) => json!([0, n]),
                 Conversion::RemoveFromEnd(n) => json!([1, n]),
@@ -62,6 +69,15 @@ fn converter(c: &StringConverter) -> Result<Value> {
                     pattern,
                     replacement,
                 } => json!([9, [pattern.pattern(), replacement]]),
+                Conversion::DateDecode {
+                    phrase,
+                    timezone,
+                    offset,
+                } => json!([10, [phrase, timezone.code(), offset]]),
+                Conversion::DateEncode { phrase, timezone } => {
+                    json!([12, [phrase, timezone.code()]])
+                }
+                Conversion::DateParse => json!([14, null]),
                 Conversion::IntegerAddition(n) => json!([11, n]),
                 Conversion::Hash(h) => json!([
                     13,
@@ -81,7 +97,7 @@ fn converter(c: &StringConverter) -> Result<Value> {
         .collect::<Result<Vec<_>>>()?;
     Ok(object(55, 2, json!([conversions, c.example])))
 }
-fn processor(p: &StringProcessor) -> Result<Value> {
+pub(super) fn processor(p: &StringProcessor) -> Result<Value> {
     let steps = p
         .steps
         .iter()
@@ -195,7 +211,7 @@ fn html_rule(r: &HtmlRule) -> Value {
         ]),
     )
 }
-fn formula(f: &Formula) -> Result<Value> {
+pub(crate) fn formula(f: &Formula) -> Result<Value> {
     let p = processor(&f.processor)?;
     let mut encoded = match &f.kind {
         FormulaKind::Html { rules, content } => {
@@ -257,7 +273,7 @@ fn formula(f: &Formula) -> Result<Value> {
     Ok(encoded)
 }
 
-fn content(c: &ContentParser) -> Result<Value> {
+pub(crate) fn content(c: &ContentParser) -> Result<Value> {
     let (kind, extra) = match &c.kind {
         ContentKind::Url { url_type, priority } => (7, json!([url_type, priority])),
         ContentKind::Tag { namespace } => (0, json!(namespace)),
@@ -281,7 +297,7 @@ fn content(c: &ContentParser) -> Result<Value> {
         json!([c.name, kind, formula(&c.formula)?, extra]),
     ))
 }
-fn page(p: &PageParser) -> Result<Value> {
+pub(crate) fn page(p: &PageParser) -> Result<Value> {
     valid_key(&p.key)?;
     let mut contents = p.content_parsers.iter().collect::<Vec<_>>();
     contents.sort_by_cached_key(|c| hydrus_core::casefold::casefold(&c.name));
@@ -320,7 +336,7 @@ fn page(p: &PageParser) -> Result<Value> {
     Ok(encoded)
 }
 
-fn valid_key(key: &str) -> Result<()> {
+pub(crate) fn valid_key(key: &str) -> Result<()> {
     let bytes = hex::decode(key)
         .map_err(|_| Error::Invalid("Definition key is not hexadecimal.".into()))?;
     if bytes.is_empty() || bytes.len() > 128 {

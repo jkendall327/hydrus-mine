@@ -1,0 +1,295 @@
+[
+  {
+    "case": "context_formula",
+    "collapse": true,
+    "context": {
+      "url": "https://formula.example/post",
+      "note": " first\n second "
+    },
+    "variable": "note",
+    "name": "context note",
+    "before": [
+      "firstsecond"
+    ],
+    "results": [
+      "firstsecond!"
+    ]
+  },
+  {
+    "case": "context_missing",
+    "results": []
+  },
+  {
+    "case": "static_formula",
+    "collapse": true,
+    "text": " first\n second ",
+    "count": 3,
+    "name": "three constants",
+    "results": [
+      "firstsecond!",
+      "firstsecond!",
+      "firstsecond!"
+    ],
+    "minimum": 1,
+    "maximum": 65535
+  },
+  {
+    "case": "context_formula",
+    "collapse": false,
+    "context": {
+      "url": "https://formula.example/post",
+      "note": " first\n second "
+    },
+    "variable": "note",
+    "name": "context note",
+    "before": [
+      "first\n second"
+    ],
+    "results": [
+      "first\n second!"
+    ]
+  },
+  {
+    "case": "context_missing",
+    "results": []
+  },
+  {
+    "case": "static_formula",
+    "collapse": false,
+    "text": " first\n second ",
+    "count": 3,
+    "name": "three constants",
+    "results": [
+      "first\n second!",
+      "first\n second!",
+      "first\n second!"
+    ],
+    "minimum": 1,
+    "maximum": 65535
+  },
+  {
+    "case": "nested_formula",
+    "text": "<html><script>{\"posts\":[\"alpha\",\"beta\"]}</script></html>",
+    "context": {
+      "url": "https://formula.example/post",
+      "note": " first\n second "
+    },
+    "name": "embedded json",
+    "results": [
+      "alpha!",
+      "beta!"
+    ],
+    "sub_texts": [
+      "{\"posts\":[\"alpha\",\"beta\"]}"
+    ]
+  },
+  {
+    "case": "nested_multiple",
+    "text": "<html><script>{\"posts\":[\"first\"]}</script><script>{\"posts\":[\"second\"]}</script></html>",
+    "sub_texts": [
+      "{\"posts\":[\"first\"]}",
+      "{\"posts\":[\"second\"]}"
+    ],
+    "results": [
+      "first!",
+      "second!"
+    ]
+  },
+  {
+    "case": "nested_main_edit",
+    "sub_texts": [
+      "{\"posts\":[\"changed\"]}"
+    ],
+    "results": [
+      "changed!"
+    ]
+  },
+  {
+    "case": "nested_sub_edit",
+    "results": [
+      "https://formula.example/post!"
+    ]
+  },
+  {
+    "case": "nested_sub_test",
+    "type": "first_nonempty",
+    "texts": [
+      "<html></html>",
+      "<html><script>{\"posts\":[\"alpha\",\"beta\"]}</script></html>"
+    ],
+    "sub_texts": [
+      "{\"posts\":[\"alpha\",\"beta\"]}"
+    ],
+    "context": {
+      "url": "https://formula.example/post",
+      "note": " first\n second "
+    }
+  },
+  {
+    "case": "nested_sub_test",
+    "type": "error_fallback",
+    "texts": [
+      "not json",
+      "{\"posts\":\"later\"}"
+    ],
+    "sub_texts": [
+      ""
+    ],
+    "context": {
+      "url": "https://formula.example/post",
+      "note": " first\n second "
+    }
+  },
+  {
+    "case": "nested_sub_test",
+    "type": "empty",
+    "texts": [
+      "<html></html>"
+    ],
+    "sub_texts": [],
+    "context": {
+      "url": "https://formula.example/post",
+      "note": " first\n second "
+    }
+  },
+  {
+    "case": "zipper_queue",
+    "action": "add",
+    "texts": [
+      "first",
+      "second"
+    ],
+    "selected": []
+  },
+  {
+    "case": "zipper_queue",
+    "action": "edit",
+    "texts": [
+      "first",
+      "replacement"
+    ],
+    "selected": [
+      1
+    ]
+  },
+  {
+    "case": "zipper_queue",
+    "action": "up",
+    "texts": [
+      "replacement",
+      "first"
+    ],
+    "selected": [
+      0
+    ]
+  },
+  {
+    "case": "zipper_queue",
+    "action": "down",
+    "texts": [
+      "first",
+      "replacement"
+    ],
+    "selected": [
+      1
+    ]
+  },
+  {
+    "case": "zipper_queue",
+    "action": "cancel_add",
+    "texts": [
+      "first",
+      "replacement"
+    ],
+    "selected": [
+      1
+    ]
+  },
+  {
+    "case": "zipper_queue",
+    "action": "cancel_edit",
+    "texts": [
+      "first",
+      "replacement"
+    ],
+    "selected": [
+      1
+    ]
+  },
+  {
+    "case": "zipper_queue",
+    "action": "delete",
+    "texts": [
+      "first"
+    ],
+    "selected": []
+  },
+  {
+    "case": "zipper_formula",
+    "phrase": "\\1 -> \\2",
+    "name": "paired",
+    "context": {
+      "url": "https://formula.example/post",
+      "note": " first\n second "
+    },
+    "results": [
+      "left -> https://formula.example/post!",
+      "left -> https://formula.example/post!"
+    ]
+  },
+  {
+    "case": "change_recursive_type",
+    "type": "nested",
+    "name": "",
+    "processing": [],
+    "main_type": "ParseFormulaHTML",
+    "sub_type": "ParseFormulaJSON"
+  },
+  {
+    "case": "change_recursive_type",
+    "type": "zipper",
+    "name": "",
+    "processing": [],
+    "phrase": "\\1",
+    "children": 1
+  },
+  {
+    "case": "change_recursive_type",
+    "type": "context",
+    "name": "",
+    "processing": [],
+    "variable": "url"
+  },
+  {
+    "case": "change_recursive_type",
+    "type": "static",
+    "name": "",
+    "processing": [],
+    "text": "example text",
+    "count": 1
+  },
+  {
+    "case": "subsidiary_separator",
+    "raw": "<div class=\"post\"><p> first\n\nsecond </p></div>",
+    "converted": "<div class=\"post\"><p> first\n\nsecond </p></div><!-- converted -->",
+    "collapse": false,
+    "before": [
+      "<div class=\"post\"><p> first\n\nsecond </p></div>"
+    ],
+    "sort_before": true
+  },
+  {
+    "case": "subsidiary_separator_edit",
+    "text": "<p> edited\n\nnote </p>",
+    "name": "preserved child",
+    "sort": false,
+    "results": [
+      "<p> edited\n\nnote </p>"
+    ],
+    "post_texts": [
+      [
+        "edited\n\nnote"
+      ]
+    ]
+  }
+]

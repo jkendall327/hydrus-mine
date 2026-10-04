@@ -80,6 +80,128 @@ pub fn row(seed: &FileSeed, index: usize, now: i64) -> Vec<String> {
     ]
 }
 
+/// Parse the reference clipboard source batch. Its first source sets the type
+/// for every seed; URL encoding also applies to URL-looking lines in path batches.
+pub fn pasted_sources(
+    text: &str,
+    classes: &hydrus_core::url::UrlClasses,
+) -> Result<Vec<hydrus_store::queues::NewFileSeed>, String> {
+    let sources: Vec<String> = text
+        .split([
+            '\n', '\r', '\u{000b}', '\u{000c}', '\u{001c}', '\u{001d}', '\u{001e}', '\u{0085}',
+            '\u{2028}', '\u{2029}',
+        ])
+        .map(|s| s.trim_start_matches('\u{feff}').trim())
+        .filter(|s| !s.is_empty())
+        .map(|s| {
+            hydrus_core::url::ensure_url_is_encoded(
+                s,
+                false,
+                classes.settings().collapse_leading_slashes,
+            )
+        })
+        .collect();
+    let first = sources.first().ok_or_else(|| {
+        "Could not understand the clipboard as Lines of URLs or file paths: no sources.".to_owned()
+    })?;
+    let seed_type = if first.starts_with("http") {
+        SeedType::Url
+    } else {
+        SeedType::Path
+    };
+    Ok(sources
+        .into_iter()
+        .map(|source| {
+            let (data, data_for_comparison) = if seed_type == SeedType::Url {
+                match classes.normalise(&source, true).and_then(|data| {
+                    classes
+                        .normalise(&source, false)
+                        .map(|comparison| (data, comparison))
+                }) {
+                    Ok(pair) => pair,
+                    Err(_) => (source.clone(), source),
+                }
+            } else {
+                (source.clone(), source)
+            };
+            hydrus_store::queues::NewFileSeed {
+                seed_type,
+                data,
+                data_for_comparison,
+                source_time: None,
+                referral_url: None,
+                meta: hydrus_store::queues::FileSeedMeta::default(),
+            }
+        })
+        .collect())
+}
+
+/// One OR container of exact URL predicates, as the selected-row action uses.
+pub fn url_search(urls: &[String]) -> Vec<hydrus_core::search::predicate::Predicate> {
+    use hydrus_core::search::predicate::{Predicate, SystemPredicate, UrlRule};
+    vec![Predicate::Or(
+        urls.iter()
+            .filter(|url| url.starts_with("http"))
+            .map(|url| {
+                Predicate::System(SystemPredicate::KnownUrl {
+                    rule: UrlRule::ExactMatch(url.clone()),
+                    has: true,
+                })
+            })
+            .collect(),
+    )]
+}
+
+/// Reference confirmation before re-normalising and discarding later duplicates.
+pub const RENORMALISE_QUESTION: &str = "Are you sure you want to renormalise all the URLs in here (and discard any subsequent duplicates)? This typically only makes sense if you have changed the URL Class rules after this list was created (e.g. to remove an ephemeral token parameter) and you now need to collapse the existing list to catch future duplicates better.\n\nIf you do not know exactly what this does, click no.";
+
+/// Selected import objects in the reference SerialisableList v3/FileSeed v8
+/// layout, including progress, headers, hashes, tags, source URLs and notes.
+pub fn export_objects(seeds: &[&FileSeed]) -> Result<String, String> {
+    use serde_json::json;
+    let objects = seeds
+        .iter()
+        .map(|s| {
+            let headers: serde_json::Map<String, serde_json::Value> = s
+                .meta
+                .request_headers
+                .iter()
+                .map(|(k, v)| (k.clone(), json!(v)))
+                .collect();
+            json!([
+                2,
+                [
+                    57,
+                    8,
+                    [
+                        s.seed_type as i64,
+                        s.data,
+                        s.data_for_comparison,
+                        s.created,
+                        s.modified,
+                        s.source_time,
+                        s.status.code(),
+                        s.note,
+                        s.referral_url,
+                        headers,
+                        s.meta.external_filterable_tags,
+                        [77, 1, s.meta.external_additional_tags],
+                        s.meta.primary_urls,
+                        s.meta.source_urls,
+                        s.meta.tags,
+                        s.meta.notes,
+                        s.meta.hashes
+                    ]
+                ]
+            ])
+        })
+        .collect::<Vec<_>>();
+    let text = serde_json::to_string(&json!([26, 3, objects])).map_err(|e| e.to_string())?;
+    hydrus_core::pyjson::PyJson::parse(&text)
+        .map(|v| v.to_python_string())
+        .map_err(|e| e.to_string())
+}
+
 /// What a menu item does.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Action {
@@ -99,6 +221,14 @@ pub enum Action {
     ExportToClipboard,
     /// New sources (URLs or paths) from the clipboard.
     ImportFromClipboard,
+    /// New source lines from a reference string PNG carrier.
+    ImportFromPng,
+    /// All source lines exported as a reference string PNG carrier.
+    ExportToPng,
+    /// Selected complete FileSeed objects as reference clipboard JSON.
+    ExportObjects,
+    /// Confirm normalization of all URLs and discard subsequent duplicates.
+    Renormalise,
     /// The selected files in a new page.
     OpenSelectedFiles,
     /// The selected's sources to the clipboard.
@@ -282,7 +412,7 @@ pub fn log_menu(log: &LogFacts, any_selected: bool) -> Vec<Entry> {
             "export all sources".into(),
             vec![
                 item("to clipboard", Action::ExportToClipboard),
-                item("to png", Action::NotYet),
+                item("to png", Action::ExportToPng),
             ],
         ));
     }
@@ -290,7 +420,7 @@ pub fn log_menu(log: &LogFacts, any_selected: bool) -> Vec<Entry> {
         "ADVANCED: import new sources".into(),
         vec![
             item("from clipboard", Action::ImportFromClipboard),
-            item("from png", Action::NotYet),
+            item("from png", Action::ImportFromPng),
         ],
     ));
     if any_selected || log.urls {
@@ -298,11 +428,11 @@ pub fn log_menu(log: &LogFacts, any_selected: bool) -> Vec<Entry> {
         if any_selected {
             advanced.push(item(
                 "export selected import objects to clipboard",
-                Action::NotYet,
+                Action::ExportObjects,
             ));
         }
         if log.urls {
-            advanced.push(item("re-normalise all URLs", Action::NotYet));
+            advanced.push(item("re-normalise all URLs", Action::Renormalise));
         }
         menu.push(Entry::Menu("advanced".into(), advanced));
     }

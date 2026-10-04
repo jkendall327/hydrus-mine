@@ -1,0 +1,74 @@
+{
+ "label": "Default export directory: ",
+ "box": "export folder",
+ "cases": [
+  {
+   "case": "fallback",
+   "stored_before": null,
+   "shown": "",
+   "entered": "",
+   "staged": null,
+   "saved": null,
+   "manual": "<DB>/synthetic-home/hydrus_export"
+  },
+  {
+   "case": "custom",
+   "stored_before": null,
+   "shown": "",
+   "entered": "<DB>/synthetic exports 日本",
+   "staged": null,
+   "saved": "synthetic exports 日本",
+   "manual": "<DB>/synthetic exports 日本"
+  },
+  {
+   "case": "spaces",
+   "stored_before": "<DB>/synthetic exports 日本",
+   "shown": "<DB>/synthetic exports 日本",
+   "entered": " \t ",
+   "staged": "<DB>/synthetic exports 日本",
+   "saved": null,
+   "manual": "<DB>/synthetic-home/hydrus_export"
+  },
+  {
+   "case": "literal_space",
+   "stored_before": null,
+   "shown": "",
+   "entered": "<DB>/synthetic exports 日本 ",
+   "staged": null,
+   "saved": "synthetic exports 日本 ",
+   "manual": "<DB>/synthetic exports 日本 "
+  },
+  {
+   "case": "relative",
+   "stored_before": null,
+   "shown": "",
+   "entered": "relative exports",
+   "staged": null,
+   "saved": "relative exports",
+   "manual": "<DB>/relative exports"
+  },
+  {
+   "case": "portable",
+   "stored_before": "synthetic exports 日本",
+   "shown": "<DB>/synthetic exports 日本",
+   "entered": "<DB>/synthetic exports 日本",
+   "staged": "synthetic exports 日本",
+   "saved": "synthetic exports 日本",
+   "manual": "<DB>/synthetic exports 日本"
+  }
+ ],
+ "browse": [
+  {
+   "caption": "Select directory",
+   "existing": "<DB>/synthetic exports 日本"
+  }
+ ],
+ "picked": "<DB>/synthetic exports 日本",
+ "cancelled_browse": "<DB>/synthetic exports 日本",
+ "cancelled_option": "synthetic exports 日本",
+ "manual_after_cancel": "<DB>/synthetic exports 日本",
+ "one_off_shown": "<DB>/one off destination",
+ "saved_after_one_off": "synthetic exports 日本",
+ "manual_after_one_off": "<DB>/synthetic exports 日本",
+ "fallback_exists": true
+}

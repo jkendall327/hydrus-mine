@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "agent": "search-options",
+  "baseline_git_head": "d50df26b",
+  "claims": [
+    {
+      "id": "audit-options-media-viewer-animation-audio-seek-bar-seek-bar-full-height-pop-in-requires-window-focus",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact default-true checkbox stages/persists the seek-bar focus requirement independently of hover focus. Actual shared native OS activity routes viewer/window identity to the open viewer. When enabled, ordinary mouseover of an inactive viewer uses configured away height (recorded20\u21925); disabling it permits full height while inactive. Actual held scrub and existing volume popup preserve the reference forced-full exception. Native volume control follows the same full-height eligibility. Apply updates the open viewer, Cancel retains policy, and legacy animated_scanbar_pop_in_requires_focus migrates.",
+      "limits": [
+        "Preview canvases and backend-specific MPV controls remain separate unclaimed leaves. Existing native full/away heights and presentation styling apply."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ViewerFocusSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/src/viewer_focus.rs::NativeFocus",
+        "crates/hydrus-gui/src/lib.rs::open_viewer",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow",
+        "crates/hydrus-gui/src/session_autosave.rs::observe_native_focus"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::viewer_focus_controls_stage_independent_reference_policies",
+        "crates/hydrus-store/src/import/decode.rs::viewer_focus_options_import_independent_mouseover_gates",
+        "crates/hydrus-gui/tests/gui/options_window.rs::focus_options_reach_native_activity_and_actual_mouseover_gates"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_focus_options.py",
+        "fixture": "oracle/fixtures/viewer_focus_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T12:20:36Z",
+        "reference": "Real MediaViewerPanel and MediaViewerHoversPanel UpdateOptions; real displayed local GIF CanvasMediaListBrowser._ShowHideControlBar and four hover DoRegularHideShow consumers. Real Qt top-level activation and QApplication.setActiveWindow(None) transient, asserted via unchanged actual QApplication.activeWindow; no activeWindow mocks."
+      },
+      "implementationCommit": "de5c2c47",
+      "dependencies": [
+        "9b0839e3",
+        "b9de55c2"
+      ]
+    },
+    {
+      "id": "audit-options-media-viewer-hovers-hover-windows-hover-window-pop-in-requires-window-focus",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact default-true checkbox stages/persists an independent focus policy for the top-information, tags, ratings/locations and notes hover panels. The shared actual native observer distinguishes this viewer, another application window, and no active application window. Enabled focus policy suppresses new raises without viewer activity, preserves already-raised panels during None only while the pointer remains in position, and hides them when another window becomes active. Fresh real Qt activation/raise consumers record all8preference\u00d7activity combinations and each panel transient[true,true,false,false,true,false], replayed through the same native-ID observer and real native pointer events. Apply/Cancel, imported preferences, callback identity isolation and dead-owner release are covered.",
+      "limits": [
+        "Native hover content/layout and existing menu/dominant-hover interaction differences remain outside this control. Passive background-copy preferences, preview controls and duplicate-filter-specific hovers are separate unclaimed leaves."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ViewerFocusSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/src/viewer_focus.rs::NativeFocus",
+        "crates/hydrus-gui/src/lib.rs::open_viewer",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow",
+        "crates/hydrus-gui/src/session_autosave.rs::observe_native_focus"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::viewer_focus_controls_stage_independent_reference_policies",
+        "crates/hydrus-store/src/import/decode.rs::viewer_focus_options_import_independent_mouseover_gates",
+        "crates/hydrus-gui/tests/gui/options_window.rs::focus_options_reach_native_activity_and_actual_mouseover_gates"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_focus_options.py",
+        "fixture": "oracle/fixtures/viewer_focus_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T12:20:36Z",
+        "reference": "Real MediaViewerPanel and MediaViewerHoversPanel UpdateOptions; real displayed local GIF CanvasMediaListBrowser._ShowHideControlBar and four hover DoRegularHideShow consumers. Real Qt top-level activation and QApplication.setActiveWindow(None) transient, asserted via unchanged actual QApplication.activeWindow; no activeWindow mocks."
+      },
+      "implementationCommit": "de5c2c47",
+      "dependencies": [
+        "9b0839e3",
+        "b9de55c2"
+      ]
+    }
+  ],
+  "counts": {
+    "concrete_first_pass": 2,
+    "parent_or_alias": 0
+  }
+}

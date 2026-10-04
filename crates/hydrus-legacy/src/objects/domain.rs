@@ -9,8 +9,8 @@
 
 use hydrus_core::url::class::{GalleryIndex, GalleryIndexPosition, Referral, ReferralMode};
 use hydrus_core::url::strings::{
-    Conversion, Encoding, FlexibleMatch, HashFunction, MatchKind, ProcessingStep, PyRegex,
-    SortKind, StringConverter, StringMatch, StringProcessor,
+    Conversion, DateTimezone, Encoding, FlexibleMatch, HashFunction, MatchKind, ProcessingStep,
+    PyRegex, SortKind, StringConverter, StringMatch, StringProcessor,
 };
 use hydrus_core::url::{DomainMask, UrlClass, UrlClassSettings, UrlParameter, UrlType};
 
@@ -475,6 +475,24 @@ pub(crate) fn string_converter(object: &SerialisableObject) -> DecodeResult<Stri
                     replacement: string(k, replacement, "replacement")?,
                 }
             }
+            10 => {
+                let [phrase, timezone, offset] = tuple::<3>(k, data, "date decode")?;
+                Conversion::DateDecode {
+                    phrase: string(k, phrase, "date phrase")?,
+                    timezone: DateTimezone::from_code(int(k, timezone, "timezone")?)
+                        .ok_or_else(|| malformed(k, "unknown date timezone"))?,
+                    offset: int(k, offset, "timezone offset")?,
+                }
+            }
+            12 => {
+                let [phrase, timezone] = tuple::<2>(k, data, "date encode")?;
+                Conversion::DateEncode {
+                    phrase: string(k, phrase, "date phrase")?,
+                    timezone: DateTimezone::from_code(int(k, timezone, "timezone")?)
+                        .ok_or_else(|| malformed(k, "unknown date timezone"))?,
+                }
+            }
+            14 => Conversion::DateParse,
             11 => Conversion::IntegerAddition(int(k, data, "delta")?),
             13 => Conversion::Hash(match string(k, data, "hash function")?.as_str() {
                 "md5" => HashFunction::Md5,

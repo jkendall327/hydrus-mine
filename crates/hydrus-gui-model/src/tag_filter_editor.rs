@@ -151,6 +151,7 @@ pub struct View {
 #[derive(Debug, Clone)]
 pub struct TagFilterEditor {
     blacklist_only: bool,
+    extra_panels: bool,
     /// The namespaces offered a box each (not the empty one).
     namespaces: Vec<String>,
     /// "exclude these" and "except for these", sorted.
@@ -164,6 +165,7 @@ impl TagFilterEditor {
     pub fn new(filter: &TagFilter, blacklist_only: bool, namespaces: &[String]) -> Self {
         let mut editor = Self {
             blacklist_only,
+            extra_panels: false,
             namespaces: namespaces
                 .iter()
                 .filter(|n| !n.is_empty())
@@ -211,10 +213,46 @@ impl TagFilterEditor {
     }
 
     pub fn tabs(&self) -> Vec<Tab> {
-        if self.blacklist_only {
+        if self.blacklist_only && !self.extra_panels {
             vec![Tab::Blacklist]
+        } else if self.blacklist_only {
+            vec![Tab::Blacklist, Tab::Whitelist, Tab::Advanced]
         } else {
             vec![Tab::Whitelist, Tab::Blacklist, Tab::Advanced]
+        }
+    }
+
+    /// Whether advanced mode can offer the blacklist's extra tabs.
+    pub fn show_other_panels_offered(&self, advanced: bool) -> bool {
+        self.blacklist_only && advanced && !self.extra_panels
+    }
+
+    /// Reveal the whitelist and advanced tabs while keeping blacklist testing.
+    pub fn show_other_panels(&mut self) {
+        self.extra_panels = true;
+    }
+
+    /// Paste the reference's newline-separated inputs into one rule list.
+    /// Empty/whitespace-only lines are ignored, even in the global-slice inputs.
+    pub fn paste_slices(&mut self, list: usize, text: &str) {
+        let slices: Vec<String> = text
+            .split([
+                '\n', '\r', '\u{b}', '\u{c}', '\u{85}', '\u{2028}', '\u{2029}', '\u{1c}', '\u{1d}',
+                '\u{1e}',
+            ])
+            .map(|line| line.trim_start_matches('\u{feff}').trim())
+            .filter(|line| !line.is_empty())
+            .map(str::to_owned)
+            .collect();
+        if slices.is_empty() {
+            return;
+        }
+        match list {
+            0 => self.add_simple_whitelist(&slices),
+            1 => self.add_simple_blacklist(&slices),
+            2 => self.add_advanced_blacklist(&slices),
+            3 => self.add_advanced_whitelist(&slices),
+            _ => (),
         }
     }
 
@@ -599,4 +637,134 @@ impl TagFilterEditor {
         };
         (text, Some(all_good))
     }
+}
+
+/// The reference's prompt before saving or importing a favourite.
+pub const FAVOURITE_NAME: &str = "Enter a name for the favourite.";
+/// The empty favourite menu's label.
+pub const NO_FAVOURITES: &str = "no favourites set!";
+/// Ask before replacing a saved name (case-sensitive, as the reference).
+pub fn overwrite_favourite(name: &str) -> String {
+    format!("\"{name}\" already exists! Overwrite?")
+}
+/// Ask before deleting a saved filter.
+pub fn delete_favourite(name: &str) -> String {
+    format!("Delete \"{name}\"?")
+}
+
+/// Shared favourites in insertion order, independent of any editor's draft.
+#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct FavouriteTagFilters(pub Vec<(String, TagFilter)>);
+impl hydrus_store::settings::Setting for FavouriteTagFilters {
+    const KEY: &'static str = "favourite_tag_filters";
+}
+impl FavouriteTagFilters {
+    /// Read current favourites; failed reads never become an empty write.
+    pub fn load(store: &hydrus_store::Store) -> hydrus_store::Result<Self> {
+        store.read(hydrus_store::settings::get::<Self>)
+    }
+    /// An owned saved value for a detached editor draft.
+    pub fn get(&self, name: &str) -> Option<TagFilter> {
+        self.0
+            .iter()
+            .find(|(n, _)| n == name)
+            .map(|(_, f)| f.clone())
+    }
+    /// Save only this name, preserving changes from other open editors.
+    /// Returns false when replacement still requires the user's answer.
+    pub fn save(
+        store: &hydrus_store::Store,
+        name: String,
+        filter: TagFilter,
+        overwrite: bool,
+    ) -> hydrus_store::Result<bool> {
+        if name.is_empty() {
+            return Err(hydrus_store::StoreError::Invalid(
+                "Cannot enter blank text here!".into(),
+            ));
+        }
+        store.write(move |ctx| {
+            let mut favourites: Self = hydrus_store::settings::get(ctx.conn())?;
+            if let Some((_, old)) = favourites.0.iter_mut().find(|(n, _)| *n == name) {
+                if !overwrite {
+                    return Ok(false);
+                }
+                *old = filter;
+            } else {
+                favourites.0.push((name, filter));
+            }
+            hydrus_store::settings::set(ctx.conn(), &favourites)?;
+            Ok(true)
+        })
+    }
+    /// Delete only the confirmed name; the caller's filter stays intact.
+    pub fn delete(store: &hydrus_store::Store, name: String) -> hydrus_store::Result<()> {
+        store.write(move |ctx| {
+            let mut favourites: Self = hydrus_store::settings::get(ctx.conn())?;
+            favourites.0.retain(|(n, _)| *n != name);
+            hydrus_store::settings::set(ctx.conn(), &favourites)
+        })
+    }
+}
+
+/// Encode the reference's JSON-serialised Tag Filter object for clipboard/files.
+pub fn export_favourite(filter: &TagFilter) -> String {
+    let rules: Vec<_> = filter
+        .rules()
+        .map(|(slice, rule)| serde_json::json!([slice, i32::from(rule == FilterRule::Blacklist)]))
+        .collect();
+    hydrus_core::pyjson::PyJson::parse(&serde_json::json!([44, 1, rules]).to_string())
+        .expect("a tag filter tuple is valid JSON")
+        .to_python_string()
+}
+
+/// Decode and clean a single reference Tag Filter, before any draft/settings change.
+pub fn import_favourite(text: &str) -> Result<TagFilter, String> {
+    if text.len() > 16 * 1024 * 1024 {
+        return Err("Tag filter data exceeds the 16 MiB limit.".into());
+    }
+    let value: serde_json::Value = serde_json::from_str(text)
+        .map_err(|e| format!("Could not parse JSON-serialised Tag Filter object: {e}"))?;
+    let tuple = value
+        .as_array()
+        .filter(|v| v.len() == 3)
+        .ok_or_else(|| "That object was not a Tag Filter!".to_owned())?;
+    if tuple[0] != 44 || tuple[1] != 1 {
+        return Err("That object was not a supported Tag Filter!".into());
+    }
+    let rules = tuple[2]
+        .as_array()
+        .ok_or_else(|| "Invalid Tag Filter rules.".to_owned())?;
+    let mut filter = TagFilter::new();
+    for rule in rules {
+        let pair = rule
+            .as_array()
+            .filter(|p| p.len() == 2)
+            .ok_or_else(|| "Invalid Tag Filter rule.".to_owned())?;
+        let slice = pair[0]
+            .as_str()
+            .ok_or_else(|| "Invalid tag slice.".to_owned())?;
+        let rule = match pair[1].as_i64() {
+            Some(0) => FilterRule::Whitelist,
+            Some(1) => FilterRule::Blacklist,
+            _ => return Err("Invalid Tag Filter rule type.".into()),
+        };
+        // CleanRules preserves the global slices and cleans namespaces using
+        // an example tag. It does not interpret '*' as an editor shortcut.
+        let cleaned = if slice == UNNAMESPACED || slice == NAMESPACED {
+            slice.to_owned()
+        } else if is_namespace_slice(slice) {
+            let example = hydrus_core::tag::clean_tag(&format!("{slice}example"));
+            example
+                .strip_suffix("example")
+                .unwrap_or_default()
+                .to_owned()
+        } else {
+            hydrus_core::tag::clean_tag(slice)
+        };
+        if !cleaned.is_empty() || slice == UNNAMESPACED {
+            filter.set_rule(cleaned, rule);
+        }
+    }
+    Ok(filter)
 }

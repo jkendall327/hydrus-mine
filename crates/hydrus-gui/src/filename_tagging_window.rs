@@ -358,7 +358,12 @@ fn build(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let state = state.clone();
         move || {
+            let sidecars = state.borrow().sidecars.clone();
+            if let Some(sidecars) = sidecars {
+                sidecars.slots.cancel();
+            }
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -420,6 +425,15 @@ fn build(
                     }
                 }
             });
+            sidecars.slots.set_test_objects(
+                state
+                    .borrow()
+                    .paths
+                    .iter()
+                    .cloned()
+                    .map(crate::sidecar_editors::TestObject::File)
+                    .collect(),
+            );
             match crate::sidecars_window::open_routers(
                 &sidecars.store,
                 crate::sidecar_editors::Context::Import,

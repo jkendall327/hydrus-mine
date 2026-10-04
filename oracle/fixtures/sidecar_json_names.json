@@ -1,0 +1,517 @@
+{
+ "states": [
+  {
+   "case": "empty",
+   "names": [],
+   "selected": [],
+   "serialised": [
+    113,
+    2,
+    [
+     false,
+     "",
+     [
+      55,
+      2,
+      [
+       [],
+       "0123456789abcdef.jpg.json"
+      ]
+     ],
+     []
+    ]
+   ]
+  },
+  {
+   "case": "add",
+   "names": [
+    "files"
+   ],
+   "selected": [],
+   "serialised": [
+    113,
+    2,
+    [
+     false,
+     "",
+     [
+      55,
+      2,
+      [
+       [],
+       "0123456789abcdef.jpg.json"
+      ]
+     ],
+     [
+      "files"
+     ]
+    ]
+   ]
+  },
+  {
+   "case": "add",
+   "names": [
+    "files",
+    " tags "
+   ],
+   "selected": [],
+   "serialised": [
+    113,
+    2,
+    [
+     false,
+     "",
+     [
+      55,
+      2,
+      [
+       [],
+       "0123456789abcdef.jpg.json"
+      ]
+     ],
+     [
+      "files",
+      " tags "
+     ]
+    ]
+   ]
+  },
+  {
+   "case": "add",
+   "names": [
+    "files",
+    " tags ",
+    "files"
+   ],
+   "selected": [],
+   "serialised": [
+    113,
+    2,
+    [
+     false,
+     "",
+     [
+      55,
+      2,
+      [
+       [],
+       "0123456789abcdef.jpg.json"
+      ]
+     ],
+     [
+      "files",
+      " tags ",
+      "files"
+     ]
+    ]
+   ]
+  },
+  {
+   "case": "add",
+   "names": [
+    "files",
+    " tags ",
+    "files",
+    "   "
+   ],
+   "selected": [],
+   "serialised": [
+    113,
+    2,
+    [
+     false,
+     "",
+     [
+      55,
+      2,
+      [
+       [],
+       "0123456789abcdef.jpg.json"
+      ]
+     ],
+     [
+      "files",
+      " tags ",
+      "files",
+      "   "
+     ]
+    ]
+   ]
+  },
+  {
+   "case": "add",
+   "names": [
+    "files",
+    " tags ",
+    "files",
+    "   ",
+    "line\nbreak"
+   ],
+   "selected": [],
+   "serialised": [
+    113,
+    2,
+    [
+     false,
+     "",
+     [
+      55,
+      2,
+      [
+       [],
+       "0123456789abcdef.jpg.json"
+      ]
+     ],
+     [
+      "files",
+      " tags ",
+      "files",
+      "   ",
+      "line\nbreak"
+     ]
+    ]
+   ]
+  },
+  {
+   "case": "cancel_add",
+   "names": [
+    "files",
+    " tags ",
+    "files",
+    "   ",
+    "line\nbreak"
+   ],
+   "selected": [],
+   "serialised": [
+    113,
+    2,
+    [
+     false,
+     "",
+     [
+      55,
+      2,
+      [
+       [],
+       "0123456789abcdef.jpg.json"
+      ]
+     ],
+     [
+      "files",
+      " tags ",
+      "files",
+      "   ",
+      "line\nbreak"
+     ]
+    ]
+   ]
+  },
+  {
+   "case": "blank_add_veto",
+   "names": [
+    "files",
+    " tags ",
+    "files",
+    "   ",
+    "line\nbreak"
+   ],
+   "selected": [],
+   "serialised": [
+    113,
+    2,
+    [
+     false,
+     "",
+     [
+      55,
+      2,
+      [
+       [],
+       "0123456789abcdef.jpg.json"
+      ]
+     ],
+     [
+      "files",
+      " tags ",
+      "files",
+      "   ",
+      "line\nbreak"
+     ]
+    ]
+   ]
+  },
+  {
+   "case": "edit_first_of_selection",
+   "names": [
+    "files",
+    " renamed ",
+    "files",
+    "   ",
+    "line\nbreak"
+   ],
+   "selected": [
+    1,
+    3
+   ],
+   "serialised": [
+    113,
+    2,
+    [
+     false,
+     "",
+     [
+      55,
+      2,
+      [
+       [],
+       "0123456789abcdef.jpg.json"
+      ]
+     ],
+     [
+      "files",
+      " renamed ",
+      "files",
+      "   ",
+      "line\nbreak"
+     ]
+    ]
+   ]
+  },
+  {
+   "case": "cancel_edit",
+   "names": [
+    "files",
+    " renamed ",
+    "files",
+    "   ",
+    "line\nbreak"
+   ],
+   "selected": [
+    1,
+    3
+   ],
+   "serialised": [
+    113,
+    2,
+    [
+     false,
+     "",
+     [
+      55,
+      2,
+      [
+       [],
+       "0123456789abcdef.jpg.json"
+      ]
+     ],
+     [
+      "files",
+      " renamed ",
+      "files",
+      "   ",
+      "line\nbreak"
+     ]
+    ]
+   ]
+  },
+  {
+   "case": "up_selected",
+   "names": [
+    " renamed ",
+    "files",
+    "   ",
+    "files",
+    "line\nbreak"
+   ],
+   "selected": [
+    0,
+    2
+   ],
+   "serialised": [
+    113,
+    2,
+    [
+     false,
+     "",
+     [
+      55,
+      2,
+      [
+       [],
+       "0123456789abcdef.jpg.json"
+      ]
+     ],
+     [
+      " renamed ",
+      "files",
+      "   ",
+      "files",
+      "line\nbreak"
+     ]
+    ]
+   ]
+  },
+  {
+   "case": "down_selected",
+   "names": [
+    "files",
+    " renamed ",
+    "files",
+    "   ",
+    "line\nbreak"
+   ],
+   "selected": [
+    1,
+    3
+   ],
+   "serialised": [
+    113,
+    2,
+    [
+     false,
+     "",
+     [
+      55,
+      2,
+      [
+       [],
+       "0123456789abcdef.jpg.json"
+      ]
+     ],
+     [
+      "files",
+      " renamed ",
+      "files",
+      "   ",
+      "line\nbreak"
+     ]
+    ]
+   ]
+  },
+  {
+   "case": "cancel_delete",
+   "names": [
+    "files",
+    " renamed ",
+    "files",
+    "   ",
+    "line\nbreak"
+   ],
+   "selected": [
+    1,
+    3
+   ],
+   "serialised": [
+    113,
+    2,
+    [
+     false,
+     "",
+     [
+      55,
+      2,
+      [
+       [],
+       "0123456789abcdef.jpg.json"
+      ]
+     ],
+     [
+      "files",
+      " renamed ",
+      "files",
+      "   ",
+      "line\nbreak"
+     ]
+    ]
+   ]
+  },
+  {
+   "case": "delete_selected",
+   "names": [
+    "files",
+    "files",
+    "line\nbreak"
+   ],
+   "selected": [],
+   "serialised": [
+    113,
+    2,
+    [
+     false,
+     "",
+     [
+      55,
+      2,
+      [
+       [],
+       "0123456789abcdef.jpg.json"
+      ]
+     ],
+     [
+      "files",
+      "files",
+      "line\nbreak"
+     ]
+    ]
+   ]
+  }
+ ],
+ "inputs": [
+  {
+   "message": "Enter the JSON Object name.",
+   "default": "",
+   "answer": "files"
+  },
+  {
+   "message": "Enter the JSON Object name.",
+   "default": "",
+   "answer": " tags "
+  },
+  {
+   "message": "Enter the JSON Object name.",
+   "default": "",
+   "answer": "files"
+  },
+  {
+   "message": "Enter the JSON Object name.",
+   "default": "",
+   "answer": "   "
+  },
+  {
+   "message": "Enter the JSON Object name.",
+   "default": "",
+   "answer": "line\nbreak"
+  },
+  {
+   "message": "Enter the JSON Object name.",
+   "default": "",
+   "answer": null
+  },
+  {
+   "message": "Enter the JSON Object name.",
+   "default": "",
+   "answer": "",
+   "error": "Cannot enter blank text here!"
+  },
+  {
+   "message": "Enter the JSON Object name.",
+   "default": " tags ",
+   "answer": " renamed "
+  },
+  {
+   "message": "Enter the JSON Object name.",
+   "default": " renamed ",
+   "answer": null
+  }
+ ],
+ "questions": [
+  {
+   "message": "Remove 2 selected?",
+   "answer": false
+  },
+  {
+   "message": "Remove 2 selected?",
+   "answer": true
+  }
+ ]
+}

@@ -23,6 +23,8 @@ pub(crate) struct Hooks {
     /// Open the siblings or parents editor.
     pub tag_display: Rc<dyn Fn(bool)>,
     pub tag_relationships: Rc<dyn Fn(hydrus_store::display::RelationKind)>,
+    /// Open tag migration without a selected-file restriction.
+    pub tag_migrate: Rc<dyn Fn()>,
     pub pages: Rc<RefCell<Pages>>,
     pub network_data: crate::network_data_window::Slots,
     pub change_pages: ChangePages,
@@ -35,6 +37,9 @@ pub(crate) struct Hooks {
     pub manage_subscriptions: Rc<dyn Fn()>,
     /// Open URL class or gallery URL generator definition editors.
     pub manage_downloader_definitions: Rc<dyn Fn(bool)>,
+    pub manage_login_scripts: Rc<dyn Fn()>,
+    pub manage_logins: Rc<dyn Fn()>,
+    pub manage_downloader_display: Rc<dyn Fn()>,
     /// Open native parser definitions or URL-class links.
     pub manage_parsers: Rc<dyn Fn(bool)>,
     pub manage_network_sessions: Rc<dyn Fn(bool)>,
@@ -45,7 +50,7 @@ pub(crate) struct Hooks {
     /// Open the "review files to import" window.
     pub import_files: Rc<dyn Fn()>,
     /// Save the open pages as this session, or a new one (asking).
-    pub save_session: Rc<dyn Fn(Option<String>)>,
+    pub save_session: Rc<dyn Fn(Option<String>, crate::session_saving::Scope)>,
     /// The page shown's file (0) or tag (1) domain button's menu: none
     /// for a page without a search.
     pub domain_menu: Rc<dyn Fn(i32) -> Vec<main_menu::Entry>>,
@@ -235,6 +240,27 @@ pub(crate) fn bind(window: &MainWindow, hooks: Hooks) -> Rc<dyn Fn()> {
             show();
         }
     });
+    window.on_tab_menu_requested({
+        let open = open.clone();
+        let hooks = hooks.clone();
+        let show = show.clone();
+        move |depth, index, x, y| {
+            let Ok(depth) = usize::try_from(depth) else {
+                return;
+            };
+            let entries = if index == -1 {
+                hooks.pages.borrow().tab_space_menu(depth)
+            } else if let Ok(index) = usize::try_from(index) {
+                hooks.pages.borrow().tab_menu(depth, index)
+            } else {
+                return;
+            };
+            if !entries.is_empty() {
+                open.borrow_mut().open_popup(entries, x, y);
+                show();
+            }
+        }
+    });
     // a search page's domain buttons: their menus, below them
     window.on_domain_menu_requested({
         let open = open.clone();
@@ -408,7 +434,121 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
     let store = hooks.pages.borrow().store().clone();
     let change_pages = &hooks.change_pages;
     match command {
+        Command::DuplicateTab { depth, index } => {
+            change_pages(&|pages| pages.duplicate_tab(depth, index));
+        }
+        Command::CollapseTabs {
+            depth,
+            index,
+            scope,
+        } => {
+            let harvest = hooks
+                .pages
+                .borrow_mut()
+                .collapse_tabs_question(depth, index, scope);
+            match harvest {
+                Ok(Some((keys, files, question))) => {
+                    let change = hooks.change_pages.clone();
+                    (hooks.ask)(
+                        question,
+                        Rc::new(move || {
+                            change(&|pages| pages.collapse_tab_keys(&keys, &files));
+                        }),
+                    );
+                }
+                Ok(None) => {}
+                Err(error) => eprintln!("could not harvest pages: {error}"),
+            }
+        }
+        Command::RenameTab { depth, index } => {
+            if let (Ok(depth), Ok(index)) = (i32::try_from(depth), i32::try_from(index)) {
+                window.invoke_tab_rename_requested(depth, index);
+            }
+        }
+        Command::SendTabs {
+            depth,
+            index,
+            scope,
+        } => {
+            let keys = hooks.pages.borrow().send_tab_targets(depth, index, scope);
+            if keys.is_empty() {
+                return;
+            }
+            let change = hooks.change_pages.clone();
+            let weak = window.as_weak();
+            let store = store.clone();
+            let send: Rc<dyn Fn()> = Rc::new(move || {
+                let created = std::cell::Cell::new(None);
+                change(&|pages| {
+                    created
+                        .set(pages.send_tab_keys(&keys, scope == crate::tab_context::Send::This));
+                    Ok(())
+                });
+                let settings: hydrus_store::sessions::NotebookSettings =
+                    store.read(hydrus_store::settings::get).unwrap_or_default();
+                if settings.rename_sent_notebooks
+                    && let (Some(key), Some(window)) = (created.get(), weak.upgrade())
+                {
+                    window.invoke_notebook_rename_requested(key.to_hex().into());
+                }
+            });
+            if scope == crate::tab_context::Send::This {
+                send();
+            } else {
+                (hooks.ask)(
+                    "Send all pages to the right to a new page of pages?".into(),
+                    send,
+                );
+            }
+        }
+        Command::CloseTab { depth, index } => {
+            if let (Ok(depth), Ok(index)) = (i32::try_from(depth), i32::try_from(index)) {
+                window.invoke_close_tab(depth, index);
+            }
+        }
+        Command::CloseTabs { depth, index, side } => {
+            let prepared = hooks
+                .pages
+                .borrow_mut()
+                .close_tabs_question(depth, index, side);
+            if let Some((keys, question)) = prepared {
+                let change_pages = hooks.change_pages.clone();
+                (hooks.ask)(
+                    question,
+                    Rc::new(move || change_pages(&|pages| pages.close_tab_keys(&keys))),
+                );
+            }
+        }
+        Command::NavigateTabs { depth, movement } => change_pages(&|pages| {
+            pages.navigate_tabs(depth, movement, std::time::Instant::now());
+            Ok(())
+        }),
+        Command::SortTabs {
+            depth,
+            by,
+            ascending,
+        } => change_pages(&|pages| pages.sort_tabs(depth, by, ascending)),
+        Command::MoveTab {
+            depth,
+            index,
+            movement,
+        } => change_pages(&|pages| {
+            pages.move_tab(depth, index, movement);
+            Ok(())
+        }),
         Command::Copy(text) => crate::copy_to_clipboard(&text),
+        Command::NetworkBootPause => {
+            let done = store.write(|ctx| {
+                let conn = ctx.conn();
+                let mut boot: hydrus_store::settings::NetworkBootPause =
+                    hydrus_store::settings::get(conn)?;
+                boot.0 = !boot.0;
+                hydrus_store::settings::set(conn, &boot)
+            });
+            if let Err(error) = done {
+                eprintln!("could not save the network boot preference: {error}");
+            }
+        }
         Command::Pause(pause) => {
             let done = store.write(move |ctx| {
                 let conn = ctx.conn();
@@ -481,6 +621,9 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         }),
         Command::ClearHistory => hooks.pages.borrow_mut().clear_history(),
         Command::Refresh => window.invoke_refresh_page(),
+        Command::AppendSessionBackup { name, timestamp } => {
+            change_pages(&|pages| pages.append_session_backup(&name, timestamp));
+        }
         Command::AppendSession(name) => change_pages(&|pages| pages.append_session(&name)),
         // asked first, then (any page objecting) asked again, as the
         // reference's `LoadGUISession` asks
@@ -504,7 +647,35 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
                 }),
             );
         }
-        Command::SaveSession(name) => (hooks.save_session)(name),
+        Command::RefreshTab(key) => {
+            change_pages(&|pages| {
+                pages.refresh_tab_tree(key);
+                Ok(())
+            });
+        }
+        Command::ChooseNotebookPage { parent, before } => {
+            window.invoke_tab_new_page_requested(
+                parent.map_or_else(String::new, |key| key.to_hex()).into(),
+                before.map_or_else(String::new, |key| key.to_hex()).into(),
+            );
+        }
+        Command::SaveSession(name) => (hooks.save_session)(name, crate::session_saving::Scope::All),
+        Command::SaveNotebookSession {
+            key,
+            name,
+            suggested_name,
+        } => {
+            (hooks.save_session)(
+                name,
+                crate::session_saving::Scope::Notebook {
+                    key,
+                    suggested_name,
+                },
+            );
+        }
+        Command::AppendNotebookSession { notebook, name } => {
+            change_pages(&|pages| pages.append_session_to_notebook(notebook, &name));
+        }
         Command::DeleteSession(name) => {
             let store = store.clone();
             let deleted = name.clone();
@@ -574,6 +745,10 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         }
         Command::TagDisplay(application) => (hooks.tag_display)(application),
         Command::TagRelationships(kind) => (hooks.tag_relationships)(kind),
+        Command::TagMigrate => (hooks.tag_migrate)(),
+        Command::ManageLoginScripts => (hooks.manage_login_scripts)(),
+        Command::ManageLogins => (hooks.manage_logins)(),
+        Command::ManageDownloaderDisplay => (hooks.manage_downloader_display)(),
         Command::ManageDownloaderDefinitions(classes) => {
             (hooks.manage_downloader_definitions)(classes);
         }

@@ -4,12 +4,14 @@
 // ticking or unticking all of its.
 
 import { Button, CheckBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
 
 // A row of the filetype tree: a group (`option` -1, with its filetypes
 // shown if `expanded`) or one of its filetypes.
 export struct EditorTreeRow {
     text: string,
     ticked: bool,
+    partial: bool,
     group: int,
     option: int,
     shown: bool,
@@ -31,12 +33,30 @@ export component FiletypeTree inherits VerticalLayout {
                 text: row.expanded ? "▾" : "▸";
                 clicked => { root.expanded(row.group, !row.expanded); }
             }
-            CheckBox {
+            Rectangle {
                 min-height: 24px;
-                text: row.text;
-                checked: row.ticked;
-                enabled: root.enabled;
-                toggled => { root.ticked(row.group, row.option, self.checked); }
+                min-width: check.min-width;
+                preferred-width: check.preferred-width;
+                horizontal-stretch: 1;
+                check := CheckBox {
+                    width: parent.width;
+                    height: parent.height;
+                    text: row.text;
+                    checked: row.ticked;
+                    enabled: root.enabled;
+                    toggled => { root.ticked(row.group, row.option, self.checked); }
+                    accessible-label: row.partial ? row.text + " (partially selected)" : row.text;
+                }
+                // Standard Slint checkboxes expose a boolean. Show the
+                // inherited mixed state inside the box while retaining its
+                // normal focus, keyboard and select-all interaction.
+                if row.partial: Rectangle {
+                    x: 5px;
+                    y: (parent.height - self.height) / 2;
+                    width: 8px;
+                    height: 2px;
+                    background: root.enabled ? Theme.text : Theme.muted;
+                }
             }
         }
     }

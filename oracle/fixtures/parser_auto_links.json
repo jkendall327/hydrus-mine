@@ -1,0 +1,753 @@
+{
+ "classes": [
+  [
+   50,
+   "direct",
+   15,
+   [
+    "1f4b015e9cd131244014bec4bfc7ea986b3a4dfaf732016bc47955f9eb7df557",
+    0,
+    "https",
+    [
+     139,
+     1,
+     [
+      [
+       "links.example"
+      ],
+      [],
+      false,
+      false
+     ]
+    ],
+    [
+     true,
+     false,
+     false,
+     true,
+     false,
+     true,
+     false
+    ],
+    [
+     [
+      [
+       51,
+       1,
+       [
+        0,
+        "direct",
+        null,
+        null,
+        "example string"
+       ]
+      ],
+      null
+     ]
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    false,
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ],
+    [],
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    0,
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    null,
+    null,
+    1,
+    "https://links.example/direct"
+   ]
+  ],
+  [
+   50,
+   "redirect source",
+   15,
+   [
+    "22fd0a9a5ea74c90a168deb9433e8987631eaa14d3bf8e52c66203f15f7fad70",
+    0,
+    "https",
+    [
+     139,
+     1,
+     [
+      [
+       "links.example"
+      ],
+      [],
+      false,
+      false
+     ]
+    ],
+    [
+     true,
+     false,
+     false,
+     true,
+     false,
+     true,
+     false
+    ],
+    [
+     [
+      [
+       51,
+       1,
+       [
+        0,
+        "redirect",
+        null,
+        null,
+        "example string"
+       ]
+      ],
+      null
+     ]
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    false,
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ],
+    [],
+    [
+     55,
+     2,
+     [
+      [
+       [
+        9,
+        [
+         "/redirect",
+         "/api"
+        ]
+       ]
+      ],
+      "example string"
+     ]
+    ],
+    0,
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    null,
+    null,
+    1,
+    "https://links.example/redirect"
+   ]
+  ],
+  [
+   50,
+   "API target",
+   15,
+   [
+    "54ee6b4b35c844348bbb906a9e7cced5d49ce52d8933b2f0d785a0643416677c",
+    0,
+    "https",
+    [
+     139,
+     1,
+     [
+      [
+       "links.example"
+      ],
+      [],
+      false,
+      false
+     ]
+    ],
+    [
+     true,
+     false,
+     false,
+     true,
+     false,
+     true,
+     false
+    ],
+    [
+     [
+      [
+       51,
+       1,
+       [
+        0,
+        "api",
+        null,
+        null,
+        "example string"
+       ]
+      ],
+      null
+     ]
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    false,
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ],
+    [],
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    0,
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    null,
+    null,
+    1,
+    "https://links.example/api"
+   ]
+  ]
+ ],
+ "parsers": [
+  [
+   58,
+   "direct parser",
+   3,
+   [
+    "direct parser",
+    "48936f20a672a58f20aceae3f4f5a1a97c8c7fae232735b5ee6a427cd002b995",
+    [
+     55,
+     2,
+     [
+      [],
+      "example string"
+     ]
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    [
+     "https://links.example/direct"
+    ],
+    {
+     "url": "https://example.com/posts/index.php?id=123456"
+    }
+   ]
+  ],
+  [
+   58,
+   "API parser",
+   3,
+   [
+    "API parser",
+    "d75a9f4cf53ff492b5560e7e9bb6a15778b2307e1355da64bbf3179a5da9f9d8",
+    [
+     55,
+     2,
+     [
+      [],
+      "example string"
+     ]
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    [
+     "https://links.example/api"
+    ],
+    {
+     "url": "https://example.com/posts/index.php?id=123456"
+    }
+   ]
+  ]
+ ],
+ "cases": [
+  {
+   "name": "empty",
+   "existing": [],
+   "candidates": [
+    [
+     "API target",
+     "API parser"
+    ],
+    [
+     "direct",
+     "direct parser"
+    ]
+   ],
+   "tabs": [
+    "parser links",
+    "api/redirect link review"
+   ],
+   "api_pairs": [
+    [
+     "redirect source",
+     "API target"
+    ]
+   ],
+   "steps": [
+    {
+     "action": "initial",
+     "enabled": true,
+     "gaps_exist": true,
+     "rows": [
+      [
+       "API target",
+       "post url",
+       ""
+      ],
+      [
+       "direct",
+       "post url",
+       ""
+      ]
+     ],
+     "value": []
+    },
+    {
+     "action": "auto fill",
+     "enabled": true,
+     "gaps_exist": true,
+     "rows": [
+      [
+       "API target",
+       "post url",
+       ""
+      ],
+      [
+       "direct",
+       "post url",
+       ""
+      ]
+     ],
+     "value": []
+    }
+   ],
+   "api_columns": [
+    "url class",
+    "api/redirect url class"
+   ],
+   "selected_tab": "api/redirect link review"
+  },
+  {
+   "name": "linked",
+   "existing": [
+    [
+     "direct",
+     "direct parser"
+    ]
+   ],
+   "candidates": [
+    [
+     "API target",
+     "API parser"
+    ]
+   ],
+   "tabs": [
+    "parser links",
+    "api/redirect link review"
+   ],
+   "api_pairs": [
+    [
+     "redirect source",
+     "API target"
+    ]
+   ],
+   "steps": [
+    {
+     "action": "initial",
+     "enabled": true,
+     "gaps_exist": true,
+     "rows": [
+      [
+       "API target",
+       "post url",
+       ""
+      ],
+      [
+       "direct",
+       "post url",
+       "direct parser"
+      ]
+     ],
+     "value": [
+      [
+       "direct",
+       "direct parser"
+      ]
+     ]
+    },
+    {
+     "action": "auto fill",
+     "enabled": true,
+     "gaps_exist": true,
+     "rows": [
+      [
+       "API target",
+       "post url",
+       ""
+      ],
+      [
+       "direct",
+       "post url",
+       "direct parser"
+      ]
+     ],
+     "value": [
+      [
+       "direct",
+       "direct parser"
+      ]
+     ]
+    }
+   ],
+   "api_columns": [
+    "url class",
+    "api/redirect url class"
+   ],
+   "selected_tab": "api/redirect link review"
+  },
+  {
+   "name": "installed",
+   "existing": [
+    [
+     "API target",
+     "API parser"
+    ],
+    [
+     "direct",
+     "direct parser"
+    ]
+   ],
+   "candidates": [],
+   "tabs": [
+    "parser links",
+    "api/redirect link review"
+   ],
+   "api_pairs": [
+    [
+     "redirect source",
+     "API target"
+    ]
+   ],
+   "steps": [
+    {
+     "action": "initial",
+     "enabled": false,
+     "gaps_exist": false,
+     "rows": [
+      [
+       "API target",
+       "post url",
+       "API parser"
+      ],
+      [
+       "direct",
+       "post url",
+       "direct parser"
+      ]
+     ],
+     "value": [
+      [
+       "API target",
+       "API parser"
+      ],
+      [
+       "direct",
+       "direct parser"
+      ]
+     ]
+    },
+    {
+     "action": "auto fill",
+     "enabled": false,
+     "gaps_exist": false,
+     "rows": [
+      [
+       "API target",
+       "post url",
+       "API parser"
+      ],
+      [
+       "direct",
+       "post url",
+       "direct parser"
+      ]
+     ],
+     "value": [
+      [
+       "API target",
+       "API parser"
+      ],
+      [
+       "direct",
+       "direct parser"
+      ]
+     ]
+    }
+   ],
+   "api_columns": [
+    "url class",
+    "api/redirect url class"
+   ],
+   "selected_tab": "api/redirect link review"
+  }
+ ],
+ "invalid_classes": [
+  [
+   50,
+   "broken converter",
+   15,
+   [
+    "05bb81a0ca7797492e764368522e4c440835e96c17e9c2cb00e25afa78e267eb",
+    0,
+    "https",
+    [
+     139,
+     1,
+     [
+      [
+       "links.example"
+      ],
+      [],
+      false,
+      false
+     ]
+    ],
+    [
+     true,
+     false,
+     false,
+     true,
+     false,
+     true,
+     false
+    ],
+    [
+     [
+      [
+       51,
+       1,
+       [
+        0,
+        "broken",
+        null,
+        null,
+        "example string"
+       ]
+      ],
+      null
+     ]
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    false,
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ],
+    [],
+    [
+     55,
+     2,
+     [
+      [
+       [
+        9,
+        [
+         "[",
+         "api"
+        ]
+       ]
+      ],
+      "example string"
+     ]
+    ],
+    0,
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    null,
+    null,
+    1,
+    "https://links.example/broken"
+   ]
+  ],
+  [
+   50,
+   "API target",
+   15,
+   [
+    "54ee6b4b35c844348bbb906a9e7cced5d49ce52d8933b2f0d785a0643416677c",
+    0,
+    "https",
+    [
+     139,
+     1,
+     [
+      [
+       "links.example"
+      ],
+      [],
+      false,
+      false
+     ]
+    ],
+    [
+     true,
+     false,
+     false,
+     true,
+     false,
+     true,
+     false
+    ],
+    [
+     [
+      [
+       51,
+       1,
+       [
+        0,
+        "api",
+        null,
+        null,
+        "example string"
+       ]
+      ],
+      null
+     ]
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    false,
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ],
+    [],
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    0,
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    null,
+    null,
+    1,
+    "https://links.example/api"
+   ]
+  ]
+ ],
+ "invalid_api_pairs": []
+}

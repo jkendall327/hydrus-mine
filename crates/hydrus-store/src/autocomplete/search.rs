@@ -423,6 +423,52 @@ fn chained_in_namespaces(
     Ok(with_sibling_chains(graph, &in_namespaces))
 }
 
+/// Count an explicit set of tag IDs, retaining zero-count tags for children tabs.
+pub fn count_tags(
+    conn: &Connection,
+    services: &ServiceRegistry,
+    scope: &TagSearchScope,
+    tags: &[TagId],
+) -> Result<Vec<TagMatch>> {
+    let mut merged: HashMap<TagId, CountRange> =
+        tags.iter().map(|id| (*id, CountRange::default())).collect();
+    let tag_services: Vec<_> = scope.tag_service.map_or_else(
+        || services.tag_services().map(|s| s.id).collect(),
+        |id| vec![id],
+    );
+    for service in tag_services {
+        let tables = MappingTables::new(service);
+        let table = match scope.display {
+            TagDisplayType::Storage => tables.counts,
+            TagDisplayType::Display => tables.display_counts,
+        };
+        for &domain in &scope.domains {
+            let counts = DomainCounts {
+                conn,
+                table: &table,
+                domain,
+                include_current: scope.include_current,
+                include_pending: scope.include_pending,
+            };
+            for (tag, range) in counts.for_tags(tags)? {
+                merged.entry(tag).or_default().merge(range);
+            }
+        }
+    }
+    let texts = master::tags(conn, tags)?;
+    let mut matches: Vec<_> = merged
+        .into_iter()
+        .filter_map(|(id, count)| {
+            texts.get(&id).map(|t| TagMatch {
+                tag: t.as_str().to_owned(),
+                count,
+            })
+        })
+        .collect();
+    sort_matches(&mut matches);
+    Ok(matches)
+}
+
 /// Run an autocomplete search.
 ///
 /// Results are sorted by count, largest first, then by their text as the
@@ -433,6 +479,29 @@ pub fn search_tags(
     graphs: &DisplayGraphs,
     scope: &TagSearchScope,
     query: &TagQuery,
+) -> Result<Vec<TagMatch>> {
+    search_tags_inner(conn, services, graphs, scope, query, None)
+}
+
+/// Write autocomplete keeps matching known tags even with no mappings in the searched domain.
+pub fn search_tags_for_write(
+    conn: &Connection,
+    services: &ServiceRegistry,
+    graphs: &DisplayGraphs,
+    scope: &TagSearchScope,
+    query: &TagQuery,
+    display_service: ServiceId,
+) -> Result<Vec<TagMatch>> {
+    search_tags_inner(conn, services, graphs, scope, query, Some(display_service))
+}
+
+fn search_tags_inner(
+    conn: &Connection,
+    services: &ServiceRegistry,
+    graphs: &DisplayGraphs,
+    scope: &TagSearchScope,
+    query: &TagQuery,
+    write_display_service: Option<ServiceId>,
 ) -> Result<Vec<TagMatch>> {
     let all_known_files = services
         .of_type(ServiceType::CombinedFile)
@@ -473,7 +542,7 @@ pub fn search_tags(
 
     let mut merged: HashMap<TagId, CountRange> = HashMap::new();
     for &service in &tag_services {
-        let graph = graphs.get(service);
+        let graph = graphs.get(write_display_service.unwrap_or(service));
         let tables = MappingTables::new(service);
         let table = match scope.display {
             TagDisplayType::Storage => tables.counts,
@@ -517,12 +586,42 @@ pub fn search_tags(
             }
         }
     }
+    if let Some(display_service) = write_display_service {
+        let graph = graphs.get(display_service);
+        let mut candidates = with_sibling_chains(&graph, &text_matches);
+        for matcher in &matchers {
+            match matcher {
+                TagMatcher::All => candidates.extend(
+                    conn.prepare_cached("SELECT tag_id FROM tags")?
+                        .query_map([], |row| row.get::<_, TagId>(0))?
+                        .collect::<rusqlite::Result<Vec<_>>>()?,
+                ),
+                TagMatcher::Namespaces(namespaces) => candidates.extend(
+                    conn.prepare_cached("SELECT tag_id FROM tags WHERE namespace_id IN rarray(?)")?
+                        .query_map([id_array(namespaces)], |row| row.get::<_, TagId>(0))?
+                        .collect::<rusqlite::Result<Vec<_>>>()?,
+                ),
+                TagMatcher::Nothing | TagMatcher::Text { .. } => (),
+            }
+        }
+        for candidate in candidates {
+            merged.entry(candidate).or_default();
+        }
+    }
     if merged.is_empty() {
         return Ok(Vec::new());
     }
 
     // the siblings a result may also be matched by
     let known_siblings = |tag: TagId| -> Vec<TagId> {
+        if let Some(service) = write_display_service {
+            let graph = graphs.get(service);
+            return if graph.in_sibling_chain(tag) {
+                graph.chain(tag)
+            } else {
+                Vec::new()
+            };
+        }
         let sources: &[ServiceId] = match (scope.display, scope.tag_service) {
             (TagDisplayType::Storage, None) => &[],
             (TagDisplayType::Storage, Some(_)) | (TagDisplayType::Display, _) => &tag_services,

@@ -10,7 +10,7 @@ use roaring::RoaringBitmap;
 
 use hydrus_core::pages::{PageSort, PageSortBy};
 use hydrus_core::sort::{HumanSortKey, human_sort_key};
-use hydrus_core::{ContentStatus, HashId, TagId};
+use hydrus_core::{HashId, TagId};
 use hydrus_store::media::Rating;
 
 use super::Result;
@@ -33,14 +33,26 @@ pub(crate) fn sort_page(env: &Env<'_>, files: &[u32], sort: &PageSort) -> Result
     };
     match &sort.by {
         PageSortBy::System(code) => match SortBy::from_code(*code) {
+            Some(SortBy::NumTags) => {
+                let ids: Vec<HashId> = files.iter().map(|&id| HashId(id)).collect();
+                let batch = hydrus_store::media::load(
+                    env.conn,
+                    &env.snapshot.services,
+                    Some(&env.snapshot.display),
+                    &ids,
+                )?;
+                let tags = tag_ids_for_sort(env, &batch, sort)?;
+                let keys = tags
+                    .into_iter()
+                    .map(|(id, tags)| (id.0, tags.len()))
+                    .collect();
+                Ok(stable(files, &keys, !sort.ascending))
+            }
             Some(by) => sort::sort_in(env, &bitmap, FileSort { by, order }, Mode::Page(files)),
             None => Ok(files.to_vec()),
         },
-        PageSortBy::Namespaces {
-            namespaces,
-            tag_display_type,
-        } => {
-            let keys = namespace_keys(env, files, namespaces, *tag_display_type)?;
+        PageSortBy::Namespaces { namespaces, .. } => {
+            let keys = namespace_keys(env, files, namespaces, sort)?;
             Ok(stable(files, &keys, !sort.ascending))
         }
         PageSortBy::Rating(service) => {
@@ -72,9 +84,8 @@ fn namespace_keys(
     env: &Env<'_>,
     files: &[u32],
     namespaces: &[String],
-    tag_display_type: i64,
+    sort: &PageSort,
 ) -> Result<HashMap<u32, Vec<Vec<HumanSortKey>>>> {
-    use hydrus_store::tag_display::{TagDisplayFilters, TagView};
     let ids: Vec<HashId> = files.iter().map(|&id| HashId(id)).collect();
     let batch = hydrus_store::media::load(
         env.conn,
@@ -82,36 +93,10 @@ fn namespace_keys(
         Some(&env.snapshot.display),
         &ids,
     )?;
-    let view = match tag_display_type {
-        TAG_DISPLAY_SINGLE_MEDIA => Some(TagView::SingleMedia),
-        TAG_DISPLAY_SELECTION_LIST => Some(TagView::SelectionList),
-        _ => None,
-    };
-    let hidden = match view {
-        Some(view) => {
-            let filters: TagDisplayFilters = hydrus_store::settings::get(env.conn)?;
-            Some(filters.by_service(view, &env.snapshot.services))
-        }
-        None => None,
-    };
+    let displayed = tag_ids_for_sort(env, &batch, sort)?;
     let mut keys = HashMap::with_capacity(batch.results.len());
     for m in &batch.results {
-        let mut displayed: BTreeSet<TagId> = BTreeSet::new();
-        for (&service, service_tags) in &m.tags {
-            let graph = env.snapshot.display.get(service);
-            for status in [ContentStatus::Current, ContentStatus::Pending] {
-                for &stored in service_tags.by_status.get(&status).into_iter().flatten() {
-                    displayed.extend(graph.display_tags(stored).filter(|t| {
-                        hidden.as_ref().is_none_or(|hidden| {
-                            batch
-                                .tags
-                                .get(t)
-                                .is_none_or(|tag| hidden.shows(service, tag.as_str()))
-                        })
-                    }));
-                }
-            }
-        }
+        let displayed = &displayed[&m.hash_id];
         let pairs: Vec<(&str, &str)> = displayed
             .iter()
             .filter_map(|t| batch.tags.get(t))
@@ -132,6 +117,70 @@ fn namespace_keys(
         keys.insert(m.hash_id.0, key);
     }
     Ok(keys)
+}
+
+/// Displayed current and pending tags in the sort's independent service.
+/// Search context toggles and display service do not change MediaSort keys.
+pub(crate) fn tag_ids_for_sort(
+    env: &Env<'_>,
+    batch: &hydrus_store::media::MediaBatch,
+    sort: &PageSort,
+) -> Result<HashMap<HashId, BTreeSet<TagId>>> {
+    use hydrus_store::tag_display::{TagDisplayFilters, TagView};
+    let uses_tags = matches!(sort.by, PageSortBy::Namespaces { .. })
+        || matches!(sort.by, PageSortBy::System(code) if SortBy::from_code(code) == Some(SortBy::NumTags));
+    if !uses_tags {
+        return Ok(batch
+            .results
+            .iter()
+            .map(|media| (media.hash_id, BTreeSet::new()))
+            .collect());
+    }
+    let context =
+        hydrus_core::search::context::TagContext::new(sort.tag_context.service.clone(), true, true);
+    let scope = super::context::resolve_tags(env.snapshot, &context)?;
+    let view = match &sort.by {
+        PageSortBy::Namespaces {
+            tag_display_type: TAG_DISPLAY_SINGLE_MEDIA,
+            ..
+        } => Some(TagView::SingleMedia),
+        PageSortBy::Namespaces {
+            tag_display_type: TAG_DISPLAY_SELECTION_LIST,
+            ..
+        } => Some(TagView::SelectionList),
+        _ => None,
+    };
+    let hidden = match view {
+        Some(view) => {
+            let filters: TagDisplayFilters = hydrus_store::settings::get(env.conn)?;
+            Some(filters.by_service(view, &env.snapshot.services))
+        }
+        None => None,
+    };
+    Ok(batch
+        .results
+        .iter()
+        .map(|media| {
+            let mut displayed = BTreeSet::new();
+            for service in &scope.services {
+                if let Some(mapped) = media.tags.get(&service.id) {
+                    for status in &scope.statuses {
+                        for &stored in mapped.by_status.get(status).into_iter().flatten() {
+                            displayed.extend(service.graph.display_tags(stored).filter(|tag| {
+                                hidden.as_ref().is_none_or(|hidden| {
+                                    batch
+                                        .tags
+                                        .get(tag)
+                                        .is_none_or(|tag| hidden.shows(service.id, tag.as_str()))
+                                })
+                            }));
+                        }
+                    }
+                }
+            }
+            (media.hash_id, displayed)
+        })
+        .collect())
 }
 
 /// A rating as a page sorts by it: the number, or -1 for none.

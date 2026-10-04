@@ -21,6 +21,19 @@ pub enum Kind {
 }
 
 impl Kind {
+    pub fn code(self) -> u8 {
+        match self {
+            Self::Prefetch => 0,
+            Self::FileFiltering => 1,
+            Self::TagFiltering => 2,
+            Self::Locations => 3,
+            Self::Tags => 4,
+            Self::Notes => 5,
+            Self::Presentation => 6,
+            Self::ExternalPrograms => 7,
+        }
+    }
+
     pub const ALL: [Kind; 8] = [
         Kind::Prefetch,
         Kind::FileFiltering,
@@ -147,6 +160,52 @@ pub fn listed_kinds(caller: CallerType, simple: bool, slice: &ImportOptionsSlice
         .collect()
 }
 
+/// The defaults page hides unusual option kinds, while retaining every custom
+/// kind already present. Importer buttons keep their existing broader lists.
+pub fn default_kinds(caller: CallerType, simple: bool, own: &ImportOptionsSlice) -> Vec<Kind> {
+    use Kind as K;
+    let mut kinds = if simple {
+        match caller {
+            CallerType::LocalImport => vec![
+                K::FileFiltering,
+                K::Locations,
+                K::ExternalPrograms,
+                K::Presentation,
+            ],
+            CallerType::LocalImportFolder => {
+                vec![K::Locations, K::ExternalPrograms, K::Presentation]
+            }
+            CallerType::Subscription => vec![K::Locations, K::Presentation],
+            CallerType::PostUrls | CallerType::WatcherUrls => vec![
+                K::FileFiltering,
+                K::TagFiltering,
+                K::Locations,
+                K::Tags,
+                K::Notes,
+                K::Presentation,
+            ],
+            CallerType::UrlClass => vec![
+                K::Prefetch,
+                K::FileFiltering,
+                K::TagFiltering,
+                K::Locations,
+                K::Tags,
+                K::Notes,
+            ],
+            CallerType::ClientApi => vec![K::FileFiltering, K::Locations],
+            _ => K::ALL.to_vec(),
+        }
+    } else {
+        K::ALL.to_vec()
+    };
+    for kind in K::ALL {
+        if kind.is_set(own) && !kinds.contains(&kind) {
+            kinds.push(kind);
+        }
+    }
+    kinds
+}
+
 /// Whose default a kind falls back to, for an importer whose defaults are
 /// `caller`'s ("global", "subscription", ...): the most specific defaults
 /// that set it.
@@ -189,6 +248,27 @@ pub fn tab_label(kind: Kind, custom_summary: Option<&str>, source: &str) -> Stri
 /// What a kind's options in `slice` (which must set it) say they do, as
 /// the editor's list shows them for a downloader (`GetSummary`); `name`
 /// names a service by its key (hex).
+/// The container summary shown in subscription rows and favourites menus.
+pub fn container_summary(slice: &ImportOptionsSlice, name: &dyn Fn(&str) -> String) -> String {
+    let kinds = Kind::ALL
+        .into_iter()
+        .filter(|kind| kind.is_set(slice))
+        .collect::<Vec<_>>();
+    let names = kinds.iter().map(|kind| kind.name()).collect::<Vec<_>>();
+    let summaries = kinds
+        .iter()
+        .map(|kind| summary(*kind, slice, name))
+        .filter(|s| !s.is_empty())
+        .collect::<Vec<_>>();
+    if names.is_empty() {
+        String::new()
+    } else if names.len() <= 2 && (1..=2).contains(&summaries.len()) {
+        format!("{}: {}", names.join(", "), summaries.join(" | "))
+    } else {
+        names.join(", ")
+    }
+}
+
 pub fn summary(kind: Kind, slice: &ImportOptionsSlice, name: &dyn Fn(&str) -> String) -> String {
     use hydrus_core::import_options::PrefetchCheck as C;
     let mut parts: Vec<String> = Vec::new();
@@ -413,6 +493,43 @@ impl Editor {
         }
     }
 
+    /// Edit a defaults row using only its less-specific parent as fallback.
+    /// URL classes use their post/watch context to choose that parent; their
+    /// own override is never fed back into the displayed default values.
+    pub fn new_for_defaults(
+        manager: &ImportOptionsManager,
+        caller: CallerType,
+        simple: bool,
+        own: &ImportOptionsSlice,
+        url_classes: &[(String, hydrus_core::import_options::UrlClassKind)],
+    ) -> Self {
+        let stack = hydrus_core::import_options::preference_stack(caller, url_classes);
+        let parent = if matches!(caller, CallerType::Global | CallerType::Favourites) {
+            CallerType::Global
+        } else {
+            stack
+                .iter()
+                .position(|layer| *layer == caller)
+                .and_then(|index| stack.get(index + 1))
+                .copied()
+                .unwrap_or(CallerType::Global)
+        };
+        let mut editor = Self::new(manager, parent, false, own);
+        editor.caller = caller;
+        editor.kinds = default_kinds(caller, simple, own);
+        if own.external_programs.is_none() {
+            editor.values.external_programs =
+                hydrus_core::import_options::preference_stack(parent, &[])
+                    .into_iter()
+                    .filter_map(|layer| manager.caller_default(layer))
+                    .find_map(|slice| slice.external_programs.clone())
+                    .or_else(|| {
+                        Some(hydrus_core::import_options::ExternalProgramsOptions::default())
+                    });
+        }
+        editor
+    }
+
     pub fn is_custom(&self, kind: Kind) -> bool {
         self.custom.contains(&kind)
     }
@@ -420,6 +537,9 @@ impl Editor {
     /// Use custom options for a kind (starting from what its page shows),
     /// or the default.
     pub fn set_custom(&mut self, kind: Kind, custom: bool) {
+        if self.caller == CallerType::Global && !custom {
+            return;
+        }
         self.custom.retain(|k| *k != kind);
         if custom {
             self.custom.push(kind);

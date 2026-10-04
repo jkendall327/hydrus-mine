@@ -8,7 +8,7 @@
 //! sizes are whole logical pixels, as Qt's are. Plain Rust, tested
 //! directly.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::collections::BTreeMap;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -32,6 +32,7 @@ pub struct Zoom {
     ratio: f64,
     zooms: BTreeMap<ZoomType, f64>,
     current: f64,
+    current_type: ZoomType,
     /// The file's top left.
     position: Point,
 }
@@ -57,6 +58,7 @@ impl Zoom {
             ratio,
             zooms: BTreeMap::new(),
             current: 1.0,
+            current_type: ZoomType::Full,
             position: (0, 0),
         };
         zoom.reinit();
@@ -132,7 +134,8 @@ impl Zoom {
             ),
             self.ratio,
         );
-        self.current = self.zooms[&self.settings.default_zoom_type];
+        self.current_type = self.settings.default_zoom_type;
+        self.current = self.zooms[&self.current_type];
         self.recentre();
     }
 
@@ -229,10 +232,20 @@ impl Zoom {
     /// The canvas changed size: the default zoom again, centred, as the
     /// reference's defaults have it.
     pub fn resize(&mut self, canvas: Point, ratio: f64) {
+        self.resize_with_policy(canvas, ratio, true);
+    }
+
+    /// Resize without losing a detail zoom/pan when recentering is disabled.
+    pub fn resize_with_policy(&mut self, canvas: Point, ratio: f64, recenter: bool) {
         if canvas != self.canvas || (ratio - self.ratio).abs() > f64::EPSILON {
+            let (current, position) = (self.current, self.position);
             self.canvas = canvas;
             self.ratio = ratio;
             self.reinit();
+            if !recenter {
+                self.current = current;
+                self.position = position;
+            }
         }
     }
 
@@ -279,10 +292,43 @@ impl Zoom {
         } else {
             1.0
         };
+        self.current_type = if zoom == 1.0 {
+            ZoomType::Full
+        } else {
+            ZoomType::Canvas
+        };
         self.change_zoom(zoom, pointer);
         if zoom <= canvas {
             self.recentre();
         }
+    }
+
+    /// The configurable top-hover switch: two or three levels, optionally
+    /// overriding the chosen zoom centre with the viewer centre.
+    #[allow(clippy::float_cmp)]
+    pub fn switch_with_policy(&mut self, choice: usize, pointer: Option<Point>) {
+        if !self.zoomable() {
+            return;
+        }
+        let centre = self.settings.zoom_centre;
+        if choice % 2 == 1 {
+            self.settings.zoom_centre = ZoomCentre::ViewerCentre;
+        }
+        if choice < 2 {
+            self.switch(pointer);
+        } else {
+            self.current_type = if self.current == 1.0 {
+                ZoomType::Canvas
+            } else if self.current_type == ZoomType::Canvas {
+                ZoomType::FillAuto
+            } else {
+                ZoomType::Full
+            };
+            let zoom = self.zoom_of(self.current_type);
+            self.change_zoom(zoom, pointer);
+            self.recentre();
+        }
+        self.settings.zoom_centre = centre;
     }
 
     /// To the largest zoom (`ZoomMax`): the largest of the zoom steps, or
@@ -454,6 +500,7 @@ struct Sharp {
 
 /// What a window is told of its file's zoom (none, if it doesn't zoom).
 type Watch = Rc<dyn Fn(Option<f64>)>;
+type ResizePolicy = Rc<dyn Fn() -> bool>;
 
 /// A window's zoomed file, kept as the file, the window and the user
 /// change it, and drawn by the window's own setters: the file's box, and
@@ -461,6 +508,9 @@ type Watch = Rc<dyn Fn(Option<f64>)>;
 #[derive(Clone)]
 pub(crate) struct Zoomed {
     settings: MediaViewerSettings,
+    resize_policy: Rc<RefCell<ResizePolicy>>,
+    origin: Rc<dyn Fn() -> Option<Point>>,
+    last_origin: Rc<Cell<Option<Point>>>,
     zoom: Rc<RefCell<Option<Zoom>>>,
     sharp: Rc<RefCell<Sharp>>,
     /// The window's canvas and device pixel ratio, while it is open.
@@ -489,9 +539,24 @@ impl Zoomed {
         draw: impl Fn(&W, Rect) + 'static,
         overlay: impl Fn(&W, Option<Overlay>) + 'static,
     ) -> Self {
-        let (sized, drawn, overlaid) = (window.as_weak(), window.as_weak(), window.as_weak());
+        let (sized, drawn, overlaid, positioned) = (
+            window.as_weak(),
+            window.as_weak(),
+            window.as_weak(),
+            window.as_weak(),
+        );
         Self {
             settings,
+            resize_policy: Rc::new(RefCell::new(Rc::new(|| true))),
+            origin: Rc::new(move || {
+                let window = positioned.upgrade()?;
+                let origin = window
+                    .window()
+                    .position()
+                    .to_logical(window.window().scale_factor());
+                Some((origin.x as i32, origin.y as i32))
+            }),
+            last_origin: Rc::default(),
             zoom: Rc::default(),
             sharp: Rc::default(),
             canvas: Rc::new(move || {
@@ -511,6 +576,11 @@ impl Zoomed {
             }),
             watch: Rc::default(),
         }
+    }
+
+    /// Read resize policy live; other canvases keep the default recentering.
+    pub fn set_resize_policy(&self, policy: impl Fn() -> bool + 'static) {
+        *self.resize_policy.borrow_mut() = Rc::new(policy);
     }
 
     /// Tell `watch` the zoom (none, for a file that doesn't zoom) each time
@@ -535,6 +605,7 @@ impl Zoomed {
     /// Show a file of this type and resolution (none: of unknown type) at
     /// its default zoom.
     pub fn show(&self, shape: Option<(Mime, Option<(u32, u32)>)>) {
+        self.last_origin.set((self.origin)());
         let Some((canvas, ratio)) = (self.canvas)() else {
             return;
         };
@@ -702,7 +773,19 @@ impl Zoomed {
     /// The window changed size.
     pub fn resized(&self) {
         if let Some((canvas, ratio)) = (self.canvas)() {
-            self.change(|zoom| zoom.resize(canvas, ratio));
+            let recenter = (self.resize_policy.borrow())();
+            let origin = (self.origin)();
+            let previous = self.last_origin.replace(origin);
+            let delta = match (previous, origin) {
+                (Some(previous), Some(current)) => (previous.0 - current.0, previous.1 - current.1),
+                _ => (0, 0),
+            };
+            self.change(|zoom| {
+                zoom.resize_with_policy(canvas, ratio, recenter);
+                if !recenter {
+                    zoom.drag(delta);
+                }
+            });
         }
     }
 
@@ -713,6 +796,10 @@ impl Zoomed {
             -1 => zoom.zoom_out(pointer),
             _ => zoom.switch(pointer),
         });
+    }
+
+    pub fn switch_with_policy(&self, choice: usize, pointer: Option<Point>) {
+        self.change(|zoom| zoom.switch_with_policy(choice, pointer));
     }
 
     pub fn pan(&self, x_steps: i32, y_steps: i32) {

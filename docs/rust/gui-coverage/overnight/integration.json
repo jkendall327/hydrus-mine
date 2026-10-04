@@ -1,0 +1,134 @@
+{
+  "agent": "root",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "claims": [
+    {
+      "reference_id": "audit-media-menu-tags-migrate",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Tags > migrate opens the retained migration editor without a file restriction, choosing the configured or remembered default tag-dialog service, with the migration model fallback when that service is unavailable. It uses the actual migration job/editor path, survives cancellation and reopening, and refreshes current pages and tag views on completion.",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/menu_bar.rs",
+          "line": 632,
+          "symbol": "Command::TagMigrate =>",
+          "commit": "1733015432624620543529c3ed9ffe34019f95e0"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 1405,
+          "symbol": "let key = preferences.default_service;",
+          "commit": "7f1ded2a07a2f36fbcd0cc2e3c1955082063883c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
+          "line": 6,
+          "symbol": "fn global_tags_menu_opens_unrestricted_migration_and_can_reopen_after_cancel",
+          "commit": "1733015432624620543529c3ed9ffe34019f95e0"
+        }
+      ],
+      "limitations": [],
+      "reference_recording": "oracle/fixtures/tag_migration.json",
+      "validation": {
+        "rust_tests": "Awaiting root asynchronous CI",
+        "reference_recording_executed": true
+      }
+    },
+    {
+      "reference_id": "audit-options-predicate-filetype-mime-tree",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "MIME group checkboxes expose an accessible mixed state. Selecting or clearing a group changes all children. Actual Qt recorded empty, one child, all children, deselection and clear states are replayed through the native window and feed the resulting search predicate.",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+          "line": 531,
+          "symbol": "pub(crate) fn tree_rows(",
+          "commit": "1733015432624620543529c3ed9ffe34019f95e0"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/filetype_tree.slint",
+          "line": 48,
+          "symbol": "accessible-label: row.partial",
+          "commit": "1733015432624620543529c3ed9ffe34019f95e0"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/predicate_editors.rs",
+          "line": 653,
+          "symbol": "fn the_editor_window_shows_what_trees_and_buttons_change",
+          "commit": "1733015432624620543529c3ed9ffe34019f95e0"
+        }
+      ],
+      "limitations": [],
+      "reference_recording": "oracle/fixtures/predicate_boundaries.json",
+      "validation": {
+        "rust_tests": "Awaiting root asynchronous CI",
+        "reference_recording_executed": true
+      }
+    },
+    {
+      "reference_id": "audit-options-predicate-filetype-mime-mode",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "change_kind": "evidence_only_reassessment",
+      "exact_behavior": "Existing is/is-not inclusion is covered by recorded default/change assertions. The shared tri-state display omission is now resolved by the tree implementation.",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/predicate_editors/special.rs",
+          "line": 152,
+          "symbol": "fn filetype_panel(",
+          "commit": "1733015432624620543529c3ed9ffe34019f95e0"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/predicate_editors.rs",
+          "line": 653,
+          "symbol": "fn the_editor_window_shows_what_trees_and_buttons_change",
+          "commit": "1733015432624620543529c3ed9ffe34019f95e0"
+        }
+      ],
+      "limitations": [],
+      "reference_recording": "oracle/fixtures/system_predicate_editors.json",
+      "validation": {
+        "rust_tests": "Awaiting root asynchronous CI",
+        "reference_recording_executed": true
+      }
+    },
+    {
+      "reference_id": "audit-options-predicate-hash-hash-clean",
+      "previous_status": "partial",
+      "proposed_status": "partial",
+      "change_kind": "implementation",
+      "exact_behavior": "Forced cleanup asks the exact reference question and supports yes/no and Escape, freezes the draft while pending, and ignores stale answers after closing. No retains text and algorithm; yes removes malformed lines and guesses the algorithm.",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+          "line": 471,
+          "symbol": "window.on_answer({",
+          "commit": "1733015432624620543529c3ed9ffe34019f95e0"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/predicate_editors/special.rs",
+          "line": 584,
+          "symbol": "pub fn press_confirmed(",
+          "commit": "1733015432624620543529c3ed9ffe34019f95e0"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/predicate_editors.rs",
+          "line": 653,
+          "symbol": "fn the_editor_window_shows_what_trees_and_buttons_change",
+          "commit": "1733015432624620543529c3ed9ffe34019f95e0"
+        }
+      ],
+      "limitations": [
+        "Hash-cleanup warnings still display inline instead of in a separate Qt message dialog."
+      ],
+      "reference_recording": "oracle/fixtures/predicate_boundaries.json",
+      "validation": {
+        "rust_tests": "Awaiting root asynchronous CI",
+        "reference_recording_executed": true
+      }
+    }
+  ]
+}

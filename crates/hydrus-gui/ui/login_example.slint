@@ -1,0 +1,25 @@
+import { Button, ComboBox, LineEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export component LoginExampleDomainWindow inherits Window {
+    title: "edit example domain"; preferred-width: 650px; preferred-height: 260px; background: Theme.window;
+    in property <int> stage;
+    in-out property <string> domain;
+    in-out property <int> access;
+    in-out property <string> description;
+    in property <string> error;
+    callback action(string);
+    callback closed();
+    VerticalLayout { padding: 12px; spacing: 8px;
+        if root.stage == 0: VerticalLayout { spacing: 6px; Text { text: "Edit the domain"; color: Theme.text; } LineEdit { text <=> root.domain; } }
+        if root.stage == 1: VerticalLayout { spacing: 6px; Text { text: "select what type of access the login gives to this domain"; color: Theme.text; wrap: word-wrap; } ComboBox { model: ["Everything", "NSFW", "Special", "User prefs"]; current-index <=> root.access; } }
+        if root.stage == 2: VerticalLayout { spacing: 6px; Text { text: "Edit the access description, if needed."; color: Theme.text; } LineEdit { text <=> root.description; } }
+        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        Rectangle { vertical-stretch: 1; }
+        HorizontalLayout { alignment: end; spacing: 6px;
+            if root.stage < 2: Button { text: "next"; enabled: root.stage != 0 || root.domain != ""; clicked => { root.action("next"); } }
+            if root.stage == 2: Button { text: "save"; enabled: root.description != ""; clicked => { root.action("save"); } }
+            if root.stage == 2: Button { text: "keep description"; clicked => { root.action("keep-description"); } }
+            if root.stage < 2: Button { text: "cancel"; clicked => { root.action("cancel"); } }
+        }
+    }
+}

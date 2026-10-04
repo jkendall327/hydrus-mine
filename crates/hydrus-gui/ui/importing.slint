@@ -3,7 +3,8 @@
 // "imports" and "search" boxes (a URL page's, a gallery page's highlighted
 // query's).
 
-import { Button, ProgressIndicator } from "std-widgets.slint";
+import { Button, ProgressIndicator, ScrollView, VerticalBox } from "std-widgets.slint";
+import { MenuRow } from "menus.slint";
 import { Theme } from "theme.slint";
 
 // a download in progress, under an importer's log (the reference's
@@ -16,8 +17,37 @@ export struct DownloadLine {
     can-cancel: bool,
 }
 
+export struct JobCogMenu {
+    url: string,
+    rules: [MenuRow],
+    actions: [MenuRow],
+    auto-override: bool,
+    has-error: bool,
+}
+
+// Error clearing belongs to the owner, never to this visible menu.
+export component NetworkErrorWindow inherits Window {
+    title: "Network Error";
+    width: 660px;
+    height: 370px;
+    background: Theme.window;
+    in property <string> error-text;
+    callback close-clicked();
+    VerticalBox {
+        ScrollView {
+            vertical-stretch: 1;
+            Text { text: root.error-text; wrap: word-wrap; color: Theme.text; }
+        }
+        Button { text: "close"; clicked => { root.close-clicked(); } }
+    }
+}
+
 export component DownloadControl inherits Rectangle {
     in property <DownloadLine> line;
+    in property <JobCogMenu> cog;
+    in property <bool> advanced;
+    callback action(int);
+    callback open-menu();
     callback cancel();
     border-width: 1px;
     border-color: Theme.border;
@@ -48,6 +78,44 @@ export component DownloadControl inherits Rectangle {
                 enabled: root.line.can-cancel;
                 clicked => { root.cancel(); }
             }
+
+            if root.advanced && root.cog.has-error: error-menu := ContextMenuArea {
+                width: 30px;
+                Menu {
+                    MenuItem { title: "show error"; activated => { root.action(8); } }
+                    MenuItem { title: "copy error"; activated => { root.action(9); } }
+                }
+                Button {
+                    width: 30px;
+                    icon: @image-url("../../../static/dump_fail.png");
+                    clicked => { root.open-menu(); error-menu.show({ x: 0px, y: self.height }); }
+                }
+            }
+            if root.advanced: cog-menu := ContextMenuArea {
+                width: 30px;
+                Menu {
+                    if root.cog.url != "": MenuItem { title: root.cog.url; activated => { root.action(1); } }
+                    if root.cog.url != "": MenuSeparator {}
+                    if root.cog.rules.length > 0: Menu {
+                        title: "edit bandwidth rules";
+                        for item in root.cog.rules: MenuItem { title: item.label; activated => { root.action(item.id); } }
+                    }
+                    if root.cog.rules.length > 0: MenuSeparator {}
+                    for item in root.cog.actions: MenuItem { title: item.label; activated => { root.action(item.id); } }
+                    if root.cog.url != "": MenuSeparator {}
+                    MenuItem {
+                        title: "auto-override bandwidth rules for all jobs here after five seconds";
+                        checkable: true;
+                        checked: root.cog.auto-override;
+                        activated => { root.action(7); }
+                    }
+                }
+                Button {
+                    width: 30px;
+                    text: "⚙";
+                    clicked => { root.open-menu(); cog-menu.show({ x: 0px, y: self.height }); }
+                }
+            }
         }
     }
 }
@@ -70,6 +138,10 @@ export component ImporterBoxes inherits VerticalLayout {
     in property <DownloadLine> search-download;
     callback pause-play-files();
     callback pause-play-search();
+    in property <JobCogMenu> file-cog;
+    in property <JobCogMenu> search-cog;
+    callback control-action(bool, int);
+    callback control-menu(bool);
     callback cancel-download(bool);
     // the file log button (`FileSeedCacheButton`)
     callback file-log();
@@ -123,6 +195,10 @@ export component ImporterBoxes inherits VerticalLayout {
             }
             DownloadControl {
                 line: root.file-download;
+                advanced: true;
+                cog: root.file-cog;
+                action(id) => { root.control-action(false, id); }
+                open-menu => { root.control-menu(false); }
                 cancel => { root.cancel-download(false); }
             }
         }
@@ -166,6 +242,10 @@ export component ImporterBoxes inherits VerticalLayout {
             }
             DownloadControl {
                 line: root.search-download;
+                advanced: true;
+                cog: root.search-cog;
+                action(id) => { root.control-action(true, id); }
+                open-menu => { root.control-menu(true); }
                 cancel => { root.cancel-download(true); }
             }
         }

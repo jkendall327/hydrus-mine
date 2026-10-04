@@ -42,6 +42,7 @@ export struct EditorPanel {
 component FieldView {
     in property <EditorField> field;
     in property <bool> here;
+    in property <bool> blocked: false;
     callback chose(int);
     callback ticked(int, bool);
     callback number-edited(int);
@@ -73,7 +74,7 @@ component FieldView {
             width: root.field.width;
             model: root.field.options;
             current-index: root.field.chosen;
-            enabled: root.field.enabled;
+            enabled: root.field.enabled && !root.blocked;
             selected => { root.chose(self.current-index); }
         }
         if root.field.kind == 2: VerticalLayout {
@@ -81,7 +82,7 @@ component FieldView {
                 min-height: 24px;
                 text: option;
                 checked: root.field.ticked[o];
-                enabled: root.field.enabled;
+                enabled: root.field.enabled && !root.blocked;
                 toggled => { root.ticked(o, self.checked); }
             }
         }
@@ -98,7 +99,7 @@ component FieldView {
                 minimum: root.field.minimum;
                 maximum: root.field.maximum;
                 value: root.field.value;
-                enabled: root.field.enabled;
+                enabled: root.field.enabled && !root.blocked;
                 edited(value) => { root.number-edited(value); }
             }
             if root.field.after != "": Text {
@@ -111,7 +112,7 @@ component FieldView {
             min-width: 160px;
             text: root.field.text;
             placeholder-text: root.field.placeholder;
-            enabled: root.field.enabled;
+            enabled: root.field.enabled && !root.blocked;
             edited(text) => { root.text-edited(text); }
             accepted => { root.accepted(); }
         }
@@ -120,17 +121,18 @@ component FieldView {
             min-height: 84px;
             text: root.field.text;
             placeholder-text: root.field.placeholder;
-            enabled: root.field.enabled;
+            enabled: root.field.enabled && !root.blocked;
             edited(text) => { root.text-edited(text); }
         }
         if root.field.kind == 6: FiletypeTree {
             rows: root.field.rows;
+            enabled: root.field.enabled && !root.blocked;
             expanded(group, on) => { root.expanded(group, on); }
             ticked(group, option, on) => { root.tree-ticked(group, option, on); }
         }
         if root.field.kind == 7: Button {
             text: root.field.text;
-            enabled: root.field.enabled;
+            enabled: root.field.enabled && !root.blocked;
             clicked => { root.pressed(); }
         }
     }
@@ -151,6 +153,8 @@ export component PredicateEditorWindow inherits Window {
     in property <bool> two-columns;
     in property <[EditorPanel]> panels;
     in property <string> error;
+    in property <string> question;
+    callback answer(bool);
     // the shown page's recent predicates, each a button adding it with
     // one beside it forgetting it
     in property <[string]> recent;
@@ -179,6 +183,10 @@ export component PredicateEditorWindow inherits Window {
     keys := FocusScope {
         key-pressed(event) => {
             if (event.text == Key.Escape) {
+                if (root.question != "") {
+                    root.answer(false);
+                    return accept;
+                }
                 root.cancel();
                 return accept;
             }
@@ -197,6 +205,7 @@ export component PredicateEditorWindow inherits Window {
                 alignment: start;
                 for name[i] in root.pages: Button {
                     text: name;
+                                    enabled: root.question == "";
                     checkable: true;
                     checked: i == root.page;
                     clicked => { root.page-chosen(i); }
@@ -223,10 +232,12 @@ export component PredicateEditorWindow inherits Window {
                                 Button {
                                     horizontal-stretch: 1;
                                     text: label;
+                                    enabled: root.question == "";
                                     clicked => { root.recent-clicked(i); }
                                 }
                                 Button {
                                     text: "forget";
+                                    enabled: root.question == "";
                                     clicked => { root.recent-forgotten(i); }
                                 }
                             }
@@ -236,6 +247,7 @@ export component PredicateEditorWindow inherits Window {
                         spacing: 2px;
                         for label[i] in root.buttons: Button {
                             text: label;
+                                    enabled: root.question == "";
                             clicked => { root.button-clicked(i); }
                         }
                     }
@@ -246,11 +258,13 @@ export component PredicateEditorWindow inherits Window {
                             Button {
                                 horizontal-stretch: 1;
                                 text: root.buttons[row * 2];
+                                    enabled: root.question == "";
                                 clicked => { root.button-clicked(row * 2); }
                             }
                             if row * 2 + 1 < root.buttons.length: Button {
                                 horizontal-stretch: 1;
                                 text: root.buttons[row * 2 + 1];
+                                    enabled: root.question == "";
                                 clicked => { root.button-clicked(row * 2 + 1); }
                             }
                         }
@@ -264,6 +278,7 @@ export component PredicateEditorWindow inherits Window {
                             HorizontalLayout {
                                 for field[f] in panel.fields: FieldView {
                                     field: field;
+                                    blocked: root.question != "";
                                     here: field.shown && field.line == 0;
                                     chose(option) => { root.chose(p, f, option); }
                                     ticked(option, on) => { root.ticked(p, f, option, on); }
@@ -279,6 +294,7 @@ export component PredicateEditorWindow inherits Window {
                                     alignment: center;
                                     Button {
                                         text: "ok";
+                                    enabled: root.question == "";
                                         clicked => { root.ok(p); }
                                     }
                                 }
@@ -286,6 +302,7 @@ export component PredicateEditorWindow inherits Window {
                             if panel.two-lines: HorizontalLayout {
                                 for field[f] in panel.fields: FieldView {
                                     field: field;
+                                    blocked: root.question != "";
                                     here: field.shown && field.line == 1;
                                     chose(option) => { root.chose(p, f, option); }
                                     ticked(option, on) => { root.ticked(p, f, option, on); }
@@ -301,6 +318,7 @@ export component PredicateEditorWindow inherits Window {
                                     alignment: center;
                                     Button {
                                         text: "ok";
+                                    enabled: root.question == "";
                                         clicked => { root.ok(p); }
                                     }
                                 }
@@ -313,6 +331,11 @@ export component PredicateEditorWindow inherits Window {
                 text: root.error;
                 wrap: word-wrap;
                 color: Theme.error;
+            }
+            if root.question != "": HorizontalLayout {
+                Text { text: root.question; color: Theme.text; }
+                Button { text: "yes"; clicked => { root.answer(true); } }
+                Button { text: "no"; clicked => { root.answer(false); } }
             }
             HorizontalLayout {
                 alignment: end;

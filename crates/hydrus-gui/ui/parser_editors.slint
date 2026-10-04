@@ -6,12 +6,19 @@ import { DefinitionField } from "downloader_definitions.slint";
 import { Question } from "favourites.slint";
 export component ParserListWindow inherits Window {
     in property <bool> links;
+    in-out property <int> links-tab;
+    in property <bool> gaps-exist;
+    in property <[TableColumn]> api-columns;
+    in property <[TableRow]> api-rows;
+    callback api-sort(int,bool);
     title: root.links ? "url class links" : "parsers";
     preferred-width: 1000px; preferred-height: 580px;
     background: Theme.window;
     in property <[TableColumn]> columns;
     in property <[TableRow]> rows;
     in property <bool> selected;
+    in property <bool> single-selected;
+    in property <bool> clearable;
     in property <bool> child-open;
     in property <[string]> parser-choices;
     in-out property <int> chosen-parser;
@@ -21,16 +28,26 @@ export component ParserListWindow inherits Window {
     callback sort(int,bool);
     callback action(string);
     callback answered(bool);
+    callback force-close();
     VerticalLayout {
         padding: 10px; spacing: 8px;
-        ListTable {
+        if root.links: HorizontalLayout {
+            spacing: 6px;
+            Button { text: "parser links"; enabled: root.links-tab != 0; clicked => { root.links-tab = 0; } }
+            Button { text: "api/redirect link review"; enabled: root.links-tab != 1; clicked => { root.links-tab = 1; } }
+        }
+        if root.links && root.links-tab == 1: ListTable {
+            columns: root.api-columns; rows: root.api-rows;
+            sort(c,a) => { root.api-sort(c,a); }
+        }
+        if !root.links || root.links-tab == 0: ListTable {
             columns: root.columns; rows: root.rows;
             row-clicked(i,c,s) => { if root.question == "" { root.row-clicked(i,c,s); } }
-            row-activated(i) => { if root.question == "" { root.row-clicked(i,false,false); root.action(root.links ? "link" : "edit"); } }
+            row-activated(i) => { if root.question == "" { root.row-clicked(i,false,false); root.action(root.links ? "pick-parser" : "edit"); } }
             sort(c,a) => { if root.question == "" { root.sort(c,a); } }
             delete-pressed => { if root.question == "" { root.action(root.links ? "clear" : "delete"); } }
         }
-        HorizontalLayout {
+        if !root.links || root.links-tab == 0: HorizontalLayout {
             spacing: 6px; alignment: start;
             if !root.links: Button { text: "add"; enabled: !root.child-open && root.question == ""; clicked => { root.action("add"); } }
             if !root.links: Button { text: "edit"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("edit"); } }
@@ -38,9 +55,9 @@ export component ParserListWindow inherits Window {
             if !root.links: Button { text: "delete"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("delete"); } }
             if !root.links: Button { text: "import"; enabled: !root.child-open && root.question == ""; clicked => { root.action("import"); } }
             if !root.links: Button { text: "export"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("export"); } }
-            if root.links: ComboBox { enabled: root.question == ""; model: root.parser-choices; current-index <=> root.chosen-parser; }
-            if root.links: Button { text: "link"; enabled: root.selected && root.question == ""; clicked => { root.action("link"); } }
-            if root.links: Button { text: "clear"; enabled: root.selected && root.question == ""; clicked => { root.action("clear"); } }
+            if root.links: Button { text: "edit"; enabled: root.single-selected && !root.child-open && root.question == ""; clicked => { root.action("pick-parser"); } }
+            if root.links: Button { text: "clear"; enabled: root.clearable && !root.child-open && root.question == ""; clicked => { root.action("clear"); } }
+            if root.links: Button { text: "try to fill in gaps based on example urls"; enabled: root.gaps-exist && !root.child-open && root.question == ""; clicked => { root.action("auto-link"); } }
         }
         if root.links: Text { text: "API/redirect source classes use their target's parser. Associations apply to the live downloader."; color: Theme.text; wrap: word-wrap; }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
@@ -54,7 +71,10 @@ export component ParserListWindow inherits Window {
 }
 export component ParserEditWindow inherits Window {
     in property <bool> page;
-    title: root.page ? "edit page parser" : "edit content parser";
+    in property <bool> subsidiary;
+    in property <string> own-separator;
+    in-out property <bool> own-sorted;
+    title: root.subsidiary ? "edit sub page parser" : root.page ? "edit page parser" : "edit content parser";
     preferred-width: 1000px; preferred-height: 780px;
     background: Theme.window;
     in property <[DefinitionField]> fields;
@@ -62,8 +82,24 @@ export component ParserEditWindow inherits Window {
     in property <bool> selected;
     in property <bool> child-open;
     in property <string> subsidiary-note;
+    in property <[TableRow]> subsidiaries;
+    in property <bool> subsidiary-selected;
+    in property <bool> subsidiary-exportable;
+    in-out property <bool> subsidiary-sorted;
     in-out property <string> document;
+    in property <string> raw-description;
+    in property <string> raw-preview;
+    in property <bool> parse-enabled;
+    callback raw-action(string);
+    in property <[string]> examples;
+    in-out property <int> example;
     in-out property <string> test-url;
+    in-out property <string> fetch-url;
+    in-out property <string> referral-url;
+    in property <bool> fetching;
+    in property <string> fetch-status;
+    in property <bool> fetch-has-error;
+    callback fetch-error-action(int);
     in-out property <string> post-index: "0";
     in-out property <string> variables;
     in property <string> preview;
@@ -78,6 +114,10 @@ export component ParserEditWindow inherits Window {
     callback answered(bool);
     callback closed();
     callback force-close();
+    callback fetch(); callback fetch-from-url(); callback cancel-fetch();
+    callback example-chosen();
+    callback subsidiary-clicked(int,bool,bool); callback subsidiary-sort-changed(bool);
+    callback own-sort-changed(bool);
     VerticalLayout {
         height: root.height - 52px; padding: 10px; spacing: 8px;
         ScrollView {
@@ -99,6 +139,11 @@ export component ParserEditWindow inherits Window {
                     row-activated(i) => { root.row-clicked(i,false,false); root.action("edit-content"); }
                     delete-pressed => { root.action("delete-content"); }
                 }
+                if root.subsidiary: HorizontalLayout {
+                    Text { text: root.own-separator; color: Theme.text; wrap: word-wrap; }
+                    Button { text: "edit this separation formula"; enabled: !root.child-open; clicked => { root.action("own-separator"); } }
+                    CheckBox { text: "sort posts by source time"; checked <=> root.own-sorted; enabled: !root.child-open; toggled => { root.own-sort-changed(self.checked); } }
+                }
                 HorizontalLayout {
                     spacing: 6px; alignment: start;
                     if root.page: Button { text: "add content parser"; enabled: !root.child-open; clicked => { root.action("add-content"); } }
@@ -106,22 +151,80 @@ export component ParserEditWindow inherits Window {
                     if root.page: Button { text: "delete content parser"; enabled: root.selected && !root.child-open; clicked => { root.action("delete-content"); } }
                     if root.page: Button { text: "edit pre-parsing converter"; enabled: !root.child-open; clicked => { root.action("converter"); } }
                     if !root.page: Button { text: "edit parsing formula"; enabled: !root.child-open; clicked => { root.action("formula"); } }
-                    Button { text: "import parser"; enabled: !root.child-open; clicked => { root.action("import"); } }
-                    Button { text: "export parser"; enabled: !root.child-open; clicked => { root.action("export"); } }
+                    if !root.subsidiary: Button { text: "import parser"; enabled: !root.child-open; clicked => { root.action("import"); } }
+                    if !root.subsidiary: Button { text: "export parser"; enabled: !root.child-open; clicked => { root.action("export"); } }
                     if !root.page: Button { text: "edit veto string match"; enabled: !root.child-open; clicked => { root.action("match"); } }
+                }
+                if root.page: VerticalLayout {
+                    spacing: 6px;
+                    Text { text: "subsidiary page parsers"; color: Theme.text; }
+                    ListTable {
+                        height: 120px;
+                        columns: [{ title: "name",width: 350px },{ title: "separation formula",width: 420px,stretch: true }];
+                        rows: root.subsidiaries;
+                        row-clicked(i,c,s) => { root.subsidiary-clicked(i,c,s); }
+                        row-activated(i) => { root.subsidiary-clicked(i,false,false);root.action("edit-subsidiary"); }
+                        delete-pressed => { root.action("delete-subsidiary"); }
+                    }
+                    HorizontalLayout {
+                        spacing: 6px;
+                        Button { text: "add subsidiary parser"; enabled: !root.child-open; clicked => { root.action("add-subsidiary"); } }
+                        Button { text: "edit subsidiary parser"; enabled: root.subsidiary-selected && !root.child-open; clicked => { root.action("edit-subsidiary"); } }
+                        Button { text: "delete subsidiary parser"; enabled: root.subsidiary-exportable && !root.child-open; clicked => { root.action("delete-subsidiary"); } }
+                        Button { text: "edit separation formula"; enabled: root.subsidiary-selected && !root.child-open; clicked => { root.action("separator"); } }
+                        CheckBox { text: "sort posts by source time"; checked <=> root.subsidiary-sorted; enabled: root.subsidiary-selected && !root.child-open; toggled => { root.subsidiary-sort-changed(self.checked); } }
+                    }
+                    HorizontalLayout {
+                        spacing: 6px; alignment: start;
+                        Button { text: "import subsidiary parsers"; enabled: !root.child-open; clicked => { root.action("import-subsidiary"); } }
+                        Button { text: "export subsidiary parsers"; enabled: root.subsidiary-exportable && !root.child-open; clicked => { root.action("export-subsidiary"); } }
+                        Button { text: "duplicate subsidiary parsers"; enabled: root.subsidiary-exportable && !root.child-open; clicked => { root.action("duplicate-subsidiary"); } }
+                    }
                 }
                 if root.subsidiary-note != "": Text { text: root.subsidiary-note; color: Theme.text; wrap: word-wrap; }
                 Text { text: "test document"; color: Theme.text; }
-                TextEdit { height: 130px; text <=> root.document; enabled: !root.child-open; }
+                HorizontalLayout {
+                    LineEdit { text <=> root.fetch-url; placeholder-text: "URL to fetch"; enabled: !root.child-open; }
+                    Button { text: "fetch from URL"; enabled: !root.child-open; clicked => { root.fetch-from-url(); } }
+                    Button { text: "cancel fetch"; enabled: root.fetching; clicked => { root.cancel-fetch(); } }
+                }
+                HorizontalLayout {
+                    ComboBox { model: root.examples; current-index <=> root.example; enabled: !root.child-open; selected => { root.example-chosen(); } }
+                    Button { text: "add example"; enabled: !root.child-open; clicked => { root.action("add-example"); } }
+                    Button { text: "remove example"; enabled: root.examples.length > 1 && !root.child-open; clicked => { root.action("remove-example"); } }
+                }
+                HorizontalLayout {
+                    Button { text: "copy data"; enabled: !root.child-open; clicked => { root.raw-action("copy"); } }
+                    Button { text: "paste data"; enabled: !root.child-open; clicked => { root.raw-action("paste"); } }
+                }
+                Text { text: root.raw-description; color: Theme.text; wrap: word-wrap; }
+                TextEdit { height: 130px; text: root.raw-preview; read-only: true; }
                 HorizontalLayout {
                     Text { text: "page URL"; color: Theme.text; vertical-alignment: center; }
                     LineEdit { text <=> root.test-url; enabled: !root.child-open; }
                     Text { text: "post index"; color: Theme.text; vertical-alignment: center; }
                     LineEdit { width: 90px; text <=> root.post-index; enabled: !root.child-open; }
                 }
+                if root.page && !root.subsidiary: HorizontalLayout {
+                    Text { text: "referral URL"; color: Theme.text; vertical-alignment: center; }
+                    LineEdit { text <=> root.referral-url; enabled: !root.child-open; }
+                    Button { text: "fetch example data"; enabled: !root.child-open; clicked => { root.fetch(); } }
+                    if root.fetch-has-error: fetch-errors := ContextMenuArea {
+                        width: 30px;
+                        Menu {
+                            MenuItem { title: "show error"; activated => { root.fetch-error-action(8); } }
+                            MenuItem { title: "copy error"; activated => { root.fetch-error-action(9); } }
+                        }
+                        Button {
+                            width: 30px; icon: @image-url("../../../static/dump_fail.png");
+                            clicked => { fetch-errors.show({ x: 0px, y: self.height }); }
+                        }
+                    }
+                }
+                if root.fetch-status != "": Text { text: root.fetch-status; color: Theme.text; wrap: word-wrap; }
                 Text { text: "context variables (one key=value per line)"; color: Theme.text; }
                 TextEdit { height: 60px; text <=> root.variables; enabled: !root.child-open; }
-                Button { text: "test parse"; enabled: !root.child-open; clicked => { root.action("test"); } }
+                Button { text: "test parse"; enabled: root.parse-enabled && !root.child-open; clicked => { root.action("test"); } }
                 TextEdit { height: 140px; text: root.preview; read-only: true; }
             }
         }
@@ -132,6 +235,31 @@ export component ParserEditWindow inherits Window {
         x: 10px; y: root.height - 42px; width: root.width - 20px; height: 32px;
         alignment: end; spacing: 6px;
         Button { text: "apply"; enabled: !root.child-open; clicked => { root.action("apply"); } }
-        Button { text: "cancel"; enabled: !root.child-open; clicked => { root.action("cancel"); } }
+        Button { text: "cancel"; enabled: !root.child-open || root.fetching; clicked => { root.action("cancel"); } }
+    }
+}
+
+// Owned per-class selector, including the reference's selectable no-op separator.
+export component ParserPickerWindow inherits Window {
+    in property <string> window-title;
+    title: root.window-title;
+    preferred-width: 540px; preferred-height: 380px;
+    background: Theme.window;
+    in property <[TableRow]> rows;
+    in-out property <int> selected-index;
+    callback selected(int);
+    callback answered(bool);
+    VerticalLayout {
+        padding: 10px; spacing: 8px;
+        ListTable {
+            columns: [{title: "parser",width: 500px,stretch: true}]; rows: root.rows;
+            row-clicked(i,c,s) => { root.selected(i); }
+            row-activated(i) => { root.selected(i);root.answered(true); }
+        }
+        HorizontalLayout {
+            alignment: end; spacing: 6px;
+            Button { text: "ok"; clicked => { root.answered(true); } }
+            Button { text: "cancel"; clicked => { root.answered(false); } }
+        }
     }
 }

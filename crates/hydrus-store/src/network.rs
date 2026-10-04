@@ -474,6 +474,7 @@ mod tests {
     fn sessions_are_per_registrable_domain() {
         let conn = conn();
         let session = |d: &str| session_for(&conn, &NetworkContext::domain(d)).unwrap().data;
+        // Keep the real multi-label public suffix to exercise its session boundary.
         assert_eq!(session("www.example.co.uk"), "example.co.uk");
         assert_eq!(session("example.com"), "example.com");
         // an older, wider session keeps being used
@@ -543,10 +544,14 @@ pub struct NetworkSettings {
     pub downloader_network_error_delay: u64,
     pub subscription_network_error_delay: i64,
     pub subscription_other_error_delay: i64,
+    /// Non-DataMissing file failures allowed per sync; None never abandons.
+    pub subscription_file_error_cancel_threshold: Option<u64>,
     pub process_subs_in_random_order: bool,
     pub max_simultaneous_subscriptions: u32,
     /// `replace_percent_twenty_with_space_in_gug_input`.
     pub gug_percent_twenty_is_space: bool,
+    /// Whether clock gaps detect a wake (`do_sleep_check`).
+    pub detect_sleep: bool,
     /// Seconds requests wait after the computer wakes from sleep.
     pub wake_delay_period: u64,
 }
@@ -570,9 +575,11 @@ impl Default for NetworkSettings {
             downloader_network_error_delay: 90 * 60,
             subscription_network_error_delay: 12 * 3600,
             subscription_other_error_delay: 36 * 3600,
+            subscription_file_error_cancel_threshold: Some(5),
             process_subs_in_random_order: true,
             max_simultaneous_subscriptions: 1,
             gug_percent_twenty_is_space: false,
+            detect_sleep: true,
             wake_delay_period: 15,
         }
     }
@@ -612,7 +619,7 @@ mod login_tests {
         let logins = LoginDomains(vec!["example.com".into()]);
         assert!(logins.covers("https://example.com/post/1"));
         assert!(logins.covers("https://img.example.com/file.jpg"));
-        assert!(!logins.covers("https://other.com/post/1"));
+        assert!(!logins.covers("https://other.example/post/1"));
         assert!(!logins.covers("not a url"));
     }
 }

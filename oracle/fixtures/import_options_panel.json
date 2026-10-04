@@ -1,0 +1,3410 @@
+{
+  "initial": {
+    "simple": true,
+    "defaults": [
+      [
+        "subscription",
+        "presentation: presenting new files"
+      ],
+      [
+        "gallery/post urls",
+        "tags: downloader tags[all tags]"
+      ],
+      [
+        "watchable urls",
+        "tags: not adding any tags"
+      ],
+      [
+        "import folder",
+        "presentation: presenting new files"
+      ],
+      [
+        "local hard drive import",
+        ""
+      ],
+      [
+        "client api",
+        ""
+      ],
+      [
+        "global",
+        "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+      ]
+    ],
+    "caller_codes": [
+      2,
+      1,
+      3,
+      9,
+      0,
+      10,
+      4
+    ],
+    "urls": [
+      [
+        "alpha post",
+        "post url",
+        ""
+      ],
+      [
+        "beta watch",
+        "watchable url",
+        ""
+      ],
+      [
+        "gamma gallery",
+        "gallery url",
+        ""
+      ]
+    ],
+    "url_presence": [
+      false,
+      false,
+      false
+    ],
+    "favourites": []
+  },
+  "editors": [
+    {
+      "caller": 4,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"global\".\n\nThis is the base that all importers will default to if nothing else is set. This is the place to manage your general preferences.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 4,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"global\".\n\nThis is the base that all importers will default to if nothing else is set. This is the place to manage your general preferences.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 10,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"client api\".\n\nThis covers all files directly imported via the Client API, i.e. when an external program posts a raw file or a file path to be imported, with no downloader page involved. Only appropriate for file filtering and routing.",
+      "kinds": [
+        1,
+        3
+      ],
+      "sources": [
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 10,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"client api\".\n\nThis covers all files directly imported via the Client API, i.e. when an external program posts a raw file or a file path to be imported, with no downloader page involved. Only appropriate for file filtering and routing.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 0,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"local hard drive import\".\n\nThis covers all imports from a local hard drive, via a local import page or an \"import folder\". This is the place to filter, route, or present files differently to downloads.",
+      "kinds": [
+        1,
+        3,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 0,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"local hard drive import\".\n\nThis covers all imports from a local hard drive, via a local import page or an \"import folder\". This is the place to filter, route, or present files differently to downloads.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 9,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"import folder\".\n\nThis covers all import folders, if you want different behaviour to a regular local import. A good place to set up quieter presentation options.",
+      "kinds": [
+        3,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 9,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"import folder\".\n\nThis covers all import folders, if you want different behaviour to a regular local import. A good place to set up quieter presentation options.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 3,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"watchable urls\".\n\nThis covers all thread watcher work. A good place to set metadata filtering that differs from your gallery/post URL settings.",
+      "kinds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 3,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"watchable urls\".\n\nThis covers all thread watcher work. A good place to set metadata filtering that differs from your gallery/post URL settings.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 1,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"gallery/post urls\".\n\nThis covers any gallery search or \"post\" URL, be that in a gallery downloader, urls downloader, or subscription. A general catch-all for all normal URLs. This is a good place to set up metadata filtering.",
+      "kinds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 1,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"gallery/post urls\".\n\nThis covers any gallery search or \"post\" URL, be that in a gallery downloader, urls downloader, or subscription. A general catch-all for all normal URLs. This is a good place to set up metadata filtering.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 2,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"subscription\".\n\nThis covers all subscriptions. A good place to set up quieter presentation options than a normal download page (e.g. to make your subscription popups less spammy).",
+      "kinds": [
+        3,
+        6
+      ],
+      "sources": [
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 2,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"subscription\".\n\nThis covers all subscriptions. A good place to set up quieter presentation options than a normal download page (e.g. to make your subscription popups less spammy).",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "gallery/post urls",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 7,
+      "simple": true,
+      "url_keys": [
+        "0101010101010101010101010101010101010101010101010101010101010101"
+      ],
+      "description": "You are editing URL Class \"alpha post\".\n\nThis covers all URLs of a particular class. It overrides most other defaults. This is the place to set up blacklists particular to a certain site. The logic of passing from one URL to another can get tricky depending on the question, so if the site is complicated, spam these settings to all the URLs that might be involved (gallery, post, any file...) so you are covering every step of parsing and processing. Generally, though, the final \"Post URL\" encountered is the one that matters.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "gallery/post urls",
+        "global"
+      ]
+    },
+    {
+      "caller": 7,
+      "simple": false,
+      "url_keys": [
+        "0101010101010101010101010101010101010101010101010101010101010101"
+      ],
+      "description": "You are editing URL Class \"alpha post\".\n\nThis covers all URLs of a particular class. It overrides most other defaults. This is the place to set up blacklists particular to a certain site. The logic of passing from one URL to another can get tricky depending on the question, so if the site is complicated, spam these settings to all the URLs that might be involved (gallery, post, any file...) so you are covering every step of parsing and processing. Generally, though, the final \"Post URL\" encountered is the one that matters.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "gallery/post urls",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 7,
+      "simple": true,
+      "url_keys": [
+        "0202020202020202020202020202020202020202020202020202020202020202"
+      ],
+      "description": "You are editing URL Class \"beta watch\".\n\nThis covers all URLs of a particular class. It overrides most other defaults. This is the place to set up blacklists particular to a certain site. The logic of passing from one URL to another can get tricky depending on the question, so if the site is complicated, spam these settings to all the URLs that might be involved (gallery, post, any file...) so you are covering every step of parsing and processing. Generally, though, the final \"Post URL\" encountered is the one that matters.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "watchable urls",
+        "global"
+      ]
+    },
+    {
+      "caller": 7,
+      "simple": false,
+      "url_keys": [
+        "0202020202020202020202020202020202020202020202020202020202020202"
+      ],
+      "description": "You are editing URL Class \"beta watch\".\n\nThis covers all URLs of a particular class. It overrides most other defaults. This is the place to set up blacklists particular to a certain site. The logic of passing from one URL to another can get tricky depending on the question, so if the site is complicated, spam these settings to all the URLs that might be involved (gallery, post, any file...) so you are covering every step of parsing and processing. Generally, though, the final \"Post URL\" encountered is the one that matters.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "watchable urls",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 11,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"favourites template\".\n\nThis is a template you can load and paste wherever you need it.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 11,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"favourites template\".\n\nThis is a template you can load and paste wherever you need it.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "action": "_SeeDefaultStack",
+      "selection": {
+        "defaults": [
+          "subscription"
+        ],
+        "urls": [],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "information": "The stack for subscription, from first- to last-checked, is:\n\nany custom import options for the particular subscription\nany matching URL Class\nsubscription\ngallery/post urls\nglobal"
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_SeeDefaultStack",
+      "selection": {
+        "defaults": [
+          "gallery/post urls"
+        ],
+        "urls": [],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "information": "The stack for gallery/post urls, from first- to last-checked, is:\n\nany custom import options for the particular downloader page or subscription\nany matching URL Class\nmaybe \"subscription\"\ngallery/post urls\nglobal"
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_SeeDefaultStack",
+      "selection": {
+        "defaults": [
+          "watchable urls"
+        ],
+        "urls": [],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "information": "The stack for watchable urls, from first- to last-checked, is:\n\nany custom import options for the particular watcher page\nany matching URL Class\nwatchable urls\nglobal"
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_SeeDefaultStack",
+      "selection": {
+        "defaults": [
+          "import folder"
+        ],
+        "urls": [],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "information": "The stack for import folder, from first- to last-checked, is:\n\nany custom import options for the particular import folder\nimport folder\nlocal hard drive import\nglobal"
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_SeeDefaultStack",
+      "selection": {
+        "defaults": [
+          "local hard drive import"
+        ],
+        "urls": [],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "information": "The stack for local hard drive import, from first- to last-checked, is:\n\nany custom import options for the particular local import page\nlocal hard drive import\nglobal"
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_SeeDefaultStack",
+      "selection": {
+        "defaults": [
+          "client api"
+        ],
+        "urls": [],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "information": "The stack for client api, from first- to last-checked, is:\n\nclient api\nglobal"
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_SeeDefaultStack",
+      "selection": {
+        "defaults": [
+          "global"
+        ],
+        "urls": [],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "information": "The \"global\" set is the fallback default that all the other options will eventually use as the options-of-last-resort. No importer uses \"global\" as its primary import context."
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_SeeURLClassStack",
+      "selection": {
+        "defaults": [
+          "global"
+        ],
+        "urls": [
+          "alpha post"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "information": "The stack for when this url class is encountered, from first- to last-checked, is:\n\nany custom import options for the particular downloader page or subscription\nurls of class \"alpha post\"\nmaybe \"subscription\"\ngallery/post urls\nglobal"
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_SeeURLClassStack",
+      "selection": {
+        "defaults": [
+          "global"
+        ],
+        "urls": [
+          "beta watch"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "information": "The stack for when this url class is encountered, from first- to last-checked, is:\n\nany custom import options for the particular watcher page\nurls of class \"beta watch\"\nwatchable urls\nglobal"
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_SeeURLClassStack",
+      "selection": {
+        "defaults": [
+          "global"
+        ],
+        "urls": [
+          "gamma gallery"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "information": "The stack for when this url class is encountered, from first- to last-checked, is:\n\nany custom import options for the particular downloader page or subscription\nurls of class \"gamma gallery\"\nmaybe \"subscription\"\ngallery/post urls\nglobal"
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_ShowTLDR",
+      "selection": {
+        "defaults": [
+          "global"
+        ],
+        "urls": [
+          "gamma gallery"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "information": "tl;dr: Go into \"gallery/post urls\" and make sure tags are going where you want. Never touch this again, and, on occasion, set a \"custom\" import options override on a specific downloader."
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_ClearDefault",
+      "selection": {
+        "defaults": [
+          "global"
+        ],
+        "urls": [
+          "gamma gallery"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "information": "You cannot clear the \"global\" set! It has to have an entry for everything, to be the fallback default."
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_EditDefault",
+      "selection": {
+        "defaults": [
+          "gallery/post urls"
+        ],
+        "urls": [
+          "gamma gallery"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "editor": "edit import options",
+          "name": "favourite",
+          "accepted": false,
+          "kinds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_EditDefault",
+      "selection": {
+        "defaults": [
+          "gallery/post urls"
+        ],
+        "urls": [
+          "gamma gallery"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "editor": "edit import options",
+          "name": "favourite",
+          "accepted": true,
+          "kinds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "notes: adding notes, with conflict resolution: add the new note under a new name"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_ClearDefault",
+      "selection": {
+        "defaults": [
+          "gallery/post urls"
+        ],
+        "urls": [
+          "gamma gallery"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "question": "Clear all custom import options from gallery/post urls?",
+          "yes": "yes",
+          "no": "no",
+          "answer": false
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "notes: adding notes, with conflict resolution: add the new note under a new name"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_ClearDefault",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "gamma gallery"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "question": "Clear all custom import options from gallery/post urls?",
+          "yes": "yes",
+          "no": "no",
+          "answer": true
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            ""
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_EditURLClass",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "editor": "edit import options",
+          "name": "favourite",
+          "accepted": false,
+          "kinds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            ""
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_EditURLClass",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "editor": "edit import options",
+          "name": "favourite",
+          "accepted": true,
+          "kinds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            ""
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            "notes: adding notes, with conflict resolution: add the new note under a new name"
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          true,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_ClearURLClass",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "question": "Clear all custom import options for this entry?",
+          "yes": "yes",
+          "no": "no",
+          "answer": false
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            ""
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            "notes: adding notes, with conflict resolution: add the new note under a new name"
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          true,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_ClearURLClass",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post",
+          "beta watch"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "question": "Clear all custom import options for 2 url class entries?",
+          "yes": "yes",
+          "no": "no",
+          "answer": true
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            ""
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_AddFavourite",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post",
+          "beta watch"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "editor": "edit favourite/profile import options",
+          "name": "new import options favourite/profile",
+          "accepted": false,
+          "kinds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            7,
+            6
+          ]
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            ""
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_AddFavourite",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post",
+          "beta watch"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "editor": "edit favourite/profile import options",
+          "name": "new import options favourite/profile",
+          "accepted": true,
+          "kinds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            7,
+            6
+          ]
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            ""
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": [
+          [
+            "notes",
+            "notes: adding notes, with conflict resolution: add the new note under a new name"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "_AddFavourite",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post",
+          "beta watch"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "editor": "edit favourite/profile import options",
+          "name": "new import options favourite/profile",
+          "accepted": true,
+          "kinds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            7,
+            6
+          ]
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            ""
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": [
+          [
+            "notes",
+            "notes: adding notes, with conflict resolution: add the new note under a new name"
+          ],
+          [
+            "notes (1)",
+            "notes: adding notes, with conflict resolution: add the new note under a new name"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "_EditFavourite",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post",
+          "beta watch"
+        ],
+        "favourites": [
+          "notes"
+        ]
+      },
+      "calls": [
+        {
+          "editor": "edit favourite/profile import options",
+          "name": "notes",
+          "accepted": true,
+          "kinds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            7,
+            6
+          ]
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            ""
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": [
+          [
+            "notes (1) (1)",
+            "notes: adding notes, with conflict resolution: add the new note under a new name"
+          ],
+          [
+            "notes (1)",
+            "notes: adding notes, with conflict resolution: add the new note under a new name"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "_DeleteFavourite",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post",
+          "beta watch"
+        ],
+        "favourites": [
+          "notes (1) (1)"
+        ]
+      },
+      "calls": [],
+      "error": "ValueError: not enough values to unpack (expected 2, got 1)",
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            ""
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": [
+          [
+            "notes (1) (1)",
+            "notes: adding notes, with conflict resolution: add the new note under a new name"
+          ],
+          [
+            "notes (1)",
+            "notes: adding notes, with conflict resolution: add the new note under a new name"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "_DeleteFavourite",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post",
+          "beta watch"
+        ],
+        "favourites": [
+          "notes (1) (1)",
+          "notes (1)"
+        ]
+      },
+      "calls": [
+        {
+          "question": "Delete the 2 selected favourites/profiles?",
+          "yes": "yes",
+          "no": "no",
+          "answer": false
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            ""
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": [
+          [
+            "notes (1) (1)",
+            "notes: adding notes, with conflict resolution: add the new note under a new name"
+          ],
+          [
+            "notes (1)",
+            "notes: adding notes, with conflict resolution: add the new note under a new name"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "_DeleteFavourite",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post",
+          "beta watch"
+        ],
+        "favourites": [
+          "notes (1) (1)",
+          "notes (1)"
+        ]
+      },
+      "calls": [
+        {
+          "question": "Delete the 2 selected favourites/profiles?",
+          "yes": "yes",
+          "no": "no",
+          "answer": true
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            ""
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_ResetDefaultToDefault",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post",
+          "beta watch"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "title": "Reset things?",
+          "choices": [
+            [
+              "reset top defaults",
+              "defaults",
+              "Clear the default import options list and set everything back to how a new client database has it."
+            ],
+            [
+              "reset url classes",
+              "url_classes",
+              "Clear all the default URL Class entries."
+            ],
+            [
+              "reset favourites/templates",
+              "favourites",
+              "Clear the favourites/templates under the star icon button."
+            ]
+          ],
+          "answer": 0
+        },
+        {
+          "question": "Hey, you selected to reset \"defaults\". I am going to clear everything and reset to defaults, ok? If it does not go how you want, cancel out of the options dialog.",
+          "yes": "let's do it",
+          "no": "no, hold off",
+          "answer": false
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            ""
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_ResetDefaultToDefault",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post",
+          "beta watch"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "title": "Reset things?",
+          "choices": [
+            [
+              "reset top defaults",
+              "defaults",
+              "Clear the default import options list and set everything back to how a new client database has it."
+            ],
+            [
+              "reset url classes",
+              "url_classes",
+              "Clear all the default URL Class entries."
+            ],
+            [
+              "reset favourites/templates",
+              "favourites",
+              "Clear the favourites/templates under the star icon button."
+            ]
+          ],
+          "answer": 0
+        },
+        {
+          "question": "Hey, you selected to reset \"defaults\". I am going to clear everything and reset to defaults, ok? If it does not go how you want, cancel out of the options dialog.",
+          "yes": "let's do it",
+          "no": "no, hold off",
+          "answer": true
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_ResetDefaultToDefault",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post",
+          "beta watch"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "title": "Reset things?",
+          "choices": [
+            [
+              "reset top defaults",
+              "defaults",
+              "Clear the default import options list and set everything back to how a new client database has it."
+            ],
+            [
+              "reset url classes",
+              "url_classes",
+              "Clear all the default URL Class entries."
+            ],
+            [
+              "reset favourites/templates",
+              "favourites",
+              "Clear the favourites/templates under the star icon button."
+            ]
+          ],
+          "answer": 1
+        },
+        {
+          "question": "Hey, you selected to reset \"url_classes\". I am going to clear everything and reset to defaults, ok? If it does not go how you want, cancel out of the options dialog.",
+          "yes": "let's do it",
+          "no": "no, hold off",
+          "answer": true
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    },
+    {
+      "action": "_ResetDefaultToDefault",
+      "selection": {
+        "defaults": [
+          "gallery/post urls",
+          "global"
+        ],
+        "urls": [
+          "alpha post",
+          "beta watch"
+        ],
+        "favourites": []
+      },
+      "calls": [
+        {
+          "title": "Reset things?",
+          "choices": [
+            [
+              "reset top defaults",
+              "defaults",
+              "Clear the default import options list and set everything back to how a new client database has it."
+            ],
+            [
+              "reset url classes",
+              "url_classes",
+              "Clear all the default URL Class entries."
+            ],
+            [
+              "reset favourites/templates",
+              "favourites",
+              "Clear the favourites/templates under the star icon button."
+            ]
+          ],
+          "answer": 2
+        },
+        {
+          "question": "Hey, you selected to reset \"favourites\". I am going to clear everything and reset to defaults, ok? If it does not go how you want, cancel out of the options dialog.",
+          "yes": "let's do it",
+          "no": "no, hold off",
+          "answer": true
+        }
+      ],
+      "error": null,
+      "state": {
+        "simple": true,
+        "defaults": [
+          [
+            "subscription",
+            "presentation: presenting new files"
+          ],
+          [
+            "gallery/post urls",
+            "tags: downloader tags[all tags]"
+          ],
+          [
+            "watchable urls",
+            "tags: not adding any tags"
+          ],
+          [
+            "import folder",
+            "presentation: presenting new files"
+          ],
+          [
+            "local hard drive import",
+            ""
+          ],
+          [
+            "client api",
+            ""
+          ],
+          [
+            "global",
+            "prefetch logic, file filtering, tag filtering, locations, tags, notes, external programs, presentation"
+          ]
+        ],
+        "caller_codes": [
+          2,
+          1,
+          3,
+          9,
+          0,
+          10,
+          4
+        ],
+        "urls": [
+          [
+            "alpha post",
+            "post url",
+            ""
+          ],
+          [
+            "beta watch",
+            "watchable url",
+            ""
+          ],
+          [
+            "gamma gallery",
+            "gallery url",
+            ""
+          ]
+        ],
+        "url_presence": [
+          false,
+          false,
+          false
+        ],
+        "favourites": []
+      }
+    }
+  ],
+  "incoming_summary": "notes: adding notes, with conflict resolution: add the new note under a new name",
+  "help_titles": [
+    "open tl;dr",
+    "open the import options help"
+  ],
+  "documentation": [
+    "getting_started_import_options.html"
+  ],
+  "draft_isolated": true,
+  "applied": true,
+  "reopened_simple": false,
+  "reopened_favourites": [
+    [
+      "no tags",
+      "tags: not adding any tags"
+    ],
+    [
+      "show new files",
+      "presentation: presenting new files"
+    ],
+    [
+      "show all files",
+      "presentation: presenting all files"
+    ],
+    [
+      "example blacklist",
+      "tag filtering: blacklisting on goblin, orc"
+    ],
+    [
+      "force metadata refetch",
+      "prefetch logic: always redownloads metadata!"
+    ]
+  ]
+}

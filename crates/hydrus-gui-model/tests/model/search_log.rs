@@ -111,3 +111,88 @@ fn the_search_log_is_the_references() {
         recorded["delete_question"]
     );
 }
+
+#[test]
+fn exchange_questions_replay_actual_reference_answers_and_complete_objects() {
+    use hydrus_gui_model::search_log::{ImportStep, export_objects};
+    let recorded = hydrus_testkit::fixture_json("search_log_exchange.json");
+    let classes = hydrus_core::url::UrlClasses::default();
+    let existing = GallerySeed {
+        id: 1,
+        queue_id: 1,
+        url: "https://gallery-exchange.example/a".into(),
+        can_generate_more_pages: true,
+        created: 0,
+        modified: 0,
+        status: SeedStatus::Error,
+        note: "old failure".into(),
+        referral_url: None,
+        meta: GallerySeedMeta::default(),
+    };
+    let mut q = 0;
+    for case in recorded["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|c| c["text"].is_string())
+    {
+        let mut step = ImportStep::start(
+            case["text"].as_str().unwrap(),
+            std::slice::from_ref(&existing),
+            &classes,
+            true,
+        );
+        for answer in case["answers"].as_array().unwrap() {
+            let (text, choices) = step.question().unwrap();
+            assert_eq!(json!(text), recorded["questions"][q]["text"]);
+            assert_eq!(json!(choices), recorded["questions"][q]["choices"]);
+            step = step.answer(
+                match answer.as_str().unwrap() {
+                    "yes" => 0,
+                    "no" => 1,
+                    "cancel" => -1,
+                    _ => unreachable!(),
+                },
+                true,
+            );
+            q += 1;
+        }
+        let mut rows = vec![json!([existing.url, true, 4, "old failure"])];
+        if let ImportStep::Ready { urls, more } = step {
+            let mut seen = std::collections::BTreeSet::new();
+            rows.extend(urls.into_iter().filter_map(|url| {
+                let url = classes.normalise(&url, true).unwrap_or(url);
+                if seen.insert(url.clone()) {
+                    Some(json!([url, more, 0, ""]))
+                } else {
+                    None
+                }
+            }));
+        } else {
+            assert_eq!(step, ImportStep::Cancelled);
+        }
+        assert_eq!(json!(rows), case["seeds"], "{}", case["name"]);
+    }
+    let s = GallerySeed {
+        url: recorded["png"]["payload"].as_str().unwrap().into(),
+        can_generate_more_pages: false,
+        created: 1_700_000_000,
+        modified: 1_700_000_100,
+        note: "note 日本".into(),
+        referral_url: Some("https://gallery-exchange.example/ref".into()),
+        meta: GallerySeedMeta {
+            request_headers: vec![("X-Synthetic".into(), "header".into())],
+            external_filterable_tags: ["filter:tag".into()].into(),
+            external_additional_tags: vec![("11".repeat(32), ["extra:tag".into()].into())],
+            run_token: "not serialized".into(),
+            force_next_page_url_generation: true,
+        },
+        ..existing
+    };
+    assert_eq!(json!(export_objects(&[&s]).unwrap()), recorded["objects"]);
+    let png = std::fs::read(hydrus_testkit::fixture_path("search_log_urls.png")).unwrap();
+    assert_eq!(
+        json!(hydrus_downloader_exchange::text_png::decode(&png).unwrap()),
+        recorded["png"]["payload"]
+    );
+}

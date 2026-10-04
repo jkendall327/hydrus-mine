@@ -535,3 +535,109 @@ fn clear_and_load_replaces_the_pages_with_a_session() {
     assert_eq!(tabs(&ui).len(), 1);
     assert!(!bound.pages.borrow_mut().unclose());
 }
+
+#[test]
+fn boot_pause_menu_saves_preference_and_preserves_live_resume() {
+    use hydrus_store::settings::{self, AdvancedMode, NetworkBootPause, Pauses};
+    let recorded: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../../oracle/fixtures/network_boot_pause.json"
+    ))
+    .unwrap();
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let network = titles(&ui)
+        .iter()
+        .position(|(label, _)| label == "network")
+        .unwrap() as i32;
+    let label = "always boot the client with paused network traffic";
+    let open = || {
+        ui.invoke_menu_title_pressed(network, 200.0, 22.0);
+        hover(&ui, "pause");
+    };
+    for menu in recorded["menus"].as_array().unwrap() {
+        let advanced = menu["advanced"].as_bool().unwrap();
+        store
+            .write(move |ctx| settings::set(ctx.conn(), &AdvancedMode(advanced)))
+            .unwrap();
+        open();
+        let (_, usable, checked) = panes(&ui)
+            .last()
+            .unwrap()
+            .iter()
+            .find(|row| row.0 == label)
+            .unwrap()
+            .clone();
+        assert_eq!(usable, menu["enabled"].as_bool().unwrap());
+        assert_eq!(checked, menu["checked"].as_bool().unwrap());
+        ui.invoke_menu_dismissed();
+    }
+    let original: Pauses = store.read(settings::get).unwrap();
+    open();
+    choose(&ui, label);
+    assert!(store.read(settings::get::<NetworkBootPause>).unwrap().0);
+    assert_eq!(store.read(settings::get::<Pauses>).unwrap(), original);
+    open();
+    assert!(
+        panes(&ui)
+            .last()
+            .unwrap()
+            .iter()
+            .find(|row| row.0 == label)
+            .unwrap()
+            .2
+    );
+    ui.invoke_menu_dismissed();
+    assert!(
+        store.read(settings::get::<NetworkBootPause>).unwrap().0,
+        "dismiss is inert"
+    );
+    settings::apply_network_boot_pause(&store).unwrap();
+    assert!(store.read(settings::get::<Pauses>).unwrap().network_traffic);
+    open();
+    choose(&ui, "all new network traffic");
+    assert!(!store.read(settings::get::<Pauses>).unwrap().network_traffic);
+    assert!(store.read(settings::get::<NetworkBootPause>).unwrap().0);
+    open();
+    choose(&ui, label);
+    assert!(!store.read(settings::get::<NetworkBootPause>).unwrap().0);
+    assert!(!store.read(settings::get::<Pauses>).unwrap().network_traffic);
+    open();
+    choose(&ui, label);
+    drop(bound);
+    drop(ui);
+    let reopened = Store::open(store.dir()).unwrap();
+    assert!(reopened.read(settings::get::<NetworkBootPause>).unwrap().0);
+    assert!(
+        !reopened
+            .read(settings::get::<Pauses>)
+            .unwrap()
+            .network_traffic
+    );
+    for case in recorded["boot"].as_array().unwrap() {
+        let preference = case["preference"].as_bool().unwrap();
+        let before = case["before"].as_bool().unwrap();
+        reopened
+            .write(move |ctx| {
+                settings::set(ctx.conn(), &NetworkBootPause(preference))?;
+                settings::set(
+                    ctx.conn(),
+                    &Pauses {
+                        network_traffic: before,
+                        subscriptions: true,
+                        ..Pauses::default()
+                    },
+                )
+            })
+            .unwrap();
+        settings::apply_network_boot_pause(&reopened).unwrap();
+        let pauses: Pauses = reopened.read(settings::get).unwrap();
+        assert_eq!(pauses.network_traffic, case["after"].as_bool().unwrap());
+        assert!(pauses.subscriptions);
+        assert_eq!(
+            reopened.read(settings::get::<NetworkBootPause>).unwrap().0,
+            case["preference"].as_bool().unwrap()
+        );
+    }
+}

@@ -1,4 +1,4 @@
-//! URL classes: patterns recognising the URLs of a site ("a danbooru post
+//! URL classes: patterns recognising the URLs of a site ("a booru post
 //! page"), which also say how to normalise such URLs so the same page is
 //! always stored under the same URL.
 
@@ -201,6 +201,58 @@ impl DomainMask {
         })
     }
 
+    /// Test a domain with the same mask description shown by the reference.
+    pub fn test(&self, domain: &str) -> Result<(), UrlClassError> {
+        fn summary(values: &[String], noun: &str) -> String {
+            let mut values = values.to_vec();
+            crate::sort::human_sort(&mut values);
+            let full = values
+                .iter()
+                .map(|value| format!("\"{value}\""))
+                .collect::<Vec<_>>()
+                .join(", ");
+            if full.chars().count() <= 48 {
+                return full;
+            }
+            if values.len() > 1 {
+                let leading = format!(
+                    "\"{}\" & {} other {noun}",
+                    values[0],
+                    crate::numbers::human_int(u64::try_from(values.len() - 1).unwrap_or(u64::MAX))
+                );
+                if leading.chars().count() <= 48 {
+                    return leading;
+                }
+            }
+            format!(
+                "{} {noun}",
+                crate::numbers::human_int(u64::try_from(values.len()).unwrap_or(u64::MAX))
+            )
+        }
+        if self.matches(domain) {
+            return Ok(());
+        }
+        let mut description = if self.raw_domains.is_empty() {
+            String::new()
+        } else {
+            summary(&self.raw_domains, "domains")
+        };
+        if !self.domain_regexes.is_empty() {
+            description.push_str(&summary(&self.domain_regexes, "domain regexes"));
+        }
+        if self.raw_domains.is_empty() && self.domain_regexes.is_empty() {
+            description = "no domain rules, will not match anything!".into();
+        }
+        let subdomains = if self.match_subdomains {
+            " (potentially excluding subdomains)"
+        } else {
+            ""
+        };
+        fail(format!(
+            "{domain}{subdomains} did not match URL Domain Mask: {description}"
+        ))
+    }
+
     pub fn matches(&self, domain: &str) -> bool {
         self.compiled()
             .matchers
@@ -401,9 +453,7 @@ impl UrlClass {
     pub fn test(&self, url: &str, collapse_leading_slashes: bool) -> Result<(), UrlClassError> {
         let url = ensure_url_is_encoded(url, true, collapse_leading_slashes);
         let parts = parse_url(&url).map_err(|e| UrlClassError(e.to_string()))?;
-        if !self.domain_mask.matches(&parts.netloc) {
-            return fail(format!("{} did not match the domain mask", parts.netloc));
-        }
+        self.domain_mask.test(&parts.netloc)?;
         self.test_path(&parts.path, collapse_leading_slashes)?;
         let query = Query::parse(&parts.query);
         if self.no_more_parameters_than_this
@@ -707,13 +757,18 @@ pub(crate) mod tests {
     use super::*;
     use crate::url::strings::{FlexibleMatch, MatchKind};
 
-    pub(crate) fn gelbooru_post() -> UrlClass {
+    pub(crate) fn booru_post() -> UrlClass {
         UrlClass {
-            name: "gelbooru file page".into(),
+            name: "booru file page".into(),
             key: vec![1; 32],
             url_type: UrlType::Post,
             preferred_scheme: "https".into(),
-            domain_mask: DomainMask::new(vec!["gelbooru.com".into()], Vec::new(), false, false),
+            domain_mask: DomainMask::new(
+                vec!["booru.example.com".into()],
+                Vec::new(),
+                false,
+                false,
+            ),
             alphabetise_get_parameters: true,
             no_more_path_components_than_this: false,
             no_more_parameters_than_this: false,
@@ -752,7 +807,7 @@ pub(crate) mod tests {
             single_value_parameters_match: StringMatch::any(),
             header_overrides: Vec::new(),
             api_lookup_converter: StringConverter::default(),
-            example_url: "https://gelbooru.com/index.php?page=post&s=view&id=123".into(),
+            example_url: "https://booru.example.com/index.php?page=post&s=view&id=123".into(),
             referral: Referral::default(),
             gallery_index: None,
         }
@@ -760,18 +815,21 @@ pub(crate) mod tests {
 
     #[test]
     fn classes_match_and_normalise() {
-        let c = gelbooru_post();
-        let url = "http://www.gelbooru.com/index.php?id=2000&s=view&page=post&extra=1#top";
+        let c = booru_post();
+        let url = "http://www.booru.example.com/index.php?id=2000&s=view&page=post&extra=1#top";
         assert!(c.matches(url, false));
         assert_eq!(
             c.normalise(url, false, false).unwrap(),
-            "https://gelbooru.com/index.php?id=2000&page=post&s=view"
+            "https://booru.example.com/index.php?id=2000&page=post&s=view"
         );
         assert_eq!(
             c.normalise(url, true, false).unwrap(),
-            "https://gelbooru.com/index.php?extra=1&id=2000&page=post&s=view"
+            "https://booru.example.com/index.php?extra=1&id=2000&page=post&s=view"
         );
-        assert!(!c.matches("https://gelbooru.com/index.php?page=post&s=list", false));
+        assert!(!c.matches(
+            "https://booru.example.com/index.php?page=post&s=list",
+            false
+        ));
         assert!(!c.matches("https://example.com/index.php?page=post&s=view&id=1", false));
     }
 

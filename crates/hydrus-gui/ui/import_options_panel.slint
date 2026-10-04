@@ -1,0 +1,208 @@
+import { Button, CheckBox, ScrollView } from "std-widgets.slint";
+import { ListTable, TableRow, TableColumn } from "list_table.slint";
+import { ImportFavouriteRow, ImportFavouritesButton } from "import_options_favourites.slint";
+import { Theme } from "theme.slint";
+
+component ImportList {
+    in property <string> title;
+    in property <[TableColumn]> columns;
+    in property <[TableRow]> rows;
+    in property <[ImportFavouriteRow]> favourites;
+    in property <bool> profiles;
+    in property <bool> defaults;
+    in property <bool> any-selected;
+    in property <bool> one-selected;
+    in property <bool> enabled;
+    in property <int> sort-column;
+    in property <bool> ascending;
+    in-out property <bool> expanded: true;
+    callback clicked(int, bool, bool);
+    callback activated(int);
+    callback sort(int, bool);
+    callback action(string);
+    callback favourite(int, string);
+    VerticalLayout {
+        spacing: 4px;
+        Button { text: root.title + (root.expanded ? "  ▾" : "  ▸"); clicked => { root.expanded = !root.expanded; } }
+        if root.expanded: VerticalLayout {
+            spacing: 4px;
+            ListTable {
+                height: 150px;
+                columns: root.columns;
+                rows: root.rows;
+                sort-column: root.sort-column;
+                ascending: root.ascending;
+                row-clicked(row,ctrl,shift) => { if root.enabled {root.clicked(row,ctrl,shift);} }
+                row-activated(row) => { if root.enabled {root.activated(row);} }
+                sort(column,ascending) => { if root.enabled {root.sort(column,ascending);} }
+                delete-pressed => { if root.profiles && root.enabled && root.any-selected {root.action("delete");} }
+            }
+            HorizontalLayout {
+                spacing: 4px;
+                alignment: start;
+                if !root.profiles: Button { text: "show stack"; enabled: root.enabled && root.one-selected; clicked => {root.action("stack");} }
+                Button { text: "copy"; enabled: root.enabled && root.one-selected; clicked => {root.action("copy");} }
+                Button { text: "paste  ▾"; enabled: root.enabled && root.any-selected; clicked => {paste.show();} }
+                if !root.profiles: ImportFavouritesButton {
+                    rows: root.favourites;
+                    enabled: root.enabled;
+                    save-current-allowed: false;
+                    refresh => {root.action("refresh-favourites");}
+                    selected(action,name) => {root.favourite(action,name);}
+                }
+                if root.profiles: Button { text: "add"; enabled: root.enabled; clicked => {root.action("add");} }
+                Button { text: "edit"; enabled: root.enabled && root.one-selected; clicked => {root.action("edit");} }
+                Button { text: root.profiles ? "delete" : "clear"; enabled: root.enabled && root.any-selected; clicked => {root.action(root.profiles ? "delete" : "clear");} }
+                if root.defaults: Button { text: "reset to defaults"; enabled: root.enabled; clicked => {root.action("reset");} }
+            }
+        }
+    }
+    paste := PopupWindow {
+        width: 280px;
+        height: 132px;
+        Rectangle {
+            background: Theme.panel;
+            border-width: 1px;
+            border-color: Theme.border;
+            VerticalLayout {
+                padding: 4px; spacing: 2px;
+                Button { text: "custom paste: choose what you want"; clicked => {paste.close();root.action("paste-custom");} }
+                Button { text: "merge-paste"; clicked => {paste.close();root.action("paste-replace");} }
+                Button { text: "fill-in-gaps-paste"; clicked => {paste.close();root.action("paste-merge");} }
+                Button { text: "replace-paste"; clicked => {paste.close();root.action("paste-fill");} }
+            }
+        }
+    }
+}
+
+export component ImportOptionsPanelWindow inherits Window {
+    title: "import options";
+    preferred-width: 980px;
+    preferred-height: 850px;
+    background: Theme.window;
+    in property <string> warning;
+    in-out property <bool> simple;
+    in property <[TableRow]> defaults;
+    in property <[TableRow]> urls;
+    in property <[TableRow]> profiles;
+    in property <[bool]> any-selected;
+    in property <[bool]> one-selected;
+    in property <[int]> sort-columns;
+    in property <[bool]> ascending;
+    in property <[ImportFavouriteRow]> favourites;
+    in property <bool> busy;
+    in property <string> information;
+    in property <string> error;
+    in property <string> question;
+    in property <string> yes-label: "yes";
+    in property <string> no-label: "no";
+    in property <bool> resetting;
+    in property <[string]> reset-labels;
+    in property <[string]> reset-descriptions;
+    callback clicked(int,int,bool,bool);
+    callback activated(int,int);
+    callback sort(int,int,bool);
+    callback action(int,string);
+    callback favourite(int,int,string);
+    callback simple-changed(bool);
+    callback reset-chosen(int);
+    callback answered(bool);
+    callback apply();
+    callback cancel();
+    keys := FocusScope {
+        key-pressed(event) => { if event.text == Key.Escape {root.cancel();return accept;} reject }
+        VerticalLayout {
+            padding: 10px; spacing: 6px;
+            Text { text: root.warning; wrap: word-wrap; color: Theme.error; }
+            HorizontalLayout {
+                spacing: 8px; alignment: start;
+                Text { text: "help for this panel -->"; color: Theme.text; vertical-alignment: center; }
+                Button { text: "help  ▾"; clicked => {help.show();} }
+                CheckBox { text: "keep this panel simple :^)"; checked <=> root.simple; enabled: !root.busy && root.question == "" && !root.resetting; toggled => {root.simple-changed(self.checked);} }
+            }
+            ScrollView {
+                vertical-stretch: 1;
+                VerticalLayout {
+                    spacing: 8px;
+                    ImportList {
+                        title: "default import options";
+                        columns: [{title:"context",width:240px,stretch:false},{title:"custom import options",width:580px,stretch:true}];
+                        rows: root.defaults; defaults: true;
+                        any-selected: root.any-selected[0]; one-selected: root.one-selected[0];
+                        sort-column: root.sort-columns[0]; ascending: root.ascending[0];
+                        enabled: !root.busy && root.question == "" && !root.resetting;
+                        favourites: root.favourites;
+                        clicked(row,ctrl,shift) => {root.clicked(0,row,ctrl,shift);}
+                        activated(row) => {root.activated(0,row);}
+                        sort(column,ascending) => {root.sort(0,column,ascending);}
+                        action(action) => {root.action(0,action);}
+                        favourite(action,name) => {root.favourite(0,action,name);}
+                    }
+                    ImportList {
+                        title: "url class import options";
+                        columns: [{title:"name",width:260px,stretch:false},{title:"url type",width:120px,stretch:false},{title:"custom import options",width:440px,stretch:true}];
+                        rows: root.urls;
+                        any-selected: root.any-selected[1]; one-selected: root.one-selected[1];
+                        sort-column: root.sort-columns[1]; ascending: root.ascending[1];
+                        enabled: !root.busy && root.question == "" && !root.resetting;
+                        favourites: root.favourites;
+                        clicked(row,ctrl,shift) => {root.clicked(1,row,ctrl,shift);}
+                        activated(row) => {root.activated(1,row);}
+                        sort(column,ascending) => {root.sort(1,column,ascending);}
+                        action(action) => {root.action(1,action);}
+                        favourite(action,name) => {root.favourite(1,action,name);}
+                    }
+                    ImportList {
+                        title: "favourites/profiles";
+                        columns: [{title:"name",width:240px,stretch:false},{title:"custom import options",width:580px,stretch:true}];
+                        rows: root.profiles; profiles: true;
+                        any-selected: root.any-selected[2]; one-selected: root.one-selected[2];
+                        sort-column: root.sort-columns[2]; ascending: root.ascending[2];
+                        enabled: !root.busy && root.question == "" && !root.resetting;
+                        clicked(row,ctrl,shift) => {root.clicked(2,row,ctrl,shift);}
+                        activated(row) => {root.activated(2,row);}
+                        sort(column,ascending) => {root.sort(2,column,ascending);}
+                        action(action) => {root.action(2,action);}
+                    }
+                }
+            }
+            if root.information != "": VerticalLayout {
+                Text { text: root.information; color: Theme.text; wrap: word-wrap; }
+                Button { text: "ok"; clicked => {root.action(-1,"dismiss-information");} }
+            }
+            if root.resetting: VerticalLayout {
+                Text { text: "Reset things?"; color: Theme.text; }
+                for label[index] in root.reset-labels: HorizontalLayout {
+                    Button { text: label; clicked => {root.reset-chosen(index);} }
+                    Text { text: root.reset-descriptions[index]; color: Theme.text; wrap: word-wrap; horizontal-stretch: 1; }
+                }
+                Button { text: "cancel"; clicked => {root.reset-chosen(-1);} }
+            }
+            if root.question != "": VerticalLayout {
+                Text { text: root.question; color: Theme.text; wrap: word-wrap; }
+                HorizontalLayout {
+                    alignment: end; spacing: 6px;
+                    Button { text: root.yes-label; clicked => {root.answered(true);} }
+                    Button { text: root.no-label; clicked => {root.answered(false);} }
+                }
+            }
+            if root.error != "": Text { text: root.error; wrap: word-wrap; color: Theme.error; }
+            HorizontalLayout {
+                alignment: end; spacing: 6px;
+                Button { text: "apply"; enabled: !root.busy && root.question == "" && !root.resetting; clicked => {root.apply();} }
+                Button { text: "cancel"; clicked => {root.cancel();} }
+            }
+        }
+    }
+    help := PopupWindow {
+        width: 260px; height: 66px;
+        Rectangle {
+            background: Theme.panel;
+            VerticalLayout {
+                padding: 4px; spacing: 2px;
+                Button { text: "open tl;dr"; clicked => {help.close();root.action(-1,"tldr");} }
+                Button { text: "open the import options help"; clicked => {help.close();root.action(-1,"help");} }
+            }
+        }
+    }
+}

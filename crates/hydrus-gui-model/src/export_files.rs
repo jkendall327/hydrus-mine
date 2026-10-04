@@ -10,16 +10,53 @@ use hydrus_parse::folders::parse_export_phrase;
 use hydrus_parse::sidecar::Router;
 use hydrus_store::{Store, settings};
 
+#[path = "export_files_tags.rs"]
+pub mod tags;
+
 /// The reference's destructive export confirmation.
 pub const TRASH_WARNING: &str = "THE FILES WILL BE SENT TO THE TRASH IN THE CLIENT AFTERWARDS";
 /// The reference's remove-from-preview question.
 pub const REMOVE_QUESTION: &str = "Remove all selected?";
 
+/// The shared folder/manual export pattern menu copies phrases; it does not
+/// replace the current filename pattern.
+pub const PATTERN_SHORTCUT_HEADING: &str = "click on a phrase to copy to clipboard";
+pub const PATTERN_SHORTCUTS: [(&str, &str); 7] = [
+    ("unique numerical file id - {file_id}", "{file_id}"),
+    ("the file's hash - {hash}", "{hash}"),
+    ("all the file's tags - {tags}", "{tags}"),
+    (
+        "all the file's non-namespaced tags - {nn tags}",
+        "{nn tags}",
+    ),
+    ("file order - {#}", "{#}"),
+    (
+        "all instances of a particular namespace - [\u{2026}]",
+        "[\u{2026}]",
+    ),
+    (
+        "a particular tag, if the file has it - (\u{2026})",
+        "(\u{2026})",
+    ),
+];
+
+/// Out-of-range native menu callbacks cannot produce a clipboard payload.
+pub fn pattern_shortcut(index: i32) -> Option<&'static str> {
+    if index == 7 {
+        return Some(PATTERN_SHORTCUT_HEADING);
+    }
+    usize::try_from(index)
+        .ok()
+        .and_then(|index| PATTERN_SHORTCUTS.get(index))
+        .map(|(_, phrase)| *phrase)
+}
+
 /// Remembered manual export choices, independent of scheduled export folders.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(default)]
 pub struct Preferences {
-    /// Destination last used for manual exports.
+    /// Previously remembered destination, retained for settings compatibility.
+    /// New panels use the shared ExportSettings default directory.
     pub destination: String,
     /// Whether to send exported media to the client's trash.
     pub trash: bool,
@@ -38,6 +75,28 @@ impl Default for Preferences {
 }
 impl settings::Setting for Preferences {
     const KEY: &'static str = "manual_export";
+}
+
+/// Resolve the shared default used whenever a manual export panel opens.
+/// Portable relative paths are relative to this client's database directory.
+pub fn default_directory(store: &Store, naming: &settings::ExportSettings) -> String {
+    let path = naming.default_directory.as_ref().map_or_else(
+        || {
+            std::env::var_os("HOME")
+                .or_else(|| std::env::var_os("USERPROFILE"))
+                .map(|home| PathBuf::from(home).join("hydrus_export"))
+        },
+        |path| {
+            let path = Path::new(path);
+            Some(if path.is_absolute() {
+                path.to_path_buf()
+            } else {
+                store.dir().join(path)
+            })
+        },
+    );
+    path.map(|path| normalise(&path).to_string_lossy().into_owned())
+        .unwrap_or_default()
 }
 
 /// A preview row, retaining the original file identity.

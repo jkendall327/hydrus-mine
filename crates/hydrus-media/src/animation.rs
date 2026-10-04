@@ -3,14 +3,14 @@
 //! a viewer plays them.
 
 use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, Read};
 use std::path::Path;
 
 use hydrus_core::Mime;
 
 use crate::error::{MediaError, Result};
 use crate::formats::archive::{self, Zip};
-use crate::formats::webp;
+use crate::formats::{apng, gif, webp};
 use crate::imaging::Raster;
 use crate::tools::{MediaTools, raster_from_bytes};
 
@@ -22,6 +22,7 @@ pub struct Frames {
     source: Source,
     durations: Vec<u32>,
     next: usize,
+    times_to_play: u32,
 }
 
 enum Source {
@@ -98,11 +99,22 @@ impl Frames {
                 });
             }
         };
+        let times_to_play = if mime == Mime::AnimationUgoira {
+            0
+        } else {
+            times_to_play(path)
+        };
         Ok(Self {
             source,
             durations,
             next: 0,
+            times_to_play,
         })
+    }
+
+    /// Stored play count: zero means infinite, matching the reference.
+    pub fn times_to_play(&self) -> u32 {
+        self.times_to_play
     }
 
     /// How many frames there are.
@@ -172,6 +184,44 @@ impl Frames {
     }
 }
 
+/// Animation metadata used by both native and mpv-backed playback. GIFs
+/// without a loop extension play once; WebP/APNG zero means infinite.
+/// Non-animation formats (including ugoira) impose no finite play limit.
+pub fn times_to_play(path: &Path) -> u32 {
+    let Ok(mut file) = File::open(path) else {
+        return 0;
+    };
+    let mut header = [0; 12];
+    if file.read_exact(&mut header).is_err() {
+        return 0;
+    }
+    if !(header.starts_with(b"GIF87a")
+        || header.starts_with(b"GIF89a")
+        || header.starts_with(b"\x89PNG\r\n\x1a\n")
+        || (header.starts_with(b"RIFF") && header.get(8..12) == Some(b"WEBP")))
+    {
+        return 0;
+    }
+    let Ok(data) = std::fs::read(path) else {
+        return 0;
+    };
+    if data.starts_with(b"GIF87a") || data.starts_with(b"GIF89a") {
+        return gif::parse(&data).map_or(1, |gif| gif.times_to_play);
+    }
+    if data.starts_with(b"\x89PNG\r\n\x1a\n") {
+        return apng::times_to_play(&data[..data.len().min(256)]);
+    }
+    if data.starts_with(b"RIFF") && data.get(8..12) == Some(b"WEBP") {
+        return webp::chunks(&data)
+            .into_iter()
+            .find(|(kind, _)| kind == b"ANIM")
+            .and_then(|(_, body)| body.get(4..6))
+            .and_then(|bytes| bytes.try_into().ok())
+            .map_or(0, |bytes| u32::from(u16::from_le_bytes(bytes)));
+    }
+    0
+}
+
 /// The frame showing `timestamp_ms` in, of frames of these `durations`
 /// (`GetFrameIndex`): the first not over by then, and past the end, the
 /// first.
@@ -204,6 +254,48 @@ mod tests {
                 (image.width(), image.height(), ms)
             })
             .collect()
+    }
+
+    #[test]
+    fn stored_loop_counts_match_real_qt_animation_metadata() {
+        let fixture = hydrus_testkit::fixture_json("viewer_zoom_loop_options.json");
+        let directory = tempfile::tempdir().unwrap();
+        for case in fixture["metadata"].as_array().unwrap() {
+            let path = directory.path().join("animation");
+            std::fs::write(&path, hex::decode(case["bytes"].as_str().unwrap()).unwrap()).unwrap();
+            assert_eq!(
+                u64::from(times_to_play(&path)),
+                case["count"].as_u64().unwrap(),
+                "{case:?}"
+            );
+        }
+        let original = hex::decode(fixture["animation_bytes"].as_str().unwrap()).unwrap();
+        let offset = original
+            .windows(4)
+            .position(|bytes| bytes == b"ANIM")
+            .unwrap()
+            + 12;
+        for count in 0_u16..=2 {
+            let mut data = original.clone();
+            data[offset..offset + 2].copy_from_slice(&count.to_le_bytes());
+            let path = directory.path().join("animation.webp");
+            std::fs::write(&path, data).unwrap();
+            let frames = Frames::open(&path, Mime::AnimationWebp, &[], None).unwrap();
+            assert_eq!(frames.times_to_play(), u32::from(count));
+        }
+        assert_eq!(
+            Frames::open(&corpus("ugoira_json.zip"), Mime::AnimationUgoira, &[], None)
+                .unwrap()
+                .times_to_play(),
+            0
+        );
+        let path = directory.path().join("not-animation");
+        std::fs::write(&path, vec![0; 1024]).unwrap();
+        assert_eq!(
+            times_to_play(&path),
+            0,
+            "other playable formats have no finite animation limit"
+        );
     }
 
     #[test]

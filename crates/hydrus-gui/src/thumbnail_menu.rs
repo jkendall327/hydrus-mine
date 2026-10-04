@@ -248,9 +248,11 @@ pub fn hashes(store: &Store, files: &[HashId], kind: HashKind) -> Vec<String> {
         Ok((
             hydrus_store::media::load_basic(c, files)?,
             hydrus_store::media::digests(c, files)?,
+            hydrus_store::settings::get::<hydrus_store::settings::FileHandlingSettings>(c)?
+                .prefix_hash_when_copying,
         ))
     });
-    let Ok((basic, digests)) = read else {
+    let Ok((basic, digests, prefix)) = read else {
         return Vec::new();
     };
     files
@@ -266,6 +268,18 @@ pub fn hashes(store: &Store, files: &[HashId], kind: HashKind) -> Vec<String> {
                 HashKind::Sha512 => digest(2),
                 HashKind::Blurhash => info.and_then(|i| i.blurhash.clone()),
                 HashKind::PixelHash => info.and_then(|i| i.pixel_hash).map(|h| h.to_hex()),
+            }
+        })
+        .map(|hash| {
+            if prefix {
+                let name = if kind == HashKind::PixelHash {
+                    "pixel_hash"
+                } else {
+                    kind.name()
+                };
+                format!("{name}:{hash}")
+            } else {
+                hash
             }
         })
         .collect()

@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "agent": "search-options",
+  "baseline_git_head": "d50df26b",
+  "claims": [
+    {
+      "id": "audit-options-media-viewer-hovers-hover-windows-pop-in-tags-left-hover-window-on-mouseover",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact default-true checkbox stages and persists independent enablement of the native tags pop-in panel. Apply gates the current viewer immediately, disabling its existing left mouseover hit region; Cancel retains the live preference. Legacy disable_tags_hover_in_media_viewer is inverted into the enabled control. Fresh real Qt ideal-layout decisions and native actual mouseover states cover independent combinations.",
+      "limits": [
+        "Native hover panels retain existing layout/content differences. The reference focus requirement, other passive background copies, preview and duplicate-filter hover controls are separate unclaimed leaves."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ViewerHoverSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow tags-showing"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::viewer_hover_controls_replay_reference_enabled_states",
+        "crates/hydrus-store/src/import/decode.rs::viewer_hover_options_migrate_disable_keys_as_enabled_controls",
+        "crates/hydrus-gui/tests/gui/options_window.rs::hover_options_apply_to_actual_mouseover_panels_and_passive_index_text"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_hover_options.py",
+        "fixture": "oracle/fixtures/viewer_hover_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T11:33:47Z",
+        "reference": "Real MediaViewerHoversPanel controls/UpdateOptions; real CanvasMediaListBrowser hover ideal layouts and _DrawBackgroundDetails/_DrawIndexAndZoom text. Synthetic basic fixture and note."
+      },
+      "implementationCommit": "4091939f1f3d7bcf5e734a56825b81210bd36c75"
+    },
+    {
+      "id": "audit-options-media-viewer-hovers-hover-windows-pop-in-ratings-and-locations-top-right-hover-window-on-mouseover",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact default-true checkbox stages and persists independent enablement of the native ratings/locations pop-in panel. Apply gates the current viewer immediately and disables its existing top-right mouseover hit region; Cancel retains the live preference. Legacy disable_top_right_hover_in_media_viewer is inverted into the enabled control. Real Qt layout decisions and native actual mouseover states cover independent combinations.",
+      "limits": [
+        "Native hover panels retain existing layout/content differences. The reference focus requirement, other passive background copies, preview and duplicate-filter hover controls are separate unclaimed leaves."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ViewerHoverSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow ratings-showing"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::viewer_hover_controls_replay_reference_enabled_states",
+        "crates/hydrus-store/src/import/decode.rs::viewer_hover_options_migrate_disable_keys_as_enabled_controls",
+        "crates/hydrus-gui/tests/gui/options_window.rs::hover_options_apply_to_actual_mouseover_panels_and_passive_index_text"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_hover_options.py",
+        "fixture": "oracle/fixtures/viewer_hover_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T11:33:47Z",
+        "reference": "Real MediaViewerHoversPanel controls/UpdateOptions; real CanvasMediaListBrowser hover ideal layouts and _DrawBackgroundDetails/_DrawIndexAndZoom text. Synthetic basic fixture and note."
+      },
+      "implementationCommit": "4091939f1f3d7bcf5e734a56825b81210bd36c75"
+    },
+    {
+      "id": "audit-options-media-viewer-hovers-hover-windows-pop-in-notes-right-hover-window-on-mouseover",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact default-true checkbox stages and persists independent enablement of the native notes pop-in panel. Apply gates the current viewer immediately and disables its existing right mouseover hit region; Cancel retains the live preference. Legacy disable_notes_hover_in_media_viewer is inverted into the enabled control. Synthetic real notes exercise actual Qt layout decisions and native visible notes boundaries under ratings.",
+      "limits": [
+        "Native hover panels retain existing layout/content differences. The reference focus requirement, other passive background copies, preview and duplicate-filter hover controls are separate unclaimed leaves."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ViewerHoverSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow notes-showing"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::viewer_hover_controls_replay_reference_enabled_states",
+        "crates/hydrus-store/src/import/decode.rs::viewer_hover_options_migrate_disable_keys_as_enabled_controls",
+        "crates/hydrus-gui/tests/gui/options_window.rs::hover_options_apply_to_actual_mouseover_panels_and_passive_index_text"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_hover_options.py",
+        "fixture": "oracle/fixtures/viewer_hover_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T11:33:47Z",
+        "reference": "Real MediaViewerHoversPanel controls/UpdateOptions; real CanvasMediaListBrowser hover ideal layouts and _DrawBackgroundDetails/_DrawIndexAndZoom text. Synthetic basic fixture and note."
+      },
+      "implementationCommit": "4091939f1f3d7bcf5e734a56825b81210bd36c75"
+    },
+    {
+      "id": "audit-options-media-viewer-hovers-background-draw-index-text-bottom-right-in-the-viewer-background",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact default-true checkbox stages and persists drawing the reference zoom - index string three pixels from the bottom-right canvas edge, underneath media. Apply updates an open viewer, Cancel retains the applied state, and the legacy boolean migrates. Fresh actual Qt _DrawIndexAndZoom draw calls and native exact strings/pixel presence/opaque-media occlusion regressions prove the visible consumer.",
+      "limits": [
+        "Native text palette/font metrics differ from Qt; exact string format, bottom-right inset and background stacking match the reference. Other passive background copies and preview/duplicate-filter preferences are unclaimed."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ViewerHoverSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow index-background-text/passive Text before media"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::viewer_hover_controls_replay_reference_enabled_states",
+        "crates/hydrus-store/src/import/decode.rs::viewer_hover_options_migrate_disable_keys_as_enabled_controls",
+        "crates/hydrus-gui/tests/gui/options_window.rs::hover_options_apply_to_actual_mouseover_panels_and_passive_index_text"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_hover_options.py",
+        "fixture": "oracle/fixtures/viewer_hover_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T11:33:47Z",
+        "reference": "Real MediaViewerHoversPanel controls/UpdateOptions; real CanvasMediaListBrowser hover ideal layouts and _DrawBackgroundDetails/_DrawIndexAndZoom text. Synthetic basic fixture and note."
+      },
+      "implementationCommit": "4091939f1f3d7bcf5e734a56825b81210bd36c75"
+    }
+  ],
+  "summary": {
+    "concrete_implementation_leaves": 4,
+    "parent_or_alias_completions": 0,
+    "evidence_only_reassessments": 0
+  },
+  "validation": {
+    "reference_recording": "executed successfully",
+    "formatter": "cargo fmt --all passed",
+    "python_compile": "passed",
+    "diff_check": "passed",
+    "native_tests": "Added; delegated to root GitHub CI. No local Cargo builds."
+  }
+}

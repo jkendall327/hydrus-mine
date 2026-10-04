@@ -1,0 +1,527 @@
+{
+  "schema_version": 1,
+  "scope": "Offline hierarchy supplement for newly exported WriteTagsWindow and shared WriteTagInput; root applies after CI. Canonical inventories untouched.",
+  "referenceImplementationLeafCount": 0,
+  "newReferenceIds": [],
+  "implementationCommit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf",
+  "nativeComponents": [
+    {
+      "id": "catalog.writetagswindow",
+      "name": "WriteTagsWindow",
+      "label": "Edit additional tags / file whitelist / favourite tags",
+      "kind": "dialog",
+      "status": "partial",
+      "file": "crates/hydrus-gui/ui/write_autocomplete.slint",
+      "title": "edit tags / edit additional tags / edit file whitelist / edit favourite tags",
+      "preferredSize": "460 \u00d7 600",
+      "implementationCommit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf",
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/ui/write_autocomplete.slint",
+          "line": 122,
+          "symbol": "export component WriteTagsWindow",
+          "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/write_tag_window.rs",
+          "line": 24,
+          "symbol": "pub fn open(",
+          "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/write_tag_window.rs",
+          "line": 45,
+          "symbol": "pub fn open_favourites(",
+          "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 162,
+          "symbol": "fn detached_write_tag_child",
+          "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 2536,
+          "symbol": "fn favourite_tags_child_replays_reference",
+          "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+        }
+      ],
+      "owner": "Per-import-options child slot or Options favourite-tags child slot. Child Apply stages a copied list until parent Apply. Parent close closes the child and rejects retained results.",
+      "parents": [
+        {
+          "id": "dialog.import-options.tags",
+          "relationship": "owned_child",
+          "note": "Edit additional tags by service"
+        },
+        {
+          "id": "dialog.import-options.tag-filtering",
+          "relationship": "owned_child",
+          "note": "Edit file whitelist"
+        },
+        {
+          "id": "catalog.optionswindow",
+          "relationship": "owned_child",
+          "note": "Tag autocomplete tabs > favourite tags"
+        }
+      ],
+      "sharedInputOwners": [
+        {
+          "id": "dialog.manage-tags",
+          "relationship": "embeds_shared_WriteTagInput",
+          "note": "ManageTagsWindow does not open WriteTagsWindow as a child"
+        },
+        {
+          "id": "dialog.tag-siblings",
+          "relationship": "embeds_shared_WriteTagInput",
+          "note": "Two inputs in TagRelationshipsWindow"
+        },
+        {
+          "id": "dialog.tag-parents",
+          "relationship": "embeds_shared_WriteTagInput",
+          "note": "Two inputs in TagRelationshipsWindow"
+        }
+      ],
+      "sharedLinks": [
+        {
+          "id": "dialog.string.tag-filter",
+          "relationship": "same_import_options_owner_sibling",
+          "note": "Existing import filters are caller siblings, not WriteTagsWindow children"
+        },
+        {
+          "id": "dialog.tag-display.location",
+          "relationship": "custom_file_context_child"
+        },
+        {
+          "id": "dialog.tag-display.autocomplete",
+          "relationship": "associated_saved_source_editor"
+        }
+      ],
+      "limits": "Container remains partial for multiple-tag selection/menus, exact Qt navigation/geometry, declined-paste fallthrough and remote maintenance. This descriptor adds no reference IDs or implementation count.",
+      "children": [
+        {
+          "id": "catalog.writetagswindow.tabs",
+          "label": "Tags / favourites / children",
+          "kind": "feature_group",
+          "status": "first_pass",
+          "exactBehavior": "Real storage suggestions, natural-ordered saved favourites, and count-ordered descendants of caller tags consume the saved children cap.",
+          "sourceAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui/ui/write_autocomplete.slint",
+              "line": 7,
+              "symbol": "export component WriteTagInput",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+              "line": 282,
+              "symbol": "fn search(&self, manual: bool)",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "testAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+              "line": 374,
+              "symbol": "fn favourite_and_count_ordered_children_tabs",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+              "line": 286,
+              "symbol": "fn favourite_children_tabs",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ]
+        },
+        {
+          "id": "catalog.writetagswindow.suggestions",
+          "label": "Suggestions / manual fetch / selection",
+          "kind": "feature_group",
+          "status": "first_pass",
+          "exactBehavior": "Typed and ideal elevation, zero-count known tags, raw tags, first counted-result preference, parent/sibling decorators, namespace colours, Up/Down and Ctrl+Space use the shared write consumer.",
+          "sourceAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+              "line": 91,
+              "symbol": "pub struct WriteAutocomplete",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/ui/write_autocomplete.slint",
+              "line": 26,
+              "symbol": "capture-key-pressed(event)",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "testAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+              "line": 87,
+              "symbol": "fn exact_rows_counts_domains",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+              "line": 162,
+              "symbol": "fn detached_write_tag_child",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ]
+        },
+        {
+          "id": "catalog.writetagswindow.domains",
+          "label": "File and tag source contexts",
+          "kind": "feature_group",
+          "status": "partial",
+          "exactBehavior": "Domain buttons expose real services, combined/advanced choices and a custom current/deleted location child. Fixed-source and override-location interlocks are consumed; custom child Cancel preserves the editor context.",
+          "sourceAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui/src/write_tag_window.rs",
+              "line": 195,
+              "symbol": "window.on_domain_menu",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+              "line": 127,
+              "symbol": "pub fn domain_menu",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/src/write_tag_menu.rs",
+              "line": 145,
+              "symbol": "Action::Locations(location)",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "testAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+              "line": 824,
+              "symbol": "fn write_domain_menus_and_interlocks",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+              "line": 697,
+              "symbol": "fn write_domain_buttons_query_counts",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "sharedLinks": [
+            {
+              "id": "dialog.tag-display.location",
+              "relationship": "owned_shared_child",
+              "note": "LocationsWindow custom current/deleted domains"
+            },
+            {
+              "id": "dialog.tag-display.autocomplete",
+              "relationship": "associated_source_configuration",
+              "note": "The saved source/override-location editor feeds this consumer; it is not opened as a WriteTagsWindow child."
+            }
+          ]
+        },
+        {
+          "id": "catalog.writetagswindow.search",
+          "label": "Open search / duplicate page",
+          "kind": "feature_group",
+          "status": "partial",
+          "exactBehavior": "A single logical suggestion opens a real search or duplicate page with recorded domains and tag predicates through the weak main-window launcher. Closed editors cannot launch.",
+          "sourceAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+              "line": 251,
+              "symbol": "let launch = |duplicate|",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/src/write_tag_menu.rs",
+              "line": 17,
+              "symbol": "pub fn install_search_launcher",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "testAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+              "line": 591,
+              "symbol": "fn tag_menu_launches_native_search_and_duplicate_pages",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+              "line": 443,
+              "symbol": "fn shared_tag_menu_favourites_questions",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "limits": "Multiple-tag AND/OR/each-page launch menus are not implemented in this write suggestion list."
+        },
+        {
+          "id": "catalog.writetagswindow.favourites",
+          "label": "Global favourites / service most-used actions",
+          "kind": "feature_group",
+          "status": "first_pass",
+          "exactBehavior": "Add/remove uses current persisted settings and exact removal questions. Only accepted active-owner answers persist; the consumer refreshes afterwards.",
+          "sourceAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+              "line": 56,
+              "symbol": "pub fn persist(",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/src/write_tag_menu.rs",
+              "line": 131,
+              "symbol": "pub fn answer(&self, yes: bool)",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "testAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+              "line": 505,
+              "symbol": "fn tag_menu_copy_decorations_favourites",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+              "line": 443,
+              "symbol": "fn shared_tag_menu_favourites_questions",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ]
+        },
+        {
+          "id": "catalog.writetagswindow.parents",
+          "label": "Review parents / children and add parents",
+          "kind": "feature_group",
+          "status": "partial",
+          "exactBehavior": "Actual service-grouped parent/child review entries copy source labels and seed a shared parent editor with the originating logical tag. Owner close cancels the child and late answers.",
+          "sourceAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+              "line": 352,
+              "symbol": "fn relationship_entries",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/src/write_tag_menu.rs",
+              "line": 168,
+              "symbol": "Action::Relationship",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "testAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+              "line": 505,
+              "symbol": "fn tag_menu_copy_decorations_favourites",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/src/write_tag_menu.rs",
+              "line": 248,
+              "symbol": "fn seeded_relationship_child_apply_refresh",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "sharedLinks": [
+            {
+              "id": "dialog.tag-parents",
+              "relationship": "owned_shared_child",
+              "note": "TagRelationshipsWindow"
+            }
+          ],
+          "limits": "Full multi-tag and remote maintenance workflows remain partial."
+        },
+        {
+          "id": "catalog.writetagswindow.siblings",
+          "label": "Review ideal / sibling groups and add siblings",
+          "kind": "feature_group",
+          "status": "partial",
+          "exactBehavior": "Real ideal and sibling groups are reviewed by service; copied entries and the shared sibling child use the originating tag. Owner close invalidates pending child actions.",
+          "sourceAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+              "line": 352,
+              "symbol": "fn relationship_entries",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/src/write_tag_menu.rs",
+              "line": 168,
+              "symbol": "Action::Relationship",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "testAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+              "line": 505,
+              "symbol": "fn tag_menu_copy_decorations_favourites",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/src/write_tag_menu.rs",
+              "line": 248,
+              "symbol": "fn seeded_relationship_child_apply_refresh",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "sharedLinks": [
+            {
+              "id": "dialog.tag-siblings",
+              "relationship": "owned_shared_child",
+              "note": "TagRelationshipsWindow"
+            }
+          ],
+          "limits": "Full multi-tag and remote maintenance workflows remain partial."
+        },
+        {
+          "id": "catalog.writetagswindow.paste",
+          "label": "Paste / confirmation / skip preference",
+          "kind": "feature_group",
+          "status": "first_pass",
+          "exactBehavior": "Cleaned distinct multiline Ctrl+V asks the real yes/no question unless the saved skip preference is enabled. Explicit paste button bypasses it. Paste is add-only and staged; late answers after close do nothing.",
+          "sourceAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui/src/write_tag_window.rs",
+              "line": 319,
+              "symbol": "window.on_paste",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+              "line": 50,
+              "symbol": "pub fn paste(text:",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "testAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+              "line": 173,
+              "symbol": "fn paste_questions_skip",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+              "line": 162,
+              "symbol": "fn detached_write_tag_child",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "limits": "Declining the native question preserves current text; Qt hands the rejected event to normal paste."
+        },
+        {
+          "id": "catalog.writetagswindow.review",
+          "label": "Review staged tags / remove / copy",
+          "kind": "feature_group",
+          "status": "partial",
+          "exactBehavior": "Natural-ordered staged caller tags use namespace colours; double-click removes a staged tag. Suggestion context menus copy tags, subtags, underscore text, counts, parents or the whole logical result list.",
+          "sourceAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui/ui/write_autocomplete.slint",
+              "line": 170,
+              "symbol": "for tag[i] in root.tags",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+              "line": 168,
+              "symbol": "pub fn menu(&self, index: usize)",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "testAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+              "line": 337,
+              "symbol": "fn detached_import_tag_lists",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+              "line": 162,
+              "symbol": "fn detached_write_tag_child",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/tests/gui/options_window.rs",
+              "line": 2536,
+              "symbol": "fn favourite_tags_child_replays_reference",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "limits": "The staged list has no native multiple selection or complete Qt review context menu."
+        },
+        {
+          "id": "catalog.writetagswindow.lifecycle",
+          "label": "Child Apply / Cancel / parent transaction",
+          "kind": "feature_group",
+          "status": "first_pass",
+          "exactBehavior": "Child Apply returns the copied draft once; caller Apply persists it. Import additional-tags/whitelist and Options favourites retain their transactions. Closing either owner discards staged work and invalidates callbacks. Favourite manual choices use add-only mode.",
+          "sourceAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui/src/write_tag_window.rs",
+              "line": 208,
+              "symbol": "let close = Rc::new",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/src/write_tag_window.rs",
+              "line": 381,
+              "symbol": "window.on_apply",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/src/import_options_window.rs",
+              "line": 752,
+              "symbol": "match crate::write_tag_window::open",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/src/options_window.rs",
+              "line": 446,
+              "symbol": "crate::write_tag_window::open_favourites",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ],
+          "testAnchors": [
+            {
+              "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+              "line": 162,
+              "symbol": "fn detached_write_tag_child",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            },
+            {
+              "relativepath": "crates/hydrus-gui/tests/gui/options_window.rs",
+              "line": 2536,
+              "symbol": "fn favourite_tags_child_replays_reference",
+              "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "referenceRecording": [
+    {
+      "relativepath": "oracle/record_write_tag_autocomplete.py",
+      "line": 14,
+      "symbol": "def record(",
+      "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+    },
+    {
+      "relativepath": "oracle/fixtures/write_tag_autocomplete.json",
+      "line": 1462,
+      "symbol": "\"corpus\":",
+      "commit": "21ee181bd4eee5c444423eb74ae44e1cd9d319bf"
+    }
+  ],
+  "validation": "Source paths/symbols and existing real Qt oracle/test bodies inspected at the pinned commit. Runtime outcomes belong to root hosted CI."
+}

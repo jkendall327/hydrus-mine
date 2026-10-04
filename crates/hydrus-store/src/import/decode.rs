@@ -112,12 +112,243 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &pauses)?;
+    let boot = options
+        .as_ref()
+        .and_then(|o| o.booleans.get("boot_with_network_traffic_paused"))
+        .copied()
+        .unwrap_or(false);
+    insert_setting(&mut input, &crate::settings::NetworkBootPause(boot))?;
     if let Some(&advanced) = options
         .as_ref()
         .and_then(|o| o.booleans.get("advanced_mode"))
     {
         insert_setting(&mut input, &crate::settings::AdvancedMode(advanced))?;
     }
+    let mut notebooks = crate::sessions::NotebookSettings::default();
+    if let Some(options) = &options {
+        if let Some(value) = options.integers.get("close_page_focus_goes") {
+            notebooks.close_focus_left = *value == 0;
+        }
+        if let Some(&value) = options.booleans.get("rename_page_of_pages_on_send") {
+            notebooks.rename_sent_notebooks = value;
+        }
+    }
+    insert_setting(&mut input, &notebooks)?;
+    let mut tag_editing = crate::tag_editing::TagEditingSettings::default();
+    if let Some(options) = &options {
+        for (key, field) in [
+            (
+                "use_listbook_for_tag_service_panels",
+                &mut tag_editing.use_listbook,
+            ),
+            (
+                "show_parent_decorators_on_storage_taglists",
+                &mut tag_editing.tag_list_show_parents,
+            ),
+            (
+                "expand_parents_on_storage_taglists",
+                &mut tag_editing.tag_list_expand_parents,
+            ),
+            (
+                "show_sibling_decorators_on_storage_taglists",
+                &mut tag_editing.tag_list_show_siblings,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("save_default_tag_service_tab_on_change")
+        {
+            tag_editing.remember_service = value;
+        }
+        if let Some(&value) = options.booleans.get("ac_select_first_with_count") {
+            tag_editing.select_first_with_count = value;
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("skip_yesno_on_write_autocomplete_multiline_paste")
+        {
+            tag_editing.skip_multiline_paste_confirmation = value;
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("show_parent_decorators_on_storage_autocomplete_taglists")
+        {
+            tag_editing.autocomplete_show_parents = value;
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("expand_parents_on_storage_autocomplete_taglists")
+        {
+            tag_editing.autocomplete_expand_parents = value;
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("show_sibling_decorators_on_storage_autocomplete_taglists")
+        {
+            tag_editing.autocomplete_show_siblings = value;
+        }
+        if let Some(&value) = options.integers.get("ac_write_list_height_num_chars") {
+            tag_editing.autocomplete_list_height = u32::try_from(value).unwrap_or(11).clamp(1, 128);
+        }
+        if let Some(key) = options.keys.get("default_tag_service_tab") {
+            tag_editing.default_service = ServiceKey::new(key.clone());
+        }
+    }
+    insert_setting(&mut input, &tag_editing)?;
+    let mut autocomplete_tabs = crate::settings::TagAutocompleteTabs::default();
+    if let Some(value) = options.as_ref().and_then(|o| {
+        o.noneable_integers
+            .get("num_to_show_in_ac_dropdown_children_tab")
+    }) {
+        autocomplete_tabs.children_limit = value.map(|n| usize::try_from(n).unwrap_or(1).max(1));
+    }
+    if let Some(options) = &options {
+        autocomplete_tabs.most_used = options
+            .suggested_tags_favourites
+            .iter()
+            .map(|(key, tags)| (key.to_hex(), tags.clone()))
+            .collect();
+    }
+    insert_setting(&mut input, &autocomplete_tabs)?;
+    let notebook_creation = crate::settings::NotebookCreationSettings {
+        rename_new_notebooks: options.as_ref().is_some_and(|options| {
+            options.booleans.get("rename_page_of_pages_on_pick_new") == Some(&true)
+        }),
+    };
+    let insertion = options
+        .as_ref()
+        .and_then(|options| options.integers.get("default_new_page_goes"))
+        .and_then(|&code| crate::settings::PageInsertion::from_code(code))
+        .unwrap_or_default();
+    insert_setting(&mut input, &insertion)?;
+    insert_setting(&mut input, &notebook_creation)?;
+    let mut page_chooser = crate::settings::PageChooserSettings::default();
+    if let Some(options) = &options {
+        for (key, target) in [
+            (
+                "show_all_my_files_on_page_chooser",
+                &mut page_chooser.show_combined,
+            ),
+            (
+                "show_all_my_files_on_page_chooser_at_top",
+                &mut page_chooser.combined_at_top,
+            ),
+            (
+                "show_local_files_on_page_chooser",
+                &mut page_chooser.show_storage,
+            ),
+            (
+                "show_local_files_on_page_chooser_at_top",
+                &mut page_chooser.storage_at_top,
+            ),
+        ] {
+            if let Some(&value) = options.booleans.get(key) {
+                *target = value;
+            }
+        }
+    }
+    insert_setting(&mut input, &page_chooser)?;
+    let mut navigation = crate::settings::PageNavigationSettings::default();
+    if let Some(options) = &options {
+        navigation.confirm_all_closes = options
+            .booleans
+            .get("confirm_all_page_closes")
+            .copied()
+            .unwrap_or(false);
+        navigation.focus_search_on_change = options
+            .booleans
+            .get("set_search_focus_on_page_change")
+            .copied()
+            .unwrap_or(false);
+        if let Some(&value) = options.integers.get("page_nav_history_max_entries") {
+            navigation.history_entries = u16::try_from(value.clamp(1, 1000)).unwrap_or(100);
+        }
+    }
+    insert_setting(&mut input, &navigation)?;
+    let import_ui = crate::settings::ImportOptionsUiSettings {
+        simple: options
+            .as_ref()
+            .and_then(|options| options.booleans.get("import_options_simple_mode"))
+            .copied()
+            .unwrap_or(true),
+    };
+    insert_setting(&mut input, &import_ui)?;
+    let mut lifecycle = crate::settings::GuiSessionSettings::default();
+    if let Some(value) = legacy_options.get("default_gui_session") {
+        lifecycle.startup = value
+            .as_str()
+            .filter(|&name| name != "just a blank page")
+            .map(str::to_owned);
+    }
+    if let Some(options) = &options {
+        if let Some(&period) = options.integers.get("last_session_save_period_minutes") {
+            lifecycle.autosave_minutes = u16::try_from(period.clamp(1, 1440)).unwrap_or(5);
+        }
+        if let Some(&only) = options.booleans.get("only_save_last_session_during_idle") {
+            lifecycle.only_during_idle = only;
+        }
+        if let Some(&warn) = options.booleans.get("show_session_size_warnings") {
+            lifecycle.warn_large_session = warn;
+        }
+    }
+    insert_setting(&mut input, &lifecycle)?;
+    let mut idle = crate::settings::GuiIdleSettings {
+        user_seconds: limit("idle_period"),
+        mouse_seconds: limit("idle_mouse_period"),
+        ..crate::settings::GuiIdleSettings::default()
+    };
+    if let Some(enabled) = legacy_options
+        .get("idle_normal")
+        .and_then(hydrus_legacy::objects::YamlValue::as_bool)
+    {
+        idle.enabled = enabled;
+    }
+    if let Some(options) = &options {
+        idle.api_seconds = options
+            .noneable_integers
+            .get("idle_mode_client_api_timeout")
+            .copied()
+            .flatten()
+            .and_then(|seconds| u64::try_from(seconds).ok());
+    }
+    insert_setting(&mut input, &idle)?;
+    let mut backups = crate::session_backups::SessionBackupSettings::default();
+    if let Some(options) = &options
+        && let Some(value) = options.integers.get("number_of_gui_session_backups")
+    {
+        backups.keep = usize::try_from(*value).unwrap_or(1).clamp(1, 32);
+    }
+    insert_setting(&mut input, &backups)?;
+    let mut gui = crate::settings::GuiSettings::default();
+    if let Some(options) = &options
+        && let Some(value) = options.strings.get("app_display_name")
+    {
+        gui.application_display_name.clone_from(value);
+    }
+    if let Some(value) = legacy_options
+        .get("confirm_client_exit")
+        .and_then(hydrus_legacy::objects::YamlValue::as_bool)
+    {
+        gui.confirm_exit = value;
+    }
+    insert_setting(&mut input, &gui)?;
+    let mut preferences = crate::settings::OptionsPreferences::default();
+    if let Some(options) = &options {
+        if let Some(&value) = options.booleans.get("remember_options_window_panel") {
+            preferences.remember_panel = value;
+        }
+        if let Some(&value) = options.booleans.get("options_search_bar_top_of_window") {
+            preferences.search_at_top = value;
+        }
+        if let Some(value) = options.strings.get("last_options_window_panel") {
+            preferences.last_panel.clone_from(value);
+        }
+    }
+    insert_setting(&mut input, &preferences)?;
     let mut delete_lock = crate::delete_lock::DeleteLock::default();
     if let Some(options) = &options {
         for (key, field) in delete_lock.by_option_name() {
@@ -259,6 +490,8 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         handling.comic_book_detection =
             boolean("allow_comic_book_archive_detection").unwrap_or(handling.comic_book_detection);
         handling.do_not_chmod = boolean("do_not_do_chmod_mode").unwrap_or(handling.do_not_chmod);
+        handling.prefix_hash_when_copying =
+            boolean("prefix_hash_when_copying").unwrap_or(handling.prefix_hash_when_copying);
         if let Some(level) = options
             .integers
             .get("file_has_transparency_strictness")
@@ -340,12 +573,20 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             int("subscription_network_error_delay").unwrap_or(n.subscription_network_error_delay);
         n.subscription_other_error_delay =
             int("subscription_other_error_delay").unwrap_or(n.subscription_other_error_delay);
+        if let Some(threshold) = options
+            .noneable_integers
+            .get("subscription_file_error_cancel_threshold")
+        {
+            n.subscription_file_error_cancel_threshold =
+                threshold.and_then(|value| u64::try_from(value).ok());
+        }
         n.process_subs_in_random_order =
             boolean("process_subs_in_random_order").unwrap_or(n.process_subs_in_random_order);
         n.max_simultaneous_subscriptions =
             small("max_simultaneous_subscriptions").unwrap_or(n.max_simultaneous_subscriptions);
         n.gug_percent_twenty_is_space = boolean("replace_percent_twenty_with_space_in_gug_input")
             .unwrap_or(n.gug_percent_twenty_is_space);
+        n.detect_sleep = boolean("do_sleep_check").unwrap_or(n.detect_sleep);
         n.wake_delay_period = unsigned("wake_delay_period").unwrap_or(n.wake_delay_period);
     }
     insert_setting(&mut input, &network)?;
@@ -358,7 +599,22 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }),
     };
     insert_setting(&mut input, &clipboard)?;
-    let mut export = crate::settings::ExportSettings::default();
+    let mut export = crate::settings::ExportSettings {
+        default_directory: legacy_options
+            .get("export_path")
+            .and_then(legacy::YamlValue::as_str)
+            .map(|path| {
+                let path = std::path::Path::new(path);
+                if path.is_absolute() {
+                    path.to_path_buf()
+                } else {
+                    db.db_dir().join(path)
+                }
+                .to_string_lossy()
+                .into_owned()
+            }),
+        ..crate::settings::ExportSettings::default()
+    };
     if let Some(options) = &options {
         if let Some(phrase) = options.strings.get("export_phrase") {
             export.phrase.clone_from(phrase);
@@ -437,6 +693,196 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             );
         }
         insert_setting(&mut input, &search_defaults)?;
+        let mut file_search = crate::settings::FileSearchSettings::default();
+        file_search.search_immediately = options
+            .booleans
+            .get("default_search_synchronised")
+            .copied()
+            .unwrap_or(file_search.search_immediately);
+        file_search.show_system_everything = options
+            .booleans
+            .get("show_system_everything")
+            .copied()
+            .unwrap_or(file_search.show_system_everything);
+        file_search.float_autocomplete = options
+            .booleans
+            .get("autocomplete_float_main_gui")
+            .copied()
+            .unwrap_or(file_search.float_autocomplete);
+        if let Some(rows) = options
+            .integers
+            .get("active_search_predicates_height_num_chars")
+        {
+            file_search.active_predicate_rows = (*rows).clamp(1, 128) as u32;
+        }
+        if let Some(rows) = options.integers.get("ac_read_list_height_num_chars") {
+            file_search.autocomplete_rows = (*rows).clamp(1, 128) as u32;
+        }
+        if let Some(limit) = options.noneable_integers.get("forced_search_limit") {
+            file_search.implicit_limit = limit.map(|value| value.clamp(1, 100_000_000) as u64);
+        }
+        file_search.refresh_limited_sort = options
+            .booleans
+            .get("refresh_search_page_on_system_limited_sort_changed")
+            .copied()
+            .unwrap_or(file_search.refresh_limited_sort);
+        insert_setting(&mut input, &file_search)?;
+        let mut viewer_canvas = crate::settings::ViewerCanvasSettings::default();
+        for (key, field) in [
+            (
+                "media_viewer_recenter_media_on_window_resize",
+                &mut viewer_canvas.recenter_on_resize,
+            ),
+            (
+                "draw_transparency_checkerboard_media_canvas",
+                &mut viewer_canvas.transparency_checkerboard,
+            ),
+            (
+                "draw_transparency_checkerboard_as_greenscreen",
+                &mut viewer_canvas.transparency_greenscreen,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        if let Some(value) = options.integers.get("animated_scanbar_height") {
+            viewer_canvas.seek_height = (*value).clamp(1, 255) as u32;
+        }
+        if let Some(value) = options
+            .noneable_integers
+            .get("animated_scanbar_hide_height")
+        {
+            viewer_canvas.seek_hidden_height = value.map(|height| height.clamp(1, 255) as u32);
+        }
+        if let Some(value) = options.integers.get("animated_scanbar_nub_width") {
+            viewer_canvas.seek_nub_width = (*value).clamp(1, 63) as u32;
+        }
+        insert_setting(&mut input, &viewer_canvas)?;
+        let mut viewer_playback = crate::settings::ViewerPlaybackSettings::default();
+        if let Some(value) = options.booleans.get("always_loop_gifs") {
+            viewer_playback.always_loop = *value;
+        }
+        if let Some(value) = options.integers.get("zoom_switch_command") {
+            viewer_playback.zoom_switch = match *value {
+                106 => 1,
+                172 => 2,
+                173 => 3,
+                _ => 0,
+            };
+        }
+        insert_setting(&mut input, &viewer_playback)?;
+        let mut viewer_cursor = crate::settings::ViewerCursorSettings::default();
+        if let Some(value) = options
+            .noneable_integers
+            .get("media_viewer_cursor_autohide_time_ms")
+        {
+            viewer_cursor.autohide_ms = value.map(|delay| delay.clamp(100, 100_000) as u32);
+        }
+        insert_setting(&mut input, &viewer_cursor)?;
+        let mut viewer_background = crate::settings::ViewerBackgroundSettings::default();
+        for (key, target) in [
+            (
+                "draw_tags_hover_in_media_viewer_background",
+                &mut viewer_background.tags,
+            ),
+            (
+                "draw_top_hover_in_media_viewer_background",
+                &mut viewer_background.information,
+            ),
+            (
+                "draw_top_right_hover_in_media_viewer_background",
+                &mut viewer_background.ratings,
+            ),
+            (
+                "draw_notes_hover_in_media_viewer_background",
+                &mut viewer_background.notes,
+            ),
+        ] {
+            if let Some(&value) = options.booleans.get(key) {
+                *target = value;
+            }
+        }
+        insert_setting(&mut input, &viewer_background)?;
+        let mut viewer_closing = crate::settings::ViewerClosingSettings::default();
+        for (key, field) in [
+            (
+                "focus_media_tab_on_viewer_close_if_possible",
+                &mut viewer_closing.reselect_page,
+            ),
+            (
+                "focus_media_thumb_on_viewer_close",
+                &mut viewer_closing.select_exit_media,
+            ),
+            (
+                "activate_main_gui_on_focusing_viewer_close",
+                &mut viewer_closing.activate_focusing,
+            ),
+            (
+                "activate_main_gui_on_viewer_close",
+                &mut viewer_closing.activate_always,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        insert_setting(&mut input, &viewer_closing)?;
+        let mut viewer_focus = crate::settings::ViewerFocusSettings::default();
+        for (key, field) in [
+            (
+                "animated_scanbar_pop_in_requires_focus",
+                &mut viewer_focus.seek_requires_focus,
+            ),
+            (
+                "hover_windows_need_window_focus_to_pop_in",
+                &mut viewer_focus.hovers_require_focus,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        insert_setting(&mut input, &viewer_focus)?;
+        let mut viewer_pointer = crate::settings::ViewerPointerSettings::default();
+        for (key, field) in [
+            (
+                "disallow_media_drags_on_duration_media",
+                &mut viewer_pointer.disallow_duration_drag,
+            ),
+            ("hide_canvas_drags", &mut viewer_pointer.hide_during_drag),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        insert_setting(&mut input, &viewer_pointer)?;
+        let mut viewer_hovers = crate::settings::ViewerHoverSettings::default();
+        for (key, field) in [
+            (
+                "disable_tags_hover_in_media_viewer",
+                &mut viewer_hovers.tags,
+            ),
+            (
+                "disable_top_right_hover_in_media_viewer",
+                &mut viewer_hovers.ratings,
+            ),
+            (
+                "disable_notes_hover_in_media_viewer",
+                &mut viewer_hovers.notes,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = !*value;
+            }
+        }
+        if let Some(value) = options
+            .booleans
+            .get("draw_bottom_right_index_in_media_viewer_background")
+        {
+            viewer_hovers.index_background = *value;
+        }
+        insert_setting(&mut input, &viewer_hovers)?;
         let mut summaries = hydrus_core::tag_summary::TagSummaries::default();
         for (name, field) in [
             ("thumbnail_top", &mut summaries.thumbnail_top),
@@ -1549,6 +1995,34 @@ fn tag_presentation(
     if let Some(connector) = options.strings.get("namespace_connector") {
         out.namespace_connector.clone_from(connector);
     }
+    if let Some(limit) = options
+        .noneable_integers
+        .get("number_of_unselected_medias_to_present_tags_for")
+    {
+        out.unselected_tag_limit = limit.map(|limit| limit.clamp(0, 10_000_000) as u32);
+    }
+    for (key, target) in [
+        (
+            "tag_list_tag_display_type_sidebar",
+            &mut out.sidebar_display_type,
+        ),
+        (
+            "tag_list_tag_display_type_media_viewer_hover",
+            &mut out.viewer_display_type,
+        ),
+    ] {
+        if let Some(mode) = options
+            .integers
+            .get(key)
+            .copied()
+            .and_then(hydrus_core::tag_presentation::TagDisplayType::from_code)
+        {
+            *target = mode;
+        }
+    }
+    if let Some(connector) = options.strings.get("sibling_connector") {
+        out.sibling_connector.clone_from(connector);
+    }
     if let Some(namespaces) = options.string_lists.get("user_namespace_group_by_sort") {
         out.user_namespaces.clone_from(namespaces);
     }
@@ -2153,6 +2627,12 @@ fn page_collect(collect: &legacy::MediaCollect) -> hydrus_core::pages::PageColle
         namespaces: collect.namespaces.clone(),
         ratings: collect.rating_service_keys.clone(),
         collect_unmatched: collect.collect_unmatched,
+        tag_context: hydrus_core::search::context::TagContext {
+            service: collect.tag_context.service_key.clone(),
+            include_current: collect.tag_context.include_current_tags,
+            include_pending: collect.tag_context.include_pending_tags,
+            display_service: collect.tag_context.display_service_key.clone(),
+        },
     }
 }
 
@@ -2160,6 +2640,12 @@ fn page_collect(collect: &legacy::MediaCollect) -> hydrus_core::pages::PageColle
 fn page_sort(sort: &legacy::MediaSort) -> PageSort {
     use legacy::MediaSortType;
     PageSort {
+        tag_context: hydrus_core::search::context::TagContext {
+            service: sort.tag_context.service_key.clone(),
+            include_current: sort.tag_context.include_current_tags,
+            include_pending: sort.tag_context.include_pending_tags,
+            display_service: sort.tag_context.display_service_key.clone(),
+        },
         by: match &sort.sort_type {
             MediaSortType::System(code) => PageSortBy::System(*code),
             MediaSortType::Namespaces {
@@ -2185,6 +2671,22 @@ mod tests {
 
     /// The lock password comes across as hydrus stored it (the sha256 of
     /// "hunter2", in the old options' YAML).
+    #[test]
+    fn page_sort_import_preserves_its_independent_full_tag_context() {
+        let encoded = hydrus_legacy::pyjson::PyJson::parse(
+            r#"[49, 3, ["system", 0, 0, [80, 2, ["6c6f63616c2074616773", false, true, "616c6c206b6e6f776e2074616773"]]]]"#,
+        ).unwrap();
+        let legacy = legacy::MediaSort::from_tuple(&encoded).unwrap();
+        let converted = page_sort(&legacy);
+        assert_eq!(converted.tag_context.service.as_bytes(), b"local tags");
+        assert_eq!(
+            converted.tag_context.display_service.as_bytes(),
+            b"all known tags"
+        );
+        assert!(!converted.tag_context.include_current);
+        assert!(converted.tag_context.include_pending);
+    }
+
     #[test]
     fn the_lock_password_converts() {
         let source = hydrus_testkit::legacy_fixture("basic");
@@ -2236,6 +2738,131 @@ mod tests {
             [dump.into_bytes()],
         )
         .unwrap();
+    }
+
+    #[test]
+    fn subscription_concurrency_imports_nondefault_number() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "max_simultaneous_subscriptions"], [0, 1]]"#,
+                r#"[[0, "max_simultaneous_subscriptions"], [0, 37]]"#,
+            )],
+        );
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let settings: crate::network::NetworkSettings =
+            serde_json::from_value(input.settings["network"].clone()).unwrap();
+        assert_eq!(settings.max_simultaneous_subscriptions, 37);
+    }
+
+    #[test]
+    fn subscription_file_failure_threshold_imports_none_and_number() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<crate::network::NetworkSettings>(
+                input.settings["network"].clone(),
+            )
+            .unwrap()
+            .subscription_file_error_cancel_threshold
+        };
+        assert_eq!(decoded(), Some(5));
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, 5]]"#,
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, null]]"#,
+            )],
+        );
+        assert_eq!(decoded(), None);
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, null]]"#,
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, 19]]"#,
+            )],
+        );
+        assert_eq!(decoded(), Some(19));
+    }
+
+    #[test]
+    fn network_boot_preference_converts_without_changing_live_pause() {
+        use crate::settings::{NetworkBootPause, Pauses};
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        assert_eq!(
+            decoded().settings["boot_with_network_traffic_paused"],
+            false
+        );
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "boot_with_network_traffic_paused"], [0, false]]"#,
+                r#"[[0, "boot_with_network_traffic_paused"], [0, true]]"#,
+            )],
+        );
+        let input = decoded();
+        let boot: NetworkBootPause =
+            serde_json::from_value(input.settings["boot_with_network_traffic_paused"].clone())
+                .unwrap();
+        assert!(boot.0);
+        let pauses: Pauses = serde_json::from_value(input.settings["pauses"].clone()).unwrap();
+        let before: Pauses = serde_json::from_value(
+            decode_input(&LegacyDb::open(hydrus_testkit::legacy_fixture("basic").path()).unwrap())
+                .unwrap()
+                .settings["pauses"]
+                .clone(),
+        )
+        .unwrap();
+        assert_eq!(pauses, before, "import does not apply a boot action");
+    }
+
+    #[test]
+    fn tag_dialog_defaults_import_independently_of_autocomplete_defaults() {
+        use crate::tag_editing::TagEditingSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<TagEditingSettings>(input.settings["tag_editing"].clone())
+                .unwrap()
+        };
+        let before = decoded();
+        assert!(!before.use_listbook);
+        assert!(before.tag_list_show_parents);
+        assert!(before.tag_list_expand_parents);
+        assert!(before.tag_list_show_siblings);
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "use_listbook_for_tag_service_panels"], [0, false]]"#,
+                    r#"[[0, "use_listbook_for_tag_service_panels"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "show_parent_decorators_on_storage_taglists"], [0, true]]"#,
+                    r#"[[0, "show_parent_decorators_on_storage_taglists"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "expand_parents_on_storage_taglists"], [0, true]]"#,
+                    r#"[[0, "expand_parents_on_storage_taglists"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "show_sibling_decorators_on_storage_taglists"], [0, true]]"#,
+                    r#"[[0, "show_sibling_decorators_on_storage_taglists"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            TagEditingSettings {
+                use_listbook: true,
+                tag_list_show_parents: false,
+                tag_list_expand_parents: false,
+                tag_list_show_siblings: false,
+                ..before
+            }
+        );
     }
 
     #[test]
@@ -2424,6 +3051,384 @@ mod tests {
         );
     }
 
+    #[test]
+    fn file_search_defaults_convert_user_values() {
+        use crate::settings::FileSearchSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<FileSearchSettings>(input.settings["file_search"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), FileSearchSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "default_search_synchronised"], [0, true]]"#,
+                    r#"[[0, "default_search_synchronised"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "show_system_everything"], [0, true]]"#,
+                    r#"[[0, "show_system_everything"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "autocomplete_float_main_gui"], [0, true]]"#,
+                    r#"[[0, "autocomplete_float_main_gui"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "active_search_predicates_height_num_chars"], [0, 6]]"#,
+                    r#"[[0, "active_search_predicates_height_num_chars"], [0, 9]]"#,
+                ),
+                (
+                    r#"[[0, "ac_read_list_height_num_chars"], [0, 22]]"#,
+                    r#"[[0, "ac_read_list_height_num_chars"], [0, 24]]"#,
+                ),
+                (
+                    r#"[[0, "forced_search_limit"], [0, null]]"#,
+                    r#"[[0, "forced_search_limit"], [0, 3]]"#,
+                ),
+                (
+                    r#"[[0, "refresh_search_page_on_system_limited_sort_changed"], [0, true]]"#,
+                    r#"[[0, "refresh_search_page_on_system_limited_sort_changed"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            FileSearchSettings {
+                search_immediately: false,
+                show_system_everything: false,
+                float_autocomplete: false,
+                active_predicate_rows: 9,
+                autocomplete_rows: 24,
+                implicit_limit: Some(3),
+                refresh_limited_sort: false,
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_canvas_options_convert_user_values() {
+        use crate::settings::ViewerCanvasSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerCanvasSettings>(input.settings["viewer_canvas"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), ViewerCanvasSettings::default());
+        assert_eq!(
+            serde_json::from_value::<ViewerCanvasSettings>(serde_json::json!({})).unwrap(),
+            ViewerCanvasSettings::default()
+        );
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "media_viewer_recenter_media_on_window_resize"], [0, true]]"#,
+                    r#"[[0, "media_viewer_recenter_media_on_window_resize"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_transparency_checkerboard_media_canvas"], [0, false]]"#,
+                    r#"[[0, "draw_transparency_checkerboard_media_canvas"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "draw_transparency_checkerboard_as_greenscreen"], [0, false]]"#,
+                    r#"[[0, "draw_transparency_checkerboard_as_greenscreen"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "animated_scanbar_height"], [0, 20]]"#,
+                    r#"[[0, "animated_scanbar_height"], [0, 37]]"#,
+                ),
+                (
+                    r#"[[0, "animated_scanbar_hide_height"], [0, 5]]"#,
+                    r#"[[0, "animated_scanbar_hide_height"], [0, null]]"#,
+                ),
+                (
+                    r#"[[0, "animated_scanbar_nub_width"], [0, 10]]"#,
+                    r#"[[0, "animated_scanbar_nub_width"], [0, 19]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerCanvasSettings {
+                recenter_on_resize: false,
+                transparency_checkerboard: true,
+                transparency_greenscreen: true,
+                seek_height: 37,
+                seek_hidden_height: None,
+                seek_nub_width: 19
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_playback_import_keeps_zoom_command_and_loop_policy() {
+        use crate::settings::ViewerPlaybackSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerPlaybackSettings>(
+                input.settings["viewer_playback"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), ViewerPlaybackSettings::default());
+        for (previous, command, choice) in [(91, 106, 1), (106, 172, 2), (172, 173, 3)] {
+            edit_client_options(
+                source.path(),
+                &[(
+                    &format!(r#"[[0, "zoom_switch_command"], [0, {previous}]]"#),
+                    &format!(r#"[[0, "zoom_switch_command"], [0, {command}]]"#),
+                )],
+            );
+            assert_eq!(decoded().zoom_switch, choice);
+        }
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "always_loop_gifs"], [0, true]]"#,
+                r#"[[0, "always_loop_gifs"], [0, false]]"#,
+            )],
+        );
+        assert!(!decoded().always_loop);
+    }
+
+    #[test]
+    fn cursor_autohide_import_preserves_timeout_and_do_not_hide() {
+        use crate::settings::ViewerCursorSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerCursorSettings>(input.settings["viewer_cursor"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), ViewerCursorSettings::default());
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "media_viewer_cursor_autohide_time_ms"], [0, 700]]"#,
+                r#"[[0, "media_viewer_cursor_autohide_time_ms"], [0, 1250]]"#,
+            )],
+        );
+        assert_eq!(decoded().autohide_ms, Some(1250));
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "media_viewer_cursor_autohide_time_ms"], [0, 1250]]"#,
+                r#"[[0, "media_viewer_cursor_autohide_time_ms"], [0, null]]"#,
+            )],
+        );
+        assert_eq!(decoded().autohide_ms, None);
+    }
+
+    #[test]
+    fn passive_background_options_import_each_draw_key() {
+        use crate::settings::ViewerBackgroundSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerBackgroundSettings>(
+                input.settings["viewer_background"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), ViewerBackgroundSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "draw_tags_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_tags_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_top_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_top_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_top_right_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_top_right_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_notes_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_notes_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerBackgroundSettings {
+                tags: false,
+                information: false,
+                ratings: false,
+                notes: false
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_closing_options_import_each_independent_preference() {
+        use crate::settings::ViewerClosingSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerClosingSettings>(
+                input.settings["viewer_closing"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), ViewerClosingSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "focus_media_tab_on_viewer_close_if_possible"], [0, false]]"#,
+                    r#"[[0, "focus_media_tab_on_viewer_close_if_possible"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "focus_media_thumb_on_viewer_close"], [0, true]]"#,
+                    r#"[[0, "focus_media_thumb_on_viewer_close"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "activate_main_gui_on_focusing_viewer_close"], [0, false]]"#,
+                    r#"[[0, "activate_main_gui_on_focusing_viewer_close"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "activate_main_gui_on_viewer_close"], [0, false]]"#,
+                    r#"[[0, "activate_main_gui_on_viewer_close"], [0, true]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerClosingSettings {
+                reselect_page: true,
+                select_exit_media: false,
+                activate_focusing: true,
+                activate_always: true
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_focus_options_import_independent_mouseover_gates() {
+        use crate::settings::ViewerFocusSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerFocusSettings>(input.settings["viewer_focus"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), ViewerFocusSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "animated_scanbar_pop_in_requires_focus"], [0, true]]"#,
+                    r#"[[0, "animated_scanbar_pop_in_requires_focus"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "hover_windows_need_window_focus_to_pop_in"], [0, true]]"#,
+                    r#"[[0, "hover_windows_need_window_focus_to_pop_in"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerFocusSettings {
+                seek_requires_focus: false,
+                hovers_require_focus: false
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_pointer_options_import_both_drag_preferences() {
+        use crate::settings::ViewerPointerSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerPointerSettings>(
+                input.settings["viewer_pointer"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(
+            decoded(),
+            ViewerPointerSettings {
+                disallow_duration_drag: false,
+                hide_during_drag: true
+            }
+        );
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "disallow_media_drags_on_duration_media"], [0, false]]"#,
+                    r#"[[0, "disallow_media_drags_on_duration_media"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "hide_canvas_drags"], [0, true]]"#,
+                    r#"[[0, "hide_canvas_drags"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerPointerSettings {
+                disallow_duration_drag: true,
+                hide_during_drag: false
+            }
+        );
+        let fresh: ViewerPointerSettings = serde_json::from_str("{}").unwrap();
+        assert!(!fresh.disallow_duration_drag);
+        assert_eq!(fresh.hide_during_drag, !cfg!(target_os = "macos"));
+    }
+
+    #[test]
+    fn viewer_hover_options_migrate_disable_keys_as_enabled_controls() {
+        use crate::settings::ViewerHoverSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerHoverSettings>(input.settings["viewer_hovers"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), ViewerHoverSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "disable_tags_hover_in_media_viewer"], [0, false]]"#,
+                    r#"[[0, "disable_tags_hover_in_media_viewer"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "disable_top_right_hover_in_media_viewer"], [0, false]]"#,
+                    r#"[[0, "disable_top_right_hover_in_media_viewer"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "disable_notes_hover_in_media_viewer"], [0, false]]"#,
+                    r#"[[0, "disable_notes_hover_in_media_viewer"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "draw_bottom_right_index_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_bottom_right_index_in_media_viewer_background"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerHoverSettings {
+                tags: false,
+                ratings: false,
+                notes: false,
+                index_background: false
+            }
+        );
+    }
+
     /// Whether a sort chosen on a page becomes the default comes across.
     #[test]
     fn saving_the_page_sort_on_change_converts() {
@@ -2509,6 +3514,9 @@ mod tests {
         options
             .strings
             .insert("namespace_connector".into(), " - ".into());
+        options
+            .strings
+            .insert("sibling_connector".into(), " ⇢ ".into());
         options.string_lists.insert(
             "user_namespace_group_by_sort".into(),
             vec!["series".into(), ":".into(), String::new()],
@@ -2525,6 +3533,7 @@ mod tests {
         let converted = tag_presentation(&options);
         assert!(!converted.show_namespaces && converted.replace_underscores);
         assert_eq!(converted.namespace_connector, " - ");
+        assert_eq!(converted.sibling_connector, " ⇢ ");
         assert_eq!(converted.user_namespaces, ["series", ":", ""]);
         assert_eq!(
             converted.search_page_sort,
@@ -2535,6 +3544,71 @@ mod tests {
             }
         );
         assert_eq!(converted.media_viewer_sort, TagSort::DEFAULT);
+    }
+
+    #[test]
+    fn tag_list_opening_modes_import_independently_and_ignore_unknown_codes() {
+        use hydrus_core::tag_presentation::TagDisplayType;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let db = LegacyDb::open(source.path()).unwrap();
+        let mut options = db.client_options().unwrap().unwrap();
+        let before = tag_presentation(&options);
+        assert_eq!(before.sidebar_display_type, TagDisplayType::SelectionList);
+        assert_eq!(before.viewer_display_type, TagDisplayType::SingleMedia);
+        for mode in TagDisplayType::CHOICES {
+            options
+                .integers
+                .insert("tag_list_tag_display_type_sidebar".into(), mode.code());
+            assert_eq!(
+                tag_presentation(&options),
+                hydrus_core::tag_presentation::TagPresentation {
+                    sidebar_display_type: mode,
+                    ..before.clone()
+                }
+            );
+        }
+        options
+            .integers
+            .insert("tag_list_tag_display_type_sidebar".into(), -1);
+        for mode in TagDisplayType::CHOICES {
+            options.integers.insert(
+                "tag_list_tag_display_type_media_viewer_hover".into(),
+                mode.code(),
+            );
+            assert_eq!(
+                tag_presentation(&options),
+                hydrus_core::tag_presentation::TagPresentation {
+                    viewer_display_type: mode,
+                    ..before.clone()
+                }
+            );
+        }
+        options
+            .integers
+            .insert("tag_list_tag_display_type_media_viewer_hover".into(), 4);
+        assert_eq!(tag_presentation(&options), before);
+    }
+
+    #[test]
+    fn unselected_tag_limit_import_preserves_zero_none_and_presentation() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let db = LegacyDb::open(source.path()).unwrap();
+        let mut options = db.client_options().unwrap().unwrap();
+        let before = tag_presentation(&options);
+        assert_eq!(before.unselected_tag_limit, Some(4096));
+        for limit in [None, Some(0), Some(1), Some(10_000_000)] {
+            options.noneable_integers.insert(
+                "number_of_unselected_medias_to_present_tags_for".into(),
+                limit,
+            );
+            assert_eq!(
+                tag_presentation(&options),
+                hydrus_core::tag_presentation::TagPresentation {
+                    unselected_tag_limit: limit.map(|limit| limit as u32),
+                    ..before.clone()
+                }
+            );
+        }
     }
 
     /// The single media and selection list filters come across by service;
@@ -2756,6 +3830,40 @@ mod tests {
             .collect();
         assert_eq!(input.custom_headers, Some(expected));
         assert!(input.warnings.is_empty(), "{:?}", input.warnings);
+    }
+
+    /// The legacy YAML preference is a portable path, independent of the
+    /// filename/character-limit serialisable options.
+    #[test]
+    fn export_default_directory_import_resolves_recorded_portable_paths() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let fixture = hydrus_testkit::fixture_json("export_default_directory.json");
+        let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+        let original: String = conn
+            .query_row("SELECT options FROM options", [], |row| row.get(0))
+            .unwrap();
+        assert!(original.contains("export_path: null\n"));
+        let path = fixture["cases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|case| case["case"] == "portable")
+            .unwrap()["saved"]
+            .as_str()
+            .unwrap();
+        let yaml = original.replace("export_path: null\n", &format!("export_path: '{path}'\n"));
+        conn.execute("UPDATE options SET options = ?1", [&yaml])
+            .unwrap();
+        drop(conn);
+        let db = LegacyDb::open(source.path()).unwrap();
+        let input = decode_input(&db).unwrap();
+        let settings: crate::settings::ExportSettings =
+            serde_json::from_value(input.settings["export"].clone()).unwrap();
+        assert_eq!(
+            settings.default_directory.as_deref(),
+            db.db_dir().join(path).to_str()
+        );
+        assert_eq!(settings.phrase, "{hash}");
     }
 
     /// Custom options as the reference serialised them

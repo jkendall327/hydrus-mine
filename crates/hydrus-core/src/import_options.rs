@@ -200,6 +200,9 @@ impl TagFilteringOptions {
 pub struct LocationOptions {
     /// Local file domains (hex keys).
     pub destinations: Vec<String>,
+    /// Deleted-domain keys retained for reference clipboard exchange.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub deleted_destinations: Vec<String>,
     pub automatically_archive: bool,
     pub associate_primary_urls: bool,
     pub associate_source_urls: bool,
@@ -229,6 +232,7 @@ impl Default for LocationOptions {
     fn default() -> Self {
         Self {
             destinations: vec![hex::encode(builtin_keys::MY_FILES)],
+            deleted_destinations: Vec::new(),
             automatically_archive: false,
             associate_primary_urls: true,
             associate_source_urls: true,
@@ -404,6 +408,9 @@ pub enum PresentationInbox {
 pub struct PresentationOptions {
     /// Only files in these domains (hex keys).
     pub location: Vec<String>,
+    /// Deleted-domain keys from the reference location context.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub deleted_location: Vec<String>,
     pub status: PresentationStatus,
     pub inbox: PresentationInbox,
 }
@@ -412,6 +419,7 @@ impl Default for PresentationOptions {
     fn default() -> Self {
         Self {
             location: vec![hex::encode(builtin_keys::COMBINED_LOCAL_FILE_DOMAINS)],
+            deleted_location: Vec::new(),
             status: PresentationStatus::AnyGood,
             inbox: PresentationInbox::Agnostic,
         }
@@ -595,6 +603,7 @@ impl Default for ImportOptionsManager {
                     ImportOptionsSlice {
                         presentation: Some(PresentationOptions {
                             location: vec![all_local_media.clone()],
+                            deleted_location: Vec::new(),
                             status: PresentationStatus::NewOnly,
                             inbox: PresentationInbox::Agnostic,
                         }),
@@ -606,6 +615,7 @@ impl Default for ImportOptionsManager {
                     ImportOptionsSlice {
                         presentation: Some(PresentationOptions {
                             location: vec![all_local_media],
+                            deleted_location: Vec::new(),
                             status: PresentationStatus::AnyGood,
                             inbox: PresentationInbox::Agnostic,
                         }),

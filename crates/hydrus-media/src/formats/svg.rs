@@ -88,6 +88,29 @@ fn fonts() -> Arc<usvg::fontdb::Database> {
         .get_or_init(|| {
             let mut db = usvg::fontdb::Database::new();
             db.load_system_fonts();
+            // A system database can contain fonts while the default generic
+            // families (Arial/Times New Roman/Courier New) are unresolved.
+            // Preserve every resolvable desktop choice; fill only missing ones.
+            db.load_font_data(include_bytes!("../../assets/OpenSans-Regular.ttf").to_vec());
+            for (family, kind) in [
+                (usvg::fontdb::Family::SansSerif, 0),
+                (usvg::fontdb::Family::Serif, 1),
+                (usvg::fontdb::Family::Monospace, 2),
+            ] {
+                if db
+                    .query(&usvg::fontdb::Query {
+                        families: &[family],
+                        ..usvg::fontdb::Query::default()
+                    })
+                    .is_none()
+                {
+                    match kind {
+                        0 => db.set_sans_serif_family("Open Sans"),
+                        1 => db.set_serif_family("Open Sans"),
+                        _ => db.set_monospace_family("Open Sans"),
+                    }
+                }
+            }
             Arc::new(db)
         })
         .clone()

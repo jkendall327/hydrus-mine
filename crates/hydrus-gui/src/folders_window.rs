@@ -7,7 +7,7 @@
 //! Import folders are import queues (their import options and file logs
 //! are kept); export folders are a setting.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -345,6 +345,7 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         let weak = window.as_weak();
         let slots = slots.clone();
         move || {
+            slots.sidecars.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -635,10 +636,11 @@ fn open_import_folder(
         let log = slots.log.clone();
         let open_files = slots.open_files.clone();
         window.on_file_log(move || {
-            if let Some(old) = log.borrow_mut().take() {
-                let _ = old.hide();
+            let old = log.borrow_mut().take();
+            if let Some(old) = old {
+                old.invoke_close_window();
             }
-            match crate::file_log_window::open(&store, queue, &log, &open_files.0) {
+            match crate::file_log_window::open(&store, queue, &log, &open_files) {
                 Ok(window) => *log.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the file log: {e}"),
             }
@@ -681,6 +683,12 @@ fn open_import_folder(
         let sidecars = slots.sidecars.clone();
         move || {
             let routers = state.borrow().folder.settings.routers.clone();
+            sidecars.set_test_objects(crate::sidecar_editors::folder_test_objects(
+                &weak
+                    .upgrade()
+                    .map(|window| window.get_path().to_string())
+                    .unwrap_or_default(),
+            ));
             let applied: Rc<dyn Fn(Vec<hydrus_parse::sidecar::Router>)> = {
                 let weak = weak.clone();
                 let state = state.clone();
@@ -725,7 +733,9 @@ fn open_import_folder(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let sidecars = slots.sidecars.clone();
         move || {
+            sidecars.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -1124,12 +1134,18 @@ pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         let weak = window.as_weak();
         let slots = slots.clone();
         move || {
+            slots.sidecars.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
             slots.export_list.borrow_mut().take();
-            if let Some(edit) = slots.export_edit.borrow_mut().take() {
-                let _ = edit.hide();
+            let edit = slots
+                .export_edit
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(edit) = edit {
+                edit.invoke_cancel();
             }
         }
     };
@@ -1236,6 +1252,7 @@ pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
 struct ExportEdit {
     folder: ExportFolder,
     asking: Option<Asking>,
+    examples: Vec<crate::sidecar_editors::TestObject>,
 }
 
 fn read_export_fields(window: &ExportFolderWindow, folder: &mut ExportFolder) {
@@ -1296,20 +1313,125 @@ fn open_export_folder(
     let state = Rc::new(RefCell::new(ExportEdit {
         folder,
         asking: None,
+        examples: Vec::new(),
     }));
+    sidecars.set_test_objects(Vec::new());
+    let active = Rc::new(Cell::new(true));
+    let example_timer = Rc::new(RefCell::new(None::<slint::Timer>));
+    window.set_pattern_shortcuts(strings(
+        hydrus_gui_model::export_files::PATTERN_SHORTCUTS
+            .iter()
+            .map(|(label, _)| (*label).to_owned())
+            .collect(),
+    ));
+    window.set_pattern_heading(hydrus_gui_model::export_files::PATTERN_SHORTCUT_HEADING.into());
+    window.on_pattern_chosen({
+        let active = active.clone();
+        let sidecars = sidecars.clone();
+        move |index| {
+            if active.get()
+                && sidecars.routers.borrow().is_none()
+                && let Some(phrase) = hydrus_gui_model::export_files::pattern_shortcut(index)
+            {
+                crate::copy_to_clipboard(phrase);
+            }
+        }
+    });
+    window.on_update_examples({
+        let weak = window.as_weak();
+        let store = store.clone();
+        let state = state.clone();
+        let active = active.clone();
+        let timers = example_timer.clone();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if !active.get() || !window.get_examples_enabled() {
+                return;
+            }
+            window.set_examples_enabled(false);
+            window.set_examples_label("loading\u{2026}".into());
+            window.set_error(SharedString::new());
+            timers.borrow_mut().take();
+            let search = state.borrow().folder.search.clone();
+            let worker_store = store.clone();
+            let (send, receive) = std::sync::mpsc::channel();
+            std::thread::spawn(move || {
+                let _ = send.send(crate::folders::export_test_examples(&worker_store, &search));
+            });
+            let timer = slint::Timer::default();
+            timer.start(
+                slint::TimerMode::Repeated,
+                std::time::Duration::from_millis(30),
+                {
+                    let weak = weak.clone();
+                    let state = state.clone();
+                    let active = active.clone();
+                    let timers = timers.clone();
+                    move || {
+                        if !active.get() {
+                            timers.borrow_mut().take();
+                            return;
+                        }
+                        let result = match receive.try_recv() {
+                            Ok(result) => result,
+                            Err(std::sync::mpsc::TryRecvError::Empty) => return,
+                            Err(std::sync::mpsc::TryRecvError::Disconnected) => {
+                                Err("The example file query did not finish.".into())
+                            }
+                        };
+                        timers.borrow_mut().take();
+                        if let Some(window) = weak.upgrade() {
+                            match result {
+                                Ok(ids) => {
+                                    window.set_examples_label(
+                                        format!(
+                                            "got {} files!",
+                                            hydrus_core::numbers::human_int(ids.len() as u64)
+                                        )
+                                        .into(),
+                                    );
+                                    state.borrow_mut().examples = ids
+                                        .into_iter()
+                                        .map(crate::sidecar_editors::TestObject::Media)
+                                        .collect();
+                                }
+                                Err(error) => {
+                                    window.set_error(error.into());
+                                    window.set_examples_label("update test example files".into());
+                                    window.set_examples_enabled(true);
+                                }
+                            }
+                        }
+                    }
+                },
+            );
+            *timers.borrow_mut() = Some(timer);
+        }
+    });
     // its sidecars, in the sidecar editors (an export's)
     window.on_edit_sidecars({
         let weak = window.as_weak();
         let state = state.clone();
         let store = store.clone();
         let sidecars = sidecars.clone();
+        let active = active.clone();
         move || {
+            if !active.get() || sidecars.routers.borrow().is_some() {
+                return;
+            }
+            sidecars.set_test_objects(state.borrow().examples.clone());
             let routers = state.borrow().folder.routers.clone();
             let applied: Rc<dyn Fn(Vec<hydrus_parse::sidecar::Router>)> = {
                 let weak = weak.clone();
                 let state = state.clone();
                 let store = store.clone();
+                let active = active.clone();
                 Rc::new(move |routers| {
+                    if !active.get() {
+                        return;
+                    }
                     if let Some(window) = weak.upgrade() {
                         window.set_sidecars(sidecars_label(&store, &routers).into());
                     }
@@ -1349,7 +1471,13 @@ fn open_export_folder(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let sidecars = sidecars.clone();
+        let active = active.clone();
+        let timers = example_timer.clone();
         move || {
+            active.set(false);
+            timers.borrow_mut().take();
+            sidecars.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -1417,6 +1545,8 @@ fn open_export_folder(
                     );
                     window.set_typed(SharedString::new());
                     window.set_error(SharedString::new());
+                    window.set_examples_label("update test example files".into());
+                    window.set_examples_enabled(true);
                 }
                 Err(e) => window.set_error(e.to_string().into()),
             }
@@ -1424,6 +1554,7 @@ fn open_export_folder(
         }
     });
     window.on_predicate_removed({
+        let weak = window.as_weak();
         let state = state.clone();
         let show = show.clone();
         move |i| {
@@ -1431,6 +1562,10 @@ fn open_export_folder(
                 let predicates = &mut state.borrow_mut().folder.search.predicates;
                 if i < predicates.len() {
                     predicates.remove(i);
+                    if let Some(window) = weak.upgrade() {
+                        window.set_examples_label("update test example files".into());
+                        window.set_examples_enabled(true);
+                    }
                 }
             }
             show();
@@ -1442,7 +1577,11 @@ fn open_export_folder(
         let show = show.clone();
         let close = close.clone();
         let done = done.clone();
+        let active = active.clone();
         move || {
+            if !active.get() {
+                return;
+            }
             let checked = check_export_folder(&state.borrow().folder);
             if let Err(veto) = checked {
                 state.borrow_mut().asking = Some(Asking::Messages(vec![veto], After::Nothing));
@@ -1459,7 +1598,12 @@ fn open_export_folder(
         let state = state.clone();
         let show = show.clone();
         let check = check.clone();
+        let active = active.clone();
+        let sidecars = sidecars.clone();
         move || {
+            if !active.get() || sidecars.routers.borrow().is_some() {
+                return;
+            }
             let Some(window) = weak.upgrade() else {
                 return;
             };

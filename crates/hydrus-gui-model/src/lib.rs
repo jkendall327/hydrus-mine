@@ -32,6 +32,8 @@ pub mod folders;
 pub mod force_filetype;
 pub mod formula_editors;
 pub mod import_options_editor;
+pub mod import_options_overwrite;
+pub mod import_options_panel;
 pub mod importer_menu;
 pub mod info_lines;
 pub mod list_selection;
@@ -44,6 +46,7 @@ pub mod merge_summary;
 pub mod notes_editor;
 pub mod options;
 pub mod page_chooser;
+pub mod png_export;
 pub mod predicate_editors;
 pub mod ratings;
 pub mod ratings_editor;
@@ -52,6 +55,7 @@ pub mod search_log;
 pub mod selection;
 pub mod services_editor;
 pub mod services_review;
+pub mod session_lifecycle;
 pub mod session_saving;
 pub mod sidecar_editors;
 pub mod sidecars;
@@ -59,9 +63,11 @@ pub mod simple_downloader;
 pub mod sort;
 pub mod status;
 pub mod string_editors;
+pub mod subscription_quality;
 pub mod subscriptions_dedupe;
 pub mod subscriptions_dialog;
 pub mod subscriptions_list;
+pub mod tab_context;
 pub mod tag_filter_editor;
 pub mod thumbnail_icons;
 pub mod thumbnail_ratings;
@@ -71,6 +77,7 @@ pub mod urls_editor;
 pub mod tag_relationships;
 
 pub mod parser_editors;
+pub mod parser_test_data;
 pub mod tag_display;
 
 pub mod client_api_admin;
@@ -79,3 +86,20 @@ pub mod network_sessions;
 
 pub mod network_data;
 pub mod tag_migration;
+
+pub mod downloader_display;
+pub mod login_workflows;
+pub mod regex_favourites;
+
+pub mod write_autocomplete;
+
+pub mod network_job_control;
+pub mod write_tag_menu;
+
+pub mod gallery_source;
+pub mod viewer_closing;
+
+pub mod namespace_sorts;
+pub mod viewer_cursor;
+
+pub mod sort_cog;

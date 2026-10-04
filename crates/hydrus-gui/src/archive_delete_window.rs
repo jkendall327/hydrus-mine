@@ -19,9 +19,14 @@ pub(crate) fn open(
     removed: Removed,
 ) -> Result<ArchiveDeleteWindow, slint::PlatformError> {
     let window = ArchiveDeleteWindow::new()?;
+    let presentation: hydrus_core::tag_presentation::TagPresentation = model
+        .store()
+        .read(hydrus_store::settings::get)
+        .unwrap_or_default();
+    let tag_display_type = presentation.viewer_display_type;
     let model = Rc::new(RefCell::new(model));
-    let playback = playback::Playback::new(model.borrow().store().dir().join("mpv.conf"));
-    let animator = animation::Animator::new();
+    let playback = playback::Playback::for_store(model.borrow().store().clone());
+    let animator = animation::Animator::for_store(model.borrow().store().clone());
     let settings: hydrus_core::media_viewer::MediaViewerSettings = model
         .borrow()
         .store()
@@ -75,7 +80,7 @@ pub(crate) fn open(
             zoomed.set_still(crate::viewer::still_of(media, shape, still));
             zoomed.show(shape);
             window.set_info_line(crate::viewer::shown(store, file).line.into());
-            let tags: Vec<ListText> = crate::viewer::hover_tags(store, file)
+            let tags: Vec<ListText> = crate::viewer::hover_tags(store, file, tag_display_type)
                 .iter()
                 .map(|(row, rgb)| list_text(row, *rgb))
                 .collect();

@@ -61,6 +61,7 @@ component Simple inherits VerticalLayout {
     callback row-clicked(int, bool, bool);
     callback row-activated(int);
     callback typed(string);
+    callback paste();
     callback remove();
     callback block();
     spacing: 4px;
@@ -113,6 +114,11 @@ component Simple inherits VerticalLayout {
                         }
                     }
                     Button {
+                        text: "paste";
+                        enabled: root.enabled && !root.asking;
+                        clicked => { root.paste(); }
+                    }
+                    Button {
                         text: "remove";
                         enabled: root.enabled && !root.asking;
                         clicked => { root.remove(); }
@@ -137,6 +143,7 @@ component Rules inherits Box {
     callback row-clicked(int, bool, bool);
     callback row-activated(int);
     callback typed(string);
+    callback paste();
     callback delete();
     callback block();
     ListTable {
@@ -156,6 +163,11 @@ component Rules inherits Box {
                 root.typed(text);
                 self.text = "";
             }
+        }
+        Button {
+            text: "paste";
+            enabled: root.input-enabled && !root.asking;
+            clicked => { root.paste(); }
         }
         Button {
             text: "delete";
@@ -213,6 +225,19 @@ export component TagFilterWindow inherits Window {
     in property <string> asking-title;
     in property <string> asking-message;
     in property <[string]> asking-choices;
+    in property <bool> favourite-naming;
+    in-out property <string> favourite-name;
+    in property <bool> favourite-exchange;
+    in property <bool> exchange-importing;
+    in-out property <string> exchange-text;
+    in-out property <string> exchange-path;
+    in property <string> exchange-error;
+    callback favourite(string);
+    callback favourite-named(string);
+    callback exchange-action(string);
+    in property <bool> show-other-panels;
+    callback show-panels();
+    callback paste(int);
     callback tab-chosen(int);
     // a list's events: 0 whitelist, 1 blacklist, 2 exclude these, 3 except
     // for these
@@ -257,6 +282,17 @@ export component TagFilterWindow inherits Window {
             }
         }
         Box {
+            title: "favourites";
+            HorizontalLayout {
+                spacing: 6px;
+                for action in ["import", "export", "load", "save", "delete"] : Button {
+                    text: action;
+                    enabled: !root.asking;
+                    clicked => { root.favourite(action); }
+                }
+            }
+        }
+        Box {
             title: "filter";
             vertical-stretch: 1;
             Text {
@@ -264,6 +300,11 @@ export component TagFilterWindow inherits Window {
                 wrap: word-wrap;
                 horizontal-alignment: center;
                 color: Theme.text;
+            }
+            if root.show-other-panels: Button {
+                text: "show other panels";
+                enabled: !root.asking;
+                clicked => { root.show-panels(); }
             }
             HorizontalLayout {
                 spacing: 0px;
@@ -289,6 +330,7 @@ export component TagFilterWindow inherits Window {
                 row-clicked(r, ctrl, shift) => { root.row-clicked(0, r, ctrl, shift); }
                 row-activated(r) => { root.row-activated(0, r); }
                 typed(t) => { root.typed(0, t); }
+                paste => { root.paste(0); }
                 remove => { root.remove(0); }
             }
             if root.tabs[root.tab] == "blacklist": Simple {
@@ -307,6 +349,7 @@ export component TagFilterWindow inherits Window {
                 row-clicked(r, ctrl, shift) => { root.row-clicked(1, r, ctrl, shift); }
                 row-activated(r) => { root.row-activated(1, r); }
                 typed(t) => { root.typed(1, t); }
+                paste => { root.paste(1); }
                 remove => { root.remove(1); }
                 block => { root.block-everything(); }
             }
@@ -321,6 +364,7 @@ export component TagFilterWindow inherits Window {
                     row-clicked(r, ctrl, shift) => { root.row-clicked(2, r, ctrl, shift); }
                     row-activated(r) => { root.row-activated(2, r); }
                     typed(t) => { root.typed(2, t); }
+                paste => { root.paste(2); }
                     delete => { root.remove(2); }
                     block => { root.block-everything(); }
                 }
@@ -332,6 +376,7 @@ export component TagFilterWindow inherits Window {
                     row-clicked(r, ctrl, shift) => { root.row-clicked(3, r, ctrl, shift); }
                     row-activated(r) => { root.row-activated(3, r); }
                     typed(t) => { root.typed(3, t); }
+                paste => { root.paste(3); }
                     delete => { root.remove(3); }
                 }
             }
@@ -373,6 +418,26 @@ export component TagFilterWindow inherits Window {
                     edited => { root.test-edited(); }
                 }
             }
+        }
+        if root.favourite-naming: HorizontalLayout {
+            LineEdit {
+                horizontal-stretch: 1;
+                text <=> root.favourite-name;
+                accepted(t) => { root.favourite-named(t); }
+            }
+            Button { text: "save"; enabled: root.favourite-name != ""; clicked => { root.favourite-named(root.favourite-name); } }
+        }
+        if root.favourite-exchange: Box {
+            title: root.exchange-importing ? "import favourite" : "export favourite";
+            TextEdit { height: 80px; text <=> root.exchange-text; read-only: !root.exchange-importing; }
+            HorizontalLayout {
+                Button { text: root.exchange-importing ? "paste" : "copy"; clicked => { root.exchange-action(root.exchange-importing ? "paste" : "copy"); } }
+                if root.exchange-importing: Button { text: "import text"; clicked => { root.exchange-action("import"); } }
+                LineEdit { horizontal-stretch: 1; text <=> root.exchange-path; placeholder-text: "JSON file path"; }
+                Button { text: "browse"; clicked => { root.exchange-action("browse"); } }
+                Button { text: root.exchange-importing ? "open file" : "save JSON"; clicked => { root.exchange-action(root.exchange-importing ? "open" : "save"); } }
+            }
+            if root.exchange-error != "": Text { text: root.exchange-error; color: Theme.error; wrap: word-wrap; }
         }
         if root.asking: Asking {
             title: root.asking-title;

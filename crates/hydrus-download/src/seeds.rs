@@ -181,6 +181,7 @@ pub(crate) fn seeds_from_posts(
 pub(crate) enum Stop {
     Veto(String),
     Error(String),
+    DataMissing(String),
     Failed(WorkError),
 }
 
@@ -263,26 +264,43 @@ impl Downloader {
         options: &FullImportOptions,
         job: &Job,
     ) -> bool {
+        let outcome = self.work_on_url_outcome(seed, options, job).await;
+        if matches!(outcome.error, Some(WorkError::Network(_))) {
+            tokio::time::sleep(std::time::Duration::from_secs(3)).await;
+        }
+        outcome.did_work
+    }
+
+    /// Inspect the handled file failure without losing its exception class.
+    /// Subscription budgets exclude these handled failures; their outer
+    /// option-generation/query-tag exceptions have a separate five-second throttle.
+    /// Vetoes (including HTTP 404) are not errors.
+    pub async fn work_on_url_outcome(
+        &self,
+        seed: &mut FileSeed,
+        options: &FullImportOptions,
+        job: &Job,
+    ) -> crate::FileWorkOutcome {
         let mut did_work = false;
         let outcome = self.work(seed, options, job, &mut did_work).await;
-        match outcome {
-            Ok(()) => {}
-            Err(Stop::Veto(note)) if note == "403" && self.had_login(&seed.data) => set_status(
-                seed,
-                SeedStatus::Vetoed,
-                "403 (hydrus logged in to this site with a login script, which hydrus-rs doesn't run: its cookies may need refreshing)".into(),
-            ),
-            Err(Stop::Veto(note)) => set_status(seed, SeedStatus::Vetoed, note),
-            Err(Stop::Error(note)) => set_status(seed, SeedStatus::Error, note),
-            Err(Stop::Failed(e)) => {
-                set_status(seed, SeedStatus::Error, e.to_string());
-                // (a moment's pause before the next, as the reference has)
-                if matches!(e, WorkError::Network(_)) {
-                    tokio::time::sleep(std::time::Duration::from_secs(3)).await;
-                }
+        let error = match outcome {
+            Ok(()) => None,
+            Err(Stop::Veto(note)) if note == "403" && self.had_login(&seed.data) => {
+                set_status(seed, SeedStatus::Vetoed, "403 (hydrus logged in to this site with a login script, which hydrus-rs doesn't run: its cookies may need refreshing)".into());
+                None
             }
+            Err(Stop::Veto(note)) => {
+                set_status(seed, SeedStatus::Vetoed, note);
+                None
+            }
+            Err(Stop::Error(note)) => Some(WorkError::File(note)),
+            Err(Stop::DataMissing(note)) => Some(WorkError::DataMissing(note)),
+            Err(Stop::Failed(error)) => Some(error),
+        };
+        if let Some(error) = &error {
+            set_status(seed, SeedStatus::Error, error.to_string());
         }
-        did_work
+        crate::FileWorkOutcome { did_work, error }
     }
 
     async fn work(
@@ -518,6 +536,8 @@ impl Downloader {
             // the reference's import raised, before the seed took the hash
             return Err(if result.status == hydrus_import::ImportStatus::Vetoed {
                 Stop::Veto(message)
+            } else if result.raised_kind == Some(hydrus_import::ImportFailureKind::DataMissing) {
+                Stop::DataMissing(message)
             } else {
                 Stop::Error(message)
             });
@@ -683,4 +703,74 @@ pub(crate) fn set_status(seed: &mut FileSeed, status: SeedStatus, note: String) 
         seed.meta.hashes.clear();
     }
     seed.modified = now();
+}
+
+#[cfg(test)]
+mod timestamp_editor_tests {
+    use super::{now, seeds_from_posts};
+    use hydrus_core::{url::UrlClasses, url::strings::StringProcessor};
+    use hydrus_parse::{
+        content::{ContentKind, ContentParser},
+        formula::{Formula, FormulaKind, ParsingContext},
+    };
+
+    #[test]
+    fn recorded_saved_timestamp_parser_and_date_conversion_reach_actual_file_seeds() {
+        let reference = hydrus_testkit::fixture_json("content_time.json");
+        let file = ContentParser {
+            name: "download".into(),
+            kind: ContentKind::Url {
+                url_type: 7,
+                priority: 50,
+            },
+            formula: Formula {
+                reference_auxiliary: None,
+                name: String::new(),
+                kind: FormulaKind::Static {
+                    text: "https://source-time.example/image.png".into(),
+                    count: 1,
+                },
+                processor: StringProcessor::default(),
+            },
+        };
+        let classes = UrlClasses::default();
+        let mut context = ParsingContext::new();
+        context.insert("url".into(), "https://source-time.example/post/1".into());
+        for case in reference["cases"].as_array().unwrap() {
+            let decoded =
+                hydrus_downloader_exchange::decode_text(&case["tuple"].to_string()).unwrap();
+            let hydrus_downloader_exchange::Native::Content(parser) = &decoded[0].native else {
+                panic!("saved timestamp content parser");
+            };
+            for parsed in case["cases"].as_array().unwrap() {
+                let mut post = parser
+                    .parse(&context, parsed["document"].as_str().unwrap())
+                    .unwrap();
+                post.contents
+                    .extend(file.parse(&context, "").unwrap().contents);
+                let before = now();
+                let seeds =
+                    seeds_from_posts(&classes, &[post], "https://source-time.example/post/1");
+                let after = now();
+                assert_eq!(seeds.len(), 1);
+                assert_eq!(seeds[0].data, "https://source-time.example/image.png");
+                assert_eq!(
+                    seeds[0].referral_url.as_deref(),
+                    Some("https://source-time.example/post/1")
+                );
+                match parsed["source_time"].as_i64() {
+                    None | Some(-1 | 0) => {
+                        assert_eq!(seeds[0].source_time, None);
+                    }
+                    Some(time) if time < reference["now"].as_i64().unwrap() - 5 => {
+                        assert_eq!(seeds[0].source_time, Some(time));
+                    }
+                    Some(_) => {
+                        let time = seeds[0].source_time.unwrap();
+                        assert!((before - 30..=after - 30).contains(&time));
+                    }
+                }
+            }
+        }
+    }
 }

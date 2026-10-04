@@ -1,7 +1,9 @@
-import { Button, CheckBox, ComboBox, LineEdit, VerticalBox } from "std-widgets.slint";
+import { Button, CheckBox, ComboBox, LineEdit, ScrollView, VerticalBox } from "std-widgets.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
+import { DownloadControl, DownloadLine, JobCogMenu } from "importing.slint";
 import { Theme } from "theme.slint";
 
+export struct MonthlyBandwidthBar { month: string, usage: string, fraction: float }
 export component BandwidthWindow inherits Window {
     title: "review bandwidth usage and edit rules";
     width: 1120px;
@@ -19,10 +21,17 @@ export component BandwidthWindow inherits Window {
     in-out property <int> default-kind: 0;
     in-out property <int> history: 0;
     in-out property <string> domain;
+    in-out property <string> history-seconds: "604800";
+    in-out property <bool> show-all;
+    in-out property <bool> include-rules;
+    in property <bool> can-delete;
+    in property <[MonthlyBandwidthBar]> monthly-bars;
+    in property <string> chart-context;
     in-out property <string> question;
     callback row-clicked(int, bool, bool);
     callback sort(int, bool);
     callback edit-clicked();
+    callback delete-history-clicked();
     callback revert-clicked();
     callback default-clicked();
     callback domain-clicked();
@@ -34,7 +43,10 @@ export component BandwidthWindow inherits Window {
         Text { text: "Every context normally relies on the default bandwidth rules for its type. Select a row to review or override its rules."; wrap: word-wrap; color: Theme.text; }
         HorizontalLayout {
             Text { text: "History:"; color: Theme.text; vertical-alignment: center; }
-            ComboBox { model: ["past 7 days", "past day", "this month", "all time"]; current-index <=> root.history; selected(_) => { root.refresh(); } }
+            ComboBox { model: ["past 7 days", "past day", "this month", "all time", "custom seconds"]; enabled: !root.show-all; current-index <=> root.history; selected(_) => { root.refresh(); } }
+            if root.history == 4: LineEdit { text <=> root.history-seconds; enabled: !root.show-all; edited => { root.refresh(); } }
+            CheckBox { text: "show all"; checked <=> root.show-all; toggled => { root.refresh(); } }
+            CheckBox { text: "show anything with specific bandwidth rules"; enabled: !root.show-all && root.history != 3; checked <=> root.include-rules; toggled => { root.refresh(); } }
             Button { text: "refresh snapshot"; clicked => { root.refresh(); } }
         }
         ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
@@ -42,8 +54,26 @@ export component BandwidthWindow inherits Window {
             row-activated(_) => { root.edit-clicked(); }
             sort(c,a) => { root.sort(c,a); }
         }
-        Text { text: root.detail; wrap: word-wrap; color: Theme.text; min-height: 90px; }
+        Text { text: root.detail; wrap: word-wrap; color: Theme.text; min-height: 70px; }
+        if root.chart-context != "": VerticalBox {
+            Text { text: "Monthly bandwidth history (UTC) — " + root.chart-context; color: Theme.text; }
+            if root.monthly-bars.length == 0: Text { text: "No usage yet, so no usage history to show."; color: Theme.text; }
+            if root.monthly-bars.length > 0: ScrollView {
+                height: 180px;
+                HorizontalLayout { spacing: 8px;
+                    for bar in root.monthly-bars: VerticalLayout {
+                        width: 94px;
+                        Text { text: bar.usage; color: Theme.text; horizontal-alignment: center; }
+                        Rectangle { height: 125px;
+                            Rectangle { background: #508bd7; x: 16px; width: 62px; height: bar.fraction * parent.height; y: parent.height - self.height; }
+                        }
+                        Text { text: bar.month; color: Theme.text; horizontal-alignment: center; }
+                    }
+                }
+            }
+        }
         HorizontalLayout {
+            Button { text: "delete selected history"; enabled: root.can-delete && !root.busy && root.question == ""; clicked => { root.delete-history-clicked(); } }
             Button { text: "edit rules"; enabled: root.can-edit && !root.busy; clicked => { root.edit-clicked(); } }
             Button { text: "use default rules"; enabled: root.can-revert && !root.busy; clicked => { root.revert-clicked(); } }
             Rectangle { horizontal-stretch: 1; }
@@ -131,6 +161,10 @@ export component NetworkJobsWindow inherits Window {
     in property <string> detail;
     in property <string> status;
     in property <bool> can-act;
+    in property <DownloadLine> download;
+    in property <JobCogMenu> cog;
+    callback control-menu();
+    callback control-action(int);
     callback row-clicked(int, bool, bool);
     callback sort(int, bool);
     callback refresh();
@@ -142,6 +176,14 @@ export component NetworkJobsWindow inherits Window {
         ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
             row-clicked(r,c,s) => { root.row-clicked(r,c,s); }
             sort(c,a) => { root.sort(c,a); }
+        }
+        DownloadControl {
+            line: root.download;
+            advanced: true;
+            cog: root.cog;
+            open-menu => { root.control-menu(); }
+            action(id) => { root.control-action(id); }
+            cancel => { root.cancel-jobs(); }
         }
         Text { text: root.detail; wrap: word-wrap; color: Theme.text; min-height: 75px; }
         HorizontalLayout {

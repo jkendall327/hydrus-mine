@@ -36,6 +36,14 @@ pub enum ImportError {
 
 pub type Result<T, E = ImportError> = std::result::Result<T, E>;
 
+/// Reference exception identity retained when an import raised.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ImportFailureKind {
+    /// `DataMissing`: a failure which subscription error budgets exclude.
+    DataMissing,
+    Other,
+}
+
 /// The outcome of importing one file.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ImportResult {
@@ -48,6 +56,7 @@ pub struct ImportResult {
     /// can't import): the exception's message, which is what a file seed
     /// notes (and a seed then keeps no hash).
     pub raised: Option<String>,
+    pub raised_kind: Option<ImportFailureKind>,
 }
 
 /// Imports files into a store.
@@ -128,6 +137,7 @@ impl FileImporter {
             mime,
             note,
             raised: None,
+            raised_kind: None,
         };
         // the database says we have it, but the file is gone: import again
         if let (ImportStatus::SuccessfulButRedundant, Some(mime)) = (result.status, mime)
@@ -188,6 +198,7 @@ impl FileImporter {
                 mime: Some(info.mime),
                 note: note.clone(),
                 raised: Some(note),
+                raised_kind: Some(ImportFailureKind::Other),
             });
         }
         let spec = thumbnail_spec(&snap.thumbnails);
@@ -203,6 +214,7 @@ impl FileImporter {
                 mime: Some(mime),
                 note,
                 raised: None,
+                raised_kind: None,
             });
         }
         // (the reference's job raises this before the file reaches the
@@ -216,6 +228,7 @@ impl FileImporter {
                     mime: Some(mime),
                     note: note.to_owned(),
                     raised: Some(note.to_owned()),
+                    raised_kind: Some(ImportFailureKind::Other),
                 });
             }
         };
@@ -281,6 +294,7 @@ impl FileImporter {
             mime: Some(mime),
             note: String::new(),
             raised: None,
+            raised_kind: None,
         })
     }
 
@@ -322,6 +336,7 @@ fn unknown(hash: Sha256) -> ImportResult {
         mime: None,
         note: String::new(),
         raised: None,
+        raised_kind: None,
     }
 }
 
@@ -331,6 +346,9 @@ fn error_result(hash: Sha256, error: &MediaError) -> ImportResult {
         MediaError::Unsupported { reason, .. } => reason.clone(),
         MediaError::ZeroSize => "File is of zero length!".into(),
         MediaError::Damaged(message) => message.clone(),
+        MediaError::FfmpegNoOutput => {
+            "Cannot interact with media because FFMPEG did not return any content.".into()
+        }
         other => other.to_string(),
     };
     ImportResult {
@@ -339,6 +357,11 @@ fn error_result(hash: Sha256, error: &MediaError) -> ImportResult {
         mime: None,
         note: error.to_string(),
         raised: Some(raised),
+        raised_kind: Some(if matches!(error, MediaError::FfmpegNoOutput) {
+            ImportFailureKind::DataMissing
+        } else {
+            ImportFailureKind::Other
+        }),
     }
 }
 
@@ -593,4 +616,26 @@ pub fn local_domains(services: &hydrus_store::services::ServiceRegistry) -> Vec<
         .of_type(hydrus_core::ServiceType::LocalFileDomain)
         .map(|s| s.id)
         .collect()
+}
+
+#[cfg(test)]
+mod failure_identity_tests {
+    use super::*;
+
+    #[test]
+    fn missing_ffmpeg_data_keeps_its_reference_exception_identity() {
+        let hash = Sha256::from_slice(&[0; 32]).unwrap();
+        let missing = error_result(hash, &MediaError::FfmpegNoOutput);
+        assert_eq!(missing.raised_kind, Some(ImportFailureKind::DataMissing));
+        assert_eq!(
+            missing.raised.as_deref(),
+            Some("Cannot interact with media because FFMPEG did not return any content.")
+        );
+        let other = error_result(
+            hash,
+            &MediaError::Damaged("DataMissing appears in this arbitrary message".into()),
+        );
+        assert_eq!(other.raised_kind, Some(ImportFailureKind::Other));
+        assert_eq!(other.status, ImportStatus::Error);
+    }
 }

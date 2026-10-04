@@ -1,0 +1,777 @@
+{
+  "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+  ],
+  "collapse": [
+    {
+      "scope": "this",
+      "index": 0,
+      "accepted": false,
+      "asked": [
+        "This will collect the 3 files in this page and place them, in current order, in a single new search page. This can work on a page of pages.\n\nThe old page will be closed, no matter its type."
+      ],
+      "before": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "last",
+            "hashes": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "child 1",
+        "closed_indices": []
+      },
+      "after": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "last",
+            "hashes": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "child 1",
+        "closed_indices": []
+      }
+    },
+    {
+      "scope": "this",
+      "index": 0,
+      "accepted": true,
+      "asked": [
+        "This will collect the 3 files in this page and place them, in current order, in a single new search page. This can work on a page of pages.\n\nThe old page will be closed, no matter its type."
+      ],
+      "before": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "last",
+            "hashes": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "child 1",
+        "closed_indices": []
+      },
+      "after": {
+        "tree": [
+          {
+            "name": "files",
+            "hashes": [
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "last",
+            "hashes": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "files",
+        "closed_indices": [
+          0
+        ]
+      }
+    },
+    {
+      "scope": "from_here",
+      "index": 0,
+      "accepted": false,
+      "asked": [
+        "This will collect the 4 files in view in the 3 pages and place them, in current order, in a single new search page.\n\nAll the pages harvested from will be closed, no matter their type."
+      ],
+      "before": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "last",
+            "hashes": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "child 1",
+        "closed_indices": []
+      },
+      "after": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "last",
+            "hashes": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "child 1",
+        "closed_indices": []
+      }
+    },
+    {
+      "scope": "from_here",
+      "index": 0,
+      "accepted": true,
+      "asked": [
+        "This will collect the 4 files in view in the 3 pages and place them, in current order, in a single new search page.\n\nAll the pages harvested from will be closed, no matter their type."
+      ],
+      "before": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "last",
+            "hashes": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "child 1",
+        "closed_indices": []
+      },
+      "after": {
+        "tree": [
+          {
+            "name": "files",
+            "hashes": [
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+            ]
+          }
+        ],
+        "shown": "files",
+        "closed_indices": [
+          2,
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "scope": "right",
+      "index": 1,
+      "accepted": false,
+      "asked": [
+        "This will collect the 3 files in view in the 2 pages and place them, in current order, in a single new search page.\n\nAll the pages harvested from will be closed, no matter their type."
+      ],
+      "before": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "last",
+            "hashes": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "child 1",
+        "closed_indices": []
+      },
+      "after": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "last",
+            "hashes": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "child 1",
+        "closed_indices": []
+      }
+    },
+    {
+      "scope": "right",
+      "index": 1,
+      "accepted": true,
+      "asked": [
+        "This will collect the 3 files in view in the 2 pages and place them, in current order, in a single new search page.\n\nAll the pages harvested from will be closed, no matter their type."
+      ],
+      "before": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "last",
+            "hashes": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "child 1",
+        "closed_indices": []
+      },
+      "after": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "files",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "files",
+        "closed_indices": [
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "scope": "only",
+      "index": 0,
+      "accepted": false,
+      "asked": [
+        "This will collect the 3 files in this page and place them, in current order, in a single new search page. This can work on a page of pages.\n\nThe old page will be closed, no matter its type."
+      ],
+      "before": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          }
+        ],
+        "shown": "child 1",
+        "closed_indices": []
+      },
+      "after": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          }
+        ],
+        "shown": "child 1",
+        "closed_indices": []
+      }
+    },
+    {
+      "scope": "only",
+      "index": 0,
+      "accepted": true,
+      "asked": [
+        "This will collect the 3 files in this page and place them, in current order, in a single new search page. This can work on a page of pages.\n\nThe old page will be closed, no matter its type."
+      ],
+      "before": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          }
+        ],
+        "shown": "child 1",
+        "closed_indices": []
+      },
+      "after": {
+        "tree": [
+          {
+            "name": "files",
+            "hashes": [
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "files",
+        "closed_indices": [
+          0
+        ]
+      }
+    }
+  ],
+  "duplicate": [
+    {
+      "index": 0,
+      "before": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "last",
+            "hashes": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "child 1",
+        "closed_indices": []
+      },
+      "after": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "last",
+            "hashes": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "child 0",
+        "closed_indices": []
+      }
+    },
+    {
+      "index": 1,
+      "before": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "last",
+            "hashes": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "child 1",
+        "closed_indices": []
+      },
+      "after": {
+        "tree": [
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "child 0",
+                "hashes": [
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+                  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+                ]
+              },
+              {
+                "name": "child 1",
+                "hashes": [
+                  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+                  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "other",
+            "hashes": [
+              "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          },
+          {
+            "name": "last",
+            "hashes": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ],
+        "shown": "other",
+        "closed_indices": []
+      }
+    }
+  ]
+}

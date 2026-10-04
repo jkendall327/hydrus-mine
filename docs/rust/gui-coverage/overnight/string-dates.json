@@ -1,0 +1,381 @@
+{
+  "schema_version": 1,
+  "agent": "string-dates",
+  "baseline_git_head": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "implementation_git_head": "8d7096fe833010eab2c0ecc120d5627e134ee46a",
+  "implementation_commits": [
+    "fb4ce6e2",
+    "2c946b4f",
+    "92fed70c",
+    "b2689d91",
+    "83d4d7e4",
+    "53575a98",
+    "f0178014",
+    "8d7096fe"
+  ],
+  "dependencies": [
+    {
+      "git_head": "f1048a26c6ce2a3aee64a84333bce8837f2456dc",
+      "agent": "overnight_options",
+      "reason": "Regex favourites options page, parent draft Apply/Cancel route, and route regression; this packet claims the page container separately from the editor leaf."
+    }
+  ],
+  "summary": {
+    "concrete_existing_reference_controls_completed": 5,
+    "concrete_existing_reference_controls_improved_to_partial": 1,
+    "parent_or_alias_completions": 1
+  },
+  "validation": {
+    "reference_recordings_executed": [
+      "oracle/dump_string_dates.py (46 conversion +5 local/DST cases)",
+      "oracle/record_string_date_editor.py",
+      "oracle/record_processing_exchange.py",
+      "oracle/record_regex_favourites.py",
+      "oracle/record_string_conversion_preference.py (4 fresh parents with real option serialization/reload)"
+    ],
+    "cargo_fmt": "passed",
+    "rustc_date_harness": "All 46 direct conversion vectors and 5 named-local/DST contexts passed using existing Jiff/regex/serde_json artifacts; no Cargo build or target directory created.",
+    "rust_assertions": "Authored; root asynchronous CI owns execution. Date strict Clippy fixes b2689d91 delivered; no local heavy Cargo or mutation tests.",
+    "rustc_regex_tools_harness": "All29 component/replacement clipboard snippets match the realQt recording, linked to existingserde_json artifact without Cargo build."
+  },
+  "claims": [
+    {
+      "reference_id": "audit-network-conversion-date-fields",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "behavior": "Date controls produce typed executable conversions; UTC/local/offset and phrase values update previews and survive reference interchange. Previously preserved native date payloads execute without requiring an edit.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/string_editors.rs",
+          "line": 1175,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-core/src/url/strings.rs",
+          "line": 358,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/string_converter_editor.rs",
+          "line": 181,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 512,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-downloader-exchange/tests/interchange.rs",
+          "line": 226,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        }
+      ],
+      "boundaries": [
+        "Native date phrase documentation is still plain text; this does not affect the executable fields."
+      ]
+    },
+    {
+      "reference_id": "audit-network-conversion-date-decode",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Execute Python-compatible strptime fields with UTC/local/offset rules, six-digit microseconds, UTC/GMT/system timezone names, year/directive validation, aware local offsets, pre-epoch timestamps and default omitted fields. Update the conversion and sequence previews live.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-core/src/url/string_dates.rs",
+          "line": 170,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-core/src/url/string_dates.rs",
+          "line": 348,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-core/src/url/string_dates.rs",
+          "line": 413,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/string_converter_editor.rs",
+          "line": 181,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 512,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        }
+      ],
+      "boundaries": [
+        "Jiff diagnostic reasons differ from Python. Locale directives use English/C forms. Platform-specific DST choices may differ; the recorded Linux New York repeated/nonexistent times match."
+      ]
+    },
+    {
+      "reference_id": "audit-network-conversion-date-encode",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Execute integer timestamp formatting and live previews, preserving the reference current-local-offset behavior, naive %z/%Z fields, zero microseconds, fractions/noninteger rejection, underscores and pre-epoch values.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-core/src/url/string_dates.rs",
+          "line": 209,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-core/src/url/string_dates.rs",
+          "line": 348,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-core/src/url/string_dates.rs",
+          "line": 436,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/string_converter_editor.rs",
+          "line": 181,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-downloader-exchange/tests/interchange.rs",
+          "line": 226,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        }
+      ],
+      "boundaries": [
+        "Locale date phrases use English/C forms. Platform-specific strftime extensions such as %s remain outside the supported grammar."
+      ]
+    },
+    {
+      "reference_id": "audit-network-conversion-dateparser",
+      "previous_status": "missing",
+      "proposed_status": "partial",
+      "behavior": "Execute and preview common ISO/English dates, numeric US dates, RFC dates with offsets and relative English second-through-year expressions, now/today/yesterday/tomorrow. Preserve reference code14/null interchange.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-core/src/url/string_dates.rs",
+          "line": 265,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-core/src/url/string_dates.rs",
+          "line": 348,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/string_converter_editor.rs",
+          "line": 181,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        }
+      ],
+      "boundaries": [
+        "Full dateparser multilingual/fuzzy grammar is not implemented. This entry remains partial and is not counted as completed."
+      ]
+    },
+    {
+      "reference_id": "audit-network-processor-exchange",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Import/export selected processing steps in reference single-object/list JSON and compressed PNG. Clipboard/file import reviews atomic appended steps; selected exports retain execution order; accepted imports update draft previews, and parent cancellation invalidates exchange children.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui/src/string_processor_window.rs",
+          "line": 219,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-downloader-exchange/src/processing.rs",
+          "line": 38,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-downloader-exchange/tests/interchange.rs",
+          "line": 261,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/string_processor_editor.rs",
+          "line": 269,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 574,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        }
+      ],
+      "boundaries": [
+        "Mixed unsupported packages are rejected atomically, whereas the reference may append permitted entries and warn about rejected ones. Native uses a shared text/PNG review window."
+      ]
+    },
+    {
+      "reference_id": "audit-options-regex-favourites-regular-expression-favourites-editor",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Offer the options child editor for sorted regex/description CRUD, exact duplicate guard, advisory invalid fragments, extended selection and confirmed deletion. Child edits wait for options Apply; cancellation discards drafts. Saved native preferences override preserved reference YAML, including an empty list.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui/src/regex_favourites_window.rs",
+          "line": 69,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-store/src/regex_favourites.rs",
+          "line": 30,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 329,
+          "git_head": "f1048a26c6ce2a3aee64a84333bce8837f2456dc"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/regex_favourites.rs",
+          "line": 15,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/regex_favourites.rs",
+          "line": 75,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/regex_favourites.rs",
+          "line": 10,
+          "git_head": "83d4d7e41a9c42f3431ed1b9b42e415d6668bae2"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 1091,
+          "git_head": "f1048a26c6ce2a3aee64a84333bce8837f2456dc"
+        }
+      ],
+      "boundaries": [
+        "Requires options route f1048a26. Native edits phrase/description together; Qt uses sequential dialogs. Options page container is separately identified in this packet."
+      ]
+    },
+    {
+      "reference_id": "options-regex-favourites",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_kind": "parent_container",
+      "behavior": "Expose the regex favourites options page and its embedded editor route; child Apply updates the options draft, parent Apply persists and parent Cancel discards child drafts and closes stale handles. Counted separately from its concrete editor leaf.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 329,
+          "git_head": "f1048a26c6ce2a3aee64a84333bce8837f2456dc"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 283,
+          "git_head": "f1048a26c6ce2a3aee64a84333bce8837f2456dc"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 701,
+          "git_head": "f1048a26c6ce2a3aee64a84333bce8837f2456dc"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 1092,
+          "git_head": "f1048a26c6ce2a3aee64a84333bce8837f2456dc"
+        }
+      ],
+      "boundaries": [
+        "Options agent route must be integrated; no duplicate options-agent completion claim."
+      ]
+    }
+  ],
+  "unclaimed_parent_limitations": {
+    "string-match": "Remains partial until regex help links are implemented; favourites/components do not turn the whole dialog green.",
+    "string-converter": "Full automatic date grammar, converter favourite/help menus and clickable date-format documentation remain incomplete; persistent last-used conversion now works for Store-connected consumers.",
+    "string-processor": "Sidecar automatic starting examples remain incomplete."
+  },
+  "additional_behavior_without_completion_claim": {
+    "reference_id": "string-match",
+    "proposed_status": "partial",
+    "behavior": "Shared matcher/sorter favourites and25 exact component clipboard snippets; conversion regex fields also expose4 replacement-group snippets. Closed handles cannot copy. Help links remain absent, so the broader matcher remains partial.",
+    "source_anchors": [
+      {
+        "path": "crates/hydrus-gui/ui/regex_tools.slint",
+        "line": 4,
+        "git_head": "f017801421aaeafacb95c344ca02d6c88eaa7a04"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/regex_favourites.rs",
+        "line": 96,
+        "git_head": "f017801421aaeafacb95c344ca02d6c88eaa7a04"
+      }
+    ],
+    "test_anchors": [
+      {
+        "path": "crates/hydrus-gui-model/tests/model/regex_favourites.rs",
+        "line": 100,
+        "git_head": "f017801421aaeafacb95c344ca02d6c88eaa7a04"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/regex_favourites.rs",
+        "line": 100,
+        "git_head": "f017801421aaeafacb95c344ca02d6c88eaa7a04"
+      }
+    ]
+  },
+  "additional_persistence_behavior_without_completion_claim": {
+    "reference_id": "string-converter",
+    "proposed_status": "partial",
+    "behavior": "Persist the last accepted child conversion before applying its draft and closing. Parent Cancel preserves the global preference, child Cancel does not change it, fresh editor Slots reload it and preserved reference options are used until a native save. A write failure leaves the child open and parent draft unchanged. No new completion claim for this broader parent.",
+    "source_anchors": [
+      {
+        "path": "crates/hydrus-store/src/string_conversion.rs",
+        "line": 22,
+        "git_head": "8d7096fe833010eab2c0ecc120d5627e134ee46a"
+      },
+      {
+        "path": "crates/hydrus-legacy/src/objects/client_options.rs",
+        "line": 498,
+        "git_head": "8d7096fe833010eab2c0ecc120d5627e134ee46a"
+      },
+      {
+        "path": "crates/hydrus-gui/src/string_processor_window.rs",
+        "line": 60,
+        "git_head": "8d7096fe833010eab2c0ecc120d5627e134ee46a"
+      }
+    ],
+    "test_anchors": [
+      {
+        "path": "crates/hydrus-gui-model/tests/model/string_converter_editor.rs",
+        "line": 254,
+        "git_head": "8d7096fe833010eab2c0ecc120d5627e134ee46a"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/regex_favourites.rs",
+        "line": 172,
+        "git_head": "8d7096fe833010eab2c0ecc120d5627e134ee46a"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/regex_favourites.rs",
+        "line": 230,
+        "git_head": "8d7096fe833010eab2c0ecc120d5627e134ee46a"
+      }
+    ],
+    "boundaries": [
+      "Store-less embedded API callers retain the in-memory fallback. Parser/formula initializers are coordinated for root integration."
+    ]
+  }
+}

@@ -27,6 +27,8 @@ import { LineEdit } from "std-widgets.slint";
 import { ListText } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 
+export struct ViewerUrlRow { label: string, url: string }
+
 // one shape of a rating control, its outline and fill
 export struct RatingShape {
     pen: color,
@@ -55,10 +57,48 @@ export struct RatingRow {
     brush: color,
 }
 
+// Shared passive rating drawing; input belongs only to the hover's own TouchArea.
+component RatingGraphic inherits Rectangle {
+    in property <RatingRow> rating;
+    in property <length> icon-size: 12px;
+    in property <length> incdec-height: 12px;
+    in property <length> outline: 1px;
+    width: root.rating.kind == 2 ? root.incdec-height * 2 : root.rating.shapes.length * (root.icon-size + root.rating.pad) - root.rating.pad;
+    height: root.rating.kind == 2 ? root.incdec-height : root.icon-size;
+    if root.rating.kind == 2: Rectangle {
+        border-width: 1px;
+        border-color: root.rating.pen;
+        background: root.rating.brush;
+        Text {
+            x: 0;
+            width: parent.width - 2px;
+            height: parent.height;
+            horizontal-alignment: right;
+            vertical-alignment: center;
+            text: root.rating.text;
+            color: #000000;
+            font-size: max(root.incdec-height - 1px, 6px);
+        }
+    }
+    for star[k] in root.rating.shapes: Path {
+        x: k * (root.icon-size + root.rating.pad);
+        y: 0;
+        width: root.icon-size;
+        height: root.icon-size;
+        viewbox-width: 12;
+        viewbox-height: 12;
+        commands: root.rating.shape;
+        fill: star.brush;
+        stroke: star.pen;
+        stroke-width: root.outline;
+    }
+}
+
 // a button of the top hover frame: the reference's icon for it
 component HoverButton inherits Rectangle {
     in property <image> icon;
     callback clicked();
+    callback pointed-click(length, length);
     width: 24px;
     height: 24px;
     border-radius: 3px;
@@ -71,9 +111,14 @@ component HoverButton inherits Rectangle {
         source: root.icon;
     }
     touch := TouchArea {
-        clicked => { root.clicked(); }
+        clicked => {
+            root.clicked();
+            root.pointed-click(root.absolute-position.x + self.mouse-x, root.absolute-position.y + self.mouse-y);
+        }
     }
 }
+
+import { TransparencyBackdrop } from "transparency_backdrop.slint";
 
 export component MediaViewerWindow inherits Window {
     title: root.caption;
@@ -82,21 +127,57 @@ export component MediaViewerWindow inherits Window {
     background: #202020;
 
     in property <image> media;
+    in property <int> transparency-mode;
+    in property <length> seek-height: 20px;
+    in property <length> seek-hidden-height: 5px;
+    in property <length> seek-nub-width: 10px;
+    callback zoom-switch-requested(length, length);
+    callback presentation-settings-changed();
+    in property <bool> window-active: true;
+    in property <bool> another-window-active;
+    property <bool> info-raised;
+    property <bool> tags-raised;
+    property <bool> ratings-raised;
+    property <bool> notes-raised;
+    changed info-showing => { root.info-raised = root.info-showing; }
+    changed tags-showing => { root.tags-raised = root.tags-showing; }
+    changed ratings-showing => { root.ratings-raised = root.ratings-showing; }
+    changed notes-showing => { root.notes-raised = root.notes-showing; }
+    in property <bool> seek-requires-focus: true;
+    in property <bool> hovers-require-focus: true;
+    property <bool> hover-focus-good: !root.hovers-require-focus || root.window-active;
+    property <bool> seek-focus-good: !root.seek-requires-focus || root.window-active;
+    out property <bool> seek-bar-full: root.scanbar-shown && bar.full;
+    out property <length> seek-bar-height: root.scanbar-shown ? bar.height : 0px;
+    in property <bool> hover-tags-enabled: true;
+    in property <bool> hover-ratings-enabled: true;
+    in property <bool> hover-notes-enabled: true;
+    in property <bool> draw-tags-background: true;
+    in property <bool> draw-information-background: true;
+    in property <bool> draw-ratings-background: true;
+    in property <bool> draw-notes-background: true;
+    in property <[string]> location-strings;
+    out property <length> background-ratings-height: root.draw-ratings-background ? passive-ratings.height : 0px;
+    out property <length> background-notes-y: root.background-ratings-height;
+    in property <bool> draw-index-background: true;
+    out property <string> index-background-text: !root.draw-index-background || root.caption == "" ? ""
+        : (root.zoom-text != "" ? root.zoom-text : "100%")
+            + (root.caption != "" ? " - " + root.caption : "");
     in property <string> caption;
     // the file's tags, for the hover frame
     in property <[ListText]> tags;
     // the file's notes, for the right hover frame under the ratings, shown
     // while the pointer is over it
     in property <[NoteRow]> notes;
-    out property <bool> notes-showing: root.notes.length > 0 && pointer.has-hover
+    out property <bool> notes-showing: (root.hover-focus-good || (!root.another-window-active && root.notes-raised)) && root.hover-notes-enabled && root.notes.length > 0 && pointer.has-hover
         && pointer.mouse-x >= notes-box.x
         && pointer.mouse-y >= notes-box.y && pointer.mouse-y <= notes-box.y + notes-box.height;
     // the file's info line, for the top hover frame, which shows with the
     // pointer over it or near it, in the window's middle three fifths
     in property <string> info-line;
-    out property <bool> info-showing: top-frame.has-hover || (pointer.has-hover
+    out property <bool> info-showing: (root.hover-focus-good || (!root.another-window-active && root.info-raised)) && (top-frame.has-hover || (pointer.has-hover
         && pointer.mouse-y <= top-box.preferred-height + 20px
-        && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8);
+        && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8));
     // the file's state, for the frame's buttons: in the inbox (archive,
     // else re-inbox), in the trash (delete completely), here and not
     // trashed (send to trash), deleted from a local file domain (undelete)
@@ -111,13 +192,15 @@ export component MediaViewerWindow inherits Window {
     // the file's ratings, for the top-right hover frame, as the reference
     // draws them
     in property <[RatingRow]> ratings;
+    in property <[ViewerUrlRow]> url-links;
+    callback url-clicked(int);
     in property <length> rating-size: 12px;
     in property <length> incdec-height: 12px;
     in property <length> rating-outline: 1px;
-    out property <bool> ratings-showing: root.ratings.length > 0 && (ratings-frame.has-hover
+    out property <bool> ratings-showing: (root.hover-focus-good || (!root.another-window-active && root.ratings-raised)) && root.hover-ratings-enabled && (root.ratings.length > 0 || root.url-links.length > 0) && (ratings-frame.has-hover
         || (pointer.has-hover && pointer.mouse-x >= root.width - ratings-box.preferred-width - 20px
             && pointer.mouse-y <= ratings-box.preferred-height + 20px));
-    out property <bool> tags-showing: pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
+    out property <bool> tags-showing: (root.hover-focus-good || (!root.another-window-active && root.tags-raised)) && root.hover-tags-enabled && pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
 
     // a question to answer (a deletion): enter is yes, escape no
     in property <string> question;
@@ -169,6 +252,8 @@ export component MediaViewerWindow inherits Window {
     // the right-click menu (`src/viewer_menu.rs`): asked for, then shown,
     // its rows' ids chosen
     in property <ThumbnailMenu> context-menu;
+    callback cursor-menu-starting();
+    callback cursor-menu-returned();
     callback context-menu-requested();
     callback menu-chosen(int);
     // home and end: the first file and the last
@@ -189,11 +274,18 @@ export component MediaViewerWindow inherits Window {
     }
     // the bar at its full size near the pointer (as the reference's
     // animation bar pops in), else a thin line
-    property <length> bar-top: root.media-y + root.media-height - 20px;
+    property <length> bar-top: root.media-y + root.media-height - root.seek-height;
     out property <bool> bar-near: pointer.has-hover
         && pointer.mouse-x >= root.media-x - 50px && pointer.mouse-x <= root.media-x + root.media-width + 50px
         && pointer.mouse-y >= root.bar-top - 100px && pointer.mouse-y <= root.bar-top + 40px;
     // where a drag last was
+    in property <bool> disallow-duration-drag;
+    in property <bool> hide-during-drag;
+    in property <bool> media-has-duration;
+    out property <bool> drag-accepted;
+    in property <bool> cursor-idle-hidden;
+    out property <bool> cursor-hide-eligible: pointer.has-hover && !root.info-showing && !root.tags-showing && !root.ratings-showing && !root.notes-showing && !root.volume-open;
+    out property <bool> drag-cursor-hidden;
     property <length> drag-x;
     property <length> drag-y;
 
@@ -749,6 +841,73 @@ export component MediaViewerWindow inherits Window {
                 }
             }
         }
+        // Passive copies paint on the canvas before media, without popup input.
+        Rectangle {
+            x: 0; y: 0; width: root.width * 0.2; height: root.height;
+            visible: root.draw-tags-background;
+            clip: true;
+            VerticalLayout {
+                padding: 6px; spacing: 2px; alignment: start;
+                for tag in root.tags: Text { text: tag.text; color: tag.colour; overflow: elide; }
+            }
+        }
+        Text {
+            x: root.width * 0.2; width: root.width * 0.6; y: 3px;
+            visible: root.draw-information-background;
+            text: root.info-line; color: #f0f0f0; font-size: 14px;
+            horizontal-alignment: center; overflow: elide;
+        }
+        passive-ratings := Rectangle {
+            x: root.width * 0.65; y: 0; width: root.width * 0.35;
+            height: passive-ratings-layout.preferred-height;
+            visible: root.draw-ratings-background;
+            passive-ratings-layout := VerticalLayout {
+                padding: 6px; spacing: 4px; alignment: start;
+                for rating in root.ratings: HorizontalLayout {
+                    alignment: end;
+                    RatingGraphic { rating: rating; icon-size: root.rating-size; incdec-height: root.incdec-height; outline: root.rating-outline; }
+                }
+                if root.file-inbox || root.file-trashed: HorizontalLayout {
+                    alignment: end;
+                    if root.file-trashed: Image { width: 16px; height: 16px; source: @image-url("../../../static/trash.png"); }
+                    if root.file-inbox: Image { width: 16px; height: 16px; source: @image-url("../../../static/inbox.png"); }
+                }
+                for location in root.location-strings: Text { text: location; color: #f0f0f0; horizontal-alignment: right; }
+                for link in root.url-links: Text { text: link.label; color: #f0f0f0; horizontal-alignment: right; overflow: elide; }
+            }
+        }
+        Rectangle {
+            x: root.width * 0.8; y: root.background-notes-y;
+            width: root.width * 0.2;
+            height: min(passive-notes-layout.preferred-height, root.height - self.y);
+            visible: root.draw-notes-background;
+            clip: true;
+            passive-notes-layout := VerticalLayout {
+                padding: 6px; spacing: 8px; alignment: start;
+                for note in root.notes: VerticalLayout {
+                    spacing: 2px;
+                    Text { text: note.name; color: #f0f0f0; font-weight: 700; horizontal-alignment: center; wrap: word-wrap; }
+                    Text { text: note.text; color: #e0e0e0; wrap: word-wrap; }
+                }
+            }
+        }
+        // Passive canvas details are behind the media and never take input.
+        if root.index-background-text != "": Text {
+            x: root.width - self.preferred-width - 3px;
+            y: root.height - self.preferred-height - 3px;
+            text: root.index-background-text;
+            color: #f0f0f0;
+            font-size: 14px;
+        }
+        if root.transparency-mode > 0: TransparencyBackdrop {
+            x: root.media-x;
+            y: root.media-y;
+            width: root.media-width;
+            height: root.media-height;
+            canvas-width: root.width;
+            canvas-height: root.height;
+            mode: root.transparency-mode;
+        }
         Image {
             x: root.media-x;
             y: root.media-y;
@@ -767,10 +926,17 @@ export component MediaViewerWindow inherits Window {
             image-fit: fill;
         }
         pointer := TouchArea {
+            mouse-cursor: root.drag-cursor-hidden || root.cursor-idle-hidden ? MouseCursor.none : MouseCursor.default;
+            changed mouse-x => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
+            changed mouse-y => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
             pointer-event(event) => {
                 if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                    root.drag-accepted = !root.disallow-duration-drag || !root.media-has-duration;
                     root.drag-x = self.mouse-x;
                     root.drag-y = self.mouse-y;
+                }
+                if (event.kind == PointerEventKind.up || event.kind == PointerEventKind.cancel) {
+                    root.drag-accepted = false;
                 }
                 // as the reference's default: a middle click closes it
                 if (event.kind == PointerEventKind.down && event.button == PointerEventButton.middle) {
@@ -779,15 +945,24 @@ export component MediaViewerWindow inherits Window {
                 // and a right click shows the menu
                 if (event.kind == PointerEventKind.down && event.button == PointerEventButton.right) {
                     root.context-menu-requested();
+                    root.cursor-menu-starting();
                     viewer-menu.show({ x: self.mouse-x, y: self.mouse-y });
+                    root.cursor-menu-returned();
                 }
             }
             // as is a (left) double-click, as the reference's default
             double-clicked => { root.close-requested(); }
             moved => {
-                root.drag(self.mouse-x - root.drag-x, self.mouse-y - root.drag-y);
-                root.drag-x = self.mouse-x;
-                root.drag-y = self.mouse-y;
+                if (root.drag-accepted) {
+                    if (self.mouse-x != root.drag-x || self.mouse-y != root.drag-y) {
+                        root.drag(self.mouse-x - root.drag-x, self.mouse-y - root.drag-y);
+                        root.drag-cursor-hidden = root.hide-during-drag;
+                    }
+                    root.drag-x = self.mouse-x;
+                    root.drag-y = self.mouse-y;
+                } else {
+                    root.drag-cursor-hidden = false;
+                }
             }
             scroll-event(event) => {
                 if (event.modifiers.control) {
@@ -806,18 +981,19 @@ export component MediaViewerWindow inherits Window {
                 accept
             }
         }
-        if root.scanbar-shown: bar := Rectangle {
-            property <bool> full: root.bar-near || scrub.has-hover || scrub.pressed || root.volume-open;
+        bar := Rectangle {
+            visible: root.scanbar-shown;
+            property <bool> full: (root.seek-focus-good && (root.bar-near || scrub.has-hover)) || scrub.pressed || root.volume-open;
             x: root.media-x;
             width: root.media-width - (root.volume-shown ? 24px : 0px);
-            height: self.full ? 20px : 5px;
+            height: self.full ? root.seek-height : root.seek-hidden-height;
             y: root.media-y + root.media-height - self.height;
             background: #303030;
             border-width: 1px;
             border-color: #606060;
             Rectangle {
-                x: floor((parent.width - 10px) * root.scanbar-progress / 1px) * 1px;
-                width: 10px;
+                x: floor((parent.width - min(root.seek-nub-width, parent.width)) * root.scanbar-progress / 1px) * 1px;
+                width: min(root.seek-nub-width, parent.width);
                 background: #b0b0b0;
             }
             if bar.full: Text {
@@ -856,7 +1032,7 @@ export component MediaViewerWindow inherits Window {
             // the volume and the viewer's mute, above the global mute
             property <length> popup: self.track + 2 * self.track-top + self.line;
             width: 24px;
-            height: self.open ? self.popup + self.line : root.bar-near ? self.line : 5px;
+            height: self.open ? self.popup + root.seek-height : root.seek-bar-full ? root.seek-height : root.seek-hidden-height;
             x: root.media-x + root.media-width - self.width;
             y: root.media-y + root.media-height - self.height;
             background: #303030;
@@ -897,6 +1073,7 @@ export component MediaViewerWindow inherits Window {
                 font-size: 11px;
             }
             volume-area := TouchArea {
+                enabled: root.seek-bar-full;
                 pointer-event(event) => {
                     if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
                         if (self.mouse-y >= volume-box.height - volume-box.line) {
@@ -1058,7 +1235,7 @@ export component MediaViewerWindow inherits Window {
                             }
                             HoverButton {
                                 icon: @image-url("../../../static/zoom_switch.png");
-                                clicked => { root.zoom(0, false, 0, 0); }
+                                pointed-click(x, y) => { root.zoom-switch-requested(x, y); }
                             }
                             HoverButton {
                                 icon: @image-url("../../../static/fullscreen_switch.svg");
@@ -1092,7 +1269,7 @@ export component MediaViewerWindow inherits Window {
         // (nothing in it takes the pointer, so the area below keeps it)
         notes-box := Rectangle {
             x: root.width * 0.8;
-            y: root.ratings.length > 0 ? ratings-box.preferred-height + 4px : 0;
+            y: root.ratings.length > 0 || root.url-links.length > 0 ? ratings-box.preferred-height + 4px : 0;
             width: root.width * 0.2;
             height: min(notes-layout.preferred-height, root.height - self.y);
             background: #202020e8;
@@ -1136,32 +1313,11 @@ export component MediaViewerWindow inherits Window {
                         Rectangle {
                             width: row.kind == 2 ? root.incdec-height * 2 : row.shapes.length * (root.rating-size + row.pad) - row.pad;
                             height: row.kind == 2 ? root.incdec-height : root.rating-size;
-                            if row.kind == 2: Rectangle {
-                                border-width: 1px;
-                                border-color: row.pen;
-                                background: row.brush;
-                                Text {
-                                    x: 0;
-                                    width: parent.width - 2px;
-                                    height: parent.height;
-                                    horizontal-alignment: right;
-                                    vertical-alignment: center;
-                                    text: row.text;
-                                    color: #000000;
-                                    font-size: max(root.incdec-height - 1px, 6px);
-                                }
-                            }
-                            for star[k] in row.shapes: Path {
-                                x: k * (root.rating-size + row.pad);
-                                y: 0;
-                                width: root.rating-size;
-                                height: root.rating-size;
-                                viewbox-width: 12;
-                                viewbox-height: 12;
-                                commands: row.shape;
-                                fill: star.brush;
-                                stroke: star.pen;
-                                stroke-width: root.rating-outline;
+                            RatingGraphic {
+                                rating: row;
+                                icon-size: root.rating-size;
+                                incdec-height: root.incdec-height;
+                                outline: root.rating-outline;
                             }
                             TouchArea {
                                 pointer-event(event) => {
@@ -1181,6 +1337,12 @@ export component MediaViewerWindow inherits Window {
                                 }
                             }
                         }
+                    }
+                    for link[i] in root.url-links: Rectangle {
+                        width: min(root.width * 0.35, 280px);
+                        height: 22px;
+                        Text { text: link.label; color: #70b5ff; font-size: 12px; horizontal-alignment: right; vertical-alignment: center; overflow: elide; }
+                        TouchArea { mouse-cursor: MouseCursor.pointer; clicked => { root.url-clicked(i); } }
                     }
                 }
             }

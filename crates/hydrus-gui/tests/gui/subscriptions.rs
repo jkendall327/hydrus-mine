@@ -15,6 +15,227 @@ use hydrus_store::import::import_legacy;
 use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedStatus, SeedType};
 use hydrus_store::subscriptions;
 
+#[test]
+fn favourites_load_selected_subscriptions_and_custom_overwrite_obeys_owner_lifetime() {
+    use hydrus_core::import_options::ImportOptionsManager;
+    use hydrus_downloader_exchange::import_options;
+    use hydrus_store::settings;
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("subscription_import_options.json");
+    let reference = &fixture["subscription_favourites"];
+    let existing = import_options::decode_text(&fixture["existing"].to_string()).unwrap();
+    let incoming = import_options::decode_text(&fixture["incoming"].to_string()).unwrap();
+    let original = existing.clone();
+    let favourite = incoming.clone();
+    store
+        .write(move |tx| {
+            for name in ["alpha", "beta"] {
+                subscriptions::create_subscription(
+                    tx.conn(),
+                    name,
+                    &SubscriptionSettings {
+                        import_options: original.clone(),
+                        ..SubscriptionSettings::default()
+                    },
+                )?;
+            }
+            let mut manager: ImportOptionsManager = settings::get(tx.conn())?;
+            manager.favourites.push(("profile".into(), favourite));
+            settings::set(tx.conn(), &manager)
+        })
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_favourite(0, "profile".into());
+    assert_eq!(asked(&dialog).1, reference["information"][0]);
+    dialog.invoke_chosen(0);
+    dialog.invoke_row_clicked(0, false, false);
+    dialog.invoke_row_clicked(1, true, false);
+    dialog.invoke_favourite(0, "profile".into());
+    for (cells, _) in rows(&dialog) {
+        assert_eq!(cells[8], reference["steps"][1]["rows"][0]["summary"]);
+    }
+    assert!(
+        store
+            .read(subscriptions::subscriptions)
+            .unwrap()
+            .iter()
+            .all(|s| s.settings.import_options == existing)
+    );
+    dialog.invoke_cancel();
+    dialog.invoke_favourite(0, "profile".into());
+    dialog.invoke_apply();
+    assert!(
+        store
+            .read(subscriptions::subscriptions)
+            .unwrap()
+            .iter()
+            .all(|s| s.settings.import_options == existing)
+    );
+
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_row_clicked(0, false, false);
+    dialog.invoke_row_clicked(1, true, false);
+    dialog.invoke_favourite(1, "profile".into());
+    assert_eq!(asked(&dialog).1, reference["information"][1]);
+    dialog.invoke_chosen(0);
+    let chooser = hydrus_gui::import_options_overwrite_window::last_opened().unwrap();
+    assert!(dialog.get_import_child_open());
+    chooser.invoke_preset(1);
+    chooser.invoke_cancel();
+    assert!(!dialog.get_import_child_open());
+    chooser.invoke_apply();
+    for (cells, _) in rows(&dialog) {
+        assert_eq!(cells[8], reference["steps"][2]["rows"][0]["summary"]);
+    }
+    dialog.invoke_favourite(1, "profile".into());
+    dialog.invoke_chosen(0);
+    let chooser = hydrus_gui::import_options_overwrite_window::last_opened().unwrap();
+    chooser.invoke_preset(1);
+    let pixels = headless::render(&windows.get(1).unwrap(), 1180, 560);
+    assert!(!pixels.is_empty());
+    chooser.invoke_apply();
+    for (cells, _) in rows(&dialog) {
+        assert_eq!(cells[8], reference["steps"][3]["rows"][0]["summary"]);
+    }
+    dialog.invoke_apply();
+    let expected =
+        import_options::decode_text(&reference["dialogs"][1]["options"].to_string()).unwrap();
+    assert!(
+        store
+            .read(subscriptions::subscriptions)
+            .unwrap()
+            .iter()
+            .all(|s| s.settings.import_options == expected)
+    );
+    let reopened = open_dialog(&ui, &bound);
+    assert_eq!(
+        rows(&reopened)[0].0[8],
+        reference["steps"][3]["rows"][0]["summary"]
+    );
+    reopened.invoke_row_clicked(0, false, false);
+    reopened.invoke_favourite(1, "profile".into());
+    let stale = hydrus_gui::import_options_overwrite_window::last_opened().unwrap();
+    reopened.invoke_cancel();
+    assert!(hydrus_gui::import_options_overwrite_window::last_opened().is_none());
+    stale.invoke_preset(2);
+    stale.invoke_apply();
+    reopened.invoke_apply();
+    assert!(
+        store
+            .read(subscriptions::subscriptions)
+            .unwrap()
+            .iter()
+            .all(|s| s.settings.import_options == expected)
+    );
+
+    let direct = open_dialog(&ui, &bound);
+    direct.invoke_row_clicked(0, false, false);
+    direct.invoke_row_clicked(1, true, false);
+    direct.invoke_favourite(0, "profile".into());
+    direct.invoke_apply();
+    assert!(
+        store
+            .read(subscriptions::subscriptions)
+            .unwrap()
+            .iter()
+            .all(|s| s.settings.import_options == incoming)
+    );
+}
+
+#[test]
+fn subscription_option_clipboard_edits_stay_staged_and_closed_owners_cannot_apply() {
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("subscription_import_options.json");
+    let existing =
+        hydrus_downloader_exchange::import_options::decode_text(&fixture["existing"].to_string())
+            .unwrap();
+    let original = existing.clone();
+    store
+        .write(move |ctx| {
+            for name in ["alpha", "beta"] {
+                subscriptions::create_subscription(
+                    ctx.conn(),
+                    name,
+                    &SubscriptionSettings {
+                        import_options: original.clone(),
+                        ..SubscriptionSettings::default()
+                    },
+                )?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let copied = std::rc::Rc::new(std::cell::RefCell::new(String::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let hydrus_gui::Clip::Text(text) = clip {
+                copied.borrow_mut().clone_from(text);
+            }
+        }
+    });
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_row_clicked(0, false, false);
+    dialog.invoke_copy_import_options();
+    assert_eq!(
+        hydrus_downloader_exchange::import_options::decode_text(&copied.borrow()).unwrap(),
+        existing
+    );
+    let incoming = fixture["incoming"].to_string();
+    hydrus_gui::set_paster(move || incoming.clone());
+    dialog.invoke_paste_import_options(0);
+    assert_eq!(
+        store.read(subscriptions::subscriptions).unwrap()[0]
+            .settings
+            .import_options,
+        existing
+    );
+    let pixels = headless::render(&windows.get(1).unwrap(), 1180, 560);
+    assert!(!pixels.is_empty());
+    dialog.invoke_cancel();
+    dialog.invoke_apply();
+    assert_eq!(
+        store.read(subscriptions::subscriptions).unwrap()[0]
+            .settings
+            .import_options,
+        existing
+    );
+
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_row_clicked(0, false, false);
+    dialog.invoke_row_clicked(1, true, false);
+    hydrus_gui::set_paster(|| "not json".into());
+    dialog.invoke_paste_import_options(0);
+    assert!(
+        asked(&dialog)
+            .1
+            .contains("JSON-serialised Import Options Container")
+    );
+    dialog.invoke_chosen(0);
+    dialog.invoke_clear_import_options();
+    assert_eq!(asked(&dialog).1, fixture["questions"][0]);
+    dialog.invoke_chosen(1);
+    dialog.invoke_clear_import_options();
+    dialog.invoke_chosen(0);
+    dialog.invoke_apply();
+    assert!(
+        store
+            .read(subscriptions::subscriptions)
+            .unwrap()
+            .iter()
+            .all(|s| s.settings.import_options.is_empty())
+    );
+    let reopened = open_dialog(&ui, &bound);
+    assert_eq!(rows(&reopened).len(), 2);
+    reopened.invoke_cancel();
+}
+
 pub(crate) fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();

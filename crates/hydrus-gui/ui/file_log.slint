@@ -23,6 +23,7 @@ export component FileLogWindow inherits Window {
     in property <[TableRow]> rows;
     in property <[MenuPane]> menu-panes;
     in property <bool> asking;
+    in property <bool> busy;
     in property <string> asking-title;
     in property <string> asking-message;
     in property <[string]> asking-choices;
@@ -71,7 +72,7 @@ export component FileLogWindow inherits Window {
                 }
                 log-button := Button {
                     text: "whole log ▾";
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.busy;
                     clicked => {
                         root.log-menu(self.absolute-position.x, self.absolute-position.y + self.height);
                     }
@@ -83,7 +84,7 @@ export component FileLogWindow inherits Window {
                 rows: root.rows;
                 row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
                 row-activated(row) => { root.row-activated(row); }
-                row-menu(row, x, y) => { if !root.asking { root.row-menu(row, x, y); } }
+                row-menu(row, x, y) => { if !root.asking && !root.busy { root.row-menu(row, x, y); } }
                 delete-pressed => { root.delete-pressed(); }
             }
             if root.asking: Asking {

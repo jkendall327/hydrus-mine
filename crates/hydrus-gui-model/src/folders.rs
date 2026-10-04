@@ -11,6 +11,61 @@ use hydrus_parse::folders::{ExportFolder, ExportType, FolderAction, ImportFolder
 
 use crate::list_selection::ListSelection;
 
+/// Query the export folder's current media examples. The reference only applies
+/// the size ordering when a system limit actually removes results, then takes
+/// at most 25 media results for the read-only router test context.
+pub fn export_test_examples(
+    store: &hydrus_store::Store,
+    search: &hydrus_core::search::context::FileSearchContext,
+) -> Result<Vec<hydrus_core::HashId>, String> {
+    use hydrus_core::search::predicate::{Predicate, SystemPredicate};
+    use hydrus_search::{Clock, FileSort, SortBy, SortOrder};
+    let mut unlimited = search.clone();
+    let limit = unlimited
+        .predicates
+        .iter()
+        .filter_map(|p| match p {
+            Predicate::System(SystemPredicate::Limit(n)) => Some(*n),
+            _ => None,
+        })
+        .min();
+    unlimited
+        .predicates
+        .retain(|p| !matches!(p, Predicate::System(SystemPredicate::Limit(_))));
+    let snapshot = store.snapshot();
+    let mut ids = store
+        .read(|conn| {
+            let clock = Clock::system();
+            let mut ids = hydrus_search::search_files(
+                conn,
+                &snapshot,
+                &unlimited,
+                FileSort::default(),
+                &clock,
+            )
+            .map_err(|e| hydrus_store::StoreError::Invalid(e.to_string()))?;
+            if limit.is_some_and(|n| n < ids.len() as u64) {
+                ids = hydrus_search::search_files(
+                    conn,
+                    &snapshot,
+                    search,
+                    FileSort {
+                        by: SortBy::FileSize,
+                        order: SortOrder::Ascending,
+                    },
+                    &clock,
+                )
+                .map_err(|e| hydrus_store::StoreError::Invalid(e.to_string()))?;
+            } else {
+                ids.sort_unstable();
+            }
+            Ok(ids)
+        })
+        .map_err(|e| e.to_string())?;
+    ids.truncate(25);
+    Ok(ids)
+}
+
 /// The import folders list's column titles.
 pub const IMPORT_COLUMNS: [&str; 4] = ["name", "path", "paused", "check period"];
 

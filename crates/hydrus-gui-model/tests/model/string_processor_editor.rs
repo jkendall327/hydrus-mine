@@ -264,3 +264,37 @@ fn the_string_processor_editor_works_as_the_references_does() {
         [SortKind::Human, SortKind::Lexicographic, SortKind::Reverse]
     );
 }
+
+#[test]
+fn processor_exchange_appends_reference_steps_and_rejects_invalid_data_atomically() {
+    use hydrus_downloader_exchange::processing;
+    let fixture = hydrus_testkit::fixture_json("processing_exchange.json");
+    let mut editor = ProcessorEditor::new(
+        &processor(&fixture["start"]["processor"]),
+        vec!["a,b".into()],
+    );
+    editor.click(1, false);
+    let single: Value =
+        serde_json::from_str(&processing::encode_text(&editor.export_steps()).unwrap()).unwrap();
+    assert_eq!(single, fixture["single"]);
+    editor.click(0, true);
+    let multiple: Value =
+        serde_json::from_str(&processing::encode_text(&editor.export_steps()).unwrap()).unwrap();
+    assert_eq!(multiple, fixture["multiple"]);
+    assert_eq!(editor.import_text(&multiple.to_string()).unwrap(), 2);
+    assert_eq!(editor.value(), processor(&fixture["imported"]["processor"]));
+    assert_eq!(
+        editor.value().process(vec!["a,b".into()]).unwrap(),
+        fixture["imported"]["processed"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| v.as_str().unwrap().to_owned())
+            .collect::<Vec<_>>()
+    );
+    assert_eq!(json!(editor.selected()), fixture["imported"]["selected"]);
+    let before = editor.clone();
+    assert!(editor.import_text("not JSON").is_err());
+    assert_eq!(editor.value(), before.value());
+    assert_eq!(editor.selected(), before.selected());
+}

@@ -5,9 +5,13 @@ use crate::formula_editors::{FormulaTestData, new_formula};
 use hydrus_core::pages::PageKey;
 use hydrus_core::url::strings::{StringConverter, StringMatch};
 use hydrus_core::url::{UrlClass, UrlClassSettings, UrlType};
-use hydrus_parse::content::{ContentKind, ContentParser, PageParser, ParseFailure, ParsedPost};
+use hydrus_parse::content::{
+    ContentKind, ContentParser, PageParser, ParseFailure, ParsedPost, SubsidiaryPageParser,
+};
 use hydrus_parse::downloaders::Downloaders;
-use hydrus_parse::formula::ParsingContext;
+use hydrus_parse::formula::{
+    Formula, FormulaKind, HtmlContent, HtmlRule, HtmlWalk, ParsingContext, TagSearch,
+};
 use hydrus_store::{Store, StoreError, settings};
 
 /// Reference content choices, including existing temporary variables.
@@ -124,13 +128,17 @@ impl ContentEditor {
             _ => &self.inactive_namespace,
         }
     }
-    /// Apply reference normalization for an empty note name.
+    /// Apply reference normalization for an empty note name and the only
+    /// supported timestamp choice, including imported unset/obsolete types.
     pub fn value(&self) -> ContentParser {
         let mut parser = self.parser.clone();
         if let ContentKind::Note { name } = &mut parser.kind
             && name.is_empty()
         {
             *name = "note".into();
+        }
+        if let ContentKind::Timestamp { timestamp_type } = &mut parser.kind {
+            *timestamp_type = Some(hydrus_parse::content::TIMESTAMP_MODIFIED_DOMAIN);
         }
         parser
     }
@@ -208,6 +216,97 @@ pub fn new_page() -> PageParser {
         subsidiary: Vec::new(),
         content_parsers: Vec::new(),
         example_urls: Vec::new(),
+    }
+}
+/// Reference defaults for a newly added recursive subsidiary page parser.
+pub fn new_subsidiary() -> SubsidiaryPageParser {
+    let mut parser = new_page();
+    parser.name = "new sub page parser".into();
+    let mut formula = new_formula(false);
+    formula.kind = FormulaKind::Html {
+        rules: vec![HtmlRule {
+            walk: HtmlWalk::Descendants(TagSearch {
+                attrs: vec![("class".into(), "thumb".into())],
+                ..TagSearch::default()
+            }),
+            tag_name: Some("div".into()),
+            text_match: None,
+        }],
+        content: HtmlContent::Html,
+    };
+    SubsidiaryPageParser {
+        formula,
+        sort_by_source_time: false,
+        parser,
+    }
+}
+/// Separation controls accompany the ordinary reusable child page draft.
+#[derive(Debug, Clone)]
+pub struct SubsidiaryEditor {
+    pub formula: Formula,
+    pub sort_by_source_time: bool,
+}
+impl SubsidiaryEditor {
+    /// Copy the child separation and source-time controls into an isolated draft.
+    #[must_use]
+    pub fn new(parser: &SubsidiaryPageParser) -> Self {
+        Self {
+            formula: parser.formula.clone(),
+            sort_by_source_time: parser.sort_by_source_time,
+        }
+    }
+    /// Preserve the edited page's key, recursive definitions and auxiliary data.
+    pub fn value(&self, parser: PageParser) -> SubsidiaryPageParser {
+        SubsidiaryPageParser {
+            formula: self.formula.clone(),
+            sort_by_source_time: self.sort_by_source_time,
+            parser,
+        }
+    }
+    /// Reference child previews convert the raw document, then separate posts.
+    pub fn child_test_data(
+        &self,
+        parser: &PageParser,
+        test: &FormulaTestData,
+    ) -> Result<FormulaTestData, String> {
+        let mut input = test.clone();
+        input.prepare_examples();
+        let mut child = input.clone();
+        child.examples.clear();
+        child.source_urls.clear();
+        for (i, text) in input.examples.iter().enumerate() {
+            let converted = parser.converter.convert(text).map_err(|e| e.to_string())?;
+            let texts = self
+                .formula
+                .parse(&test.context, &converted, false)
+                .map_err(|e| e.to_string())?;
+            let url = test
+                .source_urls
+                .get(i)
+                .cloned()
+                .unwrap_or_else(|| test.context.get("url").cloned());
+            for text in texts {
+                child.examples.push(text);
+                child.source_urls.push(url.clone());
+            }
+        }
+        if child.examples.is_empty() {
+            child.examples.push(String::new());
+            child.source_urls.push(test.context.get("url").cloned());
+        }
+        child.prepare_examples();
+        Ok(child)
+    }
+    /// Run the complete subsidiary with the same parser engine used by downloads.
+    pub fn preview(
+        &self,
+        parser: &PageParser,
+        context: &mut ParsingContext,
+        text: &str,
+    ) -> Result<Vec<ParsedPost>, ParseFailure> {
+        let mut parent = new_page();
+        parent.subsidiary.push(self.value(parser.clone()));
+        parent.parse(context, text)
     }
 }
 /// Staged parser list and class links loaded together from the native store.
@@ -297,14 +396,144 @@ impl Draft {
     }
     /// Classes which can directly own a parser; redirect sources use their target.
     pub fn linkable(&self) -> Vec<usize> {
+        let sources = self
+            .api_pairs()
+            .into_iter()
+            .map(|(i, _)| i)
+            .collect::<std::collections::HashSet<_>>();
         self.classes
             .url_classes
             .iter()
             .enumerate()
-            .filter(|(_, c)| can_link(c))
+            .filter(|(i, c)| {
+                matches!(
+                    c.url_type,
+                    UrlType::Post | UrlType::Gallery | UrlType::Watchable
+                ) && !sources.contains(i)
+            })
             .map(|(i, _)| i)
             .collect()
     }
+    /// The reference's direct API/redirect pairs, using source example URLs.
+    /// Failed converters and self matches are skipped, not followed recursively.
+    pub fn api_pairs(&self) -> Vec<(usize, usize)> {
+        let collapse = self.classes.collapse_leading_slashes;
+        let mut order = (0..self.classes.url_classes.len()).collect::<Vec<_>>();
+        order
+            .sort_by_key(|&i| std::cmp::Reverse(self.classes.url_classes[i].sorting_key(collapse)));
+        let mut pairs = Vec::new();
+        for &i in &order {
+            let class = &self.classes.url_classes[i];
+            if !class.uses_api_url() {
+                continue;
+            }
+            let Ok(url) = class.api_url(&class.example_url, collapse) else {
+                continue;
+            };
+            if let Some(&target) = order
+                .iter()
+                .find(|&&j| i != j && self.classes.url_classes[j].matches(&url, collapse))
+            {
+                pairs.push((i, target));
+            }
+        }
+        pairs
+    }
+
+    /// Match parser examples as the reference STATICLinkURLClassesAndParsers does.
+    pub fn auto_link_candidates(&self) -> Vec<(String, String)> {
+        let collapse = self.classes.collapse_leading_slashes;
+        let mut classes = (0..self.classes.url_classes.len()).collect::<Vec<_>>();
+        classes
+            .sort_by_key(|&i| std::cmp::Reverse(self.classes.url_classes[i].sorting_key(collapse)));
+        let sources = self
+            .api_pairs()
+            .into_iter()
+            .map(|(i, _)| i)
+            .collect::<std::collections::HashSet<_>>();
+        let mut parsers = self.parsers.iter().collect::<Vec<_>>();
+        parsers.sort_by_cached_key(|parser| parser.name.clone());
+        let mut candidates = Vec::new();
+        for parser in parsers {
+            for example in &parser.example_urls {
+                let Some(&i) = classes.iter().find(|&&i| {
+                    !sources.contains(&i) && self.classes.url_classes[i].matches(example, collapse)
+                }) else {
+                    continue;
+                };
+                let class = &self.classes.url_classes[i];
+                let key = hex::encode(&class.key);
+                if matches!(
+                    class.url_type,
+                    UrlType::Post | UrlType::Gallery | UrlType::Watchable
+                ) && !self
+                    .classes
+                    .parser_links
+                    .iter()
+                    .any(|(k, p)| k == &key && p.is_some())
+                    && !candidates.iter().any(|(k, _)| k == &key)
+                {
+                    candidates.push((key, parser.key.clone()));
+                }
+            }
+        }
+        candidates
+    }
+
+    /// The actual Qt auto-fill owner iterates only already-linked rows when
+    /// applying its new/unlinked candidates. The sets are disjoint, so its
+    /// button leaves gaps unchanged; preserve this fixture-backed boundary.
+    pub fn try_fill_gaps(&mut self) {
+        let candidates = self.auto_link_candidates();
+        for (class_key, parser_key) in &mut self.classes.parser_links {
+            if parser_key.is_some()
+                && let Some((_, new)) = candidates.iter().find(|(key, _)| key == class_key)
+            {
+                *parser_key = Some(new.clone());
+            }
+        }
+    }
+
+    pub fn gaps_exist(&self) -> bool {
+        self.linkable().into_iter().any(|i| {
+            let key = hex::encode(&self.classes.url_classes[i].key);
+            !self
+                .classes
+                .parser_links
+                .iter()
+                .any(|(class, parser)| class == &key && parser.is_some())
+        })
+    }
+
+    /// Per-class choices: matching examples first, then the selectable no-op separator.
+    pub fn parser_choices(&self, class_key: &str) -> Result<Vec<(String, Option<String>)>, String> {
+        let class = self
+            .classes
+            .url_classes
+            .iter()
+            .find(|class| hex::encode(&class.key) == class_key)
+            .ok_or("The URL class no longer exists.")?;
+        let mut matching = Vec::new();
+        let mut others = Vec::new();
+        for parser in &self.parsers {
+            let row = (parser.name.clone(), Some(parser.key.clone()));
+            if parser
+                .example_urls
+                .iter()
+                .any(|url| class.matches(url, self.classes.collapse_leading_slashes))
+            {
+                matching.push(row);
+            } else {
+                others.push(row);
+            }
+        }
+        matching.sort_by(|a, b| a.0.cmp(&b.0));
+        others.sort_by(|a, b| a.0.cmp(&b.0));
+        matching.push(("------".into(), None));
+        matching.extend(others);
+        Ok(matching)
+    }
+
     /// Stage an association using keys, validating both endpoints.
     pub fn link(&mut self, class_key: &str, parser_key: Option<&str>) -> Result<(), String> {
         if !self
@@ -404,4 +633,25 @@ fn can_link(class: &UrlClass) -> bool {
         class.url_type,
         UrlType::Post | UrlType::Gallery | UrlType::Watchable
     ) && !class.uses_api_url()
+}
+
+/// Append a subsidiary package, sort the queue and return exactly the added rows.
+/// Duplicate keys remain intact, as reference subsidiary clipboard imports do.
+pub fn append_subsidiaries(
+    page: &mut PageParser,
+    imported: Vec<SubsidiaryPageParser>,
+) -> Vec<usize> {
+    let mut rows = std::mem::take(&mut page.subsidiary)
+        .into_iter()
+        .map(|parser| (false, parser))
+        .collect::<Vec<_>>();
+    rows.extend(imported.into_iter().map(|parser| (true, parser)));
+    rows.sort_by_cached_key(|(_, parser)| hydrus_core::casefold::casefold(&parser.parser.name));
+    let added = rows
+        .iter()
+        .enumerate()
+        .filter_map(|(i, (added, _))| added.then_some(i))
+        .collect();
+    page.subsidiary = rows.into_iter().map(|(_, parser)| parser).collect();
+    added
 }

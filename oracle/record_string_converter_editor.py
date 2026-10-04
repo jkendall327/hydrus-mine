@@ -27,8 +27,8 @@ the example and its conversion), what "ok" asked, and what it gives.
 Steps: `["click", row, ctrl]`, `["example", text]`, `["add", edits]`,
 `["edit", edits]` (`edits` the fields to set by name, `null` to cancel;
 `"ok"` the answer to "ok"'s question), `["delete"]` (answering yes),
-`["up"]` and `["down"]`. Dates are kept, not run, by hydrus-rs: the
-cases' date conversions are only opened and set.
+`["up"]` and `["down"]`. The dedicated date recorder
+extends these editor assertions with deterministic date execution vectors.
 
 Usage: QT_QPA_PLATFORM=offscreen python oracle/record_string_converter_editor.py
        (writes fixtures/string_converter_editor.json)

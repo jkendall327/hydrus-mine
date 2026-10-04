@@ -1,0 +1,225 @@
+{
+ "steps": [
+  {
+   "do": {
+    "type": "prepend text",
+    "text": "saved prefix",
+    "accept": true
+   },
+   "opened": {
+    "type": "append text",
+    "text": "extra text"
+   },
+   "saved": [
+    55,
+    2,
+    [
+     [
+      [
+       2,
+       "saved prefix"
+      ]
+     ],
+     "example string"
+    ]
+   ],
+   "options": [
+    22,
+    8,
+    [
+     21,
+     2,
+     [
+      [
+       [
+        0,
+        "last_used_string_conversion_step"
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            2,
+            "saved prefix"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "do": {
+    "type": "append text",
+    "text": "canceled suffix",
+    "accept": false
+   },
+   "opened": {
+    "type": "prepend text",
+    "text": "saved prefix"
+   },
+   "saved": [
+    55,
+    2,
+    [
+     [
+      [
+       2,
+       "saved prefix"
+      ]
+     ],
+     "example string"
+    ]
+   ],
+   "options": [
+    22,
+    8,
+    [
+     21,
+     2,
+     [
+      [
+       [
+        0,
+        "last_used_string_conversion_step"
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            2,
+            "saved prefix"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "do": {
+    "type": "reverse text",
+    "accept": true
+   },
+   "opened": {
+    "type": "prepend text",
+    "text": "saved prefix"
+   },
+   "saved": [
+    55,
+    2,
+    [
+     [
+      [
+       8,
+       null
+      ]
+     ],
+     "example string"
+    ]
+   ],
+   "options": [
+    22,
+    8,
+    [
+     21,
+     2,
+     [
+      [
+       [
+        0,
+        "last_used_string_conversion_step"
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            8,
+            null
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "do": {
+    "accept": false
+   },
+   "opened": {
+    "type": "reverse text",
+    "text": ""
+   },
+   "saved": [
+    55,
+    2,
+    [
+     [
+      [
+       8,
+       null
+      ]
+     ],
+     "example string"
+    ]
+   ],
+   "options": [
+    22,
+    8,
+    [
+     21,
+     2,
+     [
+      [
+       [
+        0,
+        "last_used_string_conversion_step"
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            8,
+            null
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  }
+ ]
+}

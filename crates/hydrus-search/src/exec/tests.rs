@@ -440,17 +440,35 @@ const TERMS: &[&str] = &[
     "system:filesize < 5 KB",
     "system:filetype = image/png, apng",
     "system:filetype = image",
-    "system:has domain gelbooru.com",
-    "system:does not have domain gelbooru.com",
+    "system:has domain booru.example",
+    "system:does not have domain booru.example",
     "system:has note with name comment",
     "system:no note with name comment",
     "system:has exif",
     "system:no exif",
 ];
 
+// Include a deterministically selected domain from the imported fixture so URL
+// predicates also exercise positive matches, without hardcoding fixture sites.
+static SEARCH_TERMS: LazyLock<Vec<String>> = LazyLock::new(|| {
+    let domain = MODEL
+        .batch
+        .results
+        .iter()
+        .flat_map(|media| &media.urls)
+        .filter(|url| url.starts_with("http://") || url.starts_with("https://"))
+        .map(|url| hydrus_store::master::url_domain(url))
+        .min()
+        .expect("the basic reference fixture contains HTTP URLs");
+    let mut terms: Vec<String> = TERMS.iter().map(|term| (*term).to_owned()).collect();
+    terms.push(format!("system:has domain {domain}"));
+    terms.push(format!("system:does not have domain {domain}"));
+    terms
+});
+
 fn term() -> impl Strategy<Value = Json> {
-    (0..TERMS.len(), any::<bool>()).prop_map(|(i, negate)| {
-        let term = TERMS[i];
+    (0..SEARCH_TERMS.len(), any::<bool>()).prop_map(|(i, negate)| {
+        let term = &SEARCH_TERMS[i];
         if negate && !term.starts_with("system:") {
             json!(format!("-{term}"))
         } else {
@@ -531,7 +549,7 @@ proptest! {
 #[test]
 fn every_term_is_understood_by_the_model() {
     // the model panics on predicates it does not know; exercise each once
-    for term in TERMS {
+    for term in &*SEARCH_TERMS {
         let predicates = parse_api_search(&json!([term])).unwrap();
         let search = FileSearchContext {
             predicates,
@@ -763,6 +781,7 @@ fn a_page_s_fallback_sort_orders_its_sort_s_ties() {
     );
     let snapshot = store.snapshot();
     let system = |by: SortBy, ascending| hydrus_core::pages::PageSort {
+        tag_context: hydrus_core::search::context::TagContext::default(),
         by: hydrus_core::pages::PageSortBy::System(i64::from(by.code())),
         ascending,
     };
@@ -941,6 +960,7 @@ fn pages_collect_as_the_reference_s_pages_collect() {
         .map(|h| id_of(h.as_str().unwrap()))
         .collect();
     let fallback = PageSort {
+        tag_context: hydrus_core::search::context::TagContext::default(),
         by: PageSortBy::System(2),
         ascending: true,
     };
@@ -962,11 +982,13 @@ fn pages_collect_as_the_reference_s_pages_collect() {
                 .map(|r| key(&unhex(r.as_str().unwrap())))
                 .collect(),
             collect_unmatched: c["collect_unmatched"].as_bool().unwrap(),
+            tag_context: hydrus_core::search::context::TagContext::default(),
         };
         for s in case["sorts"].as_array().unwrap() {
             let sort = &s["sort"];
             let data = &sort["data"];
             let sort = PageSort {
+                tag_context: hydrus_core::search::context::TagContext::default(),
                 by: match sort["type"].as_str().unwrap() {
                     "system" => PageSortBy::System(data.as_i64().unwrap()),
                     "namespaces" => PageSortBy::Namespaces {
@@ -1025,4 +1047,228 @@ fn pages_collect_as_the_reference_s_pages_collect() {
         wrong[..wrong.len().min(25)].join("\n")
     );
     assert_eq!(checked, 10 * 64);
+}
+
+#[test]
+fn saved_collect_tag_domains_group_files_as_the_reference_does() {
+    use hydrus_core::pages::{PageCollect, PageMedia, PageSort, PageSortBy};
+    let f = hydrus_testkit::fixture_json("favourite_search_editor.json");
+    let store = &SHARED.store;
+    let snapshot = store.snapshot();
+    let key_named = |name: &str| {
+        snapshot
+            .services
+            .all()
+            .find(|s| s.name == name)
+            .unwrap()
+            .key
+            .clone()
+    };
+    let search = FileSearchContext {
+        location: LocationContext::single(key_named("my files")),
+        ..FileSearchContext::default()
+    };
+    let files: Vec<HashId> = f["collect_groups"][0]["groups"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .flat_map(|g| g.as_array().unwrap())
+        .map(|h| {
+            store
+                .read(|conn| {
+                    hydrus_store::master::hash_id(conn, &h.as_str().unwrap().parse().unwrap())
+                })
+                .unwrap()
+                .unwrap()
+        })
+        .collect();
+    let sort = PageSort {
+        tag_context: hydrus_core::search::context::TagContext::default(),
+        by: PageSortBy::System(0),
+        ascending: true,
+    };
+    for case in f["collect_groups"].as_array().unwrap() {
+        let collect = PageCollect {
+            namespaces: vec!["series".into()],
+            ratings: Vec::new(),
+            collect_unmatched: false,
+            tag_context: TagContext::new(
+                key_named(case["service"].as_str().unwrap()),
+                case["current"].as_bool().unwrap(),
+                case["pending"].as_bool().unwrap(),
+            ),
+        };
+        let grouped = store
+            .read(|conn| {
+                Ok(super::collect_page_files(
+                    conn,
+                    &snapshot,
+                    &search,
+                    &files,
+                    &collect,
+                    &sort,
+                    None,
+                    &Clock::system(),
+                ))
+            })
+            .unwrap()
+            .unwrap();
+        let hashes = store
+            .read(|conn| hydrus_store::master::hashes(conn, &files))
+            .unwrap();
+        let mut groups: Vec<Vec<String>> = grouped
+            .into_iter()
+            .map(|m| {
+                let ids = match m {
+                    PageMedia::File(id) => vec![id],
+                    PageMedia::Collection(ids) => ids,
+                };
+                let mut names: Vec<String> = ids.iter().map(|id| hashes[id].to_string()).collect();
+                names.sort();
+                names
+            })
+            .collect();
+        groups.sort();
+        assert_eq!(
+            case["groups"],
+            serde_json::json!(groups),
+            "{} / current={}",
+            case["service"],
+            case["current"]
+        );
+    }
+}
+
+#[test]
+fn owned_sort_contexts_replay_default_fallback_cogs_for_files_and_collections() {
+    use hydrus_core::pages::{PageCollect, PageMedia, PageSort, PageSortBy};
+    fn recorded(value: &Json) -> PageSort {
+        let context = &value["tag_context"];
+        PageSort {
+            by: match value["type"].as_str().unwrap() {
+                "system" => PageSortBy::System(value["data"].as_i64().unwrap()),
+                "namespaces" => PageSortBy::Namespaces {
+                    namespaces: value["data"]["namespaces"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|v| v.as_str().unwrap().into())
+                        .collect(),
+                    tag_display_type: value["data"]["tag_display_type"].as_i64().unwrap(),
+                },
+                kind => panic!("unexpected recorded sort {kind}"),
+            },
+            ascending: value["order"] == 0,
+            tag_context: TagContext {
+                service: ServiceKey::from_hex(context["service"].as_str().unwrap()).unwrap(),
+                display_service: ServiceKey::from_hex(context["display_service"].as_str().unwrap())
+                    .unwrap(),
+                include_current: context["include_current"].as_bool().unwrap(),
+                include_pending: context["include_pending"].as_bool().unwrap(),
+            },
+        }
+    }
+    let fixture = hydrus_testkit::fixture_json("sort_cogs.json");
+    let store = &SHARED.store;
+    let snapshot = store.snapshot();
+    let files: Vec<HashId> = fixture["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|hash| {
+            store
+                .read(|conn| {
+                    hydrus_store::master::hash_id(conn, &hash.as_str().unwrap().parse().unwrap())
+                })
+                .unwrap()
+                .unwrap()
+        })
+        .collect();
+    let hashes = store
+        .read(|conn| hydrus_store::master::hashes(conn, &files))
+        .unwrap();
+    let search = FileSearchContext {
+        location: LocationContext::single(
+            ServiceKey::from_hex(fixture["location"].as_str().unwrap()).unwrap(),
+        ),
+        tags: TagContext::new(key(builtin_keys::MY_TAGS), false, false),
+        predicates: Vec::new(),
+    };
+    let clock = Clock::system();
+    let mut distinct = HashSet::new();
+    for case in fixture["cases"].as_array().unwrap() {
+        let primary = recorded(&case["primary"]);
+        let fallback = recorded(&case["fallback"]);
+        let items = if case["collected"] == true {
+            let collect = PageCollect {
+                namespaces: vec!["series".into()],
+                ..PageCollect::default()
+            };
+            store
+                .read(|conn| {
+                    Ok(super::collect_page_files(
+                        conn,
+                        &snapshot,
+                        &search,
+                        &files,
+                        &collect,
+                        &primary,
+                        Some(&fallback),
+                        &clock,
+                    ))
+                })
+                .unwrap()
+                .unwrap()
+        } else {
+            store
+                .read(|conn| {
+                    Ok(super::sort_page_files(
+                        conn,
+                        &snapshot,
+                        &search,
+                        &files,
+                        &primary,
+                        Some(&fallback),
+                        &clock,
+                    ))
+                })
+                .unwrap()
+                .unwrap()
+                .into_iter()
+                .map(PageMedia::File)
+                .collect()
+        };
+        let actual: Vec<Json> = items
+            .iter()
+            .map(|item| match item {
+                PageMedia::File(id) => json!(hashes[id].to_string()),
+                PageMedia::Collection(ids) => json!(
+                    ids.iter()
+                        .map(|id| hashes[id].to_string())
+                        .collect::<Vec<_>>()
+                ),
+            })
+            .collect();
+        assert_eq!(
+            json!(actual),
+            case["media"],
+            "{} {} {}",
+            case["role"],
+            case["kind"],
+            case["service_name"]
+        );
+        distinct.insert(json!(actual).to_string());
+    }
+    assert!(
+        distinct.len() > 10,
+        "the recorded service choices produce different real ordering"
+    );
+    let old: PageSort =
+        serde_json::from_value(json!({"by":{"System":0},"ascending":true})).unwrap();
+    assert_eq!(old.tag_context, TagContext::default());
+    let selected = recorded(&fixture["cases"][0]["sort"]);
+    assert_eq!(
+        serde_json::from_value::<PageSort>(serde_json::to_value(&selected).unwrap()).unwrap(),
+        selected
+    );
 }

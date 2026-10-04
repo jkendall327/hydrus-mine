@@ -37,6 +37,7 @@ pub(crate) struct Gif {
     pub screen: (u32, u32),
     pub global_palette: Option<Vec<u8>>,
     pub frames: Vec<Frame>,
+    pub times_to_play: u32,
 }
 
 struct Cursor<'a> {
@@ -84,7 +85,12 @@ enum Step {
 }
 
 /// One `_seek` iteration: read extensions until an image descriptor.
-fn next_frame(c: &mut Cursor<'_>, size: &mut (u32, u32), first: bool) -> Step {
+fn next_frame(
+    c: &mut Cursor<'_>,
+    size: &mut (u32, u32),
+    first: bool,
+    times_to_play: &mut u32,
+) -> Step {
     let mut s = c.byte();
     match s {
         None | Some(b';') => return Step::End,
@@ -131,8 +137,13 @@ fn next_frame(c: &mut Cursor<'_>, size: &mut (u32, u32), first: bool) -> Step {
                         .as_deref()
                         .is_some_and(|b| b.starts_with(b"NETSCAPE2.0"))
                 {
-                    // the loop-count sub-block
-                    let _ = c.sub_block();
+                    // Pillow exposes the stored count directly (0 infinite).
+                    if let Some(block) = c.sub_block()
+                        && block.first() == Some(&1)
+                        && let Some(count) = le16(&block, 1)
+                    {
+                        *times_to_play = count;
+                    }
                 }
                 while c.sub_block().is_some() {}
             }
@@ -195,13 +206,14 @@ pub(crate) fn parse(data: &[u8]) -> Result<Gif> {
         }
     }
     let mut frames: Vec<Frame> = Vec::new();
+    let mut times_to_play = 1;
     loop {
         if let Some(prev) = frames.last() {
             // skip the previous frame's image data
             c.pos = prev.data_offset;
             while c.sub_block().is_some() {}
         }
-        match next_frame(&mut c, &mut size, frames.is_empty()) {
+        match next_frame(&mut c, &mut size, frames.is_empty(), &mut times_to_play) {
             Step::Frame(f) => frames.push(f),
             // Pillow stops at the first frame it cannot read
             Step::End | Step::Broken => break,
@@ -214,6 +226,7 @@ pub(crate) fn parse(data: &[u8]) -> Result<Gif> {
         screen: (le16(data, 6).unwrap_or(0), le16(data, 8).unwrap_or(0)),
         global_palette,
         frames,
+        times_to_play,
     })
 }
 

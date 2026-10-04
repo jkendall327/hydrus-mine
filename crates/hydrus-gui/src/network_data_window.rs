@@ -1,6 +1,9 @@
 //! Non-blocking native network reviews, using the daemon's typed store IPC.
 
-use crate::{BandwidthWindow, EditBandwidthRulesWindow, NetworkJobsWindow, TableColumn, TableRow};
+use crate::{
+    BandwidthWindow, EditBandwidthRulesWindow, MonthlyBandwidthBar, NetworkJobsWindow, TableColumn,
+    TableRow,
+};
 use crossbeam_channel::{Receiver, Sender};
 use hydrus_core::{bandwidth::BandwidthType, network::NetworkContext, time::TimestampMs};
 use hydrus_gui_model::{
@@ -20,8 +23,10 @@ use std::{
 };
 
 enum Operation {
+    Preferences(model::BandwidthReviewPreferences),
     Refresh,
     Save(RulesDraft, bool),
+    DeleteHistory(Vec<NetworkContext>),
     Reset,
     Job(Command),
     Stop,
@@ -46,11 +51,26 @@ impl Worker {
                     | Err(crossbeam_channel::RecvTimeoutError::Disconnected) => break,
                     Ok(Operation::Save(draft, revert)) => Some(draft.apply(&store, revert)),
                     Ok(Operation::Reset) => Some(model::reset_defaults(&store)),
+                    Ok(Operation::DeleteHistory(contexts)) => Some(
+                        store
+                            .write(move |ctx| {
+                                hydrus_store::bandwidth::delete_history(ctx.conn(), &contexts)
+                            })
+                            .map_err(|e| e.to_string()),
+                    ),
                     Ok(Operation::Job(command)) => Some(
                         store
                             .write(move |ctx| network_runtime::send(ctx.conn(), command))
                             .map_err(|e| e.to_string()),
                     ),
+                    Ok(Operation::Preferences(preferences)) => {
+                        if let Err(e) = store
+                            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &preferences))
+                        {
+                            let _ = events.send(Event::Review(Err(e.to_string())));
+                        }
+                        None
+                    }
                     Ok(Operation::Refresh) | Err(crossbeam_channel::RecvTimeoutError::Timeout) => {
                         None
                     }
@@ -58,12 +78,8 @@ impl Worker {
                 if let Some(result) = result {
                     let _ = events.send(Event::Written(result));
                 }
-                if events
-                    .send(Event::Review(Review::load(&store, now())))
-                    .is_err()
-                {
-                    break;
-                }
+                // A closing view can still have an owner-release command queued.
+                let _ = events.send(Event::Review(Review::load(&store, now())));
             }
         });
         let _ = send.send(Operation::Refresh);
@@ -157,6 +173,33 @@ pub fn last_jobs() -> Option<NetworkJobsWindow> {
         .filter(|w| w.window().is_visible())
 }
 
+fn review_history(window: &BandwidthWindow) -> Result<Option<u64>, String> {
+    if window.get_show_all() || window.get_history() == 3 {
+        return Ok(None);
+    }
+    Ok(Some(match window.get_history() {
+        1 => 86400,
+        2 => {
+            let date = jiff::Timestamp::now().to_zoned(jiff::tz::TimeZone::UTC);
+            u64::try_from(
+                i64::from(date.day() - 1) * 86400
+                    + i64::from(date.hour()) * 3600
+                    + i64::from(date.minute()) * 60
+                    + i64::from(date.second())
+                    + 1,
+            )
+            .unwrap_or(1)
+        }
+        4 => window
+            .get_history_seconds()
+            .trim()
+            .parse::<u64>()
+            .ok()
+            .filter(|span| *span > 0 && i64::try_from(*span).is_ok())
+            .ok_or("Enter a positive history period in seconds.")?,
+        _ => 604_800,
+    }))
+}
 struct Edit {
     window: EditBandwidthRulesWindow,
 }
@@ -166,9 +209,13 @@ struct Bandwidth {
     worker: Worker,
     timer: Timer,
     active: Cell<bool>,
+    direct: Cell<bool>,
+    requested_edit: RefCell<Option<NetworkContext>>,
     review: RefCell<Option<Review>>,
     order: RefCell<Vec<NetworkContext>>,
     selected: RefCell<Option<NetworkContext>>,
+    known: RefCell<Vec<NetworkContext>>,
+    selection: RefCell<ListSelection<usize>>,
     edit: RefCell<Option<Edit>>,
     pending: RefCell<Option<Operation>>,
     error: RefCell<String>,
@@ -179,25 +226,36 @@ impl Bandwidth {
         let Some(review) = review.as_ref() else {
             return;
         };
-        let history = match self.window.get_history() {
-            1 => Some(86400),
-            2 | 3 => None,
-            _ => Some(604_800),
+        let history = match review_history(&self.window) {
+            Ok(history) => history,
+            Err(e) => {
+                self.window.set_status(e.into());
+                return;
+            }
         };
         let column = usize::try_from(self.window.get_sort_column())
             .unwrap_or(0)
             .min(7);
-        let numeric_column = if column == 4 && self.window.get_history() == 2 {
-            5
-        } else {
-            column
-        };
-        let mut order = review.contexts();
+        let numeric_column =
+            if column == 4 && self.window.get_history() == 2 && !self.window.get_show_all() {
+                5
+            } else {
+                column
+            };
+        let mut order = review.filtered_contexts(history, self.window.get_include_rules(), now());
+        {
+            let mut known = self.known.borrow_mut();
+            for context in &order {
+                if !known.contains(context) {
+                    known.push(context.clone());
+                }
+            }
+        }
         let mut rows: Vec<_> = order
             .drain(..)
             .map(|c| {
                 let mut cells = review.row(&c, history, now());
-                if self.window.get_history() == 2 {
+                if self.window.get_history() == 2 && !self.window.get_show_all() {
                     let (history, month) = cells.split_at_mut(5);
                     history[4].clone_from(&month[0]);
                 }
@@ -209,11 +267,34 @@ impl Bandwidth {
         if !self.window.get_ascending() {
             rows.reverse();
         }
-        let selected = self.selected.borrow();
         *self.order.borrow_mut() = rows.iter().map(|(c, _, _)| c.clone()).collect();
+        let known = self.known.borrow();
+        let visible: Vec<_> = self
+            .order
+            .borrow()
+            .iter()
+            .filter_map(|c| known.iter().position(|k| k == c))
+            .collect();
+        let selection = self.selection.borrow();
+        let selected_tokens = selection.in_order(&visible);
+        *self.selected.borrow_mut() = if selected_tokens.len() == 1 {
+            known.get(selected_tokens[0]).cloned()
+        } else {
+            None
+        };
+        let selected = self.selected.borrow();
+        self.window.set_can_delete(!selected_tokens.is_empty());
         self.window.set_rows(ModelRc::new(VecModel::from(
             rows.into_iter()
-                .map(|(c, cells, _)| row(cells, selected.as_ref() == Some(&c)))
+                .map(|(c, cells, _)| {
+                    row(
+                        cells,
+                        known
+                            .iter()
+                            .position(|k| k == &c)
+                            .is_some_and(|i| selection.is_selected(i)),
+                    )
+                })
                 .collect::<Vec<_>>(),
         )));
         self.window.set_can_edit(selected.is_some());
@@ -222,8 +303,23 @@ impl Bandwidth {
                 .as_ref()
                 .is_some_and(|c| !c.is_default() && c.kind != 0 && !review.inherits(c)),
         );
+        self.window.set_detail("".into());
+        self.window.set_chart_context("".into());
+        self.window.set_monthly_bars(ModelRc::default());
         if let Some(context) = selected.as_ref() {
             let mut tracker = review.tracker(context, now());
+            self.window
+                .set_chart_context(context.to_human_string().into());
+            self.window.set_monthly_bars(ModelRc::new(VecModel::from(
+                model::monthly_history(&tracker)
+                    .into_iter()
+                    .map(|bar| MonthlyBandwidthBar {
+                        month: bar.month.into(),
+                        usage: hydrus_core::numbers::human_bytes(bar.bytes).into(),
+                        fraction: bar.fraction,
+                    })
+                    .collect::<Vec<_>>(),
+            )));
             let rules = review
                 .rules(context)
                 .rules()
@@ -276,6 +372,10 @@ impl Bandwidth {
                 Event::Review(Ok(review)) => {
                     *self.review.borrow_mut() = Some(review);
                     self.show();
+                    let requested = self.requested_edit.borrow_mut().take();
+                    if let Some(context) = requested {
+                        self.edit(context);
+                    }
                 }
                 Event::Review(Err(error)) => self.window.set_status(error.into()),
                 Event::Written(result) => {
@@ -303,6 +403,14 @@ impl Bandwidth {
     fn close_edit(&self) {
         if let Some(edit) = self.edit.borrow_mut().take() {
             let _ = edit.window.hide();
+        }
+        if self.direct.get() {
+            self.active.set(false);
+            self.timer.stop();
+            let _ = self.worker.send.send(Operation::Stop);
+            if let Some(owner) = self.owner.upgrade() {
+                owner.borrow_mut().take();
+            }
         }
     }
     fn edit(self: &Rc<Self>, context: NetworkContext) {
@@ -513,6 +621,18 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
         ("own rules", 75.0),
         ("blocked", 100.0),
     ]));
+    let preferences = store
+        .read(hydrus_store::settings::get::<model::BandwidthReviewPreferences>)
+        .map_err(|e| e.to_string())?;
+    match preferences.history {
+        None => window.set_show_all(true),
+        Some(86400) => window.set_history(1),
+        Some(604_800) => {}
+        Some(span) => {
+            window.set_history(4);
+            window.set_history_seconds(span.to_string().into());
+        }
+    }
     window.set_status("Loading bandwidth usage…".into());
     let state = Rc::new(Bandwidth {
         window: window.clone_strong(),
@@ -520,20 +640,33 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
         worker: Worker::start(store),
         timer: Timer::default(),
         active: Cell::new(true),
+        direct: Cell::new(false),
+        requested_edit: RefCell::default(),
         review: RefCell::default(),
         order: RefCell::default(),
         selected: RefCell::default(),
+        known: RefCell::default(),
+        selection: RefCell::default(),
         edit: RefCell::default(),
         pending: RefCell::default(),
         error: RefCell::default(),
     });
     window.on_row_clicked({
         let state = Rc::downgrade(&state);
-        move |r, _, _| {
-            if let Some(s) = state.upgrade() {
-                *s.selected.borrow_mut() = usize::try_from(r)
-                    .ok()
-                    .and_then(|i| s.order.borrow().get(i).cloned());
+        move |r, ctrl, shift| {
+            if let (Some(s), Ok(index)) = (state.upgrade(), usize::try_from(r)) {
+                if !s.active.get() || !s.window.get_question().is_empty() {
+                    return;
+                }
+                let known = s.known.borrow();
+                let tokens: Vec<_> = s
+                    .order
+                    .borrow()
+                    .iter()
+                    .filter_map(|c| known.iter().position(|k| k == c))
+                    .collect();
+                s.selection.borrow_mut().click(&tokens, index, ctrl, shift);
+                drop(known);
                 s.show();
             }
         }
@@ -553,6 +686,11 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
         move || {
             if let Some(s) = state.upgrade() {
                 s.show();
+                if let Ok(history) = review_history(&s.window) {
+                    let _ = s.worker.send.send(Operation::Preferences(
+                        model::BandwidthReviewPreferences { history },
+                    ));
+                }
                 let _ = s.worker.send.send(Operation::Refresh);
             }
         }
@@ -592,6 +730,36 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
                         .set_status("Enter a domain without a scheme or path.".into());
                 }
             }
+        }
+    });
+    window.on_delete_history_clicked({
+        let state = Rc::downgrade(&state);
+        move || {
+            let Some(s) = state.upgrade() else {
+                return;
+            };
+            if !s.active.get() || s.window.get_busy() || !s.window.get_question().is_empty() {
+                return;
+            }
+            let known = s.known.borrow();
+            let visible: Vec<_> = s
+                .order
+                .borrow()
+                .iter()
+                .filter_map(|c| known.iter().position(|k| k == c))
+                .collect();
+            let contexts: Vec<_> = s
+                .selection
+                .borrow()
+                .in_order(&visible)
+                .into_iter()
+                .filter_map(|i| known.get(i).cloned())
+                .collect();
+            if contexts.is_empty() {
+                return;
+            }
+            *s.pending.borrow_mut() = Some(Operation::DeleteHistory(contexts));
+            s.window.set_question(model::DELETE_HISTORY_QUESTION.into());
         }
     });
     window.on_revert_clicked({
@@ -665,7 +833,40 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
     Ok(window)
 }
 
+/// Open the same detached rules editor directly from a job's context submenu.
+/// A hidden loading owner is closed with the draft; an existing review stays open.
+pub fn open_rules(store: Arc<Store>, slots: &Slots, context: NetworkContext) -> Result<(), String> {
+    let existing = slots.bandwidth.borrow().is_some();
+    let window = open_bandwidth(store, slots)?;
+    let state = slots
+        .bandwidth
+        .borrow()
+        .clone()
+        .ok_or("Rules owner was closed.")?;
+    if !existing {
+        window.hide().map_err(|e| e.to_string())?;
+        state.direct.set(true);
+    }
+    if state.review.borrow().is_some() {
+        state.edit(context);
+    } else {
+        *state.requested_edit.borrow_mut() = Some(context);
+    }
+    Ok(())
+}
+
 struct Jobs {
+    store: Arc<Store>,
+    rules: Slots,
+    control_owner: u64,
+    auto_override: Cell<bool>,
+    auto_sent: RefCell<Option<(String, u64, bool)>>,
+    cog_job: RefCell<Option<(String, u64)>>,
+    cog_actions:
+        RefCell<std::collections::HashMap<i32, hydrus_gui_model::network_job_control::Action>>,
+    last_job: RefCell<Option<(String, u64)>>,
+    last_error: RefCell<Option<String>>,
+    error_window: crate::network_job_control::Errors,
     window: NetworkJobsWindow,
     owner: std::rc::Weak<RefCell<Option<Rc<Jobs>>>>,
     worker: Worker,
@@ -713,6 +914,70 @@ impl Jobs {
             .borrow()
             .one()
             .and_then(|id| jobs.iter().find(|j| j.id == id));
+        if let Some(job) = selected {
+            *self.last_job.borrow_mut() = Some((review.runtime.epoch.clone(), job.id));
+        }
+        if let Some(error) = self.last_job.borrow().as_ref().and_then(|(epoch, id)| {
+            if review.runtime.epoch != *epoch {
+                return None;
+            }
+            review.runtime.errors.iter().rev().find(|e| e.id == *id)
+        }) {
+            *self.last_error.borrow_mut() = Some(error.text.clone());
+        }
+        let line = selected
+            .map(|job| {
+                hydrus_store::live::JobLive {
+                    url: job.url.clone(),
+                    status: job.status.clone(),
+                    speed: job.speed,
+                    bytes_read: job.bytes_read,
+                    bytes_to_read: job.bytes_total,
+                    done: false,
+                    error: false,
+                }
+                .line()
+            })
+            .unwrap_or_default();
+        self.window.set_download(crate::download_line(&line));
+        let mut cog = self.window.get_cog();
+        cog.auto_override = self.auto_override.get();
+        cog.has_error = self.last_error.borrow().is_some();
+        self.window.set_cog(cog);
+        let selected = selected.filter(|_| review.runtime.fresh(now()));
+        let next = selected.map(|job| {
+            (
+                review.runtime.epoch.clone(),
+                job.id,
+                self.auto_override.get(),
+            )
+        });
+        if *self.auto_sent.borrow() != next {
+            if let Some((epoch, id, true)) = self.auto_sent.borrow().as_ref()
+                && review.runtime.epoch == *epoch
+                && review.runtime.jobs.iter().any(|j| j.id == *id)
+            {
+                let _ = self.worker.send.send(Operation::Job(Command {
+                    epoch: epoch.clone(),
+                    job: *id,
+                    action: JobAction::AutoOverrideBandwidthFor {
+                        owner: self.control_owner,
+                        enabled: false,
+                    },
+                }));
+            }
+            if let Some((epoch, id, true)) = &next {
+                let _ = self.worker.send.send(Operation::Job(Command {
+                    epoch: epoch.clone(),
+                    job: *id,
+                    action: JobAction::AutoOverrideBandwidthFor {
+                        owner: self.control_owner,
+                        enabled: true,
+                    },
+                }));
+            }
+            *self.auto_sent.borrow_mut() = next;
+        }
         self.window.set_detail(
             selected
                 .map_or_else(String::new, |job| {
@@ -739,6 +1004,80 @@ impl Jobs {
             }
             .into(),
         );
+    }
+    fn menu(&self) {
+        let review = self.review.borrow();
+        let Some(review) = review.as_ref() else {
+            return;
+        };
+        let selected = self
+            .selection
+            .borrow()
+            .one()
+            .and_then(|id| review.runtime.jobs.iter().find(|j| j.id == id));
+        let job = selected
+            .filter(|_| review.runtime.fresh(now()))
+            .and_then(|job| {
+                review
+                    .runtime
+                    .controls
+                    .iter()
+                    .find(|c| c.id == job.id)
+                    .map(|meta| (job, meta))
+            });
+        let menu = hydrus_gui_model::network_job_control::cog(
+            review,
+            job,
+            self.auto_override.get(),
+            now(),
+        );
+        let (menu, actions) =
+            crate::network_job_control::menu_data(menu, self.last_error.borrow().is_some());
+        *self.cog_job.borrow_mut() = job.map(|(job, _)| (review.runtime.epoch.clone(), job.id));
+        *self.cog_actions.borrow_mut() = actions;
+        self.window.set_cog(menu);
+    }
+    fn control_action(&self, id: i32) {
+        if id == 7 {
+            self.auto_override.set(!self.auto_override.get());
+            self.show();
+            self.menu();
+            return;
+        }
+        if matches!(id, 8 | 9) {
+            if let Some(text) = self.last_error.borrow().as_ref() {
+                if id == 8 {
+                    let _ = self.error_window.show(text);
+                } else {
+                    crate::copy_to_clipboard(text);
+                }
+            }
+            return;
+        }
+        match self.cog_actions.borrow().get(&id) {
+            Some(hydrus_gui_model::network_job_control::Action::CopyUrl(url)) => {
+                crate::copy_to_clipboard(url);
+            }
+            Some(hydrus_gui_model::network_job_control::Action::Rules(context)) => {
+                let _ = open_rules(self.store.clone(), &self.rules, context.clone());
+            }
+            Some(hydrus_gui_model::network_job_control::Action::Job(action)) => {
+                if let Some((epoch, id)) = self.cog_job.borrow().as_ref()
+                    && self.review.borrow().as_ref().is_some_and(|r| {
+                        r.runtime.fresh(now())
+                            && r.runtime.epoch == *epoch
+                            && r.runtime.jobs.iter().any(|j| j.id == *id)
+                    })
+                {
+                    let _ = self.worker.send.send(Operation::Job(Command {
+                        epoch: epoch.clone(),
+                        job: *id,
+                        action: *action,
+                    }));
+                }
+            }
+            _ => {}
+        }
     }
     fn poll(&self) {
         for event in self.worker.receive.try_iter() {
@@ -791,6 +1130,16 @@ impl Jobs {
         self.manual.set(true);
     }
     fn close(&self) {
+        if let Some((epoch, job, true)) = self.auto_sent.borrow_mut().take() {
+            let _ = self.worker.send.send(Operation::Job(Command {
+                epoch,
+                job,
+                action: JobAction::AutoOverrideBandwidthFor {
+                    owner: self.control_owner,
+                    enabled: false,
+                },
+            }));
+        }
         self.timer.stop();
         let _ = self.worker.send.send(Operation::Stop);
         let _ = self.window.hide();
@@ -819,6 +1168,19 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
         ("progress", 110.0),
     ]));
     let state = Rc::new(Jobs {
+        store: store.clone(),
+        rules: Slots {
+            bandwidth: slots.bandwidth.clone(),
+            jobs: Rc::default(),
+        },
+        control_owner: crate::network_job_control::new_control_owner(),
+        auto_override: Cell::new(false),
+        auto_sent: RefCell::default(),
+        cog_job: RefCell::default(),
+        cog_actions: RefCell::default(),
+        last_job: RefCell::default(),
+        last_error: RefCell::default(),
+        error_window: crate::network_job_control::Errors::default(),
         window: window.clone_strong(),
         owner: Rc::downgrade(&slots.jobs),
         worker: Worker::start(store),
@@ -857,6 +1219,22 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
             if let Some(s) = state.upgrade() {
                 s.manual.set(true);
                 let _ = s.worker.send.send(Operation::Refresh);
+            }
+        }
+    });
+    window.on_control_menu({
+        let state = Rc::downgrade(&state);
+        move || {
+            if let Some(s) = state.upgrade() {
+                s.menu();
+            }
+        }
+    });
+    window.on_control_action({
+        let state = Rc::downgrade(&state);
+        move |id| {
+            if let Some(s) = state.upgrade() {
+                s.control_action(id);
             }
         }
     });

@@ -1,7 +1,9 @@
 import { Button, LineEdit, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component DownloaderExchangeWindow inherits Window {
-    title: root.importing ? "import downloader definitions" : "export downloader definitions";
+    in property <string> window-title: root.importing ? "import downloader definitions" : "export downloader definitions";
+    title: root.window-title;
+    in property <string> instructions: root.importing ? "Paste reference downloader text or open a hydrus PNG. Review the definitions before importing." : "Copy reference downloader text or save a hydrus PNG to share these definitions.";
     preferred-width: 880px; preferred-height: 610px;
     background: Theme.window;
     in property <bool> importing;
@@ -11,21 +13,26 @@ export component DownloaderExchangeWindow inherits Window {
     in property <string> review;
     in property <string> error;
     in property <bool> ready;
+    in property <bool> active;
+    in property <bool> png-enabled;
+    in property <bool> png-child;
+    callback export-png();
     callback action(string);
     callback closed();
     VerticalLayout {
         padding: 12px; spacing: 8px;
-        Text { text: root.importing ? "Paste reference downloader text or open a hydrus PNG. Review the definitions before importing." : "Copy reference downloader text or save a hydrus PNG to share these definitions."; color: Theme.text; wrap: word-wrap; }
-        TextEdit { vertical-stretch: 1; text <=> root.text; read-only: root.text-read-only; enabled: !root.ready; }
+        Text { text: root.instructions; color: Theme.text; wrap: word-wrap; }
+        TextEdit { vertical-stretch: 1; text <=> root.text; read-only: root.text-read-only; enabled: !root.ready && !root.png-child; }
         HorizontalLayout {
-            Button { text: root.importing ? "paste" : "copy"; enabled: !root.ready; clicked => { root.action(root.importing ? "paste" : "copy"); } }
-            if root.importing: Button { text: "review text"; enabled: !root.ready; clicked => { root.action("review"); } }
+            Button { text: root.importing ? "paste" : "copy"; enabled: !root.ready && !root.png-child; clicked => { root.action(root.importing ? "paste" : "copy"); } }
+            if root.importing: Button { text: "review text"; enabled: !root.ready && !root.png-child; clicked => { root.action("review"); } }
         }
-        HorizontalLayout {
-            LineEdit { horizontal-stretch: 1; text <=> root.path; placeholder-text: "PNG or text file path"; enabled: !root.ready; }
-            Button { text: "browse"; enabled: !root.ready; clicked => { root.action("browse"); } }
-            Button { text: root.importing ? "open file" : "save PNG"; enabled: !root.ready; clicked => { root.action(root.importing ? "open" : "save"); } }
+        if !root.png-enabled || root.importing: HorizontalLayout {
+            LineEdit { horizontal-stretch: 1; text <=> root.path; placeholder-text: "PNG or text file path"; enabled: !root.ready && !root.png-child; }
+            Button { text: "browse"; enabled: !root.ready && !root.png-child; clicked => { root.action("browse"); } }
+            Button { text: root.importing ? "open file" : "save PNG"; enabled: !root.ready && !root.png-child; clicked => { root.action(root.importing ? "open" : "save"); } }
         }
+        if root.png-enabled && !root.importing: Button { text: "export to png"; enabled: !root.png-child; clicked => { root.export-png(); } }
         if root.review != "": TextEdit { height: 140px; text: root.review; read-only: true; }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         HorizontalLayout {

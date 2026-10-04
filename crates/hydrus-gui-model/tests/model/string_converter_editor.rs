@@ -3,9 +3,8 @@
 //! from `oracle/record_string_converter_editor.py`): the numbered rows with
 //! the example converted up to each, the selection and moves, what each
 //! conversion editor is given and shows, what "ok" asks, and the values.
-//! Random text and dates aren't the same run to run (random) or run at all
-//! (dates, which hydrus-rs keeps without running): those results are
-//! checked as far as they can be.
+//! Random results are checked structurally. Deterministic date execution
+//! and invalid input are covered by the separate date recorder replay.
 
 use hydrus_core::url::strings::{Conversion, ProcessingStep, StringConverter};
 use hydrus_gui_model::string_editors::{
@@ -28,7 +27,13 @@ fn converter(value: &Value) -> StringConverter {
 /// date (whose error hydrus-rs words its own way).
 fn random_or_date(conversion: &Conversion) -> bool {
     matches!(conversion, Conversion::AppendRandom { population, count } if !population.is_empty() && *count > 0)
-        || matches!(conversion, Conversion::Unsupported { .. })
+        || matches!(
+            conversion,
+            Conversion::Unsupported { .. }
+                | Conversion::DateDecode { .. }
+                | Conversion::DateEncode { .. }
+                | Conversion::DateParse
+        )
 }
 
 /// An error's text up to its reason.
@@ -44,6 +49,7 @@ fn same_result(ours: &str, theirs: &str, loose: bool, context: &str) {
     } else if let Some(theirs) = before_reason(theirs) {
         assert_eq!(before_reason(ours), Some(theirs), "{context}");
     } else {
+        // Random conversions are the only successful values with unstable text.
         assert_eq!(
             ours.chars().count(),
             theirs.chars().count(),
@@ -92,7 +98,9 @@ fn check_conversion(editor: &ConversionEditor, state: &Value, context: &str) {
     same_result(
         &editor.result(),
         state["result"].as_str().unwrap(),
-        random_or_date(&value),
+        random_or_date(&value)
+            && (state["result"].as_str().unwrap().starts_with("ERROR:")
+                || matches!(value, Conversion::AppendRandom { .. })),
         context,
     );
 }
@@ -151,7 +159,11 @@ fn check(editor: &ConverterEditor, state: &Value, context: &str) {
     for (i, (row, theirs)) in rows.iter().zip(recorded).enumerate() {
         assert_eq!(row[0], theirs[0], "{context}");
         assert_eq!(row[1], theirs[1], "{context}");
-        let loose = value.conversions[..=i].iter().any(random_or_date);
+        let loose = value.conversions[..=i].iter().any(|v| {
+            random_or_date(v)
+                && (theirs[2].as_str().unwrap().starts_with("ERROR:")
+                    || matches!(v, Conversion::AppendRandom { .. }))
+        });
         same_result(&row[2], theirs[2].as_str().unwrap(), loose, context);
     }
     assert_eq!(json!(editor.selected()), state["selected"], "{context}");
@@ -161,7 +173,16 @@ fn check(editor: &ConverterEditor, state: &Value, context: &str) {
 
 #[test]
 fn the_string_converter_editor_works_as_the_references_does() {
-    let recorded = hydrus_testkit::fixture_json("string_converter_editor.json");
+    replay("string_converter_editor.json");
+}
+
+#[test]
+fn date_controls_and_live_preview_follow_real_qt_accept_cancel_and_reorder() {
+    replay("string_date_editor.json");
+}
+
+fn replay(fixture: &str) {
+    let recorded = hydrus_testkit::fixture_json(fixture);
     for (c, case) in recorded["cases"].as_array().unwrap().iter().enumerate() {
         let mut editor = ConverterEditor::new(
             &converter(&case["converter"]),
@@ -180,7 +201,7 @@ fn the_string_converter_editor_works_as_the_references_does() {
                     usize::try_from(action[1].as_u64().unwrap()).unwrap(),
                     action[2].as_bool().unwrap(),
                 ),
-                "example" => editor.example = action[1].as_str().unwrap().to_owned(),
+                "example" => action[1].as_str().unwrap().clone_into(&mut editor.example),
                 "add" => {
                     assert_eq!(said[0], json!({"dialog": "edit conversion"}), "{context}");
                     let adding = editor.adding(last_used.as_ref());
@@ -227,4 +248,36 @@ fn the_string_converter_editor_works_as_the_references_does() {
             check(&editor, &step["state"], &context);
         }
     }
+}
+
+#[test]
+fn last_conversion_loads_reference_options_then_native_override() {
+    use hydrus_store::string_conversion::{LastStringConversion, load};
+    let fixture = hydrus_testkit::fixture_json("string_conversion_preference.json");
+    let conn = rusqlite::Connection::open_in_memory().unwrap();
+    conn.execute_batch("CREATE TABLE settings(key TEXT PRIMARY KEY, value TEXT); CREATE TABLE legacy_objects(source TEXT, type_id INTEGER, version INTEGER, dump TEXT);").unwrap();
+    assert_eq!(load(&conn).unwrap(), LastStringConversion::default());
+    for step in fixture["steps"].as_array().unwrap() {
+        conn.execute("DELETE FROM legacy_objects", []).unwrap();
+        conn.execute(
+            "INSERT INTO legacy_objects VALUES ('json_dumps',22,8,?)",
+            [step["options"][2].to_string()],
+        )
+        .unwrap();
+        let expected =
+            hydrus_downloader_exchange::processing::decode_text(&step["saved"].to_string())
+                .unwrap();
+        let ProcessingStep::Convert(expected) = &expected[0] else {
+            panic!("reference preference is a converter")
+        };
+        assert_eq!(
+            load(&conn).unwrap().0.as_ref(),
+            expected.conversions.first()
+        );
+    }
+    let saved = LastStringConversion(Some(Conversion::Append("native".into())));
+    hydrus_store::settings::set(&conn, &saved).unwrap();
+    assert_eq!(load(&conn).unwrap(), saved);
+    hydrus_store::settings::set(&conn, &LastStringConversion(None)).unwrap();
+    assert_eq!(load(&conn).unwrap(), LastStringConversion(None));
 }

@@ -304,6 +304,11 @@ async fn flaky(State(s): State<Arc<Server>>, Path(kind): Path<String>) -> Respon
             .header(header::RETRY_AFTER, "0")
             .body(Body::from("slow down"))
             .unwrap(),
+        "429long" if n <= 1 => Response::builder()
+            .status(StatusCode::TOO_MANY_REQUESTS)
+            .header(header::RETRY_AFTER, "60")
+            .body(Body::from("slow down"))
+            .unwrap(),
         "always429" => Response::builder()
             .status(StatusCode::TOO_MANY_REQUESTS)
             .header(header::RETRY_AFTER, "0")
@@ -565,7 +570,9 @@ async fn statuses_become_errors_or_retries() {
 #[tokio::test]
 async fn a_job_ends_as_the_references_do_and_has_a_speed() {
     let s = setup(|_| Vec::new()).await;
-    // done, with what it read in the last second as its speed
+    // Speed counts the current integer-second bucket, not the entire
+    // three-range transfer: CI can cross a second between its 400/400/200 reads.
+    // Exact rollover/expiry is checked with a fixed clock in the Job unit test.
     let job = Job::new();
     let request = Request::get(format!("{}/file.png", s.base));
     s.engine.fetch(&request, &job).await.unwrap();
@@ -573,7 +580,7 @@ async fn a_job_ends_as_the_references_do_and_has_a_speed() {
     assert_eq!(state.status, "done!");
     assert!(state.done && !state.error);
     assert_eq!(state.bytes_read, 1000);
-    assert_eq!(state.speed, 1000, "read within the last second");
+    assert!(state.speed <= state.bytes_read);
     // an error status as the server gave it
     let failing = Request::get(format!("{}/flaky/404", s.base));
     assert!(s.engine.fetch(&failing, &job).await.is_err());
@@ -895,4 +902,496 @@ async fn a_header_awaiting_approval_holds_its_requests() {
         .unwrap()
         .text();
     assert!(text.contains("x-new: yes"), "{text}");
+}
+
+#[tokio::test]
+async fn deleting_history_discards_stale_flushes_resets_live_limits_and_wakes_waiters() {
+    use hydrus_core::bandwidth::{BandwidthType, Rule, Rules};
+    use hydrus_store::{
+        bandwidth::{self, BandwidthSettings},
+        settings,
+    };
+    let s = setup(|_| Vec::new()).await;
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &BandwidthSettings {
+                    rules: vec![(
+                        NetworkContext::global(),
+                        Rules::new([Rule::new(BandwidthType::Requests, Some(3600), 1)]),
+                    )],
+                    ..BandwidthSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let engine = NetEngine::new(
+        s.store.clone(),
+        NetOptions {
+            obey_bandwidth: true,
+            ..s.engine.options()
+        },
+    )
+    .unwrap();
+    let request = Request::get(format!("{}/echo", s.base));
+    engine.fetch(&request, &Job::new()).await.unwrap();
+    engine.publish_runtime().unwrap();
+    let job = Job::new();
+    let mut pending = Box::pin(engine.fetch(&request, &job));
+    tokio::select! { _ = &mut pending => panic!("request must wait for bandwidth"), () = tokio::time::sleep(std::time::Duration::from_millis(30)) => {} }
+    s.store
+        .write(|ctx| bandwidth::delete_history(ctx.conn(), &[NetworkContext::global()]))
+        .unwrap();
+    engine.save_bandwidth().unwrap();
+    let now = engine.runtime_snapshot().at;
+    assert!(
+        !s.store
+            .read(|c| bandwidth::usage(c, now))
+            .unwrap()
+            .iter()
+            .any(|(c, _)| c == &NetworkContext::global())
+    );
+    engine.publish_runtime().unwrap();
+    assert!(
+        !s.store
+            .read(settings::get::<hydrus_store::network_runtime::Snapshot>)
+            .unwrap()
+            .usage
+            .iter()
+            .any(|(c, _)| c == &NetworkContext::global())
+    );
+    tokio::time::timeout(std::time::Duration::from_secs(1), pending)
+        .await
+        .unwrap()
+        .unwrap();
+    engine.save_bandwidth().unwrap();
+    let mut tracker = s
+        .store
+        .read(|c| bandwidth::usage(c, now))
+        .unwrap()
+        .into_iter()
+        .find(|(c, _)| c == &NetworkContext::global())
+        .unwrap()
+        .1;
+    assert_eq!(tracker.usage(BandwidthType::Requests, None, now), 1);
+    assert_eq!(
+        s.store
+            .read(settings::get::<BandwidthSettings>)
+            .unwrap()
+            .rules[0]
+            .1
+            .rules()[0]
+            .max_allowed,
+        1
+    );
+    let reopened = NetEngine::new(
+        s.store.clone(),
+        NetOptions {
+            obey_bandwidth: true,
+            ..s.engine.options()
+        },
+    )
+    .unwrap();
+    let mut tracker = reopened
+        .runtime_snapshot()
+        .usage
+        .into_iter()
+        .find(|(c, _)| c == &NetworkContext::global())
+        .unwrap()
+        .1;
+    assert_eq!(tracker.usage(BandwidthType::Requests, None, now), 1);
+}
+
+#[tokio::test]
+async fn disabling_sleep_detection_reloads_and_releases_pending_requests() {
+    use hydrus_store::network::NetworkSettings;
+    use hydrus_store::settings;
+    let s = setup(|_| Vec::new()).await;
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_millis() as i64;
+    s.engine.sleep_check_at(now - 61_000);
+    s.engine.sleep_check_at(now);
+    let request = Request::get(format!("{}/echo", s.base));
+    let job = Job::new();
+    assert!(
+        tokio::time::timeout(
+            std::time::Duration::from_millis(100),
+            s.engine.fetch(&request, &job)
+        )
+        .await
+        .is_err()
+    );
+    assert_eq!(
+        job.state().status,
+        "looks like computer just woke up, waiting a bit"
+    );
+    s.store
+        .write(|ctx| {
+            let mut options = settings::get::<NetworkSettings>(ctx.conn())?;
+            options.detect_sleep = false;
+            settings::set(ctx.conn(), &options)
+        })
+        .unwrap();
+    assert!(s.engine.reload_settings().unwrap());
+    s.engine.sleep_check_at(now + 1);
+    tokio::time::timeout(
+        std::time::Duration::from_secs(2),
+        s.engine.fetch(&request, &Job::new()),
+    )
+    .await
+    .unwrap()
+    .unwrap();
+    s.engine.sleep_check_at(now + 61_002);
+    tokio::time::timeout(
+        std::time::Duration::from_secs(2),
+        s.engine.fetch(&request, &Job::new()),
+    )
+    .await
+    .unwrap()
+    .unwrap();
+}
+
+#[tokio::test]
+async fn independent_engines_add_new_usage_without_replacing_each_other_or_double_counting() {
+    use hydrus_core::bandwidth::{BandwidthType, Tracker};
+    use hydrus_store::bandwidth;
+    let setup = setup(|_| Vec::new()).await;
+    let now = setup.engine.runtime_snapshot().at;
+    let context = NetworkContext::global();
+    let mut old = Tracker::new(now);
+    old.report_data(1234, now);
+    old.report_requests(7, now);
+    setup
+        .store
+        .write({
+            let context = context.clone();
+            move |ctx| bandwidth::save_usage(ctx.conn(), &[(context, old)])
+        })
+        .unwrap();
+    // setup disables bandwidth accounting for unrelated HTTP tests. This
+    // regression needs counting enabled while explicitly bypassing its limits.
+    let options = NetOptions {
+        obey_bandwidth: true,
+        ..setup.engine.options()
+    };
+    let first = NetEngine::new(setup.store.clone(), options.clone()).unwrap();
+    let second = NetEngine::new(setup.store.clone(), options).unwrap();
+    let mut request = Request::get(format!("{}/echo", setup.base));
+    request.override_bandwidth_after = Some(0);
+    let one = first.fetch(&request, &Job::new()).await.unwrap();
+    let two = second.fetch(&request, &Job::new()).await.unwrap();
+    first.save_bandwidth().unwrap();
+    second.save_bandwidth().unwrap();
+    let read = || {
+        setup
+            .store
+            .read(|conn| bandwidth::usage(conn, now))
+            .unwrap()
+            .into_iter()
+            .find(|(c, _)| c == &context)
+            .unwrap()
+            .1
+    };
+    let usage = read();
+    assert_eq!(
+        usage.all_usage(BandwidthType::Data),
+        1234 + one.bytes_read + two.bytes_read
+    );
+    assert_eq!(usage.all_usage(BandwidthType::Requests), 9);
+    first.save_bandwidth().unwrap();
+    second.save_bandwidth().unwrap();
+    assert_eq!(read().to_counters(), usage.to_counters());
+    let three = first.fetch(&request, &Job::new()).await.unwrap();
+    first.save_bandwidth().unwrap();
+    let usage = read();
+    assert_eq!(
+        usage.all_usage(BandwidthType::Data),
+        1234 + one.bytes_read + two.bytes_read + three.bytes_read
+    );
+    assert_eq!(usage.all_usage(BandwidthType::Requests), 10);
+    // A generation change skips stale deltas and clears the old baseline before
+    // the next request is accounted, even while the other engine still exists.
+    setup
+        .store
+        .write({
+            let context = context.clone();
+            move |ctx| bandwidth::delete_history(ctx.conn(), &[context])
+        })
+        .unwrap();
+    second.save_bandwidth().unwrap();
+    assert!(
+        !setup
+            .store
+            .read(|conn| bandwidth::usage(conn, now))
+            .unwrap()
+            .iter()
+            .any(|(c, _)| c == &context)
+    );
+    first.publish_runtime().unwrap();
+    let fresh = first.fetch(&request, &Job::new()).await.unwrap();
+    first.save_bandwidth().unwrap();
+    let usage = read();
+    assert_eq!(usage.all_usage(BandwidthType::Data), fresh.bytes_read);
+    assert_eq!(usage.all_usage(BandwidthType::Requests), 1);
+}
+
+#[tokio::test]
+async fn runtime_cog_server_retry_domain_scrub_and_retained_error() {
+    use hydrus_store::network_runtime::{Command, JobAction, WaitReason};
+    let s = setup(|_| Vec::new()).await;
+    let request = Request::get(format!("{}/flaky/429long", s.base));
+    let job = Job::new();
+    let mut fetch = Box::pin(s.engine.fetch(&request, &job));
+    let start = std::time::Instant::now();
+    loop {
+        tokio::select! { _ = &mut fetch => panic!("server retry wait was skipped"), () = tokio::time::sleep(std::time::Duration::from_millis(10)) => {} }
+        if job.state().wait == WaitReason::ServerBandwidth {
+            break;
+        }
+        assert!(start.elapsed() < std::time::Duration::from_secs(2));
+    }
+    let snapshot = s.engine.runtime_snapshot();
+    let command = |action| Command {
+        epoch: snapshot.epoch.clone(),
+        job: snapshot.jobs[0].id,
+        action,
+    };
+    assert!(
+        !s.engine
+            .runtime_command(&command(JobAction::OverrideConnectionWait))
+    );
+    assert!(
+        s.engine
+            .runtime_command(&command(JobAction::OverrideServerBandwidthWait))
+    );
+    tokio::time::timeout(std::time::Duration::from_secs(1), fetch)
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(s.server.hits.lock().get("429long"), Some(&2));
+    assert!(!s.engine.runtime_command(&command(JobAction::Cancel)));
+
+    let engine = NetEngine::new(
+        s.store.clone(),
+        NetOptions {
+            domain_error_number: 1,
+            ..s.engine.options()
+        },
+    )
+    .unwrap();
+    let mut fail = Request::get(format!("{}/flaky/500", s.base));
+    fail.one_shot = true;
+    assert!(engine.fetch(&fail, &Job::new()).await.is_err());
+    let snapshot = engine.runtime_snapshot();
+    assert!(snapshot.jobs.is_empty());
+    assert_eq!(snapshot.errors.len(), 1);
+    assert_eq!(snapshot.errors[0].url, fail.url);
+    assert_eq!(snapshot.errors[0].text, "broken");
+    // Loopback IPs have no registrable domain. The reference's scrub action
+    // does not clear that gate; registered-domain wake consumption is asserted
+    // in the engine unit test with a synthetic domain and no external requests.
+    assert!(!engine.domain_ok(&fail.url));
+}
+
+#[tokio::test]
+async fn runtime_cog_gallery_override_does_not_release_other_gallery_waiters() {
+    use hydrus_core::bandwidth::{GalleryTokenKind, Rules};
+    use hydrus_net::BandwidthScope;
+    use hydrus_store::{
+        bandwidth::BandwidthSettings,
+        network_runtime::{Command, JobAction, WaitReason},
+        settings,
+    };
+    let s = setup(|_| Vec::new()).await;
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &BandwidthSettings {
+                    rules: vec![(NetworkContext::global(), Rules::new([]))],
+                    gallery_page_wait_pages: 60,
+                    ..BandwidthSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let engine = NetEngine::new(
+        s.store.clone(),
+        NetOptions {
+            obey_bandwidth: true,
+            ..s.engine.options()
+        },
+    )
+    .unwrap();
+    let mut request = Request::get(format!("{}/echo", s.base));
+    request.gallery_page = true;
+    let scope = BandwidthScope {
+        gallery_token: Some(GalleryTokenKind::DownloadPage),
+        ..BandwidthScope::default()
+    };
+    engine
+        .fetch(&request, &Job::scoped(scope.clone()))
+        .await
+        .unwrap();
+    let job = Job::scoped(scope.clone());
+    let other = Job::scoped(scope);
+    let mut fetch = Box::pin(engine.fetch(&request, &job));
+    let mut waiting = Box::pin(engine.fetch(&request, &other));
+    tokio::select! { _ = &mut fetch => panic!("gallery delay was skipped"), _ = &mut waiting => panic!("gallery delay was skipped"), () = tokio::time::sleep(std::time::Duration::from_millis(30)) => {} }
+    let snapshot = engine.runtime_snapshot();
+    assert_eq!(snapshot.jobs.len(), 2);
+    assert!(snapshot.jobs.iter().all(|j| j.wait == WaitReason::Gallery));
+    assert!(snapshot.controls.iter().all(|c| c.gallery));
+    assert!(engine.runtime_command(&Command {
+        epoch: snapshot.epoch.clone(),
+        job: snapshot.jobs[0].id,
+        action: JobAction::OverrideGalleryWait
+    }));
+    // IDs are insertion-ordered in the registry. The override goes to one request.
+    let completed = tokio::time::timeout(std::time::Duration::from_secs(1), async {
+        tokio::select! { result = &mut fetch => result, result = &mut waiting => result }
+    })
+    .await
+    .unwrap();
+    completed.unwrap();
+    let snapshot = engine.runtime_snapshot();
+    assert_eq!(snapshot.jobs.len(), 1);
+    assert_eq!(snapshot.jobs[0].wait, WaitReason::Gallery);
+    assert!(engine.runtime_command(&Command {
+        epoch: snapshot.epoch,
+        job: snapshot.jobs[0].id,
+        action: JobAction::Cancel
+    }));
+    // Drop both futures: the completed one must not be polled a second time.
+    drop(fetch);
+    drop(waiting);
+    assert!(engine.runtime_snapshot().jobs.is_empty());
+}
+
+#[tokio::test]
+async fn runtime_cog_connection_override_releases_only_the_current_retry() {
+    use hydrus_store::network_runtime::{Command, JobAction, WaitReason};
+    let s = setup(|_| Vec::new()).await;
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let request = Request::get(format!(
+        "http://{}/unavailable",
+        listener.local_addr().unwrap()
+    ));
+    // A closed port may take the platform's entire connect timeout to refuse
+    // each attempt. Accept and read the real request, then close before any
+    // HTTP response: the same connection-error retry branch, without a second
+    // OS refusal timer inside the one-second override assertion.
+    let attempts = Arc::new(AtomicUsize::new(0));
+    let observed = attempts.clone();
+    let peer = tokio::spawn(async move {
+        use tokio::io::AsyncReadExt as _;
+        loop {
+            let (mut socket, _) = listener.accept().await.unwrap();
+            let mut request = [0; 2048];
+            if socket.read(&mut request).await.unwrap_or(0) > 0 {
+                observed.fetch_add(1, Ordering::SeqCst);
+            }
+            drop(socket);
+        }
+    });
+    let engine = NetEngine::new(
+        s.store.clone(),
+        NetOptions {
+            connection_error_wait_time: 60,
+            max_connection_attempts: 2,
+            domain_error_number: 0,
+            ..s.engine.options()
+        },
+    )
+    .unwrap();
+    let job = Job::new();
+    let mut fetch = Box::pin(engine.fetch(&request, &job));
+    let start = std::time::Instant::now();
+    loop {
+        tokio::select! { _ = &mut fetch => panic!("connection delay was skipped"), () = tokio::time::sleep(std::time::Duration::from_millis(10)) => {} }
+        if job.state().wait == WaitReason::Connection {
+            break;
+        }
+        assert!(start.elapsed() < std::time::Duration::from_secs(2));
+    }
+    let snapshot = engine.runtime_snapshot();
+    assert!(engine.runtime_command(&Command {
+        epoch: snapshot.epoch,
+        job: snapshot.jobs[0].id,
+        action: JobAction::OverrideConnectionWait
+    }));
+    let result = tokio::time::timeout(std::time::Duration::from_secs(1), fetch).await;
+    peer.abort();
+    let error = result
+        .expect("connection override must release the retry before its 60-second delay")
+        .unwrap_err();
+    assert!(matches!(error, NetError::Connection(_)));
+    assert_eq!(
+        attempts.load(Ordering::SeqCst),
+        2,
+        "initial request and exactly one retry reached the loopback peer"
+    );
+    assert!(engine.runtime_snapshot().jobs.is_empty());
+    assert_eq!(engine.runtime_snapshot().errors.len(), 1);
+}
+
+#[tokio::test]
+async fn boot_pause_blocks_real_requests_and_resume_does_not_reset_the_preference() {
+    use hydrus_store::{network_runtime::WaitReason, settings};
+    let s = setup(|_| Vec::new()).await;
+    s.store
+        .write(|ctx| {
+            settings::set(ctx.conn(), &settings::NetworkBootPause(true))?;
+            settings::set(ctx.conn(), &settings::Pauses::default())
+        })
+        .unwrap();
+    settings::apply_network_boot_pause(&s.store).unwrap();
+    let engine = NetEngine::new(s.store.clone(), s.engine.options()).unwrap();
+    let request = Request::get(format!("{}/echo", s.base));
+    let job = Job::new();
+    let mut fetch = Box::pin(engine.fetch(&request, &job));
+    tokio::select! {
+        _ = &mut fetch => panic!("boot-paused request reached the server"),
+        () = tokio::time::sleep(std::time::Duration::from_millis(30)) => {}
+    }
+    assert_eq!(engine.runtime_snapshot().jobs[0].wait, WaitReason::Paused);
+    s.store
+        .write(|ctx| settings::set(ctx.conn(), &settings::Pauses::default()))
+        .unwrap();
+    tokio::time::timeout(std::time::Duration::from_secs(3), fetch)
+        .await
+        .unwrap()
+        .unwrap();
+    assert!(
+        s.store
+            .read(settings::get::<settings::NetworkBootPause>)
+            .unwrap()
+            .0
+    );
+    // Parser/login consumers create additional engines inside this boot.
+    // They must honor live Resume rather than applying the preference again.
+    let next = NetEngine::new(s.store.clone(), s.engine.options()).unwrap();
+    tokio::time::timeout(
+        std::time::Duration::from_secs(1),
+        next.fetch(&request, &Job::new()),
+    )
+    .await
+    .unwrap()
+    .unwrap();
+    assert!(
+        s.store
+            .read(settings::get::<settings::NetworkBootPause>)
+            .unwrap()
+            .0
+    );
+    settings::apply_network_boot_pause(&s.store).unwrap();
+    assert!(
+        s.store
+            .read(settings::get::<settings::Pauses>)
+            .unwrap()
+            .network_traffic
+    );
 }

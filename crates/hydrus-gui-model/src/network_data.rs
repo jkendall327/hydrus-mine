@@ -112,6 +112,41 @@ impl Review {
         contexts
     }
 
+    /// Visible contexts follow the reference's request-age and explicit-rule filters.
+    /// All-time includes every retained non-ephemeral context and every specific rule.
+    pub fn filtered_contexts(
+        &self,
+        history: Option<u64>,
+        include_rules: bool,
+        now: i64,
+    ) -> Vec<NetworkContext> {
+        let mut contexts = Vec::new();
+        if include_rules || history.is_none() {
+            contexts.extend(
+                self.settings
+                    .rules
+                    .iter()
+                    .filter(|(c, _)| !c.is_default() && c.kind != CONTEXT_GLOBAL)
+                    .map(|(c, _)| c.clone()),
+            );
+        }
+        for (context, tracker) in &self.usage {
+            if context.is_default() || context.is_ephemeral() {
+                continue;
+            }
+            let mut tracker = tracker.clone();
+            if context.kind == CONTEXT_GLOBAL
+                || history.is_none()
+                || tracker.usage(BandwidthType::Requests, history, now) > 0
+            {
+                contexts.push(context.clone());
+            }
+        }
+        contexts.sort();
+        contexts.dedup();
+        contexts
+    }
+
     /// The inherited or specific rules that apply to this context.
     pub fn rules(&self, context: &NetworkContext) -> Rules {
         Manager::new(self.settings.rules.clone())
@@ -175,6 +210,58 @@ impl Review {
         ]
     }
 }
+
+/// The last review age, preserved when reopening the bandwidth browser.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct BandwidthReviewPreferences {
+    pub history: Option<u64>,
+}
+impl Default for BandwidthReviewPreferences {
+    fn default() -> Self {
+        Self {
+            history: Some(604_800),
+        }
+    }
+}
+impl hydrus_store::settings::Setting for BandwidthReviewPreferences {
+    const KEY: &'static str = "bandwidth_review_preferences";
+}
+
+/// One UTC calendar-month bar; raw bytes drive the chart independently of formatting.
+#[derive(Debug, Clone, PartialEq)]
+pub struct MonthlyBar {
+    pub month: String,
+    pub bytes: u64,
+    pub fraction: f32,
+}
+
+/// Monthly data totals in chronological order, as the reference tracker supplies them.
+pub fn monthly_history(tracker: &Tracker) -> Vec<MonthlyBar> {
+    let months = tracker.to_counters()[0].clone();
+    let maximum = months
+        .iter()
+        .map(|(_, bytes)| *bytes)
+        .max()
+        .unwrap_or(0)
+        .max(1);
+    months
+        .into_iter()
+        .filter_map(|(timestamp, bytes)| {
+            let date = jiff::Timestamp::from_second(timestamp)
+                .ok()?
+                .to_zoned(jiff::tz::TimeZone::UTC);
+            Some(MonthlyBar {
+                month: format!("{:04}-{:02}", date.year(), date.month()),
+                bytes,
+                fraction: (bytes as f64 / maximum as f64 / 1.2) as f32,
+            })
+        })
+        .collect()
+}
+
+/// The confirmation shown before deleting the selected contexts' bandwidth history.
+pub const DELETE_HISTORY_QUESTION: &str =
+    "Are you sure? This will delete all bandwidth record for the selected network contexts.";
 
 /// The reference's context type names.
 pub const fn context_kind(kind: i64) -> &'static str {

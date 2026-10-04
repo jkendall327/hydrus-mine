@@ -14,18 +14,24 @@ export struct DurationField {
     label: string,
 }
 
+export struct SortCogItem { label: string, checked: bool, separator: bool }
+
 export struct OptionRow {
     // 0 a box's title, 1 a checkbox, 2 a number, 3 a number that may be
     // none, 4 a number with a fraction (typed), 5 a dropdown, 6 text, 7
     // text that may be none, 8 a time (its fields), 9 a number per a time,
     // 10 a file sort (its type and order), 11 a collect (its choices), 12
     // a tag sort (its type, order and grouping), 13 checker options (a
-    // button, `text`, opening their editor)
+    // button, `text`, opening their editor), 14 regex favourites,
+    // 15 tag service/session, 16 local location, 17 favourite tags,
+    // 18 import options, 19 gallery source, 20 directory path,
+    // 21 namespace sorting schemes.
     kind: int,
     label: string,
     // how many boxes it is in
     depth: int,
     checked: bool,
+    enabled: bool,
     number: int,
     minimum: int,
     maximum: int,
@@ -52,6 +58,7 @@ export struct OptionRow {
     groups: [string],
     group-index: int,
     grouped: bool,
+    sort-cog: bool,
 }
 
 // a whole number typed in a small box
@@ -97,6 +104,7 @@ export component OptionsWindow inherits Window {
     // the search box: its placeholder, text, what it suggests (at most
     // `shown` at once), and the one picked by the arrows (-1 for none)
     in property <string> search-placeholder;
+    in property <bool> search-at-top: true;
     in property <int> shown: 10;
     in-out property <string> search-text;
     in property <[string]> matches;
@@ -111,6 +119,7 @@ export component OptionsWindow inherits Window {
     callback number-edited(int, int);
     callback none-toggled(int, bool);
     callback text-edited(int, string);
+    callback directory-browse(int);
     callback choice-chosen(int, int);
     // (a sort's type, or its order, by its place in the row's lists)
     callback sort-chosen(int, int);
@@ -124,6 +133,19 @@ export component OptionsWindow inherits Window {
     callback field-edited(int, int, int);
     // (checker options' button clicked)
     callback checker-clicked(int);
+    callback regex-favourites-clicked();
+    callback gallery-source-clicked();
+    callback local-location-clicked(int);
+    callback favourite-tags-clicked();
+    callback import-options-clicked();
+    callback namespace-sorts-clicked();
+    in property <[string]> sort-cog-groups;
+    in property <[SortCogItem]> sort-cog-items;
+    in property <int> sort-cog-group: -1;
+    callback sort-cog-open(int);
+    callback sort-cog-group-chosen(int, int);
+    callback sort-cog-choice(int, int);
+    callback sort-cog-cancel();
     callback apply();
     callback cancel();
 
@@ -163,10 +185,8 @@ export component OptionsWindow inherits Window {
         VerticalLayout {
             padding: 8px;
             spacing: 6px;
-            search := LineEdit {
-                placeholder-text: root.search-placeholder;
-                text <=> root.search-text;
-                edited(text) => { root.search-edited(text); }
+            top-search-slot := Rectangle {
+                height: root.search-at-top ? 30px : 0px;
             }
             HorizontalLayout {
                 spacing: 8px;
@@ -263,6 +283,17 @@ export component OptionsWindow inherits Window {
                                 text: row.text;
                                 edited(text) => { root.text-edited(i, text); }
                             }
+                            if row.kind == 20: HorizontalLayout {
+                                width: 260px;
+                                LineEdit {
+                                    text: row.text;
+                                    edited(text) => { root.text-edited(i, text); }
+                                }
+                                Button {
+                                    text: "browse";
+                                    clicked => { root.directory-browse(i); }
+                                }
+                            }
                             if row.kind == 7: HorizontalLayout {
                                 width: 260px;
                                 spacing: 4px;
@@ -278,6 +309,30 @@ export component OptionsWindow inherits Window {
                                     toggled => { root.none-toggled(i, self.checked); }
                                 }
                             }
+                            if row.kind == 16: Button {
+                                text: row.text;
+                                clicked => { root.local-location-clicked(i); }
+                            }
+                            if row.kind == 17: Button {
+                                text: row.text;
+                                clicked => { root.favourite-tags-clicked(); }
+                            }
+                            if row.kind == 21: Button {
+                                text: row.text;
+                                clicked => { root.namespace-sorts-clicked(); }
+                            }
+                            if row.kind == 19: Button {
+                                text: row.text;
+                                clicked => { root.gallery-source-clicked(); }
+                            }
+                            if row.kind == 18: Button {
+                                text: row.text;
+                                clicked => {root.import-options-clicked();}
+                            }
+                            if row.kind == 14: Button {
+                                text: row.text;
+                                clicked => { root.regex-favourites-clicked(); }
+                            }
                             if row.kind == 13: HorizontalLayout {
                                 width: 260px;
                                 Button {
@@ -285,7 +340,8 @@ export component OptionsWindow inherits Window {
                                     clicked => { root.checker-clicked(i); }
                                 }
                             }
-                            if row.kind == 5: ComboBox {
+                            if row.kind == 5 || row.kind == 15: ComboBox {
+                                enabled: row.enabled;
                                 width: 260px;
                                 model: row.items;
                                 current-index: row.index;
@@ -303,6 +359,46 @@ export component OptionsWindow inherits Window {
                                     model: row.orders;
                                     current-index: row.order-index;
                                     selected => { root.order-chosen(i, self.current-index); }
+                                }
+                                if row.sort-cog: Rectangle {
+                                    height: 28px;
+                                    Button { text: "⚙"; clicked => { root.sort-cog-open(i); cog-menu.show(); } }
+                                    cog-menu := PopupWindow {
+                                        y: parent.height;
+                                        width: 320px;
+                                        Rectangle {
+                                            background: Theme.panel;
+                                            border-width: 1px;
+                                            border-color: Theme.border;
+                                            FocusScope {
+                                                init => { self.focus(); }
+                                                key-pressed(event) => {
+                                                    if event.text == Key.Escape { cog-menu.close(); root.sort-cog-cancel(); return accept; }
+                                                    reject
+                                                }
+                                                VerticalLayout {
+                                                    padding: 4px;
+                                                    spacing: 2px;
+                                                    if root.sort-cog-group < 0: VerticalLayout {
+                                                        for name[group] in root.sort-cog-groups: Button {
+                                                            text: name + "  ›";
+                                                            clicked => { root.sort-cog-group-chosen(i, group); }
+                                                        }
+                                                    }
+                                                    if root.sort-cog-group >= 0: VerticalLayout {
+                                                        for entry[index] in root.sort-cog-items: Rectangle {
+                                                            height: entry.separator ? 3px : 28px;
+                                                            if entry.separator: Rectangle { height: 1px; background: Theme.border; }
+                                                            if !entry.separator: Button {
+                                                                text: (entry.checked ? "✓ " : "") + entry.label;
+                                                                clicked => { cog-menu.close(); root.sort-cog-choice(i, index); }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             if row.kind == 12: VerticalLayout {
@@ -379,6 +475,9 @@ export component OptionsWindow inherits Window {
                     }
                 }
             }
+            bottom-search-slot := Rectangle {
+                height: root.search-at-top ? 0px : 30px;
+            }
             HorizontalLayout {
                 spacing: 6px;
                 alignment: end;
@@ -392,9 +491,18 @@ export component OptionsWindow inherits Window {
                 }
             }
         }
+        search := LineEdit {
+            x: 8px;
+            y: root.search-at-top ? top-search-slot.y : bottom-search-slot.y;
+            width: parent.width - 16px;
+            height: 30px;
+            placeholder-text: root.search-placeholder;
+            text <=> root.search-text;
+            edited(text) => { root.search-edited(text); }
+        }
         if root.matches.length > 0: Rectangle {
             x: search.x;
-            y: search.y + search.height + 2px;
+            y: root.search-at-top ? search.y + search.height + 2px : search.y - self.height - 2px;
             width: search.width;
             height: min(root.matches.length, root.shown) * 24px + 4px;
             background: Theme.panel;

@@ -22,8 +22,8 @@ remaining limitations.
 - A real Xvfb desktop smoke imported the basic fixture, opened the client,
   observed a fresh daemon network heartbeat, exited through File > exit and
   verified the daemon cleared its runtime snapshot.
-- No mutation tests ran, as requested. Hosted Windows/macOS verification is
-  separate from these local Linux results.
+- No mutation tests ran, as requested. Hosted CI subsequently passed Linux,
+  macOS and Windows after the Windows follow-up described below.
 
 ## Review findings
 
@@ -70,3 +70,33 @@ to test every backend until the final batch would delay useful feedback.
 
 The separately requested follow-ups are authored Rust test/example domain cleanup
 and a scoped hierarchical GUI migration viewer. They are kept off the slate branch.
+
+## Completed follow-ups
+
+The slate and Windows follow-up were merged as PRs #31 and #32. Windows CI caught
+a held-open temporary destination in a PNG overwrite test and a production export
+filename split that recognized only the native separator. The fixes close the test
+handle before replacement and recognize both Windows path separators, retaining
+the reference's later directory-sanitization behavior. The fixes passed hosted CI
+on all three platforms.
+
+Authored Rust test/example download URLs now use synthetic domains. The search
+coverage test derives its expected URL domain from the reference fixture, keeping
+positive coverage without hardcoding a real site. Python reference/oracle fixtures,
+specification namespaces and actual application/help links remain unchanged.
+Full local formatting, strict workspace Clippy, all 16 packages and the parity
+ratchet passed after this cleanup and the Windows fixes, including all 215 GUI
+integration tests.
+
+The expanded GUI map audits all 66 exported native windows and important
+non-window surfaces, with 1,812 reference and 1,277 native nodes. All 38 reference
+option tabs and 19 system-predicate groups are exposed; Options has 644 nested
+entries. Source audits and an independent depth review replaced the opaque native
+window catch-all with concrete controls, workflows and shared targets. Evidence
+review downgraded 28 source-only or overbroad native claims to partial; retained
+green claims cite the relevant existing assertion/recording scope. This is a
+finite semantic inventory, not an enumeration of every raw widget or a client
+completion percentage. Source fingerprints, graph/count validation and desktop/
+mobile browser checks passed; the inventory audit itself did not execute behavior
+tests. The generated viewer also works through a localhost HTTP preview when
+managed browser policy blocks direct file navigation.

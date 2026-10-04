@@ -1,0 +1,65 @@
+{
+ "states": [
+  {
+   "case": "empty_url_keeps_error",
+   "has_job": false,
+   "has_error": true,
+   "error_hidden": false,
+   "error_tail": "previous failure"
+  },
+  {
+   "case": "new_request_clears_error",
+   "has_job": true,
+   "has_error": false,
+   "error_hidden": true,
+   "error_tail": null
+  },
+  {
+   "case": "completed_failure_retains_error_without_job",
+   "has_job": false,
+   "has_error": true,
+   "error_hidden": false,
+   "error_tail": "RuntimeError: synthetic failure"
+  },
+  {
+   "case": "next_request_clears_error",
+   "has_job": true,
+   "has_error": false,
+   "error_hidden": true,
+   "error_tail": null
+  },
+  {
+   "case": "success_without_error",
+   "has_job": false,
+   "has_error": false,
+   "error_hidden": true,
+   "error_tail": null
+  }
+ ],
+ "menus": [
+  [
+   "show error",
+   "copy error"
+  ]
+ ],
+ "copied": [
+  [
+   "clipboard",
+   "text",
+   "Traceback (most recent call last):\n  File \"/workspace/parallel/parity-parser-children/hydrus/client/gui/parsing/ClientGUIParsing.py\", line 1529, in wait_and_do_it\n    network_job.WaitUntilDone()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/workspace/parallel/parity-parser-children/oracle/record_parser_fetch_errors.py\", line 29, in <lambda>\n    result.WaitUntilDone = lambda: (_ for _ in ()).throw(RuntimeError('synthetic failure'))\n                                   ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/parallel/parity-parser-children/oracle/record_parser_fetch_errors.py\", line 29, in <genexpr>\n    result.WaitUntilDone = lambda: (_ for _ in ()).throw(RuntimeError('synthetic failure'))\nRuntimeError: synthetic failure\n"
+  ]
+ ],
+ "messages": [
+  [
+   "Network Error",
+   "Traceback (most recent call last):\n  File \"/workspace/parallel/parity-parser-children/hydrus/client/gui/parsing/ClientGUIParsing.py\", line 1529, in wait_and_do_it\n    network_job.WaitUntilDone()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/workspace/parallel/parity-parser-children/oracle/record_parser_fetch_errors.py\", line 29, in <lambda>\n    result.WaitUntilDone = lambda: (_ for _ in ()).throw(RuntimeError('synthetic failure'))\n                                   ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/parallel/parity-parser-children/oracle/record_parser_fetch_errors.py\", line 29, in <genexpr>\n    result.WaitUntilDone = lambda: (_ for _ in ()).throw(RuntimeError('synthetic failure'))\nRuntimeError: synthetic failure\n"
+  ]
+ ],
+ "failure_document": "fetch failed: synthetic failure\n\nserver detail",
+ "context": {
+  "url": "https://fetch-errors.example/document",
+  "post_index": "0"
+ },
+ "success_document": "server detail",
+ "show_copy_identical": true
+}

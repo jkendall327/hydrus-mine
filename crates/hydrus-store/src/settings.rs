@@ -29,6 +29,25 @@ impl Setting for FavouriteTags {
     const KEY: &'static str = "favourite_tags";
 }
 
+/// Shared tag-autocomplete tabs: the children result cap and service-specific most-used tags.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct TagAutocompleteTabs {
+    pub children_limit: Option<usize>,
+    pub most_used: std::collections::BTreeMap<String, Vec<String>>,
+}
+impl Default for TagAutocompleteTabs {
+    fn default() -> Self {
+        Self {
+            children_limit: Some(40),
+            most_used: std::collections::BTreeMap::new(),
+        }
+    }
+}
+impl Setting for TagAutocompleteTabs {
+    const KEY: &'static str = "tag_autocomplete_tabs";
+}
+
 /// File viewing statistics: whether they are recorded, and which viewers'
 /// statistics count as "views" and "view time" when a search or sort does
 /// not name viewers (the reference's `file_viewing_statistics_active` and
@@ -104,6 +123,231 @@ pub struct Pauses {
 
 impl Setting for Pauses {
     const KEY: &'static str = "pauses";
+}
+
+/// The reference's saved `boot_with_network_traffic_paused` preference.
+/// Separate from the live pause: resuming traffic does not change the next boot.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct NetworkBootPause(pub bool);
+
+impl Setting for NetworkBootPause {
+    const KEY: &'static str = "boot_with_network_traffic_paused";
+}
+
+/// Apply once at client startup, before network workers are constructed.
+/// A false preference preserves the live pause, as the reference boot does.
+pub fn apply_network_boot_pause(store: &crate::Store) -> Result<()> {
+    store.write(|ctx| {
+        let conn = ctx.conn();
+        if get::<NetworkBootPause>(conn)?.0 {
+            let mut pauses: Pauses = get(conn)?;
+            pauses.network_traffic = true;
+            set(conn, &pauses)?;
+        }
+        Ok(())
+    })
+}
+
+/// Main-window identity and the optional client-exit confirmation.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct GuiSettings {
+    pub application_display_name: String,
+    pub confirm_exit: bool,
+}
+
+impl Default for GuiSettings {
+    fn default() -> Self {
+        Self {
+            application_display_name: "hydrus client".into(),
+            confirm_exit: false,
+        }
+    }
+}
+
+impl Setting for GuiSettings {
+    const KEY: &'static str = "gui_settings";
+}
+
+/// The options window’s opening page and search placement.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct OptionsPreferences {
+    pub remember_panel: bool,
+    pub last_panel: String,
+    pub search_at_top: bool,
+}
+
+impl Default for OptionsPreferences {
+    fn default() -> Self {
+        Self {
+            remember_panel: true,
+            last_panel: "gui".into(),
+            search_at_top: true,
+        }
+    }
+}
+
+impl Setting for OptionsPreferences {
+    const KEY: &'static str = "options_preferences";
+}
+
+/// Prompt after the chooser creates a notebook (`rename_page_of_pages_on_pick_new`).
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct NotebookCreationSettings {
+    pub rename_new_notebooks: bool,
+}
+
+impl Setting for NotebookCreationSettings {
+    const KEY: &'static str = "gui_notebook_creation";
+}
+
+/// `default_new_page_goes`, in the reference choice order.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub enum PageInsertion {
+    FarLeft,
+    LeftOfCurrent,
+    RightOfCurrent,
+    #[default]
+    FarRight,
+}
+
+impl PageInsertion {
+    pub fn from_code(code: i64) -> Option<Self> {
+        match code {
+            0 => Some(Self::FarLeft),
+            1 => Some(Self::LeftOfCurrent),
+            2 => Some(Self::RightOfCurrent),
+            3 => Some(Self::FarRight),
+            _ => None,
+        }
+    }
+
+    pub fn index(self, current: Option<usize>, count: usize) -> usize {
+        let Some(current) = current else {
+            return 0;
+        };
+        match self {
+            Self::FarLeft => 0,
+            Self::LeftOfCurrent => current.min(count),
+            Self::RightOfCurrent => (current + 1).min(count),
+            Self::FarRight => count,
+        }
+    }
+}
+
+impl Setting for PageInsertion {
+    const KEY: &'static str = "gui_page_insertion";
+}
+
+/// File domains offered by the reference's new-page chooser.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct PageChooserSettings {
+    pub show_combined: bool,
+    pub combined_at_top: bool,
+    pub show_storage: bool,
+    pub storage_at_top: bool,
+}
+
+impl Default for PageChooserSettings {
+    fn default() -> Self {
+        Self {
+            show_combined: true,
+            combined_at_top: false,
+            show_storage: false,
+            storage_at_top: false,
+        }
+    }
+}
+
+impl Setting for PageChooserSettings {
+    const KEY: &'static str = "gui_page_chooser";
+}
+
+/// Confirmation and navigation preferences from GUI Pages.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct PageNavigationSettings {
+    pub confirm_all_closes: bool,
+    pub focus_search_on_change: bool,
+    pub history_entries: u16,
+}
+impl Default for PageNavigationSettings {
+    fn default() -> Self {
+        Self {
+            confirm_all_closes: false,
+            focus_search_on_change: false,
+            history_entries: 100,
+        }
+    }
+}
+impl Setting for PageNavigationSettings {
+    const KEY: &'static str = "gui_page_navigation";
+}
+
+/// Whether import-options editors hide inappropriate options for each caller.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ImportOptionsUiSettings {
+    pub simple: bool,
+}
+impl Default for ImportOptionsUiSettings {
+    fn default() -> Self {
+        Self { simple: true }
+    }
+}
+impl Setting for ImportOptionsUiSettings {
+    const KEY: &'static str = "import_options_ui";
+}
+
+/// Startup and periodic last-session saving, as GUI Sessions edits it.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct GuiSessionSettings {
+    pub startup: Option<String>,
+    pub autosave_minutes: u16,
+    pub only_during_idle: bool,
+    pub warn_large_session: bool,
+}
+
+impl Default for GuiSessionSettings {
+    fn default() -> Self {
+        Self {
+            startup: Some(crate::sessions::LAST_SESSION.into()),
+            autosave_minutes: 5,
+            only_during_idle: false,
+            warn_large_session: true,
+        }
+    }
+}
+
+impl Setting for GuiSessionSettings {
+    const KEY: &'static str = "gui_sessions";
+}
+
+/// Idle eligibility from the reference's user-action and mouse timers.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct GuiIdleSettings {
+    pub enabled: bool,
+    pub user_seconds: Option<u64>,
+    pub mouse_seconds: Option<u64>,
+    pub api_seconds: Option<u64>,
+}
+impl Default for GuiIdleSettings {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            user_seconds: Some(1800),
+            mouse_seconds: Some(600),
+            api_seconds: None,
+        }
+    }
+}
+impl Setting for GuiIdleSettings {
+    const KEY: &'static str = "gui_idle";
 }
 
 /// Which recognised URL types the desktop watches for in changed clipboard text.
@@ -186,6 +430,8 @@ pub struct FileHandlingSettings {
     pub transparency_strictness: u8,
     /// Leave files' permissions alone (`do_not_do_chmod_mode`).
     pub do_not_chmod: bool,
+    /// Prefix clipboard hashes with their type (`prefix_hash_when_copying`).
+    pub prefix_hash_when_copying: bool,
 }
 
 impl Default for FileHandlingSettings {
@@ -194,6 +440,7 @@ impl Default for FileHandlingSettings {
             comic_book_detection: true,
             transparency_strictness: 2,
             do_not_chmod: false,
+            prefix_hash_when_copying: false,
         }
     }
 }
@@ -204,6 +451,66 @@ impl Setting for FileHandlingSettings {
 
 impl Setting for hydrus_core::pages::SortSettings {
     const KEY: &'static str = "sorts";
+}
+
+/// Top-hover zoom button and animation loop preferences.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerPlaybackSettings {
+    /// Choice index: fit, centred fit, fit/fill, centred fit/fill.
+    pub zoom_switch: usize,
+    pub always_loop: bool,
+}
+impl Default for ViewerPlaybackSettings {
+    fn default() -> Self {
+        Self {
+            zoom_switch: 0,
+            always_loop: true,
+        }
+    }
+}
+impl Setting for ViewerPlaybackSettings {
+    const KEY: &'static str = "viewer_playback";
+}
+
+/// Native media viewer cursor inactivity timeout, or never hide.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerCursorSettings {
+    pub autohide_ms: Option<u32>,
+}
+impl Default for ViewerCursorSettings {
+    fn default() -> Self {
+        Self {
+            autohide_ms: Some(700),
+        }
+    }
+}
+impl Setting for ViewerCursorSettings {
+    const KEY: &'static str = "viewer_cursor";
+}
+
+/// Passive copies of hover content, painted behind media independently of popups.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerBackgroundSettings {
+    pub tags: bool,
+    pub information: bool,
+    pub ratings: bool,
+    pub notes: bool,
+}
+impl Default for ViewerBackgroundSettings {
+    fn default() -> Self {
+        Self {
+            tags: true,
+            information: true,
+            ratings: true,
+            notes: true,
+        }
+    }
+}
+impl Setting for ViewerBackgroundSettings {
+    const KEY: &'static str = "viewer_background";
 }
 
 /// How the GUI opens pages.
@@ -277,8 +584,180 @@ impl Default for SearchDefaults {
     }
 }
 
+impl SearchDefaults {
+    /// Match GetDefaultLocalLocationContext: discard missing domains, then
+    /// use all local file domains if none remain.
+    pub fn resolved_local_location(
+        &self,
+        services: &crate::services::ServiceRegistry,
+    ) -> hydrus_core::search::context::LocationContext {
+        use hydrus_core::search::context::LocationContext;
+        let location = LocationContext::new(
+            self.local_location
+                .current()
+                .iter()
+                .filter(|key| services.by_key(key).is_ok())
+                .cloned(),
+            self.local_location
+                .deleted()
+                .iter()
+                .filter(|key| services.by_key(key).is_ok())
+                .cloned(),
+        );
+        if location.current().is_empty() && location.deleted().is_empty() {
+            LocationContext::single(hydrus_core::ServiceKey::new(
+                hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+            ))
+        } else {
+            location
+        }
+    }
+}
+
 impl Setting for SearchDefaults {
     const KEY: &'static str = "search_defaults";
+}
+
+/// Read autocomplete and the initial state of a newly created search page.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct FileSearchSettings {
+    pub search_immediately: bool,
+    pub show_system_everything: bool,
+    pub active_predicate_rows: u32,
+    pub autocomplete_rows: u32,
+    pub float_autocomplete: bool,
+    pub implicit_limit: Option<u64>,
+    pub refresh_limited_sort: bool,
+}
+
+impl Default for FileSearchSettings {
+    fn default() -> Self {
+        Self {
+            search_immediately: true,
+            show_system_everything: true,
+            active_predicate_rows: 6,
+            autocomplete_rows: 22,
+            float_autocomplete: true,
+            implicit_limit: None,
+            refresh_limited_sort: true,
+        }
+    }
+}
+
+impl Setting for FileSearchSettings {
+    const KEY: &'static str = "file_search";
+}
+
+/// Native media canvas presentation (`media playback` and `media viewer`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerCanvasSettings {
+    pub recenter_on_resize: bool,
+    pub transparency_checkerboard: bool,
+    pub transparency_greenscreen: bool,
+    pub seek_height: u32,
+    pub seek_hidden_height: Option<u32>,
+    pub seek_nub_width: u32,
+}
+impl Default for ViewerCanvasSettings {
+    fn default() -> Self {
+        Self {
+            recenter_on_resize: true,
+            transparency_checkerboard: false,
+            transparency_greenscreen: false,
+            seek_height: 20,
+            seek_hidden_height: Some(5),
+            seek_nub_width: 10,
+        }
+    }
+}
+impl Setting for ViewerCanvasSettings {
+    const KEY: &'static str = "viewer_canvas";
+}
+
+/// What a surviving original page and main window do when a viewer closes.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerClosingSettings {
+    pub reselect_page: bool,
+    pub select_exit_media: bool,
+    pub activate_focusing: bool,
+    pub activate_always: bool,
+}
+impl Default for ViewerClosingSettings {
+    fn default() -> Self {
+        Self {
+            reselect_page: false,
+            select_exit_media: true,
+            activate_focusing: false,
+            activate_always: false,
+        }
+    }
+}
+impl Setting for ViewerClosingSettings {
+    const KEY: &'static str = "viewer_closing";
+}
+
+/// Whether mouseover panels require the native viewer's active window.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerFocusSettings {
+    pub seek_requires_focus: bool,
+    pub hovers_require_focus: bool,
+}
+impl Default for ViewerFocusSettings {
+    fn default() -> Self {
+        Self {
+            seek_requires_focus: true,
+            hovers_require_focus: true,
+        }
+    }
+}
+impl Setting for ViewerFocusSettings {
+    const KEY: &'static str = "viewer_focus";
+}
+
+/// Pointer panning and cursor visibility during native viewer drags.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerPointerSettings {
+    pub disallow_duration_drag: bool,
+    pub hide_during_drag: bool,
+}
+impl Default for ViewerPointerSettings {
+    fn default() -> Self {
+        Self {
+            disallow_duration_drag: false,
+            hide_during_drag: !cfg!(target_os = "macos"),
+        }
+    }
+}
+impl Setting for ViewerPointerSettings {
+    const KEY: &'static str = "viewer_pointer";
+}
+
+/// Pop-in hover panels and the passive bottom-right index in the media viewer.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerHoverSettings {
+    pub tags: bool,
+    pub ratings: bool,
+    pub notes: bool,
+    pub index_background: bool,
+}
+impl Default for ViewerHoverSettings {
+    fn default() -> Self {
+        Self {
+            tags: true,
+            ratings: true,
+            notes: true,
+            index_background: true,
+        }
+    }
+}
+impl Setting for ViewerHoverSettings {
+    const KEY: &'static str = "viewer_hovers";
 }
 
 /// Export folders.
@@ -294,6 +773,8 @@ impl Setting for ExportFolders {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
 pub struct ExportSettings {
+    /// The starting manual-export directory (none: the home hydrus_export folder).
+    pub default_directory: Option<String>,
     /// The phrase new export folders start with.
     pub phrase: String,
     /// The longest whole path (none: the platform's).
@@ -308,6 +789,7 @@ pub struct ExportSettings {
 impl Default for ExportSettings {
     fn default() -> Self {
         Self {
+            default_directory: None,
             phrase: "{hash}".into(),
             path_character_limit: None,
             dirname_character_limit: None,

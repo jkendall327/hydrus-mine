@@ -7,7 +7,7 @@ use std::sync::Arc;
 
 use hydrus_core::HashId;
 use hydrus_gui::archive_delete::{ArchiveDeleteFilter, DELETE_REASON};
-use hydrus_gui::{ArchiveDeleteWindow, MainWindow, Pages, SearchPage, bind, headless};
+use hydrus_gui::{ArchiveDeleteWindow, MainWindow, Pages, bind, headless};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 
@@ -39,7 +39,10 @@ fn the_archive_delete_filter_keeps_and_deletes() {
 
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
-    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
     ui.invoke_search_edited("system:inbox".into());
     ui.invoke_search_accepted();
     let page = bound.current.borrow().clone();

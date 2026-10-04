@@ -198,7 +198,14 @@ fn search_with_strategy(
     strategy: context::Strategy,
 ) -> Result<Vec<HashId>> {
     let env = context::Env::new(conn, snapshot, search, clock, strategy)?;
-    let (expr, limit) = plan::build(&env, &search.predicates)?;
+    let (expr, explicit_limit) = plan::build(&env, &search.predicates)?;
+    let limit = match explicit_limit {
+        Some(value) => Some(value),
+        None => {
+            hydrus_store::settings::get::<hydrus_store::settings::FileSearchSettings>(conn)?
+                .implicit_limit
+        }
+    };
     if limit == Some(0) {
         return Ok(Vec::new());
     }

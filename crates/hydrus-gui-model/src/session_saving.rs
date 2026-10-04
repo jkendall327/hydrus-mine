@@ -39,6 +39,16 @@ pub enum Step {
     Stop,
 }
 
+/// The page tree whose contents a save dialog targets.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Scope {
+    All,
+    Notebook {
+        key: hydrus_core::pages::PageKey,
+        suggested_name: String,
+    },
+}
+
 /// A session being saved.
 #[derive(Debug, Clone)]
 pub struct Saving {
@@ -153,4 +163,36 @@ pub fn close_all_question(vetoes: &[(String, String)]) -> Option<String> {
         "Close \"top page notebook\"?\n\n{}",
         blocks.join("\n----\n")
     ))
+}
+
+/// A backup timestamp, as the reference's append-backup menu labels it.
+pub fn backup_timestamp(ms: i64, timezone: &jiff::tz::TimeZone) -> String {
+    jiff::Timestamp::from_millisecond(ms).map_or_else(
+        |_| format!("unparseable time {}", ms / 1000),
+        |timestamp| {
+            timestamp
+                .to_zoned(timezone.clone())
+                .strftime("%Y-%m-%d %H:%M:%S")
+                .to_string()
+        },
+    )
+}
+
+/// Bulk-close confirmation, including descendants in the count and grouped
+/// downloader objections. A quiet group still asks before closing.
+pub fn close_group_question(
+    count: usize,
+    description: &str,
+    vetoes: &[(String, String)],
+) -> String {
+    let count = hydrus_core::numbers::human_int(count as u64);
+    match close_all_question(vetoes) {
+        None => format!("Close {count} {description}?"),
+        Some(message) => format!(
+            "Are you sure you want to close {count} {description}?\n\n{}",
+            message
+                .strip_prefix("Close \"top page notebook\"?\n\n")
+                .unwrap_or(&message)
+        ),
+    }
 }

@@ -9,7 +9,7 @@ use slint::Model as _;
 
 use hydrus_core::HashId;
 use hydrus_gui::media_actions::{self, Deletion};
-use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
+use hydrus_gui::{MainWindow, Pages, bind, headless};
 use hydrus_search::LocationContext;
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
@@ -51,7 +51,10 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
 
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
-    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
     ui.invoke_search_edited("system:inbox".into());
     ui.invoke_search_accepted();
     let page = bound.current.borrow().clone();

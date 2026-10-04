@@ -1,0 +1,157 @@
+{
+  "refresh": {
+    "events": [
+      "first",
+      "second",
+      "importer"
+    ],
+    "before_sync": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "after_sync": [
+      true,
+      true,
+      false,
+      false
+    ],
+    "shown": "outside",
+    "counts": [
+      30,
+      30,
+      30,
+      0
+    ]
+  },
+  "weights": {
+    "hashes": [
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+    ],
+    "files_per_leaf": [
+      2,
+      2
+    ],
+    "file_seeds": 54,
+    "gallery_seeds": 1,
+    "leaf_weights": [
+      2,
+      2,
+      1100
+    ],
+    "weight": 1104,
+    "menus": [
+      {
+        "advanced": false,
+        "entries": [
+          "close page",
+          "---",
+          {
+            "menu": "pages",
+            "entries": [
+              "files a - 2 files",
+              "files b - 2 files",
+              "weighted importer - 0/54"
+            ]
+          },
+          "---",
+          "new page",
+          "new page here",
+          "---",
+          "rename page",
+          "duplicate page",
+          "---",
+          {
+            "menu": "collapse to a single page",
+            "entries": [
+              "this page"
+            ]
+          },
+          {
+            "menu": "send down to a new page of pages",
+            "entries": [
+              "this page"
+            ]
+          },
+          "---",
+          "refresh all this page's pages",
+          "---",
+          {
+            "menu": "append session",
+            "entries": [
+              "exit session",
+              "last session"
+            ]
+          },
+          {
+            "menu": "save this page of pages to a session",
+            "entries": [
+              "create a new session"
+            ]
+          }
+        ]
+      },
+      {
+        "advanced": true,
+        "entries": [
+          "page weight: 1,104",
+          "---",
+          "close page",
+          "---",
+          {
+            "menu": "pages",
+            "entries": [
+              "files a - 2 files",
+              "files b - 2 files",
+              "weighted importer - 0/54"
+            ]
+          },
+          "---",
+          "new page",
+          "new page here",
+          "---",
+          "rename page",
+          "duplicate page",
+          "---",
+          {
+            "menu": "collapse to a single page",
+            "entries": [
+              "this page"
+            ]
+          },
+          {
+            "menu": "send down to a new page of pages",
+            "entries": [
+              "this page"
+            ]
+          },
+          "---",
+          "refresh all this page's pages",
+          "---",
+          {
+            "menu": "append session",
+            "entries": [
+              "exit session",
+              "last session"
+            ]
+          },
+          {
+            "menu": "save this page of pages to a session",
+            "entries": [
+              "create a new session"
+            ]
+          }
+        ],
+        "clipboard": [
+          [
+            "text",
+            "page weight: 1,104"
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -3,14 +3,41 @@ import { Button, CheckBox, LineEdit, ProgressIndicator } from "std-widgets.slint
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 import { Asking } from "subscriptions.slint";
+import { ExportPatternButton } from "export_pattern.slint";
+import { ExportTags } from "export_tags.slint";
+import { ListText } from "theme.slint";
+import { MenuPane } from "main_menu.slint";
+import { TagMenuOverlay } from "write_autocomplete.slint";
 export component ExportFilesWindow inherits Window {
     title: "export files";
-    preferred-width: 880px;
-    preferred-height: 610px;
+    preferred-width: 1120px;
+    preferred-height: 690px;
     background: Theme.window;
     in property <[TableRow]> rows;
     in-out property <string> destination;
     in-out property <string> phrase;
+    in property <[string]> pattern-shortcuts;
+    in property <string> pattern-heading;
+    callback pattern-chosen(int);
+    in property <[ListText]> tags;
+    in property <[bool]> tag-selected;
+    in property <int> tag-sort-type;
+    in property <[string]> tag-sort-orders;
+    in property <int> tag-sort-order;
+    in property <int> tag-sort-group;
+    callback tag-row-clicked(int,bool,bool);
+    callback tag-middle-clicked(int,bool,bool);
+    callback tag-context-menu(int,length,length);
+    callback tag-sort-chosen(int,int);
+    callback tag-copy();
+    callback tag-select-all();
+    in property <[MenuPane]> tag-menu-panes;
+    in property <string> tag-menu-question;
+    callback tag-menu-hovered(int,int,length,length,length);
+    callback tag-menu-clicked(int,int,length,length,length);
+    callback tag-menu-placed(int,length,length,length);
+    callback tag-menu-dismissed();
+    callback tag-menu-answered(bool);
     in-out property <bool> trash;
     in-out property <bool> symlinks;
     in property <string> sidecars: "no sidecars";
@@ -33,10 +60,27 @@ export component ExportFilesWindow inherits Window {
         padding: 12px;
         spacing: 9px;
         Text { text: "files to export"; color: Theme.text; font-weight: 700; }
-        ListTable {
-            columns: [ {title: "#", width: 50px}, {title: "filetype", width: 135px}, {title: "path", width: 610px} ];
-            rows: root.rows;
-            row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+        HorizontalLayout {
+            vertical-stretch: 1;
+            spacing: 8px;
+            ExportTags {
+                width: 280px;
+                enabled: !root.working && !root.asking;
+                rows: root.tags; selected: root.tag-selected;
+                sort-type: root.tag-sort-type; orders: root.tag-sort-orders; order: root.tag-sort-order; group: root.tag-sort-group;
+                clicked(row,ctrl,shift) => {root.tag-row-clicked(row,ctrl,shift);}
+                middle-clicked(row,ctrl,shift) => {root.tag-middle-clicked(row,ctrl,shift);}
+                context-menu(row,x,y) => {root.tag-context-menu(row,x,y);}
+                sort-chosen(part,index) => {root.tag-sort-chosen(part,index);}
+                copy => {root.tag-copy();}
+                select-all => {root.tag-select-all();}
+            }
+            ListTable {
+                horizontal-stretch: 1;
+                columns: [ {title: "#", width: 50px}, {title: "filetype", width: 135px}, {title: "path", width: 610px} ];
+                rows: root.rows;
+                row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+            }
         }
         HorizontalLayout {
             Button { text: "remove selected"; enabled: !root.working && !root.asking; clicked => { root.remove(); } }
@@ -52,6 +96,12 @@ export component ExportFilesWindow inherits Window {
         HorizontalLayout {
             LineEdit { text <=> root.phrase; enabled: !root.working && !root.asking; accepted => { root.update(); } }
             Button { text: "update"; enabled: !root.working && !root.asking; clicked => { root.update(); } }
+            ExportPatternButton {
+                labels: root.pattern-shortcuts;
+                heading: root.pattern-heading;
+                available: !root.working && !root.asking;
+                selected(index) => { root.pattern-chosen(index); }
+            }
         }
         Text { text: "{hash}   {file_id}   {#}   {tags}   {nn tags}   [namespace]   (tag)"; color: Theme.text; }
         CheckBox { text: "trash files in hydrus client after export"; checked <=> root.trash; enabled: !root.working && !root.asking; toggled => { if root.trash { root.symlinks = false; } } }
@@ -73,5 +123,14 @@ export component ExportFilesWindow inherits Window {
         choices: ["yes", "no"];
         chosen(i) => { root.answer(i); }
         cancelled => { root.answer(1); }
+    }
+    TagMenuOverlay {
+        width: root.width; height: root.height;
+        panes: root.tag-menu-panes; question: root.tag-menu-question;
+        hovered(p,l,r,t,x) => {root.tag-menu-hovered(p,l,r,t,x);}
+        clicked(p,l,r,t,x) => {root.tag-menu-clicked(p,l,r,t,x);}
+        placed(p,x,y,w) => {root.tag-menu-placed(p,x,y,w);}
+        dismissed => {root.tag-menu-dismissed();}
+        answered(yes) => {root.tag-menu-answered(yes);}
     }
 }

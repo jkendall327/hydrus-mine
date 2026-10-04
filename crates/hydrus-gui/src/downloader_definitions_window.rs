@@ -28,6 +28,7 @@ pub struct Slots {
     pub gug_edit: Rc<RefCell<Option<DownloaderDefinitionEditWindow>>>,
     pub rule: Rc<RefCell<Option<DownloaderDefinitionEditWindow>>>,
     pub strings: crate::string_processor_window::Slots,
+    pub domains: crate::domain_mask_entry::Slots,
 }
 
 impl std::fmt::Debug for Slots {
@@ -63,13 +64,6 @@ fn field(id: i32, label: &str, text: impl Into<String>) -> DefinitionField {
         text: text.into().into(),
         enabled: true,
         ..DefinitionField::default()
-    }
-}
-
-fn multiline(id: i32, label: &str, text: String) -> DefinitionField {
-    DefinitionField {
-        kind: 3,
-        ..field(id, label, text)
     }
 }
 
@@ -133,6 +127,7 @@ pub fn open(
     slots: &Slots,
     classes: bool,
 ) -> Result<DownloaderDefinitionsWindow, String> {
+    slots.strings.set_store(store);
     let slot = if classes { &slots.classes } else { &slots.gugs };
     let exchange = if classes {
         &slots.class_exchange
@@ -443,22 +438,6 @@ fn class_fields(editor: &Editor, c: &UrlClass) -> Vec<DefinitionField> {
                 &["http", "https"],
                 usize::from(c.preferred_scheme == "https"),
             ),
-            multiline(
-                3,
-                "domains (one per line):",
-                c.domain_mask.raw_domains.join("\n"),
-            ),
-            multiline(
-                4,
-                "domain regexes (one per line):",
-                c.domain_mask.domain_regexes.join("\n"),
-            ),
-            tick(5, "match subdomains", c.domain_mask.match_subdomains),
-            tick(
-                6,
-                "keep matched subdomains",
-                c.domain_mask.keep_matched_subdomains,
-            ),
             tick(
                 7,
                 "do not allow extra path components",
@@ -528,7 +507,9 @@ fn class_fields(editor: &Editor, c: &UrlClass) -> Vec<DefinitionField> {
 
 fn editor_blocked(editor: &Editor, slots: &Slots) -> bool {
     match editor.value {
-        Value::Class(_) => slots.rule.borrow().is_some() || slots.strings.has_open(),
+        Value::Class(_) => {
+            slots.rule.borrow().is_some() || slots.strings.has_open() || slots.domains.has_open()
+        }
         Value::Rule(_, _) => slots.strings.has_open(),
         Value::Gug(_) | Value::Header(_, _) => false,
     }
@@ -617,6 +598,56 @@ fn show_editor(window: &DownloaderDefinitionEditWindow, editor: &Editor, whole: 
     window.set_selected_rule(editor.selected_rule.map_or(-1, int));
     window.set_rules(strings(editor.rules()));
     window.set_preview(editor.preview().into());
+    let is_class = matches!(&editor.value, Value::Class(_));
+    window.set_url_class(is_class);
+    if let Value::Class(c) = &editor.value {
+        window.set_domain_mode(int(editor.domain_mode));
+        window.set_domain_mode_enabled(
+            c.domain_mask.raw_domains.len() == 1 && c.domain_mask.domain_regexes.is_empty(),
+        );
+        // Keep unfinished trailing newlines/spaces while the user types a full list.
+        if whole {
+            window.set_domain_raw(c.domain_mask.raw_domains.join("\n").into());
+            window.set_domain_regex(c.domain_mask.domain_regexes.join("\n").into());
+        }
+        window.set_domain_match(c.domain_mask.match_subdomains);
+        window.set_domain_keep(c.domain_mask.keep_matched_subdomains);
+        window.set_domain_test(editor.domain_test.clone().into());
+        let raw_selected = editor.domain_selected(false);
+        let regex_selected = editor.domain_selected(true);
+        window.set_domain_raw_rows(ModelRc::new(VecModel::from(
+            editor
+                .domain_values(false)
+                .iter()
+                .enumerate()
+                .map(|(i, value)| row(vec![value.clone()], raw_selected.contains(&i)))
+                .collect::<Vec<_>>(),
+        )));
+        window.set_domain_regex_rows(ModelRc::new(VecModel::from(
+            editor
+                .domain_values(true)
+                .iter()
+                .enumerate()
+                .map(|(i, value)| row(vec![value.clone()], regex_selected.contains(&i)))
+                .collect::<Vec<_>>(),
+        )));
+        window.set_domain_raw_selected(!raw_selected.is_empty());
+        window.set_domain_regex_selected(!regex_selected.is_empty());
+        let (status, normalised) = editor.domain_preview();
+        window.set_domain_status(status.into());
+        window.set_domain_normalised(normalised.into());
+        let preview = definitions::class_preview(c, editor.classes.collapse_leading_slashes);
+        let invalid = preview.status.starts_with("Example does not match");
+        window.set_preview_status(preview.status.into());
+        window.set_preview_normalised(preview.normalised.into());
+        window.set_preview_request(preview.request.into());
+        window.set_preview_api(preview.api.into());
+        // Qt clears these three outputs on a mismatch, retaining its last referral/next.
+        if !invalid {
+            window.set_preview_referral(preview.referral.into());
+            window.set_preview_next(preview.next.into());
+        }
+    }
     if let Value::Gug(AnyGug::Nested(n)) = &editor.value {
         window.set_members(ModelRc::new(VecModel::from(
             editor
@@ -758,6 +789,7 @@ fn open_editor(
         move || {
             match state.borrow().value {
                 Value::Class(_) => {
+                    slots.domains.cancel();
                     slots.strings.cancel_all();
                     if let Some(rule) = slots.rule.borrow_mut().take() {
                         let _ = rule.hide();
@@ -773,6 +805,82 @@ fn open_editor(
             slot.borrow_mut().take();
             if let Some(window) = window {
                 window.invoke_closed();
+            }
+        }
+    });
+    window.on_domain_row_clicked({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        let weak = window.as_weak();
+        move |regex, index, ctrl, shift| {
+            if weak
+                .upgrade()
+                .is_some_and(|window| window.window().is_visible())
+                && state.borrow().domain_mode == 1
+                && !blocked()
+                && let Ok(index) = usize::try_from(index)
+            {
+                state.borrow_mut().domain_click(regex, index, ctrl, shift);
+                refresh(false);
+            }
+        }
+    });
+    window.on_domain_action({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        let store = store.clone();
+        let slots = slots.clone();
+        let weak = window.as_weak();
+        move |regex, action| {
+            if blocked() || state.borrow().domain_mode != 1 || state.borrow().tab != 0 {
+                return;
+            }
+            let alive: Rc<dyn Fn() -> bool> = Rc::new({
+                let weak = weak.clone();
+                move || {
+                    weak.upgrade()
+                        .is_some_and(|window| window.window().is_visible())
+                }
+            });
+            let result = if action == "delete" {
+                crate::domain_mask_entry::delete(
+                    &store,
+                    &slots.domains,
+                    &state,
+                    regex,
+                    alive,
+                    refresh.clone(),
+                )
+            } else {
+                let indices = if action == "add" {
+                    std::collections::VecDeque::from([None])
+                } else if action == "edit" {
+                    state
+                        .borrow()
+                        .domain_selected(regex)
+                        .into_iter()
+                        .map(Some)
+                        .collect()
+                } else {
+                    return;
+                };
+                crate::domain_mask_entry::edit(
+                    &store,
+                    &slots.domains,
+                    &state,
+                    regex,
+                    indices,
+                    alive,
+                    refresh.clone(),
+                )
+            };
+            refresh(false);
+            if let Err(error) = result
+                && let Some(window) = weak.upgrade()
+            {
+                window.set_error(error.into());
             }
         }
     });

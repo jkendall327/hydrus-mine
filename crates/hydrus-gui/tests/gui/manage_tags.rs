@@ -61,7 +61,7 @@ fn tags_are_added_and_removed_as_the_reference_does() {
     let mut manage = ManageTags::new(store.clone(), vec![tagged]).unwrap();
     let names = manage.service_names();
     let mine = names.iter().position(|n| n == "my tags").unwrap();
-    manage.choose_service(mine);
+    manage.choose_service(mine).unwrap();
     let listed = |m: &ManageTags| -> Vec<String> { m.rows().into_iter().map(|(t, _)| t).collect() };
     assert!(listed(&manage).contains(&its_tag));
     // entered, a new tag is added; entered again, it isn't
@@ -100,7 +100,7 @@ fn tags_are_added_and_removed_as_the_reference_does() {
     // two files: a tag only one has is counted, and entering it adds it to
     // the other
     let mut both = ManageTags::new(store.clone(), vec![tagged, other]).unwrap();
-    both.choose_service(mine);
+    both.choose_service(mine).unwrap();
     let row = both
         .rows()
         .into_iter()

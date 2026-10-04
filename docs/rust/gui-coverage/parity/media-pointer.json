@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "agent": "search-options",
+  "baseline_git_head": "d50df26b",
+  "claims": [
+    {
+      "id": "audit-options-media-viewer-mouse-behaviour-do-not-allow-mouse-media-drag-panning-when-the-media-has-duration",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact default-false checkbox stages/persists drag blocking on real files with duration. Apply updates the open viewer. The actual pointer press snapshots eligibility, rejects panning for duration media only, and leaves keyboard panning and the independent seek bar available. Fresh real Qt recorded displayed local GIF and JPEG drag acceptance and native pointer events reproduce their 21,7 or zero rectangle deltas.",
+      "limits": [
+        "Cursor anchoring/warping, touchscreen unanchoring and idle cursor auto-hide are separate unclaimed controls. Native default cursor follows the platform Arrow/default shape; the Linux Qt recording uses Arrow0 and Blank10.",
+        "The animation start percentage is separately unclaimed; its cold/warm previous-frame-count quirk is recorded for future porting."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ViewerPointerSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow pointer"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::viewer_pointer_controls_stage_the_reference_drag_preferences",
+        "crates/hydrus-store/src/import/decode.rs::viewer_pointer_options_import_both_drag_preferences",
+        "crates/hydrus-gui/tests/gui/options_window.rs::pointer_options_change_real_drag_acceptance_and_cursor_transitions"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_pointer_options.py",
+        "fixture": "oracle/fixtures/viewer_pointer_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T11:53:56Z",
+        "reference": "Real MediaViewerPanel UpdateOptions and CanvasMediaListBrowser BeginDrag/HandleMouseMoveWithoutEvent/EndDrag using actual displayed local JPEG/GIF hashes and controlled unanchored pointer coordinates. Also records real Animation.SetMedia cold/warm boundaries without claiming them."
+      },
+      "implementationCommit": "839c529a"
+    },
+    {
+      "id": "audit-options-media-viewer-mouse-behaviour-hide-mouse-cursor-during-media-viewer-drags",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact checkbox stages/persists cursor hiding, default enabled except macOS. Imported legacy preference is preserved. Actual accepted pointer movement binds the native cursor to MouseCursor.none when enabled; pressing begins with ordinary cursor, release retains blank, and subsequent ordinary pointer movement restores default. Rejected duration-media drags retain ordinary cursor. All four actual Qt cursor phases, independent preference combinations, native pointer events, Cancel, persistence and reopening are covered.",
+      "limits": [
+        "Cursor anchoring/warping, touchscreen unanchoring and idle cursor auto-hide are separate unclaimed controls. Native default cursor follows the platform Arrow/default shape; the Linux Qt recording uses Arrow0 and Blank10.",
+        "The animation start percentage is separately unclaimed; its cold/warm previous-frame-count quirk is recorded for future porting."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ViewerPointerSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow pointer"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::viewer_pointer_controls_stage_the_reference_drag_preferences",
+        "crates/hydrus-store/src/import/decode.rs::viewer_pointer_options_import_both_drag_preferences",
+        "crates/hydrus-gui/tests/gui/options_window.rs::pointer_options_change_real_drag_acceptance_and_cursor_transitions"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_pointer_options.py",
+        "fixture": "oracle/fixtures/viewer_pointer_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T11:53:56Z",
+        "reference": "Real MediaViewerPanel UpdateOptions and CanvasMediaListBrowser BeginDrag/HandleMouseMoveWithoutEvent/EndDrag using actual displayed local JPEG/GIF hashes and controlled unanchored pointer coordinates. Also records real Animation.SetMedia cold/warm boundaries without claiming them."
+      },
+      "implementationCommit": "839c529a"
+    }
+  ],
+  "counts": {
+    "concrete_first_pass": 2,
+    "parent_or_alias": 0
+  }
+}

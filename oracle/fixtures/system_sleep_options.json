@@ -1,0 +1,69 @@
+{
+  "controls": {
+    "enabled": true,
+    "delay": 15,
+    "min": 0,
+    "max": 60
+  },
+  "cases": [
+    {
+      "enabled": true,
+      "delay": 15,
+      "gap_ms": 60000,
+      "detected": false,
+      "deadline_ms": 0,
+      "last_check_touched": true,
+      "after_delay": false
+    },
+    {
+      "enabled": true,
+      "delay": 15,
+      "gap_ms": 61000,
+      "detected": true,
+      "deadline_ms": 1700000015000,
+      "last_check_touched": true,
+      "after_delay": false
+    },
+    {
+      "enabled": true,
+      "delay": 0,
+      "gap_ms": 61000,
+      "detected": true,
+      "deadline_ms": 1700000000000,
+      "last_check_touched": true,
+      "after_delay": false
+    },
+    {
+      "enabled": true,
+      "delay": 60,
+      "gap_ms": 61000,
+      "detected": true,
+      "deadline_ms": 1700000060000,
+      "last_check_touched": true,
+      "after_delay": false
+    },
+    {
+      "enabled": false,
+      "delay": 15,
+      "gap_ms": 61000,
+      "detected": false,
+      "deadline_ms": 0,
+      "last_check_touched": false,
+      "after_delay": false
+    }
+  ],
+  "disabled_pending": {
+    "before": true,
+    "after": false
+  },
+  "clamps": [
+    {
+      "typed": -1,
+      "saved": 0
+    },
+    {
+      "typed": 61,
+      "saved": 60
+    }
+  ]
+}

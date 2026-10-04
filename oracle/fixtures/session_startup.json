@@ -1,0 +1,352 @@
+{
+  "steps": [
+    {
+      "startup": null,
+      "bad": false,
+      "answer": null,
+      "questions": [],
+      "tree": [
+        {
+          "name": "files"
+        }
+      ],
+      "shown": "files",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    },
+    {
+      "startup": "missing startup",
+      "bad": false,
+      "answer": null,
+      "questions": [],
+      "tree": [
+        {
+          "name": "files"
+        }
+      ],
+      "shown": "files",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    },
+    {
+      "startup": "last session",
+      "bad": false,
+      "answer": null,
+      "questions": [],
+      "tree": [
+        {
+          "name": "last inside"
+        }
+      ],
+      "shown": "last inside",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    },
+    {
+      "startup": "startup work",
+      "bad": false,
+      "answer": null,
+      "questions": [],
+      "tree": [
+        {
+          "name": "saved notebook",
+          "children": [
+            {
+              "name": "inside one"
+            }
+          ]
+        },
+        {
+          "name": "saved outside"
+        }
+      ],
+      "shown": "inside one",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    }
+  ],
+  "recovery_steps": [
+    {
+      "startup": "last session",
+      "bad": true,
+      "answer": "yes",
+      "questions": [
+        {
+          "message": "It looks like the last instance of the client did not shut down cleanly.\n\nWould you like to try loading your default session \"last session\", or just a blank page?\n\nThis will auto-choose to open your default session in 15 seconds.",
+          "title": "Previous shutdown was bad",
+          "yes_label": "try to load \"last session\"",
+          "no_label": "just load a blank page",
+          "auto_yes_time": 15
+        }
+      ],
+      "tree": [
+        {
+          "name": "last inside"
+        }
+      ],
+      "shown": "last inside",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    },
+    {
+      "startup": "last session",
+      "bad": true,
+      "answer": "no",
+      "questions": [
+        {
+          "message": "It looks like the last instance of the client did not shut down cleanly.\n\nWould you like to try loading your default session \"last session\", or just a blank page?\n\nThis will auto-choose to open your default session in 15 seconds.",
+          "title": "Previous shutdown was bad",
+          "yes_label": "try to load \"last session\"",
+          "no_label": "just load a blank page",
+          "auto_yes_time": 15
+        }
+      ],
+      "tree": [
+        {
+          "name": "files"
+        }
+      ],
+      "shown": "files",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    },
+    {
+      "startup": "startup work",
+      "bad": true,
+      "answer": "yes",
+      "questions": [
+        {
+          "message": "It looks like the last instance of the client did not shut down cleanly.\n\nWould you like to try loading your default session \"startup work\", or just a blank page?\n\nThis will auto-choose to open your default session in 15 seconds.",
+          "title": "Previous shutdown was bad",
+          "yes_label": "try to load \"startup work\"",
+          "no_label": "just load a blank page",
+          "auto_yes_time": 15
+        }
+      ],
+      "tree": [
+        {
+          "name": "saved notebook",
+          "children": [
+            {
+              "name": "inside one"
+            }
+          ]
+        },
+        {
+          "name": "saved outside"
+        }
+      ],
+      "shown": "inside one",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    },
+    {
+      "startup": "startup work",
+      "bad": true,
+      "answer": "no",
+      "questions": [
+        {
+          "message": "It looks like the last instance of the client did not shut down cleanly.\n\nWould you like to try loading your default session \"startup work\", or just a blank page?\n\nThis will auto-choose to open your default session in 15 seconds.",
+          "title": "Previous shutdown was bad",
+          "yes_label": "try to load \"startup work\"",
+          "no_label": "just load a blank page",
+          "auto_yes_time": 15
+        }
+      ],
+      "tree": [
+        {
+          "name": "files"
+        }
+      ],
+      "shown": "files",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    },
+    {
+      "startup": "startup work",
+      "bad": true,
+      "answer": "close",
+      "questions": [
+        {
+          "message": "It looks like the last instance of the client did not shut down cleanly.\n\nWould you like to try loading your default session \"startup work\", or just a blank page?\n\nThis will auto-choose to open your default session in 15 seconds.",
+          "title": "Previous shutdown was bad",
+          "yes_label": "try to load \"startup work\"",
+          "no_label": "just load a blank page",
+          "auto_yes_time": 15
+        }
+      ],
+      "tree": [
+        {
+          "name": "files"
+        }
+      ],
+      "shown": "files",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    },
+    {
+      "startup": "last session",
+      "bad": true,
+      "answer": "timeout",
+      "questions": [
+        {
+          "message": "It looks like the last instance of the client did not shut down cleanly.\n\nWould you like to try loading your default session \"last session\", or just a blank page?\n\nThis will auto-choose to open your default session in 15 seconds.",
+          "title": "Previous shutdown was bad",
+          "yes_label": "try to load \"last session\"",
+          "no_label": "just load a blank page",
+          "auto_yes_time": 15
+        }
+      ],
+      "tree": [
+        {
+          "name": "last inside"
+        }
+      ],
+      "shown": "last inside",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    },
+    {
+      "startup": null,
+      "bad": true,
+      "answer": "no",
+      "questions": [],
+      "tree": [
+        {
+          "name": "files"
+        }
+      ],
+      "shown": "files",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    },
+    {
+      "startup": "missing startup",
+      "bad": true,
+      "answer": "no",
+      "questions": [],
+      "tree": [
+        {
+          "name": "files"
+        }
+      ],
+      "shown": "files",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    }
+  ],
+  "named_tree": [
+    {
+      "name": "saved notebook",
+      "children": [
+        {
+          "name": "inside one"
+        }
+      ]
+    },
+    {
+      "name": "saved outside"
+    }
+  ],
+  "last_tree": [
+    {
+      "name": "last inside"
+    }
+  ]
+}

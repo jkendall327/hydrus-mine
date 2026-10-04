@@ -83,6 +83,7 @@ pub struct Relationships {
     service: usize,
     sort: usize,
     ascending: bool,
+    use_listbook: bool,
 }
 
 impl Relationships {
@@ -92,7 +93,9 @@ impl Relationships {
         let snapshot = store.snapshot();
         let mut services = Vec::new();
         for ty in [ServiceType::LocalTag, ServiceType::TagRepository] {
-            for service in snapshot.services.of_type(ty) {
+            let mut ordered: Vec<_> = snapshot.services.of_type(ty).collect();
+            ordered.sort_by_cached_key(|service| service.name.to_lowercase());
+            for service in ordered {
                 let state = load(&store, kind, service.id)?;
                 services.push(Service {
                     id: service.id,
@@ -116,16 +119,48 @@ impl Relationships {
                 "there are no editable tag services".into(),
             ));
         }
+        let preferences: hydrus_store::tag_editing::TagEditingSettings =
+            store.read(hydrus_store::settings::get)?;
+        let selected = snapshot
+            .services
+            .by_key(&preferences.default_service)
+            .ok()
+            .and_then(|preferred| services.iter().position(|s| s.id == preferred.id))
+            .unwrap_or(0);
         Ok(Self {
             store,
             kind,
             services,
-            service: 0,
+            service: selected,
             sort: 2,
             ascending: true,
+            use_listbook: preferences.use_listbook,
         })
     }
 
+    /// The service navigator's topology is captured when the dialog opens.
+    pub fn use_listbook(&self) -> bool {
+        self.use_listbook
+    }
+
+    /// Seed the selected tags on every service page, as context-menu relationship editors do.
+    pub fn new_with_tags(
+        store: Arc<Store>,
+        kind: RelationKind,
+        tags: &[String],
+    ) -> hydrus_store::Result<Self> {
+        let mut model = Self::new(store, kind)?;
+        let tags: BTreeSet<_> = tags
+            .iter()
+            .filter_map(|tag| Tag::new(tag))
+            .map(|tag| tag.as_str().to_owned())
+            .collect();
+        for service in &mut model.services {
+            service.left.clone_from(&tags);
+            service.workspace.extend(tags.iter().cloned());
+        }
+        Ok(model)
+    }
     /// Store whose graph and tag presentation are being edited.
     pub fn store(&self) -> &Arc<Store> {
         &self.store
@@ -135,6 +170,14 @@ impl Relationships {
         self.kind
     }
     /// Service names in the same local-then-repository order as the reference.
+    pub fn service_key(&self, index: usize) -> Option<hydrus_core::ServiceKey> {
+        self.store
+            .snapshot()
+            .services
+            .get(self.services.get(index)?.id)
+            .ok()
+            .map(|s| s.key.clone())
+    }
     pub fn service_names(&self) -> Vec<String> {
         self.services.iter().map(|s| s.name.clone()).collect()
     }
@@ -147,6 +190,16 @@ impl Relationships {
         if index < self.services.len() {
             self.service = index;
         }
+    }
+    /// A real tab change remembers its service independently of the staged relationship draft.
+    pub fn choose_service_remembered(&mut self, index: usize) -> hydrus_store::Result<()> {
+        let Some(key) = self.service_key(index) else {
+            return Ok(());
+        };
+        self.store
+            .write(move |ctx| hydrus_store::tag_editing::remember_service(ctx.conn(), &key))?;
+        self.choose_service(index);
+        Ok(())
     }
     /// Explain which services apply these relationships and when changes appear.
     pub fn sync_status(&self) -> hydrus_store::Result<String> {
@@ -198,6 +251,13 @@ impl Relationships {
     /// Enter cleaned tags in a side's selection, toggling existing tags.
     /// A sibling has one ideal; a parent input may contain several parents.
     pub fn enter_tags(&mut self, right: bool, text: &str) -> Result<(), String> {
+        self.enter_tag_text(right, text, false)
+    }
+    /// Clipboard entry only adds tags to the side's selection.
+    pub fn paste_tags(&mut self, right: bool, tags: &[String]) -> Result<(), String> {
+        self.enter_tag_text(right, &tags.join("\n"), true)
+    }
+    fn enter_tag_text(&mut self, right: bool, text: &str, only_add: bool) -> Result<(), String> {
         let tags: Vec<String> = text
             .lines()
             .filter(|s| !s.trim().is_empty())
@@ -226,7 +286,7 @@ impl Relationships {
                 (&mut s.left, &mut s.right)
             };
             other.remove(&tag);
-            if !this.remove(&tag) {
+            if only_add || !this.remove(&tag) {
                 this.insert(tag);
             }
         }

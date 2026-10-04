@@ -494,6 +494,22 @@ impl ClientOptions {
         out
     }
 
+    /// The conversion most recently accepted in a conversion child editor.
+    pub fn last_used_string_conversion(
+        &self,
+    ) -> DecodeResult<Option<hydrus_core::url::strings::Conversion>> {
+        let settings = Settings::new(KIND, &self.dictionary)?;
+        settings
+            .get("last_used_string_conversion_step")
+            .map(|meta| {
+                let converter =
+                    super::domain::string_converter(expect_object(meta, "last used conversion")?)?;
+                Ok(converter.conversions.into_iter().next())
+            })
+            .transpose()
+            .map(Option::flatten)
+    }
+
     /// The system predicates last added from the system predicate editors,
     /// by the reference's number for their type, newest first
     /// (`predicate_types_to_recent_predicates`), numerical ratings read

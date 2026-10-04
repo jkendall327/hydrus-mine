@@ -144,12 +144,15 @@ impl State {
         for i in 0..panel.fields.len() {
             let row = field_row(panel, i);
             let old = model.row_data(i);
-            // (what was typed or chosen shows already)
+            // The active input already shows what was typed. A button also
+            // synchronizes cached text before freezing or cleaning that draft.
             let redrawn = matches!(panel.fields[i], Field::Ticks { .. } | Field::Tree { .. });
             let changed = (redrawn && Some(i) == set)
-                || old
-                    .as_ref()
-                    .is_none_or(|old| old.shown != row.shown || old.enabled != row.enabled);
+                || old.as_ref().is_none_or(|old| {
+                    old.shown != row.shown
+                        || old.enabled != row.enabled
+                        || (set.is_none() && old.text != row.text)
+                });
             if changed {
                 model.set_row_data(i, row);
             }
@@ -229,6 +232,9 @@ pub(crate) fn open(
         let store = store.clone();
         move |page: usize| {
             let Some(window) = weak.upgrade() else { return };
+            if !window.get_question().is_empty() {
+                return;
+            }
             let mut state = state.borrow_mut();
             if page >= state.editor.pages.len() {
                 return;
@@ -283,7 +289,13 @@ pub(crate) fn open(
         let close = close.clone();
         let done = done.clone();
         let store = store.clone();
+        let weak = window.as_weak();
         move |predicates: Vec<Predicate>| {
+            if weak.upgrade().is_none_or(|window| {
+                !window.window().is_visible() || !window.get_question().is_empty()
+            }) {
+                return;
+            }
             if done.replace(true) {
                 return;
             }
@@ -314,7 +326,14 @@ pub(crate) fn open(
     window.on_recent_forgotten({
         let state = state.clone();
         let show_page = show_page.clone();
+        let weak = window.as_weak();
         move |i| {
+            if weak
+                .upgrade()
+                .is_none_or(|window| !window.get_question().is_empty())
+            {
+                return;
+            }
             let forgotten = usize::try_from(i)
                 .ok()
                 .and_then(|i| state.borrow().recent.get(i).cloned());
@@ -353,6 +372,11 @@ pub(crate) fn open(
         let state = state.clone();
         let weak = window.as_weak();
         move |p: i32, set: Option<i32>, change: &dyn Fn(&mut Panel) -> Option<String>| {
+            if weak.upgrade().is_none_or(|window| {
+                !window.window().is_visible() || !window.get_question().is_empty()
+            }) {
+                return;
+            }
             let Ok(p) = usize::try_from(p) else { return };
             let mut state = state.borrow_mut();
             let page = state.page;
@@ -421,12 +445,22 @@ pub(crate) fn open(
             });
         }
     });
+    let pending_question = Rc::new(RefCell::new(None));
     window.on_pressed({
         let edit = edit.clone();
+        let pending_question = pending_question.clone();
+        let weak = window.as_weak();
         move |p, f| {
             edit(p, None, &|panel| match panel.press(index(f)) {
                 Pressed::Done => None,
                 Pressed::Warning(said) => Some(said),
+                Pressed::Confirm(question) => {
+                    *pending_question.borrow_mut() = Some((p, f));
+                    if let Some(window) = weak.upgrade() {
+                        window.set_question(question.into());
+                    }
+                    None
+                }
                 Pressed::Paste => match pasted_hashes() {
                     Ok((pixel, perceptual)) => {
                         panel.paste_hashes(&pixel, &perceptual);
@@ -437,11 +471,36 @@ pub(crate) fn open(
             });
         }
     });
+    window.on_answer({
+        let edit = edit.clone();
+        let weak = window.as_weak();
+        move |accepted| {
+            let Some(window) = weak.upgrade() else { return };
+            if !window.window().is_visible() {
+                return;
+            }
+            let Some((p, f)) = pending_question.borrow_mut().take() else {
+                return;
+            };
+            window.set_question(SharedString::new());
+            if accepted {
+                edit(p, None, &|panel| match panel.press_confirmed(index(f)) {
+                    Pressed::Warning(said) => Some(said),
+                    _ => None,
+                });
+            }
+        }
+    });
     window.on_ok({
         let weak = window.as_weak();
         let state = state.clone();
         let finish = finish.clone();
         move |p| {
+            if weak.upgrade().is_none_or(|window| {
+                !window.window().is_visible() || !window.get_question().is_empty()
+            }) {
+                return;
+            }
             let made = {
                 let state = state.borrow();
                 let Some(panel) = state.panels().get(index(p)) else {
@@ -484,6 +543,7 @@ pub(crate) fn tree_rows(groups: &[crate::predicate_editors::TreeGroup]) -> Model
         rows.push(EditorTreeRow {
             text: group.name.as_str().into(),
             ticked: group.ticked.iter().all(|t| *t),
+            partial: group.ticked.iter().any(|t| *t) && !group.ticked.iter().all(|t| *t),
             group: g,
             option: -1,
             shown: true,
@@ -493,6 +553,7 @@ pub(crate) fn tree_rows(groups: &[crate::predicate_editors::TreeGroup]) -> Model
             rows.push(EditorTreeRow {
                 text: option.as_str().into(),
                 ticked: *ticked,
+                partial: false,
                 group: g,
                 option: i32::try_from(o).unwrap_or(0),
                 shown: group.expanded,

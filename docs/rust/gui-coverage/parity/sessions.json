@@ -1,0 +1,3151 @@
+{
+  "schema_version": 1,
+  "agent": "parity-sessions",
+  "baseline": "d50df26beb3e45638b3a0ddb6d20cc1d108518a8",
+  "claims": [
+    {
+      "reference_id": "audit-options-tabs-context-action-2270-saved-session-name",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Append the freshest saved session as an independent notebook inside the frozen clicked tab row parent, retain background visible sibling and remember destination child selection; preserve files, selection and importer snapshot data independently of live source.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "b3472973",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1183,
+          "commit": "b3472973",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 299,
+          "commit": "b3472973",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 75,
+          "commit": "b3472973",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 244,
+          "commit": "b3472973",
+          "kind": "independent_state_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_notebook_sessions.py",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/notebook_sessions.json",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual popup labels/reserved-name exclusions, 7 save question/invalid/cancel outcomes, serialized children and background append selection."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2287-non-reserved-session-name",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Save only clicked notebook children to selected existing non-reserved named session after exact overwrite question; cancellation writes nothing. Source notebook key remains fixed despite a different selected sibling, copied tree omits wrapper and rolling immutable snapshots retain media/importer state.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "b3472973",
+      "limits": [
+        "Reserved-name warnings use the existing inline native warning area instead of a separate Qt warning window.",
+        "A source notebook removed before acceptance reports an error instead of saving a detached closed Qt object."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1338,
+          "commit": "b3472973",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 299,
+          "commit": "b3472973",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 75,
+          "commit": "b3472973",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 244,
+          "commit": "b3472973",
+          "kind": "independent_state_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_notebook_sessions.py",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/notebook_sessions.json",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual popup labels/reserved-name exclusions, 7 save question/invalid/cancel outcomes, serialized children and background append selection."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2290-create-a-new-session",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Create a named session from clicked notebook children, suggest notebook name, reject reserved names with retry, ask exact existing-name overwrite question, support choose-another-name/name cancellation/question closure; retain independent copied snapshots.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "b3472973",
+      "limits": [
+        "Reserved-name warnings use the existing inline native warning area instead of a separate Qt warning window.",
+        "A source notebook removed before acceptance reports an error instead of saving a detached closed Qt object."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1338,
+          "commit": "b3472973",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 299,
+          "commit": "b3472973",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 75,
+          "commit": "b3472973",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 244,
+          "commit": "b3472973",
+          "kind": "independent_state_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_notebook_sessions.py",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/notebook_sessions.json",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual popup labels/reserved-name exclusions, 7 save question/invalid/cancel outcomes, serialized children and background append selection."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2052-page-weight-information-advanced",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Advanced-only copyable comma-formatted subtree weight counts each leaf independently, plus twenty per file or gallery seed, including repeated media across children.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "5720be94534067a39a2c793865901193c03ef0a5",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1664,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2185,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "consumer"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_refresh.rs",
+          "line": 138,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "gui_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_refresh.py",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_refresh.json",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_fixture"
+        },
+        "observed": "Recursive initialized-page dispatch and search states, per-leaf and notebook weights, advanced visibility and clipboard output."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2249-refresh-this-page",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Refresh clicked initialized leaf by stable key: paused search resumes, hash-locked search stays fixed, importer re-applies current sort retaining selected files and transfer pause state.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "5720be94534067a39a2c793865901193c03ef0a5",
+      "limits": [
+        "Duplicate sidebar numbers are read on active-page render rather than independent background sidebar jobs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1651,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2185,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "consumer"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_refresh.rs",
+          "line": 68,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "gui_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_refresh.py",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_refresh.json",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_fixture"
+        },
+        "observed": "Recursive initialized-page dispatch and search states, per-leaf and notebook weights, advanced visibility and clipboard output."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2253-refresh-all-this-page-s-pages",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Recursively refresh initialized notebook descendants, skipping unopened descendants; preserve selected outside sibling and notebook selection, omit action for empty notebook.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "5720be94534067a39a2c793865901193c03ef0a5",
+      "limits": [
+        "Duplicate sidebar numbers are read on active-page render rather than independent background sidebar jobs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1651,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2185,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "consumer"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_refresh.rs",
+          "line": 68,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "gui_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_refresh.py",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_refresh.json",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_fixture"
+        },
+        "observed": "Recursive initialized-page dispatch and search states, per-leaf and notebook weights, advanced visibility and clipboard output."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2164-new-page",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Open real page chooser in frozen clicked row notebook; use current configured insertion position, preserve destination through selection changes, include unused-space right-click action, retain blank child when choosing page-of-pages.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 789,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "consumer"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 166,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "typed_setting"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1446,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "option_registration"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_new_page.rs",
+          "line": 70,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_control_comparison"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_new_page.py",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_new_page.json",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _ChooseNewPage11 cases: four default positions, explicit here overriding each position, cancellation, names/order/selection/blank children. Exact GUI Pages dropdown labels/default additionally from options_dialog.json."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2168-new-page-here",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Open chooser with frozen parent and clicked sibling anchor; insert immediately before that sibling independently of default placement; cancellation changes no tree or selection and clears pending position; reject removed/moved destination before importer queue creation.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+      "limits": [
+        "Native cancellation clears the pending position, unlike reference retained _next_new_page_index, preventing stale placement on later creation."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 789,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "consumer"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 166,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "typed_setting"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1446,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "option_registration"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_new_page.rs",
+          "line": 143,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_control_comparison"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_new_page.py",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_new_page.json",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _ChooseNewPage11 cases: four default positions, explicit here overriding each position, cancellation, names/order/selection/blank children. Exact GUI Pages dropdown labels/default additionally from options_dialog.json."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-opening-and-closing-put-new-page-tabs-on",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Exact GUI Pages choice labels/order/value import for four insertion positions; cancelled edits and invalid choice leave persisted setting unchanged; apply changes real creation immediately and survives reopen, with explicit here anchor taking precedence.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1435,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "consumer"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 166,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "typed_setting"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1446,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "option_registration"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_new_page.rs",
+          "line": 225,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_control_comparison"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_new_page.py",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_new_page.json",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _ChooseNewPage11 cases: four default positions, explicit here overriding each position, cancellation, names/order/selection/blank children. Exact GUI Pages dropdown labels/default additionally from options_dialog.json."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-sessions-sessions-if-last-session-above-autosave-it-how-often-minutes",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Exact1..1440-minute GUI Sessions control imports, cancels invalid/pending edits, applies to real historical timer; scheduled saves retain immutable media/importer history and reschedule current period while unchanged or selection-only data creates no new backup.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 84,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "timer_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1536,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "option_registration"
+        },
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 87,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "snapshot_hash_consumer"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 51,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "gui_control_timer_archive_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 142,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "real_input_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_model_replay"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_session_autosave.py",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/session_autosave.json",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual AutoSaveLastSession cadence/retry/stopping/serialized-hash suppression and independent backup timestamps; actual CurrentlyIdle boot, user, mouse, API and disabled-mode boundaries."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-sessions-sessions-if-last-session-above-only-autosave-during-idle-time",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "exactBehavior": "Consume the applied idle-only checkbox on the historical autosave timer; active sessions retry after 60 seconds. Reference boot guard and independent user/mouse/API timeouts are driven by input across all native auxiliary/main windows and atomic timestamp-only IPC from every recognized API request before authentication or busy refusal. Rejected and read-only API requests also postpone idle saves.",
+      "countAsCompletedLeaf": false,
+      "implementationCommit": "4bdc7414",
+      "limits": [
+        "The reference polls global OS cursor position; mouse movement outside native application windows does not yet reset native mouse idle. The leaf remains partial and is not counted as completed."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 84,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "timer_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1536,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "option_registration"
+        },
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 87,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "snapshot_hash_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 14,
+          "commit": "c8039840",
+          "kind": "native_window_input"
+        },
+        {
+          "path": "crates/hydrus-api/src/server.rs",
+          "line": 85,
+          "commit": "4bdc7414",
+          "kind": "api_request_activity"
+        },
+        {
+          "path": "crates/hydrus-store/src/api_activity.rs",
+          "line": 10,
+          "commit": "4bdc7414",
+          "kind": "atomic_activity_ipc"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 51,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "gui_control_timer_archive_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 142,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "real_input_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_model_replay"
+        },
+        {
+          "path": "crates/hydrus-api/tests/activity.rs",
+          "line": 38,
+          "commit": "4bdc7414",
+          "kind": "loopback_socket_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 259,
+          "commit": "4bdc7414",
+          "kind": "idle_consumer_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 96,
+          "commit": "c8039840",
+          "kind": "reference_activity_replay"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_session_autosave.py",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/session_autosave.json",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual AutoSaveLastSession cadence/retry/stopping/serialized-hash suppression and independent backup timestamps; actual CurrentlyIdle boot, user, mouse, API and disabled-mode boundaries."
+      },
+      "additionalReferenceRecordings": [
+        {
+          "recorder": {
+            "path": "oracle/record_session_activity.py",
+            "line": 1,
+            "commit": "c8039840",
+            "kind": "reference_recorder"
+          },
+          "fixture": {
+            "path": "oracle/fixtures/session_activity.json",
+            "line": 1,
+            "commit": "c8039840",
+            "kind": "reference_fixture"
+          },
+          "observed": "Actual auxiliary Dialog constructor resets only user time; real global Qt cursor movement updates mouse, unchanged cursor does not, and real controller API action updates only API time."
+        }
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-sessions-sessions-default-session-on-startup",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "a9cde425",
+      "exactBehavior": "Select blank, last session or any frozen saved name in GUI Sessions; cancel and invalid choices retain persisted startup. Ordinary boot restores the selected saved tree with independent ordered media, selection and importer queues, falls back to blank for a missing name, and schedules the first configured autosave. After an interrupted native run, prompt only for an existing configured saved name using the exact reference title/message/buttons; yes or actual fifteen-second timeout loads the frozen displayed name, no/window-close opens blank without changing preferences. Resolve startup once, start main client workers after the choice, and clear running evidence only after clean shutdown.",
+      "limits": [
+        "The native loads before showing the main window instead of a quarter-second deferred Qt callback; empty named trees retain one native blank search page.",
+        "Native recovery uses its own running marker; the reference process marker is not copied during database import."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1558,
+          "commit": "4a81784b",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 174,
+          "commit": "4a81784b",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/main.rs",
+          "line": 129,
+          "commit": "4a81784b",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/mod.rs",
+          "line": 1248,
+          "commit": "97d9074b",
+          "kind": "import_named_identity"
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_startup.rs",
+          "line": 27,
+          "commit": "a9cde425",
+          "kind": "run_lifecycle"
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_startup.rs",
+          "line": 77,
+          "commit": "a9cde425",
+          "kind": "recovery_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 197,
+          "commit": "a9cde425",
+          "kind": "frozen_startup_name"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 81,
+          "commit": "4a81784b",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 124,
+          "commit": "4a81784b",
+          "kind": "cancel_invalid_reopen"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 192,
+          "commit": "4a81784b",
+          "kind": "independent_state_regression"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/mod.rs",
+          "line": 2027,
+          "commit": "97d9074b",
+          "kind": "legacy_import_snapshot_isolation"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 303,
+          "commit": "a9cde425",
+          "kind": "reference_recovery_gui_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 398,
+          "commit": "a9cde425",
+          "kind": "frozen_name_and_clean_bypass"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 458,
+          "commit": "a9cde425",
+          "kind": "interrupt_clean_reopen_marker"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 155,
+          "commit": "a9cde425",
+          "kind": "exact_question_replay"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_session_startup.py",
+          "line": 1,
+          "commit": "4a81784b",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/session_startup.json",
+          "line": 1,
+          "commit": "4a81784b",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _InitialiseSession with real controller/DB saved trees, clean shutdown: blank/missing/Last/named tree, shown child and initial 0.25-second load/300-second autosave callbacks. Exact selector labels/order/value compare against existing real Options Dialog fixture."
+      },
+      "additionalReferenceRecordings": [
+        {
+          "recorder": {
+            "path": "oracle/record_session_startup.py",
+            "line": 1,
+            "commit": "a9cde425",
+            "kind": "reference_recorder"
+          },
+          "fixture": {
+            "path": "oracle/fixtures/session_startup.json",
+            "line": 1,
+            "commit": "a9cde425",
+            "kind": "reference_fixture"
+          },
+          "observed": "Actual _InitialiseSession eight bad-shutdown cases with exact questions and yes/no/close outputs; real GetYesNo auto-yes modal waited fifteen seconds and loaded Last. Blank/missing bypass question. Ordinary startup outputs also retained."
+        }
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-sessions-sessions-show-warning-popup-if-session-size-exceeds-10-000-000",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "588e39f0",
+      "exactBehavior": "Apply the exact GUI Sessions warning preference to active Pages::session_weight; more than ten million triggers the exact reference message through the rendered native popup stack once per boot. Closed pages are excluded, seeds contribute twenty, disabled checks do not consume the allowance, and dismissal/re-enabling does not repeat the warning in the same boot.",
+      "limits": [
+        "The native checks active weight on its one-second monitor, while the reference checks when its page-count menu becomes dirty."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1589,
+          "commit": "588e39f0",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/session_lifecycle.rs",
+          "line": 90,
+          "commit": "588e39f0",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 175,
+          "commit": "588e39f0",
+          "kind": "popup_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 2390,
+          "commit": "588e39f0",
+          "kind": "active_weight_source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 133,
+          "commit": "588e39f0",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 315,
+          "commit": "588e39f0",
+          "kind": "cancel_apply_rendered_popup_dismiss_reopen"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_session_warning.py",
+          "line": 1,
+          "commit": "588e39f0",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/session_warning.json",
+          "line": 1,
+          "commit": "588e39f0",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _UpdateMenuPagesCountIfDirty on real Qt menu items with scripted counts: six threshold/disabled/closed-page/seed-weight/repeated/new-boot cases; exact ShowText message and warning latch outputs."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-help-for-this-panel",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Help opens the recorded tl;dr text and launches the exact import-options documentation page from the help submenu.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-keep-this-panel-simple",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Stage the exact simple-mode checkbox; cancel leaves it unchanged, outer Apply persists it and ordinary local-folder/importer editors consume it. Default row editors replay all caller/simple/URL-context lists and parent fallback sources.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-default-import-options-editor-list",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Display seven canonical caller defaults in the recorded reverse canonical sort order, exact custom summaries, extended selection and stable sorting; own an isolated manager until outer Apply.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-default-import-options-show-stack",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Show the exact recorded precedence explanation for each selected caller, including Global fallback explanation and API/import-folder/subscription differences.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-default-import-options-edit",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Edit a frozen caller default through the shared staged import editor, resolve inherited values from less-specific parent contexts, retain hidden custom kinds and keep Global full; cancellation writes nothing and accepted defaults reach importer consumers.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs.",
+        "Existing shared import-options editor limitations (including program-command editing/execution) remain documented in DIFFERENCES.md."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 214,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-default-import-options-clear",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Prevent clearing Global alone; strip Global from a mixed selection, ask the exact joined-caller question and clear only the frozen accepted targets to empty containers.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-default-import-options-reset-to-defaults",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Present all three exact reset choices/descriptions and follow-up labels/question; No/Cancel change nothing, Yes resets only the selected defaults/URL overrides/profiles category within the draft.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs.",
+        "After resetting profiles, native refreshes the visible list immediately; reference currently leaves it stale until reopening."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-url-class-import-options-editor-list",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "List only installed post/watchable/gallery classes with recorded names/type/custom-summary columns; distinguish absent override from an empty override and keep stable class keys through selection/sort/edit/apply.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-url-class-import-options-show-stack",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Show the exact selected class explanation, using watcher defaults for watchable classes and post/subscription precedence for post/gallery classes.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-url-class-import-options-edit",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Stage overrides for the frozen class key and resolve inherited settings through its post/watch parent, excluding its own override; accepted overrides survive reopen and independent class keys resolve distinct effective settings.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs.",
+        "Existing shared import-options editor limitations remain documented in DIFFERENCES.md."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 214,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-url-class-import-options-clear",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Ask the exact singular/plural class clear question, preserve data on cancellation and set accepted frozen class overrides to empty containers rather than deleting entries.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-favourites-profiles-editor-list",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Show recorded named-container summaries and stable profile identity/selection, including updates from the shared staged star menus; persist/reopen only after the parent Options Apply.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-favourites-profiles-add",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Open the named shared staged editor with the recorded new-profile seed; cancellation creates nothing, accepted containers get exact unique-name suffixes and remain isolated until parent Apply.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 214,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-favourites-profiles-edit",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Open the selected frozen profile and rename/replace it through the shared staged editor; preserve row identity and selection, handle recorded name collisions, cancel safely and retain the accepted profile on reopening.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 214,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-import-options-favourites-profiles-delete",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "exactBehavior": "Native safely asks the intended named-profile question and deletes accepted frozen targets; recorded multi-profile questions/cancellation/deletion replay unchanged.",
+      "countAsCompletedLeaf": false,
+      "implementationCommit": "7d089e8d",
+      "limits": [
+        "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs.",
+        "Actual reference single-profile deletion raises ValueError before asking because it unpacks the one-row list incorrectly. Native safe single deletion differs, so this original entry remains partial and is not counted."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 415,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+          "line": 134,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+          "line": 77,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+          "line": 67,
+          "commit": "cc946a9f",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/import_options_editor.rs",
+          "line": 383,
+          "commit": "7d089e8d",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 73,
+          "commit": "7d089e8d",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+          "line": 271,
+          "commit": "7d089e8d",
+          "kind": "consumer_and_persistence_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_options_panel.py",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_options_panel.json",
+          "line": 1,
+          "commit": "7d089e8d",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-opening-and-closing-in-new-page-chooser-show-combined-local-file-domains-if-appropriate",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "ce96f5eb",
+      "exactBehavior": "Staged checkbox controls whether combined local file domains is offered, only with at least two registered local file domains. Default true; primary and top choice remain independently editable and persisted. Every chosen button creates a search on exactly that current service key.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1599,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/page_chooser.rs",
+          "line": 114,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 230,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 244,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 10,
+          "commit": "ce96f5eb",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 89,
+          "commit": "ce96f5eb",
+          "kind": "legacy_import_and_registry_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_chooser_options.rs",
+          "line": 48,
+          "commit": "ce96f5eb",
+          "kind": "gui_consumer_cancel_apply_reopen_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_page_chooser_options.py",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/page_chooser_options.json",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt Options checkbox defaults/enabled states/labels/UpdateOptions, 48 combinations of four flags and 1/2/10 registered domains, every offered actual page-query current/deleted LocationContext and cancellation result."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-opening-and-closing-put-it-at-the-top",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "ce96f5eb",
+      "exactBehavior": "Staged combined-domain top checkbox defaults false; when eligible, inserts the combined domain before sorted local domains rather than after them. Preference survives while combined visibility is disabled; storage top retains higher priority.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1604,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/page_chooser.rs",
+          "line": 114,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 230,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 244,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 10,
+          "commit": "ce96f5eb",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 89,
+          "commit": "ce96f5eb",
+          "kind": "legacy_import_and_registry_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_chooser_options.rs",
+          "line": 48,
+          "commit": "ce96f5eb",
+          "kind": "gui_consumer_cancel_apply_reopen_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_page_chooser_options.py",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/page_chooser_options.json",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt Options checkbox defaults/enabled states/labels/UpdateOptions, 48 combinations of four flags and 1/2/10 registered domains, every offered actual page-query current/deleted LocationContext and cancellation result."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-opening-and-closing-in-new-page-chooser-show-hydrus-local-file-storage",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "ce96f5eb",
+      "exactBehavior": "Staged storage checkbox defaults false; when enabled, offers hydrus local file storage after trash or at the configured top. Choice creates a search on the storage current service key, with no deleted domains.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1609,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/page_chooser.rs",
+          "line": 127,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 230,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 244,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 10,
+          "commit": "ce96f5eb",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 89,
+          "commit": "ce96f5eb",
+          "kind": "legacy_import_and_registry_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_chooser_options.rs",
+          "line": 48,
+          "commit": "ce96f5eb",
+          "kind": "gui_consumer_cancel_apply_reopen_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_page_chooser_options.py",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/page_chooser_options.json",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt Options checkbox defaults/enabled states/labels/UpdateOptions, 48 combinations of four flags and 1/2/10 registered domains, every offered actual page-query current/deleted LocationContext and cancellation result."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-opening-and-closing-put-it-at-the-top-2",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "ce96f5eb",
+      "exactBehavior": "Staged storage top checkbox defaults false; when enabled with storage visibility, inserts storage before combined and ordinary local domains. Preference survives while storage is disabled. Exact reference number-pad layout and nine-entry truncation are preserved.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1614,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/page_chooser.rs",
+          "line": 127,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 230,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 244,
+          "commit": "ce96f5eb",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 10,
+          "commit": "ce96f5eb",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_chooser_options.rs",
+          "line": 89,
+          "commit": "ce96f5eb",
+          "kind": "legacy_import_and_registry_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_chooser_options.rs",
+          "line": 48,
+          "commit": "ce96f5eb",
+          "kind": "gui_consumer_cancel_apply_reopen_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_page_chooser_options.py",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/page_chooser_options.json",
+          "line": 1,
+          "commit": "ce96f5eb",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt Options checkbox defaults/enabled states/labels/UpdateOptions, 48 combinations of four flags and 1/2/10 registered domains, every offered actual page-query current/deleted LocationContext and cancellation result."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-opening-and-closing-confirm-when-closing-any-page",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "aa5290f5",
+      "exactBehavior": "Staged default-false checkbox asks before ordinary search, empty importer and notebook tab closes. Search question is Close \"name\"?; notebooks add exact empty or recursive-held-page statement. Existing importer veto questions take priority without a second prompt. Denial preserves the full tree, acceptance uses normal close/undo; session replacement checks importer vetoes without adding notebook confirm-all prompts.",
+      "limits": [
+        "Questions use the existing inline native confirmation area."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1629,
+          "commit": "aa5290f5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1724,
+          "commit": "aa5290f5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 255,
+          "commit": "aa5290f5",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_navigation_options.rs",
+          "line": 59,
+          "commit": "aa5290f5",
+          "kind": "gui_close_cancel_undo_session_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_page_navigation_options.py",
+          "line": 1,
+          "commit": "a9248622",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/page_navigation_options.json",
+          "line": 1,
+          "commit": "a9248622",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt GUI Pages values/bounds/UpdateOptions; 24 ordinary/nested/session-close AskIfAbleToClose combinations and accepted/denied questions; real sidebar PageShown focus dispatch for search and all four importers; actual Pages History menus over 25 entries for bounds/default/short limits. Empty importer worker starts are suppressed; confirmation and PageShown implementations run unchanged."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-navigation-and-drag-and-drop-maximum-entries-to-show-in-page-navigation-history",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "aa5290f5",
+      "exactBehavior": "Staged integer control defaults to 100 with limits 1\u20131000. Apply caps Pages History visible entries, numbered newest-first, retaining all backing history and Clear History. Cancel leaves the stored value unchanged; legacy import/reopening preserve it; out-of-range model input clamps to the same 1\u20131000 bounds as the recorded Qt spinbox.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1643,
+          "commit": "aa5290f5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 624,
+          "commit": "aa5290f5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 255,
+          "commit": "aa5290f5",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_navigation_options.rs",
+          "line": 13,
+          "commit": "aa5290f5",
+          "kind": "reference_menu_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_navigation_options.rs",
+          "line": 52,
+          "commit": "aa5290f5",
+          "kind": "import_invalid_boundary_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_navigation_options.rs",
+          "line": 135,
+          "commit": "aa5290f5",
+          "kind": "gui_history_apply_cancel_reopen_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_page_navigation_options.py",
+          "line": 1,
+          "commit": "a9248622",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/page_navigation_options.json",
+          "line": 1,
+          "commit": "a9248622",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt GUI Pages values/bounds/UpdateOptions; 24 ordinary/nested/session-close AskIfAbleToClose combinations and accepted/denied questions; real sidebar PageShown focus dispatch for search and all four importers; actual Pages History menus over 25 entries for bounds/default/short limits. Empty importer worker starts are suppressed; confirmation and PageShown implementations run unchanged."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-navigation-and-drag-and-drop-when-switching-to-pages-move-keyboard-focus-to-any-text-input-field",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "a9248622",
+      "exactBehavior": "Staged default-false checkbox requests actual text focus when changing the visible page, through existing search autocomplete and gallery/watcher/simple/URL query inputs. Same visible page and sidebars without a text input do not issue a request. Disabling the preference stops navigation focus requests; Apply/Cancel/reopening and legacy import retain exact behavior.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1652,
+          "commit": "aa5290f5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 508,
+          "commit": "a9248622",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 750,
+          "commit": "a9248622",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/gallery.slint",
+          "line": 46,
+          "commit": "a9248622",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/watcher.slint",
+          "line": 43,
+          "commit": "a9248622",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/simple_downloader.slint",
+          "line": 12,
+          "commit": "a9248622",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 255,
+          "commit": "aa5290f5",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_navigation_options.rs",
+          "line": 135,
+          "commit": "aa5290f5",
+          "kind": "gui_search_focus_apply_cancel_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/page_navigation_options.rs",
+          "line": 241,
+          "commit": "a9248622",
+          "kind": "gui_importer_focus_enabled_disabled_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_page_navigation_options.py",
+          "line": 1,
+          "commit": "a9248622",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/page_navigation_options.json",
+          "line": 1,
+          "commit": "a9248622",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt GUI Pages values/bounds/UpdateOptions; 24 ordinary/nested/session-close AskIfAbleToClose combinations and accepted/denied questions; real sidebar PageShown focus dispatch for search and all four importers; actual Pages History menus over 25 entries for bounds/default/short limits. Empty importer worker starts are suppressed; confirmation and PageShown implementations run unchanged."
+      }
+    },
+    {
+      "reference_id": "audit-options-file-sort-collect-file-sort-namespace-file-sorting-ordered-editor-list",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Expose the ordered namespace scheme queue with stable duplicate identities, first-selected editing, extended selection, reference up/down move order and frozen delete question; child Apply stages an Options draft, outer Apply persists schemes for actual page sort and collect consumers.",
+      "countAsCompletedLeaf": false,
+      "implementationCommit": "963507dc",
+      "limits": [
+        "The native queue is an Options-owned child window; text/tag-view/delete questions appear in that window instead of the reference embedded queue and separate Qt modal dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/namespace_sorts.rs",
+          "line": 1,
+          "commit": "e5ae30e0",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/namespace_sorts_window.rs",
+          "line": 60,
+          "commit": "963507dc",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 544,
+          "commit": "963507dc",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_sorts.rs",
+          "line": 25,
+          "commit": "e5ae30e0",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_sorts.rs",
+          "line": 112,
+          "commit": "e5ae30e0",
+          "kind": "cancel_invalid_identity_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_sorts.rs",
+          "line": 76,
+          "commit": "963507dc",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_sorts.rs",
+          "line": 221,
+          "commit": "963507dc",
+          "kind": "actual_sort_collect_consumer_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_namespace_sorts.py",
+          "line": 1,
+          "commit": "1c844315",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/namespace_sorts.json",
+          "line": 1,
+          "commit": "1c844315",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt queue initial defaults, 13 scripted Add/Edit/Up/Down/Delete actions, exact text defaults/messages and advanced view choices, escaped hyphen cleaning, cancellation/invalid input, first-selected editing, duplicate entries, queue selection/order, isolated draft and UpdateOptions/reopen output."
+      }
+    },
+    {
+      "reference_id": "audit-options-file-sort-collect-file-sort-namespace-file-sorting-add",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Add a namespace scheme with the exact creator-series-page text default, escaped-hyphen parsing and native tag cleaning; reject empty cleaned schemes without mutation, retain duplicate rows, use display tags in normal mode and ask the exact advanced tag-view choices in order display1/multiple3/single2; cancelling either prompt changes nothing. Persist only on outer Options Apply, reopen, sort real media and expose newly added namespaces to the actual collect control.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "963507dc",
+      "limits": [
+        "The native queue is an Options-owned child window; text/tag-view/delete questions appear in that window instead of the reference embedded queue and separate Qt modal dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/namespace_sorts.rs",
+          "line": 1,
+          "commit": "e5ae30e0",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/namespace_sorts_window.rs",
+          "line": 60,
+          "commit": "963507dc",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 544,
+          "commit": "963507dc",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_sorts.rs",
+          "line": 25,
+          "commit": "e5ae30e0",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_sorts.rs",
+          "line": 112,
+          "commit": "e5ae30e0",
+          "kind": "cancel_invalid_identity_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_sorts.rs",
+          "line": 76,
+          "commit": "963507dc",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_sorts.rs",
+          "line": 221,
+          "commit": "963507dc",
+          "kind": "actual_sort_collect_consumer_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_namespace_sorts.py",
+          "line": 1,
+          "commit": "1c844315",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/namespace_sorts.json",
+          "line": 1,
+          "commit": "1c844315",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt queue initial defaults, 13 scripted Add/Edit/Up/Down/Delete actions, exact text defaults/messages and advanced view choices, escaped hyphen cleaning, cancellation/invalid input, first-selected editing, duplicate entries, queue selection/order, isolated draft and UpdateOptions/reopen output."
+      }
+    },
+    {
+      "reference_id": "audit-options-file-sort-collect-file-sort-namespace-file-sorting-edit",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Edit only the first selected namespace scheme through the exact escaped existing text default; clean parsed namespaces, retain row position/selection, use display tags in normal mode and the recorded advanced view chooser otherwise; cancellation at either question or invalid cleaned input preserves the original scheme. Freeze the target identity, preserve independent duplicate schemes, persist through outer Apply and reopen with edited output used by page sort/collect controls.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "963507dc",
+      "limits": [
+        "The native queue is an Options-owned child window; text/tag-view/delete questions appear in that window instead of the reference embedded queue and separate Qt modal dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/namespace_sorts.rs",
+          "line": 1,
+          "commit": "e5ae30e0",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/namespace_sorts_window.rs",
+          "line": 60,
+          "commit": "963507dc",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 544,
+          "commit": "963507dc",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_sorts.rs",
+          "line": 25,
+          "commit": "e5ae30e0",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_sorts.rs",
+          "line": 112,
+          "commit": "e5ae30e0",
+          "kind": "cancel_invalid_identity_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_sorts.rs",
+          "line": 76,
+          "commit": "963507dc",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_sorts.rs",
+          "line": 221,
+          "commit": "963507dc",
+          "kind": "actual_sort_collect_consumer_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_namespace_sorts.py",
+          "line": 1,
+          "commit": "1c844315",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/namespace_sorts.json",
+          "line": 1,
+          "commit": "1c844315",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt queue initial defaults, 13 scripted Add/Edit/Up/Down/Delete actions, exact text defaults/messages and advanced view choices, escaped hyphen cleaning, cancellation/invalid input, first-selected editing, duplicate entries, queue selection/order, isolated draft and UpdateOptions/reopen output."
+      }
+    },
+    {
+      "reference_id": "audit-options-nested-sort-collect-cog-default-file-sort",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": false,
+      "implementationCommit": "e4db4ad7",
+      "exactBehavior": "Expose the owned Options default sort cog only for namespace and number-of-tags sorts. Its tag-service submenu lists local services, repositories and all known tags with type separators and independent checked state; namespace sorts additionally expose display1/multiple-media3/single-media2 views. Clone the full existing context and change only the selected service or view, stage until outer Apply, cancel without persistence, invalidate rebuilt/closed-owner actions, reopen saved values and use this service independently of search, collect and the other sort for real file/collection keys.",
+      "limits": [
+        "These original inventory nodes are menus and are excluded from strict concrete-leaf completion totals.",
+        "The two-level native PopupWindow uses button rows with check marks rather than Qt QMenu items.",
+        "The separate page-level sort cog is unclaimed."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/sort_cog.rs",
+          "line": 1,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 785,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 351,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-core/src/pages.rs",
+          "line": 421,
+          "commit": "bb376ce2",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-search/src/exec/page_sort.rs",
+          "line": 124,
+          "commit": "bb376ce2",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/sort_cog.rs",
+          "line": 42,
+          "commit": "e4db4ad7",
+          "kind": "reference_menu_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/sort_cog.rs",
+          "line": 62,
+          "commit": "e4db4ad7",
+          "kind": "gui_staged_reopen_actual_media_consumer"
+        },
+        {
+          "path": "crates/hydrus-search/src/exec/tests.rs",
+          "line": 1143,
+          "commit": "bb376ce2",
+          "kind": "reference_media_keys_replay"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 2628,
+          "commit": "bb376ce2",
+          "kind": "legacy_context_import_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_sort_cogs.py",
+          "line": 1,
+          "commit": "bb376ce2",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/sort_cogs.json",
+          "line": 1,
+          "commit": "bb376ce2",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt default/secondary controls hide cogs for filesize, expose service groups with type separators for namespace/tag count, preserve complete context metadata, show namespace view checks in1/3/2 order, stage UpdateOptions and reopen.128 MediaList ordering cases cover independent default/fallback services,19 distinct plain orders, both directions, plain files and series collections with search-current/pending toggles off."
+      }
+    },
+    {
+      "reference_id": "audit-options-nested-sort-collect-cog-secondary-file-sort-when-primary-gives-two-equal-values",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": false,
+      "implementationCommit": "e4db4ad7",
+      "exactBehavior": "Expose the owned Options secondary/fallback sort cog only for namespace and number-of-tags sorts. Its tag-service submenu lists local services, repositories and all known tags with type separators and independent checked state; namespace sorts additionally expose display1/multiple-media3/single-media2 views. Clone the full existing context and change only the selected service or view, stage until outer Apply, cancel without persistence, invalidate rebuilt/closed-owner actions, reopen saved values and use this service independently of search, collect and the other sort for real file/collection keys.",
+      "limits": [
+        "These original inventory nodes are menus and are excluded from strict concrete-leaf completion totals.",
+        "The two-level native PopupWindow uses button rows with check marks rather than Qt QMenu items.",
+        "The separate page-level sort cog is unclaimed."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/sort_cog.rs",
+          "line": 1,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 785,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 351,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-core/src/pages.rs",
+          "line": 421,
+          "commit": "bb376ce2",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-search/src/exec/page_sort.rs",
+          "line": 124,
+          "commit": "bb376ce2",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/sort_cog.rs",
+          "line": 42,
+          "commit": "e4db4ad7",
+          "kind": "reference_menu_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/sort_cog.rs",
+          "line": 62,
+          "commit": "e4db4ad7",
+          "kind": "gui_staged_reopen_actual_media_consumer"
+        },
+        {
+          "path": "crates/hydrus-search/src/exec/tests.rs",
+          "line": 1143,
+          "commit": "bb376ce2",
+          "kind": "reference_media_keys_replay"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 2628,
+          "commit": "bb376ce2",
+          "kind": "legacy_context_import_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_sort_cogs.py",
+          "line": 1,
+          "commit": "bb376ce2",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/sort_cogs.json",
+          "line": 1,
+          "commit": "bb376ce2",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual Qt default/secondary controls hide cogs for filesize, expose service groups with type separators for namespace/tag count, preserve complete context metadata, show namespace view checks in1/3/2 order, stage UpdateOptions and reopen.128 MediaList ordering cases cover independent default/fallback services,19 distinct plain orders, both directions, plain files and series collections with search-current/pending toggles off."
+      }
+    }
+  ],
+  "completedOriginalLeafCount": 12,
+  "validation": {
+    "reference": "Real-client recorder completed cleanly.",
+    "local": [
+      "cargo fmt --all",
+      "git diff --check",
+      "/workspace/parallel/parity-slint-syntax.sh /workspace/parallel/parity-sessions"
+    ],
+    "cargo": "Deferred to root hosted CI; no local builds or mutation tests."
+  },
+  "remaining": [
+    "Outside-application global OS cursor polling; idle-only claim remains partial.",
+    "Legacy historical GUI-session snapshot import.",
+    "Remaining page selector and drag workflows."
+  ],
+  "nativeComponents": [
+    {
+      "name": "ImportOptionsPanelWindow",
+      "file": "crates/hydrus-gui/ui/import_options_panel.slint",
+      "title": "import options",
+      "preferredSize": "980 \u00d7 850",
+      "controls": [
+        "Help submenu: open tl;dr / open the import options help",
+        "keep this panel simple :^)",
+        "Three expandable ListTable editors, extended selection, sortable columns and activation",
+        "Frozen clear/delete and reset questions, exact Yes/No labels, cancellation",
+        "Outer child Apply returns a complete manager/preferences draft; main Options Apply persists it"
+      ],
+      "owner": "Options-owned Slot; closing/cancelling Options closes the page, cancels descendants and invalidates all retained apply callbacks.",
+      "editorRoots": [
+        {
+          "name": "default import options",
+          "referenceRoot": "audit-options-import-options-default-import-options-editor-list",
+          "columns": [
+            "context",
+            "custom import options"
+          ],
+          "actions": [
+            "show stack",
+            "copy",
+            "paste presets/custom overwrite",
+            "staged favourites menu",
+            "edit",
+            "clear",
+            "reset to defaults"
+          ],
+          "source": {
+            "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+            "line": 128,
+            "commit": "7d089e8d",
+            "kind": "source"
+          },
+          "model": {
+            "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+            "line": 176,
+            "commit": "7d089e8d",
+            "kind": "source"
+          },
+          "tests": [
+            {
+              "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+              "line": 73,
+              "commit": "7d089e8d",
+              "kind": "gui_regression"
+            },
+            {
+              "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+              "line": 67,
+              "commit": "7d089e8d",
+              "kind": "reference_replay"
+            }
+          ]
+        },
+        {
+          "name": "url class import options",
+          "referenceRoot": "audit-options-import-options-url-class-import-options-editor-list",
+          "columns": [
+            "name",
+            "url type",
+            "custom import options"
+          ],
+          "actions": [
+            "show stack",
+            "copy",
+            "paste presets/custom overwrite",
+            "staged favourites menu",
+            "edit",
+            "clear"
+          ],
+          "source": {
+            "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+            "line": 142,
+            "commit": "7d089e8d",
+            "kind": "source"
+          },
+          "model": {
+            "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+            "line": 176,
+            "commit": "7d089e8d",
+            "kind": "source"
+          },
+          "tests": [
+            {
+              "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+              "line": 271,
+              "commit": "7d089e8d",
+              "kind": "consumer_and_persistence_regression"
+            }
+          ]
+        },
+        {
+          "name": "favourites/profiles",
+          "referenceRoot": "audit-options-import-options-favourites-profiles-editor-list",
+          "columns": [
+            "name",
+            "custom import options"
+          ],
+          "actions": [
+            "copy",
+            "paste presets/custom overwrite",
+            "add",
+            "edit",
+            "delete / Delete key"
+          ],
+          "source": {
+            "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+            "line": 155,
+            "commit": "7d089e8d",
+            "kind": "source"
+          },
+          "model": {
+            "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+            "line": 176,
+            "commit": "7d089e8d",
+            "kind": "source"
+          },
+          "tests": [
+            {
+              "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+              "line": 271,
+              "commit": "7d089e8d",
+              "kind": "gui_regression"
+            },
+            {
+              "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+              "line": 209,
+              "commit": "7d089e8d",
+              "kind": "stable_identity_and_frozen_target_regression"
+            }
+          ]
+        }
+      ],
+      "sharedComponents": [
+        {
+          "name": "ImportOptionsWindow",
+          "file": "crates/hydrus-gui/ui/import_options.slint",
+          "relationship": "Selected default/site/profile row child, using shared staged manager, recorded parent fallback and caller/simple kinds.",
+          "wiring": {
+            "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+            "line": 214,
+            "commit": "7d089e8d",
+            "kind": "source"
+          }
+        },
+        {
+          "name": "ImportOptionsOverwriteWindow",
+          "file": "crates/hydrus-gui/ui/import_options_overwrite.slint",
+          "relationship": "Custom paste/load chooser over frozen targets; writes only the draft.",
+          "wiring": {
+            "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+            "line": 333,
+            "commit": "7d089e8d",
+            "kind": "source"
+          }
+        },
+        {
+          "name": "ImportFavouritePromptWindow",
+          "file": "crates/hydrus-gui/ui/import_options_favourites.slint",
+          "relationship": "Shared staged favourites star-menu confirmation; closed with this page through Controller::close.",
+          "wiring": {
+            "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+            "line": 540,
+            "commit": "7d089e8d",
+            "kind": "source"
+          }
+        }
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 487,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 510,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "guiEvidence": "options_drafts_replay_clear_reset_simple_mode_and_cancel_without_store_changes / applied_defaults_url_overrides_profiles_and_simple_preference_reach_consumers; headless render import_options_panel.png emitted by hosted CI.",
+      "referenceRecording": {
+        "recorder": "oracle/record_import_options_panel.py",
+        "fixture": "oracle/fixtures/import_options_panel.json",
+        "commit": "7d089e8d"
+      },
+      "limits": [
+        "Single-profile delete differs from the recorded reference crash and remains partial.",
+        "Profile reset refreshes the list immediately rather than waiting for reopening.",
+        "Shared import-options editor program-command editing/execution and existing limitations remain."
+      ]
+    },
+    {
+      "name": "NamespaceSortsWindow",
+      "file": "crates/hydrus-gui/ui/namespace_sorts.slint",
+      "title": "namespace file sorting / Enter text / select tag view to sort on",
+      "preferredSize": "760 \u00d7 580",
+      "controls": [
+        "Ordered ListTable with extended selection and row activation",
+        "add / edit / \u2191 / X / \u2193",
+        "Exact text question with escaped current/default namespaces",
+        "Advanced display/multiple-media/single-media tag-view choices",
+        "Frozen Remove N selected? Yes/No question",
+        "Child Apply/Cancel and parent Options Apply/Cancel isolation"
+      ],
+      "owner": "Options-owned Slot; closing Options cancels the child and invalidates retained callbacks, and outer Apply is blocked while the editor is open.",
+      "editorRoots": [
+        {
+          "name": "namespace file sorting",
+          "referenceRoot": "audit-options-file-sort-collect-file-sort-namespace-file-sorting-ordered-editor-list",
+          "columns": [
+            "namespace sorting scheme"
+          ],
+          "actions": [
+            "add",
+            "edit",
+            "up",
+            "delete",
+            "down"
+          ],
+          "source": {
+            "path": "crates/hydrus-gui/ui/namespace_sorts.slint",
+            "line": 46,
+            "commit": "963507dc",
+            "kind": "source"
+          },
+          "model": {
+            "path": "crates/hydrus-gui-model/src/namespace_sorts.rs",
+            "line": 36,
+            "commit": "e5ae30e0",
+            "kind": "source"
+          },
+          "tests": [
+            {
+              "path": "crates/hydrus-gui/tests/gui/namespace_sorts.rs",
+              "line": 76,
+              "commit": "963507dc",
+              "kind": "gui_regression"
+            }
+          ]
+        }
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 544,
+          "commit": "963507dc",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/namespace_sorts_window.rs",
+          "line": 60,
+          "commit": "963507dc",
+          "kind": "source"
+        }
+      ],
+      "guiEvidence": "queue_replays_real_questions_selection_cancel_and_parent_apply_isolation / applied_scheme_reopens_and_drives_real_ordered_media_and_new_collect_namespace; hosted GUI replay emits namespace_sorts.png.",
+      "referenceRecording": {
+        "recorder": "oracle/record_namespace_sorts.py",
+        "fixture": "oracle/fixtures/namespace_sorts.json",
+        "commit": "1c844315"
+      },
+      "limits": [
+        "The native queue is an Options-owned child window; text/tag-view/delete questions appear in that window instead of the reference embedded queue and separate Qt modal dialogs."
+      ]
+    }
+  ],
+  "nativeMenus": [
+    {
+      "name": "Options default and secondary sort cogs",
+      "file": "crates/hydrus-gui/ui/options.slint",
+      "referenceRoots": [
+        "audit-options-nested-sort-collect-cog-default-file-sort",
+        "audit-options-nested-sort-collect-cog-secondary-file-sort-when-primary-gives-two-equal-values"
+      ],
+      "owner": "Transient PopupWindow per eligible compound sort row; frozen page/row and active Options owner, rebuilt page and cancel invalidate actions.",
+      "groups": [
+        "tag service",
+        "ADVANCED: tag display type (namespace sorts only)"
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 351,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 785,
+          "commit": "e4db4ad7",
+          "kind": "source"
+        }
+      ],
+      "guiEvidence": "owned_cogs_stage_cancel_reopen_and_feed_independent_default_and_fallback_keys; hosted replay emits sort_cog_options.png.",
+      "referenceRecording": {
+        "recorder": "oracle/record_sort_cogs.py",
+        "fixture": "oracle/fixtures/sort_cogs.json",
+        "commit": "bb376ce2"
+      },
+      "newExportedWindows": 0,
+      "countAsCompletedLeaf": false
+    }
+  ]
+}

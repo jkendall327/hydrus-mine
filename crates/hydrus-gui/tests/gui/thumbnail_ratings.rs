@@ -58,7 +58,7 @@ fn show(store: &Store, flags: &Json, beside: u8) {
 #[test]
 #[allow(clippy::float_cmp)] // (whole pixels)
 fn the_grid_draws_each_thumbnail_s_ratings() {
-    use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
+    use hydrus_gui::{MainWindow, Pages, bind, headless};
     use slint::Model as _;
     let (_dirs, store) = store();
     // likes shown when rated (the fixture likes or dislikes each file),
@@ -70,7 +70,10 @@ fn the_grid_draws_each_thumbnail_s_ratings() {
     );
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
-    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     let first = bound.current.borrow().borrow().results()[0];

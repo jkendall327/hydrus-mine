@@ -83,7 +83,12 @@ impl Scanbar {
     /// The frame a click (or drag) at `x` along a bar `width` wide goes to,
     /// for an animation the client plays itself.
     pub fn frame_at(&self, x: f32, width: f32) -> usize {
-        let proportion = ((x - NUB_WIDTH / 2.0) / (width - NUB_WIDTH)).clamp(0.0, 1.0);
+        self.frame_at_with_nub(x, width, NUB_WIDTH)
+    }
+
+    /// Seek with the configured nub width, using its centre as the pointer.
+    pub fn frame_at_with_nub(&self, x: f32, width: f32, nub: f32) -> usize {
+        let proportion = ((x - nub / 2.0) / (width - nub).max(1.0)).clamp(0.0, 1.0);
         let last = self.num_frames.unwrap_or(1).max(1) - 1;
         (f64::from(proportion) * last as f64 + 0.5) as usize
     }
@@ -91,7 +96,12 @@ impl Scanbar {
     /// Where a click (or drag) at `x` along a bar `width` wide goes, in
     /// milliseconds (`_ScanToCurrentMousePos`).
     pub fn seek_to(&self, x: f32, width: f32) -> f64 {
-        let proportion = ((x - NUB_WIDTH / 2.0) / (width - NUB_WIDTH)).clamp(0.0, 1.0);
+        self.seek_to_with_nub(x, width, NUB_WIDTH)
+    }
+
+    /// Seek a time using the configured nub width (`_ScanToCurrentMousePos`).
+    pub fn seek_to_with_nub(&self, x: f32, width: f32, nub: f32) -> f64 {
+        let proportion = ((x - nub / 2.0) / (width - nub).max(1.0)).clamp(0.0, 1.0);
         (f64::from(proportion) * self.duration_ms as f64).trunc()
     }
 

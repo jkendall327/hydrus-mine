@@ -17,7 +17,7 @@ use std::collections::{BTreeSet, HashMap};
 
 use hydrus_core::pages::{PageCollect, PageMedia, PageSort, PageSortBy};
 use hydrus_core::sort::{HumanSortKey, human_sort_key};
-use hydrus_core::{CanvasType, ContentStatus, HashId, ServiceId, Tag, TagId};
+use hydrus_core::{CanvasType, HashId, ServiceId, Tag, TagId};
 use hydrus_store::media::{MediaResult, Rating};
 
 use super::Result;
@@ -43,11 +43,29 @@ pub(crate) fn collect_and_sort(
     )?;
     let results: HashMap<HashId, &MediaResult> =
         batch.results.iter().map(|m| (m.hash_id, m)).collect();
-    let tags = |file: HashId| -> BTreeSet<TagId> {
-        results
-            .get(&file)
-            .map(|m| displayed(env, m))
-            .unwrap_or_default()
+    // The reference's GetNamespaceSlice always unions current and pending;
+    // its collect context selects the service, independent of search toggles.
+    let collect_context = hydrus_core::search::context::TagContext::new(
+        collect.tag_context.service.clone(),
+        true,
+        true,
+    );
+    let collect_scope = super::context::resolve_tags(env.snapshot, &collect_context)?;
+    let collect_tags = |file: HashId| -> BTreeSet<TagId> {
+        let Some(media) = results.get(&file) else {
+            return BTreeSet::new();
+        };
+        let mut tags = BTreeSet::new();
+        for service in &collect_scope.services {
+            if let Some(mapped) = media.tags.get(&service.id) {
+                for status in &collect_scope.statuses {
+                    for &stored in mapped.by_status.get(status).into_iter().flatten() {
+                        tags.extend(service.graph.display_tags(stored));
+                    }
+                }
+            }
+        }
+        tags
     };
     let names = &batch.tags;
     // group, in the page's order
@@ -60,7 +78,7 @@ pub(crate) fn collect_and_sort(
     let mut groups: Vec<(GroupKey, Vec<HashId>)> = Vec::new();
     let mut at: HashMap<GroupKey, usize> = HashMap::new();
     for &file in files {
-        let slice: BTreeSet<String> = tags(file)
+        let slice: BTreeSet<String> = collect_tags(file)
             .iter()
             .filter_map(|t| names.get(t))
             .map(Tag::as_str)
@@ -109,12 +127,15 @@ pub(crate) fn collect_and_sort(
             first,
         });
     }
-    let facts: Vec<Facts> = items
-        .iter()
-        .map(|item| Facts::of(env, current, item, &results, &tags))
-        .collect();
     let mut order: Vec<usize> = (0..items.len()).collect();
     for sort in fallback.into_iter().chain([sort]) {
+        let sort_tags = page_sort::tag_ids_for_sort(env, &batch, sort)?;
+        let tags =
+            |file: HashId| -> BTreeSet<TagId> { sort_tags.get(&file).cloned().unwrap_or_default() };
+        let facts: Vec<Facts> = items
+            .iter()
+            .map(|item| Facts::of(env, current, item, &results, &tags))
+            .collect();
         let keys: Vec<Vec<Part>> = facts
             .iter()
             .map(|f| item_key(env, f, sort, names))
@@ -148,20 +169,6 @@ enum Item {
         as_collected: Vec<HashId>,
         first: HashId,
     },
-}
-
-/// A file's current and pending tags in all known tags, as displayed.
-fn displayed(env: &Env<'_>, m: &MediaResult) -> BTreeSet<TagId> {
-    let mut out = BTreeSet::new();
-    for (&service, service_tags) in &m.tags {
-        let graph = env.snapshot.display.get(service);
-        for status in [ContentStatus::Current, ContentStatus::Pending] {
-            for &stored in service_tags.by_status.get(&status).into_iter().flatten() {
-                out.extend(graph.display_tags(stored));
-            }
-        }
-    }
-    out
 }
 
 /// A rating as a number (`GetRating`'s).

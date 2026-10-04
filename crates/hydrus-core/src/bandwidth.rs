@@ -518,6 +518,14 @@ impl Manager {
         self.dirty.clear();
     }
 
+    /// Forget selected usage trackers while retaining their configured rules.
+    pub fn delete_history(&mut self, contexts: &[NetworkContext]) {
+        for context in contexts {
+            self.trackers.remove(context);
+            self.dirty.remove(context);
+        }
+    }
+
     /// Current context trackers, including ephemeral page contexts, for live review.
     pub fn all_trackers(&self) -> Vec<(NetworkContext, Tracker)> {
         let mut trackers: Vec<_> = self
@@ -761,13 +769,25 @@ mod tests {
     fn gallery_tokens_space_out_each_site() {
         let mut m = Manager::default();
         let k = GalleryTokenKind::Subscription;
-        assert_eq!(m.try_to_consume_gallery_token("a.com", k, 5, 100), Ok(()));
-        assert_eq!(m.try_to_consume_gallery_token("a.com", k, 5, 105), Err(105));
-        assert_eq!(m.try_to_consume_gallery_token("b.com", k, 5, 105), Ok(()));
         assert_eq!(
-            m.try_to_consume_gallery_token("a.com", GalleryTokenKind::Watcher, 5, 105),
+            m.try_to_consume_gallery_token("a.example", k, 5, 100),
             Ok(())
         );
-        assert_eq!(m.try_to_consume_gallery_token("a.com", k, 5, 106), Ok(()));
+        assert_eq!(
+            m.try_to_consume_gallery_token("a.example", k, 5, 105),
+            Err(105)
+        );
+        assert_eq!(
+            m.try_to_consume_gallery_token("b.example", k, 5, 105),
+            Ok(())
+        );
+        assert_eq!(
+            m.try_to_consume_gallery_token("a.example", GalleryTokenKind::Watcher, 5, 105),
+            Ok(())
+        );
+        assert_eq!(
+            m.try_to_consume_gallery_token("a.example", k, 5, 106),
+            Ok(())
+        );
     }
 }

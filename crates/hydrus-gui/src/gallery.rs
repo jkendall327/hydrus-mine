@@ -47,6 +47,9 @@ pub struct GalleryView {
     /// The downloaders offered for new queries (key, name, initial search
     /// text): those the client displays, by name, then the others.
     pub gugs: Vec<(String, String, String)>,
+    /// Primary-list identities and the explicit secondary-list switch.
+    pub gug_keys_to_display: Vec<String>,
+    pub show_other_gugs: bool,
     /// The options it shows itself by (pause and stop characters, whether
     /// a new query is shown, the short status's counts).
     pub settings: DownloaderPageSettings,
@@ -72,9 +75,30 @@ impl GalleryView {
         }
         self.queues.retain(|q| !gone.contains(q));
         sort(&mut read, self.sort.0, self.sort.1);
-        let changed = read != self.queries || !gone.is_empty();
+        let definitions: hydrus_parse::Downloaders = hydrus_store::settings::get(conn)?;
+        let gugs = offered_gugs(&definitions.gugs);
+        let changed = read != self.queries
+            || !gone.is_empty()
+            || gugs != self.gugs
+            || definitions.gugs.keys_to_display != self.gug_keys_to_display;
+        self.gugs = gugs;
+        self.gug_keys_to_display = definitions.gugs.keys_to_display;
         self.queries = read;
         Ok(changed)
+    }
+
+    /// The primary selector, with an explicit way to expose other downloaders.
+    /// Keep the current downloader's caption even when it has been hidden.
+    pub fn selector_gugs(&self) -> Vec<&(String, String, String)> {
+        let own = self.gallery();
+        self.gugs
+            .iter()
+            .filter(|g| {
+                self.show_other_gugs
+                    || self.gug_keys_to_display.contains(&g.0)
+                    || (!own.gug_name.is_empty() && (g.0 == own.gug_key || g.1 == own.gug_name))
+            })
+            .collect()
     }
 
     /// The gallery settings, a new client's if the page has none.

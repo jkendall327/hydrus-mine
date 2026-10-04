@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "scope": "One original Tag Presentation sibling connecting text leaf, implemented in real raw-storage and shared write-tag consumers.",
+  "implementation_leaf_count": 1,
+  "claims": [
+    {
+      "reference_id": "audit-options-tag-presentation-other-rendering-sibling-connecting-string",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "implementation_commit": "d1c2429e521986f92f9f5739a655819ea6722c89",
+      "exact_behavior": "Exact Tag Presentation text row, default arrow, accepts custom, empty and Unicode strings without changing logical tags or counts. Typed settings retain backward-compatible defaults and migrate the legacy sibling_connector string. ManageTags storage rows and shared WriteAutocomplete consumers read saved connecting text. Model/native regressions replay the real Qt labels, stage Options until Apply, preserve Cancel, reopen saved values, and prove presentation does not stage tag mappings. Existing opened model consumers re-read the saved string on refresh, matching Qt NotifyNewOptions text refresh.",
+      "limits": "Qt fading and separate connector namespace-colour settings remain missing; a native row still has one namespace colour. The broader Tag Presentation parent stays partial. Hosted CI executes Rust/native tests; no local Rust execution is claimed.",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-core/src/tag_presentation.rs",
+          "line": 25,
+          "symbol": "pub sibling_connector",
+          "commit": "d1c2429e521986f92f9f5739a655819ea6722c89"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2248,
+          "symbol": "Sibling connecting string: ",
+          "commit": "d1c2429e521986f92f9f5739a655819ea6722c89"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 1850,
+          "symbol": "options.strings.get(\"sibling_connector\")",
+          "commit": "d1c2429e521986f92f9f5739a655819ea6722c89"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 3080,
+          "symbol": "fn tag_presentation_converts",
+          "commit": "d1c2429e521986f92f9f5739a655819ea6722c89"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 263,
+          "symbol": "label.push_str(&presentation.sibling_connector)",
+          "commit": "d1c2429e521986f92f9f5739a655819ea6722c89"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 486,
+          "symbol": "label.push_str(&presentation.sibling_connector)",
+          "commit": "d1c2429e521986f92f9f5739a655819ea6722c89"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sibling_connector.rs",
+          "line": 18,
+          "symbol": "fn connector_options_replay_stage_cancel_apply_and_live_consumers",
+          "commit": "d1c2429e521986f92f9f5739a655819ea6722c89"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sibling_connector.rs",
+          "line": 62,
+          "symbol": "fn persisted_custom_empty_and_unicode_connectors_render_without_changing_tags",
+          "commit": "d1c2429e521986f92f9f5739a655819ea6722c89"
+        }
+      ],
+      "reference_source": [
+        {
+          "relativepath": "hydrus/client/gui/panels/options/TagPresentationPanel.py",
+          "line": 197,
+          "symbol": "rows.append( ( 'Sibling connecting string:",
+          "commit": "d1c2429e521986f92f9f5739a655819ea6722c89"
+        },
+        {
+          "relativepath": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+          "line": 3502,
+          "symbol": "def NotifyNewOptions( self ):",
+          "commit": "d1c2429e521986f92f9f5739a655819ea6722c89"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_sibling_connector.py",
+          "line": 12,
+          "symbol": "def record(session)",
+          "commit": "d1c2429e521986f92f9f5739a655819ea6722c89"
+        },
+        {
+          "relativepath": "oracle/fixtures/sibling_connector.json",
+          "line": 41,
+          "symbol": "\"cases\":",
+          "commit": "d1c2429e521986f92f9f5739a655819ea6722c89"
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "realQtRecording": true,
+    "cases": [
+      "default",
+      "custom",
+      "empty",
+      "Unicode"
+    ],
+    "cargoFmt": true,
+    "diffCheck": true,
+    "cachedSlintSourceCompilation": true,
+    "localCargoBuildsOrTests": false,
+    "ci": "Root asynchronous hosted CI executes authored model/native/import regressions."
+  }
+}

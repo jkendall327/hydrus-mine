@@ -1,0 +1,73 @@
+import { Button, LineEdit } from "std-widgets.slint";
+import { ListTable, TableRow } from "list_table.slint";
+import { Theme } from "theme.slint";
+export component RegexFavouritesWindow inherits Window {
+    title: "manage regex favourites";
+    preferred-width: 780px;
+    preferred-height: 500px;
+    background: Theme.window;
+    in property <[TableRow]> rows;
+    in property <bool> any-selected;
+    in property <bool> one-selected;
+    in property <bool> editing;
+    in-out property <string> phrase;
+    in-out property <string> description;
+    in property <string> validity;
+    in property <bool> valid;
+    in property <string> error;
+    in property <bool> deleting;
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback changed();
+    callback action(string);
+    callback closed();
+    VerticalLayout {
+        padding: 12px;
+        spacing: 8px;
+        ListTable {
+            vertical-stretch: 1;
+            columns: [{title: "regex", width: 330px, stretch: true}, {title: "description", width: 330px, stretch: true}];
+            rows: root.rows;
+            row-clicked(row, ctrl, shift) => { if !root.editing && !root.deleting { root.row-clicked(row, ctrl, shift); } }
+            row-activated(row) => { if !root.editing && !root.deleting { root.row-activated(row); } }
+        }
+        HorizontalLayout {
+            spacing: 6px;
+            Button { text: "add"; enabled: !root.editing && !root.deleting; clicked => { root.action("add"); } }
+            Button { text: "edit"; enabled: root.one-selected && !root.editing && !root.deleting; clicked => { root.action("edit"); } }
+            Button { text: "delete"; enabled: root.any-selected && !root.editing && !root.deleting; clicked => { root.action("delete"); } }
+            Button { text: "copy phrase"; enabled: root.one-selected && !root.editing && !root.deleting; clicked => { root.action("copy"); } }
+        }
+        if root.editing: VerticalLayout {
+            spacing: 6px;
+            HorizontalLayout {
+                Text { text: "regex phrase: "; color: Theme.text; vertical-alignment: center; }
+                LineEdit { horizontal-stretch: 1; text <=> root.phrase; edited => { root.changed(); } }
+            }
+            HorizontalLayout {
+                Text { text: "description: "; color: Theme.text; vertical-alignment: center; }
+                LineEdit { horizontal-stretch: 1; text <=> root.description; }
+            }
+            Text { text: root.validity; color: root.valid ? Theme.text : Theme.error; wrap: word-wrap; }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Button { text: "save row"; clicked => { root.action("save-row"); } }
+                Button { text: "cancel row"; clicked => { root.action("cancel-row"); } }
+            }
+        }
+        if root.deleting: HorizontalLayout {
+            spacing: 6px;
+            Text { text: "Remove all selected?"; color: Theme.text; vertical-alignment: center; }
+            Button { text: "yes"; clicked => { root.action("confirm-delete"); } }
+            Button { text: "no"; clicked => { root.action("cancel-delete"); } }
+        }
+        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button { text: "apply"; enabled: !root.editing && !root.deleting; clicked => { root.action("apply"); } }
+            Button { text: "cancel"; clicked => { root.action("cancel"); } }
+        }
+    }
+}

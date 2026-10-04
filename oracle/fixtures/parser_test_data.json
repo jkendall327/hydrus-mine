@@ -1,0 +1,157 @@
+[
+  {
+    "case": "converted_example",
+    "sequence": 0,
+    "raw": "<p>first</p>",
+    "child_texts": [
+      "<p>first</p><!-- converted -->"
+    ],
+    "context": {
+      "url": "https://test-docs.example/original",
+      "post_index": "12",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "converted_example",
+    "sequence": 1,
+    "raw": "<p>second</p>",
+    "child_texts": [
+      "<p>second</p><!-- converted -->"
+    ],
+    "context": {
+      "url": "https://test-docs.example/original",
+      "post_index": "12",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "converted_example",
+    "sequence": 2,
+    "raw": "<p>edited first</p>",
+    "child_texts": [
+      "<p>edited first</p><!-- converted -->"
+    ],
+    "context": {
+      "url": "https://test-docs.example/original",
+      "post_index": "12",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "formula_fetch",
+    "mode": "success",
+    "request": {
+      "method": "GET",
+      "url": "https://test-docs.example/formula",
+      "referral": null,
+      "override": true,
+      "one_shot": false
+    },
+    "text": "<p>fetched café</p>",
+    "context": {
+      "url": "https://test-docs.example/formula",
+      "post_index": "0",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "formula_fetch",
+    "mode": "cancel",
+    "request": {
+      "method": "GET",
+      "url": "https://test-docs.example/formula",
+      "referral": null,
+      "override": true,
+      "one_shot": false
+    },
+    "text": "fetch cancelled",
+    "context": {
+      "url": "https://test-docs.example/formula",
+      "post_index": "0",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "formula_fetch",
+    "mode": "error",
+    "request": {
+      "method": "GET",
+      "url": "https://test-docs.example/formula",
+      "referral": null,
+      "override": true,
+      "one_shot": false
+    },
+    "text": "fetch failed:\n\nscripted failure",
+    "context": {
+      "url": "https://test-docs.example/formula",
+      "post_index": "0",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "parser_fetch",
+    "mode": "success",
+    "request": {
+      "method": "GET",
+      "url": "https://test-docs.example/a%20b",
+      "referral": "https://referral.example/from",
+      "override": true,
+      "one_shot": true
+    },
+    "text": "<p>fetched café</p>",
+    "child_texts": [
+      "<p>fetched café</p><!-- converted -->"
+    ],
+    "context": {
+      "url": "https://test-docs.example/a%20b",
+      "post_index": "0",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "parser_fetch",
+    "mode": "cancel",
+    "request": {
+      "method": "GET",
+      "url": "https://test-docs.example/a%20b",
+      "referral": "https://referral.example/from",
+      "override": true,
+      "one_shot": true
+    },
+    "text": "fetch cancelled",
+    "child_texts": [
+      "fetch cancelled<!-- converted -->"
+    ],
+    "context": {
+      "url": "https://test-docs.example/a%20b",
+      "post_index": "0",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "parser_fetch",
+    "mode": "error",
+    "request": {
+      "method": "GET",
+      "url": "https://test-docs.example/a%20b",
+      "referral": "https://referral.example/from",
+      "override": true,
+      "one_shot": true
+    },
+    "text": "fetch failed: scripted failure\n\n<p>fetched café</p>",
+    "child_texts": [
+      "fetch failed: scripted failure\n\n<p>fetched café</p><!-- converted -->"
+    ],
+    "context": {
+      "url": "https://test-docs.example/a%20b",
+      "post_index": "0",
+      "token": "preserved"
+    }
+  },
+  {
+    "case": "parser_default_url",
+    "url_field": "https://test-docs.example/default",
+    "requests": 6
+  }
+]

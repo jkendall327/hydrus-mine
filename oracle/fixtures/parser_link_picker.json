@@ -1,0 +1,264 @@
+{
+ "classes": [
+  [
+   50,
+   "direct",
+   15,
+   [
+    "9c2150956e7b802696416d70cb1c507a0ae8a0b6ce5ccbf16382deb08c251e50",
+    0,
+    "https",
+    [
+     139,
+     1,
+     [
+      [
+       "links.example"
+      ],
+      [],
+      false,
+      false
+     ]
+    ],
+    [
+     true,
+     false,
+     false,
+     true,
+     false,
+     true,
+     false
+    ],
+    [
+     [
+      [
+       51,
+       1,
+       [
+        0,
+        "direct",
+        null,
+        null,
+        "example string"
+       ]
+      ],
+      null
+     ]
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    false,
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ],
+    [],
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    0,
+    [
+     55,
+     2,
+     [
+      [],
+      "https://hostname.com/post/page.php?id=123456&s=view"
+     ]
+    ],
+    null,
+    null,
+    1,
+    "https://links.example/direct"
+   ]
+  ]
+ ],
+ "parsers": [
+  [
+   58,
+   "z matching",
+   3,
+   [
+    "z matching",
+    "a1d58c3a342689a53c08084fb023b79c036d6eecda79e8dc24884edf188e8614",
+    [
+     55,
+     2,
+     [
+      [],
+      "example string"
+     ]
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    [
+     "https://links.example/direct"
+    ],
+    {
+     "url": "https://example.com/posts/index.php?id=123456"
+    }
+   ]
+  ],
+  [
+   58,
+   "a other",
+   3,
+   [
+    "a other",
+    "08560a7eb1bf267d32b03f3957cf87c492fc752e15710814cb7255a0348a5b97",
+    [
+     55,
+     2,
+     [
+      [],
+      "example string"
+     ]
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    [
+     "https://other.example/no"
+    ],
+    {
+     "url": "https://example.com/posts/index.php?id=123456"
+    }
+   ]
+  ],
+  [
+   58,
+   "b matching",
+   3,
+   [
+    "b matching",
+    "e39507f076bf83ed9b4cc192417cce94eb9d7328fa5c04f2b256841cac8ac39d",
+    [
+     55,
+     2,
+     [
+      [],
+      "example string"
+     ]
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    [
+     26,
+     3,
+     []
+    ],
+    [
+     "https://links.example/direct"
+    ],
+    {
+     "url": "https://example.com/posts/index.php?id=123456"
+    }
+   ]
+  ]
+ ],
+ "steps": [
+  {
+   "title": "select parser for direct",
+   "choices": [
+    "b matching",
+    "z matching",
+    "------",
+    "a other"
+   ],
+   "initial": [
+    1
+   ],
+   "accepted": false,
+   "value": "z matching"
+  },
+  {
+   "title": "select parser for direct",
+   "choices": [
+    "b matching",
+    "z matching",
+    "------",
+    "a other"
+   ],
+   "initial": [
+    1
+   ],
+   "accepted": true,
+   "value": "z matching"
+  },
+  {
+   "title": "select parser for direct",
+   "choices": [
+    "b matching",
+    "z matching",
+    "------",
+    "a other"
+   ],
+   "initial": [
+    1
+   ],
+   "accepted": true,
+   "value": "b matching"
+  },
+  {
+   "title": "select parser for direct",
+   "choices": [
+    "b matching",
+    "z matching",
+    "------",
+    "a other"
+   ],
+   "initial": [
+    0
+   ],
+   "accepted": true,
+   "value": "a other"
+  }
+ ],
+ "clear": [
+  {
+   "question": "Clear all the selected linked parsers?",
+   "yes": false,
+   "value": "a other",
+   "enabled": true
+  },
+  {
+   "question": "Clear all the selected linked parsers?",
+   "yes": true,
+   "value": null,
+   "enabled": false
+  }
+ ],
+ "warning": "Unfortunately, you do not have any parsers, so none can be linked to your url classes. Please create some!"
+}

@@ -560,6 +560,20 @@ pub fn tag_counts(
     files: &[HashId],
     hidden: &crate::tag_display::TagHider,
 ) -> Result<TagCounts> {
+    tag_counts_for_display(conn, registry, display, service, files, hidden, false)
+}
+
+/// Count raw stored mappings when `storage` is true, otherwise apply display graphs.
+/// Filters and per-file deduplication are shared with ordinary display counts.
+pub fn tag_counts_for_display(
+    conn: &Connection,
+    registry: &ServiceRegistry,
+    display: &DisplayGraphs,
+    service: Option<ServiceId>,
+    files: &[HashId],
+    hidden: &crate::tag_display::TagHider,
+    storage: bool,
+) -> Result<TagCounts> {
     let ids = id_array(files);
     let services: Vec<ServiceId> = registry
         .tag_services()
@@ -584,7 +598,7 @@ pub fn tag_counts(
             let mut found: Vec<(u32, u32)> = Vec::new();
             while let Some(r) = rows.next()? {
                 let (file, tag): (HashId, TagId) = (r.get(0)?, r.get(1)?);
-                if status == ContentStatus::Petitioned {
+                if storage || status == ContentStatus::Petitioned {
                     found.push((file.0, tag.0));
                 } else {
                     found.extend(graph.display_tags(tag).map(|t| (file.0, t.0)));

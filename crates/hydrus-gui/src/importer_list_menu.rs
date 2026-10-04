@@ -22,12 +22,7 @@ fn node(entry: &Entry<Action>) -> PopupNode<'_, Entry<Action>, Action> {
     match entry {
         Entry::Item(
             label,
-            Action::FileLog(
-                file_log::Action::NotYet
-                | file_log::Action::ImportFromClipboard
-                | file_log::Action::SearchUrls,
-            )
-            | Action::SearchLog(search_log::Action::NotYet),
+            Action::FileLog(file_log::Action::NotYet | file_log::Action::SearchUrls),
         ) => PopupNode::Disabled(label),
         Entry::Item(label, action) => PopupNode::Item(label, action),
         Entry::Label(label) => PopupNode::Label(label),
@@ -136,7 +131,7 @@ pub(crate) struct Context<'a> {
     /// Ask a question, then do something.
     pub ask: &'a dyn Fn(String, Rc<dyn Fn()>),
     /// Show the page again (`true`: its files changed).
-    pub shown: &'a dyn Fn(bool),
+    pub shown: Rc<dyn Fn(bool)>,
 }
 
 /// Do a menu's action.
@@ -201,11 +196,12 @@ pub(crate) fn act(cx: &Context<'_>, action: &Action) {
             let Some(&queue) = queues.first() else {
                 return;
             };
-            if let Some(old) = cx.log.borrow_mut().take() {
-                let _ = old.hide();
+            let old = cx.log.borrow_mut().take();
+            if let Some(old) = old {
+                old.invoke_close_window();
             }
             let opened = if *action == Action::ShowFileLog {
-                crate::file_log_window::open(&store, queue, cx.log, &cx.open_files.0)
+                crate::file_log_window::open(&store, queue, cx.log, cx.open_files)
             } else {
                 crate::search_log_window::open(&store, queue, cx.log)
             };
@@ -216,8 +212,37 @@ pub(crate) fn act(cx: &Context<'_>, action: &Action) {
         }
         Action::FileLog(action) => {
             if let [queue] = queues[..] {
-                crate::file_log_window::act_on_queue(&store, queue, action, &*cx.open_files.0);
-                (cx.shown)(false);
+                if *action == file_log::Action::Renormalise {
+                    let shown = cx.shown.clone();
+                    let weak = window.as_weak();
+                    (cx.ask)(
+                        file_log::RENORMALISE_QUESTION.into(),
+                        Rc::new(move || {
+                            if let Err(error) = store.write(move |ctx| {
+                                let classes = hydrus_core::url::UrlClasses::new(
+                                    hydrus_store::settings::get(ctx.conn())?,
+                                );
+                                hydrus_store::queues::renormalise_file_seeds(
+                                    ctx.conn(),
+                                    queue,
+                                    &classes,
+                                )?;
+                                hydrus_store::queues::nudge(ctx.conn(), queue)
+                            }) && let Some(w) = weak.upgrade()
+                            {
+                                w.set_error(error.to_string().into());
+                            }
+                            shown(false);
+                        }),
+                    );
+                } else {
+                    if let Some(error) =
+                        crate::file_log_window::act_on_queue(&store, queue, action, cx.open_files)
+                    {
+                        window.set_error(error.into());
+                    }
+                    (cx.shown)(false);
+                }
             }
         }
         Action::SearchLog(action) => {
@@ -226,16 +251,17 @@ pub(crate) fn act(cx: &Context<'_>, action: &Action) {
             };
             if let search_log::Action::DeleteStatus(status) = action {
                 let kind = if watcher { "check" } else { "search" };
+                let exchange = cx.open_files.clone();
                 let action = action.clone();
                 let store = store.clone();
                 (cx.ask)(
                     search_log::delete_question(*status, kind),
                     Rc::new(move || {
-                        crate::search_log_window::act_on_queue(&store, queue, &action);
+                        crate::search_log_window::act_on_queue(&store, queue, &action, &exchange);
                     }),
                 );
             } else {
-                crate::search_log_window::act_on_queue(&store, queue, action);
+                crate::search_log_window::act_on_queue(&store, queue, action, cx.open_files);
                 (cx.shown)(false);
             }
         }

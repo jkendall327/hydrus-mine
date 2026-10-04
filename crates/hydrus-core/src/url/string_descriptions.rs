@@ -146,6 +146,21 @@ impl Conversion {
                     HashFunction::Sha512 => "sha512",
                 }
             ),
+            Conversion::DateDecode {
+                phrase,
+                timezone,
+                offset,
+            } => format!(
+                "datestring to timestamp: ({}, {}, {offset})",
+                python_repr_str(phrase),
+                timezone.code()
+            ),
+            Conversion::DateEncode { phrase, timezone } => format!(
+                "timestamp to datestring: ({}, {})",
+                python_repr_str(phrase),
+                timezone.code()
+            ),
+            Conversion::DateParse => "datestring to timestamp: automatic".to_owned(),
             Conversion::Unsupported { code, data } => {
                 let data =
                     PyJson::parse(data).map_or_else(|_| data.clone(), |d| python_repr(&d, true));

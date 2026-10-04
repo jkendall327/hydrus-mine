@@ -1,0 +1,44 @@
+{
+  "initial": "616c6c206b6e6f776e2074616773",
+  "choices": [
+    {
+      "name": "all known tags",
+      "key": "616c6c206b6e6f776e2074616773"
+    },
+    {
+      "name": "downloader tags",
+      "key": "646f776e6c6f616465722074616773"
+    },
+    {
+      "name": "my tags",
+      "key": "6c6f63616c2074616773"
+    },
+    {
+      "name": "second tags",
+      "key": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0"
+    }
+  ],
+  "events": [
+    {
+      "saved": "616c6c206b6e6f776e2074616773",
+      "page_service": "616c6c206b6e6f776e2074616773"
+    },
+    {
+      "saved": "646f776e6c6f616465722074616773",
+      "page_service": "646f776e6c6f616465722074616773"
+    },
+    {
+      "saved": "6c6f63616c2074616773",
+      "page_service": "6c6f63616c2074616773"
+    },
+    {
+      "saved": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+      "page_service": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0"
+    },
+    {
+      "saved": "6d697373696e672073657276696365",
+      "page_service": "616c6c206b6e6f776e2074616773"
+    }
+  ],
+  "missing_control": "616c6c206b6e6f776e2074616773"
+}

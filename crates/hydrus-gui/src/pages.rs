@@ -52,6 +52,10 @@ fn copied(store: &hydrus_store::Store, mut pages: Vec<Page>) -> hydrus_store::Re
             if !files.is_empty() {
                 sessions::set_page_files(ctx.conn(), new, &files)?;
             }
+            let selected = sessions::page_selected(ctx.conn(), old)?;
+            if !selected.is_empty() {
+                sessions::set_page_selected(ctx.conn(), new, &selected)?;
+            }
         }
         Ok(())
     })?;
@@ -90,6 +94,9 @@ pub struct Tabs {
     pub selected: usize,
 }
 
+/// Frozen source keys, ordered media and warning for a tab collapse.
+pub type TabHarvest = (Vec<PageKey>, Vec<HashId>, String);
+
 pub struct Pages {
     store: Arc<Store>,
     session: Session,
@@ -119,6 +126,8 @@ pub struct Pages {
     /// The notebook (by depth) the next new page goes in, when one was
     /// chosen for it (its tab row's empty space double-clicked).
     new_page_depth: Option<usize>,
+    /// Stable popup destination, with an optional sibling insertion anchor.
+    new_page_target: Option<(Option<PageKey>, Option<PageKey>)>,
 }
 
 /// What the store was last told of the pages, so only changes are written.
@@ -160,6 +169,56 @@ impl std::fmt::Debug for Pages {
 }
 
 impl Pages {
+    /// Boot using the configured startup session; a missing name falls back to
+    /// the default-domain blank page. Ordinary reopen keeps the live session.
+    pub fn open_startup(store: Arc<Store>) -> hydrus_store::Result<Self> {
+        Self::open_startup_choice(store, true)
+    }
+
+    /// Recovery may choose a blank page for this boot without changing the
+    /// durable configured startup session.
+    pub fn open_startup_choice(
+        store: Arc<Store>,
+        load_default: bool,
+    ) -> hydrus_store::Result<Self> {
+        let settings: hydrus_store::settings::GuiSessionSettings =
+            store.read(hydrus_store::settings::get)?;
+        Self::open_startup_named(
+            store,
+            if load_default {
+                settings.startup.as_deref()
+            } else {
+                None
+            },
+        )
+    }
+
+    /// Load the frozen startup name that a recovery question displayed.
+    pub fn open_startup_named(store: Arc<Store>, name: Option<&str>) -> hydrus_store::Result<Self> {
+        let mut pages = Self::open(store)?;
+        if name == Some(LAST_SESSION) {
+            return Ok(pages);
+        }
+        if let Some(name) = name
+            && pages
+                .store
+                .read(|conn| sessions::load(conn, name))?
+                .is_some()
+        {
+            pages
+                .clear_and_load(name)
+                .map_err(hydrus_store::StoreError::Corrupt)?;
+            return Ok(pages);
+        }
+        for index in (0..pages.session.pages.len()).rev() {
+            pages
+                .close(0, index)
+                .map_err(hydrus_store::StoreError::Corrupt)?;
+        }
+        pages.forget_closed();
+        Ok(pages)
+    }
+
     /// The last session, as the reference starts with it; with none (or an
     /// empty one), a single empty search page.
     pub fn open(store: Arc<Store>) -> hydrus_store::Result<Self> {
@@ -186,6 +245,7 @@ impl Pages {
             closed: Vec::new(),
             history: Vec::new(),
             new_page_depth: None,
+            new_page_target: None,
             remembered: HashMap::new(),
             last_moved: HashMap::new(),
             synced: Synced::default(),
@@ -234,6 +294,7 @@ impl Pages {
             closed: Vec::new(),
             history: Vec::new(),
             new_page_depth: None,
+            new_page_target: None,
             remembered: HashMap::new(),
             last_moved: HashMap::new(),
             synced: Synced::default(),
@@ -322,7 +383,24 @@ impl Pages {
         };
         let progress = match opened {
             Some(opened) => opened.borrow().import_progress(),
-            None => (0, 0),
+            None => match &page.content {
+                PageContent::Downloader { queues, .. } => self
+                    .store
+                    .read(|conn| {
+                        queues.iter().try_fold((0, 0), |(done, total), &queue| {
+                            let (value, range) = hydrus_store::queues::file_log_value_range(
+                                &hydrus_store::queues::file_seed_counts(conn, queue)?,
+                            );
+                            Ok(if value == range {
+                                (done, total)
+                            } else {
+                                (done + value, total + range)
+                            })
+                        })
+                    })
+                    .unwrap_or_default(),
+                _ => (0, 0),
+            },
         };
         let progress = if progress.0 == progress.1 {
             (0, 0)
@@ -644,6 +722,14 @@ impl Pages {
                 SearchPage::fixed(store, "An empty page of pages.", None, files)
             }
         };
+        let mut opened = opened;
+        if let Ok(selected) = self
+            .store
+            .read(|conn| sessions::page_selected(conn, &page.key))
+            && !selected.is_empty()
+        {
+            opened.select_files(&selected);
+        }
         let opened = Rc::new(RefCell::new(opened));
         self.open.insert(page.key, opened.clone());
         opened
@@ -746,6 +832,56 @@ impl Pages {
     /// `None` for the current notebook.
     pub fn new_page_in(&mut self, depth: Option<usize>) {
         self.new_page_depth = depth;
+        self.new_page_target = None;
+    }
+
+    /// Freeze the popup row and insertion anchor through the modal chooser.
+    pub fn new_page_at(
+        &mut self,
+        parent: Option<PageKey>,
+        before: Option<PageKey>,
+    ) -> Result<(), String> {
+        self.new_page_target = None;
+        self.new_page_depth = None;
+        self.new_page_path(parent, before)?;
+        self.new_page_depth = None;
+        self.new_page_target = Some((parent, before));
+        Ok(())
+    }
+
+    fn new_page_path(
+        &self,
+        parent: Option<PageKey>,
+        before: Option<PageKey>,
+    ) -> Result<(Vec<usize>, Option<usize>), String> {
+        let path = match parent {
+            None => Vec::new(),
+            Some(key) => {
+                let path =
+                    page_path(&self.session.pages, key).ok_or("the notebook is no longer open")?;
+                let page = self
+                    .session
+                    .all_pages()
+                    .into_iter()
+                    .find(|page| page.key == key)
+                    .unwrap();
+                if !matches!(page.content, PageContent::Pages(_)) {
+                    return Err("the destination is not a notebook".into());
+                }
+                path
+            }
+        };
+        let index = if let Some(key) = before {
+            let anchor =
+                page_path(&self.session.pages, key).ok_or("the insertion tab is no longer open")?;
+            if anchor.len() != path.len() + 1 || anchor[..path.len()] != path {
+                return Err("the insertion tab moved to another notebook".into());
+            }
+            anchor.last().copied()
+        } else {
+            None
+        };
+        Ok((path, index))
     }
 
     /// Open a new search page (the reference's page chooser's "file search"
@@ -819,6 +955,17 @@ impl Pages {
         predicates: Vec<hydrus_search::Predicate>,
         name: &str,
     ) {
+        self.open_search_with_context(location, None, predicates, name);
+    }
+
+    /// Preserve an explicit tag context from an owning tag-list action.
+    pub fn open_search_with_context(
+        &mut self,
+        location: hydrus_search::LocationContext,
+        tags: Option<hydrus_search::TagContext>,
+        predicates: Vec<hydrus_search::Predicate>,
+        name: &str,
+    ) {
         let mut page = new_search_page_on(&self.store, location);
         name.clone_into(&mut page.name);
         let PageContent::Search {
@@ -831,6 +978,9 @@ impl Pages {
             unreachable!("a search page");
         };
         search.predicates = predicates;
+        if let Some(tags) = tags {
+            search.tags = tags;
+        }
         let mut opened = SearchPage::restored(
             self.store.clone(),
             search.clone(),
@@ -842,6 +992,27 @@ impl Pages {
         opened.refresh();
         self.open.insert(page.key, Rc::new(RefCell::new(opened)));
         self.add(page);
+    }
+
+    /// Open the selected predicates as the two searches of a duplicate page.
+    pub fn open_duplicates_with_context(
+        &mut self,
+        location: hydrus_search::LocationContext,
+        tags: hydrus_search::TagContext,
+        predicates: Vec<hydrus_search::Predicate>,
+        name: &str,
+    ) {
+        let mut duplicates = new_duplicates_page(location, predicates);
+        duplicates.search.search_1.tags = tags.clone();
+        duplicates.search.search_2.tags = tags;
+        self.add(Page {
+            key: PageKey::random(),
+            name: name.into(),
+            content: PageContent::Duplicates {
+                duplicates,
+                sort: None,
+            },
+        });
     }
 
     /// Open a new duplicates page searching `location` for potential pairs
@@ -881,7 +1052,24 @@ impl Pages {
         self.new_page_selected(chosen, true)
     }
 
+    /// The chooser may prompt to rename its newly created notebook, after
+    /// creating its initial blank search page. Freeze that notebook's key.
+    pub fn new_page_from_chooser(&mut self, chosen: &NewPage) -> Result<Option<PageKey>, String> {
+        self.new_page(chosen)?;
+        Ok(if matches!(chosen, NewPage::Pages) {
+            self.notebook_key(self.path.len() - 1)
+        } else {
+            None
+        })
+    }
+
     fn new_page_selected(&mut self, chosen: &NewPage, select: bool) -> Result<(), String> {
+        if let Some((parent, before)) = self.new_page_target
+            && let Err(error) = self.new_page_path(parent, before)
+        {
+            self.new_page_target = None;
+            return Err(error);
+        }
         let page = match chosen {
             NewPage::Search { domain, .. } => new_search_page_on(
                 &self.store,
@@ -906,7 +1094,7 @@ impl Pages {
             NewPage::Pages => Page {
                 key: PageKey::random(),
                 name: "pages".into(),
-                content: PageContent::Pages(Vec::new()),
+                content: PageContent::Pages(vec![new_search_page(&self.store)]),
             },
             NewPage::Session(name) => return self.append_session(name),
             NewPage::LocalImport {
@@ -1051,13 +1239,22 @@ impl Pages {
             self.add(page);
         } else {
             let depth = self.current_depth();
+            let previous = self.shown().key;
+            let current = self.path.get(depth).copied();
+            let policy: hydrus_store::settings::PageInsertion = self
+                .store
+                .read(hydrus_store::settings::get)
+                .unwrap_or_default();
             let notebook = self.notebook_mut(depth);
             let was_empty = notebook.is_empty();
-            notebook.push(page);
+            let index = policy.index(current, notebook.len());
+            notebook.insert(index, page);
             if was_empty {
                 // Qt selects the first tab in a formerly empty notebook, even
                 // when an automatic import does not request selecting a page.
                 self.select(depth, 0);
+            } else {
+                self.show(&previous);
             }
         }
         Ok(())
@@ -1122,12 +1319,11 @@ impl Pages {
     /// reference's "append session"). Its pages are copies, with their
     /// files, so the saved session stays as it was.
     pub fn append_session(&mut self, name: &str) -> Result<(), String> {
-        let saved = self
+        let pages = self.fresh_session_pages(name)?;
+        self.kept_counts = self
             .store
-            .read(|conn| sessions::load(conn, name))
-            .map_err(|e| e.to_string())?
-            .ok_or_else(|| format!("there is no saved session \"{name}\""))?;
-        let pages = copied(&self.store, saved.pages).map_err(|e| e.to_string())?;
+            .read(sessions::page_file_counts)
+            .map_err(|e| e.to_string())?;
         self.add(Page {
             key: PageKey::random(),
             name: name.to_owned(),
@@ -1136,16 +1332,97 @@ impl Pages {
         Ok(())
     }
 
+    /// Append into a frozen parent notebook, preserving a different visible
+    /// branch while remembering the new selection inside the destination.
+    pub fn append_session_to_notebook(
+        &mut self,
+        notebook: Option<PageKey>,
+        name: &str,
+    ) -> Result<(), String> {
+        let previous = self.shown().key;
+        let (depth, visible) = if let Some(key) = notebook {
+            let path = page_path(&self.session.pages, key)
+                .ok_or("destination notebook is no longer open")?;
+            let page = self
+                .session
+                .all_pages()
+                .into_iter()
+                .find(|page| page.key == key)
+                .ok_or("destination notebook is no longer open")?;
+            if !matches!(page.content, PageContent::Pages(_)) {
+                return Err("session destination is not a notebook".into());
+            }
+            let visible = self.path.starts_with(&path);
+            self.show(&key);
+            (path.len(), visible)
+        } else {
+            (0, true)
+        };
+        self.new_page_depth = Some(depth);
+        let result = self.append_session(name);
+        if result.is_err() {
+            self.new_page_depth = None;
+        }
+        if !visible || result.is_err() {
+            self.show(&previous);
+        }
+        result
+    }
+
+    /// Append an immutable historical snapshot as a fresh notebook. Re-key
+    /// every descendant and restore media from the snapshot, never live pages.
+    pub fn append_session_backup(&mut self, name: &str, timestamp: i64) -> Result<(), String> {
+        let saved_name = name.to_owned();
+        let pages = self
+            .store
+            .write(move |ctx| {
+                let name = saved_name;
+                let snapshot = hydrus_store::session_backups::load(ctx.conn(), &name, timestamp)?
+                    .ok_or_else(|| {
+                    hydrus_store::StoreError::Corrupt(format!(
+                        "there is no backup of session \"{name}\" at {timestamp}"
+                    ))
+                })?;
+                hydrus_store::session_backups::restore_pages(ctx.conn(), snapshot)
+            })
+            .map_err(|e| e.to_string())?;
+        self.kept_counts = self
+            .store
+            .read(sessions::page_file_counts)
+            .map_err(|e| e.to_string())?;
+        self.new_page_depth = Some(0);
+        self.add(Page {
+            key: PageKey::random(),
+            name: name.into(),
+            content: PageContent::Pages(pages),
+        });
+        Ok(())
+    }
+
+    fn fresh_session_pages(&self, name: &str) -> Result<Vec<Page>, String> {
+        let name = name.to_owned();
+        self.store
+            .write(move |ctx| {
+                let conn = ctx.conn();
+                let saved = sessions::load(conn, &name)?.ok_or_else(|| {
+                    hydrus_store::StoreError::Corrupt(format!(
+                        "there is no saved session \"{name}\""
+                    ))
+                })?;
+                let snapshot = match hydrus_store::session_backups::latest(conn, &name)? {
+                    Some(snapshot) => snapshot,
+                    None => hydrus_store::session_backups::capture(conn, &saved)?,
+                };
+                hydrus_store::session_backups::restore_pages(conn, snapshot)
+            })
+            .map_err(|e| e.to_string())
+    }
+
     /// Close every page and load the saved session `name` in their place,
     /// its pages at the top (the reference's "clear and load": the pages
     /// closed are gone, not kept to reopen, and their downloads with them).
     pub fn clear_and_load(&mut self, name: &str) -> Result<(), String> {
-        let saved = self
-            .store
-            .read(|conn| sessions::load(conn, name))
-            .map_err(|e| e.to_string())?
-            .ok_or_else(|| format!("there is no saved session \"{name}\""))?;
-        let pages = copied(&self.store, saved.pages).map_err(|e| e.to_string())?;
+        let pages = self.fresh_session_pages(name)?;
         let mut old = std::mem::take(&mut self.session.pages);
         refresh_contents(&mut old, &self.open);
         let queues: Vec<i64> = old.iter().flat_map(closable_queues).collect();
@@ -1156,6 +1433,10 @@ impl Pages {
         } else {
             pages
         };
+        self.kept_counts = self
+            .store
+            .read(sessions::page_file_counts)
+            .map_err(|e| e.to_string())?;
         self.path = vec![0];
         self.select(0, 0);
         Ok(())
@@ -1190,28 +1471,82 @@ impl Pages {
     /// (replacing one of that name): copies, with their files, so the
     /// saved session stays as it is while the pages change.
     pub fn save_session(&mut self, name: &str, now: i64) -> Result<(), String> {
-        self.sync(now).map_err(|e| e.to_string())?;
+        self.save_session_at_ms(name, now.saturating_mul(1000))
+    }
+
+    /// Save a named session at millisecond precision for backup timestamps.
+    pub fn save_session_at_ms(&mut self, name: &str, now_ms: i64) -> Result<(), String> {
+        self.sync(now_ms / 1000).map_err(|e| e.to_string())?;
         let pages = copied(&self.store, self.session.pages.clone()).map_err(|e| e.to_string())?;
         let session = Session {
             name: name.to_owned(),
             pages,
         };
         self.store
-            .write(move |ctx| sessions::save(ctx.conn(), &session, now))
+            .write(move |ctx| hydrus_store::session_backups::save(ctx.conn(), &session, now_ms))
+            .map_err(|e| e.to_string())
+    }
+
+    /// Save only one frozen notebook's children, independently from other
+    /// visible branches. The notebook wrapper itself is not part of the save.
+    pub fn save_notebook_session_at_ms(
+        &mut self,
+        key: PageKey,
+        name: &str,
+        now_ms: i64,
+    ) -> Result<(), String> {
+        self.sync(now_ms / 1000).map_err(|e| e.to_string())?;
+        let page = self
+            .session
+            .all_pages()
+            .into_iter()
+            .find(|page| page.key == key)
+            .ok_or("the notebook to save is no longer open")?;
+        let PageContent::Pages(children) = &page.content else {
+            return Err("the page to save is not a notebook".into());
+        };
+        let pages = copied(&self.store, children.clone()).map_err(|e| e.to_string())?;
+        let session = Session {
+            name: name.into(),
+            pages,
+        };
+        self.store
+            .write(move |ctx| hydrus_store::session_backups::save(ctx.conn(), &session, now_ms))
             .map_err(|e| e.to_string())
     }
 
     /// Add `page` at the far right of the current notebook, and show it
     /// (a notebook of pages, on its first page).
     fn add(&mut self, page: Page) {
-        let depth = self
-            .new_page_depth
-            .take()
-            .filter(|&d| d <= self.current_depth())
-            .unwrap_or_else(|| self.current_depth());
+        let target = self.new_page_target.take();
+        let (depth, insertion, selected) = if let Some((parent, before)) = target {
+            // The chooser validates before creating queue-backed pages. No
+            // event loop runs between that validation and this insertion.
+            let (path, index) = self
+                .new_page_path(parent, before)
+                .expect("validated chooser destination");
+            let selected = if self.path.starts_with(&path) {
+                self.path.get(path.len()).copied()
+            } else {
+                parent.and_then(|key| self.remembered.get(&key).copied())
+            };
+            self.path = path;
+            (self.path.len(), index, selected)
+        } else {
+            let depth = self
+                .new_page_depth
+                .take()
+                .filter(|&d| d <= self.current_depth())
+                .unwrap_or_else(|| self.current_depth());
+            (depth, None, self.path.get(depth).copied())
+        };
+        let policy: hydrus_store::settings::PageInsertion = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
         let pages = self.notebook_mut(depth);
-        pages.push(page);
-        let index = pages.len() - 1;
+        let index = insertion.unwrap_or_else(|| policy.index(selected, pages.len()));
+        pages.insert(index, page);
         self.path.truncate(depth);
         self.select(depth, index);
     }
@@ -1277,7 +1612,16 @@ impl Pages {
             self.path[depth] -= 1;
         } else if index == shown {
             if remaining > 0 {
-                self.select(depth, index.min(remaining - 1));
+                let settings: crate::tab_context::NotebookSettings = self
+                    .store
+                    .read(hydrus_store::settings::get)
+                    .unwrap_or_default();
+                let at = if settings.close_focus_left {
+                    index.saturating_sub(1)
+                } else {
+                    index
+                };
+                self.select(depth, at.min(remaining - 1));
             } else if depth > 0 {
                 // the notebook it was in is shown, empty
                 self.path.truncate(depth);
@@ -1379,24 +1723,56 @@ impl Pages {
     /// page still importing or holding imports.
     pub fn close_question(&mut self, depth: usize, index: usize) -> Option<String> {
         let page = self.notebook_at(depth)?.get(index)?.clone();
-        if !matches!(
-            page.content,
-            PageContent::Downloader {
-                kind: DownloaderKind::Urls
-                    | DownloaderKind::Gallery
-                    | DownloaderKind::Watchers
-                    | DownloaderKind::Local
-                    | DownloaderKind::Simple,
-                ..
+        if matches!(page.content, PageContent::Pages(_)) {
+            let vetoes = self.close_vetoes(std::slice::from_ref(&page));
+            return crate::session_saving::close_all_question(&vetoes)
+                .map(|question| question.replacen("top page notebook", &page.name, 1))
+                .or_else(|| self.basic_close_question(&page));
+        }
+        if matches!(page.content, PageContent::Downloader { .. }) {
+            let opened = self.page(&page.key)?;
+            if let Some(veto) = opened
+                .borrow()
+                .close_veto(self.downloader_options.confirm_non_empty_close)
+            {
+                return Some(format!("Close \"{}\"?\n\n{veto}", page.name));
             }
-        ) {
+        }
+        self.basic_close_question(&page)
+    }
+
+    fn basic_close_question(&self, page: &Page) -> Option<String> {
+        fn held(pages: &[Page]) -> usize {
+            pages
+                .iter()
+                .map(|page| {
+                    1 + match &page.content {
+                        PageContent::Pages(children) => held(children),
+                        _ => 0,
+                    }
+                })
+                .sum()
+        }
+        let settings: hydrus_store::settings::PageNavigationSettings = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        if !settings.confirm_all_closes {
             return None;
         }
-        let opened = self.page(&page.key)?;
-        let veto = opened
-            .borrow()
-            .close_veto(self.downloader_options.confirm_non_empty_close)?;
-        Some(format!("Close \"{}\"?\n\n{veto}", page.name))
+        let mut question = format!("Close \"{}\"?", page.name);
+        if let PageContent::Pages(children) = &page.content {
+            let count = held(children);
+            if count == 0 {
+                question.push_str("\n\nIt is empty.");
+            } else {
+                question.push_str(&format!(
+                    "\n\nIt is holding {} pages.",
+                    hydrus_core::numbers::human_int(u64::try_from(count).unwrap_or(u64::MAX))
+                ));
+            }
+        }
+        Some(question)
     }
 
     /// The pages of the notebook at `depth` on the way to the page shown
@@ -1410,6 +1786,578 @@ impl Pages {
             }
         }
         Some(pages)
+    }
+
+    /// Actions on the clicked tab, using that tab row's notebook.
+    pub fn tab_menu(&self, depth: usize, index: usize) -> Vec<crate::main_menu::Entry> {
+        let Some(page) = self.notebook_at(depth).and_then(|pages| pages.get(index)) else {
+            return Vec::new();
+        };
+        let mut entries = crate::tab_context::menu(
+            depth,
+            index,
+            self.notebook_at(depth).map_or(0, <[Page]>::len),
+            self.path.get(depth).copied().unwrap_or(0),
+        );
+        entries.push(crate::main_menu::Entry::Separator);
+        for (label, before) in [("new page", None), ("new page here", Some(page.key))] {
+            entries.push(crate::main_menu::Entry::Item {
+                label: label.into(),
+                enabled: true,
+                command: Some(crate::main_menu::Command::ChooseNotebookPage {
+                    parent: self.notebook_key(depth),
+                    before,
+                }),
+            });
+        }
+        let advanced: hydrus_store::settings::AdvancedMode = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        if advanced.0 {
+            let label = format!(
+                "page weight: {}",
+                hydrus_core::numbers::human_int(self.page_weight(page.key).unwrap_or(0))
+            );
+            entries.insert(0, crate::main_menu::Entry::Separator);
+            entries.insert(
+                0,
+                crate::main_menu::Entry::Item {
+                    label: label.clone(),
+                    enabled: true,
+                    command: Some(crate::main_menu::Command::Copy(label)),
+                },
+            );
+        }
+        let refresh = match &page.content {
+            PageContent::Pages(children) if children.is_empty() => None,
+            PageContent::Pages(_) => Some("refresh all this page's pages"),
+            _ => Some("refresh this page"),
+        };
+        if let Some(label) = refresh {
+            entries.push(crate::main_menu::Entry::Separator);
+            entries.push(crate::main_menu::Entry::Item {
+                label: label.into(),
+                enabled: true,
+                command: Some(crate::main_menu::Command::RefreshTab(page.key)),
+            });
+        }
+        let names: Vec<_> = self
+            .store
+            .read(sessions::names)
+            .unwrap_or_default()
+            .into_iter()
+            .map(|(name, _)| name)
+            .collect();
+        let notebook =
+            matches!(page.content, PageContent::Pages(_)).then_some((page.key, page.name.as_str()));
+        entries.extend(crate::tab_context::session_entries(
+            self.notebook_key(depth),
+            notebook,
+            &names,
+        ));
+        entries
+    }
+
+    /// Refresh only initialized media descendants, as Qt Page::RefreshQuery
+    /// skips pages whose media panels have not initialized. Preserve selection.
+    pub fn refresh_tab_tree(&mut self, key: PageKey) {
+        if !self.session.all_pages().iter().any(|page| page.key == key) {
+            return;
+        }
+        for leaf in self.pages_under(&key) {
+            if let Some(open) = self.open.get(&leaf) {
+                open.borrow_mut().refresh_tab();
+            }
+        }
+    }
+
+    /// The clicked subtree's file-and-seed weight, including repeated files
+    /// across separate pages, as each reference leaf contributes independently.
+    pub fn page_weight(&self, key: PageKey) -> Option<u64> {
+        self.session
+            .all_pages()
+            .into_iter()
+            .find(|page| page.key == key)
+            .map(|page| self.weight_for_pages(vec![page.clone()]))
+    }
+
+    /// Popup on the unused part of a tab row: choose in that row's notebook.
+    pub fn tab_space_menu(&self, depth: usize) -> Vec<crate::main_menu::Entry> {
+        if depth > self.current_depth() {
+            return Vec::new();
+        }
+        vec![crate::main_menu::Entry::Item {
+            label: "new page".into(),
+            enabled: true,
+            command: Some(crate::main_menu::Command::ChooseNotebookPage {
+                parent: self.notebook_key(depth),
+                before: None,
+            }),
+        }]
+    }
+
+    /// Navigate at a tab row's notebook, descending into its selected
+    /// notebook unless this row moved recently, just as the reference does.
+    pub fn navigate_tabs(
+        &mut self,
+        depth: usize,
+        movement: crate::tab_context::Move,
+        now: std::time::Instant,
+    ) {
+        match movement {
+            crate::tab_context::Move::Left => {
+                self.move_at(depth, -1, false, now);
+            }
+            crate::tab_context::Move::Right => {
+                self.move_at(depth, 1, false, now);
+            }
+            crate::tab_context::Move::First => {
+                self.move_end_at(depth, false, false, now);
+            }
+            crate::tab_context::Move::Last => {
+                self.move_end_at(depth, true, false, now);
+            }
+        }
+    }
+
+    fn move_end_at(
+        &mut self,
+        depth: usize,
+        last: bool,
+        test: bool,
+        now: std::time::Instant,
+    ) -> bool {
+        let Some(pages) = self.notebook_at(depth) else {
+            return false;
+        };
+        if pages.len() <= 1 {
+            return false;
+        }
+        let Some(&current) = self.path.get(depth) else {
+            return false;
+        };
+        let target = if last { pages.len() - 1 } else { 0 };
+        let nested = matches!(pages[current].content, PageContent::Pages(_));
+        let key = self.notebook_key(depth);
+        let recent = self
+            .last_moved
+            .get(&key)
+            .is_some_and(|&at| now.duration_since(at) < std::time::Duration::from_secs(3));
+        if nested && !recent && self.move_end_at(depth + 1, last, true, now) {
+            return self.move_end_at(depth + 1, last, test, now);
+        }
+        if !test {
+            self.select(depth, target);
+            self.last_moved.insert(key, now);
+        }
+        true
+    }
+
+    /// Freeze a bulk-close's targets and aggregate its confirmation. Keys
+    /// remain valid if the user selects another notebook before answering.
+    pub fn close_tabs_question(
+        &mut self,
+        depth: usize,
+        index: usize,
+        side: crate::tab_context::Close,
+    ) -> Option<(Vec<PageKey>, String)> {
+        fn count(page: &Page) -> usize {
+            1 + if let PageContent::Pages(children) = &page.content {
+                children.iter().map(count).sum()
+            } else {
+                0
+            }
+        }
+        let pages = self.notebook_at(depth)?;
+        let indices = crate::tab_context::close_indices(index, pages.len(), side);
+        let targets: Vec<Page> = indices.into_iter().map(|i| pages[i].clone()).collect();
+        if targets.is_empty() {
+            return None;
+        }
+        let held = targets.iter().map(count).sum();
+        let keys = targets.iter().map(|p| p.key).collect();
+        let vetoes = self.close_vetoes(&targets);
+        Some((
+            keys,
+            crate::session_saving::close_group_question(
+                held,
+                crate::tab_context::close_description(side),
+                &vetoes,
+            ),
+        ))
+    }
+
+    fn close_vetoes(&mut self, pages: &[Page]) -> Vec<(String, String)> {
+        fn leaves(pages: &[Page], out: &mut Vec<PageKey>) {
+            for page in pages {
+                match &page.content {
+                    PageContent::Pages(children) => leaves(children, out),
+                    _ => out.push(page.key),
+                }
+            }
+        }
+        let mut keys = Vec::new();
+        leaves(pages, &mut keys);
+        let mut vetoes = Vec::new();
+        for key in keys {
+            let name = self
+                .session
+                .all_pages()
+                .into_iter()
+                .find(|p| p.key == key)
+                .map(|p| p.name.clone())
+                .unwrap_or_default();
+            if let Some(page) = self.page(&key)
+                && let Some(reason) = page
+                    .borrow()
+                    .close_veto(self.downloader_options.confirm_non_empty_close)
+            {
+                vetoes.push((reason, name));
+            }
+        }
+        vetoes
+    }
+
+    /// Close the frozen sibling targets in reverse order. Each uses the
+    /// normal closed-page stack, so undo restores pages, queues and positions.
+    pub fn close_tab_keys(&mut self, keys: &[PageKey]) -> Result<(), String> {
+        let shown = self.shown().key;
+        for key in keys.iter().rev() {
+            if let Some(path) = page_path(&self.session.pages, *key) {
+                // Showing a notebook descends into its selected child; close
+                // the requested notebook itself, at its frozen key's depth.
+                let depth = path.len() - 1;
+                self.show(key);
+                self.close(depth, path[depth])?;
+            }
+        }
+        self.show(&shown);
+        Ok(())
+    }
+
+    /// The clicked page's identity, frozen before opening its text entry.
+    pub fn tab_identity(&self, depth: usize, index: usize) -> Option<(PageKey, String)> {
+        self.notebook_at(depth)?
+            .get(index)
+            .map(|p| (p.key, p.name.clone()))
+    }
+
+    /// Rename an existing page by key without altering its content or selection.
+    pub fn rename_key(&mut self, key: &PageKey, name: &str) {
+        fn rename(pages: &mut [Page], key: &PageKey, name: &str) {
+            for page in pages {
+                if page.key == *key {
+                    name.clone_into(&mut page.name);
+                    return;
+                }
+                if let PageContent::Pages(children) = &mut page.content {
+                    rename(children, key, name);
+                }
+            }
+        }
+        rename(&mut self.session.pages, key, name);
+    }
+
+    /// Copy the clicked subtree beside itself with fresh media and importer
+    /// storage. A copied notebook starts on its first child, as session insert.
+    pub fn duplicate_tab(&mut self, depth: usize, index: usize) -> Result<(), String> {
+        let Some((key, _)) = self.tab_identity(depth, index) else {
+            return Ok(());
+        };
+        self.sync(
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX)),
+        )
+        .map_err(|e| e.to_string())?;
+        let original = self
+            .session
+            .all_pages()
+            .into_iter()
+            .find(|page| page.key == key)
+            .cloned()
+            .ok_or("page disappeared")?;
+        let session = Session {
+            name: "dupe session".into(),
+            pages: vec![original],
+        };
+        let mut copies = self
+            .store
+            .write(move |ctx| {
+                let snapshot = hydrus_store::session_backups::capture(ctx.conn(), &session)?;
+                hydrus_store::session_backups::restore_pages(ctx.conn(), snapshot)
+            })
+            .map_err(|e| e.to_string())?;
+        let copy = copies.pop().ok_or("could not duplicate page")?;
+        self.kept_counts = self
+            .store
+            .read(sessions::page_file_counts)
+            .map_err(|e| e.to_string())?;
+        self.remember();
+        self.notebook_mut(depth).insert(index + 1, copy);
+        self.path.truncate(depth);
+        self.select(depth, index + 1);
+        Ok(())
+    }
+
+    /// Freeze both target keys and their current ordered media for the harvest
+    /// confirmation. Groups deduplicate their flattened notebook media.
+    pub fn collapse_tabs_question(
+        &mut self,
+        depth: usize,
+        index: usize,
+        scope: crate::tab_context::Send,
+    ) -> Result<Option<TabHarvest>, String> {
+        let keys = self.send_tab_targets(depth, index, scope);
+        if keys.is_empty() {
+            return Ok(None);
+        }
+        let mut files = Vec::new();
+        for key in &keys {
+            for leaf in self.pages_under(key) {
+                let media = if let Some(open) = self.open.get(&leaf) {
+                    open.borrow().files()
+                } else {
+                    self.store
+                        .read(|conn| sessions::page_files(conn, &leaf))
+                        .map_err(|e| e.to_string())?
+                };
+                files.extend(media);
+            }
+        }
+        // A notebook's GetHashes deduplicates its leaves; group harvest also
+        // deduplicates across sibling pages, always keeping first appearance.
+        let mut seen = std::collections::HashSet::new();
+        files.retain(|file| seen.insert(*file));
+        let question = crate::tab_context::collapse_question(
+            files.len(),
+            keys.len(),
+            scope == crate::tab_context::Send::This,
+        );
+        Ok(Some((keys, files, question)))
+    }
+
+    /// Harvest the frozen media, close source tabs into undo without further
+    /// importer objections, and insert a default search at the first source.
+    pub fn collapse_tab_keys(&mut self, keys: &[PageKey], files: &[HashId]) -> Result<(), String> {
+        let Some(&first) = keys.first() else {
+            return Ok(());
+        };
+        let Some(path) = page_path(&self.session.pages, first) else {
+            return Ok(());
+        };
+        // Do nothing if the confirmed siblings have since been removed/moved.
+        let parent = &path[..path.len() - 1];
+        if keys.iter().any(|key| {
+            page_path(&self.session.pages, *key).is_none_or(|p| p[..p.len() - 1] != *parent)
+        }) {
+            return Ok(());
+        }
+        let depth = path.len() - 1;
+        let insertion = path[depth];
+        let replaces_all_top = depth == 0 && keys.len() == self.session.pages.len();
+        let mut page = new_search_page(&self.store);
+        let PageContent::Search {
+            search,
+            synchronised,
+            lock,
+            sort,
+            collect,
+        } = &mut page.content
+        else {
+            unreachable!("a search page");
+        };
+        if !files.is_empty() {
+            let hashes = self
+                .store
+                .read(|conn| hydrus_store::master::hashes(conn, files))
+                .map_err(|e| e.to_string())?;
+            search.predicates = vec![hydrus_search::Predicate::System(
+                hydrus_core::search::predicate::SystemPredicate::Hash {
+                    hashes: hydrus_core::search::predicate::FileHashes::Sha256(
+                        files
+                            .iter()
+                            .filter_map(|file| hashes.get(file).copied())
+                            .collect(),
+                    ),
+                    inclusive: true,
+                },
+            )];
+            *lock = Some(hydrus_core::pages::HashLock::default());
+        }
+        let opened = SearchPage::restored(
+            self.store.clone(),
+            search.clone(),
+            *synchronised,
+            sort.as_ref(),
+            files.to_vec(),
+        )
+        .with_lock(*lock)
+        .with_collect(collect.clone());
+        self.show(&first);
+        self.close_tab_keys(keys)?;
+        // Closing all children leaves their parent notebook selected. Retain
+        // its ancestry explicitly, including the top-level empty fallback.
+        self.path = parent.to_vec();
+        if self.path.is_empty() {
+            self.path.push(0);
+        }
+        let row = self.notebook_mut(depth);
+        if replaces_all_top {
+            // Ordinary last-tab close supplies a blank fallback; this action
+            // already provides its replacement and must not keep that fallback.
+            row.clear();
+        }
+        let at = insertion.min(row.len());
+        row.insert(at, page.clone());
+        self.open.insert(page.key, Rc::new(RefCell::new(opened)));
+        self.path.truncate(depth);
+        self.select(depth, at);
+        Ok(())
+    }
+
+    /// Freeze the siblings targeted by a send-down menu action.
+    pub fn send_tab_targets(
+        &self,
+        depth: usize,
+        index: usize,
+        scope: crate::tab_context::Send,
+    ) -> Vec<PageKey> {
+        let Some(pages) = self.notebook_at(depth) else {
+            return Vec::new();
+        };
+        crate::tab_context::send_indices(index, pages.len(), scope)
+            .into_iter()
+            .map(|i| pages[i].key)
+            .collect()
+    }
+
+    /// Group siblings into a fresh notebook without closing/reopening them;
+    /// their keys, open search state and downloader queues all survive.
+    pub fn send_tab_keys(&mut self, keys: &[PageKey], single: bool) -> Option<PageKey> {
+        fn locate(pages: &[Page], key: PageKey) -> Option<Vec<usize>> {
+            for (index, page) in pages.iter().enumerate() {
+                if page.key == key {
+                    return Some(vec![index]);
+                }
+                if let PageContent::Pages(children) = &page.content
+                    && let Some(mut path) = locate(children, key)
+                {
+                    path.insert(0, index);
+                    return Some(path);
+                }
+            }
+            None
+        }
+        let first = *keys.first()?;
+        let path = locate(&self.session.pages, first)?;
+        let depth = path.len() - 1;
+        let insertion = path[depth];
+        // Preserve the selected child within every moved notebook before
+        // replacing this row's parent path.
+        self.remember();
+        let previous_path = self.path.clone();
+        self.path = path;
+        let pages = self.notebook_mut(depth);
+        let moving: Vec<_> = keys
+            .iter()
+            .filter_map(|key| pages.iter().find(|p| p.key == *key).cloned())
+            .collect();
+        if moving.len() != keys.len() {
+            self.path = previous_path;
+            return None;
+        }
+        pages.retain(|p| !keys.contains(&p.key));
+        let at = if single {
+            insertion.min(pages.len())
+        } else {
+            pages.len()
+        };
+        let selected = moving.len() - 1;
+        let notebook = PageKey::random();
+        pages.insert(
+            at,
+            Page {
+                key: notebook,
+                name: "pages".into(),
+                content: PageContent::Pages(moving),
+            },
+        );
+        self.path.truncate(depth);
+        self.select(depth, at);
+        // Qt inserts each reversed group member at zero, retaining the first
+        // inserted widget (the rightmost original page) as the selected tab.
+        self.select(depth + 1, selected);
+        Some(notebook)
+    }
+
+    /// Sort only the notebook at `depth`, retaining the shown leaf and
+    /// descendants' selections. Equal keys keep their original order.
+    pub fn sort_tabs(
+        &mut self,
+        depth: usize,
+        by: crate::tab_context::Sort,
+        ascending: bool,
+    ) -> Result<(), String> {
+        let Some(pages) = self.notebook_at(depth) else {
+            return Ok(());
+        };
+        let summaries = pages
+            .iter()
+            .map(|page| {
+                let (files, progress) = self.file_summary(page);
+                Ok(crate::tab_context::Summary {
+                    name: page.name.clone(),
+                    files,
+                    progress,
+                    size: self.total_file_size(page).map_err(|e| e.to_string())?,
+                })
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        let order = crate::tab_context::order(&summaries, by, ascending);
+        let shown = self.shown().key;
+        let old = self.notebook_mut(depth).clone();
+        *self.notebook_mut(depth) = order.into_iter().map(|i| old[i].clone()).collect();
+        self.show(&shown);
+        Ok(())
+    }
+
+    /// Move a clicked tab within its notebook while keeping the selected
+    /// leaf, including when moving a containing notebook or an unselected tab.
+    pub fn move_tab(&mut self, depth: usize, index: usize, movement: crate::tab_context::Move) {
+        let Some(pages) = self.notebook_at(depth) else {
+            return;
+        };
+        let Some(target) = crate::tab_context::destination(index, pages.len(), movement) else {
+            return;
+        };
+        let shown = self.shown().key;
+        let pages = self.notebook_mut(depth);
+        let page = pages.remove(index);
+        pages.insert(target, page);
+        self.show(&shown);
+    }
+
+    /// The reference reports zero size for a page not initialised yet;
+    /// notebooks sum each child's size, including repeated files on siblings.
+    fn total_file_size(&self, page: &Page) -> hydrus_store::Result<u64> {
+        if let PageContent::Pages(children) = &page.content {
+            return children.iter().try_fold(0_u64, |sum, child| {
+                Ok(sum.saturating_add(self.total_file_size(child)?))
+            });
+        }
+        let Some(open) = self.open.get(&page.key) else {
+            return Ok(0);
+        };
+        let files = open.borrow().files();
+        self.store.read(|conn| {
+            Ok(hydrus_store::media::load_basic(conn, &files)?
+                .iter()
+                .filter_map(|media| media.info.as_ref())
+                .map(|info| info.size)
+                .sum())
+        })
     }
 
     /// The pages opened so far.
@@ -1523,6 +2471,10 @@ impl Pages {
     /// (`ConvertNumHashesAndSeedsToWeight`): each page's files, and twenty
     /// for each item and search of its downloads.
     pub fn session_weight(&self) -> u64 {
+        self.weight_for_pages(self.session.pages.clone())
+    }
+
+    fn weight_for_pages(&self, mut pages: Vec<Page>) -> u64 {
         fn walk(me: &Pages, pages: &[Page], files: &mut u64, queues: &mut Vec<i64>) {
             for page in pages {
                 match &page.content {
@@ -1536,7 +2488,6 @@ impl Pages {
                 }
             }
         }
-        let mut pages = self.session.pages.clone();
         refresh_contents(&mut pages, &self.open);
         let (mut files, mut queues) = (0, Vec::new());
         walk(self, &pages, &mut files, &mut queues);
@@ -1661,14 +2612,13 @@ fn new_duplicates_page(
     })
 }
 
-/// A new search page, "files", searching "my files" (see
-/// [`new_search_page_on`]).
+/// A blank search page uses the configured default local file location.
 fn new_search_page(store: &Store) -> Page {
+    let defaults: hydrus_store::settings::SearchDefaults =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
     new_search_page_on(
         store,
-        hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
-            hydrus_core::service::builtin_keys::MY_FILES.to_vec(),
-        )),
+        defaults.resolved_local_location(&store.snapshot().services),
     )
 }
 
@@ -1680,6 +2630,8 @@ fn new_search_page(store: &Store) -> Page {
 /// files stored here.
 fn new_search_page_on(store: &Store, location: hydrus_search::LocationContext) -> Page {
     use hydrus_core::service::builtin_keys;
+    let file_search: hydrus_store::settings::FileSearchSettings =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
     let sorts: hydrus_core::pages::SortSettings =
         store.read(hydrus_store::settings::get).unwrap_or_default();
     let defaults: hydrus_store::settings::SearchDefaults =
@@ -1711,10 +2663,26 @@ fn new_search_page_on(store: &Store, location: hydrus_search::LocationContext) -
                 tags,
                 ..FileSearchContext::default()
             },
-            synchronised: true,
+            synchronised: file_search.search_immediately,
             sort: None,
             lock: None,
             collect: Some(sorts.default_collect),
         },
     }
+}
+
+/// Locate a page or notebook without descending through its selected child.
+fn page_path(pages: &[Page], key: PageKey) -> Option<Vec<usize>> {
+    for (index, page) in pages.iter().enumerate() {
+        if page.key == key {
+            return Some(vec![index]);
+        }
+        if let PageContent::Pages(children) = &page.content
+            && let Some(mut path) = page_path(children, key)
+        {
+            path.insert(0, index);
+            return Some(path);
+        }
+    }
+    None
 }

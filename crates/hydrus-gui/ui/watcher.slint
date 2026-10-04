@@ -6,7 +6,7 @@
 import { Button, LineEdit, ProgressIndicator } from "std-widgets.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
-import { DownloadLine, DownloadControl } from "importing.slint";
+import { JobCogMenu, DownloadLine, DownloadControl } from "importing.slint";
 
 export struct WatcherData {
     // "3 watchers - 12/40" and the total status, or "waiting for new
@@ -41,6 +41,21 @@ export struct WatcherData {
 }
 
 export component WatcherSidebar inherits VerticalLayout {
+    in property <int> focus-requests;
+    in property <bool> focus-on-show;
+    callback input-focus-changed(bool);
+    // Match Qt's SetFocusLater: the conditional sidebar must finish its
+    // layout before Slint can retain focus on the new text input.
+    property <bool> focus-pending: root.focus-on-show;
+    changed focus-requests => { root.focus-pending = true; }
+    Timer {
+        interval: 0ms;
+        running: root.focus-pending;
+        triggered => {
+            root.focus-pending = false;
+            input-box.focus();
+        }
+    }
     in property <WatcherData> data;
     in property <[TableRow]> rows;
     in property <int> sort-column: -1;
@@ -71,6 +86,10 @@ export component WatcherSidebar inherits VerticalLayout {
     callback set-options();
     callback urls-entered(string);
     callback paste();
+    in property <JobCogMenu> file-cog;
+    in property <JobCogMenu> search-cog;
+    callback control-action(bool, int);
+    callback control-menu(bool);
     callback cancel-download(bool);
     // the checker options the page gives new watchers, or (the highlighted
     // box's) the shown watcher's
@@ -169,7 +188,8 @@ export component WatcherSidebar inherits VerticalLayout {
             }
             HorizontalLayout {
                 spacing: 4px;
-                LineEdit {
+                input-box := LineEdit {
+                    changed has-focus => { root.input-focus-changed(self.has-focus); }
                     horizontal-stretch: 1;
                     placeholder-text: "watcher url";
                     accepted(text) => {
@@ -260,6 +280,10 @@ export component WatcherSidebar inherits VerticalLayout {
                     }
                     DownloadControl {
                         line: root.file-download;
+                        advanced: true;
+                        cog: root.file-cog;
+                        action(id) => { root.control-action(false, id); }
+                        open-menu => { root.control-menu(false); }
                         cancel => { root.cancel-download(false); }
                     }
                 }
@@ -308,6 +332,10 @@ export component WatcherSidebar inherits VerticalLayout {
                     }
                     DownloadControl {
                         line: root.search-download;
+                        advanced: true;
+                        cog: root.search-cog;
+                        action(id) => { root.control-action(true, id); }
+                        open-menu => { root.control-menu(true); }
                         cancel => { root.cancel-download(true); }
                     }
                     HorizontalLayout {

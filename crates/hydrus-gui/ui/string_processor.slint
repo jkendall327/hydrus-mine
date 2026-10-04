@@ -9,6 +9,8 @@ import { Button, CheckBox, ComboBox, LineEdit, SpinBox } from "std-widgets.slint
 import { Theme } from "theme.slint";
 import { Asking } from "subscriptions.slint";
 import { ListTable, TableRow } from "list_table.slint";
+import { RegexTools } from "regex_tools.slint";
+import { MenuPane, MenuPanes } from "main_menu.slint";
 
 component Box inherits Rectangle {
     in property <string> title;
@@ -86,6 +88,8 @@ export component StringProcessorWindow inherits Window {
     in property <string> asking-title;
     in property <string> asking-message;
     in property <[string]> asking-choices;
+    in property <string> exchange-error;
+    callback exchange(string);
     callback row-clicked(int, bool, bool);
     callback row-activated(int);
     callback up();
@@ -156,6 +160,13 @@ export component StringProcessorWindow inherits Window {
                 }
             }
         }
+        HorizontalLayout {
+            spacing: 6px;
+            Button { text: "import"; enabled: !root.asking && !root.child-open; clicked => { root.exchange("import"); } }
+            Button { text: "export selected"; enabled: root.any-selected && !root.asking && !root.child-open; clicked => { root.exchange("export"); } }
+            Button { text: "paste"; enabled: !root.asking && !root.child-open; clicked => { root.exchange("paste"); } }
+        }
+        if root.exchange-error != "": Text { text: root.exchange-error; color: Theme.error; wrap: word-wrap; }
         Box {
             vertical-stretch: 1;
             title: "test results";
@@ -237,6 +248,19 @@ export component StringStepWindow inherits Window {
     in-out property <int> start;
     in-out property <bool> end-on;
     in-out property <int> end: -1;
+    in property <[string]> favourites;
+    in property <string> favourite-status;
+    callback favourite-copied(int);
+    callback manage-favourites();
+    in property <[MenuPane]> favourite-panes;
+    callback favourite-menu(length, length);
+    callback favourite-line-hovered(int, int, length, length, length);
+    callback favourite-line-clicked(int, int, length, length, length);
+    callback favourite-placed(int, length, length, length);
+    callback favourite-dismissed();
+    in property <[string]> regex-components;
+    in property <[string]> regex-groups;
+    callback regex-tool(int, int);
     // sorter
     in-out property <int> sort-type;
     in-out property <bool> ascending;
@@ -429,6 +453,7 @@ export component StringStepWindow inherits Window {
                     text <=> root.regex;
                     edited => { root.changed(); }
                 }
+                RegexTools { components: root.regex-components; groups: root.regex-groups; show-groups: false; enabled: !root.child-open; selected(c, i) => { root.regex-tool(c, i); } }
             }
         }
         if root.kind == 4: Box {
@@ -457,6 +482,7 @@ export component StringStepWindow inherits Window {
                     text <=> root.match-regex;
                     edited => { root.changed(); }
                 }
+                RegexTools { components: root.regex-components; groups: root.regex-groups; show-groups: false; enabled: !root.child-open; selected(c, i) => { root.regex-tool(c, i); } }
             }
             if root.show-character-set: HorizontalLayout {
                 spacing: 6px;
@@ -527,6 +553,11 @@ export component StringStepWindow inherits Window {
                 color: root.test-ok ? Theme.text : Theme.error;
             }
         }
+        if root.show-match-regex || root.kind == 3: HorizontalLayout {
+            spacing: 6px;
+            Button { text: "favourites ▾"; enabled: !root.child-open; clicked => { root.favourite-menu(self.absolute-position.x, self.absolute-position.y+self.height); } }
+        }
+        if (root.show-match-regex || root.kind == 3) && root.favourite-status != "": Label { text: root.favourite-status; }
         if root.kind == 5: Box {
             title: "string tag filter";
             Label {
@@ -601,6 +632,16 @@ export component StringStepWindow inherits Window {
             cancel => { root.cancel(); }
         }
     }
+    if root.favourite-panes.length > 0: MenuPanes {
+        width: root.width;
+        height: root.height;
+        top: 0px;
+        panes: root.favourite-panes;
+        dismiss => { root.favourite-dismissed(); }
+        placed(p,x,y,w) => { root.favourite-placed(p,x,y,w); }
+        line-hovered(p,l,r,t,left) => { root.favourite-line-hovered(p,l,r,t,left); }
+        line-clicked(p,l,r,t,left) => { root.favourite-line-clicked(p,l,r,t,left); }
+    }
 }
 
 // A string converter's editor (`EditStringConverterPanel`): its
@@ -611,6 +652,7 @@ export component StringConverterWindow inherits Window {
     preferred-width: 760px;
     preferred-height: 460px;
     background: Theme.window;
+    in property <string> error;
     in property <[TableRow]> rows;
     in property <bool> one-selected;
     in property <bool> any-selected;
@@ -692,6 +734,7 @@ export component StringConverterWindow inherits Window {
                 edited => { root.example-edited(); }
             }
         }
+        if root.error != "": Label { text: root.error; color: Theme.error; wrap: word-wrap; }
         if root.asking: Asking {
             title: root.asking-title;
             message: root.asking-message;
@@ -715,6 +758,10 @@ export component ConversionWindow inherits Window {
     preferred-width: 560px;
     preferred-height: 380px;
     background: Theme.window;
+    in property <[string]> regex-components;
+    in property <[string]> regex-groups;
+    callback regex-tool(int, int);
+    in property <string> error;
     in property <[string]> types;
     in-out property <int> kind;
     in property <string> text-label;
@@ -811,6 +858,7 @@ export component ConversionWindow inherits Window {
                     text <=> root.pattern;
                     edited => { root.changed(); }
                 }
+                RegexTools { components: root.regex-components; groups: root.regex-groups; show-groups: true; selected(c, i) => { root.regex-tool(c, i); } }
             }
             if root.show-regex: HorizontalLayout {
                 spacing: 6px;
@@ -887,6 +935,7 @@ export component ConversionWindow inherits Window {
             }
         }
         Rectangle { vertical-stretch: 1; }
+        if root.error != "": Label { text: root.error; color: Theme.error; wrap: word-wrap; }
         if root.asking: Asking {
             title: root.asking-title;
             message: root.asking-message;

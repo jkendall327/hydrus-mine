@@ -1,4 +1,4 @@
-//! Reusable HTML/JSON formula editors. Rules stay typed and ordered; parsing
+//! Reusable formula editors. Rules and recursive children stay typed and ordered; parsing
 //! and string processing use the same engine as downloaders and sidecars.
 use crate::list_selection::ListSelection;
 use hydrus_core::url::string_descriptions::index_to_pretty_ordinal;
@@ -13,6 +13,10 @@ use hydrus_parse::formula::{
 pub struct FormulaTestData {
     pub context: ParsingContext,
     pub text: String,
+    /// All inherited documents, when a parent produced multiple examples.
+    pub examples: Vec<String>,
+    /// Source URL for each example; selection restores its parsing context URL.
+    pub source_urls: Vec<Option<String>>,
     pub collapse_newlines: bool,
 }
 impl Default for FormulaTestData {
@@ -20,7 +24,108 @@ impl Default for FormulaTestData {
         Self {
             context: ParsingContext::new(),
             text: String::new(),
+            examples: Vec::new(),
+            source_urls: Vec::new(),
             collapse_newlines: true,
+        }
+    }
+}
+impl FormulaTestData {
+    /// Select a fetched document, preserving the previous example and variables.
+    pub fn fetched(&mut self, url: String, result: FetchedDocument, page: bool) -> usize {
+        self.context.insert("post_index".into(), "0".into());
+        self.add_example(result.document(page), Some(url))
+    }
+    /// Prepare inherited documents for a selectable test panel.
+    pub fn prepare_examples(&mut self) {
+        if self.examples.is_empty() {
+            self.examples.push(self.text.clone());
+        }
+        self.source_urls
+            .resize(self.examples.len(), self.context.get("url").cloned());
+        self.choose_example(0);
+    }
+    /// Keep edits to the active document and its current source URL.
+    pub fn remember_example(&mut self, index: usize, text: String) {
+        self.text = text;
+        if self.examples.is_empty() {
+            self.examples.push(self.text.clone());
+        }
+        self.source_urls
+            .resize(self.examples.len(), self.context.get("url").cloned());
+        if let Some(example) = self.examples.get_mut(index) {
+            example.clone_from(&self.text);
+        }
+        if let Some(url) = self.source_urls.get_mut(index) {
+            *url = self.context.get("url").cloned();
+        }
+    }
+    /// Select a document, restoring its source URL without changing other variables.
+    pub fn choose_example(&mut self, index: usize) -> bool {
+        let Some(text) = self.examples.get(index) else {
+            return false;
+        };
+        self.text.clone_from(text);
+        if let Some(url) = self.source_urls.get(index) {
+            if let Some(url) = url {
+                self.context.insert("url".into(), url.clone());
+            } else {
+                self.context.remove("url");
+            }
+        }
+        true
+    }
+    /// Append a blank, pasted or fetched example and select it.
+    pub fn add_example(&mut self, text: String, url: Option<String>) -> usize {
+        if self.examples.is_empty() {
+            self.prepare_examples();
+        }
+        self.examples.push(text);
+        self.source_urls.push(url);
+        let index = self.examples.len() - 1;
+        self.choose_example(index);
+        index
+    }
+    /// Remove an example while retaining at least one test document.
+    pub fn remove_example(&mut self, index: usize) -> usize {
+        if self.examples.len() > 1 && index < self.examples.len() {
+            self.examples.remove(index);
+            if index < self.source_urls.len() {
+                self.source_urls.remove(index);
+            }
+        }
+        let selected = index.min(self.examples.len().saturating_sub(1));
+        self.choose_example(selected);
+        selected
+    }
+    /// Put the selected document first for a recursive child, retaining all others.
+    #[must_use]
+    pub fn selected_first(&self, index: usize) -> Self {
+        let mut test = self.clone();
+        if index < test.examples.len() {
+            test.examples.rotate_left(index);
+        }
+        if index < test.source_urls.len() {
+            test.source_urls.rotate_left(index);
+        }
+        test
+    }
+}
+/// A test document's network result, independent of its GUI worker.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum FetchedDocument {
+    Text(String),
+    Failed { error: String, text: String },
+    Cancelled,
+}
+impl FetchedDocument {
+    /// The reference test panel's successful, failed or cancelled document.
+    pub fn document(self, page: bool) -> String {
+        match self {
+            Self::Text(text) => text,
+            Self::Cancelled => "fetch cancelled".into(),
+            Self::Failed { error, text } if page => format!("fetch failed: {error}\n\n{text}"),
+            Self::Failed { error, .. } => format!("fetch failed:\n\n{error}"),
         }
     }
 }
@@ -104,28 +209,139 @@ impl Rule {
         }
     }
 }
+/// An address in a recursive formula draft; an absent member index appends.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FormulaChild {
+    /// The first formula in a nested pair.
+    Main,
+    /// The second formula in a nested pair.
+    Sub,
+    /// A selected zipper member or a fresh member.
+    Member(Option<usize>),
+}
+/// Describe a child for its queue row or recursive edit button.
+pub fn formula_summary(formula: &Formula) -> String {
+    let description = match &formula.kind {
+        FormulaKind::Html { rules, .. } => format!("HTML ({} rules)", rules.len()),
+        FormulaKind::Json { rules, .. } => format!("JSON ({} rules)", rules.len()),
+        FormulaKind::Nested { .. } => "NESTED first → second".into(),
+        FormulaKind::Zipper { formulae, phrase } => {
+            format!("ZIPPER ({} formulae): {phrase}", formulae.len())
+        }
+        FormulaKind::ContextVariable { variable } => format!("CONTEXT VARIABLE: {variable}"),
+        FormulaKind::Static { text, count } => format!("STATIC ({count} outputs): {text}"),
+    };
+    if formula.name.is_empty() {
+        description
+    } else {
+        format!("{} — {description}", formula.name)
+    }
+}
+
 /// A formula draft, isolated from the caller until Apply.
 #[derive(Debug, Clone)]
 pub struct FormulaEditor {
     pub formula: Formula,
     pub test: FormulaTestData,
     pub selection: ListSelection<usize>,
+    /// Current document in the inherited examples.
+    pub example: usize,
+    /// Byte detection retained only by the raw fetch owner.
+    pub raw_mimes: crate::parser_test_data::ExampleMimes,
 }
 impl FormulaEditor {
-    /// Start an isolated edit, preserving unsupported kinds intact.
-    pub fn new(formula: &Formula, test: FormulaTestData) -> Self {
+    /// Start an isolated edit, preserving recursive fields and auxiliary data.
+    pub fn new(formula: &Formula, mut test: FormulaTestData) -> Self {
+        test.prepare_examples();
         Self {
             formula: formula.clone(),
             test,
             selection: ListSelection::default(),
+            example: 0,
+            raw_mimes: crate::parser_test_data::ExampleMimes::default(),
         }
     }
-    /// Whether this formula has an HTML or JSON rule editor.
+    /// Whether the current kind has native editing controls.
     pub fn supported(&self) -> bool {
-        matches!(
-            self.formula.kind,
-            FormulaKind::Html { .. } | FormulaKind::Json { .. }
-        )
+        self.kind_index() <= 5
+    }
+    /// Ordered rows for the rules or zipper-member queue.
+    pub fn queue_descriptions(&self) -> Vec<String> {
+        match &self.formula.kind {
+            FormulaKind::Zipper { formulae, .. } => formulae.iter().map(formula_summary).collect(),
+            _ => self.rules().iter().map(Rule::description).collect(),
+        }
+    }
+    fn queue_len(&self) -> usize {
+        match &self.formula.kind {
+            FormulaKind::Html { rules, .. } => rules.len(),
+            FormulaKind::Json { rules, .. } => rules.len(),
+            FormulaKind::Zipper { formulae, .. } => formulae.len(),
+            _ => 0,
+        }
+    }
+    /// Clone a child into an isolated editor; no draft changes until acceptance.
+    pub fn child(&self, address: FormulaChild) -> Option<Formula> {
+        match (&self.formula.kind, address) {
+            (FormulaKind::Nested { main, .. }, FormulaChild::Main) => Some((**main).clone()),
+            (FormulaKind::Nested { sub, .. }, FormulaChild::Sub) => Some((**sub).clone()),
+            (FormulaKind::Zipper { formulae, .. }, FormulaChild::Member(Some(i))) => {
+                formulae.get(i).cloned()
+            }
+            (FormulaKind::Zipper { .. }, FormulaChild::Member(None)) => Some(new_formula(false)),
+            _ => None,
+        }
+    }
+    /// Commit an accepted child to its address, leaving unrelated children intact.
+    pub fn put_child(&mut self, address: FormulaChild, formula: Formula) {
+        match (&mut self.formula.kind, address) {
+            (FormulaKind::Nested { main, .. }, FormulaChild::Main) => **main = formula,
+            (FormulaKind::Nested { sub, .. }, FormulaChild::Sub) => **sub = formula,
+            (FormulaKind::Zipper { formulae, .. }, FormulaChild::Member(Some(i))) => {
+                if let Some(child) = formulae.get_mut(i) {
+                    *child = formula;
+                }
+            }
+            (FormulaKind::Zipper { formulae, .. }, FormulaChild::Member(None)) => {
+                formulae.push(formula);
+            }
+            _ => {}
+        }
+    }
+    /// Inherit context/documents, transforming them through a nested main formula
+    /// for the second editor. A parse error yields one empty example, as the reference does.
+    pub fn child_test_data(&self, address: FormulaChild) -> FormulaTestData {
+        let mut test = self.test.selected_first(self.example);
+        if let (FormulaKind::Nested { main, .. }, FormulaChild::Sub) = (&self.formula.kind, address)
+        {
+            let inputs = if test.examples.is_empty() {
+                vec![test.text.clone()]
+            } else {
+                test.examples.clone()
+            };
+            let mut texts = Vec::new();
+            for text in inputs {
+                if let Ok(parsed) = main.parse(&test.context, &text, test.collapse_newlines) {
+                    texts = parsed;
+                    if !texts.is_empty() {
+                        break;
+                    }
+                } else {
+                    texts = vec![String::new()];
+                    break;
+                }
+            }
+            test.text = texts.first().cloned().unwrap_or_default();
+            test.source_urls = vec![test.context.get("url").cloned(); texts.len()];
+            test.examples = texts;
+        }
+        test
+    }
+    /// Switch the test panel between inherited examples without discarding edits.
+    pub fn choose_example(&mut self, index: usize) {
+        if self.test.choose_example(index) {
+            self.example = index;
+        }
     }
     /// Ordered rules for the queue and its editors.
     pub fn rules(&self) -> Vec<Rule> {
@@ -164,13 +380,28 @@ impl FormulaEditor {
     }
     /// Select a rule using the common list modifiers.
     pub fn click(&mut self, row: usize, ctrl: bool, shift: bool) {
-        let order = (0..self.rules().len()).collect::<Vec<_>>();
+        let order = (0..self.queue_len()).collect::<Vec<_>>();
         self.selection.click(&order, row, ctrl, shift);
+    }
+    /// Index of the current kind in the editor's type chooser.
+    pub fn kind_index(&self) -> usize {
+        match self.formula.kind {
+            FormulaKind::Html { .. } => 0,
+            FormulaKind::Json { .. } => 1,
+            FormulaKind::Nested { .. } => 2,
+            FormulaKind::Zipper { .. } => 3,
+            FormulaKind::ContextVariable { .. } => 4,
+            FormulaKind::Static { .. } => 5,
+        }
     }
     /// Change between HTML and JSON, using the reference's fresh defaults.
     /// Separated HTML/JSON content keeps separated extraction on conversion.
     pub fn change_type(&mut self, json: bool) {
-        if !self.supported() || json == matches!(self.formula.kind, FormulaKind::Json { .. }) {
+        self.change_kind(usize::from(json));
+    }
+    /// Replace the formula with fresh defaults for the chosen type.
+    pub fn change_kind(&mut self, kind: usize) {
+        if kind == self.kind_index() || kind > 5 {
             return;
         }
         let separated = matches!(
@@ -183,7 +414,7 @@ impl FormulaEditor {
                 ..
             }
         );
-        self.formula = new_formula(json);
+        self.formula = new_formula_kind(kind);
         if separated {
             match &mut self.formula.kind {
                 FormulaKind::Html { content, .. } => *content = HtmlContent::Html,
@@ -196,7 +427,7 @@ impl FormulaEditor {
     /// Selected positions in queue order.
     pub fn selected(&self) -> Vec<usize> {
         self.selection
-            .in_order(&(0..self.rules().len()).collect::<Vec<_>>())
+            .in_order(&(0..self.queue_len()).collect::<Vec<_>>())
     }
     /// Remove selected rules, retaining the order of the others.
     pub fn delete(&mut self) {
@@ -209,6 +440,9 @@ impl FormulaEditor {
                 FormulaKind::Json { rules, .. } => {
                     rules.remove(i);
                 }
+                FormulaKind::Zipper { formulae, .. } => {
+                    formulae.remove(i);
+                }
                 _ => {}
             }
         }
@@ -220,7 +454,7 @@ impl FormulaEditor {
         if down {
             selected.reverse();
         }
-        let len = self.rules().len();
+        let len = self.queue_len();
         let mut flags = (0..len)
             .map(|i| self.selection.is_selected(i))
             .collect::<Vec<_>>();
@@ -234,6 +468,7 @@ impl FormulaEditor {
             match &mut self.formula.kind {
                 FormulaKind::Html { rules, .. } => rules.swap(i, j),
                 FormulaKind::Json { rules, .. } => rules.swap(i, j),
+                FormulaKind::Zipper { formulae, .. } => formulae.swap(i, j),
                 _ => {}
             }
         }
@@ -300,6 +535,31 @@ pub fn new_formula(json: bool) -> Formula {
         },
         processor: StringProcessor::default(),
     }
+}
+
+/// Fresh defaults for an editor kind, matching the reference type chooser.
+pub fn new_formula_kind(kind: usize) -> Formula {
+    let mut formula = new_formula(false);
+    formula.kind = match kind {
+        1 => new_formula(true).kind,
+        2 => FormulaKind::Nested {
+            main: Box::new(new_formula(false)),
+            sub: Box::new(new_formula(true)),
+        },
+        3 => FormulaKind::Zipper {
+            formulae: vec![new_formula(false)],
+            phrase: "\\1".into(),
+        },
+        4 => FormulaKind::ContextVariable {
+            variable: "url".into(),
+        },
+        5 => FormulaKind::Static {
+            text: "example text".into(),
+            count: 1,
+        },
+        _ => formula.kind,
+    };
+    formula
 }
 
 /// Rule controls retain inactive values while switching traversal modes.
