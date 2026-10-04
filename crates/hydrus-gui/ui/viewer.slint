@@ -1190,7 +1190,7 @@ export component MediaViewerWindow inherits Window {
                         width: min(root.width * 0.35, 280px);
                         height: 22px;
                         Text { text: link.label; color: #70b5ff; font-size: 12px; horizontal-alignment: right; vertical-alignment: center; overflow: elide; }
-                        TouchArea { mouse-cursor: pointer; clicked => { root.url-clicked(i); } }
+                        TouchArea { mouse-cursor: MouseCursor.pointer; clicked => { root.url-clicked(i); } }
                     }
                 }
             }
