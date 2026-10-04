@@ -65,6 +65,8 @@ fn advanced_lists_children_and_filename_consumers_match_real_reference() {
                 }
             }
             "regex_remove" => editor.remove_regexes(),
+            "quick_sort_regex" => editor.sort(1, false),
+            "quick_sort_namespace" => editor.sort(0, true),
             _ => unreachable!(),
         }
         editor.update(&mut options);

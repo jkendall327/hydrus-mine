@@ -580,10 +580,14 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   time); a router's rows go through its processor in the order the
   sidecars give them (the reference's go through a set, so a slice or
   rows the human sort ties come out in no set order);
-  its tags are typed a line each (the reference has a tags input with
-  autocomplete and paste buttons), as are its quick namespaces
-  ("namespace:regex") and regexes, where the reference has lists with
-  add and edit dialogs.
+  its simple tags are typed a line each (the reference has a tags input with
+  autocomplete and paste buttons). Advanced quick namespaces and regexes now
+  use lists with the reference's accepted-rule actions and literal field values.
+  The quick-namespace child and deletion question occupy the owning native
+  window rather than separate Qt dialogs; namespace/regex header sorting is
+  local to that editor, while Qt remembers its list-column state globally.
+  Validation error details come from the native Python-compatible regex engine.
+  The shared regex-help/favourites button is not yet attached to these inputs.
 - **There is one review window at a time**: files dropped on the main
   window while it is open join its list, where the reference opens a
   second window.

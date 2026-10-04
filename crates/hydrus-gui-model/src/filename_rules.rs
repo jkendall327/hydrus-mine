@@ -22,16 +22,33 @@ enum Pending {
 }
 
 /// The advanced lists for one tag service; all changes belong to its owner draft.
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct Editor {
     quick: Vec<Row<(String, String)>>,
     regexes: Vec<Row<String>>,
     quick_selection: ListSelection<u64>,
     regex_selection: ListSelection<u64>,
     next: u64,
+    sort_column: usize,
+    ascending: bool,
     pending: Option<Pending>,
     /// Regex returned to the input when selected expressions are removed.
     pub input: String,
+}
+impl Default for Editor {
+    fn default() -> Self {
+        Self {
+            quick: Vec::new(),
+            regexes: Vec::new(),
+            quick_selection: ListSelection::default(),
+            regex_selection: ListSelection::default(),
+            next: 0,
+            sort_column: 0,
+            ascending: true,
+            pending: None,
+            input: String::new(),
+        }
+    }
 }
 impl Editor {
     /// Open the saved extraction rules, sorting quick namespaces as Qt does.
@@ -62,12 +79,33 @@ impl Editor {
         id
     }
     fn sort_quick(&mut self) {
+        let column = self.sort_column;
         self.quick.sort_by_cached_key(|row| {
-            (
-                hydrus_core::casefold::casefold(&row.value.0),
-                hydrus_core::casefold::casefold(&row.value.1),
-            )
+            let namespace = hydrus_core::casefold::casefold(&row.value.0);
+            let regex = hydrus_core::casefold::casefold(&row.value.1);
+            let primary = if column == 0 {
+                namespace.clone()
+            } else {
+                regex.clone()
+            };
+            (primary, namespace, regex)
         });
+        if !self.ascending {
+            self.quick.reverse();
+        }
+    }
+    /// Current quick-list column and direction, used by header clicks.
+    pub fn sorting(&self) -> (usize, bool) {
+        (self.sort_column, self.ascending)
+    }
+    /// Sort the quick list by namespace or regex without changing its selection.
+    pub fn sort(&mut self, column: usize, ascending: bool) {
+        if self.asking() || column > 1 {
+            return;
+        }
+        self.sort_column = column;
+        self.ascending = ascending;
+        self.sort_quick();
     }
     /// Quick rules in displayed order, including their current selection.
     pub fn quick_rows(&self) -> Vec<Row<(String, String)>> {

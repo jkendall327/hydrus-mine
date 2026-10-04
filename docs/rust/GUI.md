@@ -294,6 +294,18 @@ submenu), retrying a watcher's failed and ignored files, removing, and
 pausing or playing. As `oracle/record_importer_menus.py` recorded the
 reference's.
 
+The filename-tagging advanced tab now has actual quick-namespace and regex
+lists in both manual-import and import-folder modes. Quick namespaces use
+Add/Edit children with separate namespace and regex fields, retain literal
+colons and whitespace, sort either column while preserving selection, and
+ask before deleting the selected rows. Empty namespaces and uncompiled regexes
+keep the child open without changing accepted rules. Enter adds a raw regex;
+double-click returns the single selected regex to its input for correction,
+including duplicates. Child cancellation, owner cancellation and callbacks on
+closed owners cannot leak changes. Accepted rules reach local-import seed tags
+and survive saving and reopening an import folder. The real Qt handlers and
+filename results are recorded in `oracle/record_filename_rules.py`.
+
 File > import/export folders > "manage import folders…" and "manage
 export folders…" open the folders dialogs (`src/folders_window.rs`,
 `hydrus-gui-model/src/folders.rs`), the reference's

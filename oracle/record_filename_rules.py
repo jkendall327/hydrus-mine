@@ -72,7 +72,9 @@ def record(session):
             if action == 'regex_add': advanced._regex_input.SetValue(text)
             {'quick_add': advanced.AddQuickNamespace, 'quick_edit': advanced.EditQuickNamespaces,
              'quick_delete': advanced._quick_namespaces_list.ShowDeleteSelectedDialog,
-             'regex_add': advanced.AddRegex, 'regex_remove': lambda: advanced.EventRemoveRegex(None)}[action]()
+             'regex_add': advanced.AddRegex, 'regex_remove': lambda: advanced.EventRemoveRegex(None),
+             'quick_sort_regex': lambda: advanced._quick_namespaces_list.Sort(1, False),
+             'quick_sort_namespace': lambda: advanced._quick_namespaces_list.Sort(0, True)}[action]()
             steps.append({'action': action, 'selected': selected, 'attempts': attempts, 'text': text, 'answer': answer,
                           'calls': list(calls), 'state': state()})
         step('quick_add', attempts=None)
@@ -80,6 +82,8 @@ def record(session):
         step('quick_add', attempts=[['version', '[unclosed'], ['version', r'(?<=\(v)\d+(?=\))']])
         step('quick_add', attempts=[['page', r'(?<=page )\d+']])
         step('quick_add', attempts=[['creator:name', r'artist']])
+        step('quick_sort_regex')
+        step('quick_sort_namespace')
         step('quick_edit', selected=[0], attempts=None)
         step('quick_edit', selected=[0], attempts=[['  SOURCE  ', 'artist']])
         step('quick_edit', selected=[0, 1], attempts=[['all', '']])
@@ -93,6 +97,7 @@ def record(session):
         step('regex_remove', selected=[0, 2])
         step('regex_add', text=advanced._regex_input.GetValue())
         step('regex_remove', selected=[])
+        step('quick_add', attempts=[['extension', r'(?<=\.)[^.]+$']])
         applied = panel.GetFilenameTaggingOptions()
         reopened = ClientGUIImport.FilenameTaggingOptionsPanel(gui, CC.DEFAULT_LOCAL_TAG_SERVICE_KEY, applied, False)
         quick, regexes = reopened.GetFilenameTaggingOptions().AdvancedToTuple()

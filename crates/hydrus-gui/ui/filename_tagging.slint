@@ -81,6 +81,25 @@ export component FilenameTaggingWindow inherits Window {
     in-out property <int> number-base;
     in-out property <int> number-step;
     in-out property <string> number-namespace;
+    // Accepted advanced rules and the owned quick-namespace child.
+    in property <[TableRow]> quick-rows;
+    in property <[TableRow]> regex-rows;
+    in property <bool> quick-one-selected;
+    in property <bool> quick-any-selected;
+    in property <int> quick-sort-column;
+    in property <bool> quick-ascending;
+    callback rule-sort(int, bool);
+    in-out property <string> regex-input;
+    in property <bool> rule-child;
+    in property <bool> rule-delete;
+    in property <string> rule-message;
+    in-out property <string> rule-namespace;
+    in-out property <string> rule-regex;
+    callback rule-clicked(bool, int, bool, bool);
+    callback rule-action(string);
+    callback rule-entered();
+    callback rule-answer(bool);
+    callback rule-cancel();
     // what is wrong with what is typed
     in property <string> errors;
     callback service-chosen(int);
@@ -95,7 +114,17 @@ export component FilenameTaggingWindow inherits Window {
     callback apply();
     callback cancel();
 
-    VerticalLayout {
+    forward-focus: keys;
+    keys := FocusScope {
+        capture-key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.rule-child || root.rule-delete { root.rule-cancel(); }
+                else { root.cancel(); }
+                return accept;
+            }
+            reject
+        }
+    if !root.rule-child && !root.rule-delete: VerticalLayout {
         padding: 10px;
         spacing: 6px;
         if !root.options-mode: HorizontalLayout {
@@ -222,21 +251,43 @@ export component FilenameTaggingWindow inherits Window {
             VerticalLayout {
                 spacing: 4px;
                 BoxTitle { text: "quick namespaces"; }
-                Label { text: "namespace:regex, a line each; all files are tagged with \"namespace:match\""; }
-                TextEdit {
+                ListTable {
                     vertical-stretch: 1;
-                    text <=> root.quick;
-                    edited => { root.changed(); }
+                    columns: [{ title: "namespace", width: 160px }, { title: "regex", width: 250px, stretch: true }];
+                    rows: root.quick-rows;
+                    sort-column: root.quick-sort-column;
+                    ascending: root.quick-ascending;
+                    sort(column, ascending) => { root.rule-sort(column, ascending); }
+                    delete-pressed => { root.rule-action("quick_delete"); }
+                    row-clicked(i, ctrl, shift) => { root.rule-clicked(true, i, ctrl, shift); }
+                    row-activated(i) => { root.rule-action("quick_edit"); }
+                }
+                HorizontalLayout {
+                    spacing: 4px;
+                    Button { text: "add"; clicked => { root.rule-action("quick_add"); } }
+                    Button { text: "edit"; enabled: root.quick-one-selected; clicked => { root.rule-action("quick_edit"); } }
+                    Button { text: "delete"; enabled: root.quick-any-selected; clicked => { root.rule-action("quick_delete"); } }
                 }
             }
             VerticalLayout {
                 spacing: 4px;
                 BoxTitle { text: "regexes"; }
-                Label { text: "a regex a line; every match is a tag"; }
-                TextEdit {
+                ListTable {
                     vertical-stretch: 1;
-                    text <=> root.regexes;
-                    edited => { root.changed(); }
+                    columns: [{ title: "regex", width: 400px, stretch: true }];
+                    rows: root.regex-rows;
+                    row-clicked(i, ctrl, shift) => { root.rule-clicked(false, i, ctrl, shift); }
+                    row-activated(i) => { root.rule-action("regex_remove"); }
+                }
+                HorizontalLayout {
+                    spacing: 4px;
+                    LineEdit {
+                        horizontal-stretch: 1;
+                        text <=> root.regex-input;
+                        placeholder-text: "enter regex here";
+                        accepted => { root.rule-action("regex_add"); }
+                    }
+                    Button { text: "add"; clicked => { root.rule-action("regex_add"); } }
                 }
                 if !root.options-mode: BoxTitle { text: "#"; }
                 if !root.options-mode: HorizontalLayout {
@@ -282,4 +333,26 @@ export component FilenameTaggingWindow inherits Window {
             }
         }
     }
+    if root.rule-child || root.rule-delete: VerticalLayout {
+        padding: 12px;
+        spacing: 8px;
+        BoxTitle { text: root.rule-child ? "configure quick namespace" : "delete"; }
+        Label { text: root.rule-message; }
+        if root.rule-child: HorizontalLayout {
+            spacing: 6px;
+            LineEdit { horizontal-stretch: 1; text <=> root.rule-namespace; placeholder-text: "namespace"; }
+            Label { text: ":"; }
+            LineEdit { horizontal-stretch: 2; text <=> root.rule-regex; placeholder-text: "regex"; accepted => { root.rule-entered(); } }
+        }
+        if root.errors != "": Label { text: root.errors; color: Theme.error; }
+        Rectangle { vertical-stretch: 1; }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button { text: root.rule-child ? "OK" : "yes"; clicked => { if root.rule-child { root.rule-entered(); } else { root.rule-answer(true); } } }
+            Button { text: root.rule-child ? "Cancel" : "no"; clicked => { root.rule-cancel(); } }
+        }
+    }
+    }
+
 }
