@@ -42,7 +42,18 @@ jobs:
       - name: fmt
         run: cargo fmt --all --check
       - name: clippy
-        run: cargo clippy --workspace --all-targets --locked
+        run: |
+          set -o pipefail
+          cargo clippy --workspace --all-targets --locked 2>&1 | tee /tmp/hydrus-clippy.log
+      - name: save immediate Clippy diagnostics
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: clippy-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/hydrus-clippy.log
+          if-no-files-found: ignore
+          retention-days: 3
       - name: test
         # Keep behavioral feedback flowing even when a lint needs repair.
         # The job still fails if formatting or strict Clippy fails.
