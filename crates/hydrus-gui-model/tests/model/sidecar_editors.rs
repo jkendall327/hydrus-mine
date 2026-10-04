@@ -525,6 +525,17 @@ fn recorded_router_tables_and_child_strings_use_real_sidecars_and_read_only_medi
                 case["case"]
             );
         }
+        for (source, input) in value
+            .importers
+            .iter()
+            .zip(case["source_inputs"].as_array().unwrap())
+        {
+            let strings = objects.first().map_or_else(Vec::new, |object| {
+                editors::test_importer_strings(&store, source, object, true)
+            });
+            assert_eq!(serde_json::to_value(strings).unwrap(), input["texts"]);
+            assert!(input["context"].as_object().unwrap().is_empty());
+        }
         assert_eq!(
             serde_json::to_value(editors::router_test_strings(&store, &value, &objects)).unwrap(),
             case["processor_texts"]

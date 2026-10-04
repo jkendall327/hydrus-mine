@@ -187,6 +187,23 @@
       "json1"
     ],
     "processor_context": {},
+    "source_inputs": [
+      {
+        "texts": [
+          "item10",
+          "item2",
+          "item2"
+        ],
+        "context": {}
+      },
+      {
+        "texts": [
+          "json2",
+          "json1"
+        ],
+        "context": {}
+      }
+    ],
     "documents": {
       "one.png.txt": "item10\nitem2\nitem2\n",
       "two.png.txt": "next\n",
@@ -369,6 +386,23 @@
       "json1"
     ],
     "processor_context": {},
+    "source_inputs": [
+      {
+        "texts": [
+          "item10",
+          "item2",
+          "item2"
+        ],
+        "context": {}
+      },
+      {
+        "texts": [
+          "json2",
+          "json1"
+        ],
+        "context": {}
+      }
+    ],
     "documents": {
       "one.png.txt": "item10\nitem2\nitem2\n",
       "two.png.txt": "next\n",
@@ -568,6 +602,23 @@
       "json1"
     ],
     "processor_context": {},
+    "source_inputs": [
+      {
+        "texts": [
+          "item10",
+          "item2",
+          "item2"
+        ],
+        "context": {}
+      },
+      {
+        "texts": [
+          "json2",
+          "json1"
+        ],
+        "context": {}
+      }
+    ],
     "documents": {
       "one.png.txt": "item10\nitem2\nitem2\n",
       "two.png.txt": "next\n",
@@ -766,6 +817,22 @@
       "Unable to parse: Appeared to receive HTML instead of JSON. Parsing text sample: <html>not JSON</html>"
     ],
     "processor_context": {},
+    "source_inputs": [
+      {
+        "texts": [
+          "item10",
+          "item2",
+          "item2"
+        ],
+        "context": {}
+      },
+      {
+        "texts": [
+          "Unable to parse: Appeared to receive HTML instead of JSON. Parsing text sample: <html>not JSON</html>"
+        ],
+        "context": {}
+      }
+    ],
     "documents": {
       "one.png.txt": "item10\nitem2\nitem2\n",
       "two.png.txt": "next\n",
@@ -820,6 +887,7 @@
     "tables": [],
     "processor_texts": [],
     "processor_context": {},
+    "source_inputs": [],
     "documents": {
       "one.png.txt": "item10\nitem2\nitem2\n",
       "two.png.txt": "next\n",
@@ -981,6 +1049,16 @@
     ],
     "processor_texts": [],
     "processor_context": {},
+    "source_inputs": [
+      {
+        "texts": [],
+        "context": {}
+      },
+      {
+        "texts": [],
+        "context": {}
+      }
+    ],
     "documents": {
       "one.png.txt": "item10\nitem2\nitem2\n",
       "two.png.txt": "next\n",
@@ -1111,6 +1189,21 @@
       "note:\\ name: first\n\nnote"
     ],
     "processor_context": {},
+    "source_inputs": [
+      {
+        "texts": [
+          "https://sidecars.example/item/1",
+          "https://sidecars.example/item/2"
+        ],
+        "context": {}
+      },
+      {
+        "texts": [
+          "note:\\ name: first\n\nnote"
+        ],
+        "context": {}
+      }
+    ],
     "documents": {
       "one.png.txt": "item10\nitem2\nitem2\n",
       "two.png.txt": "next\n",

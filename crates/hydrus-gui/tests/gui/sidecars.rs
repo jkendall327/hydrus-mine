@@ -735,7 +735,7 @@ fn router_examples_follow_reference_source_tabs_and_processor_children_without_e
         &slots.test_objects.borrow(),
     );
     assert_eq!(
-        saved.route(inputs),
+        persisted.routers[0].route(inputs),
         ["source:item10", "source:item2", "json2", "json1"]
     );
     assert!(!directory.path().join("one.png.export.txt").exists());
@@ -765,8 +765,8 @@ fn router_examples_follow_reference_source_tabs_and_processor_children_without_e
         .unwrap()
         .clone_strong();
     assert_eq!(
-        table(&processor.get_starting()),
-        ["item10", "item2", "item2"]
+        serde_json::to_value(table(&processor.get_starting())).unwrap(),
+        case["source_inputs"][0]["texts"]
     );
     window.invoke_cancel();
     assert!(slots.node.borrow().is_none());
@@ -792,7 +792,10 @@ fn router_examples_follow_reference_source_tabs_and_processor_children_without_e
         .as_ref()
         .unwrap()
         .clone_strong();
-    assert_eq!(formula.get_document(), "json2");
+    assert_eq!(
+        formula.get_document(),
+        case["source_inputs"][1]["texts"][0].as_str().unwrap()
+    );
     assert_eq!(formula.get_examples().row_count(), 2);
     assert!(!formula.get_allow_type_change());
     window.invoke_cancel();
