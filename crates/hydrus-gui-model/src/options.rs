@@ -31,7 +31,7 @@ use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FileHandlingSettings, FileSearchSettings, FileViewingStatistics,
     FolderSettings, GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings,
-    SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
+    SearchDefaults, TagAutocompleteTabs, ThumbnailLayout, ViewerCanvasSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -109,6 +109,7 @@ settings! {
     trash: TrashSettings,
     url_classes: UrlClassSettings,
     windows: WindowSettings,
+    viewer_canvas: ViewerCanvasSettings,
 }
 
 /// An option's value as its control holds it.
@@ -1750,71 +1751,120 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             },
                             |s, i| s.media_viewer.default_zoom_type = ZOOM_TYPE_ORDER[i],
                         ),
+                        check(
+                            "Re-center media on window resize:",
+                            |settings| settings.viewer_canvas.recenter_on_resize,
+                            |settings, value| settings.viewer_canvas.recenter_on_resize = value,
+                        ),
                     ],
                 ),
                 boxed(
                     "transparency",
-                    vec![choice(
-                        "Consider a file as \"having transparency\" when:",
-                        TRANSPARENCY,
-                        |s| {
-                            2_usize.saturating_sub(usize::from(
-                                s.file_handling.transparency_strictness,
-                            ))
-                        },
-                        |s, i| s.file_handling.transparency_strictness = 2 - i.min(2) as u8,
-                    )],
+                    vec![
+                        choice(
+                            "Consider a file as \"having transparency\" when:",
+                            TRANSPARENCY,
+                            |s| {
+                                2_usize.saturating_sub(usize::from(
+                                    s.file_handling.transparency_strictness,
+                                ))
+                            },
+                            |s, i| s.file_handling.transparency_strictness = 2 - i.min(2) as u8,
+                        ),
+                        check(
+                            "Draw image transparency as checkerboard:",
+                            |settings| settings.viewer_canvas.transparency_checkerboard,
+                            |settings, value| {
+                                settings.viewer_canvas.transparency_checkerboard = value
+                            },
+                        ),
+                        check(
+                            "--Instead of checkerboard, use a bright greenscreen:",
+                            |settings| settings.viewer_canvas.transparency_greenscreen,
+                            |settings, value| {
+                                settings.viewer_canvas.transparency_greenscreen = value
+                            },
+                        ),
+                    ],
                 ),
             ],
         ),
         page(
             "media viewer",
-            vec![boxed(
-                "slideshows",
-                vec![
-                    text(
-                        "Slideshow durations:",
-                        |s| numbers_text(&s.slideshow.durations),
-                        |s, t| {
-                            // (none above zero: left as they were)
-                            let durations = parse_numbers(t, "slideshow durations")?;
-                            if !durations.is_empty() {
-                                s.slideshow.durations = durations;
-                            }
-                            Ok(())
-                        },
-                    ),
-                    check(
-                        "Always play media once through before moving on:",
-                        |s| s.slideshow.once_through,
-                        |s, v| s.slideshow.once_through = v,
-                    ),
-                    noneable(
-                        "Slideshow short-media skip seconds threshold:",
-                        none("do not use", 10, (1, 86400), Some("s")),
-                        |s| s.slideshow.short_loop_seconds,
-                        |s, v| s.slideshow.short_loop_seconds = v,
-                    ),
-                    noneable(
-                        "Slideshow short-media skip percentage threshold:",
-                        none("do not use", 20, (1, 99), Some("%")),
-                        |s| s.slideshow.short_loop_percentage,
-                        |s, v| s.slideshow.short_loop_percentage = v,
-                    ),
-                    noneable(
-                        "Slideshow shorter-media cutoff percentage threshold:",
-                        none("do not use", 75, (1, 99), Some("%")),
-                        |s| s.slideshow.short_cutoff_percentage,
-                        |s, v| s.slideshow.short_cutoff_percentage = v,
-                    ),
-                    noneable(
-                        "Slideshow long-media allowed delay percentage threshold:",
-                        none("do not use", 50, (1, 500), Some("%")),
-                        |s| s.slideshow.long_overspill_percentage,
-                        |s, v| s.slideshow.long_overspill_percentage = v,
-                    ),
-                ],
-            )],
+            vec![
+                boxed(
+                    "animation/audio seek bar",
+                    vec![
+                        int(
+                            "Seek bar height:",
+                            (1, 255),
+                            |settings| i64::from(settings.viewer_canvas.seek_height),
+                            |settings, value| settings.viewer_canvas.seek_height = value as u32,
+                        ),
+                        noneable(
+                            "Seek bar height when mouse away:",
+                            none("no, hide it completely", 5, (1, 255), Some("px")),
+                            |settings| settings.viewer_canvas.seek_hidden_height.map(i64::from),
+                            |settings, value| {
+                                settings.viewer_canvas.seek_hidden_height =
+                                    value.map(|height| height as u32)
+                            },
+                        ),
+                        int(
+                            "Seek bar nub width:",
+                            (1, 63),
+                            |settings| i64::from(settings.viewer_canvas.seek_nub_width),
+                            |settings, value| settings.viewer_canvas.seek_nub_width = value as u32,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "slideshows",
+                    vec![
+                        text(
+                            "Slideshow durations:",
+                            |s| numbers_text(&s.slideshow.durations),
+                            |s, t| {
+                                // (none above zero: left as they were)
+                                let durations = parse_numbers(t, "slideshow durations")?;
+                                if !durations.is_empty() {
+                                    s.slideshow.durations = durations;
+                                }
+                                Ok(())
+                            },
+                        ),
+                        check(
+                            "Always play media once through before moving on:",
+                            |s| s.slideshow.once_through,
+                            |s, v| s.slideshow.once_through = v,
+                        ),
+                        noneable(
+                            "Slideshow short-media skip seconds threshold:",
+                            none("do not use", 10, (1, 86400), Some("s")),
+                            |s| s.slideshow.short_loop_seconds,
+                            |s, v| s.slideshow.short_loop_seconds = v,
+                        ),
+                        noneable(
+                            "Slideshow short-media skip percentage threshold:",
+                            none("do not use", 20, (1, 99), Some("%")),
+                            |s| s.slideshow.short_loop_percentage,
+                            |s, v| s.slideshow.short_loop_percentage = v,
+                        ),
+                        noneable(
+                            "Slideshow shorter-media cutoff percentage threshold:",
+                            none("do not use", 75, (1, 99), Some("%")),
+                            |s| s.slideshow.short_cutoff_percentage,
+                            |s, v| s.slideshow.short_cutoff_percentage = v,
+                        ),
+                        noneable(
+                            "Slideshow long-media allowed delay percentage threshold:",
+                            none("do not use", 50, (1, 500), Some("%")),
+                            |s| s.slideshow.long_overspill_percentage,
+                            |s, v| s.slideshow.long_overspill_percentage = v,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "media viewer hovers",

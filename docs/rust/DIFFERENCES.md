@@ -1297,3 +1297,15 @@ so the broad favourites item is not yet complete.
 Page-parser network error popups use native Rust failure diagnostics and response
 text instead of Python traceback frames. Error ownership, show/copy, completion
 retention and clearing on the next example request match the recorded Qt owner.
+The native viewer's resize-recentering, checkerboard/greenscreen transparency,
+and seek-bar height/hidden-height/nub-width preferences have real canvas
+consumers. The unchecked transparency preference uses the native viewer's
+existing dark canvas colour rather than the reference client's configurable
+palette. Checkerboard tiles and greenscreen RGB values match the reference.
+The recenter setting controls the native viewer's existing default zoom rules;
+the reference's additional per-filetype zoom-lock policies remain separate gaps.
+The seek-bar focus requirement, preview canvas preferences, and MPV-specific
+presentation preferences are outside this slice. A hidden-height value of None
+hides the native bar completely when the pointer is away; Qt internally retains
+a five-pixel ideal rectangle for its hidden widget. The recorder includes both
+that rectangle and the actual Qt visibility decision.

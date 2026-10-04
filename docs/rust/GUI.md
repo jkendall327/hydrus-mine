@@ -1996,3 +1996,12 @@ boot guard. Switching the startup preference away from last session stops the
 scheduled save chain after its next eligible tick. The real controller's cadence,
 unchanged hash suppression, history and idle boundaries are recorded in
 `oracle/record_session_autosave.py`.
+Media playback Options now control whether a resized viewer restores its default
+fit or keeps the current detail zoom and pan. Transparent media can show the
+reference's 16-pixel checkerboard or bright green background; opaque files keep
+the ordinary canvas background. Media viewer Options set the seek bar's full
+height (1–255 pixels), mouse-away height (1–255 pixels or completely hidden),
+and nub width (1–63 pixels). Apply refreshes an open viewer; Cancel discards the
+draft. The configured nub width also determines where clicks and drags seek.
+Legacy preferences migrate with the reference's defaults. These controls and
+native pixels/geometry are recorded in `viewer_canvas_options.json`.
