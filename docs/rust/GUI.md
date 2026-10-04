@@ -2060,3 +2060,12 @@ open, and Cancel leaves the startup preference unchanged. A missing session
 name falls back to a blank page. Named sessions restore their saved tree, ordered
 media, selection and independent importer state before the main window opens;
 `oracle/record_session_startup.py` records the four ordinary startup outcomes.
+File-log source PNG exchange now imports reference carriers through **from png**
+and exports the frozen source lines through **to png**. The shared **export to
+png** panel has title, payload description, description, width (100–4096) and
+path controls, validates the path/title before writing, appends `.png`, shows
+**done!** briefly, and remembers the successful export directory. Exports have a
+readable image header and compressed UTF-8 payload compatible with the reference.
+Cancelling an import picker or closing an export leaves the log unchanged;
+malformed or oversized input displays an error. The export child closes with its
+log and rejects callbacks through a retained old handle.

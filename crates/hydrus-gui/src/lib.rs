@@ -73,6 +73,7 @@ mod pages;
 pub mod parser_editors_window;
 mod parser_test_fetch;
 mod playback;
+pub mod png_export_window;
 mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
@@ -964,6 +965,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 });
             })
         },
+        png_export_window::Slots::default(),
     );
     // the page's importer's file log
     let file_log_slot: Rc<RefCell<Option<FileLogWindow>>> = Rc::default();

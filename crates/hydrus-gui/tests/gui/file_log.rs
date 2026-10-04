@@ -333,3 +333,100 @@ fn selected_url_search_opens_a_local_or_search_and_reaches_matching_files() {
     );
     log.invoke_close_window();
 }
+
+fn png_import(log: &FileLogWindow) {
+    log.invoke_log_menu(10.0, 10.0);
+    choose(log, 0, "ADVANCED: import new sources");
+    choose(log, 1, "from png");
+}
+fn png_export(log: &FileLogWindow) {
+    log.invoke_log_menu(10.0, 10.0);
+    choose(log, 0, "export all sources");
+    choose(log, 1, "to png");
+}
+
+#[test]
+fn source_png_dialogs_cancel_validate_import_export_and_close_with_the_log() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(8);
+    let queue = bound.current.borrow().borrow().importer().unwrap().queue;
+    ui.invoke_open_file_log();
+    let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+    let picked = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_picker({
+        let picked = picked.clone();
+        move |_, title| {
+            assert_eq!(title, "select the png with the sources");
+            picked.borrow().clone()
+        }
+    });
+    png_import(&log);
+    assert_eq!(cells(&log).len(), 0, "cancelled picker changes nothing");
+    *picked.borrow_mut() = vec![hydrus_testkit::fixture_path("file_log_sources.png")];
+    png_import(&log);
+    png_import(&log);
+    assert_eq!(cells(&log).len(), 2, "imported Qt carrier deduplicates");
+    let persisted = store.read(|c| queues::file_seeds(c, queue)).unwrap();
+    let temp = tempfile::tempdir().unwrap();
+    let malformed = temp.path().join("bad.png");
+    std::fs::write(&malformed, b"not a PNG").unwrap();
+    *picked.borrow_mut() = vec![malformed];
+    png_import(&log);
+    assert_eq!(log.get_asking_title(), "Could not import!");
+    log.invoke_cancelled();
+    assert_eq!(
+        store.read(|c| queues::file_seeds(c, queue)).unwrap(),
+        persisted
+    );
+    png_export(&log);
+    let export = hydrus_gui::png_export_window::last().unwrap();
+    assert_eq!(export.get_window_title(), "export to png");
+    assert_eq!(export.get_png_width(), 512);
+    assert!(!export.get_can_export());
+    assert!(log.get_busy());
+    let output = temp.path().join("shared_sources");
+    export.set_path(output.to_string_lossy().as_ref().into());
+    export.set_png_title("".into());
+    export.invoke_action("update".into());
+    assert!(!export.get_can_export());
+    export.invoke_action("export".into());
+    assert!(!output.with_extension("png").exists());
+    assert!(export.get_error().contains("set a title"));
+    export.set_png_title("Synthetic source list".into());
+    export.set_description("Shared source lines".into());
+    export.set_png_width(256);
+    export.invoke_action("update".into());
+    assert!(export.get_can_export());
+    export.invoke_action("export".into());
+    assert!(export.get_done());
+    let expected = persisted
+        .iter()
+        .map(|s| s.data.as_str())
+        .collect::<Vec<_>>()
+        .join("\n");
+    let bytes = std::fs::read(output.with_extension("png")).unwrap();
+    assert_eq!(
+        hydrus_downloader_exchange::text_png::decode(&bytes).unwrap(),
+        expected
+    );
+    let directory = store
+        .read(hydrus_store::settings::get::<hydrus_gui_model::png_export::Directory>)
+        .unwrap();
+    assert_eq!(directory.0.as_deref(), temp.path().to_str());
+    export.invoke_action("close".into());
+    assert!(!log.get_busy());
+    png_export(&log);
+    let next = hydrus_gui::png_export_window::last().unwrap();
+    assert!(next.get_path().starts_with(temp.path().to_str().unwrap()));
+    let stale = temp.path().join("stale.png");
+    next.set_path(stale.to_string_lossy().as_ref().into());
+    log.invoke_close_window();
+    assert!(!next.window().is_visible());
+    next.invoke_action("export".into());
+    assert!(!stale.exists());
+}

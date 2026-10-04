@@ -171,6 +171,10 @@ pub enum Action {
     ExportToClipboard,
     /// New sources (URLs or paths) from the clipboard.
     ImportFromClipboard,
+    /// New source lines from a reference string PNG carrier.
+    ImportFromPng,
+    /// All source lines exported as a reference string PNG carrier.
+    ExportToPng,
     /// The selected files in a new page.
     OpenSelectedFiles,
     /// The selected's sources to the clipboard.
@@ -354,7 +358,7 @@ pub fn log_menu(log: &LogFacts, any_selected: bool) -> Vec<Entry> {
             "export all sources".into(),
             vec![
                 item("to clipboard", Action::ExportToClipboard),
-                item("to png", Action::NotYet),
+                item("to png", Action::ExportToPng),
             ],
         ));
     }
@@ -362,7 +366,7 @@ pub fn log_menu(log: &LogFacts, any_selected: bool) -> Vec<Entry> {
         "ADVANCED: import new sources".into(),
         vec![
             item("from clipboard", Action::ImportFromClipboard),
-            item("from png", Action::NotYet),
+            item("from png", Action::ImportFromPng),
         ],
     ));
     if any_selected || log.urls {

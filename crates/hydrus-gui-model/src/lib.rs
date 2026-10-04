@@ -45,6 +45,7 @@ pub mod merge_summary;
 pub mod notes_editor;
 pub mod options;
 pub mod page_chooser;
+pub mod png_export;
 pub mod predicate_editors;
 pub mod ratings;
 pub mod ratings_editor;

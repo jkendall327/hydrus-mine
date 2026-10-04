@@ -1351,3 +1351,10 @@ defers its initial load by a quarter second. Ordinary blank, missing, last and
 named-session outcomes match the recorded reference. The reference's bad-shutdown
 recovery question and large-session warning are still deferred. Loading an empty
 saved tree retains the native single blank search page.
+Source PNG exports use native SVG fonts and wrapping for their readable header;
+the text placement and decorative icon differ from Qt, while the grayscale
+carrier/header-height and compressed UTF-8 payload format are compatible. The
+native export panel is an owned window rather than a modal Qt panel. Input PNGs
+and payloads are bounded to 16 MiB; title and description are each bounded to 4096
+characters. Successful exports remember the last directory; a failed write does
+not change that preference.

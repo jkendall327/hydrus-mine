@@ -38,6 +38,8 @@ struct State {
     seeds: Vec<FileSeed>,
     selection: ListSelection<i64>,
     asking: Option<Asking>,
+    exports: crate::png_export_window::Slots,
+    exports_closed: Rc<dyn Fn()>,
 }
 
 impl State {
@@ -69,7 +71,11 @@ impl State {
 /// Showing files in a new page, as a log window's "open ... in a new
 /// page" does; it does nothing until the main window gives it a way.
 #[derive(Clone)]
-pub struct OpenFiles(pub Rc<dyn Fn(Vec<HashId>)>, pub Rc<dyn Fn(Vec<String>)>);
+pub struct OpenFiles(
+    pub Rc<dyn Fn(Vec<HashId>)>,
+    pub Rc<dyn Fn(Vec<String>)>,
+    pub crate::png_export_window::Slots,
+);
 
 impl std::fmt::Debug for OpenFiles {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -79,7 +85,11 @@ impl std::fmt::Debug for OpenFiles {
 
 impl Default for OpenFiles {
     fn default() -> Self {
-        Self(Rc::new(|_| {}), Rc::new(|_| {}))
+        Self(
+            Rc::new(|_| {}),
+            Rc::new(|_| {}),
+            crate::png_export_window::Slots::default(),
+        )
     }
 }
 
@@ -149,6 +159,7 @@ fn show(window: &FileLogWindow, state: &State) {
         Some(Asking::Error(_, text)) => Some(text.clone()),
     };
     window.set_asking(question.is_some());
+    window.set_busy(state.exports.has_open());
     if let Some(message) = question {
         window.set_asking_title(match &state.asking {
             Some(Asking::Error(title, _)) => title.clone().into(),
@@ -180,7 +191,7 @@ fn hash_ids(store: &Store, seeds: &[&FileSeed]) -> Vec<HashId> {
 }
 
 /// Do a menu's action.
-fn act(store: &Store, state: &mut State, action: &Action, open_files: &OpenFiles) {
+fn act(store: &Arc<Store>, state: &mut State, action: &Action, open_files: &OpenFiles) {
     let queue = state.queue;
     let now = now();
     // (each change nudges the daemon, which works the queue)
@@ -285,6 +296,41 @@ fn act(store: &Store, state: &mut State, action: &Action, open_files: &OpenFiles
                 state.asking = Some(Asking::Delete(selected_ids));
             }
         }
+        Action::ExportToPng => {
+            let payload = state
+                .seeds
+                .iter()
+                .map(|s| s.data.as_str())
+                .collect::<Vec<_>>()
+                .join("\n");
+            if let Err(error) = crate::png_export_window::open(
+                &state.exports,
+                store,
+                payload,
+                state.exports_closed.clone(),
+            ) {
+                state.asking = Some(Asking::Error("Could not export!".into(), error));
+            }
+        }
+        Action::ImportFromPng => match crate::png_export_window::import_text() {
+            Ok(Some(payload)) => {
+                let result =
+                    crate::file_log::pasted_sources(&payload, &store.snapshot().url_classes)
+                        .and_then(|seeds| {
+                            store
+                                .write(move |ctx| {
+                                    queues::add_file_seeds(ctx.conn(), queue, &seeds, false, now)?;
+                                    queues::nudge(ctx.conn(), queue)
+                                })
+                                .map_err(|e| e.to_string())
+                        });
+                if let Err(error) = result {
+                    state.asking = Some(Asking::Error("Could not import!".into(), error));
+                }
+            }
+            Err(error) => state.asking = Some(Asking::Error("Could not import!".into(), error)),
+            Ok(None) => {}
+        },
         Action::ImportFromClipboard => {
             let result = crate::from_clipboard()
                 .map_err(|e| ("Problem pasting!".to_owned(), e))
@@ -319,7 +365,7 @@ fn act(store: &Store, state: &mut State, action: &Action, open_files: &OpenFiles
 /// Do a whole log menu's action on `queue`'s log, with no window open (a
 /// downloader list's menu's).
 pub(crate) fn act_on_queue(
-    store: &Store,
+    store: &Arc<Store>,
     queue: i64,
     action: &Action,
     open_files: &OpenFiles,
@@ -329,6 +375,8 @@ pub(crate) fn act_on_queue(
         seeds: Vec::new(),
         selection: ListSelection::default(),
         asking: None,
+        exports: open_files.2.clone(),
+        exports_closed: Rc::new(|| {}),
     };
     read(store, &mut state);
     act(store, &mut state, action, open_files);
@@ -364,7 +412,22 @@ pub(crate) fn open(
         seeds: Vec::new(),
         selection: ListSelection::default(),
         asking: None,
+        exports: crate::png_export_window::Slots::default(),
+        exports_closed: Rc::new(|| {}),
     }));
+    state.borrow_mut().exports_closed = Rc::new({
+        let weak_state = Rc::downgrade(&state);
+        let weak_window = window.as_weak();
+        let alive = alive.clone();
+        move || {
+            if !alive.get() {
+                return;
+            }
+            if let (Some(state), Some(w)) = (weak_state.upgrade(), weak_window.upgrade()) {
+                show(&w, &state.borrow());
+            }
+        }
+    });
     read(store, &mut state.borrow_mut());
     // (the reference's widths, in characters)
     window.set_columns(columns(&[
@@ -399,9 +462,11 @@ pub(crate) fn open(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let state = state.clone();
         let alive = alive.clone();
         move || {
             alive.set(false);
+            state.borrow().exports.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -416,7 +481,7 @@ pub(crate) fn open(
             if !alive.get() {
                 return;
             }
-            if state.borrow().asking.is_some() {
+            if state.borrow().asking.is_some() || state.borrow().exports.has_open() {
                 return;
             }
 
@@ -437,7 +502,7 @@ pub(crate) fn open(
             if !alive.get() {
                 return;
             }
-            if state.borrow().asking.is_some() {
+            if state.borrow().asking.is_some() || state.borrow().exports.has_open() {
                 return;
             }
 
@@ -457,7 +522,7 @@ pub(crate) fn open(
             if !alive.get() {
                 return;
             }
-            if state.borrow().asking.is_some() {
+            if state.borrow().asking.is_some() || state.borrow().exports.has_open() {
                 return;
             }
 
@@ -485,7 +550,7 @@ pub(crate) fn open(
             if !alive.get() {
                 return;
             }
-            if state.borrow().asking.is_some() {
+            if state.borrow().asking.is_some() || state.borrow().exports.has_open() {
                 return;
             }
 
@@ -518,7 +583,7 @@ pub(crate) fn open(
             if !alive.get() {
                 return;
             }
-            if state.borrow().asking.is_some() {
+            if state.borrow().asking.is_some() || state.borrow().exports.has_open() {
                 return;
             }
 
@@ -542,7 +607,7 @@ pub(crate) fn open(
             if !alive.get() {
                 return;
             }
-            if state.borrow().asking.is_some() {
+            if state.borrow().asking.is_some() || state.borrow().exports.has_open() {
                 return;
             }
 

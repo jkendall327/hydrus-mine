@@ -291,6 +291,63 @@
         "localCargoBuildsOrTests": false,
         "ci": "Parent runs asynchronous GitHub CI; scoped tests authored and not claimed locally passed."
       }
+    },
+    {
+      "originalID": "audit-network-file-log-png",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Actual from-png importer uses native picker and bounded reference compressed UTF-8 carrier decode, active source normalization/deduplication and durable queue append/nudge. Cancel leaves log unchanged; malformed and empty payloads display Could not import. Actual to-png action opens reusable owned export panel with title, readonly payload description, description, width100\u20134096/path controls, path/title validation, automatic .png suffix, readable header/compressed payload, brief done state and persistent successful last directory. Frozen payload and parent-close/stale-callback guards preserve owner boundaries.",
+      "limits": [
+        "Native SVG fonts/wrapping and decorative header pixels differ from Qt.",
+        "Export panel is an owned native window rather than a modal Qt dialog.",
+        "16 MiB carrier/payload limit and 4096-character title/description limit. Failed writes do not update the remembered directory."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
+          "line": 315,
+          "symbol": "        Action::ImportFromPng =>"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/png_export_window.rs",
+          "line": 70,
+          "symbol": "pub fn open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/png_export.rs",
+          "line": 58,
+          "symbol": "pub fn encode("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/png_export.slint",
+          "line": 4,
+          "symbol": "export component PngExportWindow"
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_log.rs",
+          "line": 178,
+          "symbol": "fn source_png_carriers_import_actual_qt_exports_and_render_custom_headers"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
+          "line": 349,
+          "symbol": "fn source_png_dialogs_cancel_validate_import_export_and_close_with_the_log"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_file_log_png.py",
+        "fixture": "oracle/fixtures/file_log_png.json",
+        "binaryFixture": "oracle/fixtures/file_log_sources.png",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; tests authored and not claimed locally passed."
+      }
     }
   ]
 }
