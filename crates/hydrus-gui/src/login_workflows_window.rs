@@ -1100,6 +1100,7 @@ pub fn open_scripts(store: &Arc<Store>, slots: &Slots) -> Result<LoginScriptsWin
         step: slots.step.clone(),
         run: slots.run.clone(),
         result: slots.result.clone(),
+        test_domain: slots.test_domain.clone(),
         cookies: slots.cookies.clone(),
         example: slots.example.clone(),
         definition: slots.definition.clone(),
