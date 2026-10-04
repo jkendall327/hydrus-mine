@@ -200,7 +200,7 @@ impl FormulaEditor {
                 }
             }
             (FormulaKind::Zipper { formulae, .. }, FormulaChild::Member(None)) => {
-                formulae.push(formula)
+                formulae.push(formula);
             }
             _ => {}
         }
@@ -221,17 +221,14 @@ impl FormulaEditor {
             };
             let mut texts = Vec::new();
             for text in inputs {
-                match main.parse(&test.context, &text, test.collapse_newlines) {
-                    Ok(parsed) => {
-                        texts = parsed;
-                        if !texts.is_empty() {
-                            break;
-                        }
-                    }
-                    Err(_) => {
-                        texts = vec![String::new()];
+                if let Ok(parsed) = main.parse(&test.context, &text, test.collapse_newlines) {
+                    texts = parsed;
+                    if !texts.is_empty() {
                         break;
                     }
+                } else {
+                    texts = vec![String::new()];
+                    break;
                 }
             }
             test.text = texts.first().cloned().unwrap_or_default();
