@@ -934,18 +934,35 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     }));
     // logs' files, shown in new pages
-    let open_files = file_log_window::OpenFiles({
-        let change_pages = change_pages.clone();
-        Rc::new(move |files| {
-            let location = hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
-                hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
-            ));
-            change_pages(&|pages| {
-                pages.open_files(location.clone(), files.clone(), None, None);
-                Ok(())
-            });
-        })
-    });
+    let open_files = file_log_window::OpenFiles(
+        {
+            let change_pages = change_pages.clone();
+            Rc::new(move |files| {
+                let location =
+                    hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                        hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+                    ));
+                change_pages(&|pages| {
+                    pages.open_files(location.clone(), files.clone(), None, None);
+                    Ok(())
+                });
+            })
+        },
+        {
+            let change_pages = change_pages.clone();
+            Rc::new(move |urls| {
+                let location =
+                    hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                        hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+                    ));
+                let predicates = crate::file_log::url_search(&urls);
+                change_pages(&|pages| {
+                    pages.open_search(location.clone(), predicates.clone(), "url search");
+                    Ok(())
+                });
+            })
+        },
+    );
     // the page's importer's file log
     let file_log_slot: Rc<RefCell<Option<FileLogWindow>>> = Rc::default();
     let file_log = file_log_slot.clone();
@@ -959,10 +976,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let Some(importer) = page.importer() else {
                 return;
             };
-            if let Some(old) = file_log.borrow_mut().take() {
-                let _ = old.hide();
+            let old = file_log.borrow_mut().take();
+            if let Some(old) = old {
+                old.invoke_close_window();
             }
-            match file_log_window::open(page.store(), importer.queue, &file_log, &open_files.0) {
+            match file_log_window::open(page.store(), importer.queue, &file_log, &open_files) {
                 Ok(window) => *file_log.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the file log: {e}"),
             }
@@ -978,8 +996,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let Some(importer) = page.importer() else {
                 return;
             };
-            if let Some(old) = file_log.borrow_mut().take() {
-                let _ = old.hide();
+            let old = file_log.borrow_mut().take();
+            if let Some(old) = old {
+                old.invoke_close_window();
             }
             match search_log_window::open(page.store(), importer.queue, &file_log) {
                 Ok(window) => *file_log.borrow_mut() = Some(window),

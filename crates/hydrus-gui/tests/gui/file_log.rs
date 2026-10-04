@@ -181,3 +181,155 @@ fn the_file_log_lists_a_queues_files_and_acts_on_them() {
     log.invoke_close_window();
     assert!(bound.file_log.borrow().is_none());
 }
+
+fn clipboard_import(log: &FileLogWindow) {
+    log.invoke_log_menu(10.0, 10.0);
+    choose(log, 0, "ADVANCED: import new sources");
+    choose(log, 1, "from clipboard");
+}
+
+#[test]
+fn clipboard_import_persists_deduplicates_and_handles_empty_or_missing_text() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(8);
+    let queue = bound.current.borrow().borrow().importer().unwrap().queue;
+    ui.invoke_open_file_log();
+    let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+    let text = Rc::new(RefCell::new(Ok(Some("\u{feff} https://clipboard.example/a b#frag\r\nhttps://clipboard.example/a%20b\nhttps://clipboard.example/日".to_owned()))));
+    hydrus_gui::set_clipboard_reader({
+        let text = text.clone();
+        move || text.borrow().clone()
+    });
+    clipboard_import(&log);
+    clipboard_import(&log);
+    let persisted = store.read(|c| queues::file_seeds(c, queue)).unwrap();
+    assert_eq!(persisted.len(), 2);
+    assert_eq!(persisted[0].data, "https://clipboard.example/a%20b");
+    assert_eq!(persisted[1].data, "https://clipboard.example/%E6%97%A5");
+    assert!(
+        persisted
+            .iter()
+            .all(|s| s.seed_type == SeedType::Url && s.status == SeedStatus::Unknown)
+    );
+    *text.borrow_mut() = Ok(Some(" \n\t".into()));
+    clipboard_import(&log);
+    assert!(log.get_asking());
+    assert!(
+        log.get_asking_message()
+            .contains("Lines of URLs or file paths")
+    );
+    log.invoke_cancelled();
+    assert!(!log.get_asking());
+    assert_eq!(
+        store.read(|c| queues::file_seeds(c, queue)).unwrap(),
+        persisted
+    );
+    *text.borrow_mut() = Ok(None);
+    clipboard_import(&log);
+    assert_eq!(log.get_asking_title(), "Problem pasting!");
+    log.invoke_chosen(0);
+    *text.borrow_mut() = Err("synthetic clipboard access failure".into());
+    clipboard_import(&log);
+    assert_eq!(
+        log.get_asking_message(),
+        "synthetic clipboard access failure"
+    );
+    log.invoke_chosen(0);
+    log.invoke_close_window();
+    *text.borrow_mut() = Ok(Some("https://clipboard.example/stale".into()));
+    log.invoke_log_menu(10.0, 10.0);
+    log.invoke_menu_line_clicked(0, 0, 300.0, 100.0, 10.0);
+    log.invoke_delete_pressed();
+    log.invoke_chosen(0);
+    assert_eq!(
+        store.read(|c| queues::file_seeds(c, queue)).unwrap(),
+        persisted
+    );
+    ui.invoke_open_file_log();
+    let reopened = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(cells(&reopened).len(), 2);
+    *text.borrow_mut() = Ok(Some(
+        "/synthetic/a.jpg\n/synthetic/a.jpg\n/synthetic/b.jpg".into(),
+    ));
+    clipboard_import(&reopened);
+    let seeds = store.read(|c| queues::file_seeds(c, queue)).unwrap();
+    assert_eq!(seeds.len(), 4);
+    assert!(seeds[2..].iter().all(|s| s.seed_type == SeedType::Path));
+    reopened.invoke_close_window();
+}
+
+#[test]
+fn selected_url_search_opens_a_local_or_search_and_reaches_matching_files() {
+    use hydrus_core::pages::PageContent;
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    bound.current.borrow().borrow_mut().refresh();
+    let files = bound.current.borrow().borrow().files().clone();
+    assert!(files.len() >= 2);
+    let first = files[0];
+    let second = files[1];
+    let urls = vec![
+        "https://clipboard.example/a".to_owned(),
+        "https://clipboard.example/b".to_owned(),
+    ];
+    store
+        .write_content({
+            let urls = urls.clone();
+            move |writer| {
+                writer.add_urls(&[first], &urls[..1])?;
+                writer.add_urls(&[second], &urls[1..])
+            }
+        })
+        .unwrap();
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(8);
+    let queue = bound.current.borrow().borrow().importer().unwrap().queue;
+    hydrus_gui::set_clipboard_reader({
+        let urls = urls.clone();
+        move || Ok(Some(urls.join("\n")))
+    });
+    ui.invoke_open_file_log();
+    let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+    clipboard_import(&log);
+    log.invoke_row_clicked(0, false, false);
+    log.invoke_row_clicked(1, true, false);
+    let pages_before = bound.pages.borrow().open_pages().len();
+    log.invoke_row_menu(0, 20.0, 20.0);
+    choose(&log, 0, "search for URLs");
+    assert_eq!(bound.pages.borrow().open_pages().len(), pages_before + 1);
+    {
+        let pages = bound.pages.borrow();
+        assert_eq!(pages.shown().name, "url search");
+        let PageContent::Search { search, .. } = &pages.shown().content else {
+            panic!("a search page");
+        };
+        assert_eq!(search.predicates, hydrus_gui::file_log::url_search(&urls));
+        assert_eq!(
+            search.location,
+            hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec()
+            ))
+        );
+    }
+    let matches = bound.current.borrow().borrow().files().clone();
+    assert!(
+        matches.contains(&first) && matches.contains(&second),
+        "both OR branches reach local files: {matches:?}"
+    );
+    bound.pages.borrow_mut().save(123).unwrap();
+    let reopened = Pages::open(store.clone()).unwrap();
+    assert_eq!(reopened.shown().name, "url search");
+    assert_eq!(
+        store.read(|c| queues::file_seeds(c, queue)).unwrap().len(),
+        2
+    );
+    log.invoke_close_window();
+}

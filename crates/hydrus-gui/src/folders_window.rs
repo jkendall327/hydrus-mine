@@ -635,10 +635,11 @@ fn open_import_folder(
         let log = slots.log.clone();
         let open_files = slots.open_files.clone();
         window.on_file_log(move || {
-            if let Some(old) = log.borrow_mut().take() {
-                let _ = old.hide();
+            let old = log.borrow_mut().take();
+            if let Some(old) = old {
+                old.invoke_close_window();
             }
-            match crate::file_log_window::open(&store, queue, &log, &open_files.0) {
+            match crate::file_log_window::open(&store, queue, &log, &open_files) {
                 Ok(window) => *log.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the file log: {e}"),
             }

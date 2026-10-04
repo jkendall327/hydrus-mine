@@ -80,6 +80,78 @@ pub fn row(seed: &FileSeed, index: usize, now: i64) -> Vec<String> {
     ]
 }
 
+/// Parse the reference clipboard source batch. Its first source sets the type
+/// for every seed; URL encoding also applies to URL-looking lines in path batches.
+pub fn pasted_sources(
+    text: &str,
+    classes: &hydrus_core::url::UrlClasses,
+) -> Result<Vec<hydrus_store::queues::NewFileSeed>, String> {
+    let sources: Vec<String> = text
+        .split([
+            '\n', '\r', '\u{000b}', '\u{000c}', '\u{001c}', '\u{001d}', '\u{001e}', '\u{0085}',
+            '\u{2028}', '\u{2029}',
+        ])
+        .map(|s| s.trim_start_matches('\u{feff}').trim())
+        .filter(|s| !s.is_empty())
+        .map(|s| {
+            hydrus_core::url::ensure_url_is_encoded(
+                s,
+                false,
+                classes.settings().collapse_leading_slashes,
+            )
+        })
+        .collect();
+    let first = sources.first().ok_or_else(|| {
+        "Could not understand the clipboard as Lines of URLs or file paths: no sources.".to_owned()
+    })?;
+    let seed_type = if first.starts_with("http") {
+        SeedType::Url
+    } else {
+        SeedType::Path
+    };
+    Ok(sources
+        .into_iter()
+        .map(|source| {
+            let (data, data_for_comparison) = if seed_type == SeedType::Url {
+                match classes.normalise(&source, true).and_then(|data| {
+                    classes
+                        .normalise(&source, false)
+                        .map(|comparison| (data, comparison))
+                }) {
+                    Ok(pair) => pair,
+                    Err(_) => (source.clone(), source),
+                }
+            } else {
+                (source.clone(), source)
+            };
+            hydrus_store::queues::NewFileSeed {
+                seed_type,
+                data,
+                data_for_comparison,
+                source_time: None,
+                referral_url: None,
+                meta: hydrus_store::queues::FileSeedMeta::default(),
+            }
+        })
+        .collect())
+}
+
+/// One OR container of exact URL predicates, as the selected-row action uses.
+pub fn url_search(urls: &[String]) -> Vec<hydrus_core::search::predicate::Predicate> {
+    use hydrus_core::search::predicate::{Predicate, SystemPredicate, UrlRule};
+    vec![Predicate::Or(
+        urls.iter()
+            .filter(|url| url.starts_with("http"))
+            .map(|url| {
+                Predicate::System(SystemPredicate::KnownUrl {
+                    rule: UrlRule::ExactMatch(url.clone()),
+                    has: true,
+                })
+            })
+            .collect(),
+    )]
+}
+
 /// What a menu item does.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Action {

@@ -128,3 +128,48 @@ fn the_file_log_is_the_references() {
     let paths = facts(std::slice::from_ref(&path));
     assert_eq!(tree(&row_menu(&[&path], &paths)), row_menus[2]["menu"]);
 }
+
+#[test]
+fn clipboard_source_batches_match_actual_reference_imports() {
+    let fixture = hydrus_testkit::fixture_json("file_log_exchange.json");
+    let classes = hydrus_core::url::UrlClasses::new(hydrus_core::url::UrlClassSettings::default());
+    for case in fixture["imports"].as_array().unwrap() {
+        let parsed =
+            hydrus_gui_model::file_log::pasted_sources(case["raw"].as_str().unwrap(), &classes);
+        if case["name"] == "empty" {
+            assert!(parsed.unwrap_err().contains("Lines of URLs or file paths"));
+            continue;
+        }
+        let mut seen = std::collections::HashSet::new();
+        let values: Vec<Json> = parsed
+            .unwrap()
+            .into_iter()
+            .filter(|s| seen.insert((s.seed_type as i64, s.data_for_comparison.clone())))
+            .map(|s| json!([s.seed_type as i64, s.data, s.data_for_comparison, 0]))
+            .collect();
+        assert_eq!(json!(values), case["seeds"], "{}", case["name"]);
+    }
+}
+
+#[test]
+fn selected_urls_are_one_exact_match_or_container() {
+    use hydrus_core::search::predicate::{Predicate, SystemPredicate, UrlRule};
+    let urls = vec![
+        "https://clipboard.example/a".into(),
+        "/synthetic/a.jpg".into(),
+        "https://clipboard.example/b".into(),
+    ];
+    assert_eq!(
+        hydrus_gui_model::file_log::url_search(&urls),
+        vec![Predicate::Or(vec![
+            Predicate::System(SystemPredicate::KnownUrl {
+                has: true,
+                rule: UrlRule::ExactMatch(urls[0].clone())
+            }),
+            Predicate::System(SystemPredicate::KnownUrl {
+                has: true,
+                rule: UrlRule::ExactMatch(urls[2].clone())
+            }),
+        ])]
+    );
+}

@@ -300,13 +300,14 @@ pub(crate) fn open(
             let Some(queue) = queue else {
                 return;
             };
-            if let Some(old) = log.borrow_mut().take() {
-                let _ = old.hide();
+            let old = log.borrow_mut().take();
+            if let Some(old) = old {
+                old.invoke_close_window();
             }
             let opened = if search {
                 crate::search_log_window::open(&store, queue, &log)
             } else {
-                crate::file_log_window::open(&store, queue, &log, &open_files.0)
+                crate::file_log_window::open(&store, queue, &log, &open_files)
             };
             match opened {
                 Ok(window) => *log.borrow_mut() = Some(window),

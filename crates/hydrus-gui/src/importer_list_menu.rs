@@ -22,11 +22,7 @@ fn node(entry: &Entry<Action>) -> PopupNode<'_, Entry<Action>, Action> {
     match entry {
         Entry::Item(
             label,
-            Action::FileLog(
-                file_log::Action::NotYet
-                | file_log::Action::ImportFromClipboard
-                | file_log::Action::SearchUrls,
-            )
+            Action::FileLog(file_log::Action::NotYet | file_log::Action::SearchUrls)
             | Action::SearchLog(search_log::Action::NotYet),
         ) => PopupNode::Disabled(label),
         Entry::Item(label, action) => PopupNode::Item(label, action),
@@ -201,11 +197,12 @@ pub(crate) fn act(cx: &Context<'_>, action: &Action) {
             let Some(&queue) = queues.first() else {
                 return;
             };
-            if let Some(old) = cx.log.borrow_mut().take() {
-                let _ = old.hide();
+            let old = cx.log.borrow_mut().take();
+            if let Some(old) = old {
+                old.invoke_close_window();
             }
             let opened = if *action == Action::ShowFileLog {
-                crate::file_log_window::open(&store, queue, cx.log, &cx.open_files.0)
+                crate::file_log_window::open(&store, queue, cx.log, cx.open_files)
             } else {
                 crate::search_log_window::open(&store, queue, cx.log)
             };
@@ -216,7 +213,11 @@ pub(crate) fn act(cx: &Context<'_>, action: &Action) {
         }
         Action::FileLog(action) => {
             if let [queue] = queues[..] {
-                crate::file_log_window::act_on_queue(&store, queue, action, &*cx.open_files.0);
+                if let Some(error) =
+                    crate::file_log_window::act_on_queue(&store, queue, action, cx.open_files)
+                {
+                    window.set_error(error.into());
+                }
                 (cx.shown)(false);
             }
         }

@@ -2005,3 +2005,14 @@ and nub width (1–63 pixels). Apply refreshes an open viewer; Cancel discards t
 draft. The configured nub width also determines where clicks and drags seek.
 Legacy preferences migrate with the reference's defaults. These controls and
 native pixels/geometry are recorded in `viewer_canvas_options.json`.
+The file log’s **ADVANCED: import new sources > from clipboard** imports
+nonblank lines immediately, applies the active URL classes, and skips duplicate
+seeds without retrying failed ones. The first line determines URL or path type
+for the whole batch, as in the reference. Empty, unavailable, or inaccessible
+clipboard text displays an error and preserves the existing log. Closing or
+replacing a log invalidates its old callbacks.
+
+The selected-row **search for URLs** action opens a **url search** page in local
+file domains with one OR container of exact URL predicates. It uses the selected
+seeds’ request URLs and executes the search through the existing search engine;
+the page and its predicates can be saved in a session.

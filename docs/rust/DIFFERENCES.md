@@ -1309,3 +1309,9 @@ presentation preferences are outside this slice. A hidden-height value of None
 hides the native bar completely when the pointer is away; Qt internally retains
 a five-pixel ideal rectangle for its hidden widget. The recorder includes both
 that rectangle and the actual Qt visibility decision.
+File-log clipboard import errors use the log’s native acknowledgement panel
+(or the downloader page’s error message for a closed-log menu) rather than Qt’s
+clipboard parse-error message sequence. Imports preserve the reference’s first
+source type, URL-class normalization, duplicate handling and immediate writes.
+Selected-URL searches use the same exact-match OR predicates and local location;
+opening the page does not explicitly raise the desktop window.

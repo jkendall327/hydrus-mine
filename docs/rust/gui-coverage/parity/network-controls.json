@@ -200,6 +200,97 @@
         "executed": true,
         "commit": "af7f5321"
       }
+    },
+    {
+      "originalID": "audit-network-file-log-clipboard-import",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Enabled actual whole-log clipboard import in open file logs and downloader list menus. Nonblank/BOM/newline source parsing, active URL-class request/storage normalization, first-line batch URL/path type including mixed batches, durable duplicate skipping without retrying failed seeds, queue nudge and reread. Empty or unavailable clipboard displays an acknowledgement; cancel/acknowledge changes nothing. Reopened log sees persisted imports; closed/replaced owners reject stale callbacks.",
+      "limits": [
+        "Native acknowledgement/page error presentation replaces Qt clipboard parse-error dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/file_log.rs",
+          "line": 85,
+          "symbol": "pub fn pasted_sources("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
+          "line": 288,
+          "symbol": "        Action::ImportFromClipboard => {"
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_log.rs",
+          "line": 133,
+          "symbol": "fn clipboard_source_batches_match_actual_reference_imports"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
+          "line": 192,
+          "symbol": "fn clipboard_import_persists_deduplicates_and_handles_empty_or_missing_text"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_file_log_exchange.py",
+        "fixture": "oracle/fixtures/file_log_exchange.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; scoped tests authored and not claimed locally passed."
+      }
+    },
+    {
+      "originalID": "audit-network-file-log-search-urls",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Enabled selected-row search for URLs. Opens a native url search page in combined local file domains containing one OR container of has-url exact-match predicates for selected request URLs beginning http. Existing search engine consumes predicates and reaches files from either OR branch; session save/reopen preserves the page. Opening does not explicitly raise the desktop window.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/file_log.rs",
+          "line": 140,
+          "symbol": "pub fn url_search("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
+          "line": 307,
+          "symbol": "        Action::SearchUrls => {"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 919,
+          "symbol": "                let predicates = crate::file_log::url_search(&urls);"
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_log.rs",
+          "line": 155,
+          "symbol": "fn selected_urls_are_one_exact_match_or_container"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
+          "line": 267,
+          "symbol": "fn selected_url_search_opens_a_local_or_search_and_reaches_matching_files"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_file_log_exchange.py",
+        "fixture": "oracle/fixtures/file_log_exchange.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; scoped tests authored and not claimed locally passed."
+      }
     }
   ]
 }
