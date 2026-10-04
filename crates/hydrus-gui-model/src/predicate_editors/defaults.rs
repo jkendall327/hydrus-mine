@@ -73,6 +73,20 @@ impl Kind {
         };
         match (self, p) {
             (
+                K::TimeDelta(kind),
+                S::Time {
+                    kind: other,
+                    test: TimeTest::Relative { .. },
+                },
+            )
+            | (
+                K::TimeDate(kind),
+                S::Time {
+                    kind: other,
+                    test: TimeTest::Absolute { .. },
+                },
+            ) => kind == *other,
+            (
                 K::Width,
                 S::Number {
                     property: N::Width, ..
@@ -126,22 +140,8 @@ impl Kind {
                     property: N::NumUrls,
                     ..
                 },
-            ) => true,
-            (
-                K::TimeDelta(kind),
-                S::Time {
-                    kind: other,
-                    test: TimeTest::Relative { .. },
-                },
             )
             | (
-                K::TimeDate(kind),
-                S::Time {
-                    kind: other,
-                    test: TimeTest::Absolute { .. },
-                },
-            ) => kind == *other,
-            (
                 K::Views,
                 S::FileViewingStats {
                     stat: ViewingStat::Views,
@@ -154,8 +154,8 @@ impl Kind {
                     stat: ViewingStat::ViewTime | ViewingStat::ViewTimeMilliseconds,
                     ..
                 },
-            ) => true,
-            (
+            )
+            | (
                 K::UrlExact,
                 S::KnownUrl {
                     rule: UrlRule::ExactMatch(_),
@@ -182,8 +182,8 @@ impl Kind {
                     rule: UrlRule::UrlClass(_),
                     ..
                 },
-            ) => true,
-            (K::Ratio, S::Ratio { .. })
+            )
+            | (K::Ratio, S::Ratio { .. })
             | (K::NumPixels, S::NumPixels { .. })
             | (K::Size, S::FileSize { .. })
             | (K::DuplicateRelationships, S::FileRelationshipCount { .. })

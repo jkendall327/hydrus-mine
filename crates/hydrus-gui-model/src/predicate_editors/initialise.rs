@@ -109,10 +109,10 @@ impl Panel {
     }
     /// Called only after the typed family matches the panel.
     pub(super) fn initialise_predicate(&mut self, predicate: &Predicate, context: &Context) {
+        use SystemPredicate as S;
         let Predicate::System(p) = predicate else {
             return;
         };
-        use SystemPredicate as S;
         match p {
             S::Number { test, .. } => {
                 if self.kind == Kind::Duration {
@@ -483,10 +483,12 @@ impl Panel {
         };
         self.initial_choice(1, choice);
         match (self.kind, test) {
-            (Kind::RatingLike(_), RatingTest::Liked) => self.initial_choice(2, 1),
-            (Kind::RatingLike(_), RatingTest::Disliked) => self.initial_choice(2, 2),
-            (Kind::RatingLike(_), RatingTest::Count { value: 0, .. }) => self.initial_choice(2, 2),
-            (Kind::RatingLike(_), RatingTest::Count { value: 1, .. }) => self.initial_choice(2, 1),
+            (Kind::RatingLike(_), RatingTest::Liked | RatingTest::Count { value: 1, .. }) => {
+                self.initial_choice(2, 1);
+            }
+            (Kind::RatingLike(_), RatingTest::Disliked | RatingTest::Count { value: 0, .. }) => {
+                self.initial_choice(2, 2);
+            }
             (Kind::RatingNumerical(index), RatingTest::Stars { stars, .. }) => {
                 if let Some(service) = context.rating_services.get(index) {
                     self.initial_choice(
