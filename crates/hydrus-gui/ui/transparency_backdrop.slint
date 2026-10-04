@@ -17,12 +17,12 @@ export component TransparencyBackdrop inherits Rectangle {
     if root.mode == 1: Rectangle {
         for index in root.columns * root.rows: Rectangle {
             property <int> column: mod(index, max(1, root.columns)) + root.first-column;
-            property <int> row: floor(index / max(1, root.columns)) + root.first-row;
+            property <int> tile-row: floor(index / max(1, root.columns)) + root.first-row;
             x: self.column * 16px;
-            y: self.row * 16px;
+            y: self.tile-row * 16px;
             width: 16px;
             height: 16px;
-            background: mod(self.column + self.row, 2) == 0 ? #ededed : #dedede;
+            background: mod(self.column + self.tile-row, 2) == 0 ? #ededed : #dedede;
         }
     }
 }
