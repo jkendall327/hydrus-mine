@@ -21,6 +21,7 @@ def record(session):
     controller,gui=session.controller,session.controller.gui
     old=(ClientGUIDialogsQuick.EnterText,ClientGUIDialogsQuick.SelectFromListButtons,ClientGUIDialogsQuick.GetYesNo)
     previous=controller.new_options.GetBoolean('advanced_mode')
+    previous_namespace_sorts=controller.new_options.GetDefaultNamespaceSorts()
     def drive():
         options=controller.new_options.Duplicate();panel=FileSortCollectPanel(gui,options)
         queue=panel._namespace_file_sort_by
@@ -66,6 +67,9 @@ def record(session):
         isolated=options.GetDefaultNamespaceSorts()[0].sort_type[1] != queue.GetData()[0]
         panel.UpdateOptions()
         applied=[[list(sort.sort_type[1][0]),sort.sort_type[1][1]] for sort in options.GetDefaultNamespaceSorts()]
+        # Options commits its draft before a later panel is reconstructed. The
+        # queue constructor reads CG.controller.new_options, not its argument.
+        controller.new_options.SetDefaultNamespaceSorts(options.GetDefaultNamespaceSorts())
         reopened=FileSortCollectPanel(gui,options)
         reopened_data=[[list(n),v] for n,v in reopened._namespace_file_sort_by.GetData()]
         panel.deleteLater();reopened.deleteLater()
@@ -74,6 +78,7 @@ def record(session):
     finally:
         ClientGUIDialogsQuick.EnterText,ClientGUIDialogsQuick.SelectFromListButtons,ClientGUIDialogsQuick.GetYesNo=old
         controller.new_options.SetBoolean('advanced_mode',previous)
+        controller.new_options.SetDefaultNamespaceSorts(previous_namespace_sorts)
 
 
 def main():

@@ -968,8 +968,8 @@
   "reopened": [
     [
       [
-        "series",
         "creator",
+        "series",
         "title",
         "volume",
         "chapter",
@@ -979,11 +979,15 @@
     ],
     [
       [
-        "creator",
-        "series",
         "title",
-        "volume",
-        "chapter",
+        "page"
+      ],
+      2
+    ],
+    [
+      [
+        "creator-id",
+        "series",
         "page"
       ],
       1
