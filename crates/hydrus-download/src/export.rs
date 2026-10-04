@@ -138,6 +138,49 @@ fn export_filename(
     Ok(format!("{joined}{ext}"))
 }
 
+/// Name a manually exported file using the same phrase and limits as export folders.
+pub fn filename_for_media(
+    store: &Store,
+    destination: &str,
+    media: &MediaResult,
+    terms: &[PhraseTerm],
+    index: usize,
+) -> Result<String, String> {
+    let settings: ExportSettings = store
+        .read(hydrus_store::settings::get)
+        .map_err(|e| e.to_string())?;
+    let facts = NameFacts {
+        media,
+        display_tags: display_tags(store, media).map_err(|e| e.to_string())?,
+    };
+    export_filename(
+        destination,
+        &facts,
+        terms,
+        index,
+        &settings,
+        paths::needs_ntfs_rules(destination, settings.always_apply_ntfs_rules),
+    )
+}
+
+/// Run the existing media-to-sidecar routers for a manual export destination.
+pub fn route_sidecars(
+    store: &Store,
+    media: HashId,
+    destination: &str,
+    routers: &[sidecar::Router],
+) -> Result<(), String> {
+    let mut access = StoreMedia {
+        store,
+        hash_id: media,
+        now: now(),
+    };
+    for router in routers {
+        sidecar::work(router, destination, &mut access).map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
 /// `os.path.normpath`, as text.
 fn normpath(path: &str) -> String {
     let p = Path::new(path);

@@ -79,7 +79,12 @@ wrong by these tests.
   serialises every read and write through one connection).
 - Tag sibling/parent graphs are small, hot and read-mostly: they live in
   memory behind an `ArcSwap`-style snapshot that the writer republishes after
-  changes. Display tags for a file are computed in memory from storage tags.
+  changes. A committed snapshot revision lets the separately running daemon
+  notice the GUI's changes. The daemon checks once a second; content writes
+  check inside their transaction so new mappings immediately use the current
+  graph, even before that poll. Reloading keeps the shared caches and never
+  advances the revision. Display tags for a file are computed in memory from
+  storage tags.
 - CPU-heavy work (hashing, decoding, thumbnailing, perceptual hashes) runs on
   a rayon pool. The HTTP server is tokio/axum; blocking work is dispatched
   off the async runtime.

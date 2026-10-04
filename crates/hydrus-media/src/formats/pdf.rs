@@ -76,6 +76,26 @@ impl Document {
             .any(|bytes| !decode_text_string(bytes).is_empty())
     }
 
+    /// The document information shown by Detailed File Metadata, in reference order.
+    pub(crate) fn human_readable_metadata(&self) -> Option<String> {
+        let meta = self.pdf.metadata();
+        let rows = [
+            ("Author", &meta.author),
+            ("Title", &meta.title),
+            ("Subject", &meta.subject),
+            ("Keywords", &meta.keywords),
+        ];
+        let text = rows
+            .into_iter()
+            .filter_map(|(label, value)| {
+                let text = decode_text_string(value.as_ref()?);
+                (!text.is_empty()).then(|| format!("{label}: {text}"))
+            })
+            .collect::<Vec<_>>()
+            .join("\n");
+        (!text.is_empty()).then_some(text)
+    }
+
     /// The `num_words` of `GetPDFInfo`.
     pub(crate) fn word_count(&self) -> u64 {
         guarded(|| {

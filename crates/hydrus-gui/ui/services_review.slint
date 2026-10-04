@@ -1,0 +1,37 @@
+import { Button, ComboBox, VerticalBox, HorizontalBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export component ServicesReviewWindow inherits Window {
+    in property <string> window-title: "review services";
+    title: root.window-title;
+    width: 700px; height: 400px;
+    background: Theme.window;
+    in property <[string]> services;
+    in-out property <int> selected;
+    in property <string> name-and-type;
+    in property <string> statistics;
+    in property <string> unavailable;
+    in property <string> database-id;
+    in property <string> error;
+    callback selected-service(int);
+    callback refresh-clicked();
+    callback copy-key();
+    callback show-id();
+    callback close-clicked();
+    VerticalBox {
+        padding: 14px; spacing: 12px;
+        ComboBox { model: root.services; current-index <=> root.selected; selected(value) => { root.selected-service(self.current-index); } }
+        Text { text: root.name-and-type; color: Theme.text; font-weight: 700; wrap: word-wrap; }
+        Text { text: root.statistics; color: Theme.text; wrap: word-wrap; }
+        Text { text: root.unavailable; color: Theme.text; wrap: word-wrap; }
+        Text { text: root.database-id; color: Theme.text; }
+        Text { text: root.error; color: red; wrap: word-wrap; }
+        Rectangle { vertical-stretch: 1; }
+        HorizontalBox {
+            Button { text: "id"; clicked => { root.show-id(); } }
+            Button { text: "copy service key"; clicked => { root.copy-key(); } }
+            Button { text: "refresh"; clicked => { root.refresh-clicked(); } }
+            Rectangle { horizontal-stretch: 1; }
+            Button { text: "close"; clicked => { root.close-clicked(); } }
+        }
+    }
+}

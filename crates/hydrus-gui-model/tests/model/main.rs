@@ -8,13 +8,16 @@ mod auto_resolution_review;
 mod auto_resolution_rules;
 mod checker_options;
 mod datetime_editor;
+mod downloader_definitions;
 mod duplicates_page;
 mod edit_subscription;
+mod embedded_metadata;
 mod file_log;
 mod filename_tagging;
 mod filetype_tree;
 mod folders;
 mod force_filetype;
+mod formula_editors;
 mod import_options_editor;
 mod importer_menu;
 mod local_import_dialog;
@@ -42,3 +45,9 @@ mod tag_filter_editor;
 mod thumbnail_ratings;
 mod times_editor;
 mod urls_editor;
+
+mod export_files;
+mod services_review;
+mod tag_relationships;
+
+mod services_editor;

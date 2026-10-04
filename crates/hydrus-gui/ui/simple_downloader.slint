@@ -27,6 +27,7 @@ export component SimpleParsingBox inherits Rectangle {
     callback url-entered(string);
     callback paste-urls();
     callback formula-chosen(int);
+    callback edit-formulae();
     border-width: 1px;
     border-color: Theme.border;
     VerticalLayout {
@@ -114,6 +115,7 @@ export component SimpleParsingBox inherits Rectangle {
                 clicked => { root.paste-urls(); }
             }
         }
+        Button { text: "edit formulae"; clicked => { root.edit-formulae(); } }
         ComboBox {
             model: root.formulae;
             current-index <=> root.formula;

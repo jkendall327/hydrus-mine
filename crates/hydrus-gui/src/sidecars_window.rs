@@ -30,6 +30,8 @@ pub struct Slots {
     pub node: Rc<RefCell<Option<SidecarNodeWindow>>>,
     /// The string processor editor, from a router or source.
     pub strings: crate::string_processor_window::Slots,
+    /// Reusable JSON formula editor for sidecar sources.
+    pub formula: crate::formula_window::Slots,
 }
 
 impl std::fmt::Debug for Slots {
@@ -39,6 +41,7 @@ impl std::fmt::Debug for Slots {
             .field("router", &self.router.borrow().is_some())
             .field("node", &self.node.borrow().is_some())
             .field("strings", &self.strings)
+            .field("formula", &self.formula)
             .finish()
     }
 }
@@ -359,6 +362,47 @@ pub fn open_node(
             refresh();
         }
     });
+    window.on_edit_formula({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let store = store.clone();
+        let slots = slots.formula.clone();
+        move || {
+            if slots.formula.borrow().is_some() {
+                return;
+            }
+            let formula = match &state.borrow().editing {
+                Editing::Source(e) => e.formula.clone(),
+                Editing::Destination(_) => return,
+            };
+            let applied = Rc::new({
+                let state = state.clone();
+                let refresh = refresh.clone();
+                move |formula| {
+                    if let Editing::Source(e) = &mut state.borrow_mut().editing {
+                        e.formula = formula;
+                    }
+                    refresh();
+                }
+            });
+            match crate::formula_window::open(
+                &store,
+                &formula,
+                crate::formula_window::FormulaTestData {
+                    collapse_newlines: false,
+                    ..Default::default()
+                },
+                &slots,
+                applied,
+            ) {
+                Ok(w) => {
+                    w.set_allow_type_change(false);
+                    *slots.formula.borrow_mut() = Some(w);
+                }
+                Err(e) => eprintln!("could not open JSON formula: {e}"),
+            }
+        }
+    });
     // the sidecar filename's conversion, in the string converter editor,
     // with the sidecar path it would convert
     window.on_edit_converter({
@@ -537,7 +581,9 @@ pub fn open_node(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let formula = slots.formula.clone();
         move || {
+            formula.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }

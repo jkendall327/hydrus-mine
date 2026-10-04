@@ -114,6 +114,63 @@ fn unattached_it_runs_on_without_input() {
 }
 
 #[test]
+fn service_edits_reach_the_running_client_api_without_a_restart() {
+    use std::io::{Read as _, Write as _};
+
+    let (_parent, dir) = store();
+    let (mut serving, said) = start(
+        &dir,
+        &["--port", "0", "--bind", "127.0.0.1", "--attached"],
+        Stdio::piped(),
+        "Client API at",
+    );
+    let address = said.strip_prefix("Client API at http://").unwrap();
+    let fixture = hydrus_testkit::fixture_json("legacy_db/basic.manifest.json");
+    let key = fixture["access_keys"]["full"].as_str().unwrap();
+    let services = || {
+        let mut stream = std::net::TcpStream::connect(address).unwrap();
+        stream
+            .set_read_timeout(Some(Duration::from_secs(5)))
+            .unwrap();
+        write!(
+            stream,
+            "GET /get_services HTTP/1.1\r\nHost: {address}\r\nHydrus-Client-API-Access-Key: {key}\r\nConnection: close\r\n\r\n"
+        )
+        .unwrap();
+        let mut response = String::new();
+        stream.read_to_string(&mut response).unwrap();
+        assert!(response.starts_with("HTTP/1.1 200"), "{response}");
+        response
+    };
+    assert!(!services().contains("edited while serving"));
+    let editor = hydrus_store::Store::open(&dir).unwrap();
+    let id = editor.snapshot().services.by_name("my tags").unwrap().id;
+    editor
+        .write_and_refresh(move |ctx| {
+            ctx.conn().execute(
+                "UPDATE services SET name='edited while serving' WHERE service_id=?1",
+                [id],
+            )?;
+            Ok(())
+        })
+        .unwrap();
+    let deadline = Instant::now() + Duration::from_secs(10);
+    while !services().contains("edited while serving") {
+        assert!(
+            Instant::now() < deadline,
+            "daemon kept its old service registry"
+        );
+        std::thread::sleep(Duration::from_millis(50));
+    }
+    drop(serving.0.stdin.take());
+    assert!(
+        exited_within(&mut serving.0, Duration::from_secs(30))
+            .unwrap()
+            .success()
+    );
+}
+
+#[test]
 fn a_client_api_that_cant_listen_stops_nothing_else() {
     let (_parent, dir) = store();
     let taken = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
@@ -531,7 +588,8 @@ fn changed_options_apply_without_a_restart() {
         .expect("the proxy is asked");
     assert_eq!(first, "GET http://hydrus-test.invalid/file.png HTTP/1.1");
     // the thumbnail options, which imports make thumbnails by: noticed
-    // once, as the daemon reads them again
+    // once, through the shared store snapshot refresh (plain settings writes
+    // remain supported without publishing a revision).
     store
         .write(|ctx| {
             let mut thumbnails: hydrus_core::thumbnail::ThumbnailSettings =
@@ -540,12 +598,12 @@ fn changed_options_apply_without_a_restart() {
             settings::set(ctx.conn(), &thumbnails)
         })
         .unwrap();
-    wait_for("the thumbnail options changed");
+    wait_for("the store snapshot changed");
     std::thread::sleep(Duration::from_millis(2500));
     assert!(
         lines
             .try_iter()
-            .all(|line| !line.contains("the thumbnail options changed")),
+            .all(|line| !line.contains("the store snapshot changed")),
         "said again: its snapshot was not read again"
     );
     drop(serving.0.stdin.take());

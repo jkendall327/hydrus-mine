@@ -1,0 +1,98 @@
+//! The local service review window with live native statistics and key copying.
+use crate::ServicesReviewWindow;
+use hydrus_gui_model::services_review::{self, Row};
+use hydrus_store::Store;
+use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
+use std::{cell::RefCell, rc::Rc, sync::Arc};
+
+fn show(window: &ServicesReviewWindow, rows: &[Row], index: usize) {
+    if let Some(row) = rows.get(index) {
+        window.set_selected(i32::try_from(index).unwrap_or(0));
+        window.set_name_and_type(format!("{} - {}", row.name, row.service_type).into());
+        window.set_statistics(row.statistics.as_str().into());
+        window.set_unavailable(row.unavailable.as_str().into());
+        window.set_database_id(SharedString::new());
+    }
+}
+
+/// Open service review over a native store; refresh retains the selected service key.
+pub fn open(store: Arc<Store>) -> Result<ServicesReviewWindow, String> {
+    let window = ServicesReviewWindow::new().map_err(|e| e.to_string())?;
+    let rows = Rc::new(RefCell::new(
+        services_review::rows(&store).map_err(|e| e.to_string())?,
+    ));
+    let names = |rows: &[Row]| {
+        ModelRc::new(VecModel::from(
+            rows.iter()
+                .map(|r| SharedString::from(format!("{}: {}", r.service_type, r.name)))
+                .collect::<Vec<_>>(),
+        ))
+    };
+    window.set_services(names(&rows.borrow()));
+    show(&window, &rows.borrow(), 0);
+    window.on_selected_service({
+        let rows = rows.clone();
+        let weak = window.as_weak();
+        move |i| {
+            if let (Some(w), Ok(i)) = (weak.upgrade(), usize::try_from(i)) {
+                show(&w, &rows.borrow(), i);
+            }
+        }
+    });
+    window.on_refresh_clicked({
+        let rows = rows.clone();
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else { return };
+            let key = usize::try_from(w.get_selected())
+                .ok()
+                .and_then(|i| rows.borrow().get(i).map(|r| r.key.clone()));
+            match services_review::rows(&store) {
+                Ok(fresh) => {
+                    let selected = fresh
+                        .iter()
+                        .position(|r| Some(&r.key) == key.as_ref())
+                        .unwrap_or(0);
+                    w.set_services(names(&fresh));
+                    *rows.borrow_mut() = fresh;
+                    show(&w, &rows.borrow(), selected);
+                    w.set_error(SharedString::new());
+                }
+                Err(e) => w.set_error(e.to_string().into()),
+            }
+        }
+    });
+    window.on_copy_key({
+        let rows = rows.clone();
+        let weak = window.as_weak();
+        move || {
+            if let Some(w) = weak.upgrade()
+                && let Ok(i) = usize::try_from(w.get_selected())
+                && let Some(row) = rows.borrow().get(i)
+            {
+                crate::copy_to_clipboard(&row.key.to_hex());
+            }
+        }
+    });
+    window.on_show_id({
+        let weak = window.as_weak();
+        move || {
+            if let Some(w) = weak.upgrade()
+                && let Ok(i) = usize::try_from(w.get_selected())
+                && let Some(row) = rows.borrow().get(i)
+            {
+                w.set_database_id(format!("service id: {}", row.id).into());
+            }
+        }
+    });
+    window.on_close_clicked({
+        let weak = window.as_weak();
+        move || {
+            if let Some(w) = weak.upgrade() {
+                let _ = w.hide();
+            }
+        }
+    });
+    window.show().map_err(|e| e.to_string())?;
+    Ok(window)
+}

@@ -28,15 +28,19 @@ mod auto_resolution_review_window;
 mod auto_resolution_rules_window;
 mod checker_options_window;
 pub mod daemon;
+pub mod downloader_definitions_window;
 mod drops;
 mod duplicates_sidebar;
 mod edit_subscription_window;
+mod embedded_metadata_window;
+pub mod export_files_window;
 pub mod favourites_window;
 mod file_log_window;
 mod filename_tagging_window;
 mod filter_window;
 mod folders_window;
 mod force_filetype_window;
+pub mod formula_window;
 mod gallery;
 mod grid;
 pub mod headless;
@@ -60,13 +64,17 @@ mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
 mod search_log_window;
+pub mod services_editor_window;
+pub mod services_review_window;
 mod session_dialog;
 pub mod sidecars_window;
+pub mod simple_formulae_window;
 pub mod slideshow;
 pub mod still;
 pub mod string_processor_window;
 mod subscriptions_window;
 pub mod tag_filter_window;
+pub(crate) mod tag_relationships_window;
 pub mod thumbnail_menu;
 mod thumbnails;
 mod unlock;
@@ -147,16 +155,18 @@ pub(crate) use bind_zoom;
 // (the workings without the windows, in their own crate, under their
 // names here)
 pub use grid::ThumbnailRows;
+pub use hydrus_gui_model::downloader_definitions;
 pub use hydrus_gui_model::{
     archive_delete, audio, auto_resolution_preview, auto_resolution_review, auto_resolution_rules,
     autocomplete, checker_options, collect, datetime_editor, domains, duplicate_filter,
-    duplicates_page, edit_subscription, favourites, file_log, filename_tagging, filetype_tree,
-    folders, force_filetype, import_options_editor, importer_menu, info_lines, list_selection,
-    local_import, main_menu, manage_tags, media_actions, merge_options_editor, notes_editor,
-    options, page_chooser, predicate_editors, ratings, ratings_editor, scanbar, search_log,
-    selection, session_saving, sidecar_editors, sidecars, simple_downloader, sort, status,
-    string_editors, subscriptions_dedupe, subscriptions_dialog, subscriptions_list,
-    tag_filter_editor, thumbnail_icons, thumbnail_ratings, times_editor, urls_editor,
+    duplicates_page, edit_subscription, embedded_metadata, export_files, favourites, file_log,
+    filename_tagging, filetype_tree, folders, force_filetype, formula_editors,
+    import_options_editor, importer_menu, info_lines, list_selection, local_import, main_menu,
+    manage_tags, media_actions, merge_options_editor, notes_editor, options, page_chooser,
+    predicate_editors, ratings, ratings_editor, scanbar, search_log, selection, session_saving,
+    sidecar_editors, sidecars, simple_downloader, sort, status, string_editors,
+    subscriptions_dedupe, subscriptions_dialog, subscriptions_list, tag_filter_editor,
+    tag_relationships, thumbnail_icons, thumbnail_ratings, times_editor, urls_editor,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -173,6 +183,8 @@ pub struct Bound {
     pub viewer: Rc<RefCell<Option<MediaViewerWindow>>>,
     /// The manage tags window while one is open.
     pub manage_tags: Rc<RefCell<Option<ManageTagsWindow>>>,
+    /// Siblings or parents while the corresponding editor is open.
+    pub tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     /// The manage notes dialog while one is open.
     pub manage_notes: Rc<RefCell<Option<ManageNotesWindow>>>,
     /// The manage ratings dialog while one is open.
@@ -183,12 +195,20 @@ pub struct Bound {
     pub datetime_editor: Rc<RefCell<Option<DateTimeEditorWindow>>>,
     /// The force filetypes dialog while one is open.
     pub force_filetype: Rc<RefCell<Option<ForceFiletypeWindow>>>,
+    /// Manual file export dialog and sidecar editor.
+    pub export_files: export_files_window::Slots,
+    /// The focused file's detailed metadata window while open.
+    pub embedded_metadata: Rc<RefCell<Option<EmbeddedMetadataWindow>>>,
     /// The manage urls dialog while one is open.
     pub manage_urls: Rc<RefCell<Option<ManageUrlsWindow>>>,
     /// The options window while it is open.
     pub options: Rc<RefCell<Option<OptionsWindow>>>,
     /// The about window while it is open.
     pub about: Rc<RefCell<Option<AboutWindow>>>,
+    /// The review services window while it is open.
+    pub services_review: Rc<RefCell<Option<ServicesReviewWindow>>>,
+    /// Staged local service editors while open.
+    pub services_editor: services_editor_window::Slots,
     /// The checker options editor while one is open (from the options
     /// window).
     pub checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>>,
@@ -197,11 +217,15 @@ pub struct Bound {
     pub session_dialog: Rc<RefCell<Option<SessionDialog>>>,
     /// The manage subscriptions dialog while it is open.
     pub subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>>,
+    /// URL class and gallery URL generator definition editors.
+    pub downloader_definitions: downloader_definitions_window::Slots,
     /// The edit subscription dialog while it is open (from the manage
     /// subscriptions dialog).
     pub edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>>,
     /// The import and export folders dialogs while they are open.
     pub folders: folders_window::Slots,
+    /// Simple downloader formula list and reusable editors.
+    pub simple_formulae: simple_formulae_window::Slots,
     /// The duplicates auto-resolution rules editor's windows.
     pub auto_resolution: auto_resolution_rules_window::Slots,
     /// The rules' "review actions" windows, by a number each.
@@ -912,6 +936,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     // F3: manage tags; once applied, the tags are counted again
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
+    let tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>> = Rc::default();
     let tags_changed: Rc<dyn Fn()> = Rc::new({
         let page = page.clone();
         let shown = shown.clone();
@@ -983,6 +1008,19 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    // The single-file info menu's detailed metadata window.
+    let embedded_metadata: Rc<RefCell<Option<EmbeddedMetadataWindow>>> = Rc::default();
+    let open_embedded_metadata: OpenOnFiles = Rc::new({
+        let slot = embedded_metadata.clone();
+        move |store, files, _| {
+            if let Some(&file) = files.first() {
+                match embedded_metadata_window::open(&store, file, &slot) {
+                    Ok(window) => *slot.borrow_mut() = Some(window),
+                    Err(e) => eprintln!("could not open detailed file metadata: {e}"),
+                }
+            }
+        }
+    });
     // a thumbnail's or the viewer's "manage > force filetype"
     let force_filetype: Rc<RefCell<Option<ForceFiletypeWindow>>> = Rc::default();
     let open_force_filetype: OpenOnFiles = Rc::new({
@@ -991,6 +1029,27 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             match force_filetype_window::open(&store, &files, &force_filetype, applied) {
                 Ok(window) => *force_filetype.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open force filetypes: {e}"),
+            }
+        }
+    });
+    let export_files = export_files_window::Slots::default();
+    let open_export_files: OpenOnFiles = Rc::new({
+        let slots = export_files.clone();
+        move |store, files, changed| {
+            let facts = thumbnail_menu::facts(&store, &files);
+            let storage = hydrus_store::content::DomainRoles::new(&store.snapshot().services)
+                .ok()
+                .map(|r| r.local_file_storage);
+            let files = files
+                .into_iter()
+                .filter(|f| {
+                    facts
+                        .iter()
+                        .any(|m| m.file == *f && storage.is_some_and(|s| m.current.contains(&s)))
+                })
+                .collect();
+            if let Err(e) = export_files_window::open(&store, files, &slots, changed) {
+                eprintln!("could not open export files: {e}");
             }
         }
     });
@@ -1165,9 +1224,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // the menu bar, its titles shown again as what they say changes
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
+    let services_review: Rc<RefCell<Option<ServicesReviewWindow>>> = Rc::default();
+    let services_editor = services_editor_window::Slots::default();
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
+    let downloader_definitions = downloader_definitions_window::Slots::default();
     let edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>> = Rc::default();
     // a downloader list's menu's actions, as last opened
     let importer_actions: Rc<RefCell<Vec<importer_menu::Action>>> = Rc::default();
@@ -1178,6 +1240,35 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
+            tag_relationships: {
+                let slot = tag_relationships.clone();
+                let pages = pages.clone();
+                let applied: Rc<dyn Fn()> = Rc::new({
+                    let tags_changed = tags_changed.clone();
+                    let viewer = viewer.clone();
+                    move || {
+                        tags_changed();
+                        if let Some(window) = viewer.borrow().as_ref() {
+                            window.invoke_refresh_tags();
+                        }
+                    }
+                });
+                Rc::new(move |kind| {
+                    if slot.borrow().is_some() {
+                        return;
+                    }
+                    let store = pages.borrow().store().clone();
+                    match tag_relationships::Relationships::new(store, kind) {
+                        Ok(model) => {
+                            match tag_relationships_window::open(model, &slot, applied.clone()) {
+                                Ok(window) => *slot.borrow_mut() = Some(window),
+                                Err(e) => eprintln!("could not open tag relationships: {e}"),
+                            }
+                        }
+                        Err(e) => eprintln!("could not load tag relationships: {e}"),
+                    }
+                })
+            },
             pages: pages.clone(),
             change_pages: Rc::new(change_pages.clone()),
             ask: {
@@ -1225,6 +1316,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     match options_window::open(&store, &slot, &checker_slot, applied) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not open the options: {e}"),
+                    }
+                })
+            },
+            manage_downloader_definitions: {
+                let pages = pages.clone();
+                let slots = downloader_definitions.clone();
+                Rc::new(move |classes| {
+                    let store = pages.borrow().store().clone();
+                    if let Err(e) = downloader_definitions_window::open(&store, &slots, classes) {
+                        eprintln!("could not open downloader definitions: {e}");
                     }
                 })
             },
@@ -1285,6 +1386,54 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     match session_dialog::open(&pages, name.as_deref(), &slot) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not save the session: {e}"),
+                    }
+                })
+            },
+            manage_services: {
+                let pages = pages.clone();
+                let slots = services_editor.clone();
+                let change_pages = change_pages.clone();
+                let rows = rows.clone();
+                let tags_changed = tags_changed.clone();
+                let viewer = viewer.clone();
+                let weak = window.as_weak();
+                Rc::new(move || {
+                    if slots.manage.borrow().is_some() {
+                        return;
+                    }
+                    let changed: Rc<dyn Fn()> = Rc::new({
+                        let pages = pages.clone();
+                        let rows = rows.clone();
+                        let change_pages = change_pages.clone();
+                        let tags_changed = tags_changed.clone();
+                        let viewer = viewer.clone();
+                        let weak = weak.clone();
+                        move || {
+                            pages.borrow_mut().reload_settings();
+                            rows.thumbnails_changed();
+                            change_pages(&|_| Ok(()));
+                            if let Some(window) = weak.upgrade() {
+                                window.invoke_refresh_page();
+                            }
+                            tags_changed();
+                            if let Some(window) = viewer.borrow().as_ref() {
+                                window.invoke_refresh_tags();
+                            }
+                        }
+                    });
+                    match services_editor_window::open(pages.borrow().store(), &slots, changed) {
+                        Ok(window) => *slots.manage.borrow_mut() = Some(window),
+                        Err(e) => eprintln!("could not manage services: {e}"),
+                    }
+                })
+            },
+            review_services: {
+                let pages = pages.clone();
+                let slot = services_review.clone();
+                Rc::new(move || {
+                    match services_review_window::open(pages.borrow().store().clone()) {
+                        Ok(window) => *slot.borrow_mut() = Some(window),
+                        Err(e) => eprintln!("could not review services: {e}"),
                     }
                 })
             },
@@ -1487,6 +1636,26 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 hydrus_store::live::JobKind::File
             };
             page().borrow().cancel_download(kind);
+        }
+    });
+    let simple_formulae = simple_formulae_window::Slots::default();
+    window.on_simple_edit_formulae({
+        let page = page.clone();
+        let shown = shown.clone();
+        let slots = simple_formulae.clone();
+        move || {
+            if slots.list.borrow().is_some() {
+                return;
+            }
+            let store = page().borrow().store().clone();
+            let applied = Rc::new({
+                let shown = shown.clone();
+                move || shown(false)
+            });
+            match simple_formulae_window::open(&store, &slots, applied) {
+                Ok(w) => *slots.list.borrow_mut() = Some(w),
+                Err(e) => eprintln!("could not open simple formulae: {e}"),
+            }
         }
     });
     // a simple downloader page's parsing box
@@ -2204,6 +2373,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_manage_ratings = open_manage_ratings.clone();
         let open_manage_times = open_manage_times.clone();
         let open_force_filetype = open_force_filetype.clone();
+        let open_export_files = open_export_files.clone();
+        let open_embedded_metadata = open_embedded_metadata.clone();
         let files_changed = files_changed.clone();
         let removed = removed.clone();
         let tags_changed = tags_changed.clone();
@@ -2225,6 +2396,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 manage_ratings: open_manage_ratings.clone(),
                 manage_times: open_manage_times.clone(),
                 force_filetype: open_force_filetype.clone(),
+                export_files: open_export_files.clone(),
+                embedded_metadata: open_embedded_metadata.clone(),
                 change_pages: change_pages.clone(),
             };
             match open_viewer(model, &viewer, hooks) {
@@ -2243,6 +2416,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_manage_ratings = open_manage_ratings.clone();
         let open_manage_times = open_manage_times.clone();
         let open_force_filetype = open_force_filetype.clone();
+        let open_export_files = open_export_files.clone();
+        let open_embedded_metadata = open_embedded_metadata.clone();
         let files_changed = files_changed.clone();
         move |index| {
             let page = page();
@@ -2271,6 +2446,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 manage_ratings: open_manage_ratings.clone(),
                 manage_times: open_manage_times.clone(),
                 force_filetype: open_force_filetype.clone(),
+                export_files: open_export_files.clone(),
+                embedded_metadata: open_embedded_metadata.clone(),
                 change_pages: change_pages.clone(),
             };
             match open_viewer(model, &viewer, hooks) {
@@ -2504,6 +2681,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_manage_ratings = open_manage_ratings.clone();
         let open_manage_times = open_manage_times.clone();
         let open_force_filetype = open_force_filetype.clone();
+        let open_export_files = open_export_files.clone();
+        let open_embedded_metadata = open_embedded_metadata.clone();
         let files_changed = files_changed.clone();
         move |id| {
             use thumbnail_menu::Action;
@@ -2616,6 +2795,24 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let files = page.selected_files();
                     if !files.is_empty() {
                         open_manage_times(page.store().clone(), files, files_changed.clone());
+                    }
+                }
+                Action::ExportFiles => {
+                    let page = page.borrow();
+                    open_export_files(
+                        page.store().clone(),
+                        page.selected_files(),
+                        files_changed.clone(),
+                    );
+                }
+                Action::EmbeddedMetadata => {
+                    let page = page.borrow();
+                    if let Some(index) = page.focused() {
+                        open_embedded_metadata(
+                            page.store().clone(),
+                            vec![page.results()[index]],
+                            Rc::new(|| {}),
+                        );
                     }
                 }
                 Action::ForceFiletype => {
@@ -2762,19 +2959,26 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         rows,
         viewer,
         manage_tags,
+        tag_relationships,
         manage_notes,
         manage_ratings,
         manage_times,
         datetime_editor,
         force_filetype,
+        export_files,
+        embedded_metadata,
         manage_urls,
         options,
         about,
+        services_review,
+        services_editor,
         checker_options,
         session_dialog,
         subscriptions,
+        downloader_definitions,
         edit_subscription,
         folders,
+        simple_formulae,
         file_log: file_log_slot,
         archive_delete,
         filter,
@@ -3044,6 +3248,7 @@ fn thumbnail_menu_rows(
     let (share_hash_title, share_hash) = share.hash.clone().unwrap_or_default();
     ThumbnailMenu {
         has_share: slots.share.is_some(),
+        share_export: rows(&share.export.iter().cloned().collect::<Vec<_>>()),
         share_a: rows(&share.a),
         share_hashes_title: share_hashes_title.into(),
         share_hashes: rows(&share_hashes),
@@ -3059,6 +3264,11 @@ fn thumbnail_menu_rows(
         },
         info_title: info.title.as_str().into(),
         info_is_menu: info.is_menu,
+        info_metadata: if info.metadata {
+            id(Action::EmbeddedMetadata, thumbnail_menu::EMBEDDED_METADATA)
+        } else {
+            -1
+        },
         info_before: labels(&info.before),
         info_sub_title: info_sub_title.into(),
         info_sub: labels(&info_sub),
@@ -3466,6 +3676,8 @@ struct ViewerHooks {
     manage_ratings: OpenOnFiles,
     manage_times: OpenOnFiles,
     force_filetype: OpenOnFiles,
+    export_files: OpenOnFiles,
+    embedded_metadata: OpenOnFiles,
     /// Opens pages (from the menu's open and urls entries).
     change_pages: ChangePages,
 }
@@ -3508,6 +3720,8 @@ fn open_viewer(
         manage_ratings,
         manage_times,
         force_filetype,
+        export_files,
+        embedded_metadata,
         change_pages,
     } = hooks;
     let window = MediaViewerWindow::new()?;
@@ -3578,6 +3792,21 @@ fn open_viewer(
             }
         }
     };
+    window.on_refresh_tags({
+        let model = model.clone();
+        let weak = window.as_weak();
+        move || {
+            if let Some(window) = weak.upgrade() {
+                let tags = model
+                    .borrow()
+                    .tag_rows()
+                    .into_iter()
+                    .map(|(row, rgb)| list_text(&row, rgb))
+                    .collect::<Vec<_>>();
+                window.set_tags(ModelRc::new(VecModel::from(tags)));
+            }
+        }
+    });
     // the file's info line and buttons, in the top hover frame, and its
     // notes
     let show_info = {
@@ -4164,6 +4393,8 @@ fn open_viewer(
         let manage_ratings = manage_ratings.clone();
         let manage_times = manage_times.clone();
         let force_filetype = force_filetype.clone();
+        let export_files = export_files.clone();
+        let embedded_metadata = embedded_metadata.clone();
         let show = show.clone();
         let remove_file = remove_file.clone();
         let with_slideshow = with_slideshow.clone();
@@ -4249,6 +4480,13 @@ fn open_viewer(
                 Action::ManageTimes => {
                     let store = model.borrow().store().clone();
                     manage_times(store, vec![file], Rc::new(show.clone()));
+                }
+                Action::ExportFiles => {
+                    let store = model.borrow().store().clone();
+                    export_files(store, vec![file], Rc::new(show.clone()));
+                }
+                Action::EmbeddedMetadata => {
+                    embedded_metadata(model.borrow().store().clone(), vec![file], Rc::new(|| {}));
                 }
                 Action::ForceFiletype => {
                     let store = model.borrow().store().clone();

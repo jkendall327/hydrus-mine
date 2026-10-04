@@ -23,16 +23,24 @@ export { ListText }
 export { Palette } from "std-widgets.slint";
 export { MediaViewerWindow, NoteRow, RatingRow, RatingShape } from "viewer.slint";
 export { ArchiveDeleteWindow } from "archive_delete.slint";
+export { TagRelationshipsWindow } from "tag_relationships.slint";
 export { ManageTagsWindow } from "manage_tags.slint";
 export { ManageNotesWindow } from "manage_notes.slint";
 export { ManageUrlsWindow } from "manage_urls.slint";
 export { ManageRatingsWindow } from "manage_ratings.slint";
 export { DateTimeEditorWindow, ManageTimesWindow, TimeRow } from "manage_times.slint";
+export { ExportFilesWindow } from "export_files.slint";
+export { EmbeddedMetadataWindow } from "embedded_metadata.slint";
+export { DefinitionField, DownloaderDefinitionEditWindow, DownloaderDefinitionsWindow } from "downloader_definitions.slint";
 export { ForceFiletypeWindow } from "force_filetype.slint";
 export { TagFilterWindow } from "tag_filter.slint";
 export { MergeOptionsWindow } from "merge_options.slint";
 export { SidecarNodeWindow, SidecarRouterWindow, SidecarRoutersWindow } from "sidecars.slint";
+export { ServicesEditorWindow, EditServiceWindow, ServiceColourRow } from "services_editor.slint";
+export { ServicesReviewWindow } from "services_review.slint";
 export { AboutWindow } from "about.slint";
+export { SimpleFormulaeWindow } from "simple_formulae.slint";
+export { FormulaWindow, FormulaRuleWindow } from "formula_editors.slint";
 export { ConversionWindow, StringConverterWindow, StringProcessorWindow, StringStepWindow } from "string_processor.slint";
 export { AutoResolutionReviewWindow, PairRow } from "auto_resolution_review.slint";
 export { DurationField, OptionRow, OptionsWindow } from "options.slint";
@@ -619,6 +627,7 @@ export component MainWindow inherits Window {
     callback simple-move-jobs(int);
     callback simple-delete-jobs();
     callback simple-formula-chosen(int);
+    callback simple-edit-formulae();
     in property <WatcherData> watcher-data;
     in property <[TableRow]> watcher-rows;
     in property <int> watcher-sort-column: -1;
@@ -1021,6 +1030,7 @@ export component MainWindow inherits Window {
                         url-entered(text) => { root.url-entered(text); }
                         paste-urls => { root.paste-urls(); }
                         formula-chosen(i) => { root.simple-formula-chosen(i); }
+                        edit-formulae => { root.simple-edit-formulae(); }
                     }
                     Button {
                         text: root.import-options-label;
@@ -1383,6 +1393,11 @@ export component MainWindow inherits Window {
                     Menu {
                         if root.thumbnail-menu.info-is-menu: Menu {
                             title: root.thumbnail-menu.info-title;
+                            if root.thumbnail-menu.info-metadata >= 0: MenuItem {
+                                title: "show detailed embedded file metadata";
+                                activated => { root.menu-chosen(root.thumbnail-menu.info-metadata); }
+                            }
+                            if root.thumbnail-menu.info-metadata >= 0: MenuSeparator { }
                             for row in root.thumbnail-menu.info-before: MenuItem {
                                 title: row.label;
                                 activated => { root.menu-chosen(row.id); }
@@ -1647,6 +1662,11 @@ export component MainWindow inherits Window {
                         }
                         if root.thumbnail-menu.has-share: Menu {
                             title: "share";
+                            for row in root.thumbnail-menu.share-export: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            if root.thumbnail-menu.share-export.length > 0: MenuSeparator { }
                             for row in root.thumbnail-menu.share-a: MenuItem {
                                 title: row.label;
                                 activated => { root.menu-chosen(row.id); }

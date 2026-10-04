@@ -2,3 +2,5 @@
 # fixtures (and files served from them) with what the reference recorded,
 # and line-ending conversion would change them.
 * -text
+# The metadata document has fixed-width PDF xref padding, not source text.
+oracle/fixtures/metadata/embedded_pdf_fields.pdf binary

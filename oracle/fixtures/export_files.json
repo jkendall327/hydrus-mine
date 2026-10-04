@@ -1,0 +1,157 @@
+{
+ "files": [
+  {
+   "file_id": 1,
+   "mime": 23,
+   "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+  },
+  {
+   "file_id": 8,
+   "mime": 2,
+   "hash": "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+  },
+  {
+   "file_id": 3,
+   "mime": 16,
+   "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+  }
+ ],
+ "previews": [
+  {
+   "phrase": "same",
+   "rows": [
+    [
+     "1",
+     "apng",
+     "/tmp/hydrus-manual-export-oracle/same.png"
+    ],
+    [
+     "2",
+     "png",
+     "/tmp/hydrus-manual-export-oracle/same (1).png"
+    ],
+    [
+     "3",
+     "flac",
+     "/tmp/hydrus-manual-export-oracle/same.flac"
+    ]
+   ]
+  },
+  {
+   "phrase": "{#} {file_id}",
+   "rows": [
+    [
+     "1",
+     "apng",
+     "/tmp/hydrus-manual-export-oracle/1 1.png"
+    ],
+    [
+     "2",
+     "png",
+     "/tmp/hydrus-manual-export-oracle/2 8.png"
+    ],
+    [
+     "3",
+     "flac",
+     "/tmp/hydrus-manual-export-oracle/3 3.flac"
+    ]
+   ]
+  },
+  {
+   "phrase": "[creator] - {hash}",
+   "rows": [
+    [
+     "1",
+     "apng",
+     "/tmp/hydrus-manual-export-oracle/- 03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b.png"
+    ],
+    [
+     "2",
+     "png",
+     "/tmp/hydrus-manual-export-oracle/someone else - c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce.png"
+    ],
+    [
+     "3",
+     "flac",
+     "/tmp/hydrus-manual-export-oracle/anonymous artist - 188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147.flac"
+    ]
+   ]
+  },
+  {
+   "phrase": "../escape",
+   "rows": [
+    [
+     "1",
+     "apng",
+     "INVALID, above destination directory: /tmp/escape.png"
+    ],
+    [
+     "2",
+     "png",
+     "INVALID, above destination directory: /tmp/escape (1).png"
+    ],
+    [
+     "3",
+     "flac",
+     "INVALID, above destination directory: /tmp/escape.flac"
+    ]
+   ]
+  },
+  {
+   "phrase": "{bad",
+   "rows": [
+    [
+     "1",
+     "apng",
+     "INVALID, above destination directory: Could not parse that phrase: not enough values to unpack (expected 2, got 1)"
+    ],
+    [
+     "2",
+     "png",
+     "INVALID, above destination directory: Could not parse that phrase: not enough values to unpack (expected 2, got 1)"
+    ],
+    [
+     "3",
+     "flac",
+     "INVALID, above destination directory: Could not parse that phrase: not enough values to unpack (expected 2, got 1)"
+    ]
+   ]
+  }
+ ],
+ "symlinks_with_trash": false,
+ "questions": [
+  "THE FILES WILL BE SENT TO THE TRASH IN THE CLIENT AFTERWARDS",
+  "Export as shown?\n\nTHE FILES WILL BE SENT TO THE TRASH IN THE CLIENT AFTERWARDS",
+  "Export as shown?"
+ ],
+ "remove_question": "Remove all selected?",
+ "removed_rows": [
+  [
+   "1",
+   "apng",
+   "/tmp/hydrus-manual-export-oracle/same.png"
+  ],
+  [
+   "2",
+   "flac",
+   "/tmp/hydrus-manual-export-oracle/same.flac"
+  ]
+ ],
+ "renumbered_rows": [
+  [
+   "1",
+   "apng",
+   "/tmp/hydrus-manual-export-oracle/1.png"
+  ],
+  [
+   "2",
+   "flac",
+   "/tmp/hydrus-manual-export-oracle/2.flac"
+  ]
+ ],
+ "copies": {
+  "same (1).png": "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+  "same.flac": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+  "same.png": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+ }
+}

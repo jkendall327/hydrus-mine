@@ -526,17 +526,24 @@ deletes its files from the client, migrated from the reference's database.
 
 ## Simple downloaders (`hydrus-download::queue`)
 
-- **A simple downloader page's formulae can't be edited yet**: its cog
-  button's "edit formulae" waits on the formula editor (which the parser
-  editors need too); hydrus-rs has the reference's two defaults, or those
-  carried over from hydrus. Its download controls sit under its boxes, not
-  inside them.
+- **A simple downloader page** uses an "edit formulae" button beside its
+  chooser rather than a cog menu. The saved list supports editing, removal
+  and adding defaults; PNG/clipboard formula import/export is not yet
+  exposed. Download controls sit under its boxes, not inside them.
+- **Formula editors** support HTML and JSON. Existing nested, zipper,
+  context-variable and static formulae are preserved and can be tested;
+  their editing controls are not yet available. The test panel accepts
+  directly editable document text and key=value context lines; it has no
+  URL/file fetch controls or multiple-example chooser. Rule attributes use
+  named fields and a list (activate a row to remove), rather than the
+  reference's dictionary dialog.
 
 Checked by `crates/hydrus-download/tests/simple_downloader.rs`,
 `crates/hydrus-legacy/tests/simple_formulae.rs` (against
 `oracle/fixtures/simple_downloader_formulae.json`),
 `crates/hydrus-legacy/tests/gui_sessions.rs` (its pages in sessions) and
-`crates/hydrus-gui/tests/gui/simple_downloader.rs`.
+`crates/hydrus-gui/tests/gui/simple_downloader.rs`, and the formula editor
+model/GUI tests against `oracle/fixtures/formula_editors.json`.
 
 ## Local imports (`hydrus-download::queue`)
 
@@ -658,8 +665,8 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **The sidecar editors** edit a router's destination in a window of its
   own (the reference embeds it in the router editor), list "Which
   type?"'s descriptions in its message, and take JSON object names a
-  line each. A JSON sidecar's parsing formula is shown but not edited
-  yet; the router editor has no testing panel; the routers list has no
+  line each. JSON sidecar formulae use the reusable HTML/JSON editor;
+  the router editor has no testing panel; the routers list has no
   import and export buttons.
 - **The string processor editor** has no starting strings to test with
   from the sidecar editors (the reference takes them from its example
@@ -741,6 +748,23 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   subscriptions, import folders or downloader pages).
 - **There is no browser impersonation** (the reference's optional
   `curl_cffi` connections); requests are always plain ones.
+
+## Downloader definition editors
+
+- URL classes and single/nested gallery URL generators have native lists and
+  rule editors. Their duplicate button creates new keys and unique names.
+  Domain lists and regex lists use one rule per line, and nested generators
+  select members with checkboxes. Definition import/export, page/content parser
+  editors, URL class links and login editors remain follow-up work.
+- Invalid example details use the native URL rules' error wording. The
+  reference retains stale referral/next-page examples after a match failure;
+  the native editor clears all derived output. A changed list asks before
+  cancelling; cancelling an individual child editor discards its draft.
+  Association notices appear inline, and dependent-generator deletion
+  confirmations are combined into one question before deleting the selection.
+- Gallery paging rejects invalid index/delta input on Apply. Delta is 1 to
+  65536, as the reference's spin box allows. The native editor exposes zero
+  based path indices or a query parameter name directly.
 
 ## URL classes
 
@@ -841,3 +865,73 @@ Checked by the `popups` conformance scenario.
 - **Booleans are not numbers.** `/edit_ratings/set_rating` rejects `true` or
   `false` for a numerical or inc/dec rating service (Python counts a bool as
   an int, so the reference stores `true` as one star).
+
+- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, Client API account controls, repository/IPFS administration, tag migration and bulk clear/undelete maintenance actions remain unavailable and are described in the window.
+
+- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields and there is no live rating preview; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account and Client API configuration edits remain unavailable here. A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
+
+## Manual file exports
+
+Manual export uses the scheduled export folders' filename and sidecar code.
+The preview paths, selected-name collision suffixes, removal question and
+trash/export-and-close confirmations match `oracle/fixtures/export_files.json`,
+as do filenames and copied bytes from the real reference export worker.
+For data safety, a failed or cancelled run never trashes any source files;
+the reference can trash the successfully copied prefix after an error. Paths
+are checked by components and canonical subfolders, and existing symlinks,
+exports into managed file storage and overwriting a source pathname are
+rejected. Copies replace destinations atomically through a sibling temporary file;
+existing hardlinks are detached so other directory entries retain their bytes.
+Existing sidecars are detached before routing for the same reason.
+
+The window displays filename examples as text; it does not yet offer the
+reference's interactive pattern-example menu or selected-files tags sidebar.
+"Export and close" closes the review window (the reference's quit-afterwards
+flag also closes its review frame, not the whole client). Cancellation completes
+an in-flight copy before stopping between files. Progress is in the review
+window rather than a separate popup job. Removing rows refreshes filenames
+immediately; the reference retains cached paths until the phrase or directory
+changes.
+
+The imported export phrase and filename limits are reused. Legacy manual export
+destination, trash preference and default sidecar routes are not yet mapped
+into the new manual settings; choices made in this window are persisted.
+
+## Tag relationship editors
+
+The first siblings/parents editors use clean-tag text inputs and preview
+lists; the reference's full write autocomplete, paste buttons, tag context
+menus, and default service-tab preference are not connected yet. Import/export
+are direct clipboard and .txt buttons rather than two popup menus. Relationship
+rows are loaded synchronously when the dialog opens, so opening a service with
+very many pairs can pause the UI; reference background fetch/progress states
+remain to be ported. The port commits and recalculates display immediately,
+so it shows that behavior instead of the reference's background-sync status.
+Repository reasons and rescinds are supported, but account/moderator permission
+warnings, moderator reason bypass and recent/fixed reason suggestions are not
+implemented. Pending changes are persisted; uploading still depends on the
+repository uploader's existing capabilities. Self-pairs imported from text are
+reported and rejected rather than stored after the reference's critical loop
+warning (the display graph ignores such pairs anyway). Batches creating loops
+or conflicting sibling ideals are rejected with an explicit message; enter
+the pairs separately to perform the ordinary automatic repairs. Already corrupt
+reference graph cycles are traversed safely, but do not raise its detailed
+pre-existing-loop warning. Tag display application editing, tag migration and
+manual background sibling/parent synchronization remain separate future work.
+
+## Detailed embedded file metadata (`hydrus-gui`, `hydrus-media`)
+
+The sections and raw EXIF clipboard values are checked against
+`oracle/dump_embedded_metadata.py`; the real panel's PNG note, visibility,
+read-only text, sorting and basics tree are recorded by
+`oracle/record_embedded_metadata_window.py`, including PDF document fields and
+non-local behavior.
+
+- HEIF, AVIF and JPEG XL embedded metadata is currently empty because the
+  existing image decoder does not open those formats as Pillow's plugins do.
+- Non-UTF-8 IPTC bytes are decoded lossily, rather than by the reference's
+  `NonFailingUnicodeDecode` charset guesses.
+- Malformed XMP that the XML parser rejects is empty where BeautifulSoup may
+  recover a partial tree.
+- A missing or unreadable local file shows its read error within the window;
+  the reference logs an exception while opening the window with basics alone.

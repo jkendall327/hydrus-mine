@@ -20,6 +20,8 @@ type ShownLines = Rc<RefCell<Vec<(Vec<MenuLine>, ModelRc<MenuLine>)>>>;
 
 /// What the menu bar works with.
 pub(crate) struct Hooks {
+    /// Open the siblings or parents editor.
+    pub tag_relationships: Rc<dyn Fn(hydrus_store::display::RelationKind)>,
     pub pages: Rc<RefCell<Pages>>,
     pub change_pages: ChangePages,
     pub ask: Ask,
@@ -29,6 +31,8 @@ pub(crate) struct Hooks {
     pub options: Rc<dyn Fn()>,
     /// Open the manage subscriptions dialog.
     pub manage_subscriptions: Rc<dyn Fn()>,
+    /// Open URL class or gallery URL generator definition editors.
+    pub manage_downloader_definitions: Rc<dyn Fn(bool)>,
     /// Open the manage import folders (`true`) or export folders dialog.
     pub manage_folders: Rc<dyn Fn(bool)>,
     /// Open the "review files to import" window.
@@ -51,6 +55,10 @@ pub(crate) struct Hooks {
     pub importer_menu: Rc<dyn Fn(i32) -> Vec<main_menu::Entry>>,
     /// Open the about window.
     pub about: Rc<dyn Fn()>,
+    /// Open service review.
+    pub review_services: Rc<dyn Fn()>,
+    /// Open staged service management.
+    pub manage_services: Rc<dyn Fn()>,
 }
 
 /// What the menus show now: the store's facts and the pages'.
@@ -554,6 +562,10 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
                 eprintln!("could not nudge the subscriptions: {e}");
             }
         }
+        Command::TagRelationships(kind) => (hooks.tag_relationships)(kind),
+        Command::ManageDownloaderDefinitions(classes) => {
+            (hooks.manage_downloader_definitions)(classes);
+        }
         Command::ManageSubscriptions => (hooks.manage_subscriptions)(),
         Command::ManageImportFolders => (hooks.manage_folders)(true),
         Command::ManageExportFolders => (hooks.manage_folders)(false),
@@ -561,5 +573,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::SearchDomain(choice) => (hooks.search_domain)(choice),
         Command::Favourite(action) => (hooks.favourite)(action),
         Command::About => (hooks.about)(),
+        Command::ReviewServices => (hooks.review_services)(),
+        Command::ManageServices => (hooks.manage_services)(),
     }
 }

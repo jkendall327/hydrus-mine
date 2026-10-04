@@ -118,6 +118,8 @@ impl Pause {
 /// What an entry does.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Command {
+    /// Open tags > siblings or parents.
+    TagRelationships(hydrus_store::display::RelationKind),
     /// Copy a label's text (the reference's `AppendMenuLabel`).
     Copy(String),
     /// An entry of a window's own popup menu: its index among that menu's
@@ -133,6 +135,10 @@ pub enum Command {
     CheckImportFolder(Option<String>),
     /// Run an export folder now (none: all of them).
     RunExportFolder(Option<String>),
+    /// Review the local service registry and statistics.
+    ReviewServices,
+    /// Manage staged local service lifecycle and rating settings.
+    ManageServices,
     OpenInstallDirectory,
     OpenDatabaseDirectory,
     Exit,
@@ -165,6 +171,8 @@ pub enum Command {
     Options,
     /// Open the manage subscriptions dialog.
     ManageSubscriptions,
+    /// Manage URL classes (true) or gallery URL generators (false).
+    ManageDownloaderDefinitions(bool),
     /// Open the manage import folders dialog.
     ManageImportFolders,
     /// Open the manage export folders dialog.
@@ -835,8 +843,14 @@ fn network_menu(facts: &Facts) -> Entry {
                         ],
                     ),
                     SEP,
-                    todo(dots("gallery url generators")),
-                    todo(dots("url classes")),
+                    item(
+                        dots("gallery url generators"),
+                        Command::ManageDownloaderDefinitions(false),
+                    ),
+                    item(
+                        dots("url classes"),
+                        Command::ManageDownloaderDefinitions(true),
+                    ),
                     todo(dots("parsers")),
                     SEP,
                     todo(dots("url class links")),
@@ -869,8 +883,8 @@ fn services_menu() -> Entry {
                 vec![check("all repository synchronisation", None, false)],
             ),
             SEP,
-            todo("review"),
-            todo(dots("edit")),
+            item("review", Command::ReviewServices),
+            item(dots("edit"), Command::ManageServices),
             SEP,
             menu(
                 "advanced",
@@ -889,8 +903,14 @@ fn tags_menu() -> Entry {
             SEP,
             todo(dots("display/search")),
             SEP,
-            todo(dots("siblings")),
-            todo(dots("parents")),
+            item(
+                dots("siblings"),
+                Command::TagRelationships(hydrus_store::display::RelationKind::Siblings),
+            ),
+            item(
+                dots("parents"),
+                Command::TagRelationships(hydrus_store::display::RelationKind::Parents),
+            ),
             menu(
                 "advanced",
                 vec![todo(dots("manage where tag siblings and parents apply"))],

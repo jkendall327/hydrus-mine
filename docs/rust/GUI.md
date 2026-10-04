@@ -136,6 +136,7 @@ as Qt's do; a press anywhere else closes them. What works so far:
   mode "nudge subscriptions awake", which wakes `hydrus serve`'s
   subscriptions daemon to look for subscriptions due; and
   "subscriptions…", the manage subscriptions dialog (below);
+- tags: the siblings and parents editors (below);
 - pending: each repository's content to upload, and forgetting it (asking
   first);
 - help: the help, links and changelog in the browser, and advanced mode
@@ -423,7 +424,28 @@ downloaded, the pages waiting ("all images embedded in page: https://...")
 with up, X and down, the URL box and paste button (full URLs only, each
 once), and the formula chooser. Each page waiting is parsed by `hydrus
 serve` with its formula, the files found downloaded as a URL page's are.
-A new page starts on the formula last chosen.
+A new page starts on the formula last chosen. Its "edit formulae" button
+opens the saved formula list: add, edit, remove (with confirmation), and add
+defaults. Selected formulae edit in sequence; cancelling a child stops the
+remaining edits. Each formula's name is entered before its reusable editor;
+Apply saves the list and refreshes the chooser, while Cancel discards it.
+
+The reusable HTML/JSON formula editor (`formula_window.rs`,
+`ui/formula_editors.slint`) edits ordered rules with add/edit/remove/up/down,
+name, extraction mode and string processor. HTML rules search descendants or
+previous/next siblings, or climb ancestors, with tag names, attributes,
+optional indices and optional string matches. JSON rules select dictionary
+keys, all items, an index, matching scalar values, ancestors or deminified
+JSON. The test panel accepts a document and context variables, runs the real
+parser with its caller's newline policy and shows results or the parse error.
+The processor receives the parsed strings before processing. Formula controls
+stay locked until an open rule or string editor closes. Processors and
+converters require their child draft to finish before Apply; Cancel or
+closing their window discards all unfinished descendants. JSON sidecar
+sources open this same formula editor from "edit parsing formula", restricted
+to JSON and preserving parsed newlines as the sidecar importer does.
+`oracle/record_formula_editors.py` records the real reference controls and
+queue actions, checked by model and headless GUI/store tests.
 
 A URL downloader page shows its queue as the daemon works on it, as the
 reference's does: its sidebar's "imports" box has the file log's status as
@@ -809,12 +831,35 @@ aren't carried over yet) or in a web browser; and share → copying the
 files themselves (as a file manager pastes them, as hydrus copies them),
 the files' paths, hashes
 (sha256, md5, sha1, sha512, blurhash, pixel hash; the focused file's shown
-in the menu) and file ids. Not yet: the embedded metadata window,
-clearing deletion records, manage's
+in the menu) and file ids. The single-file info menu's "show detailed
+embedded file metadata" opens Detailed File Metadata from the thumbnails or
+viewer. Its basics include every info line, with nested modified times indented;
+local file decoding runs in a worker while the window shows loading. The EXIF
+list selects and sorts normally, and double-click copies its raw value (plain
+hex for bytes, including original NULs in text). XMP, IPTC, human-readable text
+and extra info appear only when present; PNG EXIF includes the reference's
+orientation note. PDFs show Author, Title, Subject and Keywords. Non-local files
+show "This file is not local to this computer!" in human-readable text. Missing
+local files leave basics visible and show a read error.
+Not yet: clearing deletion records, manage's
 duplicates, maintenance and viewing stats,
 locations, urls → force metadata refetch, open's custom
 similarity distance, and
-share's exporting and copying of bitmaps.
+share's copying of bitmaps.
+
+Share → "export files" opens a manual export window for the selected local
+thumbnails or the viewer's file (`ui/export_files.slint`,
+`src/export_files_window.rs`, `hydrus-gui-model::export_files`). It previews
+number, filetype and destination using the export folders' filename machinery,
+adds ` (1)` suffixes for selected files whose names collide, remembers the
+export phrase and destination, and removes selected rows after asking. The
+existing sidecar routers editor supplies tags, notes, URLs and timestamps.
+Copies overwrite existing destinations; links are optional. Export runs on a
+worker with progress and cancellation between files. Trashing asks the
+reference's confirmation and disables links; "export and close" asks "Export
+as shown?" and closes after success. `oracle/record_export_files.py` records
+the reference panel's previews, removal and confirmations, and its export
+worker's collision filenames and overwritten file contents.
 
 Manage → "notes" (or "notes (2)", counting the focused file's notes; in
 the viewer, the file shown's) opens the reference's "manage notes"
@@ -1183,6 +1228,36 @@ the viewer's other zoom shortcuts (fill, max, the zoom menu), its
 zoom and pan locks, and "open externally" for the file types shown with
 that button (their thumbnail fills the window instead).
 
+### Downloader definitions
+
+Network > downloaders > url classes opens the native class list. Add, edit,
+duplicate and delete are staged until Apply. The list sorts and supports
+Ctrl/Shift selection; its URL test selects the matching class in the current
+draft. Class editors expose domain and regex masks, subdomain handling, ordered
+path component matches/defaults, query parameter matches/defaults/ephemeral
+values and their string processors, single-value matches, header overrides,
+normalization flags, API and referral converters, and gallery page indices.
+The example shows matching, stored/request URLs, API/referral URLs and the next
+page. Invalid examples and defaults keep the editor open. Applying refreshes
+URL matching immediately; cancelling leaves the native settings unchanged.
+Definition drafts stay modal while their rule or string editors are open:
+the parent fields and editing controls are disabled until the child closes.
+Closing a child restores the parent controls and reloads their draft values.
+Cancelling a converter or default processor also closes its nested editors,
+so the definition can be closed or edited again without abandoned windows.
+
+Network > downloaders > gallery url generators has single and nested lists,
+with add/edit/duplicate/delete, template and replacement controls, search term
+separator, initial/example searches, raw/request URL previews and matched
+classes. Nested generators select existing single generators; missing members
+are reported in the list and repaired on Apply, as in the reference. Deleting
+a generator used by a nested one asks before removing it. Parser and URL link
+settings are preserved when saving these lists.
+
+Recorded by `oracle/record_downloader_definitions.py`; replayed by model and
+GUI `downloader_definitions` tests, including real native-store reopen and
+cancel checks.
+
 ## Size
 
 The reference GUI (`hydrus/client/gui`) is 225 files, about 179k lines of
@@ -1315,3 +1390,28 @@ autocomplete options, sessions, shortcut sets, recent tags.
 
 - Slint is to be tried first (DECISIONS.md); the first milestone, a search
   page with a thumbnail grid over a real library, is where that is judged.
+
+Services → review opens the service registry with each local and built-in service's name, type, database id, service key copying and refresh. File-domain sizes and deleted counts, tag mapping/tag/file counts, and rated-file counts come from a consistent native store read and match `oracle/record_services.py`. Refresh retains the selected key. Bulk maintenance and remote administration actions show an explicit unavailable explanation.
+
+Services → edit opens the manage services list (`services_editor`, `services_editor_window`, `services_editor.slint`). Add local file, local tag, like/dislike, numerical and inc/dec rating services; edit their names and rating display colours, shapes/SVG names, thumbnail flags, stars, zero, padding and fraction placement. Names acquire casefolded duplicate suffixes. Child editors and the list hold changes until their apply buttons; either cancel forgets its changes. Deletion asks before staging and again before Apply, rejects nonempty local file domains and the last local file/tag domain, and rechecks inside the atomic write. Apply republishes the registry/graphs, reconciles deleted-domain membership, rebuilds tag counts and invalidates visible thumbnails. It refreshes the current selection's tags even on a locked page and refreshes an open viewer's tags when deletion changes sibling or parent display. Concurrent service changes reject the stale editor without partial writes.
+
+## Tag siblings and parents
+
+Tags > siblings and tags > parents open service editors on local tag services
+and tag repositories. Enter tags on each side, then add (parents can add every
+child/parent combination); double-click a preview tag to remove it. The
+relationship table sorts by its columns and supports Ctrl/Shift selection,
+Delete and double-click removal. Conflicting siblings and links that would
+close cycles are removed automatically, with the reference's replacement
+reasons. Changes stay staged as (+) and (-) rows until Apply; Cancel drops all
+service pages' changes. Removing a pending or petitioned pair asks whether to
+rescind it. Apply asks about a complete uncommitted input pair. Show all pairs,
+show pending and petitioned groups, the parents' show whole chains, and wipe
+workspace filter the remembered groups. Clipboard/.txt import and selected
+pair export use alternating tag lines. Repository changes ask for reasons and
+remain pending/petitioned through the existing store content status machinery.
+Applying updates the display graph and autocomplete counts atomically before
+the main page refreshes its tags. `oracle/record_tag_relationships.py` records
+the reference panels' labels and local/remote action-context transitions;
+model replay, snapshot/count rollback checks, and real-store menu/window tests
+cover the implementation.

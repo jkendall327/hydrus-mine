@@ -13,6 +13,7 @@
 mod files;
 mod mappings;
 mod metadata;
+pub mod tag_relations;
 mod tally;
 
 use std::collections::HashSet;

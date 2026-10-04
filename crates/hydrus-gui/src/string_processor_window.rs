@@ -6,7 +6,7 @@
 //! converter in the converter editor ([`open_converter`]), whose
 //! conversions each open in a conversion window.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -49,6 +49,59 @@ impl std::fmt::Debug for Slots {
             .field("converter", &self.converter.borrow().is_some())
             .field("conversion", &self.conversion.borrow().is_some())
             .finish_non_exhaustive()
+    }
+}
+
+impl Slots {
+    /// Whether any editor in this family is still open.
+    pub fn has_open(&self) -> bool {
+        self.processor.borrow().is_some() || self.has_processor_children()
+    }
+    /// Unfinished step, converter, conversion or tag-filter drafts.
+    pub fn has_processor_children(&self) -> bool {
+        self.step.borrow().is_some()
+            || self.converter.borrow().is_some()
+            || self.has_converter_children()
+            || self.has_step_children()
+    }
+    /// Whether a converter has an unfinished conversion.
+    pub fn has_converter_children(&self) -> bool {
+        self.conversion.borrow().is_some()
+    }
+    /// Whether a step has an unfinished tag filter.
+    pub fn has_step_children(&self) -> bool {
+        self.tag_filter.borrow().is_some()
+    }
+    /// Cancel the whole family when its owning dialog is discarded.
+    pub fn cancel_all(&self) {
+        self.cancel_processor_children();
+        cancel_slot(&self.processor, StringProcessorWindow::invoke_cancel);
+    }
+    /// Discard all processor descendants before disposing of the processor.
+    pub fn cancel_processor_children(&self) {
+        self.cancel_step_children();
+        self.cancel_converter_children();
+        cancel_slot(&self.step, StringStepWindow::invoke_cancel);
+        cancel_slot(&self.converter, StringConverterWindow::invoke_cancel);
+    }
+    /// Discard a converter's unfinished conversion.
+    pub fn cancel_converter_children(&self) {
+        cancel_slot(&self.conversion, ConversionWindow::invoke_cancel);
+    }
+    /// Discard a step's unfinished tag filter.
+    pub fn cancel_step_children(&self) {
+        cancel_slot(&self.tag_filter, crate::TagFilterWindow::invoke_cancel);
+    }
+}
+
+// The Cancel callback takes its own slot. Release our borrow first.
+fn cancel_slot<T: slint::ComponentHandle>(slot: &Rc<RefCell<Option<T>>>, cancel: impl FnOnce(&T)) {
+    let window = slot
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong);
+    if let Some(window) = window {
+        cancel(&window);
     }
 }
 
@@ -133,6 +186,12 @@ pub fn open(
     applied: Rc<dyn Fn(StringProcessor)>,
 ) -> Result<StringProcessorWindow, slint::PlatformError> {
     let window = StringProcessorWindow::new()?;
+    let active = Rc::new(Cell::new(true));
+    let blocked: Rc<dyn Fn() -> bool> = Rc::new({
+        let active = active.clone();
+        let slots = slots.clone();
+        move || !active.get() || slots.has_processor_children()
+    });
     let state = Rc::new(RefCell::new(State {
         editor: ProcessorEditor::new(processor, texts),
         tab: 0,
@@ -141,27 +200,43 @@ pub fn open(
     let refresh: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let state = state.clone();
+        let slots = slots.clone();
         move || {
             if let Some(window) = weak.upgrade() {
                 show(&window, &state.borrow());
+                window.set_child_open(slots.has_processor_children());
             }
         }
     });
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slot = slots.processor.clone();
+        let slots = slots.clone();
+        let active = active.clone();
         move || {
-            if let Some(window) = weak.upgrade() {
+            if !active.replace(false) {
+                return;
+            }
+            slots.cancel_processor_children();
+            let window = weak.upgrade();
+            if let Some(window) = &window {
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
+            if let Some(window) = window {
+                window.invoke_closed();
+            }
         }
     });
     // a step made or edited: in the list (at its place, or the end)
     let put: Rc<dyn Fn(Option<usize>, ProcessingStep)> = Rc::new({
         let state = state.clone();
         let refresh = refresh.clone();
+        let active = active.clone();
         move |index, step| {
+            if !active.get() {
+                return;
+            }
             {
                 let mut state = state.borrow_mut();
                 match index {
@@ -177,15 +252,43 @@ pub fn open(
         let slots = slots.clone();
         let state = state.clone();
         let put = put.clone();
+        let blocked = blocked.clone();
+        let refresh = refresh.clone();
         move |index, step| {
+            if blocked() {
+                return;
+            }
             let editor = state.borrow().editor.clone();
             open_step(&store, &editor, index, &step, &slots, put.clone());
+            let step = slots
+                .step
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(window) = step {
+                let refresh = refresh.clone();
+                window.on_closed(move || refresh());
+            }
+            let converter = slots
+                .converter
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(window) = converter {
+                let refresh = refresh.clone();
+                window.on_closed(move || refresh());
+            }
+            refresh();
         }
     });
     window.on_row_clicked({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |r, ctrl, _| {
+            if blocked() {
+                return;
+            }
             if let Ok(r) = usize::try_from(r) {
                 state.borrow_mut().editor.click(r, ctrl);
             }
@@ -205,7 +308,11 @@ pub fn open(
     window.on_row_activated({
         let state = state.clone();
         let edit = edit.clone();
+        let blocked = blocked.clone();
         move |r| {
+            if blocked() {
+                return;
+            }
             if let Ok(r) = usize::try_from(r) {
                 state.borrow_mut().editor.click(r, false);
             }
@@ -214,12 +321,22 @@ pub fn open(
     });
     window.on_edit({
         let edit = edit.clone();
-        move || edit()
+        let blocked = blocked.clone();
+        move || {
+            if blocked() {
+                return;
+            }
+            edit();
+        }
     });
     for (distance, up) in [(-1, true), (1, false)] {
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         let moved = move || {
+            if blocked() {
+                return;
+            }
             state.borrow_mut().editor.move_selected(distance);
             refresh();
         };
@@ -232,7 +349,11 @@ pub fn open(
     window.on_delete({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             let mut s = state.borrow_mut();
             if s.editor.delete_question().is_some() {
                 s.asking = Some(Asking::Delete);
@@ -244,7 +365,11 @@ pub fn open(
     window.on_add({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             state.borrow_mut().asking = Some(Asking::Add);
             refresh();
         }
@@ -253,7 +378,11 @@ pub fn open(
         let state = state.clone();
         let refresh = refresh.clone();
         let open_step = open_step.clone();
+        let blocked = blocked.clone();
         move |i| {
+            if blocked() {
+                return;
+            }
             let asking = state.borrow_mut().asking.take();
             match asking {
                 Some(Asking::Add) => {
@@ -286,7 +415,11 @@ pub fn open(
     window.on_text_clicked({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |r| {
+            if blocked() {
+                return;
+            }
             if let Ok(r) = usize::try_from(r) {
                 state.borrow_mut().editor.select_text(r);
             }
@@ -296,7 +429,11 @@ pub fn open(
     window.on_example_edited({
         let state = state.clone();
         let weak = window.as_weak();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             let Some(window) = weak.upgrade() else {
                 return;
             };
@@ -308,7 +445,11 @@ pub fn open(
     window.on_tab_chosen({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |i| {
+            if blocked() {
+                return;
+            }
             state.borrow_mut().tab = usize::try_from(i).unwrap_or(0);
             refresh();
         }
@@ -316,7 +457,11 @@ pub fn open(
     window.on_apply({
         let state = state.clone();
         let close = close.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             let value = state.borrow().editor.value();
             close();
             applied(value);
@@ -566,23 +711,43 @@ fn open_step(
     let Ok(window) = StringStepWindow::new() else {
         return;
     };
+    let active = Rc::new(Cell::new(true));
+    let blocked: Rc<dyn Fn() -> bool> = Rc::new({
+        let active = active.clone();
+        let slots = slots.clone();
+        move || !active.get() || slots.has_step_children()
+    });
     window.set_window_title(STEP_TITLE.into());
     let state = Rc::new(RefCell::new(step_editor));
     show_step(&window, &state.borrow());
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slot = slots.step.clone();
+        let slots = slots.clone();
+        let active = active.clone();
         move || {
-            if let Some(window) = weak.upgrade() {
+            if !active.replace(false) {
+                return;
+            }
+            slots.cancel_step_children();
+            let window = weak.upgrade();
+            if let Some(window) = &window {
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
+            if let Some(window) = window {
+                window.invoke_closed();
+            }
         }
     });
     window.on_changed({
         let weak = window.as_weak();
         let state = state.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             let Some(window) = weak.upgrade() else {
                 return;
             };
@@ -598,7 +763,11 @@ fn open_step(
         let state = state.clone();
         let store = store.clone();
         let slot = slots.tag_filter.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             let StepEditor::TagFilter(e) = &*state.borrow() else {
                 return;
             };
@@ -608,7 +777,11 @@ fn open_step(
             let applied: Rc<dyn Fn(hydrus_core::tag_filter::TagFilter)> = Rc::new({
                 let weak = weak.clone();
                 let state = state.clone();
+                let active = active.clone();
                 move |filter| {
+                    if !active.get() {
+                        return;
+                    }
                     if let StepEditor::TagFilter(e) = &mut *state.borrow_mut() {
                         e.filter = filter;
                     }
@@ -626,7 +799,18 @@ fn open_step(
                 &slot,
                 applied,
             ) {
-                Ok(w) => *slot.borrow_mut() = Some(w),
+                Ok(w) => {
+                    let parent = weak.clone();
+                    w.on_closed(move || {
+                        if let Some(window) = parent.upgrade() {
+                            window.set_child_open(false);
+                        }
+                    });
+                    *slot.borrow_mut() = Some(w);
+                    if let Some(window) = weak.upgrade() {
+                        window.set_child_open(true);
+                    }
+                }
                 Err(e) => eprintln!("could not open the tag filter: {e}"),
             }
         }
@@ -635,7 +819,11 @@ fn open_step(
         let weak = window.as_weak();
         let state = state.clone();
         let close = close.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             let value = state.borrow().value();
             match value {
                 Ok(step) => {
@@ -663,6 +851,34 @@ fn open_step(
     });
     if window.show().is_ok() {
         *slots.step.borrow_mut() = Some(window);
+    }
+}
+
+/// Edit a reusable string match using the processor's existing match window.
+pub fn open_match(
+    store: &Arc<Store>,
+    string_match: &hydrus_core::url::strings::StringMatch,
+    slots: &Slots,
+    applied: Rc<dyn Fn(hydrus_core::url::strings::StringMatch)>,
+) {
+    if slots.step.borrow().is_some() {
+        return;
+    }
+    let editor = ProcessorEditor::new(&StringProcessor::default(), Vec::new());
+    open_step(
+        store,
+        &editor,
+        None,
+        &ProcessingStep::Filter(string_match.clone()),
+        slots,
+        Rc::new(move |_, step| {
+            if let ProcessingStep::Filter(m) = step {
+                applied(m);
+            }
+        }),
+    );
+    if let Some(window) = slots.step.borrow().as_ref() {
+        window.set_window_title("edit string match".into());
     }
 }
 
@@ -705,6 +921,12 @@ pub fn open_converter(
     applied: Rc<dyn Fn(StringConverter)>,
 ) -> Result<StringConverterWindow, slint::PlatformError> {
     let window = StringConverterWindow::new()?;
+    let active = Rc::new(Cell::new(true));
+    let blocked: Rc<dyn Fn() -> bool> = Rc::new({
+        let active = active.clone();
+        let slots = slots.clone();
+        move || !active.get() || slots.has_converter_children()
+    });
     let state = Rc::new(RefCell::new((
         ConverterEditor::new(converter, example),
         false,
@@ -712,21 +934,33 @@ pub fn open_converter(
     let refresh: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let state = state.clone();
+        let slots = slots.clone();
         move || {
             if let Some(window) = weak.upgrade() {
                 let state = state.borrow();
                 show_converter(&window, &state.0, state.1);
+                window.set_child_open(slots.has_converter_children());
             }
         }
     });
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slot = slots.converter.clone();
+        let slots = slots.clone();
+        let active = active.clone();
         move || {
-            if let Some(window) = weak.upgrade() {
+            if !active.replace(false) {
+                return;
+            }
+            slots.cancel_converter_children();
+            let window = weak.upgrade();
+            if let Some(window) = &window {
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
+            if let Some(window) = window {
+                window.invoke_closed();
+            }
         }
     });
     // a conversion window for "add" (`index` none) or "edit"
@@ -734,14 +968,22 @@ pub fn open_converter(
         let state = state.clone();
         let refresh = refresh.clone();
         let slot = slots.conversion.clone();
+        let active = active.clone();
         move |index, editor| {
+            if !active.get() {
+                return;
+            }
             if slot.borrow().is_some() {
                 return;
             }
             let done: Rc<dyn Fn(Conversion)> = Rc::new({
                 let state = state.clone();
                 let refresh = refresh.clone();
+                let active = active.clone();
                 move |conversion| {
+                    if !active.get() {
+                        return;
+                    }
                     LAST_CONVERSION.with(|last| *last.borrow_mut() = Some(conversion.clone()));
                     {
                         let editor = &mut state.borrow_mut().0;
@@ -754,15 +996,24 @@ pub fn open_converter(
                 }
             });
             match open_conversion(editor, &slot, done) {
-                Ok(w) => *slot.borrow_mut() = Some(w),
+                Ok(w) => {
+                    let refresh = refresh.clone();
+                    w.on_closed(move || refresh());
+                    *slot.borrow_mut() = Some(w);
+                }
                 Err(e) => eprintln!("could not open the conversion: {e}"),
             }
+            refresh();
         }
     });
     window.on_row_clicked({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |r, ctrl, _| {
+            if blocked() {
+                return;
+            }
             if let Ok(r) = usize::try_from(r) {
                 state.borrow_mut().0.click(r, ctrl);
             }
@@ -782,7 +1033,11 @@ pub fn open_converter(
     window.on_row_activated({
         let state = state.clone();
         let edit = edit.clone();
+        let blocked = blocked.clone();
         move |r| {
+            if blocked() {
+                return;
+            }
             if let Ok(r) = usize::try_from(r) {
                 state.borrow_mut().0.click(r, false);
             }
@@ -791,12 +1046,22 @@ pub fn open_converter(
     });
     window.on_edit({
         let edit = edit.clone();
-        move || edit()
+        let blocked = blocked.clone();
+        move || {
+            if blocked() {
+                return;
+            }
+            edit();
+        }
     });
     window.on_add({
         let state = state.clone();
         let open = open.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             let editor =
                 LAST_CONVERSION.with(|last| state.borrow().0.adding(last.borrow().as_ref()));
             open(None, editor);
@@ -805,7 +1070,11 @@ pub fn open_converter(
     window.on_delete({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             {
                 let mut state = state.borrow_mut();
                 state.1 = state.0.delete_question().is_some();
@@ -816,7 +1085,11 @@ pub fn open_converter(
     window.on_chosen({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |_| {
+            if blocked() {
+                return;
+            }
             {
                 let mut state = state.borrow_mut();
                 state.1 = false;
@@ -836,7 +1109,11 @@ pub fn open_converter(
     for (distance, up) in [(-1, true), (1, false)] {
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         let moved = move || {
+            if blocked() {
+                return;
+            }
             state.borrow_mut().0.move_selected(distance);
             refresh();
         };
@@ -849,7 +1126,11 @@ pub fn open_converter(
     window.on_example_edited({
         let state = state.clone();
         let weak = window.as_weak();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             let Some(window) = weak.upgrade() else {
                 return;
             };
@@ -861,7 +1142,11 @@ pub fn open_converter(
     window.on_apply({
         let state = state.clone();
         let close = close.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             let value = state.borrow().0.value();
             close();
             applied(value);
@@ -963,23 +1248,36 @@ fn open_conversion(
     done: Rc<dyn Fn(Conversion)>,
 ) -> Result<ConversionWindow, slint::PlatformError> {
     let window = ConversionWindow::new()?;
+    let active = Rc::new(Cell::new(true));
     window.set_window_title(CONVERSION_TITLE.into());
     let state = Rc::new(RefCell::new((editor, None::<&'static str>)));
     show_conversion(&window, &state.borrow().0, None);
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slot = slot.clone();
+        let active = active.clone();
         move || {
-            if let Some(window) = weak.upgrade() {
+            if !active.replace(false) {
+                return;
+            }
+            let window = weak.upgrade();
+            if let Some(window) = &window {
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
+            if let Some(window) = window {
+                window.invoke_closed();
+            }
         }
     });
     let finish: Rc<dyn Fn()> = Rc::new({
         let state = state.clone();
         let close = close.clone();
+        let active = active.clone();
         move || {
+            if !active.get() {
+                return;
+            }
             let value = state.borrow().0.value();
             close();
             done(value);
@@ -1001,7 +1299,11 @@ fn open_conversion(
         let weak = window.as_weak();
         let state = state.clone();
         let finish = finish.clone();
+        let active = active.clone();
         move || {
+            if !active.get() {
+                return;
+            }
             let question = state.borrow().0.ok_question();
             match question {
                 Some(question) => {

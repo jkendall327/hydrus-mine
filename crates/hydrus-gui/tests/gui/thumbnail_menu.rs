@@ -95,13 +95,7 @@ fn the_menu_is_the_reference_s() {
             let mut theirs = pruned(&theirs);
             if let Some(mut info) = info {
                 if let Some(entries) = info.get_mut("entries") {
-                    let kept: Vec<Value> = entries
-                        .as_array()
-                        .unwrap()
-                        .iter()
-                        .filter(|e| *e != "show detailed embedded file metadata")
-                        .cloned()
-                        .collect();
+                    let kept: Vec<Value> = entries.as_array().unwrap().clone();
                     *entries = Value::Array(tidy(kept));
                 }
                 theirs.insert(0, info);

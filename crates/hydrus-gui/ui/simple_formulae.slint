@@ -1,0 +1,40 @@
+import { Button, LineEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+import { Asking } from "subscriptions.slint";
+export component SimpleFormulaeWindow inherits Window {
+    title: "edit simple downloader formulae";
+    preferred-width: 680px; preferred-height: 480px; background: Theme.window;
+    in property <[TableRow]> rows;
+    in property <bool> selected;
+    in-out property <string> name;
+    in property <bool> naming;
+    in property <bool> editing-formula;
+    in property <bool> deleting;
+    in property <string> question;
+    in property <string> error;
+    callback row-clicked(int, bool, bool); callback row-activated(int);
+    callback add(); callback edit(); callback delete(); callback defaults();
+    callback named(); callback name-cancelled(); callback chosen(int); callback cancelled();
+    callback apply(); callback cancel();
+    VerticalLayout { padding: 10px; spacing: 6px;
+        ListTable { vertical-stretch: 1; columns: [{title: "formula", width: 600px, stretch: true}]; rows: root.rows; row-clicked(r,c,s) => { if !root.naming && !root.deleting && !root.editing-formula { root.row-clicked(r,c,s); } } row-activated(r) => { if !root.naming && !root.deleting && !root.editing-formula { root.row-activated(r); } } }
+        HorizontalLayout { spacing: 6px;
+            Button { text: "add"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.add(); } }
+            Button { text: "edit"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula; clicked => { root.edit(); } }
+            Button { text: "delete"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula; clicked => { root.delete(); } }
+            Button { text: "add defaults"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.defaults(); } }
+        }
+        if root.naming: VerticalLayout {
+            Text { text: "Edit name."; color: Theme.text; }
+            LineEdit { text <=> root.name; accepted => { root.named(); } }
+            HorizontalLayout { Button { text: "continue"; clicked => { root.named(); } } Button { text: "cancel name"; clicked => { root.name-cancelled(); } } }
+        }
+        if root.deleting: Asking { title: "Are you sure?"; message: root.question; choices: ["yes", "no"]; chosen(i) => { root.chosen(i); } cancelled => { root.cancelled(); } }
+        Text { text: root.error; color: Theme.text; wrap: word-wrap; }
+        HorizontalLayout { alignment: end; spacing: 6px;
+            Button { text: "apply"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.apply(); } }
+            Button { text: "cancel"; clicked => { root.cancel(); } }
+        }
+    }
+}

@@ -11,14 +11,17 @@ mod auto_resolution_preview;
 mod auto_resolution_review;
 mod auto_resolution_rules;
 mod collect;
+mod downloader_definitions;
 mod downloader_lists;
 mod duplicate_filter;
 mod duplicates_page;
 mod edit_subscription;
+mod embedded_metadata;
 mod favourites;
 mod file_log;
 mod folders;
 mod force_filetype;
+mod formula_editors;
 mod import_files;
 mod import_options;
 mod importer_list_menu;
@@ -68,3 +71,9 @@ mod viewer_window;
 mod volume;
 mod watcher_checker;
 mod zoom;
+
+mod export_files;
+mod services_review;
+mod tag_relationships;
+
+mod services_editor;

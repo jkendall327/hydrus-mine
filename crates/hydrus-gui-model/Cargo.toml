@@ -8,6 +8,8 @@ license.workspace = true
 publish = false
 
 [dependencies]
+tempfile.workspace = true
+hydrus-download.workspace = true
 hydrus-core.workspace = true
 hydrus-store.workspace = true
 hydrus-search.workspace = true
@@ -19,12 +21,12 @@ rusqlite.workspace = true
 anyhow.workspace = true
 hex.workspace = true
 serde_json.workspace = true
+serde.workspace = true
 jiff.workspace = true
 
 [dev-dependencies]
 hydrus-legacy.workspace = true
 hydrus-testkit.workspace = true
-tempfile.workspace = true
 sha2.workspace = true
 
 [lints]

@@ -1,0 +1,141 @@
+import { Button, CheckBox, ComboBox, LineEdit, SpinBox, TextEdit } from "std-widgets.slint";
+import { Asking } from "subscriptions.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+
+export component FormulaWindow inherits Window {
+    title: "edit formula";
+    preferred-width: 1040px; preferred-height: 660px;
+    background: Theme.window;
+    in-out property <string> name;
+    in-out property <int> kind;
+    in property <bool> supported;
+    in property <bool> allow-type-change: true;
+    in property <[TableRow]> rules;
+    in property <bool> selected;
+    in property <[string]> contents;
+    in-out property <int> content;
+    in-out property <string> attribute;
+    in-out property <string> document;
+    in-out property <string> context;
+    in property <string> newline-note;
+    in property <string> processing;
+    in property <[TableRow]> results;
+    in property <string> status;
+    in property <string> veto;
+    in property <bool> deleting;
+    in property <bool> child-open;
+    in property <string> question;
+    callback chosen(int); callback cancelled();
+    callback changed(); callback type-chosen(); callback row-clicked(int, bool, bool);
+    callback row-activated(int); callback add(); callback edit(); callback delete(); callback shift(bool);
+    callback edit-processing(); callback test(); callback apply(); callback cancel();
+    callback closed(bool);
+    VerticalLayout {
+        padding: 10px; spacing: 6px;
+        HorizontalLayout {
+            spacing: 10px;
+            VerticalLayout {
+                horizontal-stretch: 1; spacing: 6px;
+                Text { text: "edit"; font-weight: 700; color: Theme.text; }
+                if root.supported: ComboBox { model: ["html", "json"]; current-index <=> root.kind; enabled: root.allow-type-change && !root.deleting && !root.child-open; selected => { root.type-chosen(); } }
+                Text { text: "name/description:"; color: Theme.text; }
+                LineEdit { text <=> root.name; enabled: root.supported && !root.deleting && !root.child-open; edited => { root.changed(); } }
+                ListTable { vertical-stretch: 1; columns: [{title: "parsing rules", width: 430px, stretch: true}]; rows: root.rules; row-clicked(r,c,s) => { if !root.deleting && !root.child-open { root.row-clicked(r,c,s); } } row-activated(r) => { if !root.deleting && !root.child-open { root.row-activated(r); } } }
+                HorizontalLayout {
+                    spacing: 4px;
+                    Button { text: "add"; enabled: root.supported && !root.deleting && !root.child-open; clicked => { root.add(); } }
+                    Button { text: "edit"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.edit(); } }
+                    Button { text: "delete"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.delete(); } }
+                    Button { text: "↑"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.shift(false); } }
+                    Button { text: "↓"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.shift(true); } }
+                }
+                Text { text: "content to fetch:"; color: Theme.text; }
+                ComboBox { model: root.contents; current-index <=> root.content; enabled: root.supported && !root.deleting && !root.child-open; selected => { root.changed(); } }
+                if root.kind == 0: HorizontalLayout {
+                    Text { text: "attribute to fetch:"; color: Theme.text; vertical-alignment: center; }
+                    LineEdit { text <=> root.attribute; enabled: root.content == 0 && !root.deleting && !root.child-open; edited => { root.changed(); } }
+                }
+                Text { text: root.newline-note; wrap: word-wrap; color: Theme.text; }
+                Button { text: root.processing; enabled: root.supported && !root.deleting && !root.child-open; clicked => { root.edit-processing(); } }
+            }
+            VerticalLayout {
+                horizontal-stretch: 1; spacing: 6px;
+                Text { text: "test — example document"; font-weight: 700; color: Theme.text; }
+                TextEdit { vertical-stretch: 1; text <=> root.document; enabled: !root.child-open; }
+                Text { text: "parsing context (one key=value per line)"; color: Theme.text; }
+                TextEdit { height: 65px; text <=> root.context; enabled: !root.child-open; }
+                Button { text: "test parse"; enabled: !root.child-open; clicked => { root.test(); } }
+                Text { text: root.status; wrap: word-wrap; color: Theme.text; }
+                ListTable { vertical-stretch: 1; columns: [{title: "parsed strings", width: 430px, stretch: true}]; rows: root.results; }
+            }
+        }
+        if root.deleting: Asking { title: "Are you sure?"; message: root.question; choices: ["yes", "no"]; chosen(i) => { root.chosen(i); } cancelled => { root.cancelled(); } }
+        Text { text: root.veto; wrap: word-wrap; color: Theme.text; }
+        HorizontalLayout { alignment: end; spacing: 6px;
+            Button { text: "apply"; enabled: !root.deleting && !root.child-open; clicked => { root.apply(); } }
+            Button { text: "cancel"; clicked => { root.cancel(); } }
+        }
+    }
+}
+
+export component FormulaRuleWindow inherits Window {
+    in property <string> window-title;
+    title: root.window-title;
+    preferred-width: 660px; preferred-height: 510px;
+    background: Theme.window;
+    in property <bool> html;
+    in property <[string]> types;
+    in-out property <int> rule-type;
+    in-out property <string> tag;
+    in-out property <bool> index-on;
+    in-out property <int> index;
+    in-out property <int> depth;
+    in-out property <bool> match-on;
+    in property <string> match-label;
+    in property <[TableRow]> attributes;
+    in-out property <string> attr-key;
+    in-out property <string> attr-value;
+    in property <string> description;
+    in property <string> veto;
+    callback changed(); callback edit-match(); callback attribute-put(); callback attribute-remove(int);
+    callback apply(); callback cancel(); callback closed();
+    in property <bool> child-open;
+    VerticalLayout {
+        padding: 10px; spacing: 6px;
+        Text { text: root.description; wrap: word-wrap; color: Theme.text; }
+        ComboBox { enabled: !root.child-open; model: root.types; current-index <=> root.rule-type; selected => { root.changed(); } }
+        if root.html: HorizontalLayout {
+            Text { text: "tag name (blank = any):"; color: Theme.text; vertical-alignment: center; }
+            LineEdit { enabled: !root.child-open; horizontal-stretch: 1; text <=> root.tag; edited => { root.changed(); } }
+        }
+        if root.html && root.rule-type != 1: VerticalLayout {
+            Text { text: "tag attributes (activate a row to remove)"; color: Theme.text; }
+            ListTable { height: 110px; columns: [{title: "name=value", width: 580px, stretch: true}]; rows: root.attributes; row-activated(r) => { if !root.child-open { root.attribute-remove(r); } } }
+            HorizontalLayout {
+                LineEdit { enabled: !root.child-open; placeholder-text: "name"; text <=> root.attr-key; }
+                LineEdit { enabled: !root.child-open; placeholder-text: "value"; text <=> root.attr-value; }
+                Button { enabled: !root.child-open; text: "set attribute"; clicked => { root.attribute-put(); } }
+            }
+        }
+        if (root.html && root.rule-type != 1) || (!root.html && (root.rule-type == 2 || root.rule-type == 5)): HorizontalLayout {
+            if root.html: CheckBox { enabled: !root.child-open; text: "fetch indexed tag (otherwise get all)"; checked <=> root.index-on; toggled => { root.changed(); } }
+            Text { text: "index:"; color: Theme.text; vertical-alignment: center; }
+            SpinBox { value <=> root.index; minimum: -65536; maximum: 65535; enabled: (!root.html || root.index-on) && !root.child-open; edited => { root.changed(); } }
+        }
+        if (root.html && root.rule-type == 1) || (!root.html && root.rule-type == 4): HorizontalLayout {
+            Text { text: "depth/steps to ascend:"; color: Theme.text; vertical-alignment: center; }
+            SpinBox { enabled: !root.child-open; value <=> root.depth; minimum: 1; maximum: root.html ? 255 : 64; edited => { root.changed(); } }
+        }
+        if root.html: CheckBox { enabled: !root.child-open; text: "should test tag string"; checked <=> root.match-on; toggled => { root.changed(); } }
+        if root.html || root.rule-type == 0 || root.rule-type == 3: Button {
+            text: root.match-label; enabled: (!root.html || root.match-on) && !root.child-open; clicked => { root.edit-match(); }
+        }
+        Rectangle { vertical-stretch: 1; }
+        Text { text: root.veto; color: Theme.text; }
+        HorizontalLayout { alignment: end; spacing: 6px;
+            Button { text: "apply"; enabled: !root.child-open; clicked => { root.apply(); } }
+            Button { text: "cancel"; clicked => { root.cancel(); } }
+        }
+    }
+}
