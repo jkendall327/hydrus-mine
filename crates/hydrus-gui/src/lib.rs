@@ -3386,12 +3386,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    let palette_change_pages: ChangePages = Rc::new(change_pages.clone());
     command_palette_window::bind(
         window,
         &command_palette,
         &pages,
         &current,
-        &change_pages,
+        &palette_change_pages,
         &palette_dispatcher,
         &menu_state,
         &palette_media_items,

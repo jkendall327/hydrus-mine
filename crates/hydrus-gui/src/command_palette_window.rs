@@ -84,9 +84,8 @@ fn display(window: &CommandPaletteWindow, owner: &Owner) {
     window
         .window()
         .set_size(slint::LogicalSize::new(800.0, height));
-    if let Some(parent) = owner.parent.upgrade()
-        && let Some(position) = parent.window().position()
-    {
+    if let Some(parent) = owner.parent.upgrade() {
+        let position = parent.window().position();
         let scale = parent.window().scale_factor();
         let size = parent.window().size();
         window.window().set_position(slint::LogicalPosition::new(
