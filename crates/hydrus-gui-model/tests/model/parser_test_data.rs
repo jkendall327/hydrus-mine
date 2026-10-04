@@ -52,3 +52,52 @@ fn fetched_media_detection_tracks_example_selection_and_clears_on_text_changes()
     mimes.remember(1, "new text", None);
     assert!(mimes.get(1, "new text").is_none());
 }
+
+#[test]
+fn typed_png_summary_and_header_keep_the_recorded_object_package() {
+    use hydrus_gui_model::png_export;
+    let reference = hydrus_testkit::fixture_json("parser_png_export.json");
+    for case in reference.as_array().unwrap() {
+        let name = case["case"].as_str().unwrap();
+        let router = name.starts_with("router");
+        let queue = name.ends_with("queue");
+        let payload = hydrus_core::pyjson::PyJson::parse(&case["payload"].to_string())
+            .unwrap()
+            .to_python_string();
+        let summary = png_export::object_payload_description(
+            &payload,
+            if router {
+                "Metadata Single File Router"
+            } else {
+                "Subsidiary Page Parser"
+            },
+            if queue { 2 } else { 1 },
+        );
+        assert_eq!(summary, case["summary"]);
+        let png = png_export::encode_with_summary(
+            &payload,
+            300,
+            "recorded queue 日本",
+            &summary,
+            "synthetic typed export",
+        )
+        .unwrap();
+        let decoded = hydrus_downloader_exchange::text_png::decode(&png).unwrap();
+        assert_eq!(
+            serde_json::from_str::<serde_json::Value>(&decoded).unwrap(),
+            case["loaded"]
+        );
+        let raster = hydrus_media::decode_image(&png).unwrap();
+        assert_eq!(raster.width(), 300);
+        let fixture =
+            std::fs::read(hydrus_testkit::fixtures_dir().join(format!("parser_png_{name}.png")))
+                .unwrap();
+        assert_eq!(
+            serde_json::from_str::<serde_json::Value>(
+                &hydrus_downloader_exchange::text_png::decode(&fixture).unwrap()
+            )
+            .unwrap(),
+            case["loaded"]
+        );
+    }
+}

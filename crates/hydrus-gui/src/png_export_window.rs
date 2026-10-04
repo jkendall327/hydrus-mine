@@ -74,11 +74,22 @@ pub fn open(
     payload: String,
     closed: Rc<dyn Fn()>,
 ) -> Result<PngExportWindow, String> {
+    let summary = model::payload_description(&payload);
+    open_with_summary(slots, store, payload, summary, closed)
+}
+
+/// Export a typed editor's frozen payload with its reference object summary.
+pub fn open_with_summary(
+    slots: &Slots,
+    store: &Arc<Store>,
+    payload: String,
+    summary: String,
+    closed: Rc<dyn Fn()>,
+) -> Result<PngExportWindow, String> {
     if let Some(w) = slots.window() {
         return Ok(w);
     }
     let w = PngExportWindow::new().map_err(|e| e.to_string())?;
-    let summary = model::payload_description(&payload);
     w.set_payload_description(summary.clone().into());
     w.set_png_title(summary.clone().into());
     let directory = store
@@ -178,10 +189,11 @@ pub fn open(
                         let title = w.get_png_title();
                         model::validate(path.as_str(), title.as_str(), w.get_png_width())?;
                         let width = u32::try_from(w.get_png_width()).map_err(|e| e.to_string())?;
-                        let data = model::encode(
+                        let data = model::encode_with_summary(
                             &payload,
                             width,
                             title.as_str(),
+                            w.get_payload_description().as_str(),
                             w.get_description().as_str(),
                         )?;
                         let path = if path.ends_with(".png") {
