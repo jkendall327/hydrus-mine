@@ -106,7 +106,9 @@ box. Each one is a commit that passes CI on its own.
   feature in its own files.
 - Integrate small slices as they become ready and run their relevant
   backend/model tests immediately. Batch GUI compilation and run targeted GUI
-  regressions for the batch; run the full `scripts/check.sh` before pushing
+  regressions for the batch. Start the GUI batch with strict Clippy so warnings
+  and type errors are caught before expensive test code generation. Run the
+  full `scripts/check.sh` before pushing
   the assembled slate. Changes or failures justify additional checks.
 - When worktrees share a Cargo target directory, set `HYDRUS_FIXTURE_DIR`
   to the current worktree's absolute `oracle/fixtures` path. Otherwise a

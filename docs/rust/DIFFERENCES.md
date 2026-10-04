@@ -949,6 +949,8 @@ uses a numeric zero for the reference's nullable "always autocomplete" threshold
 Tag migration and manual/background sibling/parent sync remain unimplemented.
 Autocomplete configuration refresh preserves any open manage-tags draft; its
 location editor always exposes the permitted file domains.
+Display/search edits merge unedited services and setting areas from the current
+database. Concurrent edits to the same area use the last successful Apply.
 
 
 The native parser editor model supports all nine content kinds and typed test
