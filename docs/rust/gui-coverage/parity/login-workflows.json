@@ -2,7 +2,7 @@
   "schema_version": 1,
   "agent": "login-workflows",
   "baseline_git_head": "d50df26b",
-  "implementation_git_head": "b459569c",
+  "implementation_git_head": "45cffe11",
   "implementation_commits": [
     "44840f22",
     "da3c06f2",
@@ -18,13 +18,14 @@
     "1aa947be",
     "b477fe3f",
     "2d14d685",
-    "b459569c"
+    "b459569c",
+    "45cffe11"
   ],
   "validation": {
     "referenceRecording": "oracle/record_login_editors.py executed through shared with-oracle lock using the real Qt client; fixture oracle/fixtures/login_editors.json; oracle/record_login_execution.py executed actual reference HTTP jobs and real Qt result reviews on synthetic loopback, fixture oracle/fixtures/login_execution.json",
     "cargo_fmt": "passed",
     "rust_tests": "Root CI reports all four login HTTP test groups passed. New GUI/queue/type/lint checks remain root asynchronous CI; no local Cargo builds.",
-    "slint_syntax": "Cached source compiler passed after cookie UI and three independent argument lists/scrolling footer; no Cargo builds."
+    "slint_syntax": "Cached source compiler passed after cookies, three independent request lists and staged example-domain editor; no Cargo builds."
   },
   "claims": [
     {
@@ -73,7 +74,7 @@
       "proposedStatus": "partial",
       "exactBehavior": "Real network menu opens sorted list; CRUD/extended selection, unique imported names/new keys, preserved edit keys and staged scripts-only save retaining domain fields.",
       "limits": [
-        "Nested script example-domain editing incomplete; typed steps, cookie rules and HTTP test results are editable/executable."
+        "Typed steps, cookies and example-domain controls are editable; broader script test output still arrives as a completed batch and uses a visible domain field rather than the reference run-time prompt."
       ],
       "source": [
         "crates/hydrus-gui/src/login_credential_window.rs:42",
@@ -94,18 +95,22 @@
       "proposedStatus": "partial",
       "exactBehavior": "Script identity/credential definitions/step queue and response parsers editable, invalid-script advisory; real HTTP test consumer with credential entry, isolated cookie store, domain input, Run/Cancel/live job status, final results and review; staged fields preserved.",
       "limits": [
-        "Example-domain editor remains absent; results table populates on completed run rather than streaming per-step. Native cookie list uses an owned child editor. Broad parent stays partial."
+        "Example domains now support staged domain/access/description controls including final-description Cancel acceptance; results still populate on completed run rather than streaming per-step. Native cookie list uses an owned child editor. Broad parent stays partial."
       ],
       "source": [
         "crates/hydrus-gui/src/login_credential_window.rs:42",
         "crates/hydrus-gui/src/login_workflows_window.rs:182",
         "crates/hydrus-gui-model/src/login_workflows.rs:20",
-        "crates/hydrus-store/src/logins.rs:14"
+        "crates/hydrus-store/src/logins.rs:14",
+        "crates/hydrus-gui/src/login_example_window.rs:25",
+        "crates/hydrus-gui-model/src/login_workflows.rs:531"
       ],
       "testAnchors": [
         "crates/hydrus-gui-model/tests/model/login_workflows.rs:16",
         "crates/hydrus-gui/tests/gui/login_workflows.rs:26",
-        "crates/hydrus-downloader-exchange/tests/logins.rs:1"
+        "crates/hydrus-downloader-exchange/tests/logins.rs:1",
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:433",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1178"
       ],
       "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json"
     },
