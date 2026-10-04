@@ -379,6 +379,7 @@ mod importer_tests {
                         ..Default::default()
                     },
                 }],
+                false,
                 100,
             )
             .unwrap();
@@ -415,10 +416,10 @@ mod importer_tests {
                     kind: DownloaderKind::Urls,
                     queues: vec![old],
                     sort: None,
-                    page: Some(DownloaderPageState {
+                    page: Some(Box::new(DownloaderPageState {
                         highlighted: Some(old),
                         ..Default::default()
-                    }),
+                    })),
                 },
             }],
         };
@@ -442,6 +443,7 @@ mod importer_tests {
                 referral_url: None,
                 meta: Default::default(),
             }],
+            false,
             110,
         )
         .unwrap();
@@ -479,6 +481,7 @@ mod importer_tests {
                 referral_url: None,
                 meta: Default::default(),
             }],
+            false,
             120,
         )
         .unwrap();

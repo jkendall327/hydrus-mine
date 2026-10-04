@@ -2299,6 +2299,7 @@ fn downloader_backup_and_freshest_load_survive_source_queue_deletion() {
                         referral_url: None,
                         meta: Default::default(),
                     }],
+                    false,
                     100,
                 )?;
             }
@@ -2322,6 +2323,7 @@ fn downloader_backup_and_freshest_load_survive_source_queue_deletion() {
                     referral_url: None,
                     meta: Default::default(),
                 }],
+                false,
                 110,
             )?;
             let mut first = queues::file_seeds(ctx.conn(), original)?[0].clone();
