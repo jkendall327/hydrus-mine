@@ -551,11 +551,11 @@
       "reference_id": "audit-options-gui-sessions-sessions-if-last-session-above-only-autosave-during-idle-time",
       "before": "missing",
       "proposedStatus": "partial",
-      "exactBehavior": "Real GUI Sessions checkbox imports/applies and gates historical autosaves with120-second boot guard and imported user/mouse/API idle timeouts; active ticks retry60seconds, eligible ticks save/reschedule. Real main-window key/mouse activity and Client API page commands reach idle state.",
+      "exactBehavior": "Consume the applied idle-only checkbox on the historical autosave timer; active sessions retry after 60 seconds. Reference boot guard and independent user/mouse/API timeouts are driven by input across all native auxiliary/main windows and atomic timestamp-only IPC from every recognized API request before authentication or busy refusal. Rejected and read-only API requests also postpone idle saves.",
       "countAsCompletedLeaf": false,
-      "implementationCommit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+      "implementationCommit": "4bdc7414",
       "limits": [
-        "Auxiliary-window input and non-page-command Client API requests do not yet reset idle timestamps, so application-wide idle parity is incomplete."
+        "The reference polls global OS cursor position; mouse movement outside native application windows does not yet reset native mouse idle. The leaf remains partial and is not counted as completed."
       ],
       "sourceAnchors": [
         {
@@ -575,6 +575,24 @@
           "line": 87,
           "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
           "kind": "snapshot_hash_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 14,
+          "commit": "c8039840",
+          "kind": "native_window_input"
+        },
+        {
+          "path": "crates/hydrus-api/src/server.rs",
+          "line": 85,
+          "commit": "4bdc7414",
+          "kind": "api_request_activity"
+        },
+        {
+          "path": "crates/hydrus-store/src/api_activity.rs",
+          "line": 10,
+          "commit": "4bdc7414",
+          "kind": "atomic_activity_ipc"
         }
       ],
       "testAnchors": [
@@ -595,6 +613,24 @@
           "line": 1,
           "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
           "kind": "reference_model_replay"
+        },
+        {
+          "path": "crates/hydrus-api/tests/activity.rs",
+          "line": 38,
+          "commit": "4bdc7414",
+          "kind": "loopback_socket_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 259,
+          "commit": "4bdc7414",
+          "kind": "idle_consumer_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 96,
+          "commit": "c8039840",
+          "kind": "reference_activity_replay"
         }
       ],
       "referenceRecording": {
@@ -611,7 +647,24 @@
           "kind": "reference_fixture"
         },
         "observed": "Actual AutoSaveLastSession cadence/retry/stopping/serialized-hash suppression and independent backup timestamps; actual CurrentlyIdle boot, user, mouse, API and disabled-mode boundaries."
-      }
+      },
+      "additionalReferenceRecordings": [
+        {
+          "recorder": {
+            "path": "oracle/record_session_activity.py",
+            "line": 1,
+            "commit": "c8039840",
+            "kind": "reference_recorder"
+          },
+          "fixture": {
+            "path": "oracle/fixtures/session_activity.json",
+            "line": 1,
+            "commit": "c8039840",
+            "kind": "reference_fixture"
+          },
+          "observed": "Actual auxiliary Dialog constructor resets only user time; real global Qt cursor movement updates mouse, unchanged cursor does not, and real controller API action updates only API time."
+        }
+      ]
     },
     {
       "reference_id": "audit-options-gui-sessions-sessions-default-session-on-startup",
@@ -691,7 +744,7 @@
     "cargo": "Deferred to root hosted CI; no local builds or mutation tests."
   },
   "remaining": [
-    "Auxiliary-window and all-request API idle activity coverage; current idle-only claim remains partial.",
+    "Outside-application global OS cursor polling; idle-only claim remains partial.",
     "Legacy historical GUI-session snapshot import, bad-shutdown recovery dialog and large-session warnings.",
     "Remaining page selector and drag workflows."
   ]
