@@ -1244,17 +1244,17 @@ fn subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_pr
         .unwrap();
     let before = definitions(&store);
     assert!(
-        before.parsers[0].subsidiary[1]
+        before.parsers[0].subsidiary[0]
             .parser
             .reference_auxiliary
             .is_some()
     );
-    assert_eq!(before.parsers[0].subsidiary[1].parser.subsidiary.len(), 1);
+    assert_eq!(before.parsers[0].subsidiary[0].parser.subsidiary.len(), 1);
     let list = windows::open(&store, &slots, false).unwrap();
     list.invoke_row_clicked(0, false, false);
     list.invoke_action("edit".into());
     let page = child(&slots.page);
-    page.invoke_subsidiary_clicked(1, false, false);
+    page.invoke_subsidiary_clicked(0, false, false);
     page.invoke_action("edit-subsidiary".into());
     let (_, subsidiary) = recursive_child(&slots);
     subsidiary.invoke_own_sort_changed(true);
@@ -1269,8 +1269,8 @@ fn subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_pr
     page.invoke_action("apply".into());
     list.invoke_action("apply".into());
     let saved = definitions(&store);
-    let old = &before.parsers[0].subsidiary[1];
-    let new = &saved.parsers[0].subsidiary[1];
+    let old = &before.parsers[0].subsidiary[0];
+    let new = &saved.parsers[0].subsidiary[0];
     assert_eq!(new.parser.key, old.parser.key);
     assert_eq!(
         new.parser.reference_auxiliary,
