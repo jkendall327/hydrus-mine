@@ -31,6 +31,7 @@ mod client_exit;
 pub mod clipboard_monitor;
 pub mod command_palette_window;
 pub mod daemon;
+pub mod delete_files_window;
 pub mod domain_mask_entry;
 pub mod downloader_definitions_window;
 pub mod downloader_display_window;
@@ -77,6 +78,7 @@ mod menu_bar;
 pub mod merge_options_window;
 pub mod mpv;
 pub mod network_header_approval;
+pub mod options_deletion;
 mod options_palette;
 mod options_window;
 mod page;
@@ -300,6 +302,8 @@ pub struct Bound {
     pub filter: Rc<RefCell<Option<DuplicateFilterWindow>>>,
     /// Open a new page (as the page chooser does), and show it.
     pub open_page: Rc<dyn Fn(&page_chooser::NewPage)>,
+    /// The advanced local deletion draft owned by the thumbnail panel.
+    pub delete_files: delete_files_window::Slot,
     /// The "review files to import" window while it is open, and its list.
     pub review_imports: ReviewSlot,
     /// Its "filename tagging" dialog.
@@ -1381,6 +1385,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let page = page.clone();
         move || page().borrow().selected_files()
     };
+    let delete_files: delete_files_window::Slot = Rc::default();
     let exit_confirmation = Rc::new(slint::Timer::default());
     let pending: Rc<RefCell<Option<Asked>>> = Rc::default();
     let ask = {
@@ -1389,8 +1394,55 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let page = page.clone();
         let removed = removed.clone();
         let shown = shown.clone();
+        let delete_files = delete_files.clone();
         move |asked: Asked| {
             let store = page().borrow().store().clone();
+            if let Asked::Delete(files, deletion, location) = &asked
+                && store
+                    .read(
+                        hydrus_store::settings::get::<hydrus_store::settings::DeletionPreferences>,
+                    )
+                    .unwrap_or_default()
+                    .advanced
+            {
+                let owner = page();
+                let guard: delete_files_window::Guard = Rc::new({
+                    let owner = owner.clone();
+                    let page = page.clone();
+                    let weak = weak.clone();
+                    move || weak.upgrade().is_some() && Rc::ptr_eq(&owner, &page())
+                });
+                let applied = Rc::new({
+                    let store = store.clone();
+                    let files = files.clone();
+                    let location = location.clone();
+                    let owner = owner.clone();
+                    let shown = shown.clone();
+                    move || {
+                        let remaining = media_actions::still_in(&store, &location, &files);
+                        let gone = files
+                            .iter()
+                            .copied()
+                            .filter(|f| !remaining.contains(f))
+                            .collect::<Vec<_>>();
+                        owner.borrow_mut().remove_files(&gone);
+                        shown(false);
+                    }
+                });
+                let suggested = media_actions::suggested_action(&store, deletion);
+                if let Err(error) = delete_files_window::open(
+                    &delete_files,
+                    &store,
+                    files,
+                    suggested.as_ref(),
+                    media_actions::DELETE_REASON,
+                    guard,
+                    applied,
+                ) {
+                    eprintln!("could not open deletion: {error}");
+                }
+                return;
+            }
             if let Asked::Delete(files, deletion, _) = &asked
                 && !media_actions::confirm_deletion(&store, files, deletion)
             {
@@ -3583,6 +3635,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         simple_formulae,
         file_log: file_log_slot,
         archive_delete,
+        delete_files,
         filter,
         open_page,
         review_imports,
@@ -5053,13 +5106,70 @@ fn open_viewer(
             }
         }
     });
+    let viewer_delete: delete_files_window::Slot = Rc::default();
     let pending: Rc<RefCell<Option<ViewerAsked>>> = Rc::default();
     let ask = {
         let pending = pending.clone();
         let weak = window.as_weak();
         let model = model.clone();
+        let viewer_delete = viewer_delete.clone();
+        let viewer_slot = slot.clone();
+        let remove_file = remove_file.clone();
+        let show_info = show_info.clone();
         move |asked: ViewerAsked| {
             if let Some(window) = weak.upgrade() {
+                if let ViewerAsked::Delete(deletion, file) = &asked {
+                    let store = model.borrow().store().clone();
+                    if store
+                        .read(
+                            hydrus_store::settings::get::<
+                                hydrus_store::settings::DeletionPreferences,
+                            >,
+                        )
+                        .unwrap_or_default()
+                        .advanced
+                    {
+                        let guard: delete_files_window::Guard = Rc::new({
+                            let weak = weak.clone();
+                            let viewer_slot = viewer_slot.clone();
+                            move || {
+                                weak.upgrade().is_some_and(|window| {
+                                    viewer_slot.borrow().as_ref().is_some_and(|current| {
+                                        std::ptr::eq(current.window(), window.window())
+                                    })
+                                })
+                            }
+                        });
+                        let applied = Rc::new({
+                            let file = *file;
+                            let store = store.clone();
+                            let model = model.clone();
+                            let remove_file = remove_file.clone();
+                            let show_info = show_info.clone();
+                            move || {
+                                let location = model.borrow().location().clone();
+                                if media_actions::still_in(&store, &location, &[file]).is_empty() {
+                                    remove_file(file);
+                                } else {
+                                    show_info();
+                                }
+                            }
+                        });
+                        let suggested = media_actions::suggested_action(&store, deletion);
+                        if let Err(error) = delete_files_window::open(
+                            &viewer_delete,
+                            &store,
+                            &[*file],
+                            suggested.as_ref(),
+                            media_actions::DELETE_REASON,
+                            guard,
+                            applied,
+                        ) {
+                            eprintln!("could not open deletion: {error}");
+                        }
+                        return;
+                    }
+                }
                 let question = match &asked {
                     ViewerAsked::Delete(deletion, _) => deletion.question(1),
                     ViewerAsked::OpenUrls(urls) => Asked::OpenUrls(urls.clone()).question(),
@@ -5423,6 +5533,7 @@ fn open_viewer(
         let slot = slot.clone();
         let viewing = viewing.clone();
         let model = model.clone();
+        let viewer_delete = viewer_delete.clone();
         move || {
             let Some(window) = weak.upgrade() else { return };
             let current = slot
@@ -5433,6 +5544,7 @@ fn open_viewer(
             if !current {
                 return;
             }
+            delete_files_window::cancel(&viewer_delete);
             native_cursor.close();
             let exit = model.borrow().exit_media();
             closing_owner.closed(&store, exit);

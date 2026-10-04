@@ -387,6 +387,7 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
         if matches!(
             option.kind,
             Kind::RegexFavourites
+                | Kind::DeletionReasons
                 | Kind::FavouriteTags
                 | Kind::GallerySource
                 | Kind::ImportOptions

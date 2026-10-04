@@ -7,6 +7,7 @@
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ScrollView, SpinBox, StandardListView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { TableRow } from "list_table.slint";
+import { DeletionReasonQueue } from "deletion_reasons.slint";
 import { PaletteProviderQueue } from "palette_provider_queue.slint";
 
 // a field of a time: its value, largest value, and the unit after it
@@ -102,6 +103,12 @@ export component OptionsWindow inherits Window {
     preferred-height: 640px;
     background: Theme.window;
 
+    in property <[TableRow]> reason-rows;
+    in property <bool> reason-selected;
+    in property <bool> reason-child-open;
+    callback reason-clicked(int,bool,bool);
+    callback reason-activated(int);
+    callback reason-action(string);
     in property <[StandardListViewItem]> pages;
     in-out property <int> page;
     in property <[OptionRow]> rows;
@@ -459,6 +466,15 @@ export component OptionsWindow inherits Window {
                                 }
                             }
                           }
+                            if row.kind == 25: DeletionReasonQueue {
+                                rows:root.reason-rows;
+                                enabled:row.enabled;
+                                selected:root.reason-selected;
+                                child-open:root.reason-child-open;
+                                row-clicked(index,ctrl,shift)=>{root.reason-clicked(index,ctrl,shift);}
+                                row-activated(index)=>{root.reason-activated(index);}
+                                action(action)=>{root.reason-action(action);}
+                            }
                             if row.kind == 23: VerticalLayout {
                                 width:260px;
                                 for label[c] in row.items: CheckBox {

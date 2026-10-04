@@ -2772,3 +2772,12 @@ preferences; the viewer also skips a simple local deletion question when trash
 confirmation is disabled. Multiple actionable local domains and physical deletion
 continue to ask. Cancelling Options leaves these preferences unchanged.
 The real Qt inputs and questions are recorded in `files_trash.json`.
+
+The advanced Files and Trash deletion dialog now lists actionable local domains,
+all-local trashing, unlocked physical deletion and physical deletion with cleared
+records. Its reason radio rows preserve existing reasons, offer the ordered
+custom suggestions and accept custom text. Accepted action/reason preferences
+are recalled when applicable. Options embeds the ordered reason queue with
+Add/Edit text children, movement and confirmed removal; all queue edits remain
+staged until Options Apply. Closing the owning viewer discards its open deletion
+draft and invalidates retained callbacks. `files_trash.json` records the Qt flow.

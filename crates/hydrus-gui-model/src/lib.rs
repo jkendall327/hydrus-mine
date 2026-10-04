@@ -16,6 +16,7 @@ pub mod checker_options;
 pub mod clipboard_urls;
 pub mod collect;
 pub mod datetime_editor;
+pub mod delete_files;
 pub mod domains;
 pub mod downloader_definitions;
 pub mod downloader_interchange;

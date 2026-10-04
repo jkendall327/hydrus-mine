@@ -283,3 +283,105 @@ fn confirmation_policy_matches_recorded_actionable_domains_and_counts() {
         );
     }
 }
+
+#[test]
+fn closing_viewer_discards_advanced_deletion_and_reopening_recalls_applied_choice() {
+    use hydrus_gui::delete_files_window;
+    use hydrus_store::settings::DeletionPreferences;
+    use slint::ComponentHandle as _;
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &DeletionPreferences {
+                    advanced: true,
+                    remember_action: true,
+                    ..DeletionPreferences::default()
+                },
+            )
+        })
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let page = bound.current.borrow().clone();
+    let index = page
+        .borrow()
+        .results()
+        .iter()
+        .position(|&file| state(&store, file).1 == ["my files"])
+        .unwrap();
+    let file = page.borrow().results()[index];
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    viewer.invoke_delete();
+    let child = delete_files_window::last_opened().unwrap();
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 720, 640);
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
+    let before: DeletionPreferences = store.read(hydrus_store::settings::get).unwrap();
+    viewer.invoke_close_requested();
+    assert!(!child.window().is_visible());
+    child.set_custom("closed owner".into());
+    child.invoke_accept_deletion();
+    assert_eq!(state(&store, file).1, ["my files"]);
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<DeletionPreferences>)
+            .unwrap(),
+        before
+    );
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    viewer.invoke_delete();
+    let child = delete_files_window::last_opened().unwrap();
+    let index = (0..child.get_reasons().row_count())
+        .find(|&i| child.get_reasons().row_data(i).unwrap() == "custom")
+        .unwrap();
+    child.invoke_reason_selected(i32::try_from(index).unwrap());
+    child.set_custom("accepted viewer reason".into());
+    child.invoke_accept_deletion();
+    assert_eq!(state(&store, file).1, ["trash"]);
+    let prefs: DeletionPreferences = store.read(hydrus_store::settings::get).unwrap();
+    assert_eq!(prefs.last_reason.as_deref(), Some("accepted viewer reason"));
+    let slot = delete_files_window::Slot::default();
+    let window = delete_files_window::open(
+        &slot,
+        &store,
+        &[file],
+        None,
+        media_actions::DELETE_REASON,
+        std::rc::Rc::new(|| true),
+        std::rc::Rc::new(|| {}),
+    )
+    .unwrap()
+    .unwrap();
+    assert!(
+        window
+            .get_reasons()
+            .row_data(usize::try_from(window.get_selected_reason()).unwrap())
+            .unwrap()
+            .starts_with("keep existing reason:")
+    );
+    assert!(
+        window
+            .get_actions()
+            .row_data(usize::try_from(window.get_selected_action()).unwrap())
+            .unwrap()
+            .starts_with("Permanently delete")
+    );
+    window.invoke_cancel();
+    viewer.invoke_close_requested();
+}

@@ -269,6 +269,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     out.kind = 18;
                     out.text = "edit import options".into();
                 }
+                (Kind::DeletionReasons, Value::DeletionReasons(_)) => {
+                    out.kind = 25;
+                }
                 (Kind::RegexFavourites, Value::RegexFavourites(_)) => {
                     out.kind = 14;
                     out.text = "edit regex favourites".into();
@@ -345,6 +348,7 @@ pub(crate) fn open(
         .collect();
     window.set_pages(ModelRc::new(VecModel::from(names)));
     let show_providers = crate::options_palette::bind(&window, &editor, &active);
+    let reason_queue = crate::options_deletion::bind(&window, &editor, &active);
     // (the rows are made anew only as the page changes: an edit leaves its
     // control as the user left it)
     let show_page = {
@@ -385,6 +389,7 @@ pub(crate) fn open(
         }
     };
     show_page();
+    (reason_queue.show)();
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
@@ -395,6 +400,7 @@ pub(crate) fn open(
         let location_slot = location_slot.clone();
         let tag_slot = tag_slot.clone();
         let active = active.clone();
+        let cancel_reasons = reason_queue.cancel.clone();
         move || {
             if !active.replace(false) {
                 return;
@@ -406,6 +412,7 @@ pub(crate) fn open(
             if let Some(child) = child {
                 child.invoke_cancel();
             }
+            cancel_reasons();
             crate::import_options_panel_window::cancel(&import_slot);
             crate::namespace_sorts_window::cancel(&namespace_slot);
             crate::locations_window::cancel(&location_slot);
@@ -662,14 +669,22 @@ pub(crate) fn open(
     window.on_check_toggled({
         let editor = editor.clone();
         let weak = window.as_weak();
+        let active = active.clone();
+        let reasons_open = reason_queue.has_open.clone();
         move |i, checked| {
+            if !active.get()
+                || reasons_open()
+                || !matches!(
+                    editor.borrow().rows().get(at(i)),
+                    Some(Row::Opt { enabled: true, .. })
+                )
+            {
+                return;
+            }
             editor.borrow_mut().check(at(i), checked);
             if let Some(window) = weak.upgrade() {
                 for (index, row) in editor.borrow().rows().iter().enumerate() {
-                    if let Row::Opt {
-                        option, enabled, ..
-                    } = row
-                        && matches!(option.kind, Kind::TagService { .. })
+                    if let Row::Opt { enabled, .. } = row
                         && let Some(mut shown) = window.get_rows().row_data(index)
                     {
                         shown.enabled = *enabled;
@@ -1025,6 +1040,7 @@ pub(crate) fn open(
         });
     });
     window.on_apply({
+        let reasons_open = reason_queue.has_open.clone();
         let import_slot = import_slot.clone();
         let namespace_slot = namespace_slot.clone();
         let active = active.clone();
@@ -1034,6 +1050,7 @@ pub(crate) fn open(
         let close = close.clone();
         move || {
             if !active.get()
+                || reasons_open()
                 || tag_slot.borrow().is_some()
                 || import_slot.borrow().is_some()
                 || namespace_slot.borrow().is_some()

@@ -1837,6 +1837,8 @@ reference cancellation note.
 
 Files and Trash confirmation preferences now reach thumbnail and viewer local
 file operations. The native deletion question still presents one action rather
-than the reference's complete service/action picker; advanced deletion reasons,
-remembered actions, custom-reason queue and copy/move-domain confirmation controls
-are not yet connected. Undelete currently restores immediately.
+than the reference's complete service/action picker when advanced mode is off.
+Advanced local-domain, trash and physical/clean deletion now uses the action and
+reason picker with the ordered reason queue and remembered accepted choices.
+Remote repository/IPFS actions are outside this local dialog. Copy/move-domain
+confirmation controls are not yet connected. Undelete currently restores immediately.

@@ -437,6 +437,46 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             *field = value;
         }
     }
+    if let Some(options) = &options {
+        for (key, field) in [
+            ("use_advanced_file_deletion_dialog", &mut deletion.advanced),
+            (
+                "remember_last_advanced_file_deletion_special_action",
+                &mut deletion.remember_action,
+            ),
+            (
+                "remember_last_advanced_file_deletion_reason",
+                &mut deletion.remember_reason,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        if let Some(reasons) = options.string_lists.get("advanced_file_deletion_reasons") {
+            deletion.reasons.clone_from(reasons);
+        }
+        deletion.last_reason = options
+            .noneable_strings
+            .get("last_advanced_file_deletion_reason")
+            .cloned()
+            .flatten();
+        deletion.last_action = options
+            .noneable_strings
+            .get("last_advanced_file_deletion_special_action")
+            .as_ref()
+            .and_then(|value| value.as_deref())
+            .and_then(|value| match value {
+                "physical_delete" => Some(crate::settings::DeletionAction::Physical),
+                "clear_delete" => Some(crate::settings::DeletionAction::ClearRecord),
+                key => hex::decode(key)
+                    .ok()
+                    .filter(|bytes| !bytes.is_empty())
+                    .map(|bytes| {
+                        crate::settings::DeletionAction::Domain(hydrus_core::ServiceKey::new(bytes))
+                    }),
+            });
+    }
     insert_setting(&mut input, &deletion)?;
     let mut delete_lock = crate::delete_lock::DeleteLock::default();
     if let Some(options) = &options {

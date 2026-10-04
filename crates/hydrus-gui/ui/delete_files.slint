@@ -1,0 +1,82 @@
+import { Button, LineEdit, ScrollView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+component DeleteRadioButton inherits FocusScope {
+    in property <string> text;
+    in property <bool> checked;
+    callback toggled();
+    callback navigate(bool);
+    min-height: 30px;
+    key-pressed(event) => {
+        if root.enabled && event.text == " " {root.toggled();return accept;}
+        if root.enabled && (event.text == Key.UpArrow || event.text == Key.LeftArrow) {root.navigate(false);return accept;}
+        if root.enabled && (event.text == Key.DownArrow || event.text == Key.RightArrow) {root.navigate(true);return accept;}
+        return reject;
+    }
+    HorizontalLayout {
+        spacing: 8px;
+        Rectangle {
+            width: 18px; height:18px; border-radius:9px;
+            border-width:1px; border-color:Theme.text;
+            background: root.checked ? Theme.text : Theme.window;
+        }
+        Text {text:root.text; color:Theme.text;wrap:word-wrap;vertical-alignment:center;horizontal-stretch:1;}
+    }
+    TouchArea {enabled:root.enabled;clicked=>{root.focus();root.toggled();}}
+}
+export component DeleteFilesWindow inherits Window {
+    title: "Delete files?";
+    preferred-width: 720px;
+    preferred-height: 640px;
+    background: Theme.window;
+    in property <[string]> actions;
+    in property <int> selected-action;
+    in property <[string]> reasons;
+    in property <int> selected-reason;
+    in property <bool> reason-enabled;
+    in property <bool> custom-enabled;
+    in-out property <string> custom;
+    in property <string> error;
+    callback action-selected(int);
+    callback reason-selected(int);
+    callback accept-deletion();
+    callback cancel();
+    forward-focus: keyboard;
+    keyboard := FocusScope {
+        capture-key-pressed(event)=>{
+            if event.text == Key.Escape {root.cancel();return accept;}
+            if event.text == Key.Return {root.accept-deletion();return accept;}
+            return reject;
+        }
+    VerticalLayout {
+        padding: 12px;
+        spacing: 10px;
+        ScrollView {
+            VerticalLayout {
+                spacing: 6px;
+                for label[i] in root.actions: DeleteRadioButton {
+                    text: label;
+                    checked: i == root.selected-action;
+                    toggled=>{root.action-selected(i);}
+                    navigate(down)=>{root.action-selected(down ? mod(root.selected-action + 1,root.actions.length) : mod(root.selected-action + root.actions.length - 1,root.actions.length));}
+                }
+                Text {text: "reason"; color: Theme.text;}
+                for label[i] in root.reasons: DeleteRadioButton {
+                    text: label;
+                    checked: i == root.selected-reason;
+                    enabled: root.reason-enabled;
+                    toggled=>{root.reason-selected(i);}
+                    navigate(down)=>{root.reason-selected(down ? mod(root.selected-reason + 1,root.reasons.length) : mod(root.selected-reason + root.reasons.length - 1,root.reasons.length));}
+                }
+                LineEdit {text <=> root.custom; enabled: root.custom-enabled;}
+            }
+        }
+        if root.error != "": Text {text:root.error;color:Theme.error;wrap:word-wrap;}
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button {text:"delete";clicked=>{root.accept-deletion();}}
+            Button {text:"cancel";clicked=>{root.cancel();}}
+        }
+    }
+    }
+}
