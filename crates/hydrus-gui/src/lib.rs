@@ -222,6 +222,8 @@ pub struct Bound {
     pub session_dialog: Rc<RefCell<Option<SessionDialog>>>,
     /// The manage subscriptions dialog while it is open.
     pub subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>>,
+    /// The subscriptions gallery chooser, before adding or overwriting.
+    pub subscription_gallery: Rc<RefCell<Option<SubscriptionGalleryWindow>>>,
     /// URL class and gallery URL generator definition editors.
     pub downloader_definitions: downloader_definitions_window::Slots,
     /// Native parser and URL-class link windows.
@@ -1249,6 +1251,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
+    let subscription_gallery: Rc<RefCell<Option<SubscriptionGalleryWindow>>> = Rc::default();
     let downloader_definitions = downloader_definitions_window::Slots::default();
     let parser_editors = parser_editors_window::Slots::default();
     let edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>> = Rc::default();
@@ -1420,6 +1423,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let pages = pages.clone();
                 let slot = subscriptions.clone();
                 let edit_slot = edit_subscription.clone();
+                let gallery_slot = subscription_gallery.clone();
                 let checker_slot = checker_options.clone();
                 let log_slot = folders.log.clone();
                 let import_options_slot = folders.import_options.clone();
@@ -1436,7 +1440,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         open_files: open_files.clone(),
                         import_options: import_options_slot.clone(),
                     };
-                    match subscriptions_window::open(&store, &slot, slots) {
+                    match subscriptions_window::open(&store, &slot, &gallery_slot, slots) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not open the subscriptions: {e}"),
                     }
@@ -3062,6 +3066,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         checker_options,
         session_dialog,
         subscriptions,
+        subscription_gallery,
         downloader_definitions,
         parser_editors,
         edit_subscription,

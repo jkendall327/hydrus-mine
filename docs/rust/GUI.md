@@ -169,7 +169,12 @@ some text, and overwrite the selected's downloader or checker options
 only what changed; "cancel" writes nothing. The rows and the questions
 are as `oracle/record_subscriptions_list.py` recorded the reference's.
 
-"add" (asking which downloader, or saying there are none) and "edit"
+"add" opens a separate gallery list, even with one configured downloader,
+then the subscription editor. The chooser reads the current saved downloader
+definitions and preselects the saved default; cancelling adds nothing. With
+no definitions it shows a separate warning. "overwrite downloader" uses
+the same list. `oracle/record_subscription_add.py` records the real Qt
+chooser and editor flow; GUI regressions save both native windows. "edit"
 (or a double-click) open the edit subscription dialog
 (`src/edit_subscription_window.rs`, `hydrus-gui-model/src/edit_subscription.rs`),
 the reference's `EditSubscriptionPanel`: the name, the delay line, the

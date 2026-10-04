@@ -4,7 +4,7 @@
 // hydrus-rs has so far (add and edit open `edit_subscription.slint`), and
 // the questions they ask, held until "apply".
 
-import { Button, CheckBox, LineEdit } from "std-widgets.slint";
+import { Button, CheckBox, LineEdit, ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 
@@ -68,12 +68,72 @@ export component Asking inherits Rectangle {
     }
 }
 
+// SelectGUGKeyAndName uses a separate list dialog, even for one gallery.
+export component SubscriptionGalleryWindow inherits Window {
+    in property <string> window-title: "select gallery";
+    title: root.window-title;
+    preferred-width: 420px;
+    preferred-height: root.message == "" ? 320px : 180px;
+    background: Theme.window;
+    in property <[string]> galleries;
+    in-out property <int> selected: 0;
+    in property <string> message;
+    callback accept();
+    callback cancel();
+    forward-focus: keys;
+    keys := FocusScope {
+        capture-key-pressed(event) => {
+            if event.text == Key.Escape { root.cancel(); return accept; }
+            if event.text == Key.Return { root.accept(); return accept; }
+            if event.text == Key.DownArrow { root.selected = min(root.galleries.length - 1, root.selected + 1); return accept; }
+            if event.text == Key.UpArrow { root.selected = max(0, root.selected - 1); return accept; }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            if root.message != "": Text {
+                text: root.message;
+                wrap: word-wrap;
+                color: Theme.text;
+            }
+            if root.message == "": ScrollView {
+                vertical-stretch: 1;
+                VerticalLayout {
+                    alignment: start;
+                    for gallery[index] in root.galleries: Rectangle {
+                        height: 26px;
+                        background: index == root.selected ? Theme.highlight : Theme.panel;
+                        Text {
+                            x: 6px;
+                            text: gallery;
+                            vertical-alignment: center;
+                            color: index == root.selected ? Theme.highlight-text : Theme.text;
+                        }
+                        TouchArea {
+                            clicked => { root.selected = index; }
+                            double-clicked => { root.selected = index; root.accept(); }
+                        }
+                    }
+                }
+            }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Button { text: "ok"; clicked => { root.accept(); } }
+                if root.message == "": Button { text: "cancel"; clicked => { root.cancel(); } }
+            }
+        }
+    }
+}
+
 export component SubscriptionsWindow inherits Window {
     in property <string> window-title: "manage subscriptions";
     title: root.window-title;
     preferred-width: 1180px;
     preferred-height: 520px;
     background: Theme.window;
+    in property <bool> gallery-open;
     // subscriptions paused from the network menu
     in property <bool> globally-paused;
     in property <[TableRow]> rows;
@@ -128,6 +188,7 @@ export component SubscriptionsWindow inherits Window {
 
     forward-focus: keys;
     keys := FocusScope {
+        enabled: !root.gallery-open;
         key-pressed(event) => {
             if (event.text == Key.Escape) {
                 if (root.asking) {

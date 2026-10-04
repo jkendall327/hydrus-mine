@@ -420,3 +420,210 @@ fn merging_separating_and_resetting_are_written_on_apply() {
             .is_empty()
     );
 }
+
+#[test]
+fn add_uses_a_separate_gallery_list_then_the_editor() {
+    use hydrus_core::url::{AnyGug, Gug, Gugs};
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let list = open_dialog(&ui, &bound);
+    let cases: serde_json::Value = hydrus_testkit::fixture_json("subscription_add.json");
+    let cases = cases.as_array().unwrap();
+    list.invoke_add();
+    let warning = bound
+        .subscription_gallery
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        warning.get_message().as_str(),
+        cases[0]["dialogs"][0]["message"].as_str().unwrap()
+    );
+    assert!(!list.get_asking());
+    assert_eq!(
+        warning.get_galleries().row_count(),
+        0,
+        "empty settings stay empty"
+    );
+    warning.invoke_accept();
+    assert!(bound.edit_subscription.borrow().is_none());
+
+    let gallery = |name: &str, key: &str| {
+        AnyGug::Single(Gug {
+            name: name.into(),
+            key: key.into(),
+            url_template: "https://booru.example/search/%tags%/1".into(),
+            replacement_phrase: "%tags%".into(),
+            separator: "+".into(),
+            initial_search_text: "tag".into(),
+            example_search_text: "blue_eyes".into(),
+        })
+    };
+    for (names, key, fixture_index) in [
+        (vec![gallery("alpha", "01")], None, 1),
+        (
+            vec![gallery("zed", "02"), gallery("alpha", "01")],
+            Some(("02".to_owned(), "zed".to_owned())),
+            5,
+        ),
+    ] {
+        store
+            .write(move |ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_parse::Downloaders {
+                        gugs: Gugs {
+                            keys_to_display: names.iter().map(|g| g.key().to_owned()).collect(),
+                            gugs: names,
+                        },
+                        ..hydrus_parse::Downloaders::default()
+                    },
+                )?;
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_core::subscriptions::GalleryDefaults {
+                        gug: key,
+                        ..Default::default()
+                    },
+                )
+            })
+            .unwrap();
+        let before = headless::render(&windows.get(1).unwrap(), 1180, 520);
+        let window_count = windows.count();
+        list.invoke_add();
+        assert_eq!(
+            windows.count(),
+            window_count + 1,
+            "a separate chooser window"
+        );
+        assert!(list.get_gallery_open());
+        assert!(
+            !list.get_asking(),
+            "Add never inserts the inline question panel"
+        );
+        assert!(bound.edit_subscription.borrow().is_none());
+        let chooser = bound
+            .subscription_gallery
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        let expected = &cases[fixture_index]["dialogs"][0];
+        assert_eq!(
+            chooser.get_window_title().as_str(),
+            expected["title"].as_str().unwrap()
+        );
+        let choices = chooser.get_galleries();
+        let choices: Vec<String> = (0..choices.row_count())
+            .map(|i| choices.row_data(i).unwrap().to_string())
+            .collect();
+        assert_eq!(serde_json::to_value(&choices).unwrap(), expected["choices"]);
+        assert_eq!(
+            choices[usize::try_from(chooser.get_selected()).unwrap()],
+            expected["selected"][0].as_str().unwrap()
+        );
+        let shots = std::path::Path::new(env!("CARGO_TARGET_TMPDIR"));
+        let pixels = headless::render(&windows.get(1).unwrap(), 1180, 520);
+        assert_eq!(
+            &pixels[..1180 * 250 * 4],
+            &before[..1180 * 250 * 4],
+            "the subscriptions table keeps its rendered geometry"
+        );
+        headless::save_png(&shots.join("subscription_add_list.png"), &pixels, 1180, 520).unwrap();
+        let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 420, 320);
+        headless::save_png(
+            &shots.join("subscription_add_chooser.png"),
+            &pixels,
+            420,
+            320,
+        )
+        .unwrap();
+        // Cancellation must leave the list and store empty, including with one gallery.
+        chooser.invoke_cancel();
+        assert!(!list.get_gallery_open());
+        assert!(bound.subscription_gallery.borrow().is_none());
+        assert!(rows(&list).is_empty());
+        assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+        list.invoke_add();
+        let chooser = bound
+            .subscription_gallery
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        chooser.invoke_accept();
+        assert!(!list.get_gallery_open());
+        let editor = bound
+            .edit_subscription
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        assert_eq!(editor.get_name(), "new subscription");
+        assert_eq!(
+            editor.get_downloader(),
+            choices[usize::try_from(chooser.get_selected()).unwrap()]
+        );
+        editor.invoke_cancel();
+        assert!(rows(&list).is_empty());
+    }
+    // Overwrite uses the same chooser and preserves the old downloader on cancel.
+    list.invoke_add();
+    let chooser = bound
+        .subscription_gallery
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    chooser.invoke_accept();
+    let editor = bound
+        .edit_subscription
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    editor.invoke_apply();
+    assert_eq!(rows(&list).len(), 1);
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_overwrite_downloader();
+    let chooser = bound
+        .subscription_gallery
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    chooser.invoke_cancel();
+    assert_eq!(rows(&list)[0].0[1], "zed");
+    list.invoke_overwrite_downloader();
+    let chooser = bound
+        .subscription_gallery
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    chooser.set_selected(0);
+    chooser.invoke_accept();
+    assert_eq!(rows(&list)[0].0[1], "alpha");
+    list.invoke_apply();
+    let written = store.read(subscriptions::subscriptions).unwrap();
+    assert_eq!(written[0].settings.gug_name, "alpha");
+    // Clearing configured galleries cannot resurrect either old choices or presets.
+    store
+        .write(|ctx| hydrus_store::settings::set(ctx.conn(), &hydrus_parse::Downloaders::default()))
+        .unwrap();
+    let list = open_dialog(&ui, &bound);
+    list.invoke_add();
+    let warning = bound
+        .subscription_gallery
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(warning.get_window_title(), "Warning");
+    assert_eq!(warning.get_galleries().row_count(), 0);
+    warning.invoke_accept();
+    assert!(bound.edit_subscription.borrow().is_none());
+}

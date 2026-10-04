@@ -652,7 +652,10 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   doesn't pause subscriptions while open, as the reference does: "apply"
   writes only what the dialog changed, so a subscription the daemon ran
   meanwhile keeps what the run found, unless the dialog changed the same
-  query.
+  query. Add and overwrite downloader use a separate gallery list; Slint
+  has no native modal-parent API, so the subscriptions window disables its
+  controls while that list is open. Like the editor's existing chooser,
+  it currently flattens hidden and non-functional galleries into one list.
 - **The edit subscription dialog** has no multi-site downloader warning, and
   no "additional tags" or file log compaction number in the query editor.
   Its downloader choice is one list (the reference puts the downloaders
