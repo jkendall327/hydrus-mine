@@ -139,6 +139,25 @@ def record(session):
         step_panel._subdomain.SetValue(''); step_panel._path.setText('signin')
         step_states.append({'do': 'request fields', 'state': step_state()})
         step_panel.deleteLater()
+        arguments_panel = G.EditLoginStepPanel(gui, first)
+        argument_states = [{'state': arguments_panel.GetValue().GetSerialisableTuple()}]
+        prompts = []
+        input_answers = []
+        def enter(parent, message, **kwargs):
+            prompts.append({'message': message, 'options': kwargs})
+            value = input_answers.pop(0)
+            if value is None: raise G.HydrusExceptions.CancelledException('scripted cancel')
+            return value
+        ClientGUIDialogsQuick.EnterText = enter
+        G.ClientGUIDialogsMessage.ShowWarning = lambda parent, text: prompts.append({'warning': text})
+        for kind, action, values in [('credential', 'add', ['username', 'user']), ('credential', 'add', ['username']), ('credential', 'edit', ['account', 'account_param']), ('static', 'add', ['empty', '']), ('temporary', 'add', ['cancelled', None]), ('temporary', 'add', ['csrf', 'token'])]:
+            control = {'credential': arguments_panel._required_credentials, 'static': arguments_panel._static_args, 'temporary': arguments_panel._temp_args}[kind]
+            if action == 'edit': control._listctrl.SelectDatas(control._listctrl.GetData(), deselect_others=True)
+            input_answers[:] = values; prompts.clear()
+            if action == 'add': control._Add()
+            else: control._Edit()
+            argument_states.append({'kind': kind, 'action': action, 'answers': values, 'prompts': list(prompts), 'state': arguments_panel.GetValue().GetSerialisableTuple()})
+        arguments_panel.deleteLater()
 
         domains_panel = G.EditLoginsPanel(gui, controller.network_engine, [script], manager._domains_to_login_info)
         domains_control = domains_panel._domains_and_login_info
@@ -180,7 +199,7 @@ def record(session):
             login_actions.append({'mode': mode, 'accepted': allow, 'questions': list(questions), 'warnings': list(warnings), 'okayed': list(okayed), 'domains': route._domains_to_login_after_ok})
             route.deleteLater()
 
-        return {'domain_login_actions': login_actions, 'domain_states': domain_states, 'step_states': step_states, 'permitted_content_types': permitted, 'manager': original_manager, 'script_rows': script_rows, 'script_list': script_list, 'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
+        return {'argument_states': argument_states, 'domain_login_actions': login_actions, 'domain_states': domain_states, 'step_states': step_states, 'permitted_content_types': permitted, 'manager': original_manager, 'script_rows': script_rows, 'script_list': script_list, 'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
                 'credential_types': [[i, L.credential_type_str_lookup[i]] for i in [0, 1]], 'access_types': [[i, L.login_access_type_str_lookup[i], L.login_access_type_default_description_lookup[i]] for i in range(4)]}
     return controller.CallBlockingToQt(gui, qt)
 recorder.record = record

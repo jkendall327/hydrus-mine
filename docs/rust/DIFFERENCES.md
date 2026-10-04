@@ -1413,3 +1413,10 @@ percentage of the new animation as proven behavior.
 The large-session warning uses the native popup stack with the exact reference
 text and once-per-boot allowance. Active weight is checked by the one-second
 session monitor; the reference checks when its page-count menu becomes dirty.
+
+Login step argument maps use one combined list and an inline detached row editor;
+the reference has three lists and sequential text questions. Native argument-row
+selection is single-row, and deletion asks before removing that row. Existing
+credential/static/temporary dictionary precedence and duplicate-name/blank-value
+semantics match the reference. Step/global cookie matcher and example-domain
+editors remain incomplete, so broad login script/step pages stay partial.

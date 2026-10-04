@@ -350,3 +350,88 @@ impl DomainsEditor {
         })
     }
 }
+
+/// One of the reference's three independent request argument dictionaries.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ArgumentKind {
+    Credential,
+    Static,
+    Temporary,
+}
+impl ArgumentKind {
+    pub fn from_index(index: i32) -> Self {
+        match index {
+            0 => Self::Credential,
+            2 => Self::Temporary,
+            _ => Self::Static,
+        }
+    }
+    pub fn index(self) -> i32 {
+        match self {
+            Self::Credential => 0,
+            Self::Static => 1,
+            Self::Temporary => 2,
+        }
+    }
+    pub fn key_name(self) -> &'static str {
+        match self {
+            Self::Credential => "credential name",
+            Self::Static => "parameter name",
+            Self::Temporary => "temp variable name",
+        }
+    }
+}
+impl StepEditor {
+    pub fn arguments(&self, kind: ArgumentKind) -> &BTreeMap<String, String> {
+        match kind {
+            ArgumentKind::Credential => &self.step.credentials,
+            ArgumentKind::Static => &self.step.static_args,
+            ArgumentKind::Temporary => &self.step.temp_args,
+        }
+    }
+    fn arguments_mut(&mut self, kind: ArgumentKind) -> &mut BTreeMap<String, String> {
+        match kind {
+            ArgumentKind::Credential => &mut self.step.credentials,
+            ArgumentKind::Static => &mut self.step.static_args,
+            ArgumentKind::Temporary => &mut self.step.temp_args,
+        }
+    }
+    /// Blank values are accepted; duplicate keys and blank names leave the draft intact.
+    pub fn set_argument(
+        &mut self,
+        kind: ArgumentKind,
+        old: Option<&str>,
+        key: String,
+        value: String,
+    ) -> Result<(), String> {
+        if key.is_empty() {
+            return Err(format!("Enter the {}.", kind.key_name()));
+        }
+        let values = self.arguments_mut(kind);
+        if old != Some(key.as_str()) && values.contains_key(&key) {
+            return Err(format!("That {} already exists!", kind.key_name()));
+        }
+        if let Some(old) = old {
+            values.remove(old);
+        }
+        values.insert(key, value);
+        Ok(())
+    }
+    pub fn remove_argument(&mut self, kind: ArgumentKind, key: &str) {
+        self.arguments_mut(kind).remove(key);
+    }
+    pub fn argument_rows(&self) -> Vec<(ArgumentKind, String, String)> {
+        [
+            ArgumentKind::Credential,
+            ArgumentKind::Static,
+            ArgumentKind::Temporary,
+        ]
+        .into_iter()
+        .flat_map(|kind| {
+            self.arguments(kind)
+                .iter()
+                .map(move |(key, value)| (kind, key.clone(), value.clone()))
+        })
+        .collect()
+    }
+}

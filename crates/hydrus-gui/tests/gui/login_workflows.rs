@@ -817,3 +817,97 @@ fn domain_login_confirmation_saves_then_real_http_persists_session_and_outcome()
     window.invoke_action("cancel".into());
     slots.cancel();
 }
+
+#[test]
+fn step_argument_draft_rejects_duplicates_stages_cancel_and_reaches_actual_http() {
+    let fixture = hydrus_testkit::fixture_json("login_execution.json");
+    let mut script = legacy::login_script(
+        &SerialisableObject::from_tuple_str(&fixture[0]["script"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let (_dir, store, _manager) = store();
+    store
+        .write_and_refresh(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::network::NetworkSettings {
+                    detect_sleep: false,
+                    network_timeout: 2,
+                    max_connection_attempts: 1,
+                    max_get_attempts: 1,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
+    headless::init();
+    let slots = hydrus_gui::login_step_window::Slots::default();
+    let accepted = Rc::new(RefCell::new(None));
+    let callback: hydrus_gui::login_step_window::Applied = Rc::new({
+        let accepted = accepted.clone();
+        move |step| {
+            *accepted.borrow_mut() = Some(step);
+            Ok(())
+        }
+    });
+    let window =
+        hydrus_gui::login_step_window::open(&store, &script.steps[0], &slots, callback.clone())
+            .unwrap();
+    window.invoke_action("add-variable".into());
+    window.set_variable_kind(1);
+    window.set_variable_key("lang".into());
+    window.set_variable_value("bad".into());
+    window.invoke_action("save-variable".into());
+    assert!(window.get_variable_editing());
+    assert_eq!(window.get_error(), "That parameter name already exists!");
+    window.invoke_action("cancel-variable".into());
+    window.invoke_action("add-variable".into());
+    window.set_variable_key("discarded".into());
+    window.set_variable_value("".into());
+    window.invoke_action("save-variable".into());
+    window.invoke_action("cancel".into());
+    assert!(accepted.borrow().is_none());
+    let window =
+        hydrus_gui::login_step_window::open(&store, &script.steps[0], &slots, callback).unwrap();
+    assert_eq!(window.get_variables().row_count(), 1);
+    window.invoke_variable_clicked(0);
+    assert!(window.get_variables().row_data(0).unwrap().selected);
+    window.invoke_action("edit-variable".into());
+    window.set_variable_key("probe".into());
+    window.set_variable_value("changed".into());
+    window.invoke_action("save-variable".into());
+    window.invoke_variable_clicked(0);
+    window.invoke_action("delete-variable".into());
+    assert!(window.get_deleting());
+    window.invoke_action("back".into());
+    assert_eq!(window.get_variables().row_count(), 1);
+    window.invoke_action("apply".into());
+    script.steps[0] = accepted.borrow_mut().take().unwrap();
+    assert_eq!(script.steps[0].static_args.len(), 1);
+    assert_eq!(script.steps[0].static_args["probe"], "changed");
+    let site = LoginSite::start();
+    let run = hydrus_gui::login_test_window::RunSlot::default();
+    let completed = Rc::new(RefCell::new(None));
+    run.start(
+        hydrus_gui::login_test_window::Input {
+            source: store,
+            script,
+            domain: site.domain.clone(),
+            credentials: serde_json::from_value(fixture[0]["credentials"].clone()).unwrap(),
+            test: true,
+        },
+        Rc::new(|_| {}),
+        Rc::new({
+            let completed = completed.clone();
+            move |execution| *completed.borrow_mut() = Some(execution)
+        }),
+    );
+    until_login(|| !run.busy());
+    assert_eq!(
+        completed.borrow().as_ref().unwrap().outcome,
+        hydrus_net::login::Outcome::Success
+    );
+    assert!(site.requests.lock().unwrap()[0].starts_with("GET /start?probe=changed "));
+    window.invoke_action("apply".into());
+    assert!(accepted.borrow().is_none());
+}

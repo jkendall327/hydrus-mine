@@ -1,6 +1,9 @@
 //! Login request identity and named response parsers owned by a script draft.
 use crate::{LoginStepWindow, TableRow};
-use hydrus_gui_model::{formula_editors::FormulaTestData, login_workflows::StepEditor};
+use hydrus_gui_model::{
+    formula_editors::FormulaTestData,
+    login_workflows::{ArgumentKind, StepEditor},
+};
 use hydrus_parse::{
     content::{ContentKind, ContentParser},
     login::LoginStep,
@@ -82,6 +85,15 @@ fn show(window: &LoginStepWindow, editor: &StepEditor) {
             .map(move |(key, value)| row(vec![kind.into(), key.clone(), value.clone()], false))
     })
     .collect::<Vec<_>>();
+    let selected = usize::try_from(window.get_variable_index()).ok();
+    let variables = variables
+        .into_iter()
+        .enumerate()
+        .map(|(i, mut row)| {
+            row.selected = selected == Some(i);
+            row
+        })
+        .collect::<Vec<_>>();
     window.set_variables(ModelRc::new(VecModel::from(variables)));
     window.set_cookies(ModelRc::new(VecModel::from(
         editor
@@ -120,6 +132,9 @@ pub fn open(
     let editor = Rc::new(RefCell::new(StepEditor::new(step)));
     show(&window, &editor.borrow());
     let active = Rc::new(Cell::new(true));
+    let selected_argument = Rc::new(RefCell::new(None::<(ArgumentKind, String)>));
+    let edited_argument = Rc::new(RefCell::new(None::<(ArgumentKind, String)>));
+    let deleting_argument = Rc::new(Cell::new(false));
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slot = Rc::downgrade(&slots.step);
@@ -204,6 +219,30 @@ pub fn open(
             }
         }
     });
+    window.on_variable_clicked({
+        let weak = window.as_weak();
+        let editor = editor.clone();
+        let active = active.clone();
+        let selected = selected_argument.clone();
+        move |index| {
+            if !active.get() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if window.get_child_open() || window.get_deleting() || window.get_variable_editing() {
+                return;
+            }
+            let row = usize::try_from(index)
+                .ok()
+                .and_then(|i| editor.borrow().argument_rows().get(i).cloned());
+            *selected.borrow_mut() = row.map(|(kind, key, _)| (kind, key));
+            window.set_variable_selected(selected.borrow().is_some());
+            window.set_variable_index(index);
+            show(&window, &editor.borrow());
+        }
+    });
     window.on_content_clicked({
         let weak = window.as_weak();
         let editor = editor.clone();
@@ -215,7 +254,7 @@ pub fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_child_open() || window.get_deleting() {
+            if window.get_child_open() || window.get_deleting() || window.get_variable_editing() {
                 return;
             }
             if let Ok(i) = usize::try_from(i) {
@@ -238,7 +277,7 @@ pub fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_child_open() || window.get_deleting() {
+            if window.get_child_open() || window.get_deleting() || window.get_variable_editing() {
                 return;
             }
             let selected = if let Ok(i) = usize::try_from(i) {
@@ -261,6 +300,9 @@ pub fn open(
         let close = close.clone();
         let edit = edit.clone();
         let exchange = slots.exchange.clone();
+        let selected_argument = selected_argument.clone();
+        let edited_argument = edited_argument.clone();
+        let deleting_argument = deleting_argument.clone();
         move |action| {
             if !active.get() {
                 return;
@@ -278,7 +320,69 @@ pub fn open(
             if window.get_deleting() && !matches!(action.as_str(), "confirm-delete" | "back") {
                 return;
             }
+            if window.get_variable_editing()
+                && !matches!(action.as_str(), "save-variable" | "cancel-variable")
+            {
+                return;
+            }
             match action.as_str() {
+                "add-variable" | "edit-variable" => {
+                    let selected = if action == "edit-variable" {
+                        selected_argument.borrow().clone()
+                    } else {
+                        None
+                    };
+                    if action == "edit-variable" && selected.is_none() {
+                        return;
+                    }
+                    window.set_variable_existing(selected.is_some());
+                    window.set_variable_kind(selected.as_ref().map_or(1, |(kind, _)| kind.index()));
+                    window.set_variable_key(
+                        selected.as_ref().map_or("", |(_, key)| key.as_str()).into(),
+                    );
+                    window.set_variable_value(
+                        selected
+                            .as_ref()
+                            .and_then(|(kind, key)| {
+                                editor.borrow().arguments(*kind).get(key).cloned()
+                            })
+                            .unwrap_or_default()
+                            .into(),
+                    );
+                    *edited_argument.borrow_mut() = selected;
+                    window.set_variable_editing(true);
+                }
+                "save-variable" => {
+                    let kind = ArgumentKind::from_index(window.get_variable_kind());
+                    let old = edited_argument.borrow();
+                    let result = editor.borrow_mut().set_argument(
+                        kind,
+                        old.as_ref().map(|(_, key)| key.as_str()),
+                        window.get_variable_key().to_string(),
+                        window.get_variable_value().to_string(),
+                    );
+                    match result {
+                        Ok(()) => {
+                            window.set_variable_editing(false);
+                            window.set_variable_selected(false);
+                            window.set_variable_index(-1);
+                            selected_argument.borrow_mut().take();
+                            window.set_error("".into());
+                            show(&window, &editor.borrow());
+                        }
+                        Err(error) => window.set_error(error.into()),
+                    }
+                }
+                "cancel-variable" => {
+                    window.set_variable_editing(false);
+                    window.set_error("".into());
+                }
+                "delete-variable" => {
+                    if selected_argument.borrow().is_some() {
+                        deleting_argument.set(true);
+                        window.set_deleting(true);
+                    }
+                }
                 "add-content" => edit(None),
                 "edit-content" => {
                     let selected = editor.borrow().selection.one();
@@ -292,11 +396,22 @@ pub fn open(
                     }
                 }
                 "confirm-delete" => {
-                    editor.borrow_mut().delete();
+                    if deleting_argument.replace(false) {
+                        if let Some((kind, key)) = selected_argument.borrow_mut().take() {
+                            editor.borrow_mut().remove_argument(kind, &key);
+                            window.set_variable_selected(false);
+                            window.set_variable_index(-1);
+                        }
+                    } else {
+                        editor.borrow_mut().delete();
+                    }
                     window.set_deleting(false);
                     show(&window, &editor.borrow());
                 }
-                "back" => window.set_deleting(false),
+                "back" => {
+                    deleting_argument.set(false);
+                    window.set_deleting(false);
+                }
                 "apply" => {
                     let mut step = editor.borrow().value();
                     step.name = window.get_name().to_string();

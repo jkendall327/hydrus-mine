@@ -2170,3 +2170,10 @@ object-import action.
 
 PNG export headers also render on installations without system fonts using a
 bundled Open Sans fallback with its Apache 2.0 licence and copyright notice.
+
+Login step request arguments are editable in the combined credential/static/temporary
+list. Add or edit selects the dictionary and stages its key/value pair; keys are
+nonblank and unique within that dictionary, while values can be blank. Rename,
+confirmed deletion, row Cancel and parent Cancel preserve the expected draft
+boundaries. The loopback consumer regression edits a static query argument through
+the native step window and observes it on the actual HTTP request.

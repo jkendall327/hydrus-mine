@@ -1,5 +1,7 @@
 //! Reference Qt credential rows, advisory prompts, script identities and storage.
-use hydrus_gui_model::login_workflows::{CredentialsEditor, ScriptsEditor};
+use hydrus_gui_model::login_workflows::{
+    ArgumentKind, CredentialsEditor, ScriptsEditor, StepEditor,
+};
 use hydrus_legacy::{objects::logins as legacy, serialisable::SerialisableObject};
 use hydrus_parse::login::CredentialKind;
 use serde_json::{Value, json};
@@ -116,7 +118,6 @@ fn preserved_credentials_load_then_native_save_controls_domain_warnings() {
 #[test]
 fn login_step_content_replays_reference_unique_import_cancel_sort_and_request_cleanup() {
     use hydrus_downloader_exchange::{Definition, Native};
-    use hydrus_gui_model::login_workflows::StepEditor;
     use hydrus_parse::content::ContentKind;
     let fixture = hydrus_testkit::fixture_json("login_editors.json");
     let states = fixture["step_states"].as_array().unwrap();
@@ -266,4 +267,70 @@ fn domain_apply_preserves_concurrent_script_edits_and_rejects_domain_conflicts()
         "an old domain draft must not overwrite a newer save"
     );
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
+}
+
+#[test]
+fn request_arguments_replay_real_qt_rename_duplicates_blank_values_and_cancel() {
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let states = fixture["argument_states"].as_array().unwrap();
+    let step = legacy::login_step(
+        &SerialisableObject::from_tuple_str(&states[0]["state"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let mut editor = StepEditor::new(&step);
+    for state in &states[1..] {
+        let kind = match state["kind"].as_str().unwrap() {
+            "credential" => ArgumentKind::Credential,
+            "temporary" => ArgumentKind::Temporary,
+            _ => ArgumentKind::Static,
+        };
+        let values = state["answers"].as_array().unwrap();
+        if values.len() == 1 {
+            assert_eq!(
+                editor
+                    .set_argument(
+                        kind,
+                        None,
+                        values[0].as_str().unwrap().to_owned(),
+                        String::new()
+                    )
+                    .unwrap_err(),
+                state["prompts"][1]["warning"].as_str().unwrap()
+            );
+        } else if let Some(value) = values[1].as_str() {
+            let old = if state["action"] == "edit" {
+                editor.arguments(kind).keys().next().cloned()
+            } else {
+                None
+            };
+            editor
+                .set_argument(
+                    kind,
+                    old.as_deref(),
+                    values[0].as_str().unwrap().to_owned(),
+                    value.to_owned(),
+                )
+                .unwrap();
+        }
+        assert_eq!(
+            hydrus_downloader_exchange::logins::step_tuple(&editor.value()).unwrap(),
+            state["state"]
+        );
+    }
+    let before = editor.value();
+    assert!(
+        editor
+            .set_argument(
+                ArgumentKind::Static,
+                Some("lang"),
+                String::new(),
+                "bad".into()
+            )
+            .is_err()
+    );
+    assert_eq!(editor.value(), before);
+    editor.remove_argument(ArgumentKind::Static, "empty");
+    assert!(!editor.step.static_args.contains_key("empty"));
+    assert_eq!(editor.step.credentials["account"], "account_param");
+    assert_eq!(editor.step.temp_args["csrf"], "token");
 }
