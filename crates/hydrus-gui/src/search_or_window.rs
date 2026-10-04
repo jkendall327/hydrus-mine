@@ -259,10 +259,10 @@ pub fn open(
                 return;
             }
             if let Some(window) = weak.upgrade() {
-                if !window.get_advanced() {
-                    state.page.borrow_mut().type_text(text.as_str());
-                } else {
+                if window.get_advanced() {
                     window.set_input(text);
+                } else {
+                    state.page.borrow_mut().type_text(text.as_str());
                 }
                 show(&window, &state);
             }
