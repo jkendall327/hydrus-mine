@@ -2099,3 +2099,10 @@ movement updates the mouse timer; keys, clicks, scrolling and opening/focusing
 an editor update the user timer. Rendering and losing focus do not reset either
 timer. The reference's independent dialog, mouse and API timestamp updates are
 recorded by `oracle/record_session_activity.py`.
+and cancel an active request. The script editor now has a domain field, run/cancel
+controls, current HTTP status, final result and a results table. Run asks for its
+credential values and uses a fresh cookie store, leaving the client sessions and
+staged definitions unchanged. Applying while a test runs is blocked. Review opens
+read-only URL/body/data/variable/cookie/result fields; the data preview contains
+at most 1024 Unicode characters, and copy transfers the complete response.
+Closing the owner cancels the run and its result review, and stale actions do nothing.

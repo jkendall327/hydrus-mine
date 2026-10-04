@@ -36,6 +36,7 @@ def record(session):
     thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
     def qt():
         from hydrus.client import ClientStrings as S, ClientThreading
+        from hydrus.client.gui.networking import ClientGUILogin as G
         from hydrus.client.networking import ClientNetworkingLogin as L, ClientNetworkingContexts as NC
         from hydrus.client.parsing import ClientParsing as P
         from hydrus.core import HydrusConstants as HC, HydrusSerialisable
@@ -70,6 +71,21 @@ def record(session):
             if name=='cancel_before_start':status.Cancel()
             outcome=script.Start(engine,context,credentials,test_result_callable=results.append,job_status=status)
             cases.append({'name':name,'script':script.GetSerialisableTuple(),'credentials':credentials,'results':results,'outcome':outcome,'requests':list(requests),'logged_in':script.IsLoggedIn(engine,context)})
+        copied=[]
+        original_pub=controller.pub
+        def capture(topic,*args,**kwargs):
+            if topic=='clipboard':copied.append(list(args))
+            return original_pub(topic,*args,**kwargs)
+        controller.pub=capture
+        def review(result):
+            copied.clear();panel=G.ReviewTestResultPanel(controller.gui,result)
+            state={'name':panel._name.text(),'url':panel._url.text(),'body':panel._body.toPlainText(),'data':panel._data_preview.toPlainText(),'variables':panel._temp_variables.toPlainText(),'cookies':panel._cookies.toPlainText(),'result':panel._result.text(),'read_only':[panel._url.isReadOnly(),panel._body.isReadOnly(),panel._data_preview.isReadOnly(),panel._temp_variables.isReadOnly(),panel._cookies.isReadOnly()]}
+            panel._CopyData();state['copied']=list(copied);panel.deleteLater();return state
+        try:
+            for case in cases:case['reviews']=[review(result) for result in case['results']]
+            long=list(cases[0]['results'][0]);long[3]='α🙂'*700
+            cases[0]['long_review']={'input':long,'state':review(long)}
+        finally:controller.pub=original_pub
         return cases
     try:return controller.CallBlockingToQt(controller.gui,qt)
     finally:server.shutdown();server.server_close();thread.join()

@@ -316,7 +316,90 @@
     "cookie": "preflight=ready"
    }
   ],
-  "logged_in": true
+  "logged_in": true,
+  "reviews": [
+   {
+    "name": "establish session",
+    "url": "http://127.0.0.1/start?lang=en",
+    "body": "",
+    "data": "<input name=\"csrf\" value=\"loop-token\"><p>start</p>",
+    "variables": "csrf: loop-token",
+    "cookies": "preflight: ready | 127.0.0.1 | session",
+    "result": "OK!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "<input name=\"csrf\" value=\"loop-token\"><p>start</p>"
+     ]
+    ]
+   },
+   {
+    "name": "send credentials",
+    "url": "http://127.0.0.1/login",
+    "body": "mode=login&pass=dummy + pass&=&token=loop-token&user=alice",
+    "data": "login response",
+    "variables": "",
+    "cookies": "session: ok | 127.0.0.1 | session",
+    "result": "OK!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "login response"
+     ]
+    ]
+   }
+  ],
+  "long_review": {
+   "input": [
+    "establish session",
+    "http://127.0.0.1/start?lang=en",
+    "",
+    "α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂",
+    [
+     "csrf: loop-token"
+    ],
+    [
+     "preflight: ready | 127.0.0.1 | session"
+    ],
+    "OK!"
+   ],
+   "state": {
+    "name": "establish session",
+    "url": "http://127.0.0.1/start?lang=en",
+    "body": "",
+    "data": "α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂",
+    "variables": "csrf: loop-token",
+    "cookies": "preflight: ready | 127.0.0.1 | session",
+    "result": "OK!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂"
+     ]
+    ]
+   }
+  }
  },
  {
   "name": "missing_cookie",
@@ -633,7 +716,53 @@
     "cookie": "preflight=ready"
    }
   ],
-  "logged_in": false
+  "logged_in": false,
+  "reviews": [
+   {
+    "name": "establish session",
+    "url": "http://127.0.0.1/start?lang=en",
+    "body": "",
+    "data": "<input name=\"csrf\" value=\"loop-token\"><p>start</p>",
+    "variables": "csrf: loop-token",
+    "cookies": "preflight: ready | 127.0.0.1 | session",
+    "result": "OK!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "<input name=\"csrf\" value=\"loop-token\"><p>start</p>"
+     ]
+    ]
+   },
+   {
+    "name": "send credentials",
+    "url": "http://127.0.0.1/missing-cookie",
+    "body": "mode=login&pass=dummy + pass&=&token=loop-token&user=alice",
+    "data": "Did not download data.",
+    "variables": "",
+    "cookies": "",
+    "result": "Missing cookie \"session\" on step \"send credentials\"!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "Did not download data."
+     ]
+    ]
+   }
+  ]
  },
  {
   "name": "veto",
@@ -976,7 +1105,31 @@
     "cookie": null
    }
   ],
-  "logged_in": false
+  "logged_in": false,
+  "reviews": [
+   {
+    "name": "establish session",
+    "url": "http://127.0.0.1/start?lang=en",
+    "body": "",
+    "data": "<input name=\"csrf\" value=\"loop-token\"><p>start</p>",
+    "variables": "csrf: loop-token",
+    "cookies": "preflight: ready | 127.0.0.1 | session",
+    "result": "veto: blocked response",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "<input name=\"csrf\" value=\"loop-token\"><p>start</p>"
+     ]
+    ]
+   }
+  ]
  },
  {
   "name": "final_cookie",
@@ -1295,7 +1448,53 @@
     "cookie": "preflight=ready"
    }
   ],
-  "logged_in": false
+  "logged_in": false,
+  "reviews": [
+   {
+    "name": "establish session",
+    "url": "http://127.0.0.1/start?lang=en",
+    "body": "",
+    "data": "<input name=\"csrf\" value=\"loop-token\"><p>start</p>",
+    "variables": "csrf: loop-token",
+    "cookies": "preflight: ready | 127.0.0.1 | session",
+    "result": "OK!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "<input name=\"csrf\" value=\"loop-token\"><p>start</p>"
+     ]
+    ]
+   },
+   {
+    "name": "send credentials",
+    "url": "http://127.0.0.1/login",
+    "body": "mode=login&pass=dummy + pass&=&token=loop-token&user=alice",
+    "data": "login response",
+    "variables": "",
+    "cookies": "session: ok | 127.0.0.1 | session",
+    "result": "OK!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "login response"
+     ]
+    ]
+   }
+  ]
  },
  {
   "name": "network_401",
@@ -1459,7 +1658,31 @@
     "cookie": null
    }
   ],
-  "logged_in": false
+  "logged_in": false,
+  "reviews": [
+   {
+    "name": "denied request",
+    "url": "http://127.0.0.1/unauthorised",
+    "body": "",
+    "data": "Did not download data.",
+    "variables": "",
+    "cookies": "",
+    "result": "401: credentials denied",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "Did not download data."
+     ]
+    ]
+   }
+  ]
  },
  {
   "name": "missing_variable",
@@ -1748,7 +1971,31 @@
   ],
   "outcome": "Verification error: The temporary variable 'missing' was not found!",
   "requests": [],
-  "logged_in": false
+  "logged_in": false,
+  "reviews": [
+   {
+    "name": "establish session",
+    "url": "Did not make a url.",
+    "body": "",
+    "data": "Did not download data.",
+    "variables": "",
+    "cookies": "",
+    "result": "The temporary variable 'missing' was not found!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "Did not download data."
+     ]
+    ]
+   }
+  ]
  },
  {
   "name": "cancel_before_start",
@@ -2025,6 +2272,7 @@
   "results": [],
   "outcome": "User cancelled the login process.",
   "requests": [],
-  "logged_in": false
+  "logged_in": false,
+  "reviews": []
  }
 ]

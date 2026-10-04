@@ -1322,8 +1322,12 @@ source type, URL-class normalization, duplicate handling and immediate writes.
 Selected-URL searches use the same exact-match OR predicates and local location;
 opening the page does not explicitly raise the desktop window.
 
-Login HTTP execution is implemented as a reusable NetEngine consumer; its GUI
-run/test controls are still being connected. Login requests bypass bandwidth
+Login HTTP execution is implemented as a reusable NetEngine consumer with script
+editor test controls and result review. Test runs use fresh cookie sessions while
+copying request preferences and custom headers. Results populate after the run
+finishes; the reference inserts them as each step finishes. Native copy feedback
+stays visible until the review closes. Domain-manager real execution controls are
+still absent. Login requests bypass bandwidth
 waiting while using ordinary cookies, custom headers, redirect and retry behavior.
 The executor waits the reference two seconds after successful steps and observes
 cancellation during requests and waits. Session-cookie descriptions match the

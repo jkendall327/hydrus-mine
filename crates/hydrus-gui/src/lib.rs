@@ -57,6 +57,7 @@ pub mod locations_window;
 pub mod login_credential_window;
 pub mod login_domains_window;
 pub mod login_step_window;
+pub mod login_test_window;
 pub mod login_workflows_window;
 mod manage_notes_window;
 mod manage_ratings_window;

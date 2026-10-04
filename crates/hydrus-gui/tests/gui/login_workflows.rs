@@ -7,7 +7,17 @@ use hydrus_legacy::{objects::logins as legacy, serialisable::SerialisableObject}
 use hydrus_parse::login::LoginManager;
 use hydrus_store::Store;
 use slint::{ComponentHandle as _, Model as _};
-use std::{cell::RefCell, collections::BTreeMap, rc::Rc, sync::Arc};
+use std::{
+    cell::RefCell,
+    collections::BTreeMap,
+    io::{Read as _, Write as _},
+    rc::Rc,
+    sync::{
+        Arc, Mutex,
+        atomic::{AtomicBool, Ordering},
+    },
+    time::{Duration, Instant},
+};
 fn store() -> (tempfile::TempDir, Arc<Store>, LoginManager) {
     let fixture = hydrus_testkit::fixture_json("login_editors.json");
     let manager = legacy::manager(
@@ -432,4 +442,286 @@ fn domain_menu_credentials_stage_activation_and_persist_only_at_parent_apply() {
     child.invoke_action("apply".into());
     domains.invoke_action("apply".into());
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
+}
+
+fn recorded_result(row: &serde_json::Value) -> hydrus_net::login::TestResult {
+    hydrus_net::login::TestResult {
+        name: row[0].as_str().unwrap().to_owned(),
+        url: row[1].as_str().unwrap().to_owned(),
+        body: row[2].as_str().map(str::to_owned),
+        data: row[3].as_str().unwrap().to_owned(),
+        new_variables: serde_json::from_value(row[4].clone()).unwrap(),
+        new_cookies: serde_json::from_value(row[5].clone()).unwrap(),
+        result: row[6].as_str().unwrap().to_owned(),
+    }
+}
+fn assert_review(window: &hydrus_gui::LoginTestResultWindow, state: &serde_json::Value) {
+    assert_eq!(window.get_name(), state["name"].as_str().unwrap());
+    assert_eq!(window.get_url(), state["url"].as_str().unwrap());
+    assert_eq!(window.get_body(), state["body"].as_str().unwrap());
+    assert_eq!(window.get_data(), state["data"].as_str().unwrap());
+    assert_eq!(window.get_variables(), state["variables"].as_str().unwrap());
+    assert_eq!(window.get_cookies(), state["cookies"].as_str().unwrap());
+    assert_eq!(window.get_result(), state["result"].as_str().unwrap());
+}
+#[test]
+fn result_review_replays_real_qt_fields_unicode_preview_full_copy_and_stale_close() {
+    let rendered = headless::init();
+    let fixture = hydrus_testkit::fixture_json("login_execution.json");
+    let slot = hydrus_gui::login_test_window::ResultSlot::default();
+    let copied = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |value| {
+            if let hydrus_gui::Clip::Text(text) = value {
+                copied.borrow_mut().push(text.clone());
+            }
+        }
+    });
+    for case in fixture.as_array().unwrap() {
+        for (row, state) in case["results"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(case["reviews"].as_array().unwrap())
+        {
+            let result = recorded_result(row);
+            let window = hydrus_gui::login_test_window::open_result(&result, &slot).unwrap();
+            assert_review(&window, state);
+            window.invoke_action("copy".into());
+            assert_eq!(
+                copied.borrow().last().unwrap(),
+                state["copied"][0][1].as_str().unwrap()
+            );
+            assert!(window.get_copied());
+            window.invoke_action("close".into());
+            assert!(slot.borrow().is_none());
+            let count = copied.borrow().len();
+            window.invoke_action("copy".into());
+            assert_eq!(copied.borrow().len(), count);
+        }
+    }
+    let long = &fixture[0]["long_review"];
+    let result = recorded_result(&long["input"]);
+    let window = hydrus_gui::login_test_window::open_result(&result, &slot).unwrap();
+    assert_review(&window, &long["state"]);
+    assert_eq!(window.get_data().chars().count(), 1024);
+    window.invoke_action("copy".into());
+    assert_eq!(copied.borrow().last().unwrap(), &result.data);
+    assert_eq!(result.data.chars().count(), 1400);
+    let pixels = headless::render(&rendered.get(rendered.count() - 1).unwrap(), 900, 650);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("login_test_result.png"),
+        &pixels,
+        900,
+        650,
+    )
+    .unwrap();
+    hydrus_gui::login_test_window::cancel_result(&slot);
+    assert!(!window.window().is_visible());
+    hydrus_gui::set_clipper(|_| {});
+}
+struct LoginSite {
+    domain: String,
+    requests: Arc<Mutex<Vec<String>>>,
+    stop: Arc<AtomicBool>,
+    thread: Option<std::thread::JoinHandle<()>>,
+}
+impl LoginSite {
+    fn start() -> Self {
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let domain = listener.local_addr().unwrap().to_string();
+        listener.set_nonblocking(true).unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let requests = Arc::new(Mutex::new(Vec::new()));
+        let thread = std::thread::spawn({
+            let stop = stop.clone();
+            let requests = requests.clone();
+            move || {
+                while !stop.load(Ordering::Relaxed) {
+                    let Ok((mut stream, _)) = listener.accept() else {
+                        std::thread::sleep(Duration::from_millis(10));
+                        continue;
+                    };
+                    stream.set_nonblocking(false).unwrap();
+                    stream
+                        .set_read_timeout(Some(Duration::from_secs(2)))
+                        .unwrap();
+                    let mut bytes = vec![0; 8192];
+                    let mut count = 0;
+                    let mut expected = None;
+                    while count < bytes.len() {
+                        match stream.read(&mut bytes[count..]) {
+                            Ok(0) | Err(_) => break,
+                            Ok(read) => count += read,
+                        }
+                        if expected.is_none()
+                            && let Some(end) =
+                                bytes[..count].windows(4).position(|v| v == b"\r\n\r\n")
+                        {
+                            let headers = String::from_utf8_lossy(&bytes[..end]);
+                            let length = headers
+                                .lines()
+                                .find_map(|line| {
+                                    line.to_ascii_lowercase()
+                                        .strip_prefix("content-length: ")
+                                        .map(|n| n.parse::<usize>().unwrap())
+                                })
+                                .unwrap_or(0);
+                            expected = Some(end + 4 + length);
+                        }
+                        if expected.is_some_and(|expected| count >= expected) {
+                            break;
+                        }
+                    }
+                    if count == 0 {
+                        continue;
+                    }
+                    let request = String::from_utf8_lossy(&bytes[..count]).into_owned();
+                    let post = request.starts_with("POST ");
+                    requests.lock().unwrap().push(request);
+                    let (body, cookie) = if post {
+                        ("login response", "session=ok; Path=/")
+                    } else {
+                        (
+                            "<input name=\"csrf\" value=\"loop-token\"><p>start</p>",
+                            "preflight=ready; Path=/",
+                        )
+                    };
+                    let response = format!(
+                        "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: {}\r\nSet-Cookie: {cookie}\r\nConnection: close\r\n\r\n{body}",
+                        body.len()
+                    );
+                    let _ = stream.write_all(response.as_bytes());
+                }
+            }
+        });
+        Self {
+            domain,
+            requests,
+            stop,
+            thread: Some(thread),
+        }
+    }
+}
+impl Drop for LoginSite {
+    fn drop(&mut self) {
+        self.stop.store(true, Ordering::Relaxed);
+        self.thread.take().unwrap().join().unwrap();
+    }
+}
+fn until_login(mut ready: impl FnMut() -> bool) {
+    let started = Instant::now();
+    while !ready() {
+        assert!(
+            started.elapsed() < Duration::from_secs(12),
+            "login did not finish"
+        );
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(Duration::from_millis(10));
+    }
+}
+#[test]
+fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() {
+    let site = LoginSite::start();
+    let fixture = hydrus_testkit::fixture_json("login_execution.json");
+    let value = legacy::login_script(
+        &SerialisableObject::from_tuple_str(&fixture[0]["script"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let (_dir, store, mut original) = store();
+    original.scripts = vec![value];
+    let manager = original.clone();
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::logins::save(ctx.conn(), &manager)?;
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::network::NetworkSettings {
+                    detect_sleep: false,
+                    network_timeout: 2,
+                    max_connection_attempts: 1,
+                    max_get_attempts: 1,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
+    headless::init();
+    let slots = Slots::default();
+    let list = windows::open_scripts(&store, &slots).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let window = slots.script.borrow().as_ref().unwrap().clone_strong();
+    window.set_test_domain(site.domain.clone().into());
+    window.invoke_action("run-test".into());
+    assert!(window.get_child_open());
+    let credentials = slots.credentials.borrow().as_ref().unwrap().clone_strong();
+    for i in 0..credentials.get_rows().row_count() {
+        let row = credentials.get_rows().row_data(i).unwrap();
+        credentials.invoke_edited(
+            i32::try_from(i).unwrap(),
+            fixture[0]["credentials"][row.name.as_str()]
+                .as_str()
+                .unwrap()
+                .into(),
+        );
+    }
+    credentials.invoke_action("apply".into());
+    assert!(window.get_running());
+    window.invoke_action("apply".into());
+    assert_eq!(
+        window.get_error(),
+        "Currently testing! Please cancel it first!"
+    );
+    until_login(|| !window.get_running());
+    assert_eq!(
+        window.get_final_result(),
+        fixture[0]["outcome"].as_str().unwrap()
+    );
+    assert_eq!(window.get_results().row_count(), 2);
+    let requests = site.requests.lock().unwrap();
+    assert_eq!(requests.len(), 2);
+    assert!(requests[1].contains("token=loop-token"));
+    assert!(requests[1].contains("pass=dummy+%2B+pass%26%3D"));
+    assert!(
+        requests[1]
+            .to_ascii_lowercase()
+            .contains("cookie: preflight=ready")
+    );
+    drop(requests);
+    assert!(
+        store
+            .read(hydrus_store::network::sessions)
+            .unwrap()
+            .is_empty()
+    );
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+    window.invoke_result_clicked(1);
+    window.invoke_action("review-result".into());
+    let review = slots.result.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        review.get_data(),
+        fixture[0]["reviews"][1]["data"].as_str().unwrap()
+    );
+    review.invoke_action("close".into());
+    window.invoke_action("run-test".into());
+    let credentials = slots.credentials.borrow().as_ref().unwrap().clone_strong();
+    credentials.invoke_action("apply".into());
+    until_login(|| site.requests.lock().unwrap().len() == 3);
+    assert!(slots.run.busy());
+    window.invoke_action("cancel".into());
+    assert!(!slots.run.busy());
+    assert!(slots.result.borrow().is_none());
+    assert!(!review.window().is_visible());
+    window.invoke_action("run-test".into());
+    review.invoke_action("copy".into());
+    assert!(slots.credentials.borrow().is_none());
+    for _ in 0..20 {
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(Duration::from_millis(10));
+    }
+    assert_eq!(site.requests.lock().unwrap().len(), 3);
+    list.invoke_action("cancel".into());
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
 }
