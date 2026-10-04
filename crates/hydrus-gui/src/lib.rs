@@ -93,6 +93,7 @@ mod viewer;
 pub mod viewer_menu;
 mod watcher;
 pub mod windows;
+pub mod write_tag_menu;
 pub mod write_tag_window;
 pub mod zoom;
 

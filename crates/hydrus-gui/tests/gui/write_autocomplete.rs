@@ -424,3 +424,165 @@ fn favourite_children_tabs_and_applied_cap_feed_manage_tags_and_import_tag_child
     );
     child.invoke_cancel();
 }
+
+fn choose_write_tag_menu(window: &hydrus_gui::WriteTagsWindow, path: &[&str]) {
+    for (pane, label) in path.iter().enumerate() {
+        let lines = window.get_tag_menu_panes().row_data(pane).unwrap().lines;
+        let line = lines.iter().position(|row| row.label == *label).unwrap();
+        window.invoke_tag_menu_clicked(
+            i32::try_from(pane).unwrap(),
+            i32::try_from(line).unwrap(),
+            100.0,
+            50.0,
+            10.0,
+        );
+    }
+}
+
+#[test]
+fn shared_tag_menu_favourites_questions_copy_launch_and_owner_lifetime() {
+    use hydrus_core::{Tag, search::context::LocationContext, search::predicate::Predicate};
+    use std::cell::Cell;
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let applied = Rc::new(Cell::new(0));
+    let copies = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_clipper({
+        let copies = copies.clone();
+        move |clip| copies.borrow_mut().push(clip.clone())
+    });
+    let launched = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::write_tag_menu::install_search_launcher(Rc::new({
+        let launched = launched.clone();
+        move |location, context, predicates, duplicate| {
+            launched
+                .borrow_mut()
+                .push((location, context, predicates, duplicate))
+        }
+    }));
+    let w = hydrus_gui::write_tag_window::open(
+        &store,
+        key.clone(),
+        &[],
+        "edit tags",
+        &slot,
+        Rc::new({
+            let applied = applied.clone();
+            move |_| applied.set(applied.get() + 1)
+        }),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    w.invoke_edited("parity:menu new".into());
+    w.invoke_context_menu(0, 10.0, 10.0);
+    choose_write_tag_menu(&w, &["copy", "menu_new"]);
+    assert_eq!(
+        *copies.borrow(),
+        vec![hydrus_gui::Clip::Text("menu_new".into())]
+    );
+    w.invoke_context_menu(0, 10.0, 10.0);
+    choose_write_tag_menu(&w, &["favourites", "add \"parity:menu new\" to favourites"]);
+    let favourites: settings::FavouriteTags = store.read(settings::get).unwrap();
+    assert!(favourites.0.iter().any(|t| t == "parity:menu new"));
+    w.invoke_tab_chosen(1);
+    let row = w
+        .get_suggestions()
+        .iter()
+        .position(|r| r.text == "parity:menu new")
+        .unwrap();
+    w.invoke_context_menu(i32::try_from(row).unwrap(), 10.0, 10.0);
+    choose_write_tag_menu(
+        &w,
+        &["favourites", "remove \"parity:menu new\" from favourites"],
+    );
+    assert_eq!(
+        w.get_tag_menu_question(),
+        "Remove \"parity:menu new\" from the favourites list?"
+    );
+    w.invoke_apply();
+    assert!(slot.borrow().is_some());
+    assert_eq!(applied.get(), 0);
+    w.invoke_tag_menu_answered(false);
+    assert!(w.get_tag_menu_question().is_empty());
+    let favourites: settings::FavouriteTags = store.read(settings::get).unwrap();
+    assert!(favourites.0.iter().any(|t| t == "parity:menu new"));
+    w.invoke_context_menu(i32::try_from(row).unwrap(), 10.0, 10.0);
+    choose_write_tag_menu(&w, &["open", "open a new search page for parity:menu new"]);
+    let defaults: settings::SearchDefaults = store.read(settings::get).unwrap();
+    assert_eq!(launched.borrow().len(), 1);
+    let actual = launched.borrow()[0].clone();
+    assert_eq!(actual.0, LocationContext::default());
+    assert_eq!(actual.1.service, defaults.tag_service);
+    assert_eq!(
+        actual.2,
+        vec![Predicate::Tag {
+            tag: Tag::new("parity:menu new").unwrap(),
+            inclusive: true
+        }]
+    );
+    assert!(!actual.3);
+    w.invoke_context_menu(i32::try_from(row).unwrap(), 10.0, 10.0);
+    choose_write_tag_menu(
+        &w,
+        &["favourites", "remove \"parity:menu new\" from favourites"],
+    );
+    w.window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    w.invoke_tag_menu_answered(true);
+    w.invoke_apply();
+    w.invoke_context_menu(0, 10.0, 10.0);
+    w.invoke_tag_menu_clicked(0, 0, 100.0, 50.0, 10.0);
+    assert!(slot.borrow().is_none());
+    assert_eq!(applied.get(), 0);
+    assert_eq!(launched.borrow().len(), 1);
+    let favourites: settings::FavouriteTags = store.read(settings::get).unwrap();
+    assert!(favourites.0.iter().any(|t| t == "parity:menu new"));
+    // Reopen, then a confirmed removal re-reads concurrent settings instead of replacing them.
+    let w = hydrus_gui::write_tag_window::open(
+        &store,
+        key,
+        &[],
+        "edit tags",
+        &slot,
+        Rc::new(|_| {}),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    w.invoke_tab_chosen(1);
+    let row = w
+        .get_suggestions()
+        .iter()
+        .position(|r| r.text == "parity:menu new")
+        .unwrap();
+    w.invoke_context_menu(i32::try_from(row).unwrap(), 10.0, 10.0);
+    choose_write_tag_menu(
+        &w,
+        &["favourites", "remove \"parity:menu new\" from favourites"],
+    );
+    store
+        .write(|ctx| {
+            let mut favourites: settings::FavouriteTags = settings::get(ctx.conn())?;
+            favourites.0.push("parity:other window".into());
+            settings::set(ctx.conn(), &favourites)
+        })
+        .unwrap();
+    w.invoke_tag_menu_answered(true);
+    let favourites: settings::FavouriteTags = store.read(settings::get).unwrap();
+    assert!(!favourites.0.iter().any(|t| t == "parity:menu new"));
+    assert!(favourites.0.iter().any(|t| t == "parity:other window"));
+    assert!(
+        !w.get_suggestions()
+            .iter()
+            .any(|r| r.text == "parity:menu new")
+    );
+    w.invoke_cancel();
+    hydrus_gui::write_tag_menu::clear_search_launcher();
+}

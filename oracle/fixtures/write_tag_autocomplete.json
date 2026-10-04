@@ -1,4 +1,553 @@
 {
+  "menus": [
+    {
+      "action": "open",
+      "paths": [
+        [
+          "collapse parent rows"
+        ],
+        [
+          "hide parent decorators"
+        ],
+        [
+          "hide sibling decorators"
+        ],
+        [
+          "copy",
+          "parity:amber old"
+        ],
+        [
+          "copy",
+          "amber old"
+        ],
+        [
+          "copy",
+          "amber_old"
+        ],
+        [
+          "copy",
+          "parity:amber old with counts"
+        ],
+        [
+          "copy",
+          "amber old with counts"
+        ],
+        [
+          "copy",
+          "parity:amber old and 2 parents"
+        ],
+        [
+          "copy",
+          "all tags"
+        ],
+        [
+          "copy",
+          "all subtags"
+        ],
+        [
+          "copy",
+          "all tags with counts"
+        ],
+        [
+          "copy",
+          "all subtags with counts"
+        ],
+        [
+          "siblings",
+          "add siblings to parity:amber old"
+        ],
+        [
+          "parents",
+          "add parents to parity:amber old"
+        ],
+        [
+          "open",
+          "open a new search page for parity:amber old and 2 parents"
+        ],
+        [
+          "open",
+          "open a new duplicate filter page for parity:amber old and 2 parents"
+        ],
+        [
+          "favourites",
+          "remove \"parity:amber old\" from favourites"
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"downloader tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"my tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"second tags\""
+        ],
+        [
+          "maintenance",
+          "regenerate tag display"
+        ]
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "parity:amber old",
+      "copied": [
+        "parity:amber old"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "amber old",
+      "copied": [
+        "amber old"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "amber_old",
+      "copied": [
+        "amber_old"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "parity:amber old with counts",
+      "copied": [
+        "parity:amber old (1)"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "amber old with counts",
+      "copied": [
+        "amber old (1)"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "parity:amber old and 2 parents",
+      "copied": [
+        "parity:amber old\nparity:root\nparity:colour"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "all tags",
+      "copied": [
+        "parity:amber\nparity:amber old"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "all subtags",
+      "copied": [
+        "amber\namber old"
+      ]
+    },
+    {
+      "action": "launch",
+      "label": "open a new search page for parity:amber old and 2 parents",
+      "launched": [
+        {
+          "topic": "new_page_query",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:amber old"
+          ],
+          "page_name": "parity:amber old",
+          "activate_window": false
+        }
+      ]
+    },
+    {
+      "action": "launch",
+      "label": "open a new duplicate filter page for parity:amber old and 2 parents",
+      "launched": [
+        {
+          "topic": "new_page_duplicates",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:amber old"
+          ],
+          "page_name": "duplicates: parity:amber old",
+          "activate_window": false
+        }
+      ]
+    },
+    {
+      "action": "favourite",
+      "label": "add \"parity:menu new\" to favourites",
+      "answer": false,
+      "asked": [],
+      "favourites": [
+        "parity:amber old",
+        "parity:favorite new",
+        "parity:menu new",
+        "parity:root"
+      ],
+      "most_used": []
+    },
+    {
+      "action": "favourite",
+      "label": "remove \"parity:menu new\" from favourites",
+      "answer": false,
+      "asked": [
+        {
+          "message": "Remove \"parity:menu new\" from the favourites list?",
+          "title": null
+        }
+      ],
+      "favourites": [
+        "parity:amber old",
+        "parity:favorite new",
+        "parity:menu new",
+        "parity:root"
+      ],
+      "most_used": []
+    },
+    {
+      "action": "favourite",
+      "label": "remove \"parity:menu new\" from favourites",
+      "answer": true,
+      "asked": [
+        {
+          "message": "Remove \"parity:menu new\" from the favourites list?",
+          "title": null
+        }
+      ],
+      "favourites": [
+        "parity:amber old",
+        "parity:favorite new",
+        "parity:root"
+      ],
+      "most_used": []
+    },
+    {
+      "action": "favourite",
+      "label": "add \"parity:menu new\" to most used for \"my tags\"",
+      "answer": false,
+      "asked": [],
+      "favourites": [
+        "parity:amber old",
+        "parity:favorite new",
+        "parity:root"
+      ],
+      "most_used": [
+        "parity:menu new"
+      ]
+    },
+    {
+      "action": "favourite",
+      "label": "remove \"parity:menu new\" from most used for \"my tags\"",
+      "answer": false,
+      "asked": [
+        {
+          "message": "Remove \"parity:menu new\" from the most used list for \"my tags\"?",
+          "title": null
+        }
+      ],
+      "favourites": [
+        "parity:amber old",
+        "parity:favorite new",
+        "parity:root"
+      ],
+      "most_used": [
+        "parity:menu new"
+      ]
+    },
+    {
+      "action": "favourite",
+      "label": "remove \"parity:menu new\" from most used for \"my tags\"",
+      "answer": true,
+      "asked": [
+        {
+          "message": "Remove \"parity:menu new\" from the most used list for \"my tags\"?",
+          "title": null
+        }
+      ],
+      "favourites": [
+        "parity:amber old",
+        "parity:favorite new",
+        "parity:root"
+      ],
+      "most_used": []
+    },
+    {
+      "action": "decorator",
+      "label": "collapse parent rows",
+      "paths": [
+        [
+          "expand parent rows"
+        ],
+        [
+          "hide parent decorators"
+        ],
+        [
+          "hide sibling decorators"
+        ],
+        [
+          "copy",
+          "parity:amber old"
+        ],
+        [
+          "copy",
+          "amber old"
+        ],
+        [
+          "copy",
+          "amber_old"
+        ],
+        [
+          "copy",
+          "parity:amber old with counts"
+        ],
+        [
+          "copy",
+          "amber old with counts"
+        ],
+        [
+          "copy",
+          "parity:amber old and 2 parents"
+        ],
+        [
+          "copy",
+          "all tags"
+        ],
+        [
+          "copy",
+          "all subtags"
+        ],
+        [
+          "copy",
+          "all tags with counts"
+        ],
+        [
+          "copy",
+          "all subtags with counts"
+        ],
+        [
+          "siblings",
+          "add siblings to parity:amber old"
+        ],
+        [
+          "parents",
+          "add parents to parity:amber old"
+        ],
+        [
+          "open",
+          "open a new search page for parity:amber old and 2 parents"
+        ],
+        [
+          "open",
+          "open a new duplicate filter page for parity:amber old and 2 parents"
+        ],
+        [
+          "favourites",
+          "remove \"parity:amber old\" from favourites"
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"downloader tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"my tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"second tags\""
+        ],
+        [
+          "maintenance",
+          "regenerate tag display"
+        ]
+      ]
+    },
+    {
+      "action": "decorator",
+      "label": "hide parent decorators",
+      "paths": [
+        [
+          "show parent decorators"
+        ],
+        [
+          "hide sibling decorators"
+        ],
+        [
+          "copy",
+          "parity:amber old"
+        ],
+        [
+          "copy",
+          "amber old"
+        ],
+        [
+          "copy",
+          "amber_old"
+        ],
+        [
+          "copy",
+          "parity:amber old with counts"
+        ],
+        [
+          "copy",
+          "amber old with counts"
+        ],
+        [
+          "copy",
+          "parity:amber old and 2 parents"
+        ],
+        [
+          "copy",
+          "all tags"
+        ],
+        [
+          "copy",
+          "all subtags"
+        ],
+        [
+          "copy",
+          "all tags with counts"
+        ],
+        [
+          "copy",
+          "all subtags with counts"
+        ],
+        [
+          "siblings",
+          "add siblings to parity:amber old"
+        ],
+        [
+          "parents",
+          "add parents to parity:amber old"
+        ],
+        [
+          "open",
+          "open a new search page for parity:amber old and 2 parents"
+        ],
+        [
+          "open",
+          "open a new duplicate filter page for parity:amber old and 2 parents"
+        ],
+        [
+          "favourites",
+          "remove \"parity:amber old\" from favourites"
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"downloader tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"my tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"second tags\""
+        ],
+        [
+          "maintenance",
+          "regenerate tag display"
+        ]
+      ]
+    },
+    {
+      "action": "decorator",
+      "label": "hide sibling decorators",
+      "paths": [
+        [
+          "show parent decorators"
+        ],
+        [
+          "show sibling decorators"
+        ],
+        [
+          "copy",
+          "parity:amber old"
+        ],
+        [
+          "copy",
+          "amber old"
+        ],
+        [
+          "copy",
+          "amber_old"
+        ],
+        [
+          "copy",
+          "parity:amber old with counts"
+        ],
+        [
+          "copy",
+          "amber old with counts"
+        ],
+        [
+          "copy",
+          "parity:amber old and 2 parents"
+        ],
+        [
+          "copy",
+          "all tags"
+        ],
+        [
+          "copy",
+          "all subtags"
+        ],
+        [
+          "copy",
+          "all tags with counts"
+        ],
+        [
+          "copy",
+          "all subtags with counts"
+        ],
+        [
+          "siblings",
+          "add siblings to parity:amber old"
+        ],
+        [
+          "parents",
+          "add parents to parity:amber old"
+        ],
+        [
+          "open",
+          "open a new search page for parity:amber old and 2 parents"
+        ],
+        [
+          "open",
+          "open a new duplicate filter page for parity:amber old and 2 parents"
+        ],
+        [
+          "favourites",
+          "remove \"parity:amber old\" from favourites"
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"downloader tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"my tags\""
+        ],
+        [
+          "favourites",
+          "add \"parity:amber old\" to most used for \"second tags\""
+        ],
+        [
+          "maintenance",
+          "regenerate tag display"
+        ]
+      ]
+    }
+  ],
   "tabs": [
     {
       "tab": "favourites",
@@ -575,6 +1124,37 @@
       "selected": [
         "parity:amb"
       ]
+    },
+    {
+      "text": "parity:amber old",
+      "first_with_count": false,
+      "expanded": true,
+      "parents": true,
+      "siblings": true,
+      "service": "my tags",
+      "suggestions": [
+        {
+          "tag": "parity:amber",
+          "count": true,
+          "rows": [
+            "parity:amber (3)",
+            "    parity:root",
+            "    parity:colour"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "count": true,
+          "rows": [
+            "parity:amber old (1) → parity:amber",
+            "    parity:root",
+            "    parity:colour"
+          ]
+        }
+      ],
+      "selected": [
+        "parity:amber"
+      ]
     }
   ],
   "paste": [
@@ -586,7 +1166,11 @@
       "consumed": false,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:amber\nparity:new",
+          "message": "Remove \"parity:menu new\" from the most used list for \"my tags\"?",
+          "title": null
+        },
+        {
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
           "title": "Want to paste everything?"
         }
       ],
@@ -600,7 +1184,7 @@
       "consumed": true,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:amber\nparity:new",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
           "title": "Want to paste everything?"
         }
       ],

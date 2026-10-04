@@ -1,9 +1,18 @@
 import { Button, CheckBox, ComboBox, LineEdit, ListView, TextEdit } from "std-widgets.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
-import { WriteTagInput } from "write_autocomplete.slint";
+import { WriteTagInput, TagMenuOverlay } from "write_autocomplete.slint";
+import { MenuPane } from "main_menu.slint";
 import { Theme, ListText } from "theme.slint";
 
 export component TagRelationshipsWindow inherits Window {
+    in property <[MenuPane]> tag-menu-panes;
+    in property <string> tag-menu-question;
+    callback tag-menu-hovered(int,int,length,length,length);
+    callback tag-menu-clicked(int,int,length,length,length);
+    callback tag-menu-placed(int,length,length,length);
+    callback tag-menu-dismissed();
+    callback tag-menu-answered(bool);
+
     in property <bool> siblings;
     title: root.siblings ? "manage tag siblings" : "manage tag parents";
     preferred-width: 850px;
@@ -43,6 +52,7 @@ export component TagRelationshipsWindow inherits Window {
     callback autocomplete-edited(bool, string);
     callback autocomplete-fetch(bool);
     callback autocomplete-tab(bool, int);
+    callback context-menu(bool,int,length,length);
     callback autocomplete-move(bool, int);
     callback autocomplete-chosen(bool, int);
     callback autocomplete-paste(bool, bool) -> bool;
@@ -143,6 +153,7 @@ export component TagRelationshipsWindow inherits Window {
                         fetch => { root.autocomplete-fetch(false); }
                         move-highlight(by) => { root.autocomplete-move(false, by); }
                         chosen(i) => { root.autocomplete-chosen(false, i); }
+                    context-menu(i,x,y) => { root.context-menu(false,i,x,y); }
                         paste(button) => { root.autocomplete-paste(false, button) }
                     }
                 }
@@ -171,6 +182,7 @@ export component TagRelationshipsWindow inherits Window {
                         fetch => { root.autocomplete-fetch(true); }
                         move-highlight(by) => { root.autocomplete-move(true, by); }
                         chosen(i) => { root.autocomplete-chosen(true, i); }
+                    context-menu(i,x,y) => { root.context-menu(true,i,x,y); }
                         paste(button) => { root.autocomplete-paste(true, button) }
                     }
                 }
@@ -200,6 +212,16 @@ export component TagRelationshipsWindow inherits Window {
                 Button { text: root.yes-label; enabled: !root.ask-reason || root.reason != ""; clicked => { root.answered(true); } }
                 Button { text: root.no-label; clicked => { root.answered(false); } }
             }
+        }
+
+        if root.tag-menu-panes.length > 0 || root.tag-menu-question != "": TagMenuOverlay {
+            width: root.width; height: root.height;
+            panes: root.tag-menu-panes; question: root.tag-menu-question;
+            hovered(p,l,r,t,x) => { root.tag-menu-hovered(p,l,r,t,x); }
+            clicked(p,l,r,t,x) => { root.tag-menu-clicked(p,l,r,t,x); }
+            placed(p,x,y,w) => { root.tag-menu-placed(p,x,y,w); }
+            dismissed => { root.tag-menu-dismissed(); }
+            answered(yes) => { root.tag-menu-answered(yes); }
         }
     }
 }

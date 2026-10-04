@@ -85,3 +85,5 @@ pub mod downloader_display;
 pub mod regex_favourites;
 
 pub mod write_autocomplete;
+
+pub mod write_tag_menu;

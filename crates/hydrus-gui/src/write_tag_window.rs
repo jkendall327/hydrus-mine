@@ -82,15 +82,71 @@ pub fn open(
         let pending = pending.clone();
         move || active.get() && pending.borrow().is_none()
     });
+    let tag_menu = crate::write_tag_menu::TagMenu::new(
+        store.clone(),
+        editable.clone(),
+        Rc::new({
+            let model = model.clone();
+            move |action| {
+                if let hydrus_gui_model::write_tag_menu::Action::Decorate { tab, kind, value } =
+                    action
+                {
+                    model.borrow_mut().input.decorate(tab, kind, value);
+                }
+            }
+        }),
+        Rc::new({
+            let model = model.clone();
+            let refresh = refresh.clone();
+            move || {
+                model.borrow_mut().input.fetch();
+                refresh();
+            }
+        }),
+        Rc::new({
+            let weak = window.as_weak();
+            move |question| {
+                if let Some(w) = weak.upgrade() {
+                    w.set_tag_menu_question(question.into());
+                }
+            }
+        }),
+        Rc::new({
+            let weak = window.as_weak();
+            move |error| {
+                if let Some(w) = weak.upgrade() {
+                    w.set_error(error.into());
+                }
+            }
+        }),
+    );
+    crate::write_tag_menu::bind!(window, tag_menu);
+    window.on_context_menu({
+        let tag_menu = tag_menu.clone();
+        let model = model.clone();
+        move |i, x, y| {
+            if let Ok(i) = usize::try_from(i) {
+                let entries = model.borrow().input.menu(i);
+                tag_menu.open(&entries, x, y);
+            }
+        }
+    });
+    let editable = Rc::new({
+        let editable = editable.clone();
+        let tag_menu = tag_menu.clone();
+        move || editable() && !tag_menu.busy()
+    });
     let close = Rc::new({
         let active = active.clone();
         let pending = pending.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
+        let tag_menu = tag_menu.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
+            tag_menu.close();
             pending.borrow_mut().take();
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();

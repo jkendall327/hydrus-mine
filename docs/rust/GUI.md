@@ -1842,3 +1842,15 @@ option limits children to 40 by default; a staged limit or “show all” reache
 open consumers only after Apply. `oracle/record_write_tag_autocomplete.py`
 drives the real Qt favourites decorator worker, children database query and
 noneable limit control; model and native-window regressions replay their output.
+
+Shared write-tag suggestion lists now have a right-click menu for copying raw
+tags, subtags, underscores, counts, all list tags and tags with parents. Parent
+and sibling display toggles affect only the current widget/tab and reset on
+reopening. The favourites submenu persists additions immediately and asks before
+removing a favourite or a service-specific most-used tag; declining or closing
+the owner leaves settings unchanged. Menu questions block owner Apply, and
+confirmed writes reread settings to preserve changes from other windows. The
+open submenu hands selected raw predicates to the main window's weak search/
+duplicate launcher. The real Qt menu actions, copy payloads, questions and page
+publications are recorded by `oracle/record_write_tag_autocomplete.py`; model
+replay and native-window lifecycle regressions cover these boundaries.
