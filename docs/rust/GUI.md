@@ -2708,7 +2708,10 @@ text replacement and accepted clipboard signals are recorded in
 `write_tag_selection.json`. Each input now owns Undo/Redo history: replacement
 paste is one action, later typing is separate, and fresh editing invalidates
 redo. Undo restores the replaced selection without changing another open
-editor's draft.
+editor's draft. Cursor movement, an intervening Undo/Redo and switching
+between Delete and Backspace separate typing commands; consecutive edits in
+one direction still undo together. A recorded Unicode replacement restores
+the original non-ASCII selection, including a supplementary character.
 
 Login required-cookie Add/Edit now opens the name matcher followed by the value
 matcher, using the reference titles and initial rules. Cancel at either stage

@@ -1376,9 +1376,13 @@ raw newline draft text instead of standard Slint LineEdit's newline-to-space
 conversion. Accepted clipboard tags preserve an existing text draft in both
 clients. Undo/Redo uses history owned by each input, keeping a replacement paste
 atomic, separating subsequent typing and invalidating redo on a fresh edit.
+Cursor movement and Undo/Redo boundaries prevent later typing from merging
+into an older command, and Delete and Backspace retain separate directions.
 This avoids Slint's separate selection-deletion and insertion undo items. Undo
 restores the pre-edit selection; redo restores that edit's saved post-edit
 caret, while Qt can retain a later command's caret/selection at a redo boundary.
+Same-value programmatic draft resets are not distinguished from live model
+refreshes, so this remains a limitation of the partial shared-input assessment.
 Platform widget appearance differs. Import additional-tags and whitelist fields now open a detached shared write-tag editor; their raw multiline fields remain available as well. Expanded
 parent rows enter their originating child, matching Qt's logical-list selection.
 

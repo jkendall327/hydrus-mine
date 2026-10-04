@@ -201,17 +201,29 @@ def record(session):
                 ('typing_invalidates_redo','draft content',[('paste','first replacement',0,5),('paste','second replacement',6,11),('undo',),('type','x'),('redo',),('undo',)]),
                 ('typing_after_replacement','draft content',[('paste','first replacement',0,5),('type','x'),('undo',),('undo',),('redo',),('redo',)]),
                 ('replace_suffix','draft content',[('paste','suffix',6,7),('undo',),('redo',)]),
+                ('adjacent_typing','abc',[('select',3,0),('type','x'),('type','y'),('undo',)]),
+                ('cursor_movement_splits_typing','abc',[('select',3,0),('type','x'),('key','Left'),('key','Right'),('type','y'),('undo',)]),
+                ('typing_after_undo_is_new_command','abc',[('select',3,0),('type','x'),('paste','paste',4,0),('undo',),('type','y'),('undo',)]),
+                ('delete_direction_splits_commands','abcdef',[('select',3,0),('key','Delete'),('key','Backspace'),('undo',)]),
+                ('same_direction_deletes_merge','abcdef',[('select',3,0),('key','Delete'),('key','Delete'),('undo',)]),
+                ('unicode_restored_selection','é漢😀 draft',[('paste','replacement',1,3),('undo',),('type','x'),('undo',),('redo',)]),
             ]
             for name,text,actions in sequences:
                 ac._text_ctrl.setText(text)
                 history_steps=[]
                 for action in actions:
                     kind=action[0]
+                    if kind=='select':
+                        ac._text_ctrl.setSelection(action[1],action[2])
+                        history_steps.append({'action':list(action),'text':ac._text_ctrl.text(),'cursor':ac._text_ctrl.cursorPosition(),'selection_start':ac._text_ctrl.selectionStart(),'selected':ac._text_ctrl.selectedText()})
+                        continue
                     if kind=='paste':
                         _,pasted,anchor,length=action
                         ac._text_ctrl.setSelection(anchor,length)
                         QtWidgets.QApplication.clipboard().setText(pasted)
                         key=QtCore.Qt.Key.Key_V;modifiers=QtCore.Qt.KeyboardModifier.ControlModifier;value='v'
+                    elif kind=='key':
+                        key=getattr(QtCore.Qt.Key,'Key_'+action[1]);modifiers=QtCore.Qt.KeyboardModifier.NoModifier;value=''
                     elif kind in ('undo','redo'):
                         key=QtCore.Qt.Key.Key_Z;modifiers=QtCore.Qt.KeyboardModifier.ControlModifier;value='z'
                         if kind=='redo':modifiers|=QtCore.Qt.KeyboardModifier.ShiftModifier

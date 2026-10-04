@@ -1653,6 +1653,20 @@ fn replacement_history_replays_real_keys_typing_undo_redo_and_independent_owners
         }
     }
 
+    fn qt_offset(text: &str, units: i64) -> i32 {
+        let mut remaining = usize::try_from(units).unwrap();
+        for (offset, character) in text.char_indices() {
+            if remaining == 0 {
+                return i32::try_from(offset).unwrap();
+            }
+            remaining = remaining
+                .checked_sub(character.len_utf16())
+                .expect("Qt offset must lie on a Unicode character boundary");
+        }
+        assert_eq!(remaining, 0);
+        i32::try_from(text.len()).unwrap()
+    }
+
     let (_dirs, store) = crate::subscriptions::store();
     let _windows = headless::init();
     let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
@@ -1692,14 +1706,34 @@ fn replacement_history_replays_real_keys_typing_undo_redo_and_independent_owners
             let action = step["action"].as_array().unwrap();
             match action[0].as_str().unwrap() {
                 "paste" => {
-                    let anchor = i32::try_from(action[2].as_i64().unwrap()).unwrap();
-                    let cursor = anchor + i32::try_from(action[3].as_i64().unwrap()).unwrap();
+                    let text = child.get_text();
+                    let units = action[2].as_i64().unwrap();
+                    let anchor = qt_offset(&text, units);
+                    let cursor = qt_offset(&text, units + action[3].as_i64().unwrap());
                     child.invoke_select_input(anchor, cursor);
                     let pasted = action[1].as_str().unwrap().to_owned();
                     headless::set_clipboard_text(&pasted);
                     hydrus_gui::set_paster(move || pasted.clone());
                     key(child.window(), "v", true, false);
                     assert!(child.get_question().is_empty());
+                }
+                "select" => {
+                    let text = child.get_text();
+                    let units = action[1].as_i64().unwrap();
+                    child.invoke_select_input(
+                        qt_offset(&text, units),
+                        qt_offset(&text, units + action[2].as_i64().unwrap()),
+                    );
+                }
+                "key" => {
+                    let text: slint::SharedString = match action[1].as_str().unwrap() {
+                        "Left" => Key::LeftArrow.into(),
+                        "Right" => Key::RightArrow.into(),
+                        "Delete" => Key::Delete.into(),
+                        "Backspace" => Key::Backspace.into(),
+                        name => panic!("Unknown recorded native key {name}"),
+                    };
+                    key(child.window(), &text, false, false);
                 }
                 "type" => key(child.window(), action[1].as_str().unwrap(), false, false),
                 "undo" => key(child.window(), "z", true, false),

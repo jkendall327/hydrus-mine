@@ -6,11 +6,11 @@
 import { Theme } from "theme.slint";
 
 export struct TagTextState { text: string, anchor: int, cursor: int }
-export struct TagTextEdit { before: TagTextState, after: TagTextState, typing: bool }
+export struct TagTextEdit { before: TagTextState, after: TagTextState, kind: int, group: int }
 export struct TagTextHistoryState { undos: [TagTextEdit], redos: [TagTextEdit], state: TagTextState }
 // Pure transformations only. All mutable state belongs to the input below.
 export global TagTextHistory {
-    callback record(TagTextHistoryState,TagTextState,TagTextState,bool) -> TagTextHistoryState;
+    callback record(TagTextHistoryState,TagTextState,TagTextState,int,int) -> TagTextHistoryState;
     callback undo(TagTextHistoryState) -> TagTextHistoryState;
     callback redo(TagTextHistoryState) -> TagTextHistoryState;
 }
@@ -27,7 +27,9 @@ export component WriteTagLineEdit inherits Rectangle {
     property <length> scroll-x;
     property <TagTextHistoryState> history;
     property <TagTextState> before-edit;
-    property <bool> typing-edit: true;
+    // 0: paste/cut, 1: typing, 2: Backspace, 3: Delete.
+    property <int> edit-kind: 1;
+    property <int> typing-group;
     property <bool> replaying-history;
     public function snapshot() -> TagTextState {
         {text: root.text,anchor: editor.anchor-position-byte-offset,cursor: editor.cursor-position-byte-offset}
@@ -39,6 +41,7 @@ export component WriteTagLineEdit inherits Rectangle {
     }
     public function set-selection-offsets(anchor: int, cursor: int) {
         root.ensure-history();
+        root.typing-group += 1;
         editor.set-selection-offsets(anchor,cursor);
         root.before-edit = root.snapshot();
     }
@@ -48,7 +51,7 @@ export component WriteTagLineEdit inherits Rectangle {
         root.pasting = true;
         editor.paste();
         root.pasting = false;
-        root.history = TagTextHistory.record(root.history,root.before-edit,root.snapshot(),false);
+        root.history = TagTextHistory.record(root.history,root.before-edit,root.snapshot(),0,root.typing-group);
         root.before-edit = root.snapshot();
     }
     function restore-history() {
@@ -60,11 +63,13 @@ export component WriteTagLineEdit inherits Rectangle {
         root.replaying-history = false;
     }
     public function undo() {
+        root.typing-group += 1;
         root.ensure-history();
         root.history = TagTextHistory.undo(root.history);
         root.restore-history();
     }
     public function redo() {
+        root.typing-group += 1;
         root.ensure-history();
         root.history = TagTextHistory.redo(root.history);
         root.restore-history();
@@ -107,7 +112,7 @@ export component WriteTagLineEdit inherits Rectangle {
             }
             root.ensure-history();
             root.before-edit = root.snapshot();
-            root.typing-edit = !event.modifiers.control;
+            root.edit-kind = event.modifiers.control ? 0 : event.text == Key.Backspace ? 2 : event.text == Key.Delete ? 3 : 1;
             reject
         }
         ContextMenuArea {
@@ -115,7 +120,7 @@ export component WriteTagLineEdit inherits Rectangle {
                 MenuItem { title: "Undo"; enabled: root.enabled; activated => { root.undo(); } }
                 MenuItem { title: "Redo"; enabled: root.enabled; activated => { root.redo(); } }
                 MenuSeparator {}
-                MenuItem { title: "Cut"; enabled: root.enabled; activated => { root.ensure-history(); root.before-edit=root.snapshot(); root.typing-edit=false; editor.cut(); } }
+                MenuItem { title: "Cut"; enabled: root.enabled; activated => { root.ensure-history(); root.before-edit=root.snapshot(); root.edit-kind=0; editor.cut(); } }
                 MenuItem { title: "Copy"; enabled: root.enabled; activated => { editor.copy(); } }
                 MenuItem { title: "Paste"; enabled: root.enabled; activated => { root.paste(); } }
                 MenuSeparator {}
@@ -135,6 +140,9 @@ export component WriteTagLineEdit inherits Rectangle {
                 accessible-role: none;
                 cursor-position-changed(position) => {
                     if !root.pasting && !root.replaying-history && root.text == root.before-edit.text {
+                        if editor.cursor-position-byte-offset != root.before-edit.cursor || editor.anchor-position-byte-offset != root.before-edit.anchor {
+                            root.typing-group += 1;
+                        }
                         root.before-edit=root.snapshot();
                     }
                     if position.x + root.scroll-x < 0px { root.scroll-x = -position.x; }
@@ -144,7 +152,7 @@ export component WriteTagLineEdit inherits Rectangle {
                 }
                 edited => {
                     if !root.pasting && !root.replaying-history {
-                        root.history=TagTextHistory.record(root.history,root.before-edit,root.snapshot(),root.typing-edit);
+                        root.history=TagTextHistory.record(root.history,root.before-edit,root.snapshot(),root.edit-kind,root.typing-group);
                         root.before-edit=root.snapshot();
                     }
                     root.edited(self.text);

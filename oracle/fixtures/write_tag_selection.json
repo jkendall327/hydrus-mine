@@ -1198,6 +1198,332 @@
           "selected": ""
         }
       ]
+    },
+    {
+      "name": "adjacent_typing",
+      "initial": "abc",
+      "steps": [
+        {
+          "action": [
+            "select",
+            3,
+            0
+          ],
+          "text": "abc",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "type",
+            "x"
+          ],
+          "text": "abcx",
+          "cursor": 4,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "type",
+            "y"
+          ],
+          "text": "abcxy",
+          "cursor": 5,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "abc",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "cursor_movement_splits_typing",
+      "initial": "abc",
+      "steps": [
+        {
+          "action": [
+            "select",
+            3,
+            0
+          ],
+          "text": "abc",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "type",
+            "x"
+          ],
+          "text": "abcx",
+          "cursor": 4,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "key",
+            "Left"
+          ],
+          "text": "abcx",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "key",
+            "Right"
+          ],
+          "text": "abcx",
+          "cursor": 4,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "type",
+            "y"
+          ],
+          "text": "abcxy",
+          "cursor": 5,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "abcx",
+          "cursor": 4,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "typing_after_undo_is_new_command",
+      "initial": "abc",
+      "steps": [
+        {
+          "action": [
+            "select",
+            3,
+            0
+          ],
+          "text": "abc",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "type",
+            "x"
+          ],
+          "text": "abcx",
+          "cursor": 4,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "paste",
+            "paste",
+            4,
+            0
+          ],
+          "text": "abcxpaste",
+          "cursor": 9,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "abcx",
+          "cursor": 4,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "type",
+            "y"
+          ],
+          "text": "abcxy",
+          "cursor": 5,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "abcx",
+          "cursor": 4,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "delete_direction_splits_commands",
+      "initial": "abcdef",
+      "steps": [
+        {
+          "action": [
+            "select",
+            3,
+            0
+          ],
+          "text": "abcdef",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "key",
+            "Delete"
+          ],
+          "text": "abcef",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "key",
+            "Backspace"
+          ],
+          "text": "abef",
+          "cursor": 2,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "abcef",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "same_direction_deletes_merge",
+      "initial": "abcdef",
+      "steps": [
+        {
+          "action": [
+            "select",
+            3,
+            0
+          ],
+          "text": "abcdef",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "key",
+            "Delete"
+          ],
+          "text": "abcef",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "key",
+            "Delete"
+          ],
+          "text": "abcf",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "abcdef",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "unicode_restored_selection",
+      "initial": "\u00e9\u6f22\ud83d\ude00 draft",
+      "steps": [
+        {
+          "action": [
+            "paste",
+            "replacement",
+            1,
+            3
+          ],
+          "text": "\u00e9replacement draft",
+          "cursor": 12,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "\u00e9\u6f22\ud83d\ude00 draft",
+          "cursor": 4,
+          "selection_start": 1,
+          "selected": "\u6f22\ud83d\ude00"
+        },
+        {
+          "action": [
+            "type",
+            "x"
+          ],
+          "text": "\u00e9x draft",
+          "cursor": 2,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "\u00e9\u6f22\ud83d\ude00 draft",
+          "cursor": 4,
+          "selection_start": 1,
+          "selected": "\u6f22\ud83d\ude00"
+        },
+        {
+          "action": [
+            "redo"
+          ],
+          "text": "\u00e9x draft",
+          "cursor": 2,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
     }
   ]
 }
