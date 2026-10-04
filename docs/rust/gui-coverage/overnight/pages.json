@@ -6,9 +6,10 @@
     "tabs": "01f9a039",
     "backups": "efc8b4fc",
     "size_test": "26c435f7",
-    "close_navigation": "1807f758"
+    "close_navigation": "1807f758",
+    "rename_send": "c6cae887"
   },
-  "completed_existing_leaf_count": 19,
+  "completed_existing_leaf_count": 23,
   "validation": {
     "local": [
       "cargo fmt --all",
@@ -53,7 +54,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "dynamic_menu_regression"
         }
@@ -94,7 +95,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "dynamic_menu_regression"
         }
@@ -141,7 +142,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "dynamic_menu_regression"
         }
@@ -188,7 +189,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "dynamic_menu_regression"
         }
@@ -229,7 +230,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "dynamic_menu_regression"
         }
@@ -270,7 +271,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "dynamic_menu_regression"
         }
@@ -311,7 +312,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "dynamic_menu_regression"
         }
@@ -352,7 +353,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "dynamic_menu_regression"
         }
@@ -393,7 +394,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "dynamic_menu_regression"
         }
@@ -434,7 +435,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "dynamic_menu_regression"
         }
@@ -610,7 +611,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "menu_regression"
         },
@@ -645,7 +646,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "menu_regression"
         },
@@ -682,7 +683,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "menu_regression"
         },
@@ -719,7 +720,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "menu_regression"
         },
@@ -756,7 +757,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "menu_regression"
         },
@@ -793,7 +794,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "menu_regression"
         },
@@ -828,7 +829,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "menu_regression"
         },
@@ -863,7 +864,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "menu_regression"
         },
@@ -898,7 +899,7 @@
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/tab_context.rs",
-          "line": 93,
+          "line": 87,
           "commit": "1807f758",
           "kind": "menu_regression"
         },
@@ -916,10 +917,150 @@
         }
       ],
       "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2199-rename-page",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "c6cae887",
+      "implemented_behavior": "Rename clicked page/notebook with prefilled real-reference text prompt; freeze target key across switching; cancel leaves name unchanged and accepted edit persists.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/src/tab_context_window.rs",
+          "line": 11,
+          "commit": "c6cae887",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 2159,
+          "commit": "c6cae887",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_tab_actions.py",
+          "line": 1,
+          "commit": "c6cae887",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_actions.json",
+          "line": 1,
+          "commit": "c6cae887",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2235-this-page",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "c6cae887",
+      "implemented_behavior": "Move only clicked page into new sibling notebook, preserving original keys, open objects and queues; optional naming cancellation retains new notebook.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/src/tab_context_window.rs",
+          "line": 11,
+          "commit": "c6cae887",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 2040,
+          "commit": "c6cae887",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_tab_actions.py",
+          "line": 1,
+          "commit": "c6cae887",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_actions.json",
+          "line": 1,
+          "commit": "c6cae887",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2239-pages-from-here-to-the-right",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "c6cae887",
+      "implemented_behavior": "Confirm then group clicked page and right siblings in original order; retain rightmost original selected page and optional naming semantics.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/src/tab_context_window.rs",
+          "line": 11,
+          "commit": "c6cae887",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 2040,
+          "commit": "c6cae887",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_tab_actions.py",
+          "line": 1,
+          "commit": "c6cae887",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_actions.json",
+          "line": 1,
+          "commit": "c6cae887",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2240-pages-to-the-right",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "c6cae887",
+      "implemented_behavior": "Confirm then group only right siblings in original order; retain rightmost original selected page and optional naming semantics.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/src/tab_context_window.rs",
+          "line": 11,
+          "commit": "c6cae887",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 2040,
+          "commit": "c6cae887",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_tab_actions.py",
+          "line": 1,
+          "commit": "c6cae887",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_actions.json",
+          "line": 1,
+          "commit": "c6cae887",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": []
     }
   ],
   "overall_limitations": [
-    "Tab-context rename/duplicate/collapse/send/session submenus remain deferred; tab-context parent remains partial.",
+    "Tab-context duplicate/collapse/per-notebook-session submenus remain deferred; tab-context parent remains partial.",
     "No lifecycle-settings completion is claimed.",
     "Backup workflow improvements are conservatively partial for downloader state; submenu container is counted separately from the ten completed tab leaves."
   ]
