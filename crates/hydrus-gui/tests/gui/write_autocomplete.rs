@@ -586,3 +586,95 @@ fn shared_tag_menu_favourites_questions_copy_launch_and_owner_lifetime() {
     w.invoke_cancel();
     hydrus_gui::write_tag_menu::clear_search_launcher();
 }
+
+#[test]
+fn write_domain_buttons_query_counts_and_own_cancelled_location_child() {
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let id = store.snapshot().services.by_key(&key).unwrap().id;
+    let file = store
+        .read(|conn| {
+            Ok(
+                conn.query_row("SELECT hash_id FROM files LIMIT 1", [], |row| {
+                    row.get::<_, hydrus_core::HashId>(0)
+                })?,
+            )
+        })
+        .unwrap();
+    store
+        .write_content(move |writer| {
+            let tag = hydrus_store::master::intern_tag(
+                writer.conn(),
+                &hydrus_core::Tag::new("parity:domain counted").unwrap(),
+            )?;
+            writer.update_mappings(id, &hydrus_store::content::MappingAction::Add, tag, &[file])?;
+            Ok(())
+        })
+        .unwrap();
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let applied = Rc::new(std::cell::Cell::new(0));
+    let w = hydrus_gui::write_tag_window::open(
+        &store,
+        key,
+        &[],
+        "edit tags",
+        &slot,
+        Rc::new({
+            let applied = applied.clone();
+            move |_| applied.set(applied.get() + 1)
+        }),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    w.invoke_edited("parity:domain counted".into());
+    let counted = w.get_suggestions().iter().any(|r| r.text.contains('('));
+    assert!(counted);
+    w.invoke_domain_menu(true, 10.0, 10.0);
+    choose_write_tag_menu(&w, &["all known tags"]);
+    assert_eq!(w.get_tag_label(), "all known tags");
+    w.invoke_domain_menu(false, 10.0, 10.0);
+    choose_write_tag_menu(&w, &["all known files with tags"]);
+    assert_eq!(w.get_file_label(), "all known files with tags");
+    assert_eq!(w.get_tag_label(), "downloader tags");
+    w.invoke_domain_menu(true, 10.0, 10.0);
+    choose_write_tag_menu(&w, &["all known tags"]);
+    assert_eq!(w.get_file_label(), "my files");
+    w.invoke_domain_menu(false, 10.0, 10.0);
+    choose_write_tag_menu(&w, &["multiple/deleted locations"]);
+    let child = hydrus_gui::locations_window::last_opened().unwrap();
+    w.invoke_apply();
+    assert!(slot.borrow().is_some());
+    assert_eq!(applied.get(), 0);
+    child.invoke_cancel();
+    assert_eq!(w.get_file_label(), "my files");
+    w.invoke_domain_menu(false, 10.0, 10.0);
+    choose_write_tag_menu(&w, &["multiple/deleted locations"]);
+    let child = hydrus_gui::locations_window::last_opened().unwrap();
+    // A valid empty domain reaches the live count query only after child Apply.
+    let ticks = child.get_ticks();
+    for i in 0..ticks.row_count() {
+        if ticks.row_data(i).unwrap().checked {
+            child.invoke_toggled(i32::try_from(i).unwrap(), false);
+        }
+    }
+    assert!(w.get_suggestions().iter().any(|r| r.text.contains('(')));
+    child.invoke_apply();
+    assert_eq!(w.get_file_label(), "nothing");
+    assert!(w.get_suggestions().iter().all(|r| !r.text.contains('(')));
+    w.invoke_domain_menu(false, 10.0, 10.0);
+    choose_write_tag_menu(&w, &["multiple/deleted locations"]);
+    let child = hydrus_gui::locations_window::last_opened().unwrap();
+    w.invoke_cancel();
+    child.invoke_apply();
+    w.invoke_apply();
+    assert!(slot.borrow().is_none());
+    assert_eq!(applied.get(), 0);
+    assert!(hydrus_gui::locations_window::last_opened().is_none());
+}

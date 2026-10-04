@@ -1865,3 +1865,15 @@ owner cancels its relationship child and prevents stale Apply. The reference
 recorder runs the actual relationship lookup and initialization workers and
 records all service seeds and preference changes; model and native child tests
 check graph publication, cancellation and owner lifetimes.
+
+Every shared write input now has file/tag-domain buttons. Their checked menus
+follow the reference and always offer all known files; choosing that domain
+while searching all tags switches to the first local tag service. Choosing all
+tags while searching all known files restores the default local file domain.
+These domains stay local to the widget and service draft, including across
+Manage Tags service changes, and feed live search, favourites decorators and
+children counts. Multiple/deleted locations opens an owned staged selector;
+Cancel preserves the current input domains and owner close discards the child.
+The recorder drives the real Qt domain buttons and interlocks, and model/native
+regressions verify checked menus, labels, counts, no options writes and child
+cancellation.

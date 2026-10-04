@@ -120,6 +120,12 @@ pub(crate) fn open(
                 ))
             };
             let (left_input, right_input) = &binding.inputs[model.service()];
+            let (file, tags) = left_input.domain_labels();
+            window.set_left_file_label(file.into());
+            window.set_left_tag_label(tags.into());
+            let (file, tags) = right_input.domain_labels();
+            window.set_right_file_label(file.into());
+            window.set_right_tag_label(tags.into());
             let suggestions = |input: &WriteAutocomplete| {
                 ModelRc::new(VecModel::from(
                     input
@@ -189,6 +195,12 @@ pub(crate) fn open(
                     let pair = &mut binding.inputs[service];
                     let input = if right { &mut pair.1 } else { &mut pair.0 };
                     input.decorate(tab, kind, value);
+                } else if let hydrus_gui_model::write_tag_menu::Action::Domain(choice) = action {
+                    let (service, right) = target.get();
+                    let mut binding = binding.borrow_mut();
+                    let pair = &mut binding.inputs[service];
+                    let input = if right { &mut pair.1 } else { &mut pair.0 };
+                    input.choose_domain(choice);
                 }
             }
         }),
@@ -236,6 +248,18 @@ pub(crate) fn open(
                 drop(binding);
                 tag_menu.open(&entries, x, y);
             }
+        }
+    });
+    window.on_domain_menu({
+        let menu = tag_menu.clone();
+        let binding = binding.clone();
+        let target = menu_target.clone();
+        move |right, tags, x, y| {
+            let mut binding = binding.borrow_mut();
+            target.set((binding.model.service(), right));
+            let entries = binding.input_mut(right).domain_menu(tags);
+            drop(binding);
+            menu.open(&entries, x, y);
         }
     });
     let close: Rc<dyn Fn()> = Rc::new({

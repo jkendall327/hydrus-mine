@@ -1196,8 +1196,10 @@ modal dialog, and the parent still offers its existing raw multiline fields.
 Shared write context menus now copy tags/counts/parents, toggle local decorations,
 manage favourites/most-used with removal questions and launch new search/duplicate
 pages. Relationship lookup and owned seeded sibling/parent editors now work across the
-write inputs. Maintenance/admin actions, multiple-tag selection menus and
-per-widget file/tag-domain buttons remain outstanding.
+write inputs. Maintenance/admin actions and multiple-tag selection menus remain outstanding.
+Per-widget file/tag-domain buttons now work; the multiple/deleted selector
+offers the existing native advanced domain ticks outside advanced mode, so it
+can preserve any chosen combined domain.
 The native tab selector is a compact dropdown rather than Qt tab buttons.
 Children and favourites use the real service and domain contexts; unknown
 favourites remain selectable and zero-count known children remain in the list. Expanded-row viewport height uses native fixed row

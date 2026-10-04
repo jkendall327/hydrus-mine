@@ -45,6 +45,9 @@ export component ManageTagsWindow inherits Window {
     callback entered();
     callback suggestion-chosen(int);
     callback context-menu(int,length,length);
+    callback domain-menu(bool,length,length);
+    in property <string> file-label;
+    in property <string> tag-label;
     callback paste-requested(bool) -> bool;
     callback paste-answered(bool);
     callback move-highlight(int);
@@ -107,6 +110,8 @@ export component ManageTagsWindow inherits Window {
                 move-highlight(by) => { root.move-highlight(by); }
                 chosen(i) => { root.suggestion-chosen(i); }
                 context-menu(i,x,y) => { root.context-menu(i,x,y); }
+                file-label:root.file-label;tag-label:root.tag-label;
+                domain-menu(tags,x,y)=>{root.domain-menu(tags,x,y);}
                 paste(button) => { root.paste-requested(button) }
             }
             if root.question != "": Text { text: "Want to paste everything?"; color: Theme.text; }

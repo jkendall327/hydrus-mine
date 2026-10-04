@@ -31,6 +31,9 @@ pub(crate) fn open(
                 return;
             };
             let model = model.borrow();
+            let (file, tags) = model.write_input().domain_labels();
+            window.set_file_label(file.into());
+            window.set_tag_label(tags.into());
             let colours: hydrus_core::tag_presentation::NamespaceColours = model
                 .store()
                 .read(hydrus_store::settings::get)
@@ -89,6 +92,8 @@ pub(crate) fn open(
                         .borrow_mut()
                         .write_input_mut()
                         .decorate(tab, kind, value);
+                } else if let hydrus_gui_model::write_tag_menu::Action::Domain(choice) = action {
+                    model.borrow_mut().write_input_mut().choose_domain(choice);
                 }
             }
         }),
@@ -126,6 +131,14 @@ pub(crate) fn open(
                 let entries = model.borrow().write_input().menu(i);
                 tag_menu.open(&entries, x, y);
             }
+        }
+    });
+    window.on_domain_menu({
+        let menu = tag_menu.clone();
+        let model = model.clone();
+        move |tags, x, y| {
+            let entries = model.borrow().write_input().domain_menu(tags);
+            menu.open(&entries, x, y);
         }
     });
     let close = {
