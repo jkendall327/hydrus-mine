@@ -311,10 +311,10 @@ impl Controller {
                 let options = favourite.unwrap_or_default();
                 let weak = Rc::downgrade(self);
                 let applied = Rc::new(move |name, options| {
-                    if let Some(owner) = weak.upgrade().filter(|owner| owner.active.get()) {
-                        if let Err(error) = owner.save(original.clone(), name, options) {
-                            (owner.error)(error);
-                        }
+                    if let Some(owner) = weak.upgrade().filter(|owner| owner.active.get())
+                        && let Err(error) = owner.save(original.clone(), name, options)
+                    {
+                        (owner.error)(error);
                     }
                 });
                 let weak = Rc::downgrade(self);

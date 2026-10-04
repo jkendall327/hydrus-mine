@@ -1370,7 +1370,7 @@ pub(crate) fn open(
                     }
                 }
                 Err(error) => {
-                    change(&|open| open.asking = Some(Asking::Message(error.to_string())))
+                    change(&|open| open.asking = Some(Asking::Message(error.to_string())));
                 }
             }
         }
@@ -1407,7 +1407,7 @@ pub(crate) fn open(
                         question,
                     ));
                 }
-            })
+            });
         }
     });
     window.on_apply({
