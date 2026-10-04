@@ -297,7 +297,7 @@ pub(crate) fn content(c: &ContentParser) -> Result<Value> {
         json!([c.name, kind, formula(&c.formula)?, extra]),
     ))
 }
-fn page(p: &PageParser) -> Result<Value> {
+pub(crate) fn page(p: &PageParser) -> Result<Value> {
     valid_key(&p.key)?;
     let mut contents = p.content_parsers.iter().collect::<Vec<_>>();
     contents.sort_by_cached_key(|c| hydrus_core::casefold::casefold(&c.name));
