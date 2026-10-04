@@ -1343,6 +1343,18 @@ fn subsidiary_queue_exchange_is_staged_preserves_wrappers_and_reaches_saved_pars
     export.invoke_action("cancel".into());
     page.invoke_action("duplicate-subsidiary".into());
     assert_eq!(page.get_subsidiaries().row_count(), 4);
+    let selected = page
+        .get_subsidiaries()
+        .iter()
+        .filter(|row| row.selected)
+        .map(|row| row.cells.row_data(0).unwrap().to_string())
+        .collect::<Vec<_>>();
+    assert_eq!(
+        serde_json::json!(selected),
+        reference["duplicate_selected_names"]
+    );
+    assert!(!page.get_subsidiary_selected());
+    assert!(page.get_subsidiary_exportable());
     page.invoke_action("delete-subsidiary".into());
     assert_eq!(
         page.get_question(),

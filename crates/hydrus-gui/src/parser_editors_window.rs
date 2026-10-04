@@ -285,7 +285,7 @@ fn show_editor(w: &ParserEditWindow, e: &Editor) {
                     child.parser.name.clone(),
                     hydrus_gui_model::formula_editors::formula_summary(&child.formula),
                 ],
-                e.subsidiary_selected == Some(i),
+                e.subsidiary_selection.is_selected(i),
             )
         })));
         w.set_subsidiary_selected(e.subsidiary_selected.is_some());
