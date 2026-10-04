@@ -612,9 +612,76 @@
         },
         "observed": "Actual AutoSaveLastSession cadence/retry/stopping/serialized-hash suppression and independent backup timestamps; actual CurrentlyIdle boot, user, mouse, API and disabled-mode boundaries."
       }
+    },
+    {
+      "reference_id": "audit-options-gui-sessions-sessions-default-session-on-startup",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "4a81784b",
+      "exactBehavior": "Select blank, last session or any frozen saved name in GUI Sessions; cancel and invalid choices retain persisted startup. Ordinary boot restores the selected saved tree with independent ordered media, selection and importer queues, falls back to blank for a missing name, and schedules the first configured autosave.",
+      "limits": [
+        "The bad-shutdown recovery question and large-session warning are separate deferred workflows.",
+        "The native loads before showing the window instead of a quarter-second deferred Qt callback; empty named trees retain one native blank search page."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1558,
+          "commit": "4a81784b",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 174,
+          "commit": "4a81784b",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/main.rs",
+          "line": 129,
+          "commit": "4a81784b",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 81,
+          "commit": "4a81784b",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 124,
+          "commit": "4a81784b",
+          "kind": "cancel_invalid_reopen"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 192,
+          "commit": "4a81784b",
+          "kind": "independent_state_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_session_startup.py",
+          "line": 1,
+          "commit": "4a81784b",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/session_startup.json",
+          "line": 1,
+          "commit": "4a81784b",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _InitialiseSession with real controller/DB saved trees, clean shutdown: blank/missing/Last/named tree, shown child and initial 0.25-second load/300-second autosave callbacks. Exact selector labels/order/value compare against existing real Options Dialog fixture."
+      }
     }
   ],
-  "completedOriginalLeafCount": 10,
+  "completedOriginalLeafCount": 11,
   "validation": {
     "reference": "Real-client recorder completed cleanly.",
     "local": [
@@ -624,7 +691,8 @@
     "cargo": "Deferred to root hosted CI; no local builds or mutation tests."
   },
   "remaining": [
-    "GUI session autosave lifecycle/history and imported historical backups.",
+    "Auxiliary-window and all-request API idle activity coverage; current idle-only claim remains partial.",
+    "Legacy historical GUI-session snapshot import, bad-shutdown recovery dialog and large-session warnings.",
     "Remaining page selector and drag workflows."
   ]
 }
