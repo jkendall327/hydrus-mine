@@ -123,13 +123,9 @@ pub fn open_with_changed(
                         changed();
                     }
                 });
-                if let Err(e) = crate::tag_migration_window::open(
-                    store.clone(),
-                    &row.key,
-                    vec![],
-                    &slot,
-                    changed,
-                ) {
+                if let Err(e) =
+                    crate::tag_migration_window::open(&store, &row.key, vec![], &slot, changed)
+                {
                     w.set_error(e.into());
                 }
             }

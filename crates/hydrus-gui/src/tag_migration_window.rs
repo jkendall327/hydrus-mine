@@ -73,7 +73,7 @@ fn show(window: &TagMigrationWindow, model: &Migration) {
 }
 /// Open with an optional selected-file scope; notify consumers after committed work.
 pub fn open(
-    store: Arc<Store>,
+    store: &Arc<Store>,
     key: &ServiceKey,
     files: Vec<HashId>,
     slot: &Slot,
@@ -84,7 +84,7 @@ pub fn open(
         return Ok(window.clone_strong());
     }
     let settings = Rc::new(RefCell::new(
-        Migration::new(&store, key, files).map_err(|e| e.to_string())?,
+        Migration::new(store, key, files).map_err(|e| e.to_string())?,
     ));
     let window = TagMigrationWindow::new().map_err(|e| e.to_string())?;
     window.set_services(strings(
@@ -168,10 +168,9 @@ pub fn open(
                 "Only tags passing this filter are migrated.",
                 &filter_slot,
                 chosen,
-            ) {
-                if let Some(w) = weak.upgrade() {
-                    w.set_error(e.to_string().into());
-                }
+            ) && let Some(w) = weak.upgrade()
+            {
+                w.set_error(e.to_string().into());
             }
         }
     });
@@ -197,10 +196,9 @@ pub fn open(
                 store.clone(),
                 &location,
                 chosen,
-            ) {
-                if let Some(w) = weak.upgrade() {
-                    w.set_error(e.into());
-                }
+            ) && let Some(w) = weak.upgrade()
+            {
+                w.set_error(e.into());
             }
         }
     });
@@ -339,12 +337,12 @@ pub fn open(
         let timer = timer.clone();
         move || {
             cancellation.store(true, Ordering::Release);
-            if let Some(w) = weak.upgrade() {
-                if w.get_running() {
-                    close_requested.set(true);
-                    w.set_progress("cancelling… (waiting for current batch)".into());
-                    return;
-                }
+            if let Some(w) = weak.upgrade()
+                && w.get_running()
+            {
+                close_requested.set(true);
+                w.set_progress("cancelling… (waiting for current batch)".into());
+                return;
             }
             timer.stop();
             let filter = filter_slot

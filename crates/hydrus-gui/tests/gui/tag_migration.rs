@@ -119,7 +119,7 @@ fn closing_a_running_job_refreshes_committed_state_before_hiding() {
         }
     });
     let slot = tag_migration_window::Slot::default();
-    let window = tag_migration_window::open(store, &key, vec![], &slot, notify).unwrap();
+    let window = tag_migration_window::open(&store, &key, vec![], &slot, notify).unwrap();
     window.invoke_go();
     window.invoke_answer(true);
     window.invoke_answer(true);
@@ -170,14 +170,9 @@ fn an_open_filter_child_cannot_broaden_a_confirmed_delete() {
         })
         .unwrap();
     let slot = tag_migration_window::Slot::default();
-    let window = tag_migration_window::open(
-        store.clone(),
-        &key,
-        vec![hash],
-        &slot,
-        std::rc::Rc::new(|| {}),
-    )
-    .unwrap();
+    let window =
+        tag_migration_window::open(&store, &key, vec![hash], &slot, std::rc::Rc::new(|| {}))
+            .unwrap();
     window.invoke_edit_filter(false);
     let filter = hydrus_gui::tag_filter_window::last_opened().unwrap();
     filter.invoke_typed(1, "creator:retain".into());

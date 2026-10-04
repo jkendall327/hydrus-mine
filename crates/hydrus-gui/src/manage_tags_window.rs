@@ -95,15 +95,14 @@ pub(crate) fn open(
                 }
             });
             if let Err(e) = crate::tag_migration_window::open(
-                m.store().clone(),
+                m.store(),
                 &key,
                 m.files().to_vec(),
                 &slot,
                 changed,
-            ) {
-                if let Some(w) = weak.upgrade() {
-                    w.set_error(e.into());
-                }
+            ) && let Some(w) = weak.upgrade()
+            {
+                w.set_error(e.into());
             }
         }
     });
