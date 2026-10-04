@@ -277,6 +277,7 @@ fn switching_to_each_importer_focuses_its_actual_query_or_url_text_input() {
             let before = ui.get_page_focus_requests();
             ui.invoke_tab_chosen(0, index);
             headless::render(&main, 1100, 900);
+            slint::platform::update_timers_and_animations();
             assert_eq!(
                 ui.get_page_focus_requests() - before,
                 i32::try_from(step["calls"].as_array().unwrap().len()).unwrap(),

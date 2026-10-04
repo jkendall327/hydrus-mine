@@ -11,6 +11,7 @@ import { ListTable, TableRow } from "list_table.slint";
 
 export component SimpleParsingBox inherits Rectangle {
     in property <int> focus-requests;
+    in property <bool> focus-on-show;
     callback input-focus-changed(bool);
     changed focus-requests => { input-box.focus(); }
     in property <string> parser-status;
@@ -113,6 +114,7 @@ export component SimpleParsingBox inherits Rectangle {
         HorizontalLayout {
             spacing: 4px;
             input-box := LineEdit {
+                    init => { if root.focus-on-show { self.focus(); } }
                     changed has-focus => { root.input-focus-changed(self.has-focus); }
                 horizontal-stretch: 1;
                 placeholder-text: "url to be parsed by the selected formula";

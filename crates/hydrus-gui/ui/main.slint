@@ -750,6 +750,7 @@ export component MainWindow inherits Window {
     // see each ask)
     in-out property <int> search-focus-requests;
     in-out property <int> page-focus-requests;
+    in property <bool> page-focus-on-show;
     in-out property <bool> page-input-focused;
     in property <int> viewer-reveal-index;
     in-out property <int> viewer-reveal-request;
@@ -955,6 +956,7 @@ export component MainWindow inherits Window {
                     alignment: start;
                     GallerySidebar {
                         focus-requests: root.page-focus-requests;
+                        focus-on-show: root.page-focus-on-show;
                         input-focus-changed(on) => { root.page-input-focused = on; }
                         data: root.gallery-data;
                         rows: root.gallery-rows;
@@ -1002,6 +1004,7 @@ export component MainWindow inherits Window {
                     alignment: start;
                     WatcherSidebar {
                         focus-requests: root.page-focus-requests;
+                        focus-on-show: root.page-focus-on-show;
                         input-focus-changed(on) => { root.page-input-focused = on; }
                         data: root.watcher-data;
                         rows: root.watcher-rows;
@@ -1089,6 +1092,7 @@ export component MainWindow inherits Window {
                     }
                     SimpleParsingBox {
                         focus-requests: root.page-focus-requests;
+                        focus-on-show: root.page-focus-on-show;
                         input-focus-changed(on) => { root.page-input-focused = on; }
                         parser-status: root.simple-parser-status;
                         queue-paused: root.simple-queue-paused;
@@ -1150,6 +1154,7 @@ export component MainWindow inherits Window {
                         spacing: 4px;
                         url-box := LineEdit {
                             property <int> focus-requests: root.page-focus-requests;
+                            init => { if root.page-focus-on-show { self.focus(); } }
                             changed focus-requests => { self.focus(); }
                             changed has-focus => { root.page-input-focused = self.has-focus; }
                             horizontal-stretch: 1;
@@ -1368,6 +1373,7 @@ export component MainWindow inherits Window {
                         search-row := HorizontalLayout {
                             spacing: 4px;
                             search := LineEdit {
+                                init => { if root.page-focus-on-show && !root.search-locked { self.focus(); } }
                                 horizontal-stretch: 1;
                                 placeholder-text: "search";
                                 changed has-focus => {

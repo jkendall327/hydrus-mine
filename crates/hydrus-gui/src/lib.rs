@@ -498,35 +498,36 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
             *current.borrow_mut() = opened.clone();
             let key = pages.borrow().shown().key;
-            let scroll = scrolls.borrow().get(&key).copied().unwrap_or(0.0);
-            rows.set_page(opened.clone());
-            if let Some(window) = weak.upgrade() {
-                show_tabs(&window, &pages.borrow());
-                window.set_grid_scroll(scroll);
-            }
-            shown(false);
-            if previous != key {
+            let focus_on_change = previous != key && {
                 let settings: hydrus_store::settings::PageNavigationSettings = pages
                     .borrow()
                     .store()
                     .read(hydrus_store::settings::get)
                     .unwrap_or_default();
-                if settings.focus_search_on_change
-                    && let Some(window) = weak.upgrade()
+                settings.focus_search_on_change
+            };
+            let scroll = scrolls.borrow().get(&key).copied().unwrap_or(0.0);
+            rows.set_page(opened.clone());
+            if let Some(window) = weak.upgrade() {
+                // A conditional sidebar may initialize after the property-change
+                // notification. Its initial input focus uses this same eligibility.
+                window.set_page_focus_on_show(focus_on_change);
+                show_tabs(&window, &pages.borrow());
+                window.set_grid_scroll(scroll);
+            }
+            shown(false);
+            if focus_on_change && let Some(window) = weak.upgrade() {
+                if window.get_note().is_empty() && !window.get_search_locked() {
+                    window.set_search_focus_requests(
+                        window.get_search_focus_requests().wrapping_add(1),
+                    );
+                } else if !window.get_local_import()
+                    && (window.get_importing()
+                        || window.get_gallery_page()
+                        || window.get_watcher_page())
                 {
-                    if window.get_note().is_empty() && !window.get_search_locked() {
-                        window.set_search_focus_requests(
-                            window.get_search_focus_requests().wrapping_add(1),
-                        );
-                    } else if !window.get_local_import()
-                        && (window.get_importing()
-                            || window.get_gallery_page()
-                            || window.get_watcher_page())
-                    {
-                        window.set_page_focus_requests(
-                            window.get_page_focus_requests().wrapping_add(1),
-                        );
-                    }
+                    window
+                        .set_page_focus_requests(window.get_page_focus_requests().wrapping_add(1));
                 }
             }
             if let Some(file) = viewer_exit_scrolls.borrow_mut().remove(&key) {

@@ -42,6 +42,7 @@ export struct WatcherData {
 
 export component WatcherSidebar inherits VerticalLayout {
     in property <int> focus-requests;
+    in property <bool> focus-on-show;
     callback input-focus-changed(bool);
     changed focus-requests => { input-box.focus(); }
     in property <WatcherData> data;
@@ -177,6 +178,7 @@ export component WatcherSidebar inherits VerticalLayout {
             HorizontalLayout {
                 spacing: 4px;
                 input-box := LineEdit {
+                    init => { if root.focus-on-show { self.focus(); } }
                     changed has-focus => { root.input-focus-changed(self.has-focus); }
                     horizontal-stretch: 1;
                     placeholder-text: "watcher url";
