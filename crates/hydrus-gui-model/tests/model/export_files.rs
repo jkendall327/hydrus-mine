@@ -75,20 +75,17 @@ fn preview_and_confirmations_match_reference_panel() {
     for case in recorded["previews"].as_array().unwrap() {
         let phrase = case["phrase"].as_str().unwrap();
         if phrase == "../escape" && cfg!(windows) {
-            // Windows filename rules sanitize the slash to an underscore;
-            // the Linux oracle instead resolves a parent-directory escape.
-            // Either platform must keep every accepted destination in its root.
+            // ntpath.split accepts the slash; Windows sanitization turns the
+            // '..' directory into 'empty' before joining the destination.
             let root = export_files::directory_path("/tmp/hydrus-manual-export-oracle").unwrap();
             let rows =
                 export_files::preview(&store, &files, root.to_str().unwrap(), phrase).unwrap();
             assert_eq!(rows.len(), files.len());
-            for row in rows {
-                assert!(row.destination.starts_with(&root));
-                assert!(
-                    !row.destination
-                        .components()
-                        .any(|component| { component == std::path::Component::ParentDir })
-                );
+            for (row, filename) in rows
+                .iter()
+                .zip(["escape.png", "escape (1).png", "escape.flac"])
+            {
+                assert_eq!(row.destination, root.join("empty").join(filename));
             }
             continue;
         }
@@ -131,6 +128,33 @@ fn preview_and_confirmations_match_reference_panel() {
         rows.iter()
             .all(|r| r.destination.parent().unwrap() == work.path().join("nested"))
     );
+    for (row, filename) in rows.iter().zip(["same.png", "same (1).png"]) {
+        assert_eq!(row.destination.file_name().unwrap(), filename);
+    }
+    // Repeated separators are stripped by os.path.split, including '/' on
+    // Windows. Earlier '/' inside subdirectories is sanitized there instead.
+    for (phrase, parent) in [
+        ("nested//same", work.path().join("nested")),
+        (
+            "nested/deep/same",
+            if cfg!(windows) {
+                work.path().join("nested_deep")
+            } else {
+                work.path().join("nested").join("deep")
+            },
+        ),
+    ] {
+        let rows = export_files::preview(
+            &store,
+            &[files[0], files[1]],
+            work.path().to_str().unwrap(),
+            phrase,
+        )
+        .unwrap();
+        for (row, filename) in rows.iter().zip(["same.png", "same (1).png"]) {
+            assert_eq!(row.destination, parent.join(filename));
+        }
+    }
 }
 
 #[test]
@@ -154,7 +178,8 @@ fn copies_overwrite_existing_files_and_route_metadata() {
             digest.as_str().unwrap()
         );
     }
-    let mut p = plan(&store, &files, work.path(), "nested/{#}");
+    let phrase = format!("nested{}{{#}}", std::path::MAIN_SEPARATOR);
+    let mut p = plan(&store, &files, work.path(), &phrase);
     p.routers.push(Router {
         importers: vec![Importer {
             source: Source::MediaNotes,

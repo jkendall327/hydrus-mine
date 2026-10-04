@@ -212,8 +212,12 @@ fn export_text_is_selectable_read_only_and_png_accepts_a_bare_relative_path() {
         exchange::decode_text(w.get_text().as_str()).unwrap(),
         definitions
     );
-    let file = tempfile::NamedTempFile::new_in(std::env::current_dir().unwrap()).unwrap();
-    let relative = file.path().file_name().unwrap().to_str().unwrap();
+    // Close the handle before replacing its directory entry: Windows denies
+    // replacement of an open NamedTempFile. TempPath retains cleanup ownership.
+    let file = tempfile::NamedTempFile::new_in(std::env::current_dir().unwrap())
+        .unwrap()
+        .into_temp_path();
+    let relative = file.file_name().unwrap().to_str().unwrap();
     assert!(
         std::path::Path::new(relative)
             .parent()
@@ -222,13 +226,16 @@ fn export_text_is_selectable_read_only_and_png_accepts_a_bare_relative_path() {
             .is_empty()
     );
     w.set_path(relative.into());
-    w.invoke_action("save".into());
-    assert!(w.get_error().is_empty(), "{}", w.get_error());
-    assert_eq!(w.get_review(), "PNG saved.");
-    assert_eq!(
-        exchange::decode_png(&std::fs::read(file.path()).unwrap()).unwrap(),
-        definitions
-    );
+    // The initial empty file and a previously exported PNG are both replaced.
+    for _ in 0..2 {
+        w.invoke_action("save".into());
+        assert!(w.get_error().is_empty(), "{}", w.get_error());
+        assert_eq!(w.get_review(), "PNG saved.");
+        assert_eq!(
+            exchange::decode_png(&std::fs::read(&file).unwrap()).unwrap(),
+            definitions
+        );
+    }
     w.invoke_action("cancel".into());
 }
 #[test]

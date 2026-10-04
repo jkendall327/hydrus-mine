@@ -880,6 +880,8 @@ Manual export uses the scheduled export folders' filename and sidecar code.
 The preview paths, selected-name collision suffixes, removal question and
 trash/export-and-close confirmations match `oracle/fixtures/export_files.json`,
 as do filenames and copied bytes from the real reference export worker.
+Windows also accepts a forward slash at the final folder/filename split, using
+the reference's Windows filename sanitization for the preceding directories.
 For data safety, a failed or cancelled run never trashes any source files;
 the reference can trash the successfully copied prefix after an error. Paths
 are checked by components and canonical subfolders, and existing symlinks,
