@@ -7,7 +7,13 @@
       "modified": 1799999950,
       "source_time": 1799999800,
       "status": 4,
-      "note": "detail 0"
+      "note": "detail 0",
+      "hashes": [
+        [
+          "sha256",
+          "1212121212121212121212121212121212121212121212121212121212121212"
+        ]
+      ]
     },
     {
       "data": "/srv/import/file-1.jpg",
@@ -15,7 +21,13 @@
       "modified": 1799999951,
       "source_time": 1799999801,
       "status": 2,
-      "note": "detail 1"
+      "note": "detail 1",
+      "hashes": [
+        [
+          "sha256",
+          "1212121212121212121212121212121212121212121212121212121212121212"
+        ]
+      ]
     },
     {
       "data": "/srv/import/file-2.jpg",
@@ -23,7 +35,13 @@
       "modified": 1799999952,
       "source_time": 1799999802,
       "status": 0,
-      "note": "detail 2"
+      "note": "detail 2",
+      "hashes": [
+        [
+          "sha256",
+          "1212121212121212121212121212121212121212121212121212121212121212"
+        ]
+      ]
     }
   ],
   "cases": [
@@ -55,7 +73,13 @@
               "modified": 1799999950,
               "source_time": 1799999800,
               "status": 4,
-              "note": "detail 0"
+              "note": "detail 0",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-1.jpg",
@@ -63,7 +87,13 @@
               "modified": 1799999951,
               "source_time": 1799999801,
               "status": 2,
-              "note": "detail 1"
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -71,7 +101,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         },
@@ -84,7 +120,8 @@
               "modified": 1800000000,
               "source_time": 1799999800,
               "status": 0,
-              "note": ""
+              "note": "",
+              "hashes": []
             },
             {
               "data": "/srv/import/file-1.jpg",
@@ -92,7 +129,13 @@
               "modified": 1799999951,
               "source_time": 1799999801,
               "status": 2,
-              "note": "detail 1"
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -100,7 +143,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         },
@@ -113,7 +162,8 @@
               "modified": 1800000000,
               "source_time": 1799999800,
               "status": 0,
-              "note": ""
+              "note": "",
+              "hashes": []
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -121,7 +171,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         },
@@ -134,7 +190,13 @@
               "modified": 1799999950,
               "source_time": 1799999800,
               "status": 4,
-              "note": "detail 0"
+              "note": "detail 0",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-1.jpg",
@@ -142,7 +204,13 @@
               "modified": 1799999951,
               "source_time": 1799999801,
               "status": 2,
-              "note": "detail 1"
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -150,7 +218,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         },
@@ -163,7 +237,13 @@
               "modified": 1799999950,
               "source_time": 1799999800,
               "status": 4,
-              "note": "detail 0"
+              "note": "detail 0",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-1.jpg",
@@ -171,7 +251,13 @@
               "modified": 1799999951,
               "source_time": 1799999801,
               "status": 2,
-              "note": "detail 1"
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -179,7 +265,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         }
@@ -191,7 +283,13 @@
           "modified": 1799999950,
           "source_time": 1799999800,
           "status": 4,
-          "note": "detail 0"
+          "note": "detail 0",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         },
         {
           "data": "/srv/import/file-1.jpg",
@@ -199,7 +297,13 @@
           "modified": 1799999951,
           "source_time": 1799999801,
           "status": 2,
-          "note": "detail 1"
+          "note": "detail 1",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         },
         {
           "data": "/srv/import/file-2.jpg",
@@ -207,7 +311,13 @@
           "modified": 1799999952,
           "source_time": 1799999802,
           "status": 0,
-          "note": "detail 2"
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         }
       ],
       "reopened_rows": [
@@ -217,7 +327,13 @@
           "modified": 1799999950,
           "source_time": 1799999800,
           "status": 4,
-          "note": "detail 0"
+          "note": "detail 0",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         },
         {
           "data": "/srv/import/file-1.jpg",
@@ -225,7 +341,13 @@
           "modified": 1799999951,
           "source_time": 1799999801,
           "status": 2,
-          "note": "detail 1"
+          "note": "detail 1",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         },
         {
           "data": "/srv/import/file-2.jpg",
@@ -233,7 +355,13 @@
           "modified": 1799999952,
           "source_time": 1799999802,
           "status": 0,
-          "note": "detail 2"
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         }
       ],
       "original_rows": [
@@ -243,7 +371,13 @@
           "modified": 1799999950,
           "source_time": 1799999800,
           "status": 4,
-          "note": "detail 0"
+          "note": "detail 0",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         },
         {
           "data": "/srv/import/file-1.jpg",
@@ -251,7 +385,13 @@
           "modified": 1799999951,
           "source_time": 1799999801,
           "status": 2,
-          "note": "detail 1"
+          "note": "detail 1",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         },
         {
           "data": "/srv/import/file-2.jpg",
@@ -259,7 +399,13 @@
           "modified": 1799999952,
           "source_time": 1799999802,
           "status": 0,
-          "note": "detail 2"
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         }
       ]
     },
@@ -291,7 +437,13 @@
               "modified": 1799999950,
               "source_time": 1799999800,
               "status": 4,
-              "note": "detail 0"
+              "note": "detail 0",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-1.jpg",
@@ -299,7 +451,13 @@
               "modified": 1799999951,
               "source_time": 1799999801,
               "status": 2,
-              "note": "detail 1"
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -307,7 +465,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         },
@@ -320,7 +484,8 @@
               "modified": 1800000000,
               "source_time": 1799999800,
               "status": 0,
-              "note": ""
+              "note": "",
+              "hashes": []
             },
             {
               "data": "/srv/import/file-1.jpg",
@@ -328,7 +493,13 @@
               "modified": 1799999951,
               "source_time": 1799999801,
               "status": 2,
-              "note": "detail 1"
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -336,7 +507,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         },
@@ -349,7 +526,8 @@
               "modified": 1800000000,
               "source_time": 1799999800,
               "status": 0,
-              "note": ""
+              "note": "",
+              "hashes": []
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -357,7 +535,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         },
@@ -370,7 +554,13 @@
               "modified": 1799999950,
               "source_time": 1799999800,
               "status": 4,
-              "note": "detail 0"
+              "note": "detail 0",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-1.jpg",
@@ -378,7 +568,13 @@
               "modified": 1799999951,
               "source_time": 1799999801,
               "status": 2,
-              "note": "detail 1"
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -386,7 +582,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         },
@@ -399,7 +601,8 @@
               "modified": 1800000000,
               "source_time": 1799999800,
               "status": 0,
-              "note": ""
+              "note": "",
+              "hashes": []
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -407,7 +610,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         }
@@ -419,7 +628,8 @@
           "modified": 1800000000,
           "source_time": 1799999800,
           "status": 0,
-          "note": ""
+          "note": "",
+          "hashes": []
         },
         {
           "data": "/srv/import/file-2.jpg",
@@ -427,7 +637,13 @@
           "modified": 1799999952,
           "source_time": 1799999802,
           "status": 0,
-          "note": "detail 2"
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         }
       ],
       "reopened_rows": [
@@ -437,7 +653,8 @@
           "modified": 1800000000,
           "source_time": 1799999800,
           "status": 0,
-          "note": ""
+          "note": "",
+          "hashes": []
         },
         {
           "data": "/srv/import/file-2.jpg",
@@ -445,7 +662,13 @@
           "modified": 1799999952,
           "source_time": 1799999802,
           "status": 0,
-          "note": "detail 2"
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         }
       ],
       "original_rows": [
@@ -455,7 +678,13 @@
           "modified": 1799999950,
           "source_time": 1799999800,
           "status": 4,
-          "note": "detail 0"
+          "note": "detail 0",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         },
         {
           "data": "/srv/import/file-1.jpg",
@@ -463,7 +692,13 @@
           "modified": 1799999951,
           "source_time": 1799999801,
           "status": 2,
-          "note": "detail 1"
+          "note": "detail 1",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         },
         {
           "data": "/srv/import/file-2.jpg",
@@ -471,7 +706,13 @@
           "modified": 1799999952,
           "source_time": 1799999802,
           "status": 0,
-          "note": "detail 2"
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         }
       ]
     },
@@ -503,7 +744,13 @@
               "modified": 1799999950,
               "source_time": 1799999800,
               "status": 4,
-              "note": "detail 0"
+              "note": "detail 0",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-1.jpg",
@@ -511,7 +758,13 @@
               "modified": 1799999951,
               "source_time": 1799999801,
               "status": 2,
-              "note": "detail 1"
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -519,7 +772,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         },
@@ -532,7 +791,8 @@
               "modified": 1800000000,
               "source_time": 1799999800,
               "status": 0,
-              "note": ""
+              "note": "",
+              "hashes": []
             },
             {
               "data": "/srv/import/file-1.jpg",
@@ -540,7 +800,13 @@
               "modified": 1799999951,
               "source_time": 1799999801,
               "status": 2,
-              "note": "detail 1"
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -548,7 +814,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         },
@@ -561,7 +833,8 @@
               "modified": 1800000000,
               "source_time": 1799999800,
               "status": 0,
-              "note": ""
+              "note": "",
+              "hashes": []
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -569,7 +842,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         },
@@ -582,7 +861,13 @@
               "modified": 1799999950,
               "source_time": 1799999800,
               "status": 4,
-              "note": "detail 0"
+              "note": "detail 0",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-1.jpg",
@@ -590,7 +875,13 @@
               "modified": 1799999951,
               "source_time": 1799999801,
               "status": 2,
-              "note": "detail 1"
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -598,7 +889,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         },
@@ -611,7 +908,8 @@
               "modified": 1800000000,
               "source_time": 1799999800,
               "status": 0,
-              "note": ""
+              "note": "",
+              "hashes": []
             },
             {
               "data": "/srv/import/file-2.jpg",
@@ -619,7 +917,13 @@
               "modified": 1799999952,
               "source_time": 1799999802,
               "status": 0,
-              "note": "detail 2"
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
             }
           ]
         }
@@ -631,7 +935,8 @@
           "modified": 1800000000,
           "source_time": 1799999800,
           "status": 0,
-          "note": ""
+          "note": "",
+          "hashes": []
         },
         {
           "data": "/srv/import/file-2.jpg",
@@ -639,7 +944,13 @@
           "modified": 1799999952,
           "source_time": 1799999802,
           "status": 0,
-          "note": "detail 2"
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         }
       ],
       "reopened_rows": [
@@ -649,7 +960,8 @@
           "modified": 1800000000,
           "source_time": 1799999800,
           "status": 0,
-          "note": ""
+          "note": "",
+          "hashes": []
         },
         {
           "data": "/srv/import/file-2.jpg",
@@ -657,7 +969,13 @@
           "modified": 1799999952,
           "source_time": 1799999802,
           "status": 0,
-          "note": "detail 2"
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         }
       ],
       "original_rows": [
@@ -667,7 +985,13 @@
           "modified": 1799999950,
           "source_time": 1799999800,
           "status": 4,
-          "note": "detail 0"
+          "note": "detail 0",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         },
         {
           "data": "/srv/import/file-1.jpg",
@@ -675,7 +999,13 @@
           "modified": 1799999951,
           "source_time": 1799999801,
           "status": 2,
-          "note": "detail 1"
+          "note": "detail 1",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         },
         {
           "data": "/srv/import/file-2.jpg",
@@ -683,7 +1013,13 @@
           "modified": 1799999952,
           "source_time": 1799999802,
           "status": 0,
-          "note": "detail 2"
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
         }
       ]
     }

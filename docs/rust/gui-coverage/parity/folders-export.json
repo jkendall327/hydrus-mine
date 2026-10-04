@@ -237,7 +237,7 @@
       "countAsCompletedLeaf": false,
       "change_kind": "implementation",
       "implementationCommit": "2bd97edc",
-      "exactBehavior": "Correct the folder-specific file-log ownership mismatch. FileSeedCacheButton under an import-folder dialog edits an independent cache duplicate; native now routes every existing queue mutation to a private in-memory real-schema queue with complete seed records, leaving the live folder cache and worker nudges untouched. Log Apply updates only the manager-owned folder cache draft; log Cancel discards it. Accepted cache edits survive cancelling the existing folder-fields editor, exactly as the Qt setter updates that manager object. Manager Apply atomically writes settings and accepted ordered caches into the actual folder queue, preserving full metadata, comparison values, times, notes, status and referral URLs; manager Cancel, parent closure and retained callbacks cannot commit. New folders can review an empty cache before receiving a live queue. Child questions/errors freeze Apply; both parent Apply callbacks are blocked while their child is active. Importer/search/subscription live logs retain their independent immediate source.",
+      "exactBehavior": "Correct the folder-specific file-log ownership mismatch. FileSeedCacheButton under an import-folder dialog edits an independent cache duplicate; native now routes every existing queue mutation to a private in-memory real-schema queue with complete seed records, leaving the live folder cache and worker nudges untouched. Log Apply updates only the manager-owned folder cache draft; log Cancel discards it. Accepted cache edits survive cancelling the existing folder-fields editor, exactly as the Qt setter updates that manager object. Manager Apply atomically writes settings and accepted ordered caches into the actual folder queue, preserving complete cache state, comparison values, times, notes, status and referral URLs; resetting a seed to unknown intentionally scrubs hashes, as reference FileSeed.SetStatus does; manager Cancel, parent closure and retained callbacks cannot commit. New folders can review an empty cache before receiving a live queue. Child questions/errors freeze Apply; both parent Apply callbacks are blocked while their child is active. Importer/search/subscription live logs retain their independent immediate source.",
       "limits": [
         "This original node is a shared_reference alias targeting audit-network-file-log and is explicitly excluded from the concrete-leaf completion metric. The actual folder-specific ownership consumer has changed; no shared menu leaf is newly claimed.",
         "Folder manager lifetime coordination now pauses workers through crash-safe edit/activity leases and reads its draft after active work commits. The separately recorded lifecycle follow-up below adds no new reference leaf or alias count.",
@@ -322,7 +322,7 @@
         "executed": true,
         "command": "/workspace/parallel/with-oracle python oracle/record_import_folder_log.py",
         "executed_utc": "2026-10-04 18:24 UTC",
-        "observed": "Three real EditImportFoldersPanel._Edit/FileSeedCacheButton._ShowFileSeedCacheFrame modal sequences: child Cancel + folder Cancel, child Apply + folder Cancel, child Apply + folder Apply. Actual selected retry and Delete handlers/questions, independent duplicate before child close, accepted manager object, original cache isolation and serialised/reopened full cache. Uses an existing private temporary watched directory for real field validation; no workers, imports, exports or remote requests."
+        "observed": "Three real EditImportFoldersPanel._Edit/FileSeedCacheButton._ShowFileSeedCacheFrame modal sequences: child Cancel + folder Cancel, child Apply + folder Cancel, child Apply + folder Apply. Actual selected retry and Delete handlers/questions, including a seeded SHA256 cleared on retry and retained by untouched seeds, independent duplicate before child close, accepted manager object, original cache isolation and serialised/reopened full cache. Uses an existing private temporary watched directory for real field validation; no workers, imports, exports or remote requests."
       }
     }
   ],
@@ -607,5 +607,19 @@
       "executed": "2026-10-04 18:44 UTC; passed",
       "observed": "24 actual FrameGUI import/export manager worker invocations using original blocking Qt handoff and real panels, Apply/Cancel/scripted child exceptions, both original pause states, running/idle flags, real wait-loop messages and completed/dismissed jobs, final pause restoration, import Apply-only notifications and export always-finally notification. Empty private client folder lists; no imports, exports or remote requests."
     }
+  },
+  "runtimeRepair": {
+    "referenceRecording": {
+      "command": "/workspace/parallel/with-oracle python oracle/record_import_folder_log.py",
+      "executedAt": "2026-10-04T20:27:34Z",
+      "fixture": "oracle/fixtures/import_folder_log.json",
+      "observed": "Actual Qt selected retry resets only the selected seed to unknown and scrubs its seeded SHA256; untouched unknown/status seeds retain SHA256 through child/folder Apply/Cancel and serialised reopening."
+    },
+    "behavior": "Filename/directory literal edits immediately publish their current MiscRow even when an already checked field is cleared; this retains the checkbox and does not reset unrelated advanced input. Copied file logs preserve all other metadata while following the reference intentional hash reset. No additional reference leaf is claimed.",
+    "validation": [
+      "cargo fmt --all",
+      "git diff --check",
+      "cached Slint source compilation; no Cargo build or tests"
+    ]
   }
 }

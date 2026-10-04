@@ -218,7 +218,22 @@ fn copied_cache_replays_reference_child_apply_cancel_and_folder_cancel_then_mana
             assert_eq!(seed.created, row["created"].as_i64().unwrap());
             assert_eq!(seed.source_time, row["source_time"].as_i64());
             let before = original.iter().find(|old| old.data == seed.data).unwrap();
-            assert_eq!(seed.meta, before.meta);
+            let mut expected_meta = before.meta.clone();
+            expected_meta.hashes = row["hashes"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|pair| {
+                    (
+                        pair[0].as_str().unwrap().to_owned(),
+                        pair[1].as_str().unwrap().to_owned(),
+                    )
+                })
+                .collect();
+            assert_eq!(
+                seed.meta, expected_meta,
+                "Qt retry scrubs hashes while preserving other metadata"
+            );
             assert_eq!(seed.referral_url, before.referral_url);
             assert_eq!(seed.data_for_comparison, before.data_for_comparison);
             assert_eq!(seed.queue_id, queue);
@@ -228,7 +243,7 @@ fn copied_cache_replays_reference_child_apply_cancel_and_folder_cancel_then_mana
             } else {
                 assert_ne!(
                     seed.modified, before.modified,
-                    "retry changes only its modified time/status/note"
+                    "retry changes modified time/status/note and scrubs hashes"
                 );
             }
         }

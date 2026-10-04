@@ -39,10 +39,11 @@ def record(session):
             seed.modified = NOW - 50 + i
             seed.source_time = NOW - 200 + i
             seed.status, seed.note = status, f'detail {i}'
+            seed.SetHash(bytes.fromhex('12' * 32))
             seeds.append(seed)
         cache.AddFileSeeds(seeds)
         def rows(cache):
-            return [{'data': s.file_seed_data, 'created': s.created, 'modified': s.modified, 'source_time': s.source_time, 'status': s.status, 'note': s.note} for s in cache.GetFileSeeds()]
+            return [{'data': s.file_seed_data, 'created': s.created, 'modified': s.modified, 'source_time': s.source_time, 'status': s.status, 'note': s.note, 'hashes': [[kind, hash.hex()] for kind, hash in sorted(s.GetHashTypesToHashes().items())]} for s in cache.GetFileSeeds()]
         cases = []
         for child_ok, folder_ok in [(False, False), (True, False), (True, True)]:
             managed = original.Duplicate()

@@ -494,6 +494,18 @@ fn show(window: &FilenameTaggingWindow, state: &mut State) {
             .into(),
     );
     window.set_tags_selected(state.shown_single.join("\n").into());
+    show_misc(window, state);
+    window.set_quick(quick_namespaces_text(&tab.options.quick_namespaces).into());
+    window.set_regexes(tab.options.regexes.join("\n").into());
+    window.set_number_base(i32::try_from(tab.number_base).unwrap_or(1));
+    window.set_number_step(i32::try_from(tab.number_step).unwrap_or(1));
+    window.set_number_namespace(tab.number_namespace.as_str().into());
+    show_rows(window, state);
+    show_sidecars(window, state);
+}
+
+/// Publish literal misc fields even when clearing an already checked namespace.
+fn show_misc(window: &FilenameTaggingWindow, state: &State) {
     let labels = std::iter::once("add filename?").chain(DIRECTORIES.iter().map(|d| d.0));
     let misc: Vec<MiscRow> = labels
         .zip(&state.misc[state.current])
@@ -504,13 +516,6 @@ fn show(window: &FilenameTaggingWindow, state: &mut State) {
         })
         .collect();
     window.set_misc(ModelRc::new(VecModel::from(misc)));
-    window.set_quick(quick_namespaces_text(&tab.options.quick_namespaces).into());
-    window.set_regexes(tab.options.regexes.join("\n").into());
-    window.set_number_base(i32::try_from(tab.number_base).unwrap_or(1));
-    window.set_number_step(i32::try_from(tab.number_step).unwrap_or(1));
-    window.set_number_namespace(tab.number_namespace.as_str().into());
-    show_rows(window, state);
-    show_sidecars(window, state);
 }
 
 /// Read the tab's two-way fields.
@@ -890,6 +895,7 @@ fn build(
                 row.0 = on;
             }
             state.apply_misc();
+            show_misc(&window, &state);
             show_rows(&window, &state);
         }
     });
@@ -905,7 +911,6 @@ fn build(
                 return;
             }
             let current = state.current;
-            let mut tick = false;
             if let Some(row) = usize::try_from(i)
                 .ok()
                 .and_then(|i| state.misc[current].get_mut(i))
@@ -915,15 +920,11 @@ fn build(
                 // does)
                 if !row.0 && !row.1.is_empty() {
                     row.0 = true;
-                    tick = true;
                 }
             }
             state.apply_misc();
-            if tick {
-                show(&window, &mut state);
-            } else {
-                show_rows(&window, &state);
-            }
+            show_misc(&window, &state);
+            show_rows(&window, &state);
         }
     });
     window.on_apply({
