@@ -60,6 +60,7 @@ fn thumbnail_dialog_replays_deleted_counts_and_retained_callbacks_cannot_mutate_
         )),
     );
     ui.invoke_select_all();
+    let rendered = windows.count();
     ui.invoke_manage_tags_selected();
     let window = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
     let states = recorded["deleted"].as_array().unwrap();
@@ -91,8 +92,7 @@ fn thumbnail_dialog_replays_deleted_counts_and_retained_callbacks_cannot_mutate_
     enter(&window, "checkpoint:old");
     assert_eq!(snapshot(&window), states[3]["state"]);
     assert_eq!(snapshot(&other), states[1]["state"]);
-    let rendered = windows.get(windows.count() - 2).unwrap();
-    let pixels = headless::render(&rendered, 720, 680);
+    let pixels = headless::render(&windows.get(rendered).unwrap(), 720, 680);
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("manage_deleted_mappings.png"),
         &pixels,
