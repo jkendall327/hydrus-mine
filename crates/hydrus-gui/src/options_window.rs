@@ -451,6 +451,8 @@ pub(crate) fn open(
         let editor = editor.clone();
         let store = store.clone();
         let tag_slot = tag_slot.clone();
+        let import_slot = import_slot.clone();
+        let import_slot = import_slot.clone();
         let active = active.clone();
         let show_page = show_page.clone();
         move || {
@@ -813,7 +815,7 @@ pub(crate) fn open(
         let store = store.clone();
         let close = close.clone();
         move || {
-            if !active.get() || tag_slot.borrow().is_some() {
+            if !active.get() || tag_slot.borrow().is_some() || import_slot.borrow().is_some() {
                 return;
             }
             let (after, before, problems) = {

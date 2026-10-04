@@ -1702,6 +1702,27 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             )],
         ),
         page(
+            "import options",
+            vec![opt(
+                "",
+                Kind::ImportOptions,
+                Rc::new(|settings| {
+                    Value::ImportOptions(crate::import_options_panel::Value {
+                        manager: settings.import_options.clone(),
+                        ui: settings.import_options_ui.clone(),
+                    })
+                }),
+                Rc::new(|settings, value| match value {
+                    Value::ImportOptions(value) => {
+                        settings.import_options = value.manager.clone();
+                        settings.import_options_ui = value.ui.clone();
+                        Ok(())
+                    }
+                    _ => Err(wrong("import options")),
+                }),
+            )],
+        ),
+        page(
             "importing",
             vec![boxed(
                 "filetypes",
@@ -2118,27 +2139,6 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     ],
                 ),
             ],
-        ),
-        page(
-            "import options",
-            vec![opt(
-                "",
-                Kind::ImportOptions,
-                Rc::new(|settings| {
-                    Value::ImportOptions(crate::import_options_panel::Value {
-                        manager: settings.import_options.clone(),
-                        ui: settings.import_options_ui.clone(),
-                    })
-                }),
-                Rc::new(|settings, value| match value {
-                    Value::ImportOptions(value) => {
-                        settings.import_options = value.manager.clone();
-                        settings.import_options_ui = value.ui.clone();
-                        Ok(())
-                    }
-                    _ => Err(wrong("import options")),
-                }),
-            )],
         ),
         page(
             "regex favourites",
