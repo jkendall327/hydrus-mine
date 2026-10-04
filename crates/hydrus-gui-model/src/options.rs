@@ -32,7 +32,8 @@ use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FavouriteTags, FileHandlingSettings, FileSearchSettings,
     FileViewingStatistics, FolderSettings, GuiSettings, NotebookCreationSettings,
     OptionsPreferences, PageSettings, SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
-    ViewerCanvasSettings, ViewerFocusSettings, ViewerHoverSettings, ViewerPointerSettings,
+    ViewerCanvasSettings, ViewerClosingSettings, ViewerFocusSettings, ViewerHoverSettings,
+    ViewerPointerSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -115,6 +116,7 @@ settings! {
     viewer_hovers: ViewerHoverSettings,
     viewer_pointer: ViewerPointerSettings,
     viewer_focus: ViewerFocusSettings,
+    viewer_closing: ViewerClosingSettings,
 }
 
 /// An option's value as its control holds it.
@@ -1841,6 +1843,35 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         page(
             "media viewer",
             vec![
+                boxed(
+                    "closing focus",
+                    vec![
+                        check(
+                            "When closing the media viewer, re-select original search page: ",
+                            |settings| settings.viewer_closing.reselect_page,
+                            |settings, value| settings.viewer_closing.reselect_page = value,
+                        ),
+                        check(
+                            "When closing the media viewer, tell original search page to select exit media: ",
+                            |settings| settings.viewer_closing.select_exit_media,
+                            |settings, value| {
+                                settings.viewer_closing.select_exit_media = value;
+                            },
+                        ),
+                        check(
+                            "ADVANCED: When closing the media viewer with the above focusing options, activate Main GUI: ",
+                            |settings| settings.viewer_closing.activate_focusing,
+                            |settings, value| {
+                                settings.viewer_closing.activate_focusing = value;
+                            },
+                        ),
+                        check(
+                            "DEBUG: When closing the media viewer at any time, activate Main GUI: ",
+                            |settings| settings.viewer_closing.activate_always,
+                            |settings, value| settings.viewer_closing.activate_always = value,
+                        ),
+                    ],
+                ),
                 boxed(
                     "mouse behaviour",
                     vec![

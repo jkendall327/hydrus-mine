@@ -547,6 +547,29 @@ impl Setting for ViewerCanvasSettings {
     const KEY: &'static str = "viewer_canvas";
 }
 
+/// What a surviving original page and main window do when a viewer closes.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerClosingSettings {
+    pub reselect_page: bool,
+    pub select_exit_media: bool,
+    pub activate_focusing: bool,
+    pub activate_always: bool,
+}
+impl Default for ViewerClosingSettings {
+    fn default() -> Self {
+        Self {
+            reselect_page: false,
+            select_exit_media: true,
+            activate_focusing: false,
+            activate_always: false,
+        }
+    }
+}
+impl Setting for ViewerClosingSettings {
+    const KEY: &'static str = "viewer_closing";
+}
+
 /// Whether mouseover panels require the native viewer's active window.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

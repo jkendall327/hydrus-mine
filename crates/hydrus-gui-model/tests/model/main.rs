@@ -84,3 +84,4 @@ mod network_job_control;
 
 mod gallery_source;
 mod subscription_quality;
+mod viewer_closing;

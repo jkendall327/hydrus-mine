@@ -1465,3 +1465,65 @@ fn viewer_focus_controls_stage_independent_reference_policies() {
     }
     assert_eq!(store.read(Settings::load).unwrap(), settings);
 }
+
+#[test]
+fn closing_controls_stage_all_reference_preferences_without_persisting() {
+    use hydrus_gui_model::options::{Editor, Row as EditorRow};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("viewer_closing_options.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    let registry = pages(&settings);
+    let page = registry
+        .iter()
+        .find(|page| page.name == "media viewer")
+        .unwrap();
+    let reference = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "media viewer")
+        .unwrap();
+    let problems = page_problems(page, &reference["items"], &settings, &store);
+    assert!(problems.is_empty(), "{problems:?}");
+    let mut editor = Editor::new(settings.clone());
+    let index = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "media viewer")
+        .unwrap();
+    editor.show_page(index);
+    let labels = [
+        "When closing the media viewer, re-select original search page: ",
+        "When closing the media viewer, tell original search page to select exit media: ",
+        "ADVANCED: When closing the media viewer with the above focusing options, activate Main GUI: ",
+        "DEBUG: When closing the media viewer at any time, activate Main GUI: ",
+    ];
+    let rows: Vec<_> = labels
+        .iter()
+        .map(|label| {
+            editor
+                .rows()
+                .iter()
+                .position(|row| matches!(row, EditorRow::Opt {option,..} if option.label == *label))
+                .unwrap()
+        })
+        .collect();
+    for event in fixture["events"].as_array().unwrap() {
+        for (&index, value) in rows.iter().zip(event["values"].as_array().unwrap()) {
+            editor.check(index, value.as_bool().unwrap());
+        }
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty(), "{problems:?}");
+        assert_eq!(
+            serde_json::json!([
+                applied.viewer_closing.reselect_page,
+                applied.viewer_closing.select_exit_media,
+                applied.viewer_closing.activate_focusing,
+                applied.viewer_closing.activate_always
+            ]),
+            event["values"]
+        );
+    }
+    assert_eq!(store.read(Settings::load).unwrap(), settings);
+}

@@ -97,3 +97,4 @@ pub mod network_job_control;
 pub mod write_tag_menu;
 
 pub mod gallery_source;
+pub mod viewer_closing;

@@ -666,6 +666,30 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             viewer_canvas.seek_nub_width = (*value).clamp(1, 63) as u32;
         }
         insert_setting(&mut input, &viewer_canvas)?;
+        let mut viewer_closing = crate::settings::ViewerClosingSettings::default();
+        for (key, field) in [
+            (
+                "focus_media_tab_on_viewer_close_if_possible",
+                &mut viewer_closing.reselect_page,
+            ),
+            (
+                "focus_media_thumb_on_viewer_close",
+                &mut viewer_closing.select_exit_media,
+            ),
+            (
+                "activate_main_gui_on_focusing_viewer_close",
+                &mut viewer_closing.activate_focusing,
+            ),
+            (
+                "activate_main_gui_on_viewer_close",
+                &mut viewer_closing.activate_always,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        insert_setting(&mut input, &viewer_closing)?;
         let mut viewer_focus = crate::settings::ViewerFocusSettings::default();
         for (key, field) in [
             (
@@ -2823,6 +2847,50 @@ mod tests {
                 seek_height: 37,
                 seek_hidden_height: None,
                 seek_nub_width: 19
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_closing_options_import_each_independent_preference() {
+        use crate::settings::ViewerClosingSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerClosingSettings>(
+                input.settings["viewer_closing"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), ViewerClosingSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "focus_media_tab_on_viewer_close_if_possible"], [0, false]]"#,
+                    r#"[[0, "focus_media_tab_on_viewer_close_if_possible"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "focus_media_thumb_on_viewer_close"], [0, true]]"#,
+                    r#"[[0, "focus_media_thumb_on_viewer_close"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "activate_main_gui_on_focusing_viewer_close"], [0, false]]"#,
+                    r#"[[0, "activate_main_gui_on_focusing_viewer_close"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "activate_main_gui_on_viewer_close"], [0, false]]"#,
+                    r#"[[0, "activate_main_gui_on_viewer_close"], [0, true]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerClosingSettings {
+                reselect_page: true,
+                select_exit_media: false,
+                activate_focusing: true,
+                activate_always: true
             }
         );
     }
