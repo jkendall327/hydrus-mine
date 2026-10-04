@@ -167,7 +167,7 @@ pub fn selected(
                 && let Some(header) = &query.reference_header
                 && let Some(name) = header[2][0].as_str()
             {
-                query.log_name = name.to_owned();
+                name.clone_into(&mut query.log_name);
                 if let Some(log) = &mut query.log {
                     log.name.clone_from(&query.log_name);
                 }
