@@ -14,6 +14,7 @@ mod duplicates_page;
 mod edit_subscription;
 mod embedded_metadata;
 mod file_log;
+mod filename_rules;
 mod filename_tagging;
 mod filetype_tree;
 mod folders;
