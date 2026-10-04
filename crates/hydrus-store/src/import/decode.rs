@@ -744,6 +744,14 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             viewer_canvas.seek_nub_width = (*value).clamp(1, 63) as u32;
         }
         insert_setting(&mut input, &viewer_canvas)?;
+        let mut viewer_cursor = crate::settings::ViewerCursorSettings::default();
+        if let Some(value) = options
+            .noneable_integers
+            .get("media_viewer_cursor_autohide_time_ms")
+        {
+            viewer_cursor.autohide_ms = value.map(|delay| delay.clamp(100, 100000) as u32);
+        }
+        insert_setting(&mut input, &viewer_cursor)?;
         let mut viewer_background = crate::settings::ViewerBackgroundSettings::default();
         for (key, target) in [
             (
@@ -3063,6 +3071,34 @@ mod tests {
                 seek_nub_width: 19
             }
         );
+    }
+
+    #[test]
+    fn cursor_autohide_import_preserves_timeout_and_do_not_hide() {
+        use crate::settings::ViewerCursorSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerCursorSettings>(input.settings["viewer_cursor"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), ViewerCursorSettings::default());
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "media_viewer_cursor_autohide_time_ms"], [0, 700]]"#,
+                r#"[[0, "media_viewer_cursor_autohide_time_ms"], [0, 1250]]"#,
+            )],
+        );
+        assert_eq!(decoded().autohide_ms, Some(1250));
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "media_viewer_cursor_autohide_time_ms"], [0, 1250]]"#,
+                r#"[[0, "media_viewer_cursor_autohide_time_ms"], [0, null]]"#,
+            )],
+        );
+        assert_eq!(decoded().autohide_ms, None);
     }
 
     #[test]

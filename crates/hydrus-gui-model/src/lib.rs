@@ -98,3 +98,5 @@ pub mod write_tag_menu;
 
 pub mod gallery_source;
 pub mod viewer_closing;
+
+pub mod viewer_cursor;

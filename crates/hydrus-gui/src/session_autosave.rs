@@ -9,9 +9,52 @@ use std::{
 
 thread_local! {
     static MONITORS: RefCell<Vec<Weak<Inner>>> = const { RefCell::new(Vec::new()) };
+    static POINTER_OBSERVERS: RefCell<Vec<PointerObserver>> = const { RefCell::new(Vec::new()) };
     static FOCUS_OBSERVERS: RefCell<Vec<FocusObserver>> = const { RefCell::new(Vec::new()) };
     static APPLICATION_FOCUS_OBSERVERS: RefCell<Vec<ApplicationFocusObserver>> = const { RefCell::new(Vec::new()) };
     static ACTIVE_NATIVE_WINDOW: std::cell::Cell<Option<slint::winit_030::winit::window::WindowId>> = const { std::cell::Cell::new(None) };
+}
+
+/// Weak per-native-window motion observers, shared by the desktop event handler.
+pub type PointerCallback = Rc<dyn Fn((f64, f64))>;
+struct PointerObserver {
+    window_id: slint::winit_030::winit::window::WindowId,
+    callback: Weak<dyn Fn((f64, f64))>,
+}
+pub fn watch_native_pointer_id(
+    window_id: slint::winit_030::winit::window::WindowId,
+    callback: &PointerCallback,
+) {
+    POINTER_OBSERVERS.with(|observers| {
+        let mut observers = observers.borrow_mut();
+        observers.retain(|observer| observer.callback.strong_count() > 0);
+        if !observers.iter().any(|observer| {
+            observer.window_id == window_id && observer.callback.ptr_eq(&Rc::downgrade(callback))
+        }) {
+            observers.push(PointerObserver {
+                window_id,
+                callback: Rc::downgrade(callback),
+            });
+        }
+    });
+}
+/// The same route is exposed for headless native event replay.
+pub fn observe_native_pointer(
+    window_id: slint::winit_030::winit::window::WindowId,
+    position: (f64, f64),
+) {
+    let callbacks = POINTER_OBSERVERS.with(|observers| {
+        let mut observers = observers.borrow_mut();
+        observers.retain(|observer| observer.callback.strong_count() > 0);
+        observers
+            .iter()
+            .filter(|observer| observer.window_id == window_id)
+            .filter_map(|observer| observer.callback.upgrade())
+            .collect::<Vec<_>>()
+    });
+    for callback in callbacks {
+        callback(position);
+    }
 }
 
 /// Hold this callback in the viewer's owned state; the registry keeps only Weak.
@@ -131,6 +174,9 @@ impl slint::winit_030::CustomApplicationHandler for ActivityHandler {
             }
             slint::winit_030::winit::event::WindowEvent::Destroyed => {
                 observe_native_focus(window_id, false);
+            }
+            slint::winit_030::winit::event::WindowEvent::CursorMoved { position, .. } => {
+                observe_native_pointer(window_id, (position.x, position.y));
             }
             _ => {}
         }
@@ -329,5 +375,31 @@ impl Monitor {
             *self.0.previous.borrow_mut() = Some(data);
         }
         Ok(changed)
+    }
+}
+
+#[cfg(test)]
+mod pointer_tests {
+    use super::*;
+    #[test]
+    fn native_motion_targets_one_window_and_releases_dead_viewers() {
+        let id = slint::winit_030::winit::window::WindowId::from(80001);
+        let other = slint::winit_030::winit::window::WindowId::from(80002);
+        let calls = Rc::new(RefCell::new(Vec::new()));
+        let callback: PointerCallback = Rc::new({
+            let calls = calls.clone();
+            move |position| calls.borrow_mut().push(position)
+        });
+        watch_native_pointer_id(id, &callback);
+        watch_native_pointer_id(id, &callback);
+        observe_native_pointer(other, (5.0, 7.0));
+        assert!(calls.borrow().is_empty());
+        observe_native_pointer(id, (5.0, 7.0));
+        assert_eq!(calls.borrow().len(), 1);
+        let weak = Rc::downgrade(&callback);
+        drop(callback);
+        assert!(weak.upgrade().is_none());
+        observe_native_pointer(id, (9.0, 11.0));
+        assert_eq!(calls.borrow().len(), 1);
     }
 }

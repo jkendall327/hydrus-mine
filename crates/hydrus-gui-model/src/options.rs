@@ -32,8 +32,8 @@ use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FavouriteTags, FileHandlingSettings, FileSearchSettings,
     FileViewingStatistics, FolderSettings, GuiSettings, NotebookCreationSettings,
     OptionsPreferences, PageSettings, SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
-    ViewerBackgroundSettings, ViewerCanvasSettings, ViewerClosingSettings, ViewerFocusSettings,
-    ViewerHoverSettings, ViewerPointerSettings,
+    ViewerBackgroundSettings, ViewerCanvasSettings, ViewerClosingSettings, ViewerCursorSettings,
+    ViewerFocusSettings, ViewerHoverSettings, ViewerPointerSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -122,6 +122,7 @@ settings! {
     viewer_pointer: ViewerPointerSettings,
     viewer_focus: ViewerFocusSettings,
     viewer_closing: ViewerClosingSettings,
+    viewer_cursor: ViewerCursorSettings,
 }
 
 /// An option's value as its control holds it.
@@ -1941,6 +1942,15 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "mouse behaviour",
                     vec![
+                        noneable(
+                            "Time until mouse cursor autohides on media viewer:",
+                            none("do not autohide", 700, (100, 100000), Some("ms")),
+                            |settings| settings.viewer_cursor.autohide_ms.map(i64::from),
+                            |settings, value| {
+                                settings.viewer_cursor.autohide_ms =
+                                    value.map(|delay| delay as u32);
+                            },
+                        ),
                         check(
                             "Do not allow mouse media drag-panning when the media has duration:",
                             |settings| settings.viewer_pointer.disallow_duration_drag,

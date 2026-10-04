@@ -1,0 +1,416 @@
+{
+  "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+  "initial": 700,
+  "bounds": [
+    100,
+    100000
+  ],
+  "none_phrase": "do not autohide",
+  "events": [
+    {
+      "value": null,
+      "trace": [
+        {
+          "phase": "initial",
+          "now_ms": 0,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 1000,
+          "timer_active": true
+        },
+        {
+          "phase": "at-deadline",
+          "now_ms": 700,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 1000,
+          "timer_active": true
+        },
+        {
+          "phase": "past-deadline",
+          "now_ms": 701,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 1000,
+          "timer_active": true
+        },
+        {
+          "phase": "inactive",
+          "now_ms": 702,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 1000,
+          "timer_active": true
+        },
+        {
+          "phase": "after-refocus",
+          "now_ms": 703,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 1000,
+          "timer_active": true
+        },
+        {
+          "phase": "past-refocus-deadline",
+          "now_ms": 1403,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 1000,
+          "timer_active": true
+        },
+        {
+          "phase": "ineligible-widget",
+          "now_ms": 1404,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 1000,
+          "timer_active": true
+        },
+        {
+          "phase": "after-eligible",
+          "now_ms": 1405,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 1000,
+          "timer_active": true
+        }
+      ]
+    },
+    {
+      "value": 100,
+      "trace": [
+        {
+          "phase": "initial",
+          "now_ms": 0,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 100,
+          "timer_active": true
+        },
+        {
+          "phase": "at-deadline",
+          "now_ms": 100,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 100,
+          "timer_active": true
+        },
+        {
+          "phase": "past-deadline",
+          "now_ms": 101,
+          "touch_ms": 0,
+          "blank": true,
+          "interval_ms": 100,
+          "timer_active": true
+        },
+        {
+          "phase": "inactive",
+          "now_ms": 102,
+          "touch_ms": 102,
+          "blank": false,
+          "interval_ms": 100,
+          "timer_active": true
+        },
+        {
+          "phase": "after-refocus",
+          "now_ms": 103,
+          "touch_ms": 102,
+          "blank": false,
+          "interval_ms": 100,
+          "timer_active": true
+        },
+        {
+          "phase": "past-refocus-deadline",
+          "now_ms": 203,
+          "touch_ms": 102,
+          "blank": true,
+          "interval_ms": 100,
+          "timer_active": true
+        },
+        {
+          "phase": "ineligible-widget",
+          "now_ms": 204,
+          "touch_ms": 204,
+          "blank": false,
+          "interval_ms": 100,
+          "timer_active": true
+        },
+        {
+          "phase": "after-eligible",
+          "now_ms": 205,
+          "touch_ms": 204,
+          "blank": false,
+          "interval_ms": 100,
+          "timer_active": true
+        }
+      ]
+    },
+    {
+      "value": 700,
+      "trace": [
+        {
+          "phase": "initial",
+          "now_ms": 0,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 140,
+          "timer_active": true
+        },
+        {
+          "phase": "at-deadline",
+          "now_ms": 700,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 140,
+          "timer_active": true
+        },
+        {
+          "phase": "past-deadline",
+          "now_ms": 701,
+          "touch_ms": 0,
+          "blank": true,
+          "interval_ms": 140,
+          "timer_active": true
+        },
+        {
+          "phase": "inactive",
+          "now_ms": 702,
+          "touch_ms": 702,
+          "blank": false,
+          "interval_ms": 140,
+          "timer_active": true
+        },
+        {
+          "phase": "after-refocus",
+          "now_ms": 703,
+          "touch_ms": 702,
+          "blank": false,
+          "interval_ms": 140,
+          "timer_active": true
+        },
+        {
+          "phase": "past-refocus-deadline",
+          "now_ms": 1403,
+          "touch_ms": 702,
+          "blank": true,
+          "interval_ms": 140,
+          "timer_active": true
+        },
+        {
+          "phase": "ineligible-widget",
+          "now_ms": 1404,
+          "touch_ms": 1404,
+          "blank": false,
+          "interval_ms": 140,
+          "timer_active": true
+        },
+        {
+          "phase": "after-eligible",
+          "now_ms": 1405,
+          "touch_ms": 1404,
+          "blank": false,
+          "interval_ms": 140,
+          "timer_active": true
+        }
+      ]
+    },
+    {
+      "value": 1250,
+      "trace": [
+        {
+          "phase": "initial",
+          "now_ms": 0,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 250,
+          "timer_active": true
+        },
+        {
+          "phase": "at-deadline",
+          "now_ms": 1250,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 250,
+          "timer_active": true
+        },
+        {
+          "phase": "past-deadline",
+          "now_ms": 1251,
+          "touch_ms": 0,
+          "blank": true,
+          "interval_ms": 250,
+          "timer_active": true
+        },
+        {
+          "phase": "inactive",
+          "now_ms": 1252,
+          "touch_ms": 1252,
+          "blank": false,
+          "interval_ms": 250,
+          "timer_active": true
+        },
+        {
+          "phase": "after-refocus",
+          "now_ms": 1253,
+          "touch_ms": 1252,
+          "blank": false,
+          "interval_ms": 250,
+          "timer_active": true
+        },
+        {
+          "phase": "past-refocus-deadline",
+          "now_ms": 2503,
+          "touch_ms": 1252,
+          "blank": true,
+          "interval_ms": 250,
+          "timer_active": true
+        },
+        {
+          "phase": "ineligible-widget",
+          "now_ms": 2504,
+          "touch_ms": 2504,
+          "blank": false,
+          "interval_ms": 250,
+          "timer_active": true
+        },
+        {
+          "phase": "after-eligible",
+          "now_ms": 2505,
+          "touch_ms": 2504,
+          "blank": false,
+          "interval_ms": 250,
+          "timer_active": true
+        }
+      ]
+    },
+    {
+      "value": 100000,
+      "trace": [
+        {
+          "phase": "initial",
+          "now_ms": 0,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 250,
+          "timer_active": true
+        },
+        {
+          "phase": "at-deadline",
+          "now_ms": 100000,
+          "touch_ms": 0,
+          "blank": false,
+          "interval_ms": 250,
+          "timer_active": true
+        },
+        {
+          "phase": "past-deadline",
+          "now_ms": 100001,
+          "touch_ms": 0,
+          "blank": true,
+          "interval_ms": 250,
+          "timer_active": true
+        },
+        {
+          "phase": "inactive",
+          "now_ms": 100002,
+          "touch_ms": 100002,
+          "blank": false,
+          "interval_ms": 250,
+          "timer_active": true
+        },
+        {
+          "phase": "after-refocus",
+          "now_ms": 100003,
+          "touch_ms": 100002,
+          "blank": false,
+          "interval_ms": 250,
+          "timer_active": true
+        },
+        {
+          "phase": "past-refocus-deadline",
+          "now_ms": 200003,
+          "touch_ms": 100002,
+          "blank": true,
+          "interval_ms": 250,
+          "timer_active": true
+        },
+        {
+          "phase": "ineligible-widget",
+          "now_ms": 200004,
+          "touch_ms": 200004,
+          "blank": false,
+          "interval_ms": 250,
+          "timer_active": true
+        },
+        {
+          "phase": "after-eligible",
+          "now_ms": 200005,
+          "touch_ms": 200004,
+          "blank": false,
+          "interval_ms": 250,
+          "timer_active": true
+        }
+      ]
+    }
+  ],
+  "menu": [
+    {
+      "phase": "idle-hidden",
+      "now_ms": 701,
+      "touch_ms": 0,
+      "blank": true,
+      "interval_ms": 140,
+      "timer_active": true
+    },
+    {
+      "phase": "inside-real-menu",
+      "now_ms": 800,
+      "touch_ms": 800,
+      "blank": false,
+      "interval_ms": 140,
+      "timer_active": true
+    },
+    {
+      "phase": "menu-just-closed",
+      "now_ms": 801,
+      "touch_ms": 800,
+      "blank": false,
+      "interval_ms": 140,
+      "timer_active": true
+    },
+    {
+      "phase": "after-menu-deadline",
+      "now_ms": 1501,
+      "touch_ms": 800,
+      "blank": true,
+      "interval_ms": 140,
+      "timer_active": true
+    }
+  ],
+  "movement": [
+    {
+      "phase": "ordinary-move",
+      "now_ms": 2000,
+      "touch_ms": 2000,
+      "blank": false,
+      "interval_ms": 100,
+      "timer_active": true
+    },
+    {
+      "phase": "hidden-drag",
+      "now_ms": 2000,
+      "touch_ms": 2000,
+      "blank": true,
+      "interval_ms": 100,
+      "timer_active": false
+    },
+    {
+      "phase": "after-drag-move",
+      "now_ms": 2000,
+      "touch_ms": 2000,
+      "blank": false,
+      "interval_ms": 100,
+      "timer_active": true
+    }
+  ]
+}

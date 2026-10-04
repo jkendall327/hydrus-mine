@@ -453,6 +453,23 @@ impl Setting for hydrus_core::pages::SortSettings {
     const KEY: &'static str = "sorts";
 }
 
+/// Native media viewer cursor inactivity timeout, or never hide.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerCursorSettings {
+    pub autohide_ms: Option<u32>,
+}
+impl Default for ViewerCursorSettings {
+    fn default() -> Self {
+        Self {
+            autohide_ms: Some(700),
+        }
+    }
+}
+impl Setting for ViewerCursorSettings {
+    const KEY: &'static str = "viewer_cursor";
+}
+
 /// Passive copies of hover content, painted behind media independently of popups.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

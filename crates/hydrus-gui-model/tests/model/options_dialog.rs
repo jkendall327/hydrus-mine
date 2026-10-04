@@ -1674,3 +1674,52 @@ fn subscription_file_failure_limit_replays_qt_noneable_states_in_parent_transact
         );
     }
 }
+
+#[test]
+fn cursor_autohide_control_matches_reference_default_bounds_and_none() {
+    use hydrus_gui_model::options::{Editor, Row as EditorRow};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("viewer_cursor_options.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    assert_eq!(
+        settings.viewer_cursor.autohide_ms.map(u64::from),
+        fixture["initial"].as_u64()
+    );
+    let registry = pages(&settings);
+    let page = registry
+        .iter()
+        .find(|page| page.name == "media viewer")
+        .unwrap();
+    let reference = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "media viewer")
+        .unwrap();
+    let problems = page_problems(page, &reference["items"], &settings, &store);
+    assert!(problems.is_empty(), "{problems:?}");
+    let mut editor = Editor::new(settings.clone());
+    let index = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "media viewer")
+        .unwrap();
+    editor.show_page(index);
+    let row = editor.rows().iter().position(|row| matches!(row, EditorRow::Opt {option,..} if option.label == "Time until mouse cursor autohides on media viewer:")).unwrap();
+    for event in fixture["events"].as_array().unwrap() {
+        let value = event["value"].as_i64();
+        editor.none(row, value.is_none());
+        if let Some(value) = value {
+            editor.number(row, value);
+        }
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty(), "{problems:?}");
+        assert_eq!(applied.viewer_cursor.autohide_ms.map(i64::from), value);
+    }
+    editor.number(row, 99);
+    assert_eq!(editor.applied().0.viewer_cursor.autohide_ms, Some(100));
+    editor.number(row, 100001);
+    assert_eq!(editor.applied().0.viewer_cursor.autohide_ms, Some(100000));
+    assert_eq!(store.read(Settings::load).unwrap(), settings);
+}
