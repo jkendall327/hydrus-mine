@@ -1877,7 +1877,14 @@ uncommitted-change confirmation remain separate inherited Manage Tags gaps.
 Reference numeric controls and additive per-file behavior are retained; native
 rejects out-of-range callback values without changing the preview. Initial-start
 inference now uses the reference Unicode15.1 decimal values and ASCII-run numeric
-sort keys, including mixed-script digits and skipped negative subtags. The ordinary tag-selection parent remains independently
+sort keys, including mixed-script digits and skipped negative subtags. The actual
+Qt panel fails to open when its initial integer exceeds signed 32-bit range,
+and Python rejects raw previews above its configured integer-digit limit. Native
+retains a usable value: it clamps large decimal values to 10,000,000 and correctly
+reads long leading-zero values. This intentional difference is recorded in
+`incremental_number_boundaries.json`; synthetic previews above the 1,024-character
+stored-tag limit are injected only into media tag managers, never written to DB.
+The ordinary tag-selection parent remains independently
 assessed; these two features do not complete it. Adding a fresh tag then removing
 it now retains a staged deleted mapping, matching Qt instead of treating that
 sequence as an unchanged draft.
