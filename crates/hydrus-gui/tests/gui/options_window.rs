@@ -2551,7 +2551,7 @@ fn favourite_tags_child_replays_reference_and_waits_for_parent_apply() {
         open(&ui);
         let parent = bound.options.borrow().as_ref().unwrap().clone_strong();
         show_page(&parent, "tag autocomplete tabs");
-        assert_eq!(row(&parent, "Favourite tag list editor").1.kind, 16);
+        assert_eq!(row(&parent, "These tags will appear in every tag autocomplete results dropdown, under the 'favourites' tab.").1.kind, 16);
         parent.invoke_favourite_tags_clicked();
         let child = hydrus_gui::write_tag_window::last_opened().unwrap();
         assert_eq!(child.get_tag_label(), "all known tags");

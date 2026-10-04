@@ -2118,7 +2118,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "favourite tags",
                     vec![opt(
-                        "Favourite tag list editor",
+                        "These tags will appear in every tag autocomplete results dropdown, under the 'favourites' tab.",
                         Kind::FavouriteTags,
                         Rc::new(|settings| Value::FavouriteTags(settings.favourite_tags.clone())),
                         Rc::new(|settings, value| match value {
