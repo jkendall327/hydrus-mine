@@ -1752,3 +1752,87 @@ fn historical_session_append_restores_independent_tree_files_and_selection() {
     assert_eq!(reopened.shown().key, restored);
     assert_eq!(reopened.current().borrow().selected_files(), [HashId(2)]);
 }
+
+#[test]
+fn tab_size_sort_sums_open_nested_media_and_keeps_stable_ties() {
+    use hydrus_gui::tab_context::Sort;
+    let (_dirs, store) = store();
+    let context = FileSearchContext {
+        predicates: parse_api_search(&serde_json::json!(["system:everything"])).unwrap(),
+        ..FileSearchContext::default()
+    };
+    let files = store
+        .read(|conn| {
+            Ok(search_files(
+                conn,
+                &store.snapshot(),
+                &context,
+                FileSort {
+                    by: SortBy::FileSize,
+                    order: SortOrder::Descending,
+                },
+                &Clock::system(),
+            )
+            .unwrap())
+        })
+        .unwrap();
+    let largest = files[0];
+    let smallest = *files.last().unwrap();
+    let info = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &[largest, smallest]))
+        .unwrap();
+    assert!(info[0].info.as_ref().unwrap().size > info[1].info.as_ref().unwrap().size);
+    let search = || PageContent::Search {
+        search: context.clone(),
+        synchronised: false,
+        sort: None,
+        lock: None,
+        collect: None,
+    };
+    let big = page("big", search());
+    let small = page("small", search());
+    let tie = page("same as small", search());
+    let notebook = page("nested", PageContent::Pages(vec![big.clone()]));
+    store
+        .write(|ctx| {
+            sessions::save(
+                ctx.conn(),
+                &Session {
+                    name: LAST_SESSION.into(),
+                    pages: vec![small.clone(), notebook.clone(), tie.clone()],
+                },
+                100,
+            )?;
+            sessions::set_page_files(ctx.conn(), &big.key, &[largest])?;
+            sessions::set_page_files(ctx.conn(), &small.key, &[smallest])?;
+            sessions::set_page_files(ctx.conn(), &tie.key, &[smallest])
+        })
+        .unwrap();
+    let mut pages = Pages::open(store).unwrap();
+    for key in [small.key, big.key, tie.key] {
+        pages.page(&key).unwrap();
+    }
+    pages.show(&small.key);
+    pages.sort_tabs(0, Sort::Size, false).unwrap();
+    assert_eq!(
+        pages
+            .session()
+            .pages
+            .iter()
+            .map(|p| p.key)
+            .collect::<Vec<_>>(),
+        [notebook.key, small.key, tie.key]
+    );
+    assert_eq!(pages.shown().key, small.key);
+    pages.sort_tabs(0, Sort::Size, true).unwrap();
+    assert_eq!(
+        pages
+            .session()
+            .pages
+            .iter()
+            .map(|p| p.key)
+            .collect::<Vec<_>>(),
+        [small.key, tie.key, notebook.key]
+    );
+    assert_eq!(pages.shown().key, small.key);
+}
