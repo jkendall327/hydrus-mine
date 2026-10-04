@@ -286,31 +286,34 @@ fn request_arguments_replay_real_qt_rename_duplicates_blank_values_and_cancel() 
             _ => ArgumentKind::Static,
         };
         let values = state["answers"].as_array().unwrap();
-        if values.len() == 1 {
+        let old = if state["action"] == "edit" {
+            editor.arguments(kind).keys().next().cloned()
+        } else {
+            None
+        };
+        let warning = state["prompts"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find_map(|prompt| prompt["warning"].as_str());
+        if let Some(warning) = warning {
             assert_eq!(
                 editor
                     .set_argument(
                         kind,
-                        None,
+                        old.as_deref(),
                         values[0].as_str().unwrap().to_owned(),
                         String::new()
                     )
                     .unwrap_err(),
-                state["prompts"][1]["warning"].as_str().unwrap()
+                warning
             );
-        } else if let Some(value) = values[1].as_str() {
-            let old = if state["action"] == "edit" {
-                editor.arguments(kind).keys().next().cloned()
-            } else {
-                None
-            };
+        } else if let (Some(key), Some(value)) = (
+            values[0].as_str().filter(|key| !key.is_empty()),
+            values.get(1).and_then(serde_json::Value::as_str),
+        ) {
             editor
-                .set_argument(
-                    kind,
-                    old.as_deref(),
-                    values[0].as_str().unwrap().to_owned(),
-                    value.to_owned(),
-                )
+                .set_argument(kind, old.as_deref(), key.to_owned(), value.to_owned())
                 .unwrap();
         }
         assert_eq!(

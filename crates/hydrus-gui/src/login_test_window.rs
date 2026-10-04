@@ -311,12 +311,22 @@ pub fn open_domain(
     slot: &DomainSlot,
     accepted: DomainAccepted,
 ) -> Result<crate::SessionDialog, slint::PlatformError> {
+    open_text("Edit the domain.", initial, false, slot, accepted)
+}
+/// Parent-owned EnterText prompt with the reference's explicit blank-value policy.
+pub fn open_text(
+    message: &str,
+    initial: &str,
+    allow_blank: bool,
+    slot: &DomainSlot,
+    accepted: DomainAccepted,
+) -> Result<crate::SessionDialog, slint::PlatformError> {
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
     let window = crate::SessionDialog::new()?;
     window.set_window_title("Enter Text".into());
-    window.set_message("Edit the domain.".into());
+    window.set_message(message.into());
     window.set_name_ok_label("ok".into());
     window.set_asking_name(true);
     window.set_text(initial.into());
@@ -351,7 +361,7 @@ pub fn open_domain(
     window.on_name_entered({
         let finish = finish.clone();
         move |value| {
-            finish((!value.is_empty()).then(|| value.to_string()));
+            finish((allow_blank || !value.is_empty()).then(|| value.to_string()));
         }
     });
     window.on_cancelled({

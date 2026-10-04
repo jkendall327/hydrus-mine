@@ -1499,10 +1499,10 @@ text and once-per-boot allowance. Active weight is checked by the one-second
 session monitor; the reference checks when its page-count menu becomes dirty.
 
 Login step argument maps now have three independent extended-selection lists, as
-in the reference. Native row editing uses an inline detached key/value pair;
-the reference asks sequential text questions. Both reject duplicate/nonblank-key
-violations and allow blank values, preserve dictionary precedence and support
-confirmed deletion. The scrollable native body keeps its footer visible.
+in the reference. Native Add/Edit now asks the same sequential key/value text
+questions, with remembered edit defaults, key-stage duplicate warnings and
+Cancel/blank-key aborts. Blank values are accepted; dictionary precedence and
+confirmed deletion remain unchanged. Warnings use the native inline error text. The scrollable native body keeps its footer visible.
 
 Subscription import-options favourites have reference menu actions and overwrite
 semantics through the native shared editors. Their warnings use the existing

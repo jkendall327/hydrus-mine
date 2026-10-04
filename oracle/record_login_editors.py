@@ -20,6 +20,7 @@ def record(session):
         from hydrus.client import ClientStrings as S
         from hydrus.client.networking import ClientNetworkingLogin as L
         from hydrus.client.gui.networking import ClientGUILogin as G
+        from hydrus.client.gui.panels import ClientGUIScrolledPanelsTextEntry as T
         from hydrus.client.gui import ClientGUIDialogsQuick
         from hydrus.client.parsing import ClientParsing as P
         from hydrus.core import HydrusConstants as HC, HydrusSerialisable
@@ -149,10 +150,13 @@ def record(session):
             prompts.append({'message': message, 'options': kwargs})
             value = input_answers.pop(0)
             if value is None: raise G.HydrusExceptions.CancelledException('scripted cancel')
-            return value
+            entry = T.EditTextPanel(gui, message, **kwargs)
+            entry._text.setText(value)
+            try: return entry.GetValue()
+            finally: entry.deleteLater()
         ClientGUIDialogsQuick.EnterText = enter
         G.ClientGUIDialogsMessage.ShowWarning = lambda parent, text: prompts.append({'warning': text})
-        for kind, action, values in [('credential', 'add', ['username', 'user']), ('credential', 'add', ['username']), ('credential', 'edit', ['account', 'account_param']), ('static', 'add', ['empty', '']), ('temporary', 'add', ['cancelled', None]), ('temporary', 'add', ['csrf', 'token'])]:
+        for kind, action, values in [('credential', 'add', ['username', 'user']), ('credential', 'add', ['username']), ('credential', 'edit', ['account', 'account_param']), ('static', 'add', ['empty', '']), ('temporary', 'add', ['cancelled', None]), ('temporary', 'add', ['csrf', 'token']), ('static', 'add', ['', 'unused']), ('temporary', 'add', [None]), ('static', 'edit', ['lang', 'never']), ('static', 'edit', ['empty', None])]:
             control = {'credential': arguments_panel._required_credentials, 'static': arguments_panel._static_args, 'temporary': arguments_panel._temp_args}[kind]
             if action == 'edit': control._listctrl.SelectDatas(control._listctrl.GetData(), deselect_others=True)
             input_answers[:] = values; prompts.clear()

@@ -1492,6 +1492,425 @@
      ]
     ]
    }
+  },
+  {
+   "kind": "static",
+   "action": "add",
+   "answers": [
+    "",
+    "unused"
+   ],
+   "prompts": [
+    {
+     "message": "enter the parameter name",
+     "options": {
+      "allow_blank": false
+     }
+    }
+   ],
+   "state": [
+    74,
+    "establish session",
+    2,
+    [
+     "http",
+     "GET",
+     ".",
+     "/start",
+     {
+      "account": "account_param"
+     },
+     {
+      "empty": "",
+      "lang": "en"
+     },
+     {
+      "csrf": "token"
+     },
+     [
+      21,
+      2,
+      []
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         30,
+         7,
+         [
+          "csrf variable",
+          14,
+          [
+           136,
+           1,
+           [
+            "dummy-csrf",
+            1,
+            "",
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              []
+             ]
+            ]
+           ]
+          ],
+          "csrf"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "rows": {
+    "credential": [
+     [
+      "account",
+      "account_param"
+     ]
+    ],
+    "static": [
+     [
+      "empty",
+      ""
+     ],
+     [
+      "lang",
+      "en"
+     ]
+    ],
+    "temporary": [
+     [
+      "csrf",
+      "token"
+     ]
+    ]
+   }
+  },
+  {
+   "kind": "temporary",
+   "action": "add",
+   "answers": [
+    null
+   ],
+   "prompts": [
+    {
+     "message": "enter the temp variable name",
+     "options": {
+      "allow_blank": false
+     }
+    }
+   ],
+   "state": [
+    74,
+    "establish session",
+    2,
+    [
+     "http",
+     "GET",
+     ".",
+     "/start",
+     {
+      "account": "account_param"
+     },
+     {
+      "empty": "",
+      "lang": "en"
+     },
+     {
+      "csrf": "token"
+     },
+     [
+      21,
+      2,
+      []
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         30,
+         7,
+         [
+          "csrf variable",
+          14,
+          [
+           136,
+           1,
+           [
+            "dummy-csrf",
+            1,
+            "",
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              []
+             ]
+            ]
+           ]
+          ],
+          "csrf"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "rows": {
+    "credential": [
+     [
+      "account",
+      "account_param"
+     ]
+    ],
+    "static": [
+     [
+      "empty",
+      ""
+     ],
+     [
+      "lang",
+      "en"
+     ]
+    ],
+    "temporary": [
+     [
+      "csrf",
+      "token"
+     ]
+    ]
+   }
+  },
+  {
+   "kind": "static",
+   "action": "edit",
+   "answers": [
+    "lang",
+    "never"
+   ],
+   "prompts": [
+    {
+     "message": "edit the parameter name",
+     "options": {
+      "default": "empty",
+      "allow_blank": false
+     }
+    },
+    {
+     "warning": "That parameter name already exists!"
+    }
+   ],
+   "state": [
+    74,
+    "establish session",
+    2,
+    [
+     "http",
+     "GET",
+     ".",
+     "/start",
+     {
+      "account": "account_param"
+     },
+     {
+      "empty": "",
+      "lang": "en"
+     },
+     {
+      "csrf": "token"
+     },
+     [
+      21,
+      2,
+      []
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         30,
+         7,
+         [
+          "csrf variable",
+          14,
+          [
+           136,
+           1,
+           [
+            "dummy-csrf",
+            1,
+            "",
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              []
+             ]
+            ]
+           ]
+          ],
+          "csrf"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "rows": {
+    "credential": [
+     [
+      "account",
+      "account_param"
+     ]
+    ],
+    "static": [
+     [
+      "empty",
+      ""
+     ],
+     [
+      "lang",
+      "en"
+     ]
+    ],
+    "temporary": [
+     [
+      "csrf",
+      "token"
+     ]
+    ]
+   }
+  },
+  {
+   "kind": "static",
+   "action": "edit",
+   "answers": [
+    "empty",
+    null
+   ],
+   "prompts": [
+    {
+     "message": "edit the parameter name",
+     "options": {
+      "default": "empty",
+      "allow_blank": false
+     }
+    },
+    {
+     "message": "edit the value",
+     "options": {
+      "default": "",
+      "allow_blank": true
+     }
+    }
+   ],
+   "state": [
+    74,
+    "establish session",
+    2,
+    [
+     "http",
+     "GET",
+     ".",
+     "/start",
+     {
+      "account": "account_param"
+     },
+     {
+      "empty": "",
+      "lang": "en"
+     },
+     {
+      "csrf": "token"
+     },
+     [
+      21,
+      2,
+      []
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         30,
+         7,
+         [
+          "csrf variable",
+          14,
+          [
+           136,
+           1,
+           [
+            "dummy-csrf",
+            1,
+            "",
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              []
+             ]
+            ]
+           ]
+          ],
+          "csrf"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "rows": {
+    "credential": [
+     [
+      "account",
+      "account_param"
+     ]
+    ],
+    "static": [
+     [
+      "empty",
+      ""
+     ],
+     [
+      "lang",
+      "en"
+     ]
+    ],
+    "temporary": [
+     [
+      "csrf",
+      "token"
+     ]
+    ]
+   }
   }
  ],
  "domain_login_actions": [

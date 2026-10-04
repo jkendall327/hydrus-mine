@@ -858,6 +858,14 @@ fn domain_login_confirmation_saves_then_real_http_persists_session_and_outcome()
     slots.cancel();
 }
 
+fn answer_argument(slots: &hydrus_gui::login_step_window::Slots, answer: Option<&str>) {
+    let prompt = slots.argument.borrow().as_ref().unwrap().clone_strong();
+    if let Some(answer) = answer {
+        prompt.invoke_name_entered(answer.into());
+    } else {
+        prompt.invoke_cancelled();
+    }
+}
 #[test]
 fn step_argument_draft_rejects_duplicates_stages_cancel_and_reaches_actual_http() {
     let fixture = hydrus_testkit::fixture_json("login_execution.json");
@@ -880,7 +888,7 @@ fn step_argument_draft_rejects_duplicates_stages_cancel_and_reaches_actual_http(
             )
         })
         .unwrap();
-    headless::init();
+    let _rendered = headless::init();
     let slots = hydrus_gui::login_step_window::Slots::default();
     let accepted = Rc::new(RefCell::new(None));
     let callback: hydrus_gui::login_step_window::Applied = Rc::new({
@@ -893,18 +901,14 @@ fn step_argument_draft_rejects_duplicates_stages_cancel_and_reaches_actual_http(
     let window =
         hydrus_gui::login_step_window::open(&store, &script.steps[0], &slots, callback.clone())
             .unwrap();
-    window.invoke_action("add-variable".into());
-    window.set_variable_kind(1);
-    window.set_variable_key("lang".into());
-    window.set_variable_value("bad".into());
-    window.invoke_action("save-variable".into());
-    assert!(window.get_variable_editing());
+    window.invoke_action("add-static".into());
+    answer_argument(&slots, Some("lang"));
+    assert!(slots.argument.borrow().is_none());
+    assert!(!window.get_child_open());
     assert_eq!(window.get_error(), "That parameter name already exists!");
-    window.invoke_action("cancel-variable".into());
-    window.invoke_action("add-variable".into());
-    window.set_variable_key("discarded".into());
-    window.set_variable_value("".into());
-    window.invoke_action("save-variable".into());
+    window.invoke_action("add-static".into());
+    answer_argument(&slots, Some("discarded"));
+    answer_argument(&slots, Some(""));
     window.invoke_action("cancel".into());
     assert!(accepted.borrow().is_none());
     let window =
@@ -912,10 +916,11 @@ fn step_argument_draft_rejects_duplicates_stages_cancel_and_reaches_actual_http(
     assert_eq!(window.get_variables().row_count(), 1);
     window.invoke_variable_clicked(0);
     assert!(window.get_variables().row_data(0).unwrap().selected);
-    window.invoke_action("edit-variable".into());
-    window.set_variable_key("probe".into());
-    window.set_variable_value("changed".into());
-    window.invoke_action("save-variable".into());
+    window.invoke_action("edit-static".into());
+    assert_eq!(slots.argument.borrow().as_ref().unwrap().get_text(), "lang");
+    answer_argument(&slots, Some("probe"));
+    assert_eq!(slots.argument.borrow().as_ref().unwrap().get_text(), "en");
+    answer_argument(&slots, Some("changed"));
     window.invoke_variable_clicked(0);
     window.invoke_action("delete-variable".into());
     assert!(window.get_deleting());
@@ -1120,6 +1125,92 @@ fn string_table(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> serde_json::Valu
     )
 }
 #[test]
+fn step_argument_prompts_replay_reference_questions_defaults_cancel_and_stale_owner() {
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let states = fixture["argument_states"].as_array().unwrap();
+    let step = legacy::login_step(
+        &SerialisableObject::from_tuple_str(&states[0]["state"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let (_dir, store, original) = store();
+    let _rendered = headless::init();
+    let slots = hydrus_gui::login_step_window::Slots::default();
+    let accepted = Rc::new(RefCell::new(None));
+    let window = hydrus_gui::login_step_window::open(
+        &store,
+        &step,
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |step| {
+                *accepted.borrow_mut() = Some(step);
+                Ok(())
+            }
+        }),
+    )
+    .unwrap();
+    for state in &states[1..] {
+        let kind = state["kind"].as_str().unwrap();
+        let index = match kind {
+            "credential" => 0,
+            "temporary" => 2,
+            _ => 1,
+        };
+        if state["action"] == "edit" {
+            window.invoke_argument_clicked(index, 0, false, false);
+        }
+        window.invoke_action(format!("{}-{kind}", state["action"].as_str().unwrap()).into());
+        let mut answers = state["answers"].as_array().unwrap().iter();
+        for prompt in state["prompts"].as_array().unwrap() {
+            if let Some(warning) = prompt["warning"].as_str() {
+                assert_eq!(window.get_error(), warning);
+                assert!(
+                    slots.argument.borrow().is_none(),
+                    "duplicate names never open the value question"
+                );
+                continue;
+            }
+            let child = slots.argument.borrow().as_ref().unwrap().clone_strong();
+            assert_eq!(child.get_message(), prompt["message"].as_str().unwrap());
+            assert_eq!(
+                child.get_text(),
+                prompt["options"]["default"].as_str().unwrap_or_default()
+            );
+            assert_eq!(child.get_name_ok_label(), "ok");
+            assert!(window.get_child_open());
+            window.invoke_action("apply".into());
+            assert!(accepted.borrow().is_none());
+            answer_argument(&slots, answers.next().unwrap().as_str());
+        }
+        assert!(!window.get_child_open());
+        assert!(slots.argument.borrow().is_none());
+        assert_eq!(
+            string_table(&window.get_credential_variables()),
+            state["rows"]["credential"]
+        );
+        assert_eq!(
+            string_table(&window.get_static_variables()),
+            state["rows"]["static"]
+        );
+        assert_eq!(
+            string_table(&window.get_temporary_variables()),
+            state["rows"]["temporary"]
+        );
+    }
+    window.invoke_action("add-static".into());
+    answer_argument(&slots, Some("retired"));
+    let retired = slots.argument.borrow().as_ref().unwrap().clone_strong();
+    window.invoke_action("cancel".into());
+    assert!(slots.argument.borrow().is_none());
+    retired.invoke_name_entered("stale".into());
+    retired.invoke_cancelled();
+    window.invoke_action("apply".into());
+    assert!(accepted.borrow().is_none());
+    let persisted = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(persisted, original);
+}
+
+#[test]
 fn step_shows_three_reference_argument_lists_with_independent_selection_and_pinned_footer() {
     let fixture = hydrus_testkit::fixture_json("login_editors.json");
     let state = fixture["argument_states"]
@@ -1191,7 +1282,7 @@ fn step_shows_three_reference_argument_lists_with_independent_selection_and_pinn
     );
     window.invoke_action("add-credential".into());
     assert_eq!(window.get_variable_kind(), 0);
-    window.invoke_action("cancel-variable".into());
+    answer_argument(&slots, None);
     let pixels = headless::render(&rendered.get(0).unwrap(), 880, 680);
     assert!(window.get_footer_y() > 0.0);
     assert!(window.get_footer_y() + window.get_footer_height() <= 680.0);

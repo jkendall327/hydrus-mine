@@ -22,6 +22,7 @@ pub struct Slots {
     pub parsers: crate::parser_editors_window::Slots,
     pub exchange: crate::downloader_interchange_window::Slots,
     pub cookies: crate::login_cookies_window::Slots,
+    pub argument: crate::login_test_window::DomainSlot,
 }
 /// Accepted step; script persistence still waits for the owner.
 pub type Applied = Rc<dyn Fn(LoginStep) -> Result<(), String>>;
@@ -140,6 +141,108 @@ fn show(window: &LoginStepWindow, editor: &StepEditor) {
             .collect::<Vec<_>>(),
     )));
 }
+fn edit_argument(
+    window: &LoginStepWindow,
+    editor: &Rc<RefCell<StepEditor>>,
+    active: &Rc<Cell<bool>>,
+    slot: &crate::login_test_window::DomainSlot,
+    kind: ArgumentKind,
+    old: Option<&str>,
+) {
+    let initial_value = old
+        .and_then(|key| editor.borrow().arguments(kind).get(key).cloned())
+        .unwrap_or_default();
+    let verb = if old.is_some() { "edit" } else { "enter" };
+    let accepted: crate::login_test_window::DomainAccepted = Rc::new({
+        let weak = window.as_weak();
+        let editor = editor.clone();
+        let active = active.clone();
+        let slot = slot.clone();
+        let old = old.map(str::to_owned);
+        move |key| {
+            if !active.get() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let Some(key) = key else {
+                window.set_child_open(false);
+                return;
+            };
+            if old.as_deref() != Some(key.as_str())
+                && editor.borrow().arguments(kind).contains_key(&key)
+            {
+                window.set_child_open(false);
+                window.set_error(format!("That {} already exists!", kind.key_name()).into());
+                return;
+            }
+            let value_name = if kind == ArgumentKind::Static {
+                "value"
+            } else {
+                "parameter name"
+            };
+            let accepted: crate::login_test_window::DomainAccepted = Rc::new({
+                let weak = weak.clone();
+                let editor = editor.clone();
+                let active = active.clone();
+                let old = old.clone();
+                move |value| {
+                    if !active.get() {
+                        return;
+                    }
+                    let Some(window) = weak.upgrade() else {
+                        return;
+                    };
+                    window.set_child_open(false);
+                    let Some(value) = value else {
+                        return;
+                    };
+                    let result =
+                        editor
+                            .borrow_mut()
+                            .set_argument(kind, old.as_deref(), key.clone(), value);
+                    match result {
+                        Ok(()) => {
+                            let index = editor
+                                .borrow()
+                                .arguments(kind)
+                                .keys()
+                                .position(|value| value == &key)
+                                .unwrap();
+                            editor
+                                .borrow_mut()
+                                .select_arguments(kind, index, false, false);
+                            window.set_error("".into());
+                            show(&window, &editor.borrow());
+                        }
+                        Err(error) => window.set_error(error.into()),
+                    }
+                }
+            });
+            if let Err(error) = crate::login_test_window::open_text(
+                &format!("{verb} the {value_name}"),
+                &initial_value,
+                true,
+                &slot,
+                accepted,
+            ) {
+                window.set_child_open(false);
+                window.set_error(error.to_string().into());
+            }
+        }
+    });
+    if let Err(error) = crate::login_test_window::open_text(
+        &format!("{verb} the {}", kind.key_name()),
+        old.unwrap_or_default(),
+        false,
+        slot,
+        accepted,
+    ) {
+        window.set_child_open(false);
+        window.set_error(error.to_string().into());
+    }
+}
 /// Open a detached step editor with VARIABLE/VETO-only content children.
 pub fn open(
     store: &Arc<Store>,
@@ -161,7 +264,6 @@ pub fn open(
     show(&window, &editor.borrow());
     let active = Rc::new(Cell::new(true));
     let selected_argument = Rc::new(RefCell::new(None::<(ArgumentKind, String)>));
-    let edited_argument = Rc::new(RefCell::new(None::<(ArgumentKind, String)>));
     let deleting_argument = Rc::new(Cell::new(false));
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
@@ -169,6 +271,7 @@ pub fn open(
         let parsers = slots.parsers.clone();
         let exchange = slots.exchange.clone();
         let cookies = slots.cookies.clone();
+        let argument = slots.argument.clone();
         let active = active.clone();
         move || {
             if !active.replace(false) {
@@ -177,6 +280,7 @@ pub fn open(
             exchange.cancel();
             parsers.cancel();
             cookies.cancel();
+            crate::login_test_window::cancel_domain(&argument);
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -261,7 +365,7 @@ pub fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_child_open() || window.get_deleting() || window.get_variable_editing() {
+            if window.get_child_open() || window.get_deleting() {
                 return;
             }
             let row = usize::try_from(index)
@@ -299,7 +403,7 @@ pub fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_child_open() || window.get_deleting() || window.get_variable_editing() {
+            if window.get_child_open() || window.get_deleting() {
                 return;
             }
             let kind = ArgumentKind::from_index(kind);
@@ -325,7 +429,7 @@ pub fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_child_open() || window.get_deleting() || window.get_variable_editing() {
+            if window.get_child_open() || window.get_deleting() {
                 return;
             }
             if let Ok(i) = usize::try_from(i) {
@@ -348,7 +452,7 @@ pub fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_child_open() || window.get_deleting() || window.get_variable_editing() {
+            if window.get_child_open() || window.get_deleting() {
                 return;
             }
             let selected = if let Ok(i) = usize::try_from(i) {
@@ -372,7 +476,7 @@ pub fn open(
         let edit = edit.clone();
         let exchange = slots.exchange.clone();
         let selected_argument = selected_argument.clone();
-        let edited_argument = edited_argument.clone();
+        let argument = slots.argument.clone();
         let deleting_argument = deleting_argument.clone();
         let cookies = slots.cookies.clone();
         let store = store.clone();
@@ -391,11 +495,6 @@ pub fn open(
                 return;
             }
             if window.get_deleting() && !matches!(action.as_str(), "confirm-delete" | "back") {
-                return;
-            }
-            if window.get_variable_editing()
-                && !matches!(action.as_str(), "save-variable" | "cancel-variable")
-            {
                 return;
             }
             let mapped = match action.as_str() {
@@ -457,51 +556,20 @@ pub fn open(
                     if action == "edit-variable" && selected.is_none() {
                         return;
                     }
-                    window.set_variable_existing(selected.is_some());
-                    window.set_variable_kind(
-                        selected
-                            .as_ref()
-                            .map_or(window.get_variable_kind(), |(kind, _)| kind.index()),
+                    let kind = selected.as_ref().map_or(
+                        ArgumentKind::from_index(window.get_variable_kind()),
+                        |(kind, _)| *kind,
                     );
-                    window.set_variable_key(
-                        selected.as_ref().map_or("", |(_, key)| key.as_str()).into(),
-                    );
-                    window.set_variable_value(
-                        selected
-                            .as_ref()
-                            .and_then(|(kind, key)| {
-                                editor.borrow().arguments(*kind).get(key).cloned()
-                            })
-                            .unwrap_or_default()
-                            .into(),
-                    );
-                    *edited_argument.borrow_mut() = selected;
-                    window.set_variable_editing(true);
-                }
-                "save-variable" => {
-                    let kind = ArgumentKind::from_index(window.get_variable_kind());
-                    let old = edited_argument.borrow();
-                    let result = editor.borrow_mut().set_argument(
-                        kind,
-                        old.as_ref().map(|(_, key)| key.as_str()),
-                        window.get_variable_key().to_string(),
-                        window.get_variable_value().to_string(),
-                    );
-                    match result {
-                        Ok(()) => {
-                            window.set_variable_editing(false);
-                            window.set_variable_selected(false);
-                            window.set_variable_index(-1);
-                            selected_argument.borrow_mut().take();
-                            window.set_error("".into());
-                            show(&window, &editor.borrow());
-                        }
-                        Err(error) => window.set_error(error.into()),
-                    }
-                }
-                "cancel-variable" => {
-                    window.set_variable_editing(false);
+                    window.set_child_open(true);
                     window.set_error("".into());
+                    edit_argument(
+                        &window,
+                        &editor,
+                        &active,
+                        &argument,
+                        kind,
+                        selected.as_ref().map(|(_, key)| key.as_str()),
+                    );
                 }
                 "delete-variable" => {
                     if !editor

@@ -2303,8 +2303,9 @@ bundled Open Sans fallback with its Apache 2.0 licence and copyright notice.
 
 Login step request arguments use three independent lists for credentials, static
 variables and temporary variables. Each has extended selection and add/edit/delete
-controls. Editing stages its key/value pair; keys are
-nonblank and unique within that dictionary, while values can be blank. Rename,
+controls. Add/Edit asks the key and then the value in owned text dialogs,
+using the reference prompts and defaults. Cancel or a blank key aborts; a
+duplicate key warns before any value dialog opens, while values can be blank. Rename,
 confirmed bulk deletion within that dictionary, row Cancel and parent Cancel
 preserve the expected draft boundaries. The body scrolls and the footer stays visible. The loopback consumer regression edits a static query argument through
 the native step window and observes it on the actual HTTP request.
