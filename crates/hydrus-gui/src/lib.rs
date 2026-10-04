@@ -93,6 +93,7 @@ pub mod predicate_editor_window;
 pub mod regex_favourites_window;
 pub mod search_log_import_window;
 mod search_log_window;
+pub mod search_or_window;
 pub mod services_editor_window;
 pub mod services_review_window;
 pub mod session_autosave;
@@ -320,6 +321,7 @@ pub struct Bound {
     pub favourites: favourites_window::Slots,
     /// A system predicate's editor while one is open.
     pub predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>>,
+    pub search_or: search_or_window::Slot,
     /// Files dropped on the main window: the "review files to import"
     /// window with them (they join its list if it is open).
     pub drop_files: Rc<dyn Fn(Vec<String>)>,
@@ -690,6 +692,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let menu_favourites: Rc<RefCell<Vec<hydrus_core::pages::FavouriteSearch>>> = Rc::default();
     // a system predicate's editor, from the search box
     let predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>> = Rc::default();
+    let search_or = search_or_window::Slot::default();
     let review_files: Rc<dyn Fn(Vec<String>)> = Rc::new({
         let slot = review_imports.clone();
         let tagging = filename_tagging.clone();
@@ -906,9 +909,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     window.on_search_edited({
+        let slot = search_or.clone();
         let page = page.clone();
         let shown = shown.clone();
         move |text| {
+            if slot.borrow().is_some() {
+                return;
+            }
             page().borrow_mut().type_text(&text);
             shown(false);
         }
@@ -955,10 +962,76 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     };
     window.on_search_or_action({
+        let slot = search_or.clone();
+        let weak = window.as_weak();
         let page = page.clone();
         let shown = shown.clone();
         move |action| {
             let current = page();
+            if slot.borrow().is_some() {
+                return;
+            }
+            if action == 3 || action == 4 {
+                if current.borrow().lock().is_some()
+                    || current.borrow().favourite_to_save().is_none()
+                {
+                    return;
+                }
+                let store = current.borrow().store().clone();
+                let mode: hydrus_store::settings::AdvancedMode =
+                    store.read(hydrus_store::settings::get).unwrap_or_default();
+                if action == 4 && !mode.0 {
+                    return;
+                }
+                let context = hydrus_search::FileSearchContext {
+                    location: current.borrow().location().clone(),
+                    tags: current.borrow().tag_context().clone(),
+                    predicates: Vec::new(),
+                };
+                let owner: search_or_window::ValidOwner = Rc::new({
+                    let original = Rc::downgrade(&current);
+                    let page = page.clone();
+                    let weak = weak.clone();
+                    move || {
+                        original.upgrade().is_some_and(|original| {
+                            Rc::ptr_eq(&original, &page()) && original.borrow().lock().is_none()
+                        }) && weak
+                            .upgrade()
+                            .is_some_and(|window| window.window().is_visible())
+                    }
+                });
+                let applied: search_or_window::Applied = Rc::new({
+                    let current = Rc::downgrade(&current);
+                    let owner = owner.clone();
+                    let shown = shown.clone();
+                    move |predicates| {
+                        if owner()
+                            && let Some(current) = current.upgrade()
+                        {
+                            current.borrow_mut().apply_or_editor(predicates);
+                            shown(true);
+                        }
+                    }
+                });
+                match search_or_window::open(store, context, action == 4, &slot, owner, applied) {
+                    Ok(child) => {
+                        if let Some(window) = weak.upgrade() {
+                            window.set_search_or_open(true);
+                        }
+                        let weak = weak.clone();
+                        child.on_closed(move || {
+                            if let Some(window) = weak.upgrade() {
+                                window.set_search_or_open(false);
+                                window.set_search_focus_requests(
+                                    window.get_search_focus_requests() + 1,
+                                );
+                            }
+                        });
+                    }
+                    Err(error) => eprintln!("could not open the OR editor: {error}"),
+                }
+                return;
+            }
             match action {
                 0 => current.borrow_mut().enter_or(true),
                 1 => current.borrow_mut().change_or_draft(true),
@@ -980,10 +1053,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     window.on_search_accepted({
+        let slot = search_or.clone();
         let page = page.clone();
         let shown = shown.clone();
         let open_editor = open_editor.clone();
         move || {
+            if slot.borrow().is_some() {
+                return;
+            }
             page().borrow_mut().enter();
             shown(true);
             open_editor(page());
@@ -998,9 +1075,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     window.on_suggestion_chosen({
+        let slot = search_or.clone();
         let page = page.clone();
         let shown = shown.clone();
         move |index| {
+            if slot.borrow().is_some() {
+                return;
+            }
             page()
                 .borrow_mut()
                 .choose(usize::try_from(index).unwrap_or(usize::MAX));
@@ -3686,6 +3767,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         locations,
         favourites: favourite_dialogs,
         predicate_editor,
+        search_or,
         drop_files: review_files,
         sync,
         _thumbnails: thumbnails,
@@ -6003,6 +6085,12 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
     window.set_search_text(autocomplete.text().into());
     window.set_autocomplete_tab(i32::try_from(autocomplete.tab().index()).unwrap_or(0));
     window.set_or_active(page.or_terms().is_some());
+    window.set_advanced_or_visible(
+        page.store()
+            .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
+            .unwrap_or_default()
+            .0,
+    );
     window.set_or_rewind_visible(page.or_terms().is_some_and(|terms| terms.len() > 1));
     let suggestions: Vec<ListText> = autocomplete
         .suggestions()

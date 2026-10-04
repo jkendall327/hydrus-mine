@@ -1,0 +1,455 @@
+//! Staged empty-OR and advanced Boolean input children of read autocomplete.
+use crate::{PredicateEditorWindow, SearchOrWindow, SearchPage};
+use hydrus_gui_model::search_or::advanced;
+use hydrus_search::{FileSearchContext, Predicate, TextContext};
+use hydrus_store::{Store, settings};
+use slint::{ComponentHandle as _, ModelRc, VecModel};
+use std::{
+    cell::{Cell, RefCell},
+    rc::Rc,
+    sync::Arc,
+};
+
+pub type Slot = Rc<RefCell<Option<SearchOrWindow>>>;
+pub type Applied = Rc<dyn Fn(Vec<Predicate>)>;
+pub type ValidOwner = Rc<dyn Fn() -> bool>;
+thread_local! { static LAST: RefCell<Option<slint::Weak<SearchOrWindow>>> = const { RefCell::new(None) }; }
+pub fn last_opened() -> Option<SearchOrWindow> {
+    LAST.with(|last| last.borrow().as_ref().and_then(slint::Weak::upgrade))
+        .filter(|window| window.window().is_visible())
+}
+pub fn cancel(slot: &Slot) {
+    let window = slot
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong);
+    if let Some(window) = window {
+        window.invoke_cancel();
+    }
+}
+struct State {
+    page: RefCell<SearchPage>,
+    text: TextContext,
+    active: Cell<bool>,
+    owner: ValidOwner,
+    nested: Slot,
+    system: Rc<RefCell<Option<PredicateEditorWindow>>>,
+    watch_owner: slint::Timer,
+}
+impl State {
+    fn valid(&self) -> bool {
+        self.active.get() && (self.owner)()
+    }
+    fn blocked(&self) -> bool {
+        self.nested.borrow().is_some() || self.system.borrow().is_some()
+    }
+}
+fn show(window: &SearchOrWindow, state: &State) {
+    window.set_blocked(state.blocked());
+    if window.get_advanced() {
+        let (preview, valid) = advanced::preview(window.get_input().as_str(), &state.text);
+        window.set_preview(preview.into());
+        window.set_valid(valid);
+    } else {
+        let page = state.page.borrow();
+        let autocomplete = page.autocomplete();
+        let colours: hydrus_core::tag_presentation::NamespaceColours =
+            page.store().read(settings::get).unwrap_or_default();
+        window.set_input(autocomplete.text().into());
+        window.set_predicates(ModelRc::new(VecModel::from(
+            page.predicates()
+                .into_iter()
+                .map(Into::into)
+                .collect::<Vec<_>>(),
+        )));
+        window.set_suggestions(ModelRc::new(VecModel::from(
+            autocomplete
+                .suggestions()
+                .iter()
+                .map(|suggestion| {
+                    crate::list_text(
+                        &suggestion.label,
+                        colours.predicate_text(&suggestion.predicate),
+                    )
+                })
+                .collect::<Vec<_>>(),
+        )));
+        window.set_highlighted(
+            autocomplete
+                .highlighted()
+                .and_then(|i| i32::try_from(i).ok())
+                .unwrap_or(-1),
+        );
+        window.set_tab_index(i32::try_from(autocomplete.tab().index()).unwrap_or(0));
+        window.set_or_active(page.or_terms().is_some());
+        window.set_or_rewind_visible(page.or_terms().is_some_and(|terms| terms.len() > 1));
+        window.set_error(page.error().unwrap_or_default().into());
+    }
+}
+fn system_editor(window: &SearchOrWindow, state: &Rc<State>) {
+    let Some(blank) = state.page.borrow_mut().take_editor_wanted() else {
+        return;
+    };
+    let store = state.page.borrow().store().clone();
+    let snapshot = store.snapshot();
+    let classes = snapshot
+        .url_classes
+        .settings()
+        .url_classes
+        .iter()
+        .filter(|class| class.should_be_associated_with_files)
+        .map(|class| class.name.clone())
+        .collect();
+    let context = crate::predicate_editors::Context::new(
+        &snapshot.services,
+        classes,
+        hydrus_search::Clock::system().today(),
+    );
+    let editor = crate::predicate_editors::Editor::new(blank, &context);
+    let applied: Applied = Rc::new({
+        let state = state.clone();
+        let weak = window.as_weak();
+        move |predicates| {
+            if !state.valid() {
+                return;
+            }
+            state.page.borrow_mut().add_predicates(&predicates);
+            if let Some(window) = weak.upgrade() {
+                show(&window, &state);
+            }
+        }
+    });
+    if let Err(error) = crate::predicate_editor_window::open(
+        &state.system,
+        store,
+        editor,
+        context,
+        state.text.clone(),
+        applied,
+    ) {
+        window.set_error(error.into());
+    }
+    // The shared system editor manages its own lifetime; its chosen callback
+    // refreshes this owner after the slot has closed.
+}
+/// Every child validates its live caller again before applying, including nested editors.
+pub fn open(
+    store: Arc<Store>,
+    context: FileSearchContext,
+    advanced_input: bool,
+    slot: &Slot,
+    owner: ValidOwner,
+    applied: Applied,
+) -> Result<SearchOrWindow, slint::PlatformError> {
+    if let Some(window) = slot.borrow().as_ref() {
+        return Ok(window.clone_strong());
+    }
+    let window = SearchOrWindow::new()?;
+    let snapshot = store.snapshot();
+    let viewing = store.read(settings::get).unwrap_or_default();
+    let text = TextContext::from_store(&snapshot.services, &viewing);
+    let mode: settings::AdvancedMode = store.read(settings::get).unwrap_or_default();
+    window.set_advanced(advanced_input);
+    window.set_advanced_visible(mode.0);
+    window.set_window_title(
+        if advanced_input {
+            "parse advanced predicate string"
+        } else {
+            "edit OR predicate"
+        }
+        .into(),
+    );
+    let state = Rc::new(State {
+        page: RefCell::new(SearchPage::restored(
+            store,
+            context,
+            false,
+            None,
+            Vec::new(),
+        )),
+        text,
+        active: Cell::new(true),
+        owner,
+        nested: Slot::default(),
+        system: Rc::default(),
+        watch_owner: slint::Timer::default(),
+    });
+    let close: Rc<dyn Fn()> = Rc::new({
+        let weak = window.as_weak();
+        let slot = Rc::downgrade(slot);
+        let state = state.clone();
+        move || {
+            state.watch_owner.stop();
+            if !state.active.replace(false) {
+                return;
+            }
+            cancel(&state.nested);
+            let system = state.system.borrow_mut().take();
+            if let Some(system) = system {
+                system.invoke_cancel();
+            }
+            if let Some(window) = weak.upgrade() {
+                let _ = window.hide();
+                window.invoke_closed();
+            }
+            if let Some(slot) = slot.upgrade() {
+                slot.borrow_mut().take();
+            }
+        }
+    });
+    window.on_edited({
+        let state = state.clone();
+        let weak = window.as_weak();
+        move |text| {
+            if !state.valid() || state.blocked() {
+                return;
+            }
+            if let Some(window) = weak.upgrade() {
+                if !window.get_advanced() {
+                    state.page.borrow_mut().type_text(text.as_str());
+                } else {
+                    window.set_input(text);
+                }
+                show(&window, &state);
+            }
+        }
+    });
+    window.on_enter({
+        let state = state.clone();
+        let weak = window.as_weak();
+        move |shift| {
+            if !state.valid() || state.blocked() {
+                return;
+            }
+            state.page.borrow_mut().enter_or(shift);
+            if let Some(window) = weak.upgrade() {
+                show(&window, &state);
+                system_editor(&window, &state);
+            }
+        }
+    });
+    window.on_chosen({
+        let state = state.clone();
+        let weak = window.as_weak();
+        move |index| {
+            if !state.valid() || state.blocked() {
+                return;
+            }
+            if let Ok(index) = usize::try_from(index) {
+                state.page.borrow_mut().choose(index);
+            }
+            if let Some(window) = weak.upgrade() {
+                show(&window, &state);
+                system_editor(&window, &state);
+            }
+        }
+    });
+    window.on_remove({
+        let state = state.clone();
+        let weak = window.as_weak();
+        move |index| {
+            if !state.valid() || state.blocked() {
+                return;
+            }
+            if let Ok(index) = usize::try_from(index) {
+                state.page.borrow_mut().remove_predicate(index);
+            }
+            if let Some(window) = weak.upgrade() {
+                show(&window, &state);
+            }
+        }
+    });
+    window.on_tab_chosen({
+        let state = state.clone();
+        let weak = window.as_weak();
+        move |index| {
+            if !state.valid() || state.blocked() {
+                return;
+            }
+            state.page.borrow_mut().set_autocomplete_tab(
+                hydrus_gui_model::write_autocomplete::Tab::from_index(
+                    usize::try_from(index).unwrap_or(0),
+                ),
+            );
+            if let Some(window) = weak.upgrade() {
+                show(&window, &state);
+            }
+        }
+    });
+    window.on_move_highlight({
+        let state = state.clone();
+        let weak = window.as_weak();
+        move |by| {
+            if !state.valid() || state.blocked() {
+                return;
+            }
+            state.page.borrow_mut().move_highlight(by as isize);
+            if let Some(window) = weak.upgrade() {
+                show(&window, &state);
+            }
+        }
+    });
+    window.on_fetch({
+        let state = state.clone();
+        let weak = window.as_weak();
+        move || {
+            if !state.valid() || state.blocked() {
+                return;
+            }
+            state.page.borrow_mut().fetch_autocomplete();
+            if let Some(window) = weak.upgrade() {
+                show(&window, &state);
+            }
+        }
+    });
+    window.on_escape({
+        let state = state.clone();
+        let weak = window.as_weak();
+        move || {
+            if !state.valid() || state.blocked() {
+                return false;
+            }
+            let handled = state.page.borrow_mut().escape_or();
+            if let Some(window) = weak.upgrade() {
+                show(&window, &state);
+            }
+            handled
+        }
+    });
+    window.on_or_action({
+        let state = state.clone();
+        let weak = window.as_weak();
+        move |action| {
+            if !state.valid() || state.blocked() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            match action {
+                1 | 2 => {
+                    state.page.borrow_mut().change_or_draft(action == 1);
+                    show(&window, &state);
+                }
+                3 | 4 => {
+                    let context = FileSearchContext {
+                        location: state.page.borrow().location().clone(),
+                        tags: state.page.borrow().tag_context().clone(),
+                        predicates: Vec::new(),
+                    };
+                    let owner: ValidOwner = Rc::new({
+                        let state = state.clone();
+                        move || state.valid()
+                    });
+                    let applied: Applied = Rc::new({
+                        let state = state.clone();
+                        let weak = window.as_weak();
+                        move |predicates| {
+                            if !state.valid() {
+                                return;
+                            }
+                            state.page.borrow_mut().apply_or_editor(predicates);
+                            if let Some(window) = weak.upgrade() {
+                                show(&window, &state);
+                            }
+                        }
+                    });
+                    match open(
+                        state.page.borrow().store().clone(),
+                        context,
+                        action == 4,
+                        &state.nested,
+                        owner,
+                        applied,
+                    ) {
+                        Ok(child) => {
+                            let weak = window.as_weak();
+                            let state = state.clone();
+                            child.on_closed(move || {
+                                if state.valid()
+                                    && let Some(window) = weak.upgrade()
+                                {
+                                    window.set_blocked(false);
+                                }
+                            });
+                            window.set_blocked(true);
+                        }
+                        Err(error) => window.set_error(error.to_string().into()),
+                    }
+                }
+                _ => {}
+            }
+        }
+    });
+    window.on_apply({
+        let state = state.clone();
+        let weak = window.as_weak();
+        let close = close.clone();
+        move || {
+            if !state.valid() {
+                close();
+                return;
+            }
+            if state.blocked() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let result = if window.get_advanced() {
+                advanced::predicates(window.get_input().as_str(), &state.text)
+            } else {
+                let mut predicates = state
+                    .page
+                    .borrow()
+                    .favourite_to_save()
+                    .unwrap()
+                    .search
+                    .predicates;
+                if predicates.len() > 1 {
+                    predicates = vec![Predicate::Or(predicates)];
+                }
+                Ok(predicates)
+            };
+            match result {
+                Ok(predicates) if !window.get_advanced() || !predicates.is_empty() => {
+                    close();
+                    applied(predicates);
+                }
+                _ => window.set_error(
+                    "Please enter a string that parses into a set of search rules.".into(),
+                ),
+            }
+        }
+    });
+    window.on_cancel({
+        let close = close.clone();
+        move || close()
+    });
+    window.window().on_close_requested(move || {
+        close();
+        slint::CloseRequestResponse::HideWindow
+    });
+    state.watch_owner.start(
+        slint::TimerMode::Repeated,
+        std::time::Duration::from_millis(100),
+        {
+            let state = Rc::downgrade(&state);
+            let weak = window.as_weak();
+            move || {
+                if let Some(state) = state.upgrade()
+                    && state.active.get()
+                    && !(state.owner)()
+                    && let Some(window) = weak.upgrade()
+                {
+                    window.invoke_cancel();
+                }
+            }
+        },
+    );
+    show(&window, &state);
+    *slot.borrow_mut() = Some(window.clone_strong());
+    LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));
+    window.show()?;
+    Ok(window)
+}

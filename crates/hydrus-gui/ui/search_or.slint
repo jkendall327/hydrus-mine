@@ -1,0 +1,108 @@
+import { Button, LineEdit, ScrollView } from "std-widgets.slint";
+import { ReadAutocomplete } from "read_autocomplete.slint";
+import { ListText, Theme } from "theme.slint";
+export component SearchOrWindow inherits Window {
+    in property <string> window-title;
+    title: root.window-title;
+    preferred-width: 720px;
+    preferred-height: 530px;
+    background: Theme.window;
+    in property <bool> advanced;
+    in property <bool> advanced-visible;
+    in property <bool> blocked;
+    in-out property <string> input;
+    in property <string> preview;
+    in property <bool> valid;
+    in property <string> error;
+    in property <[string]> predicates;
+    in property <[ListText]> suggestions;
+    in property <int> highlighted;
+    in property <int> tab-index;
+    in property <bool> or-active;
+    in property <bool> or-rewind-visible;
+    callback edited(string);
+    callback enter(bool);
+    callback chosen(int);
+    callback remove(int);
+    callback tab-chosen(int);
+    callback move-highlight(int);
+    callback fetch();
+    callback or-action(int);
+    callback escape() -> bool;
+    callback apply();
+    callback cancel();
+    callback closed();
+    FocusScope {
+        capture-key-pressed(event) => {
+            if event.text == Key.Escape { if !root.escape() { root.cancel(); } return accept; }
+            reject
+        }
+        VerticalLayout {
+            padding: 12px;
+            spacing: 8px;
+            if root.advanced: Text {
+                text: "Enter a complicated tag search, such as '( blue eyes and blonde hair ) or ( green eyes and red hair )'.\nAccepted operators: not (!, -), and (&&), or (||), implies (=>), xor, xnor (iff, <=>), nand, nor. Many system predicates are also supported.\nParentheses work the usual way. \\ escapes characters.";
+                color: Theme.text;
+                wrap: word-wrap;
+            }
+            if !root.advanced: ScrollView {
+                height: 120px;
+                VerticalLayout {
+                    for predicate[i] in root.predicates: HorizontalLayout {
+                        Text { text: predicate; color: Theme.text; horizontal-stretch: 1; wrap: word-wrap; }
+                        Button { text: "×"; enabled: !root.blocked; clicked => { root.remove(i); } }
+                    }
+                }
+            }
+            HorizontalLayout {
+                Text { text: root.advanced ? "Input: " : "search"; color: Theme.text; }
+                FocusScope {
+                    horizontal-stretch: 1;
+                    capture-key-pressed(event) => {
+                        if !root.advanced && !root.blocked {
+                            if event.text == Key.Return && event.modifiers.shift { root.enter(true); return accept; }
+                            if event.text == Key.UpArrow { root.move-highlight(-1); return accept; }
+                            if event.text == Key.DownArrow { root.move-highlight(1); return accept; }
+                            if event.modifiers.control && event.text == " " { root.fetch(); return accept; }
+                        }
+                        reject
+                    }
+                    LineEdit {
+                        init => { self.focus(); }
+                        enabled: !root.blocked;
+                        text <=> root.input;
+                        edited(text) => { root.edited(text); }
+                        accepted => { if root.advanced { root.apply(); } else { root.enter(false); } }
+                    }
+                }
+            }
+            if root.advanced: VerticalLayout {
+                Text { text: "Result preview: "; color: Theme.text; }
+                ScrollView {
+                    vertical-stretch: 1;
+                    Text { text: root.preview; wrap: word-wrap; color: root.valid ? Theme.text : Theme.error; }
+                }
+            }
+            if !root.advanced: ReadAutocomplete {
+                enabled: !root.blocked;
+                vertical-stretch: 1;
+                suggestions: root.suggestions;
+                highlighted: root.highlighted;
+                tab-index: root.tab-index;
+                or-active: root.or-active;
+                or-rewind-visible: root.or-rewind-visible;
+                advanced-visible: root.advanced-visible;
+                tab-chosen(i) => { root.tab-chosen(i); }
+                chosen(i) => { root.chosen(i); }
+                or-action(i) => { root.or-action(i); }
+            }
+            Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Button { text: "ok"; enabled: !root.blocked; clicked => { root.apply(); } }
+                Button { text: "cancel"; clicked => { root.cancel(); } }
+            }
+        }
+    }
+}
