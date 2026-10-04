@@ -1805,3 +1805,13 @@ Changes to these options stay staged until Apply; selecting a service tab in
 a manage-tags dialog remembers it immediately when enabled, even if the tag
 edits are later cancelled. New notebooks can separately prompt for a name after
 the page chooser creates them.
+
+Tab context menus now append a saved session inside the clicked tab row's
+notebook. Clicking a page of pages also offers saving its contents to an existing
+non-reserved session or creating a new one, with that notebook's name suggested.
+The overwrite, duplicate-name, reserved-name and cancellation steps follow the
+actual reference dialog recording in `oracle/record_notebook_sessions.py`.
+Saving targets the clicked notebook's key, independently of the selected sibling;
+its wrapper is omitted from the saved tree. Copies retain independent page media,
+selection and importer snapshots. Appending into a background notebook remembers
+its new child selection while preserving the visible sibling, and survives reopen.

@@ -1178,6 +1178,43 @@ impl Pages {
         Ok(())
     }
 
+    /// Append into a frozen parent notebook, preserving a different visible
+    /// branch while remembering the new selection inside the destination.
+    pub fn append_session_to_notebook(
+        &mut self,
+        notebook: Option<PageKey>,
+        name: &str,
+    ) -> Result<(), String> {
+        let previous = self.shown().key;
+        let (depth, visible) = if let Some(key) = notebook {
+            let path = page_path(&self.session.pages, key)
+                .ok_or("destination notebook is no longer open")?;
+            let page = self
+                .session
+                .all_pages()
+                .into_iter()
+                .find(|page| page.key == key)
+                .ok_or("destination notebook is no longer open")?;
+            if !matches!(page.content, PageContent::Pages(_)) {
+                return Err("session destination is not a notebook".into());
+            }
+            let visible = self.path.starts_with(&path);
+            self.show(&key);
+            (path.len(), visible)
+        } else {
+            (0, true)
+        };
+        self.new_page_depth = Some(depth);
+        let result = self.append_session(name);
+        if result.is_err() {
+            self.new_page_depth = None;
+        }
+        if !visible || result.is_err() {
+            self.show(&previous);
+        }
+        result
+    }
+
     /// Append an immutable historical snapshot as a fresh notebook. Re-key
     /// every descendant and restore media from the snapshot, never live pages.
     pub fn append_session_backup(&mut self, name: &str, timestamp: i64) -> Result<(), String> {
@@ -1289,6 +1326,34 @@ impl Pages {
         let pages = copied(&self.store, self.session.pages.clone()).map_err(|e| e.to_string())?;
         let session = Session {
             name: name.to_owned(),
+            pages,
+        };
+        self.store
+            .write(move |ctx| hydrus_store::session_backups::save(ctx.conn(), &session, now_ms))
+            .map_err(|e| e.to_string())
+    }
+
+    /// Save only one frozen notebook's children, independently from other
+    /// visible branches. The notebook wrapper itself is not part of the save.
+    pub fn save_notebook_session_at_ms(
+        &mut self,
+        key: PageKey,
+        name: &str,
+        now_ms: i64,
+    ) -> Result<(), String> {
+        self.sync(now_ms / 1000).map_err(|e| e.to_string())?;
+        let page = self
+            .session
+            .all_pages()
+            .into_iter()
+            .find(|page| page.key == key)
+            .ok_or("the notebook to save is no longer open")?;
+        let PageContent::Pages(children) = &page.content else {
+            return Err("the page to save is not a notebook".into());
+        };
+        let pages = copied(&self.store, children.clone()).map_err(|e| e.to_string())?;
+        let session = Session {
+            name: name.into(),
             pages,
         };
         self.store
@@ -1523,12 +1588,30 @@ impl Pages {
 
     /// Actions on the clicked tab, using that tab row's notebook.
     pub fn tab_menu(&self, depth: usize, index: usize) -> Vec<crate::main_menu::Entry> {
-        crate::tab_context::menu(
+        let Some(page) = self.notebook_at(depth).and_then(|pages| pages.get(index)) else {
+            return Vec::new();
+        };
+        let mut entries = crate::tab_context::menu(
             depth,
             index,
             self.notebook_at(depth).map_or(0, <[Page]>::len),
             self.path.get(depth).copied().unwrap_or(0),
-        )
+        );
+        let names: Vec<_> = self
+            .store
+            .read(sessions::names)
+            .unwrap_or_default()
+            .into_iter()
+            .map(|(name, _)| name)
+            .collect();
+        let notebook =
+            matches!(page.content, PageContent::Pages(_)).then_some((page.key, page.name.as_str()));
+        entries.extend(crate::tab_context::session_entries(
+            self.notebook_key(depth),
+            notebook,
+            &names,
+        ));
+        entries
     }
 
     /// Navigate at a tab row's notebook, descending into its selected

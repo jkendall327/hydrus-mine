@@ -133,6 +133,17 @@ pub enum Command {
     NudgeSubscriptions,
     /// Close every page (asking first) and load the saved session.
     ClearAndLoadSession(String),
+    /// Append a fresh named session into this notebook's sibling row.
+    AppendNotebookSession {
+        notebook: Option<PageKey>,
+        name: String,
+    },
+    /// Save only the clicked notebook's contents, with its own name suggestion.
+    SaveNotebookSession {
+        key: PageKey,
+        name: Option<String>,
+        suggested_name: String,
+    },
     /// Ask a new name for the clicked page/notebook.
     RenameTab {
         depth: usize,
