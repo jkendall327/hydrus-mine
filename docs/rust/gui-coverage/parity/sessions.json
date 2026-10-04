@@ -1969,5 +1969,204 @@
     "Outside-application global OS cursor polling; idle-only claim remains partial.",
     "Legacy historical GUI-session snapshot import.",
     "Remaining page selector and drag workflows."
+  ],
+  "nativeComponents": [
+    {
+      "name": "ImportOptionsPanelWindow",
+      "file": "crates/hydrus-gui/ui/import_options_panel.slint",
+      "title": "import options",
+      "preferredSize": "980 \u00d7 850",
+      "controls": [
+        "Help submenu: open tl;dr / open the import options help",
+        "keep this panel simple :^)",
+        "Three expandable ListTable editors, extended selection, sortable columns and activation",
+        "Frozen clear/delete and reset questions, exact Yes/No labels, cancellation",
+        "Outer child Apply returns a complete manager/preferences draft; main Options Apply persists it"
+      ],
+      "owner": "Options-owned Slot; closing/cancelling Options closes the page, cancels descendants and invalidates all retained apply callbacks.",
+      "editorRoots": [
+        {
+          "name": "default import options",
+          "referenceRoot": "audit-options-import-options-default-import-options-editor-list",
+          "columns": [
+            "context",
+            "custom import options"
+          ],
+          "actions": [
+            "show stack",
+            "copy",
+            "paste presets/custom overwrite",
+            "staged favourites menu",
+            "edit",
+            "clear",
+            "reset to defaults"
+          ],
+          "source": {
+            "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+            "line": 128,
+            "commit": "7d089e8d",
+            "kind": "source"
+          },
+          "model": {
+            "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+            "line": 176,
+            "commit": "7d089e8d",
+            "kind": "source"
+          },
+          "tests": [
+            {
+              "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+              "line": 73,
+              "commit": "7d089e8d",
+              "kind": "gui_regression"
+            },
+            {
+              "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+              "line": 67,
+              "commit": "7d089e8d",
+              "kind": "reference_replay"
+            }
+          ]
+        },
+        {
+          "name": "url class import options",
+          "referenceRoot": "audit-options-import-options-url-class-import-options-editor-list",
+          "columns": [
+            "name",
+            "url type",
+            "custom import options"
+          ],
+          "actions": [
+            "show stack",
+            "copy",
+            "paste presets/custom overwrite",
+            "staged favourites menu",
+            "edit",
+            "clear"
+          ],
+          "source": {
+            "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+            "line": 142,
+            "commit": "7d089e8d",
+            "kind": "source"
+          },
+          "model": {
+            "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+            "line": 176,
+            "commit": "7d089e8d",
+            "kind": "source"
+          },
+          "tests": [
+            {
+              "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+              "line": 271,
+              "commit": "7d089e8d",
+              "kind": "consumer_and_persistence_regression"
+            }
+          ]
+        },
+        {
+          "name": "favourites/profiles",
+          "referenceRoot": "audit-options-import-options-favourites-profiles-editor-list",
+          "columns": [
+            "name",
+            "custom import options"
+          ],
+          "actions": [
+            "copy",
+            "paste presets/custom overwrite",
+            "add",
+            "edit",
+            "delete / Delete key"
+          ],
+          "source": {
+            "path": "crates/hydrus-gui/ui/import_options_panel.slint",
+            "line": 155,
+            "commit": "7d089e8d",
+            "kind": "source"
+          },
+          "model": {
+            "path": "crates/hydrus-gui-model/src/import_options_panel.rs",
+            "line": 176,
+            "commit": "7d089e8d",
+            "kind": "source"
+          },
+          "tests": [
+            {
+              "path": "crates/hydrus-gui/tests/gui/import_options_panel.rs",
+              "line": 271,
+              "commit": "7d089e8d",
+              "kind": "gui_regression"
+            },
+            {
+              "path": "crates/hydrus-gui-model/tests/model/import_options_panel.rs",
+              "line": 209,
+              "commit": "7d089e8d",
+              "kind": "stable_identity_and_frozen_target_regression"
+            }
+          ]
+        }
+      ],
+      "sharedComponents": [
+        {
+          "name": "ImportOptionsWindow",
+          "file": "crates/hydrus-gui/ui/import_options.slint",
+          "relationship": "Selected default/site/profile row child, using shared staged manager, recorded parent fallback and caller/simple kinds.",
+          "wiring": {
+            "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+            "line": 214,
+            "commit": "7d089e8d",
+            "kind": "source"
+          }
+        },
+        {
+          "name": "ImportOptionsOverwriteWindow",
+          "file": "crates/hydrus-gui/ui/import_options_overwrite.slint",
+          "relationship": "Custom paste/load chooser over frozen targets; writes only the draft.",
+          "wiring": {
+            "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+            "line": 333,
+            "commit": "7d089e8d",
+            "kind": "source"
+          }
+        },
+        {
+          "name": "ImportFavouritePromptWindow",
+          "file": "crates/hydrus-gui/ui/import_options_favourites.slint",
+          "relationship": "Shared staged favourites star-menu confirmation; closed with this page through Controller::close.",
+          "wiring": {
+            "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+            "line": 540,
+            "commit": "7d089e8d",
+            "kind": "source"
+          }
+        }
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 487,
+          "commit": "7d089e8d",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/import_options_panel_window.rs",
+          "line": 510,
+          "commit": "7d089e8d",
+          "kind": "source"
+        }
+      ],
+      "guiEvidence": "options_drafts_replay_clear_reset_simple_mode_and_cancel_without_store_changes / applied_defaults_url_overrides_profiles_and_simple_preference_reach_consumers; headless render import_options_panel.png emitted by hosted CI.",
+      "referenceRecording": {
+        "recorder": "oracle/record_import_options_panel.py",
+        "fixture": "oracle/fixtures/import_options_panel.json",
+        "commit": "7d089e8d"
+      },
+      "limits": [
+        "Single-profile delete differs from the recorded reference crash and remains partial.",
+        "Profile reset refreshes the list immediately rather than waiting for reopening.",
+        "Shared import-options editor program-command editing/execution and existing limitations remain."
+      ]
+    }
   ]
 }
