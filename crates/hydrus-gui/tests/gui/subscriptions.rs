@@ -448,7 +448,7 @@ fn add_uses_a_separate_gallery_list_then_the_editor() {
         0,
         "empty settings stay empty"
     );
-    warning.invoke_accept();
+    warning.invoke_accept_clicked();
     assert!(bound.edit_subscription.borrow().is_none());
 
     let gallery = |name: &str, key: &str| {
@@ -543,7 +543,7 @@ fn add_uses_a_separate_gallery_list_then_the_editor() {
         .unwrap();
         // Cancellation must leave the list and store empty, including with one gallery.
         chooser.invoke_cancel();
-        chooser.invoke_accept();
+        chooser.invoke_accept_clicked();
         assert!(
             bound.edit_subscription.borrow().is_none(),
             "cancel invalidates the old chooser callback"
@@ -559,7 +559,7 @@ fn add_uses_a_separate_gallery_list_then_the_editor() {
             .as_ref()
             .unwrap()
             .clone_strong();
-        chooser.invoke_accept();
+        chooser.invoke_accept_clicked();
         assert!(!list.get_gallery_open());
         let editor = bound
             .edit_subscription
@@ -583,7 +583,7 @@ fn add_uses_a_separate_gallery_list_then_the_editor() {
         .as_ref()
         .unwrap()
         .clone_strong();
-    chooser.invoke_accept();
+    chooser.invoke_accept_clicked();
     let editor = bound
         .edit_subscription
         .borrow()
@@ -610,7 +610,7 @@ fn add_uses_a_separate_gallery_list_then_the_editor() {
         .unwrap()
         .clone_strong();
     chooser.set_selected(0);
-    chooser.invoke_accept();
+    chooser.invoke_accept_clicked();
     assert_eq!(rows(&list)[0].0[1], "alpha");
     list.invoke_apply();
     let written = store.read(subscriptions::subscriptions).unwrap();
@@ -627,7 +627,7 @@ fn add_uses_a_separate_gallery_list_then_the_editor() {
     list.invoke_cancel();
     assert!(bound.subscriptions.borrow().is_none());
     assert!(bound.subscription_gallery.borrow().is_none());
-    chooser.invoke_accept();
+    chooser.invoke_accept_clicked();
     assert!(bound.edit_subscription.borrow().is_none());
     let unchanged = store.read(subscriptions::subscriptions).unwrap();
     assert_eq!(unchanged.len(), 1);
@@ -646,6 +646,6 @@ fn add_uses_a_separate_gallery_list_then_the_editor() {
         .clone_strong();
     assert_eq!(warning.get_window_title(), "Warning");
     assert_eq!(warning.get_galleries().row_count(), 0);
-    warning.invoke_accept();
+    warning.invoke_accept_clicked();
     assert!(bound.edit_subscription.borrow().is_none());
 }

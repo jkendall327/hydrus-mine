@@ -678,7 +678,7 @@ fn select_gallery(
             }
         })
     };
-    window.on_accept({
+    window.on_accept_clicked({
         let weak = window.as_weak();
         let close = close.clone();
         move || {

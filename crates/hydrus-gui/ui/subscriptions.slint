@@ -78,13 +78,13 @@ export component SubscriptionGalleryWindow inherits Window {
     in property <[string]> galleries;
     in-out property <int> selected: 0;
     in property <string> message;
-    callback accept();
+    callback accept-clicked();
     callback cancel();
     forward-focus: keys;
     keys := FocusScope {
         capture-key-pressed(event) => {
             if event.text == Key.Escape { root.cancel(); return accept; }
-            if event.text == Key.Return { root.accept(); return accept; }
+            if event.text == Key.Return { root.accept-clicked(); return accept; }
             if event.text == Key.DownArrow { root.selected = min(root.galleries.length - 1, root.selected + 1); return accept; }
             if event.text == Key.UpArrow { root.selected = max(0, root.selected - 1); return accept; }
             reject
@@ -112,7 +112,7 @@ export component SubscriptionGalleryWindow inherits Window {
                         }
                         TouchArea {
                             clicked => { root.selected = index; }
-                            double-clicked => { root.selected = index; root.accept(); }
+                            double-clicked => { root.selected = index; root.accept-clicked(); }
                         }
                     }
                 }
@@ -120,7 +120,7 @@ export component SubscriptionGalleryWindow inherits Window {
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button { text: "ok"; clicked => { root.accept(); } }
+                Button { text: "ok"; clicked => { root.accept-clicked(); } }
                 if root.message == "": Button { text: "cancel"; clicked => { root.cancel(); } }
             }
         }
