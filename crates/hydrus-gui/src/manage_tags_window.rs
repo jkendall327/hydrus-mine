@@ -69,6 +69,44 @@ pub(crate) fn open(
             slot.borrow_mut().take();
         }
     };
+    let migration_slot = crate::tag_migration_window::Slot::default();
+    window.on_migrate_tags({
+        let model = model.clone();
+        let slot = migration_slot.clone();
+        let weak = window.as_weak();
+        let refresh = refresh.clone();
+        let applied = applied.clone();
+        move || {
+            let m = model.borrow();
+            let Some(key) = m.migration_service_key() else {
+                if let Some(w) = weak.upgrade() {
+                    w.set_error("the tag service was removed; reopen manage tags".into());
+                }
+                return;
+            };
+            let changed = Rc::new({
+                let model = model.clone();
+                let refresh = refresh.clone();
+                let applied = applied.clone();
+                move || {
+                    model.borrow_mut().refresh_stored();
+                    refresh();
+                    applied();
+                }
+            });
+            if let Err(e) = crate::tag_migration_window::open(
+                m.store().clone(),
+                &key,
+                m.files().to_vec(),
+                &slot,
+                changed,
+            ) {
+                if let Some(w) = weak.upgrade() {
+                    w.set_error(e.into());
+                }
+            }
+        }
+    });
     let apply = {
         let model = model.clone();
         let weak = window.as_weak();

@@ -80,6 +80,27 @@ impl ManageTags {
     pub fn set_location(&mut self, location: hydrus_core::search::context::LocationContext) {
         self.location = location;
     }
+    /// Selected file IDs used to launch migration.
+    pub fn files(&self) -> &[HashId] {
+        &self.files
+    }
+    /// Stable key of the active tag service.
+    pub fn migration_service_key(&self) -> Option<hydrus_core::ServiceKey> {
+        self.store
+            .snapshot()
+            .services
+            .get(self.services[self.service].0)
+            .ok()
+            .map(|s| s.key.clone())
+    }
+    /// Refresh committed tags while preserving this editor's staged changes.
+    pub fn refresh_stored(&mut self) {
+        self.stored = self
+            .services
+            .iter()
+            .map(|(id, _)| current_tags(&self.store, *id, &self.files))
+            .collect();
+    }
     pub fn store(&self) -> &Arc<Store> {
         &self.store
     }

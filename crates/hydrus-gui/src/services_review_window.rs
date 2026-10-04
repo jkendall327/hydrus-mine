@@ -9,6 +9,10 @@ fn show(window: &ServicesReviewWindow, rows: &[Row], index: usize) {
     if let Some(row) = rows.get(index) {
         window
             .set_client_api(row.service_type == hydrus_core::ServiceType::ClientApiService.name());
+        window.set_tag_service(matches!(
+            row.service_type.as_str(),
+            "local tag domain" | "hydrus tag repository"
+        ));
         window.set_selected(i32::try_from(index).unwrap_or(0));
         window.set_name_and_type(format!("{} - {}", row.name, row.service_type).into());
         window.set_statistics(row.statistics.as_str().into());
@@ -19,7 +23,16 @@ fn show(window: &ServicesReviewWindow, rows: &[Row], index: usize) {
 
 /// Open service review over a native store; refresh retains the selected service key.
 pub fn open(store: Arc<Store>) -> Result<ServicesReviewWindow, String> {
+    open_with_changed(store, Rc::new(|| {}))
+}
+
+/// Open service review and refresh tag consumers after migrations commit.
+pub fn open_with_changed(
+    store: Arc<Store>,
+    changed: Rc<dyn Fn()>,
+) -> Result<ServicesReviewWindow, String> {
     let window = ServicesReviewWindow::new().map_err(|e| e.to_string())?;
+    let migration_slot = crate::tag_migration_window::Slot::default();
     let slots = crate::client_api_admin_window::Slots::default();
     let rows = Rc::new(RefCell::new(
         services_review::rows(&store).map_err(|e| e.to_string())?,
@@ -87,6 +100,38 @@ pub fn open(store: Arc<Store>) -> Result<ServicesReviewWindow, String> {
                 && let Some(row) = rows.borrow().get(i)
             {
                 w.set_database_id(format!("service id: {}", row.id).into());
+            }
+        }
+    });
+    window.on_migrate_tags({
+        let weak = window.as_weak();
+        let rows = rows.clone();
+        let store = store.clone();
+        let slot = migration_slot.clone();
+        move || {
+            if let Some(w) = weak.upgrade()
+                && let Ok(i) = usize::try_from(w.get_selected())
+                && let Some(row) = rows.borrow().get(i)
+            {
+                let changed = Rc::new({
+                    let weak = weak.clone();
+                    let changed = changed.clone();
+                    move || {
+                        if let Some(w) = weak.upgrade() {
+                            w.invoke_refresh_clicked();
+                        }
+                        changed();
+                    }
+                });
+                if let Err(e) = crate::tag_migration_window::open(
+                    store.clone(),
+                    &row.key,
+                    vec![],
+                    &slot,
+                    changed,
+                ) {
+                    w.set_error(e.into());
+                }
             }
         }
     });

@@ -77,6 +77,7 @@ pub mod string_processor_window;
 mod subscriptions_window;
 pub(crate) mod tag_display_window;
 pub mod tag_filter_window;
+pub mod tag_migration_window;
 pub(crate) mod tag_relationships_window;
 pub mod thumbnail_menu;
 mod thumbnails;
@@ -1536,8 +1537,19 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             review_services: {
                 let pages = pages.clone();
                 let slot = services_review.clone();
+                let tags_changed = tags_changed.clone();
+                let viewer = viewer.clone();
+                let changed: Rc<dyn Fn()> = Rc::new(move || {
+                    tags_changed();
+                    if let Some(window) = viewer.borrow().as_ref() {
+                        window.invoke_refresh_tags();
+                    }
+                });
                 Rc::new(move || {
-                    match services_review_window::open(pages.borrow().store().clone()) {
+                    match services_review_window::open_with_changed(
+                        pages.borrow().store().clone(),
+                        changed.clone(),
+                    ) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not review services: {e}"),
                     }

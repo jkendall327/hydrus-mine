@@ -1549,3 +1549,23 @@ Backend/model regressions cover cancellation, dropped futures, live overrides,
 settings reload, stale heartbeat, concurrent edits and persistence. GUI regressions
 cover draft cancellation, owner closure, invalid values, Apply/reopen and local
 commands, and render the review, rules and current-jobs windows.
+
+
+## Service-to-service tag migration
+
+Service review's local/repository tag pages and Manage Tags' selected files open
+"migrate tags…". Choose mappings, siblings or parents; a real source and
+destination; current/deleted source content (also pending or current and pending
+for repositories); and the actions available for the destination. Local services
+support add/delete, plus clear deletion records for mappings. Repository actions
+pend/petition local proposals, with an editable petition reason. Mapping scopes
+use selected files or the existing multiple/current/deleted file-domain selector.
+Mappings and each side of pairs use the reusable tag-filter editor.
+
+The window shows the reference summary and its second confirmation outside
+advanced mode. Migration runs on a worker in bounded atomic batches, with live
+progress and cancellation. Cancelling retains committed batches; closing a
+running job requests cancellation and waits for its final committed progress.
+Services are resolved by key again on every batch. Graph/count publication occurs atomically per batch; displayed tags and review
+counts refresh after completion or cancellation. Reference controls, questions and actual DB mapping
+and pair destinations are recorded in `oracle/fixtures/tag_migration.json`.
