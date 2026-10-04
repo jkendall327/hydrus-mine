@@ -285,7 +285,8 @@ pub fn page_parser(object: &SerialisableObject) -> DecodeResult<PageParser> {
     })
 }
 
-fn subsidiary_page_parser(object: &SerialisableObject) -> DecodeResult<SubsidiaryPageParser> {
+/// Decode a subsidiary wrapper with its separation formula and recursive page.
+pub fn subsidiary_page_parser(object: &SerialisableObject) -> DecodeResult<SubsidiaryPageParser> {
     let k = SUBSIDIARY_PAGE_PARSER;
     expect(object, k, &[2])?;
     let info = object.info();
