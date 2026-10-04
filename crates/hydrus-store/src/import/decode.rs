@@ -3369,7 +3369,7 @@ mod tests {
         assert!(old.archive_delete);
         assert!(!old.duplicates);
         assert_eq!(old.media_min_ms, Some(2000));
-        assert_eq!(old.media_max_ms, Some(600000));
+        assert_eq!(old.media_max_ms, Some(600_000));
         assert_eq!(old.menu_display, ViewingStatsMenuDisplay::Combined);
         assert_eq!(old.interesting_canvases, [CanvasType::Preview]);
     }

@@ -166,9 +166,9 @@ fn tracker_counts_once_on_change_or_close_reads_live_policy_and_preserves_latest
             .unwrap()
     };
     let mut first = Tracker::new(store.clone(), CanvasType::MediaViewer);
-    first.show(Some(file), 123000).unwrap();
-    first.show(Some(file), 123050).unwrap();
-    first.close(125000).unwrap();
+    first.show(Some(file), 123_000).unwrap();
+    first.show(Some(file), 123_050).unwrap();
+    first.close(125_000).unwrap();
     let recorded = stats();
     assert_eq!(
         (
@@ -176,10 +176,10 @@ fn tracker_counts_once_on_change_or_close_reads_live_policy_and_preserves_latest
             recorded.viewtime_ms,
             recorded.last_viewed.unwrap().0
         ),
-        (1, 1000, 123000)
+        (1, 1000, 123_000)
     );
-    first.close(130000).unwrap();
-    first.show(Some(file), 140000).unwrap();
+    first.close(130_000).unwrap();
+    first.show(Some(file), 140_000).unwrap();
     assert_eq!(
         stats(),
         recorded,
@@ -187,20 +187,20 @@ fn tracker_counts_once_on_change_or_close_reads_live_policy_and_preserves_latest
     );
     let mut older = Tracker::new(store.clone(), CanvasType::ArchiveDeleteFilter);
     let mut newer = Tracker::new(store.clone(), CanvasType::MediaViewer);
-    older.show(Some(file), 150000).unwrap();
-    newer.show(Some(file), 151000).unwrap();
-    newer.close(153000).unwrap();
-    older.close(154000).unwrap();
+    older.show(Some(file), 150_000).unwrap();
+    newer.show(Some(file), 151_000).unwrap();
+    newer.close(153_000).unwrap();
+    older.close(154_000).unwrap();
     assert_eq!(
         (
             stats().views,
             stats().viewtime_ms,
             stats().last_viewed.unwrap().0
         ),
-        (3, 3000, 151000)
+        (3, 3000, 151_000)
     );
     let mut disabled = Tracker::new(store.clone(), CanvasType::MediaViewer);
-    disabled.show(Some(file), 160000).unwrap();
+    disabled.show(Some(file), 160_000).unwrap();
     store
         .write(|ctx| {
             hydrus_store::settings::set(
@@ -212,7 +212,7 @@ fn tracker_counts_once_on_change_or_close_reads_live_policy_and_preserves_latest
             )
         })
         .unwrap();
-    disabled.close(165000).unwrap();
+    disabled.close(165_000).unwrap();
     assert_eq!(stats().views, 3, "policy is read when interval finishes");
 }
 

@@ -94,7 +94,7 @@ impl Default for FileViewingStatistics {
             archive_delete: true,
             duplicates: false,
             media_min_ms: Some(2000),
-            media_max_ms: Some(600000),
+            media_max_ms: Some(600_000),
             menu_display: ViewingStatsMenuDisplay::Combined,
             interesting_canvases: vec![CanvasType::MediaViewer, CanvasType::ClientApi],
         }

@@ -4330,9 +4330,9 @@ fn viewing_menu_preferences_apply_to_real_menu_lines_and_cancel_preserves_them()
     store
         .write_content(move |w| {
             for (canvas, ago, views, ms) in [
-                (CanvasType::MediaViewer, 10, 2, 12000),
+                (CanvasType::MediaViewer, 10, 2, 12_000),
                 (CanvasType::Preview, 20, 3, 9000),
-                (CanvasType::ClientApi, 30, 4, 28000),
+                (CanvasType::ClientApi, 30, 4, 28_000),
             ] {
                 w.set_views(file, canvas, Some(now - ago * 1000), views, ms)?;
             }
