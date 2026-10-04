@@ -1367,3 +1367,7 @@ The passive index uses native text styling and palette rather than Qt font
 metrics. Its text format, bottom-right three-pixel inset, and placement behind
 media follow the reference. Preview and duplicate-filter hover preferences are
 separate unclaimed controls.
+
+Write-tag open-search and duplicate-page actions now have a main-window consumer
+and real session/query contexts. The optional reference setting that raises the
+main window on tag-search activation is still absent; its default is off.

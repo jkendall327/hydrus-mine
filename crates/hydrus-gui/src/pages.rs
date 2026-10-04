@@ -934,6 +934,17 @@ impl Pages {
         predicates: Vec<hydrus_search::Predicate>,
         name: &str,
     ) {
+        self.open_search_with_context(location, None, predicates, name);
+    }
+
+    /// Preserve an explicit tag context from an owning tag-list action.
+    pub fn open_search_with_context(
+        &mut self,
+        location: hydrus_search::LocationContext,
+        tags: Option<hydrus_search::TagContext>,
+        predicates: Vec<hydrus_search::Predicate>,
+        name: &str,
+    ) {
         let mut page = new_search_page_on(&self.store, location);
         name.clone_into(&mut page.name);
         let PageContent::Search {
@@ -946,6 +957,9 @@ impl Pages {
             unreachable!("a search page");
         };
         search.predicates = predicates;
+        if let Some(tags) = tags {
+            search.tags = tags;
+        }
         let mut opened = SearchPage::restored(
             self.store.clone(),
             search.clone(),
@@ -957,6 +971,27 @@ impl Pages {
         opened.refresh();
         self.open.insert(page.key, Rc::new(RefCell::new(opened)));
         self.add(page);
+    }
+
+    /// Open the selected predicates as the two searches of a duplicate page.
+    pub fn open_duplicates_with_context(
+        &mut self,
+        location: hydrus_search::LocationContext,
+        tags: hydrus_search::TagContext,
+        predicates: Vec<hydrus_search::Predicate>,
+        name: &str,
+    ) {
+        let mut duplicates = new_duplicates_page(location, predicates);
+        duplicates.search.search_1.tags = tags.clone();
+        duplicates.search.search_2.tags = tags;
+        self.add(Page {
+            key: PageKey::random(),
+            name: name.into(),
+            content: PageContent::Duplicates {
+                duplicates,
+                sort: None,
+            },
+        });
     }
 
     /// Open a new duplicates page searching `location` for potential pairs

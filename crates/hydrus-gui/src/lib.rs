@@ -482,6 +482,81 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     };
+    // Tag-list menus publish through weak main-window/page handles.
+    write_tag_menu::install_search_launcher(Rc::new({
+        let pages = Rc::downgrade(&pages);
+        let current = Rc::downgrade(&current);
+        let rows = Rc::downgrade(&rows);
+        let duplicates = Rc::downgrade(&duplicates);
+        let after_change = Rc::downgrade(&after_change);
+        let scrolls = Rc::downgrade(&scrolls);
+        let weak = window.as_weak();
+        move |location, tags, predicates, duplicate| {
+            let (
+                Some(window),
+                Some(pages),
+                Some(current),
+                Some(rows),
+                Some(duplicates),
+                Some(after_change),
+                Some(scrolls),
+            ) = (
+                weak.upgrade(),
+                pages.upgrade(),
+                current.upgrade(),
+                rows.upgrade(),
+                duplicates.upgrade(),
+                after_change.upgrade(),
+                scrolls.upgrade(),
+            )
+            else {
+                return;
+            };
+            let mut names = predicates
+                .iter()
+                .filter_map(|predicate| match predicate {
+                    hydrus_core::search::predicate::Predicate::Tag { tag, .. } => {
+                        Some(tag.as_str().to_owned())
+                    }
+                    _ => None,
+                })
+                .collect::<Vec<_>>();
+            if names.is_empty() {
+                return;
+            }
+            names.sort();
+            let name = names.join(", ");
+            let previous = pages.borrow().shown().key;
+            scrolls
+                .borrow_mut()
+                .insert(previous, window.get_grid_scroll());
+            let opened = {
+                let mut pages = pages.borrow_mut();
+                if duplicate {
+                    pages.open_duplicates_with_context(
+                        location,
+                        tags,
+                        predicates,
+                        &format!("duplicates: {name}"),
+                    );
+                } else {
+                    pages.open_search_with_context(location, Some(tags), predicates, &name);
+                }
+                pages.note_shown();
+                pages.current()
+            };
+            let after = after_change.borrow().clone();
+            if let Some(after) = after {
+                after();
+            }
+            *current.borrow_mut() = opened.clone();
+            rows.set_page(opened);
+            show_tabs(&window, &pages.borrow());
+            window.set_grid_scroll(0.0);
+            refresh(&window, &current.borrow().borrow());
+            duplicates.show(&window, &current.borrow().borrow());
+        }
+    }));
     window.on_tab_chosen({
         let change_pages = change_pages.clone();
         move |level, index| {

@@ -2087,3 +2087,9 @@ owner cancels its relationship child and prevents stale Apply. The reference
 recorder runs the actual relationship lookup and initialization workers and
 records all service seeds and preference changes; model and native child tests
 check graph publication, cancellation and owner lifetimes.
+
+Write-tag menus now open real search or duplicate-filter pages through the main
+window. The selected raw tag predicates, file domain, default tag service and
+reference page names reach their query consumers and persist in sessions.
+Parent decorations remain display text and are not silently added to searches.
+The launcher holds weak owner handles; closing a tag input invalidates its menu.

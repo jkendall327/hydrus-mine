@@ -586,3 +586,109 @@ fn shared_tag_menu_favourites_questions_copy_launch_and_owner_lifetime() {
     w.invoke_cancel();
     hydrus_gui::write_tag_menu::clear_search_launcher();
 }
+
+#[test]
+fn tag_menu_launches_native_search_and_duplicate_pages_with_recorded_predicates() {
+    use hydrus_core::{Tag, pages::PageContent, search::predicate::Predicate};
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let window = hydrus_gui::write_tag_window::open(
+        &store,
+        key,
+        &[],
+        "edit tags",
+        &slot,
+        Rc::new(|_| {}),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    *slot.borrow_mut() = Some(window.clone_strong());
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let launches = fixture["menus"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|event| event["action"] == "launch");
+    let mut count = bound.pages.borrow().session().pages.len();
+    for event in launches {
+        let expected = &event["launched"][0];
+        let tag = expected["predicates"][0].as_str().unwrap();
+        window.invoke_edited(tag.into());
+        let row = window
+            .get_suggestions()
+            .iter()
+            .position(|row| row.text.starts_with(tag))
+            .unwrap();
+        window.invoke_context_menu(i32::try_from(row).unwrap(), 10.0, 10.0);
+        // This store has no parent links; the action's payload is the same recorded child tag.
+        let duplicate = expected["topic"] == "new_page_duplicates";
+        let label = format!(
+            "open a new {} page for {tag}",
+            if duplicate {
+                "duplicate filter"
+            } else {
+                "search"
+            }
+        );
+        choose_write_tag_menu(&window, &["open", &label]);
+        count += 1;
+        let pages = bound.pages.borrow();
+        assert_eq!(pages.session().pages.len(), count);
+        assert_eq!(pages.shown().name, expected["page_name"].as_str().unwrap());
+        let predicate = Predicate::Tag {
+            tag: Tag::new(tag).unwrap(),
+            inclusive: true,
+        };
+        let context = match &pages.shown().content {
+            PageContent::Search { search, .. } => search,
+            PageContent::Duplicates { duplicates, .. } => {
+                assert_eq!(duplicates.search.search_1, duplicates.search.search_2);
+                &duplicates.search.search_1
+            }
+            content => panic!("unexpected launched page: {content:?}"),
+        };
+        assert_eq!(context.predicates, vec![predicate]);
+        assert_eq!(
+            context.tags.service,
+            store
+                .read(settings::get::<settings::SearchDefaults>)
+                .unwrap()
+                .tag_service
+        );
+        assert_eq!(
+            context
+                .location
+                .current()
+                .iter()
+                .map(|key| hex::encode(key.as_bytes()))
+                .collect::<Vec<_>>(),
+            expected["current"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|key| key.as_str().unwrap())
+                .collect::<Vec<_>>()
+        );
+    }
+    window.invoke_cancel();
+    window.invoke_context_menu(0, 10.0, 10.0);
+    window.invoke_tag_menu_clicked(0, 0, 100.0, 50.0, 10.0);
+    assert_eq!(bound.pages.borrow().session().pages.len(), count);
+    bound.pages.borrow_mut().sync(1_700_200_000).unwrap();
+    let reopened = Pages::open(store).unwrap();
+    assert_eq!(reopened.session().pages.len(), count);
+    assert!(matches!(
+        reopened.shown().content,
+        PageContent::Duplicates { .. }
+    ));
+}
