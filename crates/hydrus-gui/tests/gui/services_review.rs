@@ -149,7 +149,7 @@ fn local_bulk_review_replays_confirmations_store_changes_and_reopens() {
         })
         .unwrap();
     store
-        .write_content(|writer| writer.undelete_trash())
+        .write_content(hydrus_store::content::ContentWriter::undelete_trash)
         .unwrap();
     let domain = store
         .snapshot()
@@ -322,15 +322,15 @@ fn local_bulk_review_replays_confirmations_store_changes_and_reopens() {
             event["after"]["label"].as_str().unwrap()
         );
         assert!(window.get_error().is_empty());
-        let mut expected = if !event["accepted"].as_bool().unwrap() {
-            ids.clone()
-        } else {
+        let mut expected = if event["accepted"].as_bool().unwrap() {
             match action {
                 2 => vec![ids[0], ids[1], ids[3]],
                 3 => vec![ids[0], ids[1]],
                 4 => Vec::new(),
                 _ => unreachable!(),
             }
+        } else {
+            ids.clone()
         };
         expected.sort();
         let service_id = service.id;
