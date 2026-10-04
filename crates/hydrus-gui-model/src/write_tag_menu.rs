@@ -32,6 +32,11 @@ pub enum Action {
         predicates: Vec<Predicate>,
         duplicate: bool,
     },
+    LaunchMany {
+        location: LocationContext,
+        context: TagContext,
+        pages: Vec<Vec<Predicate>>,
+    },
     Decorate {
         tab: Tab,
         kind: Decoration,
@@ -349,7 +354,8 @@ fn sorted_tags(tags: &mut [String]) {
         &[],
     );
 }
-fn relationship_entries(store: &Store, tag: &str) -> hydrus_store::Result<Vec<Entry>> {
+/// Shared display/storage tag lists use the actual relationship lookup and dialogs.
+pub fn relationship_entries(store: &Store, tag: &str) -> hydrus_store::Result<Vec<Entry>> {
     use hydrus_store::display::RelationKind;
     use std::collections::{BTreeMap, BTreeSet};
     type Groups = BTreeMap<BTreeSet<usize>, (Vec<String>, Vec<String>)>;
