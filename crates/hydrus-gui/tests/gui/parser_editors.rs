@@ -319,6 +319,68 @@ fn setup() -> (tempfile::TempDir, std::sync::Arc<Store>, Slots) {
 fn definitions(store: &Store) -> Downloaders {
     store.read(settings::get).unwrap()
 }
+#[test]
+fn reusable_content_kinds_remap_restricted_choices_and_preserve_login_context() {
+    use hydrus_gui_model::formula_editors::FormulaTestData;
+    use std::{cell::RefCell, rc::Rc};
+    let (_dir, store, slots) = setup();
+    headless::init();
+    let mut parser = new_content();
+    parser.kind = ContentKind::Variable {
+        name: "token".into(),
+    };
+    parser.formula.kind = FormulaKind::ContextVariable {
+        variable: "csrf".into(),
+    };
+    let test = FormulaTestData {
+        context: [("csrf".into(), "synthetic login token".into())].into(),
+        ..FormulaTestData::default()
+    };
+    let accepted = Rc::new(RefCell::new(None));
+    let open = || {
+        windows::open_content(
+            &store,
+            &parser,
+            test.clone(),
+            &slots,
+            &[7, 8],
+            Rc::new({
+                let accepted = accepted.clone();
+                move |value| {
+                    *accepted.borrow_mut() = Some(value);
+                    Ok(())
+                }
+            }),
+        )
+        .unwrap()
+    };
+    let editor = open();
+    let options = editor.get_fields().row_data(1).unwrap().options;
+    assert_eq!(
+        (0..options.row_count())
+            .map(|i| options.row_data(i).unwrap().to_string())
+            .collect::<Vec<_>>(),
+        ["temporary variable", "veto"]
+    );
+    editor.invoke_action("test".into());
+    assert!(editor.get_preview().contains("synthetic login token"));
+    editor.invoke_choice_edited(1, 1);
+    editor.invoke_action("apply".into());
+    assert!(matches!(
+        accepted.borrow().as_ref().unwrap().kind,
+        ContentKind::Veto { .. }
+    ));
+    let editor = open();
+    editor.invoke_text_edited(0, "discarded".into());
+    editor.invoke_action("cancel".into());
+    editor.invoke_answered(true);
+    assert!(slots.content.borrow().is_none());
+    assert_eq!(parser.name, "new content parser");
+    assert!(matches!(
+        accepted.borrow().as_ref().unwrap().kind,
+        ContentKind::Veto { .. }
+    ));
+}
 fn screenshot(rendered: &headless::Windows, index: usize, name: &str, w: &ParserEditWindow) {
     let window = rendered.get(index).unwrap();
     let pixels = headless::render(&window, 1000, 780);

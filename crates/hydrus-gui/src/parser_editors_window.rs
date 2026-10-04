@@ -3,7 +3,7 @@ use crate::{DefinitionField, ParserEditWindow, ParserListWindow, TableColumn, Ta
 use hydrus_gui_model::formula_editors::FormulaTestData;
 use hydrus_gui_model::list_selection::ListSelection;
 use hydrus_gui_model::parser_editors::{self as model, ContentEditor, Draft, TestContext};
-use hydrus_parse::content::{ContentKind, PageParser};
+use hydrus_parse::content::{ContentKind, ContentParser, PageParser};
 use hydrus_store::Store;
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 use std::{
@@ -93,8 +93,9 @@ struct Editor {
     subsidiary_selected: Option<usize>,
     test: FormulaTestData,
     example: usize,
+    permitted_types: Vec<usize>,
 }
-fn fields(value: &Value) -> Vec<DefinitionField> {
+fn fields(value: &Value, permitted_types: &[usize]) -> Vec<DefinitionField> {
     match value {
         Value::Page(p) => vec![
             text(0, "name or description", &p.name),
@@ -109,9 +110,21 @@ fn fields(value: &Value) -> Vec<DefinitionField> {
             ),
         ],
         Value::Content(e) => {
+            let types = permitted_types
+                .iter()
+                .map(|i| model::CONTENT_TYPES[*i])
+                .collect::<Vec<_>>();
             let mut fields = vec![
                 text(0, "name or description", &e.parser.name),
-                choice(1, "content type", &model::CONTENT_TYPES, e.kind_index()),
+                choice(
+                    1,
+                    "content type",
+                    &types,
+                    permitted_types
+                        .iter()
+                        .position(|i| *i == e.kind_index())
+                        .unwrap_or(0),
+                ),
             ];
             match &e.parser.kind {
                 ContentKind::Url { url_type, priority } => {
@@ -191,7 +204,10 @@ fn show_editor(w: &ParserEditWindow, e: &Editor) {
         |(i, text)| format!("example {} ({} characters)", i + 1, text.chars().count()),
     )));
     w.set_example(i32::try_from(e.example).unwrap_or(0));
-    w.set_fields(ModelRc::new(VecModel::from(fields(&e.value))));
+    w.set_fields(ModelRc::new(VecModel::from(fields(
+        &e.value,
+        &e.permitted_types,
+    ))));
     if let Value::Page(p) = &e.value {
         w.set_nodes(table(p.content_parsers.iter().enumerate().map(|(i, c)| {
             (
@@ -324,12 +340,46 @@ fn child_open(slots: &Slots, page: bool) -> bool {
         || slots.exchange.has_open()
 }
 type Done = Rc<dyn Fn(Value) -> Result<(), String>>;
+/// Open a staged reusable content editor, restricting selectable kinds to the
+/// caller's `CONTENT_TYPES` indices. Formula context accepts arbitrary named
+/// variables. Cancel leaves the caller's parser untouched; Apply returns its draft.
+pub fn open_content(
+    store: &Arc<Store>,
+    parser: &ContentParser,
+    test: FormulaTestData,
+    slots: &Slots,
+    permitted_types: &[usize],
+    applied: Rc<dyn Fn(ContentParser) -> Result<(), String>>,
+) -> Result<ParserEditWindow, slint::PlatformError> {
+    let permitted = permitted_types.to_vec();
+    let done: Done = Rc::new(move |value| {
+        let Value::Content(content) = value else {
+            return Ok(());
+        };
+        let parser = content.value();
+        if !permitted.contains(&model::kind_index(&parser.kind)) {
+            return Err("This content type is not permitted here.".into());
+        }
+        applied(parser)
+    });
+    let window = open_editor(
+        store,
+        Value::Content(Box::new(ContentEditor::new(parser, test.clone()))),
+        test,
+        slots,
+        done,
+        Some(permitted_types),
+    )?;
+    *slots.content.borrow_mut() = Some(window.clone_strong());
+    Ok(window)
+}
 fn open_editor(
     store: &Arc<Store>,
     value: Value,
     mut test: FormulaTestData,
     slots: &Slots,
     applied: Done,
+    permitted_types: Option<&[usize]>,
 ) -> Result<ParserEditWindow, slint::PlatformError> {
     slots.formula.strings.set_store(store);
     test.prepare_examples();
@@ -363,6 +413,16 @@ fn open_editor(
         subsidiary_selected: None,
         test,
         example: 0,
+        permitted_types: permitted_types.map_or_else(
+            || (0..model::CONTENT_TYPES.len()).collect(),
+            |types| {
+                types
+                    .iter()
+                    .copied()
+                    .filter(|i| *i < model::CONTENT_TYPES.len())
+                    .collect()
+            },
+        ),
     }));
     let active = Rc::new(Cell::new(true));
     let fetch = crate::parser_test_fetch::Slot::default();
@@ -538,6 +598,14 @@ fn open_editor(
             }
             if let Ok(index) = usize::try_from(index) {
                 let mut e = state.borrow_mut();
+                let index = if id == 1 && matches!(e.value, Value::Content(_)) {
+                    let Some(index) = e.permitted_types.get(index).copied() else {
+                        return;
+                    };
+                    index
+                } else {
+                    index
+                };
                 edit_choice(&mut e.value, id, index);
                 if id == 1 {
                     e.errors.clear();
@@ -734,7 +802,7 @@ fn open_editor(
                     let examples = { let e = state.borrow(); let Value::Page(page) = &e.value else { return Ok(()); }; test.examples.iter().map(|text|page.converter.convert(text).map_err(|e|e.to_string())).collect::<Result<Vec<_>,_>>()? };
                     let test = FormulaTestData { text: converted, examples,collapse_newlines: !matches!(parser.kind,ContentKind::Note { .. }), ..test };
                     let done: Done = Rc::new({ let state = state.clone(); let active = active.clone(); move |v| { if !active.get() { return Ok(()); } let Value::Content(c) = v else { return Ok(()); }; let mut e = state.borrow_mut(); let Value::Page(p) = &mut e.value else { return Ok(()); }; if let Some(index) = at { if p.content_parsers.get(index) != original.as_ref() { return Err("The content parser changed while its editor was open.".into()); } p.content_parsers[index] = c.value(); } else { p.content_parsers.push(c.value()); } Ok(()) } });
-                    let child = open_editor(&store,Value::Content(Box::new(ContentEditor::new(&parser,test.clone()))),test,&slots,done).map_err(|e| e.to_string())?;
+                    let child = open_editor(&store,Value::Content(Box::new(ContentEditor::new(&parser,test.clone()))),test,&slots,done,None).map_err(|e| e.to_string())?;
                     let refresh = refresh.clone(); child.on_closed(move || refresh()); *slots.content.borrow_mut() = Some(child);
                 }
                 "add-example" | "remove-example" => {
@@ -1126,9 +1194,15 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                                 Ok(())
                             }
                         });
-                        let child =
-                            open_editor(&store, Value::Page(Box::new(page)), test, &slots, done)
-                                .map_err(|e| e.to_string())?;
+                        let child = open_editor(
+                            &store,
+                            Value::Page(Box::new(page)),
+                            test,
+                            &slots,
+                            done,
+                            None,
+                        )
+                        .map_err(|e| e.to_string())?;
                         let refresh = refresh.clone();
                         child.on_closed(move || refresh());
                         *slots.page.borrow_mut() = Some(child);
