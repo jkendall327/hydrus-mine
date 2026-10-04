@@ -34,11 +34,12 @@
         "fixture": "oracle/fixtures/tag_banner_editors.json",
         "executed": true,
         "executedAtUtc": "2026-10-04T21:04:10Z",
-        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,12 three-question namespace edits plus cancelled edits/deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
+        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,eight completed three-question namespace edits, four cancelled namespace edits and four cancelled deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
       },
       "implementationCommits": [
         "b31e0bb3",
-        "53588a05"
+        "53588a05",
+        "278c1912"
       ]
     },
     {
@@ -71,11 +72,12 @@
         "fixture": "oracle/fixtures/tag_banner_editors.json",
         "executed": true,
         "executedAtUtc": "2026-10-04T21:04:10Z",
-        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,12 three-question namespace edits plus cancelled edits/deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
+        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,eight completed three-question namespace edits, four cancelled namespace edits and four cancelled deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
       },
       "implementationCommits": [
         "b31e0bb3",
-        "53588a05"
+        "53588a05",
+        "278c1912"
       ]
     },
     {
@@ -108,11 +110,12 @@
         "fixture": "oracle/fixtures/tag_banner_editors.json",
         "executed": true,
         "executedAtUtc": "2026-10-04T21:04:10Z",
-        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,12 three-question namespace edits plus cancelled edits/deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
+        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,eight completed three-question namespace edits, four cancelled namespace edits and four cancelled deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
       },
       "implementationCommits": [
         "b31e0bb3",
-        "53588a05"
+        "53588a05",
+        "278c1912"
       ]
     },
     {
@@ -143,11 +146,12 @@
         "fixture": "oracle/fixtures/tag_banner_editors.json",
         "executed": true,
         "executedAtUtc": "2026-10-04T21:04:10Z",
-        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,12 three-question namespace edits plus cancelled edits/deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
+        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,eight completed three-question namespace edits, four cancelled namespace edits and four cancelled deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
       },
       "implementationCommits": [
         "b31e0bb3",
-        "53588a05"
+        "53588a05",
+        "278c1912"
       ]
     },
     {
@@ -179,11 +183,12 @@
         "fixture": "oracle/fixtures/tag_banner_editors.json",
         "executed": true,
         "executedAtUtc": "2026-10-04T21:04:10Z",
-        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,12 three-question namespace edits plus cancelled edits/deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
+        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,eight completed three-question namespace edits, four cancelled namespace edits and four cancelled deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
       },
       "implementationCommits": [
         "b31e0bb3",
-        "53588a05"
+        "53588a05",
+        "278c1912"
       ]
     },
     {
@@ -215,11 +220,12 @@
         "fixture": "oracle/fixtures/tag_banner_editors.json",
         "executed": true,
         "executedAtUtc": "2026-10-04T21:04:10Z",
-        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,12 three-question namespace edits plus cancelled edits/deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
+        "reference": "Actual TagPresentationPanel three buttons invoke TagSummaryGeneratorButton._Edit and real child panel methods; one child Cancel plus three child Apply routes,40 live editor snapshots,eight completed three-question namespace edits, four cancelled namespace edits and four cancelled deletions, parent UpdateOptions and actual MediaSingle.GetTitleString plus thumbnail GenerateSummary on synthetic current/pending tags."
       },
       "implementationCommits": [
         "b31e0bb3",
-        "53588a05"
+        "53588a05",
+        "278c1912"
       ]
     }
   ],
