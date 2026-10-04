@@ -179,6 +179,8 @@ pub enum Command {
     ManageDownloaderDefinitions(bool),
     /// Parser definitions (`false`) or URL-class parser links (`true`).
     ManageParsers(bool),
+    /// Review network sessions (`false`) or edit custom HTTP headers (`true`).
+    ManageNetworkSessions(bool),
     /// Open the manage import folders dialog.
     ManageImportFolders,
     /// Open the manage export folders dialog.
@@ -826,8 +828,14 @@ fn network_menu(facts: &Facts) -> Entry {
                 vec![
                     todo("review bandwidth usage and edit rules"),
                     todo("review current network jobs"),
-                    todo("review session cookies"),
-                    todo(dots("manage http headers")),
+                    item(
+                        "review session cookies",
+                        Command::ManageNetworkSessions(false),
+                    ),
+                    item(
+                        dots("manage http headers"),
+                        Command::ManageNetworkSessions(true),
+                    ),
                 ],
             ),
             menu(

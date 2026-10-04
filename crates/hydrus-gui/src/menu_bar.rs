@@ -36,6 +36,7 @@ pub(crate) struct Hooks {
     pub manage_downloader_definitions: Rc<dyn Fn(bool)>,
     /// Open native parser definitions or URL-class links.
     pub manage_parsers: Rc<dyn Fn(bool)>,
+    pub manage_network_sessions: Rc<dyn Fn(bool)>,
     /// Open the manage import folders (`true`) or export folders dialog.
     pub manage_folders: Rc<dyn Fn(bool)>,
     /// Open the "review files to import" window.
@@ -573,6 +574,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::ManageDownloaderDefinitions(classes) => {
             (hooks.manage_downloader_definitions)(classes);
         }
+        Command::ManageNetworkSessions(headers) => (hooks.manage_network_sessions)(headers),
         Command::ManageParsers(links) => (hooks.manage_parsers)(links),
         Command::ManageSubscriptions => (hooks.manage_subscriptions)(),
         Command::ManageImportFolders => (hooks.manage_folders)(true),

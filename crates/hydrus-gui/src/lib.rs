@@ -228,6 +228,7 @@ pub struct Bound {
     pub downloader_definitions: downloader_definitions_window::Slots,
     /// Native parser and URL-class link windows.
     pub parser_editors: parser_editors_window::Slots,
+    pub network_sessions: network_sessions_window::Slots,
     /// The edit subscription dialog while it is open (from the manage
     /// subscriptions dialog).
     pub edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>>,
@@ -1254,6 +1255,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let subscription_gallery: Rc<RefCell<Option<SubscriptionGalleryWindow>>> = Rc::default();
     let downloader_definitions = downloader_definitions_window::Slots::default();
     let parser_editors = parser_editors_window::Slots::default();
+    let network_sessions = network_sessions_window::Slots::default();
     let edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>> = Rc::default();
     // a downloader list's menu's actions, as last opened
     let importer_actions: Rc<RefCell<Vec<importer_menu::Action>>> = Rc::default();
@@ -1395,6 +1397,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     match options_window::open(&store, &slot, &checker_slot, applied) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not open the options: {e}"),
+                    }
+                })
+            },
+            manage_network_sessions: {
+                let pages = pages.clone();
+                let slots = network_sessions.clone();
+                Rc::new(move |headers| {
+                    let store = pages.borrow().store().clone();
+                    if let Err(e) = network_sessions_window::open(&store, &slots, headers) {
+                        eprintln!("could not open network data: {e}");
                     }
                 })
             },
@@ -3069,6 +3081,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         subscription_gallery,
         downloader_definitions,
         parser_editors,
+        network_sessions,
         edit_subscription,
         folders,
         simple_formulae,
@@ -5214,3 +5227,5 @@ mod tests {
 }
 
 pub mod client_api_admin_window;
+
+pub mod network_sessions_window;

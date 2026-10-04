@@ -999,3 +999,26 @@ Clipboard URL monitoring runs while the desktop is open. Fatal clipboard access
 errors use the shared popup queue so they remain visible on downloader and
 notebook pages. The reference watcher policy and toggle resets are replayed from
 `oracle/fixtures/clipboard_urls.json`.
+
+## Network session and HTTP-header management
+
+Cookie and HTTP-header editing uses detached native drafts with Apply/Cancel;
+Qt cookie-list actions take effect immediately, while its header list is staged.
+Changing a cookie's name/domain/path replaces the old identity, while Qt adds the
+new identity and leaves the old cookie. Native editing preserves secure and
+other attributes and exposes the secure flag; the reference's cookie editor
+recreates a cookie without exposing these attributes. Native validation also
+rejects invalid HTTP field names, cookie delimiters, relative paths and impossible
+UTC expiry values; empty cookie/header values are accepted as valid HTTP data.
+Expired cookies remain visible until manually removed, while Qt periodically
+clears expired cookies when opening a session. Header duplicates use valid `-2`, `-3` suffixes instead of
+Qt's human-name suffixes containing spaces. Pending approval still waits for
+a manual approval change; its automatic question popup is not implemented.
+
+The browser can inspect imported service sessions and create domain sessions;
+creating new service sessions, cookie clipboard/Netscape cookies.txt import and
+export, and drag/drop cookie imports remain deferred. Empty sessions are
+explicitly persisted in the native store. Refresh preserves a cookie/header
+draft; reopen reloads committed changes. Browser create and confirmed clear
+actions take effect immediately. Passwords and cookie values remain ordinary
+local database fields, as in the reference.

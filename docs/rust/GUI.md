@@ -1502,3 +1502,26 @@ suspends reads until a switch is toggled. Imported reference options carry both
 switches over. The real Qt watcher and URL-routing policy are recorded by
 `oracle/record_clipboard_urls.py`; native tests cover page routing, nested
 notebooks, menu persistence and failure recovery.
+
+## Network sessions and HTTP headers
+
+Network > data > review session cookies browses persisted domain and imported
+service sessions, with a text filter, show-empty toggle, cookie count and latest
+expiry. Create new establishes a domain silo; review opens its cookie list.
+Clear asks the reference's deletion question and removes the selected sessions.
+The cookie window stages add/edit/delete until Apply, including domain/path/name
+changes, session or UTC expiry, a time delta from now, and HTTPS-only cookies.
+Other attributes, including HttpOnly and SameSite, survive an edit. Cancel closes
+child editors and discards the draft. Empty sessions persist across reopen.
+
+Network > data > manage http headers stages global and domain header names,
+values, approval and reasons, with filter, sorting, duplicate and confirmed
+delete. Pending headers keep jobs waiting until approved or denied; approved
+values affect the next request from an already-running engine. Cookie and header
+Apply merges only edited keys and rejects a concurrent change to those keys
+atomically, preserving unrelated cookies received from websites or API writes.
+
+`oracle/record_network_sessions.py` records real Qt session/cookie/header rows,
+trim/newline validation and cancelled delete/clear questions. Model and native
+widget tests cover cancellation, persistence, stale editor callbacks, concurrent
+writes and actual outgoing cookie/header values through an existing NetEngine.

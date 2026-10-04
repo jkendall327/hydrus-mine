@@ -2490,6 +2490,7 @@ dependencies = [
  "hydrus-import",
  "hydrus-legacy",
  "hydrus-media",
+ "hydrus-net",
  "hydrus-parse",
  "hydrus-search",
  "hydrus-store",
@@ -2504,6 +2505,7 @@ dependencies = [
  "slint",
  "slint-build",
  "tempfile",
+ "tokio",
 ]
 
 [[package]]
