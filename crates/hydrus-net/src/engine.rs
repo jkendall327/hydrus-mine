@@ -2008,6 +2008,46 @@ mod reload_tests {
     }
 
     #[tokio::test]
+    async fn runtime_domain_scrub_wakes_a_registered_domain_gate_and_preserves_unrelated_errors() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let engine = NetEngine::new(
+            store,
+            NetOptions {
+                domain_error_number: 1,
+                ..NetOptions::default()
+            },
+        )
+        .unwrap();
+        let url = "https://sub.example.com/controlled";
+        engine.report_domain_error(url);
+        engine.report_domain_error("https://other.example.net/unrelated");
+        assert!(!engine.domain_ok(url));
+        let job = Job::new();
+        {
+            let mut state = job.state.lock();
+            state.url = url.into();
+            state.created = now();
+        }
+        let contexts = NetEngine::contexts_for(url);
+        engine.jobs.lock().insert(42, (job.clone(), contexts));
+        let mut waiting = Box::pin(engine.wait_for_domain(url, &job));
+        tokio::select! { _ = &mut waiting => panic!("domain gate unexpectedly passed"), () = tokio::time::sleep(Duration::from_millis(10)) => {} }
+        assert_eq!(job.state().wait, WaitReason::Domain);
+        assert!(engine.runtime_command(&network_runtime::Command {
+            epoch: engine.epoch.clone(),
+            job: 42,
+            action: network_runtime::JobAction::ScrubDomainErrors
+        }));
+        tokio::time::timeout(Duration::from_secs(1), waiting)
+            .await
+            .unwrap()
+            .unwrap();
+        assert!(engine.domain_ok(url));
+        assert!(!engine.domain_ok("https://other.example.net/unrelated"));
+    }
+
+    #[tokio::test]
     async fn connection_retry_skip_is_consumed_once_and_unrelated_wakes_do_not_skip() {
         let job = Job::new();
         job.set_wait(WaitReason::Connection);

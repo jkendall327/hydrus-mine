@@ -88,6 +88,15 @@ fn fonts() -> Arc<usvg::fontdb::Database> {
         .get_or_init(|| {
             let mut db = usvg::fontdb::Database::new();
             db.load_system_fonts();
+            // Backend/headless installations need readable exported PNG headers
+            // even when no system fonts are installed. Existing system font
+            // selection remains unchanged on desktop installations.
+            if db.faces().next().is_none() {
+                db.load_font_data(include_bytes!("../../assets/OpenSans-Regular.ttf").to_vec());
+                db.set_sans_serif_family("Open Sans");
+                db.set_serif_family("Open Sans");
+                db.set_monospace_family("Open Sans");
+            }
             Arc::new(db)
         })
         .clone()
