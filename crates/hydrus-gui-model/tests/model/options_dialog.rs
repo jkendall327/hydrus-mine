@@ -657,7 +657,10 @@ fn session_backup_count_matches_recorded_control_and_clamps() {
         .unwrap();
     assert!(page_problems(ours, &reference["items"], &settings, &store).is_empty());
     let options = ours.options();
-    let option = options[0];
+    let option = options
+        .into_iter()
+        .find(|option| option.label == "Number of session backups to keep: ")
+        .unwrap();
     for (input, boundary) in [(0, "min"), (100, "max")] {
         (option.set)(&mut settings, &Value::Int(input)).unwrap();
         assert_eq!(
