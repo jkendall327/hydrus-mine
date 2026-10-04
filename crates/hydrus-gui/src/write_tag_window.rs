@@ -99,13 +99,13 @@ fn open_internal(
     }
     let window = WriteTagsWindow::new()?;
     window
-        .global::<crate::TagTextHistory>()
+        .global::<crate::TagTextHistory<'_>>()
         .on_record(crate::write_tag_history::record);
     window
-        .global::<crate::TagTextHistory>()
+        .global::<crate::TagTextHistory<'_>>()
         .on_undo(crate::write_tag_history::undo);
     window
-        .global::<crate::TagTextHistory>()
+        .global::<crate::TagTextHistory<'_>>()
         .on_redo(crate::write_tag_history::redo);
     window.set_window_title(title.into());
     let location = store

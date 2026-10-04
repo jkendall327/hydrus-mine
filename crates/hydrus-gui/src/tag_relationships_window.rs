@@ -51,13 +51,13 @@ pub(crate) fn open(
 ) -> Result<TagRelationshipsWindow, slint::PlatformError> {
     let window = TagRelationshipsWindow::new()?;
     window
-        .global::<crate::TagTextHistory>()
+        .global::<crate::TagTextHistory<'_>>()
         .on_record(crate::write_tag_history::record);
     window
-        .global::<crate::TagTextHistory>()
+        .global::<crate::TagTextHistory<'_>>()
         .on_undo(crate::write_tag_history::undo);
     window
-        .global::<crate::TagTextHistory>()
+        .global::<crate::TagTextHistory<'_>>()
         .on_redo(crate::write_tag_history::redo);
     window.set_use_listbook(model.use_listbook());
     window.set_siblings(model.kind() == hydrus_store::display::RelationKind::Siblings);
