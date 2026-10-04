@@ -266,7 +266,7 @@
       "behavior": "Options selects each real tag service and edits its independent most-used list through the real shared write autocomplete/paste/removal child. Service switching retains accepted drafts; child and list Apply remain staged until Options Apply. Save merges changed service keys without overwriting concurrent other-service/children-cap edits and preserves untouched unknown entries. Descendant Cancel/owner close and retained callbacks cannot apply or clear successor slots. Persisted lists reach existing-panel broadcasts and the actual Manage Tags most-used consumer, sorted by search-page tag sort, current/pending-on-all filtering, multi-selected add-only staging, real mapping writes and reopen. Existing global autocomplete favourites are unchanged and not counted again.",
       "reference_source": {
         "relativepath": "hydrus/client/gui/panels/options/TagSuggestionsPanel.py",
-        "line": 58,
+        "line": 59,
         "symbol": "self._suggested_most_used_services"
       },
       "source_anchors": [
