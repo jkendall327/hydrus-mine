@@ -91,3 +91,40 @@ fn idle_requires_boot_user_mouse_and_api_timeouts_and_enabled_normal_work() {
         );
     }
 }
+
+#[test]
+fn real_auxiliary_dialog_mouse_and_api_actions_update_independent_idle_timers() {
+    let fixture = hydrus_testkit::fixture_json("session_activity.json");
+    let mut idle = Idle::new(0);
+    for step in fixture["steps"].as_array().unwrap() {
+        let now = step["now"].as_i64().unwrap();
+        match step["action"].as_str().unwrap() {
+            "auxiliary dialog" => idle.user(now),
+            "moved cursor" => idle.mouse(now),
+            "API request" => idle.api(now),
+            "unchanged cursor" => {}
+            other => panic!("unexpected recorded activity {other}"),
+        }
+        for key in [
+            "last_user_action",
+            "last_mouse_action",
+            "last_client_api_action",
+        ] {
+            let config = GuiIdleSettings {
+                enabled: true,
+                user_seconds: (key == "last_user_action").then_some(2),
+                mouse_seconds: (key == "last_mouse_action").then_some(2),
+                api_seconds: (key == "last_client_api_action").then_some(2),
+            };
+            let at = step["times"][key].as_i64().unwrap();
+            for check in [now, now + 2_000, now + 2_001] {
+                assert_eq!(
+                    idle.eligible(check, &config),
+                    check > at + 2_000,
+                    "{} {key} at {check}",
+                    step["action"]
+                );
+            }
+        }
+    }
+}

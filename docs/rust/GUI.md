@@ -2093,3 +2093,9 @@ window. The selected raw tag predicates, file domain, default tag service and
 reference page names reach their query consumers and persist in sessions.
 Parent decorations remain display text and are not silently added to searches.
 The launcher holds weak owner handles; closing a tag input invalidates its menu.
+
+Idle activity now also follows native input events in auxiliary windows. Mouse
+movement updates the mouse timer; keys, clicks, scrolling and opening/focusing
+an editor update the user timer. Rendering and losing focus do not reset either
+timer. The reference's independent dialog, mouse and API timestamp updates are
+recorded by `oracle/record_session_activity.py`.

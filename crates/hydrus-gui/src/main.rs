@@ -31,6 +31,8 @@ fn main() -> Result<()> {
     let lock: LockPassword = store
         .read(hydrus_store::settings::get)
         .context("reading the lock password")?;
+    hydrus_gui::session_autosave::install_activity_backend()
+        .context("initializing desktop input activity")?;
     let client: Rc<RefCell<Option<Client>>> = Rc::default();
     let failed: Rc<RefCell<Option<anyhow::Error>>> = Rc::default();
     let open = {

@@ -2,7 +2,75 @@
 use crate::{MainWindow, Pages};
 use hydrus_gui_model::session_lifecycle::{Action, Autosave, Idle};
 use hydrus_store::settings::{self, GuiIdleSettings, GuiSessionSettings};
-use std::{cell::RefCell, rc::Rc};
+use std::{
+    cell::RefCell,
+    rc::{Rc, Weak},
+};
+
+thread_local! {
+    static MONITORS: RefCell<Vec<Weak<Inner>>> = const { RefCell::new(Vec::new()) };
+}
+
+/// Install the native backend before creating the first desktop window. Its
+/// handler observes every auxiliary window as well as the main window.
+pub fn install_activity_backend() -> Result<(), slint::PlatformError> {
+    slint::BackendSelector::new()
+        .backend_name("winit".into())
+        .with_winit_custom_application_handler(ActivityHandler)
+        .select()
+}
+
+struct ActivityHandler;
+impl slint::winit_030::CustomApplicationHandler for ActivityHandler {
+    fn window_event(
+        &mut self,
+        _event_loop: &slint::winit_030::winit::event_loop::ActiveEventLoop,
+        _window_id: slint::winit_030::winit::window::WindowId,
+        _winit_window: Option<&slint::winit_030::winit::window::Window>,
+        _slint_window: Option<&slint::Window>,
+        event: &slint::winit_030::winit::event::WindowEvent,
+    ) -> slint::winit_030::EventResult {
+        observe_window_event(event);
+        slint::winit_030::EventResult::Propagate
+    }
+}
+
+/// The native handler forwards real input without consuming it. Exposed so
+/// desktop replay can drive the same callback without opening an OS event loop.
+pub fn observe_window_event(event: &slint::winit_030::winit::event::WindowEvent) {
+    use slint::winit_030::winit::event::WindowEvent;
+    let user = matches!(
+        event,
+        WindowEvent::KeyboardInput { .. }
+            | WindowEvent::MouseInput { .. }
+            | WindowEvent::MouseWheel { .. }
+            | WindowEvent::Touch(_)
+            | WindowEvent::Focused(true)
+    );
+    let mouse = matches!(
+        event,
+        WindowEvent::CursorMoved { .. } | WindowEvent::Touch(_)
+    );
+    if !user && !mouse {
+        return;
+    }
+    let now = hydrus_core::TimestampMs::now().0;
+    MONITORS.with(|monitors| {
+        monitors.borrow_mut().retain(|weak| {
+            let Some(inner) = weak.upgrade() else {
+                return false;
+            };
+            let mut idle = inner.idle.borrow_mut();
+            if user {
+                idle.user(now);
+            }
+            if mouse {
+                idle.mouse(now);
+            }
+            true
+        });
+    });
+}
 
 struct Inner {
     pages: Rc<RefCell<Pages>>,
@@ -42,6 +110,7 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>) -> Monitor {
         previous: RefCell::new(None),
         timer: slint::Timer::default(),
     }));
+    MONITORS.with(|monitors| monitors.borrow_mut().push(Rc::downgrade(&monitor.0)));
     window.on_session_user_activity({
         let monitor = monitor.clone();
         move || monitor.user_at(hydrus_core::TimestampMs::now().0)

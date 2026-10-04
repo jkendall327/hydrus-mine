@@ -1371,3 +1371,7 @@ separate unclaimed controls.
 Write-tag open-search and duplicate-page actions now have a main-window consumer
 and real session/query contexts. The optional reference setting that raises the
 main window on tag-search activation is still absent; its default is off.
+
+Native idle tracking covers input in every desktop window through the event-loop
+handler. The reference also polls the operating system's global cursor position;
+movement outside native application windows does not yet reset the mouse timer.

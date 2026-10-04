@@ -194,3 +194,63 @@ fn actual_key_and_pointer_events_reset_idle_and_other_startup_stops_autosave() {
             .is_none()
     );
 }
+
+#[test]
+fn auxiliary_native_window_events_reset_only_input_idle_and_preserve_autosave_retry() {
+    use slint::winit_030::winit::{
+        dpi::PhysicalPosition,
+        event::{DeviceId, WindowEvent},
+    };
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    store
+        .write(move |ctx| {
+            settings::set(
+                ctx.conn(),
+                &GuiIdleSettings {
+                    enabled: true,
+                    user_seconds: Some(1800),
+                    mouse_seconds: Some(600),
+                    api_seconds: None,
+                },
+            )?;
+            settings::set(
+                ctx.conn(),
+                &GuiSessionSettings {
+                    only_during_idle: true,
+                    ..GuiSessionSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let due = bound.session_autosave.next().unwrap();
+    bound.session_autosave.user_at(0);
+    bound.session_autosave.mouse_at(0);
+    assert!(bound.session_autosave.idle_at(due));
+    hydrus_gui::session_autosave::observe_window_event(&WindowEvent::RedrawRequested);
+    hydrus_gui::session_autosave::observe_window_event(&WindowEvent::Focused(false));
+    assert!(bound.session_autosave.idle_at(due));
+    // The global handler receives the same event regardless of which editor
+    // window owns it. Movement only changes the mouse timer.
+    hydrus_gui::session_autosave::observe_window_event(&WindowEvent::CursorMoved {
+        device_id: DeviceId::dummy(),
+        position: PhysicalPosition::new(20.0, 25.0),
+    });
+    assert!(!bound.session_autosave.idle_at(due));
+    assert!(!bound.session_autosave.poll_at(due).unwrap());
+    assert_eq!(bound.session_autosave.next(), Some(due + 60_000));
+    bound.session_autosave.mouse_at(0);
+    assert!(bound.session_autosave.idle_at(due));
+    hydrus_gui::session_autosave::observe_window_event(&WindowEvent::Focused(true));
+    assert!(!bound.session_autosave.idle_at(due));
+    bound.session_autosave.user_at(0);
+    assert!(bound.session_autosave.poll_at(due + 60_000).unwrap());
+    assert!(
+        store
+            .read(|conn| hydrus_store::session_backups::latest(conn, sessions::LAST_SESSION))
+            .unwrap()
+            .is_some()
+    );
+}
