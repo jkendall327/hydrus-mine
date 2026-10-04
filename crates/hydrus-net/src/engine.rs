@@ -2030,7 +2030,7 @@ mod reload_tests {
             state.created = now();
         }
         let contexts = NetEngine::contexts_for(url);
-        engine.jobs.lock().insert(42, (job.clone(), contexts));
+        engine.jobs.lock().insert(42, ((*job).clone(), contexts));
         let mut waiting = Box::pin(engine.wait_for_domain(url, &job));
         tokio::select! { _ = &mut waiting => panic!("domain gate unexpectedly passed"), () = tokio::time::sleep(Duration::from_millis(10)) => {} }
         assert_eq!(job.state().wait, WaitReason::Domain);
