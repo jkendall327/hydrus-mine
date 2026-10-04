@@ -5,7 +5,8 @@
   "base_checkout": "d7ed4e32",
   "implementationCommits": [
     "d9769c36",
-    "1e0604546c2a533eca3d050d5138e4c500022543"
+    "1e0604546c2a533eca3d050d5138e4c500022543",
+    "ed754fa172892a10a9d7f6fc233607f898c18f9e"
   ],
   "claims": [
     {
@@ -14,7 +15,7 @@
       "proposedStatus": "first_pass",
       "countAsCompletedLeaf": true,
       "change_kind": "implementation",
-      "implementationCommit": "1e0604546c2a533eca3d050d5138e4c500022543",
+      "implementationCommit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
       "exactBehavior": "Load actual storage deleted mappings for each local tag service in the ordered selection. Count tag-file mappings, hide the count/toggle at zero, and combine current (n) with deleted (Xn) rows when shown, including current counts when all selected files have the tag. Staged per-file Delete increases counts and re-add clears its deleted mappings before outer Apply. The global immediate show/hide setting survives parent Cancel, reaches other open owners and imports/reopens independently from staged Options defaults. Parent Apply commits the private draft; Cancel and closed-owner callbacks cannot change it. A fresh add/remove cycle retains the actual Qt deleted mapping instead of becoming an unchanged draft.",
       "limits": [
         "The existing Manage Tags service list contains local tag services. Repository panels and repository pend/petition action selection remain an inherited parent gap; no repository mapping is incorrectly added by this slice.",
@@ -26,63 +27,63 @@
         {
           "path": "crates/hydrus-gui-model/src/manage_tags.rs",
           "line": 156,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "pub fn show_deleted"
         },
         {
           "path": "crates/hydrus-gui-model/src/manage_tags.rs",
           "line": 186,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "pub fn deleted_count("
         },
         {
           "path": "crates/hydrus-gui-model/src/manage_tags.rs",
           "line": 170,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "fn deleted_tags"
         },
         {
           "path": "crates/hydrus-gui-model/src/manage_tags.rs",
           "line": 231,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "fn current_tags"
         },
         {
           "path": "crates/hydrus-gui-model/src/manage_tags.rs",
           "line": 323,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "fn plain_rows"
         },
         {
           "path": "crates/hydrus-gui/src/manage_tags_window.rs",
           "line": 327,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "window.on_flip_show_deleted"
         },
         {
           "path": "crates/hydrus-gui/ui/manage_tags.slint",
           "line": 120,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "if root.deleted-count-visible"
         },
         {
           "path": "crates/hydrus-store/src/tag_editing.rs",
           "line": 64,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "pub struct ManageTagsSettings"
         },
         {
           "path": "crates/hydrus-store/src/import/decode.rs",
           "line": 278,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "let mut manage_tags ="
         }
@@ -91,35 +92,35 @@
         {
           "path": "crates/hydrus-gui-model/tests/model/manage_tag_counts.rs",
           "line": 7,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "reference_replay",
           "symbol": "fn deleted_counts"
         },
         {
           "path": "crates/hydrus-gui/tests/gui/manage_tag_counts.rs",
           "line": 37,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "gui_consumer_regression",
           "symbol": "fn thumbnail_dialog"
         },
         {
           "path": "crates/hydrus-gui-model/tests/model/incremental_tagging.rs",
           "line": 100,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "reference_replay",
           "symbol": "fn add_then_remove"
         },
         {
           "path": "crates/hydrus-store/src/tag_editing.rs",
           "line": 91,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "store_regression",
           "symbol": "fn manage_tags_preferences"
         },
         {
           "path": "crates/hydrus-store/src/import/decode.rs",
           "line": 3109,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "legacy_import_regression",
           "symbol": "fn manage_tags_live"
         }
@@ -128,19 +129,19 @@
         "recorder": {
           "path": "oracle/record_manage_tag_counts_incremental.py",
           "line": 13,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "reference_recorder",
           "symbol": "def record"
         },
         "fixture": {
           "path": "oracle/fixtures/manage_tag_counts_incremental.json",
           "line": 1,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "reference_fixture",
           "symbol": "{"
         },
         "command": "/workspace/parallel/with-oracle python oracle/record_manage_tag_counts_incremental.py",
-        "executedAt": "2026-10-04T20:38:42Z",
+        "executedAt": "2026-10-04T20:48:26Z",
         "environment": "hydrus v688, actual Qt offscreen private basic legacy DB, shared with-oracle lock, activated pyenv Python; synthetic checkpoint tags and folder-log.example-style domains only, no remote requests",
         "observed": "Two real local-service panels with nonzero deleted counts, zero-count panel visibility, global toggle across already open owners, mixed current/deleted rows, staged deletion/re-add, parent Cancel/Apply and DB reopening; fresh add/remove retains deleted mappings."
       }
@@ -151,122 +152,136 @@
       "proposedStatus": "first_pass",
       "countAsCompletedLeaf": true,
       "change_kind": "implementation",
-      "implementationCommit": "1e0604546c2a533eca3d050d5138e4c500022543",
-      "exactBehavior": "The actual multi-file Manage Tags ± launcher opens an owned IncrementalTaggingWindow. Namespace defaults to saved page; prefix/suffix are remembered literally on every edit even after child or parent Cancel. Start infers the first file numeric subtag, step defaults 1; start bounds -10000000..10000000 and step -10000..10000 include zero and negative steps. Reverse numbers the original ordered file selection backwards. The exact Qt summary describes tag order and existing namespace conflicts. Child Apply atomically validates/cleans pairs and stages one additive tag per original file on the frozen service, without spreading numbered tags to all files or removing other namespace tags. Parent Apply persists per-file mappings; child/parent Cancel and closure discard them, invalidate retained handles, and preserve live preference edits. Parent service/tag edits and Apply are blocked while the child owns its draft; one-file selections cannot launch it.",
+      "implementationCommit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+      "exactBehavior": "The actual multi-file Manage Tags ± launcher opens an owned IncrementalTaggingWindow. Namespace defaults to saved page; prefix/suffix are remembered literally on every edit even after child or parent Cancel. Start infers the first decimal subtag in the first file after the actual reference ASCII-run/Unicode-decimal sorting, skips negative/nondecimal subtags, and clamps its numeric control, step defaults 1; start bounds -10000000..10000000 and step -10000..10000 include zero and negative steps. Reverse numbers the original ordered file selection backwards. The exact Qt summary describes tag order and existing namespace conflicts. Child Apply atomically validates/cleans pairs and stages one additive tag per original file on the frozen service, without spreading numbered tags to all files or removing other namespace tags. Parent Apply persists per-file mappings; child/parent Cancel and closure discard them, invalidate retained handles, and preserve live preference edits. Parent service/tag edits and Apply are blocked while the child owns its draft; one-file selections cannot launch it.",
       "limits": [
         "The existing Manage Tags service list contains local tag services. Repository panels and repository pend/petition action selection remain an inherited parent gap; no repository mapping is incorrectly added by this slice.",
         "Multiple stored-tag selection/full context menus, parent uncommitted-change confirmation and suggested-tag side panels remain independently assessed. These features do not complete audit-media-manage-tags.",
         "Rust store/model/GUI tests are authored for root hosted CI; only real Qt recordings, cargo fmt, git diff --check and cached Slint source compilation were executed locally.",
-        "Initial-start inference currently accepts ASCII decimal subtags; Qt also accepts other Unicode decimal digits. Native invalid callback values retain the accepted preview rather than allowing out-of-range state.",
+        "Native invalid callback values retain the accepted preview rather than allowing out-of-range state.",
         "The native child retains reference fields, labels and ranges but uses Slint controls/geometry and an Apply caption instead of the Qt framework OK caption."
       ],
       "sourceAnchors": [
         {
           "path": "crates/hydrus-gui-model/src/incremental_tagging.rs",
-          "line": 8,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "line": 10,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "pub struct IncrementalTagging"
         },
         {
           "path": "crates/hydrus-gui-model/src/incremental_tagging.rs",
-          "line": 55,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "line": 62,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "pub fn set_text"
         },
         {
           "path": "crates/hydrus-gui-model/src/incremental_tagging.rs",
-          "line": 77,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "line": 84,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "pub fn set_numbers"
         },
         {
           "path": "crates/hydrus-gui-model/src/incremental_tagging.rs",
-          "line": 86,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "line": 93,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "pub fn pairs"
         },
         {
           "path": "crates/hydrus-gui-model/src/incremental_tagging.rs",
-          "line": 107,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "line": 114,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "pub fn cleaned_pairs"
         },
         {
           "path": "crates/hydrus-gui-model/src/incremental_tagging.rs",
-          "line": 117,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "line": 124,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "pub fn summary"
         },
         {
           "path": "crates/hydrus-gui-model/src/manage_tags.rs",
           "line": 284,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "pub fn apply_incremental"
         },
         {
           "path": "crates/hydrus-gui/src/manage_tags_window.rs",
           "line": 201,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "window.on_incremental_tags"
         },
         {
           "path": "crates/hydrus-gui/src/incremental_tagging_window.rs",
           "line": 21,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "pub fn open("
         },
         {
           "path": "crates/hydrus-gui/ui/incremental_tagging.slint",
           "line": 3,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "export component"
+        },
+        {
+          "path": "crates/hydrus-core/src/tag_presentation.rs",
+          "line": 165,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "shared_source",
+          "symbol": "pub fn decimal_digit"
         }
       ],
       "testAnchors": [
         {
           "path": "crates/hydrus-gui-model/tests/model/incremental_tagging.rs",
           "line": 12,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "reference_replay",
           "symbol": "fn actual_child_defaults"
         },
         {
           "path": "crates/hydrus-gui/tests/gui/incremental_tagging.rs",
           "line": 17,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_incremental_child"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/incremental_tagging.rs",
+          "line": 133,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "reference_replay",
+          "symbol": "fn initial_start_uses"
         }
       ],
       "referenceRecording": {
         "recorder": {
           "path": "oracle/record_manage_tag_counts_incremental.py",
           "line": 13,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "reference_recorder",
           "symbol": "def record"
         },
         "fixture": {
           "path": "oracle/fixtures/manage_tag_counts_incremental.json",
           "line": 1,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "reference_fixture",
           "symbol": "{"
         },
         "command": "/workspace/parallel/with-oracle python oracle/record_manage_tag_counts_incremental.py",
-        "executedAt": "2026-10-04T20:38:42Z",
+        "executedAt": "2026-10-04T20:48:26Z",
         "environment": "hydrus v688, actual Qt offscreen private basic legacy DB, shared with-oracle lock, activated pyenv Python; synthetic checkpoint tags and folder-log.example-style domains only, no remote requests",
-        "observed": "Three actual DialogEdit/IncrementalTaggingPanel sequences: child Cancel; child Apply then parent Cancel; child Apply then parent Apply. Real text and numeric controls, negative start/step, reverse mapping order, initial numeric inference, exact namespace conflict summaries, remembered reopening and complete DB current tags per file."
+        "observed": "Three actual DialogEdit/IncrementalTaggingPanel sequences: child Cancel; child Apply then parent Cancel; child Apply then parent Apply. Real text and numeric controls, negative start/step, reverse mapping order, initial numeric inference, exact namespace conflict summaries, remembered reopening and complete DB current tags per file. Eleven actual Qt initial-start and zero-step cases: Arabic-Indic, fullwidth, mixed-script, ASCII-vs-Unicode precedence, negative-only/mixed subtags, nondecimal superscript, zero, clamped start and Unicode15.1 Kawi/Nag Mundari digits. Complete68-block Python decimal table recorded."
       }
     }
   ],
@@ -289,7 +304,7 @@
       "source": {
         "path": "crates/hydrus-gui/ui/manage_tags.slint",
         "line": 14,
-        "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+        "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
         "kind": "source",
         "symbol": "export component ManageTagsWindow"
       },
@@ -297,14 +312,14 @@
         {
           "path": "crates/hydrus-gui-model/tests/model/manage_tag_counts.rs",
           "line": 7,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "reference_replay",
           "symbol": "fn deleted_counts"
         },
         {
           "path": "crates/hydrus-gui/tests/gui/manage_tag_counts.rs",
           "line": 37,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "gui_consumer_regression",
           "symbol": "fn thumbnail_dialog"
         }
@@ -326,7 +341,7 @@
       "source": {
         "path": "crates/hydrus-gui/ui/incremental_tagging.slint",
         "line": 3,
-        "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+        "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
         "kind": "source",
         "symbol": "export component"
       },
@@ -334,14 +349,14 @@
         {
           "path": "crates/hydrus-gui-model/tests/model/incremental_tagging.rs",
           "line": 12,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "reference_replay",
           "symbol": "fn actual_child_defaults"
         },
         {
           "path": "crates/hydrus-gui/tests/gui/incremental_tagging.rs",
           "line": 17,
-          "commit": "1e0604546c2a533eca3d050d5138e4c500022543",
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_incremental_child"
         }
@@ -370,10 +385,11 @@
   },
   "validation": {
     "executed": [
-      "actual Python/Qt recorder at 2026-10-04T20:38:42Z",
+      "actual Python/Qt recorder at 2026-10-04T20:48:26Z",
       "cargo fmt --all",
       "git diff --check",
-      "cached Slint source compiler passed, no Cargo build"
+      "cached Slint source compiler passed, no Cargo build",
+      "source-only comparison: native decimal table exactly equals all68 recorded Python3.13 Unicode15.1 decimal zero blocks"
     ],
     "notExecuted": [
       "local Cargo builds/tests or mutation tests"

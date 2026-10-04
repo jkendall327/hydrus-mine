@@ -2831,7 +2831,7 @@ after closure cannot change it. The real Qt recording
 
 Manage Tags' ± Incremental Tagging button now opens an owned child for multi-file
 selections. Namespace, prefix and suffix remember each edit immediately, including
-Cancel; start defaults to the first file's smallest numerical namespace tag,
+Cancel; start defaults to the first file's first decimal subtag in the reference's numeric ordering,
 step defaults to one, and reverse numbers the original selection backwards.
 The preview reports the exact tag sequence and existing namespace conflicts.
 Child Apply adds one tag per original file to the selected service's private

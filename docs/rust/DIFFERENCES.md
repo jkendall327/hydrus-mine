@@ -1888,8 +1888,8 @@ consumer. Repository panels, repository pend/petition choices and parent-level
 uncommitted-change confirmation remain separate inherited Manage Tags gaps.
 Reference numeric controls and additive per-file behavior are retained; native
 rejects out-of-range callback values without changing the preview. Initial-start
-inference currently accepts ASCII decimal subtags; Qt additionally accepts other
-Unicode decimal digits. The ordinary tag-selection parent remains independently
+inference now uses the reference Unicode15.1 decimal values and ASCII-run numeric
+sort keys, including mixed-script digits and skipped negative subtags. The ordinary tag-selection parent remains independently
 assessed; these two features do not complete it. Adding a fresh tag then removing
 it now retains a staged deleted mapping, matching Qt instead of treating that
 sequence as an unchanged draft.
