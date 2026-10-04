@@ -39,7 +39,7 @@ def record(session):
             return clean(panel._directory_picker.GetPath())
         out = {'label': 'Default export directory: ', 'box': 'export folder', 'cases': [], 'browse': []}
         try:
-            for name, stored, entered in [('fallback', None, ''), ('custom', None, custom), ('spaces', custom, ' \t '), ('literal_space', None, custom + ' '), ('portable', 'synthetic exports 日本', None)]:
+            for name, stored, entered in [('fallback', None, ''), ('custom', None, custom), ('spaces', custom, ' \t '), ('literal_space', None, custom + ' '), ('relative', None, 'relative exports'), ('portable', 'synthetic exports 日本', None)]:
                 HC.options['export_path'] = stored
                 panel = O.ExportingPanel(c.gui)
                 panels.append(panel)
