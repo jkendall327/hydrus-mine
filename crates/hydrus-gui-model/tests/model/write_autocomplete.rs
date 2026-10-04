@@ -618,6 +618,9 @@ fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
                     assert_eq!(json!([text]), event["copied"]);
                 }
             }
+            Action::Regenerate { .. } => {
+                panic!("the recorded single-tag menu replay has no maintenance dispatch");
+            }
             Action::Domain(..) | Action::Locations(..) => {
                 panic!("unexpected domain action in tag menu replay");
             }
