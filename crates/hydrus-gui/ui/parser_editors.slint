@@ -62,6 +62,9 @@ export component ParserEditWindow inherits Window {
     in property <bool> selected;
     in property <bool> child-open;
     in property <string> subsidiary-note;
+    in property <[TableRow]> subsidiaries;
+    in property <bool> subsidiary-selected;
+    in-out property <bool> subsidiary-sorted;
     in-out property <string> document;
     in-out property <string> test-url;
     in-out property <string> post-index: "0";
@@ -78,6 +81,7 @@ export component ParserEditWindow inherits Window {
     callback answered(bool);
     callback closed();
     callback force-close();
+    callback subsidiary-clicked(int); callback subsidiary-sort-changed(bool);
     VerticalLayout {
         height: root.height - 52px; padding: 10px; spacing: 8px;
         ScrollView {
@@ -109,6 +113,22 @@ export component ParserEditWindow inherits Window {
                     Button { text: "import parser"; enabled: !root.child-open; clicked => { root.action("import"); } }
                     Button { text: "export parser"; enabled: !root.child-open; clicked => { root.action("export"); } }
                     if !root.page: Button { text: "edit veto string match"; enabled: !root.child-open; clicked => { root.action("match"); } }
+                }
+                if root.page: VerticalLayout {
+                    spacing: 6px;
+                    Text { text: "subsidiary page parsers"; color: Theme.text; }
+                    ListTable {
+                        height: 120px;
+                        columns: [{ title: "name",width: 350px },{ title: "separation formula",width: 420px,stretch: true }];
+                        rows: root.subsidiaries;
+                        row-clicked(i,c,s) => { root.subsidiary-clicked(i); }
+                        row-activated(i) => { root.subsidiary-clicked(i);root.action("separator"); }
+                    }
+                    HorizontalLayout {
+                        spacing: 6px;
+                        Button { text: "edit separation formula"; enabled: root.subsidiary-selected && !root.child-open; clicked => { root.action("separator"); } }
+                        CheckBox { text: "sort posts by source time"; checked <=> root.subsidiary-sorted; enabled: root.subsidiary-selected && !root.child-open; toggled => { root.subsidiary-sort-changed(self.checked); } }
+                    }
                 }
                 if root.subsidiary-note != "": Text { text: root.subsidiary-note; color: Theme.text; wrap: word-wrap; }
                 Text { text: "test document"; color: Theme.text; }

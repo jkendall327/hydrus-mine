@@ -999,6 +999,15 @@ fn recursive_second_formula_can_select_every_transformed_example() {
     sub.set_example(1);
     sub.invoke_example_chosen();
     assert_eq!(labels(&sub.get_results()), ["edited example"]);
+    sub.set_kind(2);
+    sub.invoke_type_chosen();
+    sub.invoke_edit_child(false);
+    let inner = {
+        let sub_slots = slots.child.borrow();
+        child_formula(sub_slots.as_ref().unwrap())
+    };
+    assert_eq!(inner.get_document(), "{\"posts\":[\"edited example\"]}");
+    inner.invoke_cancel();
     sub.invoke_cancel();
     assert_eq!(serde_json::json!(labels(&w.get_results())), case["results"]);
     w.invoke_cancel();

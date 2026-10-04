@@ -114,6 +114,36 @@ def record(session):
             if kind == 'nested': row.update(main_type=type(f.GetMainFormula()).__name__, sub_type=type(f.GetSubFormula()).__name__)
             out.append(row)
             p.deleteLater()
+        from hydrus.client.gui.parsing import ClientGUIParsing as PageGui
+        from hydrus.client.parsing import ClientParsingResults as Results
+        from hydrus.core import HydrusConstants as H
+        raw = '<div class="post"><p> first\n\nsecond </p></div>'
+        content = P.ContentParser(name='note content',content_type=H.CONTENT_TYPE_NOTES,
+            formula=P.ParseFormulaHTML(tag_rules=[P.ParseRuleHTML(tag_name='p')],content_to_fetch=P.HTML_CONTENT_STRING),additional_info='note')
+        child_page = P.PageParser(name='preserved child',content_parsers=[content])
+        separator = P.ParseFormulaHTML(tag_rules=[P.ParseRuleHTML(tag_name='div',tag_attributes={'class':'post'})],content_to_fetch=P.HTML_CONTENT_HTML)
+        subsidiary = P.SubsidiaryPageParser(formula=separator,sort_posts_by_source_time=True,page_parser=child_page)
+        converter = S.StringConverter(conversions=[(S.STRING_CONVERSION_APPEND_TEXT,'<!-- converted -->')])
+        parent_page = P.PageParser(name='parent page',string_converter=converter,subsidiary_page_parsers=[subsidiary])
+        parent_panel = PageGui.EditPageParserPanel(root,parent_page)
+        parent_panel._test_panel._SetExampleData(raw)
+        inherited = parent_panel._test_panel.GetTestDataForChild()
+        panel = PageGui.EditSubsidiaryPageParserPanel(root,subsidiary,test_data=inherited)
+        panel._test_panel._SetExampleData(inherited.texts[0])
+        out.append({'case':'subsidiary_separator','raw':raw,'converted':inherited.texts[0],
+            'collapse':panel._formula._collapse_newlines,
+            'before':panel.GetFormula().Parse(context,inherited.texts[0],False),
+            'sort_before':panel.GetValue().GetSortPostsBySourceTime()})
+        edited = '<p> edited\n\nnote </p>'
+        panel._formula._current_formula = P.ParseFormulaStatic(static_text=edited)
+        panel._sort_posts_by_source_time.setChecked(False)
+        value = panel.GetValue()
+        posts = value.Parse(Results.ParsedPost([]),dict(context),inherited.texts[0])
+        out.append({'case':'subsidiary_separator_edit','text':edited,'name':value.GetPageParser().GetName(),
+            'sort':value.GetSortPostsBySourceTime(),'results':value.GetFormula().Parse(context,inherited.texts[0],False),
+            'post_texts':[[c.parsed_text for c in p.parsed_contents] for p in posts]})
+        panel.deleteLater()
+        parent_panel.deleteLater()
         # Retain a visual reference of the completed nested panel.
         p = G.EditNestedFormulaPanel(root, True, nested, P.ParsingTestData(context,[text]))
         p.resize(1000,700)

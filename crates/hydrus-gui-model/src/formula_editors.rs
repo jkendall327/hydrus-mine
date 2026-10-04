@@ -209,6 +209,9 @@ impl FormulaEditor {
     /// for the second editor. A parse error yields one empty example, as the reference does.
     pub fn child_test_data(&self, address: FormulaChild) -> FormulaTestData {
         let mut test = self.test.clone();
+        if self.example < test.examples.len() {
+            test.examples.rotate_left(self.example);
+        }
         if let (FormulaKind::Nested { main, .. }, FormulaChild::Sub) = (&self.formula.kind, address)
         {
             let inputs = if test.examples.is_empty() {

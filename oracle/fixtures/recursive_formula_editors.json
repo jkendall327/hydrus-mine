@@ -267,5 +267,29 @@
     "processing": [],
     "text": "example text",
     "count": 1
+  },
+  {
+    "case": "subsidiary_separator",
+    "raw": "<div class=\"post\"><p> first\n\nsecond </p></div>",
+    "converted": "<div class=\"post\"><p> first\n\nsecond </p></div><!-- converted -->",
+    "collapse": false,
+    "before": [
+      "<div class=\"post\"><p> first\n\nsecond </p></div>"
+    ],
+    "sort_before": true
+  },
+  {
+    "case": "subsidiary_separator_edit",
+    "text": "<p> edited\n\nnote </p>",
+    "name": "preserved child",
+    "sort": false,
+    "results": [
+      "<p> edited\n\nnote </p>"
+    ],
+    "post_texts": [
+      [
+        "edited\n\nnote"
+      ]
+    ]
   }
 ]

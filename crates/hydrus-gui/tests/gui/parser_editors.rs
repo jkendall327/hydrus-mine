@@ -458,3 +458,159 @@ fn recursive_formula_edits_reach_saved_page_parser_and_consumer() {
     let reopened = Store::open(dir.path()).unwrap();
     assert_eq!(definitions(&reopened), saved);
 }
+
+#[test]
+fn subsidiary_separator_uses_converted_data_preserves_newlines_and_saves() {
+    use hydrus_core::url::strings::{Conversion, StringConverter};
+    use hydrus_gui_model::formula_editors::new_formula;
+    use hydrus_parse::formula::{HtmlContent, HtmlWalk, TagSearch};
+    let (dir, store, slots) = setup();
+    let rendered = headless::init();
+    let cases: Vec<serde_json::Value> = serde_json::from_value(hydrus_testkit::fixture_json(
+        "recursive_formula_editors.json",
+    ))
+    .unwrap();
+    let before = cases
+        .iter()
+        .find(|c| c["case"] == "subsidiary_separator")
+        .unwrap();
+    let after = cases
+        .iter()
+        .find(|c| c["case"] == "subsidiary_separator_edit")
+        .unwrap();
+    let mut initial = definitions(&store);
+    let page = &mut initial.parsers[0];
+    page.content_parsers.clear();
+    page.converter = StringConverter {
+        conversions: vec![Conversion::Append("<!-- converted -->".into())],
+        example: String::new(),
+    };
+    let subsidiary = &mut page.subsidiary[0];
+    subsidiary.parser.name = "preserved child".into();
+    let mut note = new_content();
+    note.name = "note content".into();
+    note.kind = ContentKind::Note {
+        name: "note".into(),
+    };
+    note.formula = new_formula(false);
+    let FormulaKind::Html { rules, content } = &mut note.formula.kind else {
+        panic!()
+    };
+    rules[0].tag_name = Some("p".into());
+    *content = HtmlContent::Text;
+    subsidiary.parser.content_parsers = vec![note];
+    subsidiary.formula = new_formula(false);
+    let FormulaKind::Html { rules, content } = &mut subsidiary.formula.kind else {
+        panic!()
+    };
+    rules[0].tag_name = Some("div".into());
+    rules[0].walk = HtmlWalk::Descendants(TagSearch {
+        attrs: vec![("class".into(), "post".into())],
+        index: None,
+    });
+    *content = HtmlContent::Html;
+    let original = initial.clone();
+    store
+        .write_and_refresh(move |ctx| settings::set(ctx.conn(), &initial))
+        .unwrap();
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.set_document(before["raw"].as_str().unwrap().into());
+    assert_eq!(page.get_subsidiaries().row_count(), 1);
+    page.invoke_subsidiary_clicked(0);
+    assert!(page.get_subsidiary_sorted());
+    page.invoke_action("separator".into());
+    let formula = slots
+        .formula
+        .formula
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        formula.get_document(),
+        before["converted"].as_str().unwrap()
+    );
+    assert!(formula.get_newline_note().contains("not collapsed"));
+    assert_eq!(
+        serde_json::json!(formula_results(&formula)),
+        before["before"]
+    );
+    formula.set_kind(5);
+    formula.invoke_type_chosen();
+    formula.set_static_text("discarded".into());
+    formula.invoke_cancel();
+    assert_eq!(definitions(&store), original);
+    page.invoke_action("separator".into());
+    let formula = slots
+        .formula
+        .formula
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(formula.get_kind(), 0);
+    formula.set_kind(5);
+    formula.invoke_type_chosen();
+    formula.set_static_text(after["text"].as_str().unwrap().into());
+    formula.invoke_changed();
+    assert_eq!(
+        serde_json::json!(formula_results(&formula)),
+        after["results"]
+    );
+    page.invoke_subsidiary_sort_changed(false);
+    page.invoke_action("apply".into());
+    assert!(slots.page.borrow().is_some());
+    assert_eq!(definitions(&store), original);
+    formula.invoke_apply();
+    page.invoke_subsidiary_sort_changed(after["sort"].as_bool().unwrap());
+    assert!(!page.get_subsidiary_sorted());
+    screenshot(&rendered, 1, "subsidiary-separator-owner.png", &page);
+    page.invoke_action("test".into());
+    assert!(
+        page.get_preview().contains("edited\n\nnote"),
+        "{}",
+        page.get_preview()
+    );
+    page.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    let saved = definitions(&store);
+    assert_eq!(
+        saved.parsers[0].subsidiary[0].parser,
+        original.parsers[0].subsidiary[0].parser
+    );
+    assert!(!saved.parsers[0].subsidiary[0].sort_by_source_time);
+    let mut context = Default::default();
+    let posts = saved.parsers[0]
+        .parse(&mut context, before["raw"].as_str().unwrap())
+        .unwrap();
+    let texts = posts
+        .iter()
+        .map(|post| {
+            post.contents
+                .iter()
+                .map(|content| content.text.clone())
+                .collect::<Vec<_>>()
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(serde_json::json!(texts), after["post_texts"]);
+    drop(store);
+    let reopened = Store::open(dir.path()).unwrap();
+    assert_eq!(definitions(&reopened), saved);
+}
+fn formula_results(formula: &hydrus_gui::FormulaWindow) -> Vec<String> {
+    (0..formula.get_results().row_count())
+        .map(|i| {
+            formula
+                .get_results()
+                .row_data(i)
+                .unwrap()
+                .cells
+                .row_data(0)
+                .unwrap()
+                .to_string()
+        })
+        .collect()
+}
