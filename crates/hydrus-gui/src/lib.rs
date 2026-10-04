@@ -690,6 +690,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             });
         }
     });
+    tab_presentation::bind_tree(window, &pages);
     // the page chooser, while open
     let chooser: Rc<RefCell<Option<page_chooser::PageChooser>>> = Rc::default();
     let show_chooser = {

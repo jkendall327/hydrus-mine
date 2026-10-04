@@ -1,0 +1,500 @@
+{
+  "steps": [
+    {
+      "action": "initial",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "inner"
+      ],
+      "current": "gamma",
+      "shown": "gamma"
+    },
+    {
+      "action": "expand all",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "current": "gamma",
+      "shown": "gamma"
+    },
+    {
+      "action": "click beta",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "current": "beta",
+      "shown": "gamma"
+    },
+    {
+      "action": "activate beta",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "current": "beta",
+      "shown": "beta"
+    },
+    {
+      "action": "Down",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "current": "gamma",
+      "shown": "beta"
+    },
+    {
+      "action": "Return",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "current": "gamma",
+      "shown": "gamma"
+    },
+    {
+      "action": "Left",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "omega"
+      ],
+      "current": "gamma",
+      "shown": "gamma"
+    },
+    {
+      "action": "Left",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "omega"
+      ],
+      "current": "inner",
+      "shown": "gamma"
+    },
+    {
+      "action": "Right",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "omega"
+      ],
+      "current": "beta",
+      "shown": "gamma"
+    },
+    {
+      "action": "Right",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "omega"
+      ],
+      "current": "beta",
+      "shown": "gamma"
+    },
+    {
+      "action": "End",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "omega"
+      ],
+      "current": "omega",
+      "shown": "gamma"
+    },
+    {
+      "action": "Home",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "omega"
+      ],
+      "current": "alpha",
+      "shown": "gamma"
+    },
+    {
+      "action": "select inner",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "omega"
+      ],
+      "current": "inner",
+      "shown": "gamma"
+    },
+    {
+      "action": "collapse inner",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "beta",
+        "omega"
+      ],
+      "current": "inner",
+      "shown": "gamma"
+    },
+    {
+      "action": "collapse alpha",
+      "visible": [
+        "alpha",
+        "omega"
+      ],
+      "expanded": [
+        "one",
+        "beta",
+        "omega"
+      ],
+      "current": "alpha",
+      "shown": "gamma"
+    },
+    {
+      "action": "expand alpha retains inner collapse",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "beta",
+        "omega"
+      ],
+      "current": "alpha",
+      "shown": "gamma"
+    },
+    {
+      "action": "expand inner",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "omega"
+      ],
+      "current": "alpha",
+      "shown": "gamma"
+    },
+    {
+      "action": "collapse parent retains inner expansion",
+      "visible": [
+        "alpha",
+        "omega"
+      ],
+      "expanded": [
+        "one",
+        "inner",
+        "beta",
+        "omega"
+      ],
+      "current": "alpha",
+      "shown": "gamma"
+    },
+    {
+      "action": "expand parent",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "omega"
+      ],
+      "current": "alpha",
+      "shown": "gamma"
+    },
+    {
+      "action": "double click beta",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "omega"
+      ],
+      "current": "beta",
+      "shown": "beta"
+    },
+    {
+      "action": "collapse all",
+      "visible": [
+        "alpha",
+        "omega"
+      ],
+      "expanded": [],
+      "current": "beta",
+      "shown": "beta"
+    },
+    {
+      "action": "Up",
+      "visible": [
+        "alpha",
+        "omega"
+      ],
+      "expanded": [],
+      "current": "alpha",
+      "shown": "beta"
+    },
+    {
+      "action": "Down",
+      "visible": [
+        "alpha",
+        "omega"
+      ],
+      "expanded": [],
+      "current": "omega",
+      "shown": "beta"
+    },
+    {
+      "action": "show gamma reveals ancestors",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "inner"
+      ],
+      "current": "gamma",
+      "shown": "gamma"
+    },
+    {
+      "action": "expand all again",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "current": "gamma",
+      "shown": "gamma"
+    },
+    {
+      "action": "click inner disclosure",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "current": "gamma",
+      "shown": "gamma"
+    },
+    {
+      "action": "double click inner",
+      "visible": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "expanded": [
+        "alpha",
+        "one",
+        "inner",
+        "beta",
+        "gamma",
+        "omega"
+      ],
+      "current": "inner",
+      "shown": "gamma"
+    }
+  ],
+  "limits": [
+    "default collapse-child option false",
+    "single selection; no drag/drop, context, filters, history or cog actions"
+  ]
+}
