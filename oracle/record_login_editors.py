@@ -140,7 +140,9 @@ def record(session):
         step_states.append({'do': 'request fields', 'state': step_state()})
         step_panel.deleteLater()
         arguments_panel = G.EditLoginStepPanel(gui, first)
-        argument_states = [{'state': arguments_panel.GetValue().GetSerialisableTuple()}]
+        def argument_rows():
+            return {'credential': table(arguments_panel._required_credentials._listctrl), 'static': table(arguments_panel._static_args._listctrl), 'temporary': table(arguments_panel._temp_args._listctrl)}
+        argument_states = [{'state': arguments_panel.GetValue().GetSerialisableTuple(), 'rows': argument_rows()}]
         prompts = []
         input_answers = []
         def enter(parent, message, **kwargs):
@@ -156,7 +158,7 @@ def record(session):
             input_answers[:] = values; prompts.clear()
             if action == 'add': control._Add()
             else: control._Edit()
-            argument_states.append({'kind': kind, 'action': action, 'answers': values, 'prompts': list(prompts), 'state': arguments_panel.GetValue().GetSerialisableTuple()})
+            argument_states.append({'kind': kind, 'action': action, 'answers': values, 'prompts': list(prompts), 'state': arguments_panel.GetValue().GetSerialisableTuple(), 'rows': argument_rows()})
         arguments_panel.deleteLater()
 
         cookie_panel = G.EditLoginScriptPanel(gui, script)

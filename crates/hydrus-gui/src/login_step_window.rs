@@ -74,27 +74,54 @@ fn show(window: &LoginStepWindow, editor: &StepEditor) {
     )));
     window.set_one_selected(selected.len() == 1);
     window.set_any_selected(!selected.is_empty());
-    let variables = [
-        ("credential", &editor.step.credentials),
-        ("static", &editor.step.static_args),
-        ("temporary", &editor.step.temp_args),
-    ]
-    .into_iter()
-    .flat_map(|(kind, values)| {
-        values
+    let mut variables = Vec::new();
+    for kind in [
+        ArgumentKind::Credential,
+        ArgumentKind::Static,
+        ArgumentKind::Temporary,
+    ] {
+        let selected = editor.selected_arguments(kind);
+        let rows = editor
+            .arguments(kind)
             .iter()
-            .map(move |(key, value)| row(vec![kind.into(), key.clone(), value.clone()], false))
-    })
-    .collect::<Vec<_>>();
-    let selected = usize::try_from(window.get_variable_index()).ok();
-    let variables = variables
-        .into_iter()
-        .enumerate()
-        .map(|(i, mut row)| {
-            row.selected = selected == Some(i);
-            row
-        })
-        .collect::<Vec<_>>();
+            .map(|(key, value)| row(vec![key.clone(), value.clone()], selected.contains(key)))
+            .collect::<Vec<_>>();
+        variables.extend(editor.arguments(kind).iter().map(|(key, value)| {
+            row(
+                vec![
+                    match kind {
+                        ArgumentKind::Credential => "credential",
+                        ArgumentKind::Static => "static",
+                        ArgumentKind::Temporary => "temporary",
+                    }
+                    .into(),
+                    key.clone(),
+                    value.clone(),
+                ],
+                selected.contains(key),
+            )
+        }));
+        let one = selected.len() == 1;
+        let any = !selected.is_empty();
+        let rows = ModelRc::new(VecModel::from(rows));
+        match kind {
+            ArgumentKind::Credential => {
+                window.set_credential_variables(rows);
+                window.set_credential_one(one);
+                window.set_credential_any(any);
+            }
+            ArgumentKind::Static => {
+                window.set_static_variables(rows);
+                window.set_static_one(one);
+                window.set_static_any(any);
+            }
+            ArgumentKind::Temporary => {
+                window.set_temporary_variables(rows);
+                window.set_temporary_one(one);
+                window.set_temporary_any(any);
+            }
+        }
+    }
     window.set_variables(ModelRc::new(VecModel::from(variables)));
     window.set_cookies(ModelRc::new(VecModel::from(
         editor
@@ -240,9 +267,50 @@ pub fn open(
             let row = usize::try_from(index)
                 .ok()
                 .and_then(|i| editor.borrow().argument_rows().get(i).cloned());
-            *selected.borrow_mut() = row.map(|(kind, key, _)| (kind, key));
+            if let Some((kind, key, _)) = row {
+                let index = editor
+                    .borrow()
+                    .arguments(kind)
+                    .keys()
+                    .position(|value| value == &key)
+                    .unwrap();
+                editor
+                    .borrow_mut()
+                    .select_arguments(kind, index, false, false);
+                window.set_variable_kind(kind.index());
+                *selected.borrow_mut() = Some((kind, key));
+            } else {
+                *selected.borrow_mut() = None;
+            }
             window.set_variable_selected(selected.borrow().is_some());
             window.set_variable_index(index);
+            show(&window, &editor.borrow());
+        }
+    });
+    window.on_argument_clicked({
+        let weak = window.as_weak();
+        let editor = editor.clone();
+        let active = active.clone();
+        let selected = selected_argument.clone();
+        move |kind, index, ctrl, shift| {
+            if !active.get() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if window.get_child_open() || window.get_deleting() || window.get_variable_editing() {
+                return;
+            }
+            let kind = ArgumentKind::from_index(kind);
+            if let Ok(index) = usize::try_from(index) {
+                editor
+                    .borrow_mut()
+                    .select_arguments(kind, index, ctrl, shift);
+            }
+            window.set_variable_kind(kind.index());
+            *selected.borrow_mut() = editor.borrow().selected_argument(kind);
+            window.set_variable_selected(selected.borrow().is_some());
             show(&window, &editor.borrow());
         }
     });
@@ -330,7 +398,26 @@ pub fn open(
             {
                 return;
             }
-            match action.as_str() {
+            let mapped = match action.as_str() {
+                "add-credential" => Some((0, "add-variable")),
+                "edit-credential" => Some((0, "edit-variable")),
+                "delete-credential" => Some((0, "delete-variable")),
+                "add-static" => Some((1, "add-variable")),
+                "edit-static" => Some((1, "edit-variable")),
+                "delete-static" => Some((1, "delete-variable")),
+                "add-temporary" => Some((2, "add-variable")),
+                "edit-temporary" => Some((2, "edit-variable")),
+                "delete-temporary" => Some((2, "delete-variable")),
+                _ => None,
+            };
+            if let Some((kind, _)) = mapped {
+                window.set_variable_kind(kind);
+                *selected_argument.borrow_mut() = editor
+                    .borrow()
+                    .selected_argument(ArgumentKind::from_index(kind));
+            }
+            let action = mapped.map_or(action.as_str(), |(_, action)| action);
+            match action {
                 "cookies" => {
                     let values = editor.borrow().step.required_cookies.clone();
                     let accepted: crate::login_cookies_window::Applied = Rc::new({
@@ -371,7 +458,11 @@ pub fn open(
                         return;
                     }
                     window.set_variable_existing(selected.is_some());
-                    window.set_variable_kind(selected.as_ref().map_or(1, |(kind, _)| kind.index()));
+                    window.set_variable_kind(
+                        selected
+                            .as_ref()
+                            .map_or(window.get_variable_kind(), |(kind, _)| kind.index()),
+                    );
                     window.set_variable_key(
                         selected.as_ref().map_or("", |(_, key)| key.as_str()).into(),
                     );
@@ -413,7 +504,11 @@ pub fn open(
                     window.set_error("".into());
                 }
                 "delete-variable" => {
-                    if selected_argument.borrow().is_some() {
+                    if !editor
+                        .borrow()
+                        .selected_arguments(ArgumentKind::from_index(window.get_variable_kind()))
+                        .is_empty()
+                    {
                         deleting_argument.set(true);
                         window.set_deleting(true);
                     }
@@ -432,11 +527,12 @@ pub fn open(
                 }
                 "confirm-delete" => {
                     if deleting_argument.replace(false) {
-                        if let Some((kind, key)) = selected_argument.borrow_mut().take() {
-                            editor.borrow_mut().remove_argument(kind, &key);
-                            window.set_variable_selected(false);
-                            window.set_variable_index(-1);
-                        }
+                        editor
+                            .borrow_mut()
+                            .delete_arguments(ArgumentKind::from_index(window.get_variable_kind()));
+                        selected_argument.borrow_mut().take();
+                        window.set_variable_selected(false);
+                        window.set_variable_index(-1);
                     } else {
                         editor.borrow_mut().delete();
                     }

@@ -1066,3 +1066,110 @@ fn shared_cookie_list_owns_matchers_and_stages_both_script_and_step_consumers() 
     list.invoke_action("cancel".into());
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
 }
+
+fn string_table(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> serde_json::Value {
+    serde_json::json!(
+        (0..rows.row_count())
+            .map(|i| {
+                let cells = rows.row_data(i).unwrap().cells;
+                (0..cells.row_count())
+                    .map(|j| cells.row_data(j).unwrap().to_string())
+                    .collect::<Vec<_>>()
+            })
+            .collect::<Vec<_>>()
+    )
+}
+#[test]
+fn step_shows_three_reference_argument_lists_with_independent_selection_and_pinned_footer() {
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let state = fixture["argument_states"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap();
+    let step = legacy::login_step(
+        &SerialisableObject::from_tuple_str(&state["state"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let (_dir, store, _manager) = store();
+    let rendered = headless::init();
+    let slots = hydrus_gui::login_step_window::Slots::default();
+    let accepted = Rc::new(RefCell::new(None));
+    let window = hydrus_gui::login_step_window::open(
+        &store,
+        &step,
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |step| {
+                *accepted.borrow_mut() = Some(step);
+                Ok(())
+            }
+        }),
+    )
+    .unwrap();
+    assert_eq!(
+        string_table(&window.get_credential_variables()),
+        state["rows"]["credential"]
+    );
+    assert_eq!(
+        string_table(&window.get_static_variables()),
+        state["rows"]["static"]
+    );
+    assert_eq!(
+        string_table(&window.get_temporary_variables()),
+        state["rows"]["temporary"]
+    );
+    window.invoke_argument_clicked(0, 0, false, false);
+    window.invoke_argument_clicked(1, 0, false, false);
+    window.invoke_argument_clicked(1, 1, true, false);
+    window.invoke_argument_clicked(2, 0, false, false);
+    assert!(window.get_credential_one());
+    assert!(window.get_static_any());
+    assert!(!window.get_static_one());
+    assert!(window.get_temporary_one());
+    window.invoke_action("delete-static".into());
+    assert!(window.get_deleting());
+    window.invoke_action("back".into());
+    assert_eq!(window.get_static_variables().row_count(), 2);
+    window.invoke_action("delete-static".into());
+    window.invoke_action("confirm-delete".into());
+    assert_eq!(window.get_static_variables().row_count(), 0);
+    assert!(
+        window
+            .get_credential_variables()
+            .row_data(0)
+            .unwrap()
+            .selected
+    );
+    assert!(
+        window
+            .get_temporary_variables()
+            .row_data(0)
+            .unwrap()
+            .selected
+    );
+    window.invoke_action("add-credential".into());
+    assert_eq!(window.get_variable_kind(), 0);
+    window.invoke_action("cancel-variable".into());
+    let pixels = headless::render(&rendered.get(0).unwrap(), 880, 680);
+    assert!(window.get_footer_y() > 0.0);
+    assert!(window.get_footer_y() + window.get_footer_height() <= 680.0);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("login_step_three_arguments.png"),
+        &pixels,
+        880,
+        680,
+    )
+    .unwrap();
+    window.invoke_action("apply".into());
+    assert!(accepted.borrow().as_ref().unwrap().static_args.is_empty());
+    assert_eq!(
+        accepted.borrow().as_ref().unwrap().credentials,
+        step.credentials
+    );
+    assert_eq!(
+        accepted.borrow().as_ref().unwrap().temp_args,
+        step.temp_args
+    );
+}

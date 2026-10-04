@@ -1039,23 +1039,17 @@ notebook pages. The reference watcher policy and toggle resets are replayed from
 `oracle/fixtures/clipboard_urls.json`.
 
 Login script types, bounded JSON/PNG interchange and credential/temporary-variable
-validation are available through the native login script list and credential
-definition/entry windows. Native script management stages changes until Apply;
-questions appear inline instead of in Qt modal dialogs. Credential checks in the
-script window validate the entered values without making network requests. Step request
-identity and VARIABLE/VETO response parsers are editable; request argument
-dictionaries and cookie requirements remain read-only. Script cookie/example-domain
-editing, domain add/script-choice and session-status/reset controls, test results and HTTP
-global cookie/example-domain editors remain unimplemented. Existing domain credentials are editable
-from the native menu; accepted edits reproduce validity/delay/activation behavior
-and wait for domain Apply. The domain list currently omits logged-in cookie status
-and uses a raw expiry timestamp for a future delay. Native map storage does not
-preserve arbitrary imported credential dictionary iteration order; credential
-entry and its first validation error follow the recorded normal-before-hidden
-control order. Full preserved domain credentials are
-loaded without discarding their fields, and script-list Apply preserves concurrent
-domain changes. Requests continue using their existing cookies until a login
-execution consumer is implemented.
+validation are available through native script, step and credential editors.
+Script/domain edits wait for parent Apply; advisory questions appear inline.
+Request arguments, cookie matchers and VARIABLE/VETO response parsers are editable
+and used by actual HTTP script tests and confirmed domain attempts. Script
+example-domain editing, domain add/script-choice and session-status/reset controls
+remain absent. Domain credentials reproduce validity/delay/activation behavior;
+the domain list omits logged-in cookie expiry and displays future delays as raw
+timestamps. Imported credential maps do not retain arbitrary dictionary iteration
+order; entry checks follow the recorded normal-before-hidden control order.
+Full preserved credentials are loaded without discarding fields; independent
+script/domain Apply preserves concurrent edits to the other half of preferences.
 
 ## Network session and HTTP-header management
 
@@ -1428,12 +1422,11 @@ The large-session warning uses the native popup stack with the exact reference
 text and once-per-boot allowance. Active weight is checked by the one-second
 session monitor; the reference checks when its page-count menu becomes dirty.
 
-Login step argument maps use one combined list and an inline detached row editor;
-the reference has three lists and sequential text questions. Native argument-row
-selection is single-row, and deletion asks before removing that row. Existing
-credential/static/temporary dictionary precedence and duplicate-name/blank-value
-semantics match the reference. Step/global cookie matcher and example-domain
-editors remain incomplete, so broad login script/step pages stay partial.
+Login step argument maps now have three independent extended-selection lists, as
+in the reference. Native row editing uses an inline detached key/value pair;
+the reference asks sequential text questions. Both reject duplicate/nonblank-key
+violations and allow blank values, preserve dictionary precedence and support
+confirmed deletion. The scrollable native body keeps its footer visible.
 
 Subscription import-options favourites have reference menu actions and overwrite
 semantics through the native shared editors. Their warnings use the existing
@@ -1446,7 +1439,7 @@ with a staged row and separate name/value matcher buttons; the reference embeds
 the list and asks sequential matcher dialogs. Independent matcher objects with
 identical descriptions remain distinct, as in Python. Explicit matcher edits
 canonicalize their unused auxiliary matcher values. Script example-domain editing
-and the step argument list topology/extended-selection gap remain outstanding.
+remains outstanding; the three argument-list topology and selection gap is closed.
 Startup recovery uses the native session-question window and a native GUI running
 marker rather than the reference controller's process marker. Choosing blank
 keeps the configured startup name for the next boot. Native importer workers

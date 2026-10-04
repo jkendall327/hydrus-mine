@@ -391,3 +391,40 @@ fn cookie_requirements_match_real_qt_pair_edits_cancel_and_duplicate_looking_key
     assert_eq!(editor.rows.len(), 1);
     assert!(editor.selection.is_empty());
 }
+
+#[test]
+fn three_argument_lists_keep_independent_extended_selection_and_bulk_deletion() {
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let state = fixture["argument_states"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap();
+    let step = legacy::login_step(
+        &SerialisableObject::from_tuple_str(&state["state"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let mut editor = StepEditor::new(&step);
+    editor.select_arguments(ArgumentKind::Credential, 0, false, false);
+    editor.select_arguments(ArgumentKind::Static, 0, false, false);
+    editor.select_arguments(ArgumentKind::Static, 1, true, false);
+    editor.select_arguments(ArgumentKind::Temporary, 0, false, false);
+    assert_eq!(
+        editor.selected_arguments(ArgumentKind::Credential),
+        ["account"]
+    );
+    assert_eq!(
+        editor.selected_arguments(ArgumentKind::Static),
+        ["empty", "lang"]
+    );
+    assert_eq!(editor.selected_arguments(ArgumentKind::Temporary), ["csrf"]);
+    editor.delete_arguments(ArgumentKind::Static);
+    assert!(editor.step.static_args.is_empty());
+    assert_eq!(
+        editor.selected_arguments(ArgumentKind::Credential),
+        ["account"]
+    );
+    assert_eq!(editor.selected_arguments(ArgumentKind::Temporary), ["csrf"]);
+    assert_eq!(editor.step.credentials, step.credentials);
+    assert_eq!(editor.step.temp_args, step.temp_args);
+}

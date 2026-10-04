@@ -1650,8 +1650,9 @@ scheme, method, optional subdomain and path, with the reference subdomain/path
 cleanup. Its response content list supports extended selection, unique named
 VARIABLE/VETO nodes, shared formula/live preview, delete confirmation and reviewed
 JSON/PNG exchange. Parent cancellation discards every nested formula/parser.
-Request argument dictionaries, required-cookie matchers and script example-domain
-rows are preserved and shown, but remain read-only in this slice.
+Credential/static/temporary argument dictionaries and required-cookie matchers
+are editable and consumed by real HTTP attempts. Script example-domain rows are
+preserved and shown; their editor is still absent.
 
 ## Network sessions and HTTP headers
 
@@ -2188,11 +2189,12 @@ object-import action.
 PNG export headers also render on installations without system fonts using a
 bundled Open Sans fallback with its Apache 2.0 licence and copyright notice.
 
-Login step request arguments are editable in the combined credential/static/temporary
-list. Add or edit selects the dictionary and stages its key/value pair; keys are
+Login step request arguments use three independent lists for credentials, static
+variables and temporary variables. Each has extended selection and add/edit/delete
+controls. Editing stages its key/value pair; keys are
 nonblank and unique within that dictionary, while values can be blank. Rename,
-confirmed deletion, row Cancel and parent Cancel preserve the expected draft
-boundaries. The loopback consumer regression edits a static query argument through
+confirmed bulk deletion within that dictionary, row Cancel and parent Cancel
+preserve the expected draft boundaries. The body scrolls and the footer stays visible. The loopback consumer regression edits a static query argument through
 the native step window and observes it on the actual HTTP request.
 
 Subscription import-options favourites now use the shared star menu. Loading

@@ -191,12 +191,14 @@ pub fn script_warning(script: &LoginScript) -> Option<String> {
 pub struct StepEditor {
     pub step: hydrus_parse::login::LoginStep,
     pub selection: ListSelection<usize>,
+    pub argument_selection: [ListSelection<usize>; 3],
 }
 impl StepEditor {
     pub fn new(step: &hydrus_parse::login::LoginStep) -> Self {
         Self {
             step: step.clone(),
             selection: ListSelection::default(),
+            argument_selection: std::array::from_fn(|_| ListSelection::default()),
         }
     }
     pub fn order(&self) -> Vec<usize> {
@@ -428,10 +430,35 @@ impl StepEditor {
             values.remove(old);
         }
         values.insert(key, value);
+        self.argument_selection[kind.index() as usize].select_only(None);
         Ok(())
     }
     pub fn remove_argument(&mut self, kind: ArgumentKind, key: &str) {
         self.arguments_mut(kind).remove(key);
+        self.argument_selection[kind.index() as usize].select_only(None);
+    }
+    pub fn select_arguments(&mut self, kind: ArgumentKind, index: usize, ctrl: bool, shift: bool) {
+        let order = (0..self.arguments(kind).len()).collect::<Vec<_>>();
+        self.argument_selection[kind.index() as usize].click(&order, index, ctrl, shift);
+    }
+    pub fn selected_argument(&self, kind: ArgumentKind) -> Option<(ArgumentKind, String)> {
+        self.argument_selection[kind.index() as usize]
+            .one()
+            .and_then(|index| self.arguments(kind).keys().nth(index).cloned())
+            .map(|key| (kind, key))
+    }
+    pub fn selected_arguments(&self, kind: ArgumentKind) -> Vec<String> {
+        let order = (0..self.arguments(kind).len()).collect::<Vec<_>>();
+        self.argument_selection[kind.index() as usize]
+            .in_order(&order)
+            .into_iter()
+            .filter_map(|i| self.arguments(kind).keys().nth(i).cloned())
+            .collect()
+    }
+    pub fn delete_arguments(&mut self, kind: ArgumentKind) {
+        for key in self.selected_arguments(kind) {
+            self.remove_argument(kind, &key);
+        }
     }
     pub fn argument_rows(&self) -> Vec<(ArgumentKind, String, String)> {
         [
