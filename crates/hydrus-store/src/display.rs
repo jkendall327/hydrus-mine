@@ -316,16 +316,17 @@ pub fn load_application(conn: &Connection, services: &ServiceRegistry) -> Result
     })?;
     for row in rows {
         let (display, kind, source) = row?;
-        // relations of deleted services no longer apply
-        if services.get(source).is_err() {
-            continue;
-        }
         let map = if kind == RelationKind::Siblings as u8 {
             &mut app.siblings
         } else {
             &mut app.parents
         };
-        map.entry(display).or_default().push(source);
+        let queue = map.entry(display).or_default();
+        // Zero records an explicitly empty application queue. Deleted source
+        // services also leave an empty queue, rather than restoring self.
+        if source != ServiceId(0) && services.get(source).is_ok() {
+            queue.push(source);
+        }
     }
     Ok(app)
 }

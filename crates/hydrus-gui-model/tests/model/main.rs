@@ -51,3 +51,5 @@ mod services_review;
 mod tag_relationships;
 
 mod services_editor;
+
+mod tag_display;

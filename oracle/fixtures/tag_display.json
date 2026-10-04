@@ -1,0 +1,275 @@
+{
+  "labels": [
+    "display",
+    "Tag filter for single file views: ",
+    "Tag filter for multiple file views: ",
+    "autocomplete",
+    "The settings that permit searching namespaces and expansive \"*\" queries can be very expensive on a large client and may cause problems!",
+    "Fetch results as you type: ",
+    "Do-not-autocomplete character threshold: ",
+    "characters",
+    "Override default autocomplete file domain in _manage tags_: ",
+    "Default autocomplete location in _manage tags_: ",
+    "Default autocomplete tag domain in _manage tags_: ",
+    "Search namespaces with normal input: ",
+    "Unnamespaced input gives (any namespace) wildcard results: ",
+    "Allow \"namespace:\": ",
+    "Allow \"namespace:*\": ",
+    "Allow \"*\": ",
+    "This is just one tag service. You most often search a specific tag service in the manage tags dialog.",
+    "display",
+    "Tag filter for single file views: ",
+    "Tag filter for multiple file views: ",
+    "autocomplete",
+    "The settings that permit searching namespaces and expansive \"*\" queries can be very expensive on a large client and may cause problems!",
+    "Fetch results as you type: ",
+    "Do-not-autocomplete character threshold: ",
+    "characters",
+    "Override default autocomplete file domain in _manage tags_: ",
+    "Default autocomplete location in _manage tags_: ",
+    "Default autocomplete tag domain in _manage tags_: ",
+    "Search namespaces with normal input: ",
+    "Unnamespaced input gives (any namespace) wildcard results: ",
+    "Allow \"namespace:\": ",
+    "Allow \"namespace:*\": ",
+    "Allow \"*\": ",
+    "This is just one tag service. You most often search a specific tag service in the manage tags dialog.",
+    "display",
+    "Tag filter for single file views: ",
+    "Tag filter for multiple file views: ",
+    "autocomplete",
+    "The settings that permit searching namespaces and expansive \"*\" queries can be very expensive on a large client and may cause problems!",
+    "Fetch results as you type: ",
+    "Do-not-autocomplete character threshold: ",
+    "characters",
+    "Override default autocomplete file domain in _manage tags_: ",
+    "Default autocomplete location in _manage tags_: ",
+    "Default autocomplete tag domain in _manage tags_: ",
+    "Search namespaces with normal input: ",
+    "Unnamespaced input gives (any namespace) wildcard results: ",
+    "Allow \"namespace:\": ",
+    "Allow \"namespace:*\": ",
+    "Allow \"*\": ",
+    "This is just one tag service. You most often search a specific tag service in the manage tags dialog.",
+    "display",
+    "Tag filter for single file views: ",
+    "Tag filter for multiple file views: ",
+    "autocomplete",
+    "The settings that permit searching namespaces and expansive \"*\" queries can be very expensive on a large client and may cause problems!",
+    "Fetch results as you type: ",
+    "Do-not-autocomplete character threshold: ",
+    "characters",
+    "Override default autocomplete file domain in _manage tags_: ",
+    "Default autocomplete location in _manage tags_: ",
+    "Default autocomplete tag domain in _manage tags_: ",
+    "Search namespaces with normal input: ",
+    "Unnamespaced input gives (any namespace) wildcard results: ",
+    "Allow \"namespace:\": ",
+    "Allow \"namespace:*\": ",
+    "Allow \"*\": ",
+    "This is just one tag service. You most often search a specific tag service in the manage tags dialog.",
+    "display",
+    "Tag filter for single file views: ",
+    "Tag filter for multiple file views: ",
+    "autocomplete",
+    "The settings that permit searching namespaces and expansive \"*\" queries can be very expensive on a large client and may cause problems!",
+    "Fetch results as you type: ",
+    "Do-not-autocomplete character threshold: ",
+    "characters",
+    "Search namespaces with normal input: ",
+    "Unnamespaced input gives (any namespace) wildcard results: ",
+    "Allow \"namespace:\": ",
+    "Allow \"namespace:*\": ",
+    "Allow \"*\": ",
+    "These options apply to all tag services, or to where the tag domain is \"all known tags\".\n\nThis tag domain is the union of all other services, so it can be more computationally expensive. You most often see it on new search pages."
+  ],
+  "services": [
+    "downloader tags",
+    "my tags",
+    "second tags",
+    "a tag repository"
+  ],
+  "autocomplete_steps": [
+    {
+      "step": "default",
+      "value": [
+        "646f776e6c6f616465722074616773",
+        "646f776e6c6f616465722074616773",
+        true,
+        [
+          103,
+          1,
+          [
+            [
+              "616c6c206b6e6f776e2066696c6573"
+            ],
+            []
+          ]
+        ],
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        2
+      ],
+      "namespace_enabled": [
+        true,
+        true
+      ]
+    },
+    {
+      "step": "search namespaces",
+      "value": [
+        "646f776e6c6f616465722074616773",
+        "646f776e6c6f616465722074616773",
+        true,
+        [
+          103,
+          1,
+          [
+            [
+              "616c6c206b6e6f776e2066696c6573"
+            ],
+            []
+          ]
+        ],
+        true,
+        false,
+        true,
+        true,
+        false,
+        true,
+        2
+      ],
+      "namespace_enabled": [
+        false,
+        false
+      ]
+    },
+    {
+      "step": "any namespace",
+      "value": [
+        "646f776e6c6f616465722074616773",
+        "646f776e6c6f616465722074616773",
+        true,
+        [
+          103,
+          1,
+          [
+            [
+              "616c6c206b6e6f776e2066696c6573"
+            ],
+            []
+          ]
+        ],
+        false,
+        true,
+        true,
+        true,
+        false,
+        true,
+        2
+      ],
+      "namespace_enabled": [
+        true,
+        false
+      ]
+    },
+    {
+      "step": "manual fetch, always autocomplete",
+      "value": [
+        "646f776e6c6f616465722074616773",
+        "646f776e6c6f616465722074616773",
+        true,
+        [
+          103,
+          1,
+          [
+            [
+              "616c6c206b6e6f776e2066696c6573"
+            ],
+            []
+          ]
+        ],
+        false,
+        true,
+        true,
+        true,
+        false,
+        false,
+        null
+      ],
+      "namespace_enabled": [
+        true,
+        false
+      ]
+    }
+  ],
+  "application_labels": [
+    "THIS IS COMPLICATED, THINK CAREFULLY",
+    "While a tag service normally only applies its own siblings and parents to itself, it does not have to. You can have other services' rules apply (e.g. putting the PTR's siblings on your \"my tags\"), or no siblings/parents at all.\n\nIf you apply multiple services and there are conflicts (e.g. disagreements on where siblings go, or loops), the services at the top of the list have precedence. If you want to overwrite some PTR rules, then make what you want on a local service and then put it above the PTR here. Also, siblings apply first, then parents.\n\nIf you make big changes here, it will take a long time for the client to recalculate everything. Sibling and parent chains will be broken apart and rearranged live, and for a brief period, some sibling or parent suggestions or presentation may be unusual. Check the sync progress panel under _tags->sync->review current sibling/parent sync_ to see how it is going. If your client gets too laggy doing the recalc, turn it off during \"normal time\".",
+    "Siblings and parents are set to sync all the time. Changes will start applying as soon as you ok this dialog.",
+    "sibling application",
+    "parent application",
+    "sibling application",
+    "parent application",
+    "sibling application",
+    "parent application",
+    "sibling application",
+    "parent application"
+  ],
+  "application_initial": {
+    "siblings": {
+      "646f776e6c6f616465722074616773": [
+        "646f776e6c6f616465722074616773",
+        "6c6f63616c2074616773",
+        "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+        "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67"
+      ],
+      "6c6f63616c2074616773": [],
+      "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0": [],
+      "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67": []
+    },
+    "parents": {
+      "646f776e6c6f616465722074616773": [],
+      "6c6f63616c2074616773": [],
+      "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0": [],
+      "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67": []
+    }
+  },
+  "application_reordered": {
+    "siblings": {
+      "646f776e6c6f616465722074616773": [
+        "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67",
+        "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+        "6c6f63616c2074616773",
+        "646f776e6c6f616465722074616773"
+      ],
+      "6c6f63616c2074616773": [],
+      "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0": [],
+      "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67": []
+    },
+    "parents": {
+      "646f776e6c6f616465722074616773": [],
+      "6c6f63616c2074616773": [],
+      "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0": [],
+      "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67": []
+    }
+  },
+  "application_empty": {
+    "siblings": {
+      "646f776e6c6f616465722074616773": [],
+      "6c6f63616c2074616773": [],
+      "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0": [],
+      "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67": []
+    },
+    "parents": {
+      "646f776e6c6f616465722074616773": [],
+      "6c6f63616c2074616773": [],
+      "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0": [],
+      "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67": []
+    }
+  }
+}

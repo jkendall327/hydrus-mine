@@ -1415,3 +1415,10 @@ the main page refreshes its tags. `oracle/record_tag_relationships.py` records
 the reference panels' labels and local/remote action-context transitions;
 model replay, snapshot/count rollback checks, and real-store menu/window tests
 cover the implementation.
+
+Tag display configuration now has a typed staged model for per-service single
+file/selection filters, autocomplete query rules and widget defaults, and ordered
+sibling/parent source queues (`hydrus-gui-model/src/tag_display.rs`). Applying
+commits settings, changed display graphs and derived counts atomically. Empty
+application queues survive reopening and daemon refresh. The real reference
+panels and checkbox interlocks are recorded in `oracle/record_tag_display.py`.
