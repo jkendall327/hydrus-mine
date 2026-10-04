@@ -1,0 +1,203 @@
+{
+  "now": 1700000000,
+  "options": {
+    "minimum": 1,
+    "maximum": 100,
+    "states": [
+      {
+        "given": 1,
+        "value": 1,
+        "saved_before": 1,
+        "saved_after": 1
+      },
+      {
+        "given": 2,
+        "value": 2,
+        "saved_before": 1,
+        "saved_after": 2
+      },
+      {
+        "given": 100,
+        "value": 100,
+        "saved_before": 2,
+        "saved_after": 100
+      },
+      {
+        "given": 0,
+        "value": 1,
+        "saved_before": 100,
+        "saved_after": 1
+      },
+      {
+        "given": 101,
+        "value": 100,
+        "saved_before": 1,
+        "saved_after": 100
+      },
+      {
+        "given": 3,
+        "value": 3,
+        "saved_before": 100,
+        "saved_after": 3
+      }
+    ]
+  },
+  "cases": [
+    {
+      "case": "serial default",
+      "limit": 1,
+      "running": [],
+      "paused": false,
+      "traffic_paused": false,
+      "editing": false,
+      "due": 1699999996,
+      "chosen": "sub 1",
+      "running_after": []
+    },
+    {
+      "case": "full serial",
+      "limit": 1,
+      "running": [
+        "sub 1"
+      ],
+      "paused": false,
+      "traffic_paused": false,
+      "editing": false,
+      "due": 1699999996,
+      "chosen": null,
+      "running_after": [
+        "sub 1"
+      ]
+    },
+    {
+      "case": "second slot natural order",
+      "limit": 2,
+      "running": [
+        "sub 1"
+      ],
+      "paused": false,
+      "traffic_paused": false,
+      "editing": false,
+      "due": 1699999996,
+      "chosen": "sub 2",
+      "running_after": [
+        "sub 1"
+      ]
+    },
+    {
+      "case": "full two slots",
+      "limit": 2,
+      "running": [
+        "sub 1",
+        "sub 2"
+      ],
+      "paused": false,
+      "traffic_paused": false,
+      "editing": false,
+      "due": 1699999996,
+      "chosen": null,
+      "running_after": [
+        "sub 1",
+        "sub 2"
+      ]
+    },
+    {
+      "case": "raise live limit",
+      "limit": 3,
+      "running": [
+        "sub 1",
+        "sub 2"
+      ],
+      "paused": false,
+      "traffic_paused": false,
+      "editing": false,
+      "due": 1699999996,
+      "chosen": "sub 10",
+      "running_after": [
+        "sub 1",
+        "sub 2"
+      ]
+    },
+    {
+      "case": "lower live limit preserves running",
+      "limit": 1,
+      "running": [
+        "sub 1",
+        "sub 2"
+      ],
+      "paused": false,
+      "traffic_paused": false,
+      "editing": false,
+      "due": 1699999996,
+      "chosen": null,
+      "running_after": [
+        "sub 1",
+        "sub 2"
+      ]
+    },
+    {
+      "case": "subscriptions paused",
+      "limit": 3,
+      "running": [
+        "sub 1"
+      ],
+      "paused": true,
+      "traffic_paused": false,
+      "editing": false,
+      "due": 1699999996,
+      "chosen": null,
+      "running_after": [
+        "sub 1"
+      ]
+    },
+    {
+      "case": "traffic paused",
+      "limit": 3,
+      "running": [
+        "sub 1"
+      ],
+      "paused": false,
+      "traffic_paused": true,
+      "editing": false,
+      "due": 1699999996,
+      "chosen": null,
+      "running_after": [
+        "sub 1"
+      ]
+    },
+    {
+      "case": "editing paused",
+      "limit": 3,
+      "running": [],
+      "paused": false,
+      "traffic_paused": false,
+      "editing": true,
+      "due": 1699999996,
+      "chosen": null,
+      "running_after": []
+    },
+    {
+      "case": "due buffer exact boundary",
+      "limit": 3,
+      "running": [],
+      "paused": false,
+      "traffic_paused": false,
+      "editing": false,
+      "due": 1699999997,
+      "chosen": null,
+      "running_after": []
+    },
+    {
+      "case": "due buffer elapsed",
+      "limit": 3,
+      "running": [],
+      "paused": false,
+      "traffic_paused": false,
+      "editing": false,
+      "due": 1699999996,
+      "chosen": "sub 1",
+      "running_after": []
+    }
+  ],
+  "finished_run_buffer": 120
+}

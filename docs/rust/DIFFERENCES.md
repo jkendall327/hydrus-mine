@@ -779,9 +779,13 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   the query at once; the reference edits a copy that the dialogs'
   "apply" keeps or "cancel" drops. A query added in the dialog has no
   logs to open until it is applied. Likewise an import folder's file log.
-- **Subscriptions run one at a time**, as with the reference's default
-  `max_simultaneous_subscriptions`; a higher setting comes across but
-  isn't used yet.
+- **Subscription concurrency** now uses the persisted 1–100 maximum,
+  with the reference's default of one, single-flight subscription IDs,
+  live changes, global pause admission checks and a 120-second finished-run
+  buffer. Native Options and subscription drafts do not pause the daemon
+  merely because an editor is open; the reference subscription manager has
+  a separate pause-for-editing state. Concurrent script/import changes still
+  use the existing optimistic merge boundaries rather than a global editor lock.
 - **Import options that run a program on each imported file are kept but
   not run yet.** The migration warns where they are set (which defaults,
   subscriptions, import folders or downloader pages).

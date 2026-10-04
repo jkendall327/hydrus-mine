@@ -1031,26 +1031,33 @@ fn gug_options(classes: &UrlClasses, percent_twenty_is_space: bool) -> GugOption
 /// What the subscription runner is doing.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct RunnerStatus {
-    /// The subscription running now, and what it is doing.
+    /// The first active subscription, retained for existing callers.
     pub running: Option<(String, String)>,
+    /// Every active subscription: persistent id, name, and current job text.
+    pub active: Vec<(i64, String, String)>,
     /// Notices from recent runs, newest last.
     pub notices: Vec<String>,
 }
 
-/// Runs subscriptions as they come due, one at a time
-/// (`SubscriptionsManager`, with `max_simultaneous_subscriptions` 1).
+/// Runs due subscriptions up to the live maximum, with one job per
+/// subscription (`SubscriptionsManager`). Lowering the limit leaves existing
+/// jobs alone; it prevents new admissions until there is room again.
 #[derive(Debug)]
 pub struct SubscriptionRunner {
     downloader: std::sync::Arc<Downloader>,
     wake: tokio::sync::Notify,
     started: std::sync::atomic::AtomicBool,
-    job: parking_lot::Mutex<Option<(String, std::sync::Arc<Job>)>>,
+    shutdown: std::sync::atomic::AtomicBool,
+    stopped: std::sync::atomic::AtomicBool,
+    jobs: parking_lot::Mutex<std::collections::BTreeMap<i64, (String, std::sync::Arc<Job>)>>,
     notices: parking_lot::Mutex<VecDeque<String>>,
 }
 
 /// Seconds after a subscription's due time before it starts
 /// (`SUB_WORK_DELAY_BUFFER`).
 const START_BUFFER: i64 = 3;
+/// Minimum repeat interval after a run (`BUFFER_TIME`).
+const FINISHED_BUFFER: i64 = 120;
 
 impl SubscriptionRunner {
     pub fn new(downloader: std::sync::Arc<Downloader>) -> std::sync::Arc<Self> {
@@ -1058,7 +1065,9 @@ impl SubscriptionRunner {
             downloader,
             wake: tokio::sync::Notify::new(),
             started: std::sync::atomic::AtomicBool::new(false),
-            job: parking_lot::Mutex::default(),
+            shutdown: std::sync::atomic::AtomicBool::new(false),
+            stopped: std::sync::atomic::AtomicBool::new(false),
+            jobs: parking_lot::Mutex::default(),
             notices: parking_lot::Mutex::default(),
         })
     }
@@ -1072,45 +1081,113 @@ impl SubscriptionRunner {
         tokio::spawn(async move { runner.run().await });
     }
 
-    /// Look again now (after subscriptions were changed).
+    /// Look again now (after subscriptions or options were changed).
     pub fn wake(&self) {
         self.wake.notify_one();
     }
 
-    /// Stop what the running subscription is doing (it waits 5-10 minutes
-    /// before trying again, as when cancelled in the reference).
+    /// Cancel the first active subscription, retained for existing callers.
+    /// A cancelled sync waits 5–10 minutes before trying again.
     pub fn cancel_current(&self) {
-        if let Some((_, job)) = &*self.job.lock() {
+        if let Some((_, job)) = self.jobs.lock().values().next() {
             job.cancel();
         }
     }
 
+    /// Cancel a particular active subscription, without cancelling its peers.
+    pub fn cancel(&self, id: i64) -> bool {
+        self.jobs.lock().get(&id).is_some_and(|(_, job)| {
+            job.cancel();
+            true
+        })
+    }
+
+    pub fn cancel_all(&self) {
+        for (_, job) in self.jobs.lock().values() {
+            job.cancel();
+        }
+    }
+
+    /// Stop the daemon permanently, cancelling and joining its active work.
+    /// No new jobs are admitted after this call.
+    pub fn shutdown(&self) {
+        let jobs = self.jobs.lock();
+        self.shutdown
+            .store(true, std::sync::atomic::Ordering::SeqCst);
+        for (_, job) in jobs.values() {
+            job.cancel();
+        }
+        drop(jobs);
+        self.wake();
+    }
+
+    /// Wait for shutdown to join every sync before closing the daemon's store.
+    pub async fn wait_stopped(&self) {
+        while self.started.load(std::sync::atomic::Ordering::SeqCst)
+            && !self.stopped.load(std::sync::atomic::Ordering::SeqCst)
+        {
+            tokio::time::sleep(Duration::from_millis(10)).await;
+        }
+    }
+
     pub fn status(&self) -> RunnerStatus {
+        let active: Vec<_> = self
+            .jobs
+            .lock()
+            .iter()
+            .map(|(id, (name, job))| (*id, name.clone(), job.state().status))
+            .collect();
         RunnerStatus {
-            running: self
-                .job
-                .lock()
-                .as_ref()
-                .map(|(name, job)| (name.clone(), job.state().status)),
+            running: active
+                .first()
+                .map(|(_, name, text)| (name.clone(), text.clone())),
+            active,
             notices: self.notices.lock().iter().cloned().collect(),
         }
     }
 
-    /// The subscription to run now, else how long to wait for one.
-    fn next(&self) -> Result<Result<Subscription, Duration>, WorkError> {
-        // (paused globally: look again soon, it may be switched from the
-        // command line)
-        if self.downloader.subscriptions_paused() {
+    /// The subscription to admit now, else how long to wait for one.
+    fn next(
+        &self,
+        finished: &HashMap<i64, i64>,
+    ) -> Result<Result<Subscription, Duration>, WorkError> {
+        self.next_at(finished, now())
+    }
+
+    fn next_at(
+        &self,
+        finished: &HashMap<i64, i64>,
+        t: i64,
+    ) -> Result<Result<Subscription, Duration>, WorkError> {
+        self.downloader.reload_settings()?;
+        if self.shutdown.load(std::sync::atomic::Ordering::SeqCst)
+            || self.downloader.subscriptions_paused()
+        {
             return Ok(Err(Duration::from_secs(30)));
         }
+        let active: BTreeSet<_> = self.jobs.lock().keys().copied().collect();
+        let limit = self
+            .downloader
+            .network
+            .read()
+            .max_simultaneous_subscriptions
+            .clamp(1, 100);
+        if active.len() >= limit as usize {
+            return Ok(Err(Duration::from_millis(500)));
+        }
         let subs = self.downloader.store.read(store_subs::subscriptions)?;
-        let t = now();
         let mut ready = Vec::new();
         let mut soonest: Option<i64> = None;
         for sub in subs {
-            let Some(when) = self.downloader.next_work_time(&sub)? else {
+            if active.contains(&sub.id) {
+                continue;
+            }
+            let Some(mut when) = self.downloader.next_work_time(&sub)? else {
                 continue;
             };
+            if let Some(buffer) = finished.get(&sub.id) {
+                when = when.max(*buffer);
+            }
             if t > when.saturating_add(START_BUFFER) {
                 ready.push(sub);
             } else {
@@ -1127,32 +1204,37 @@ impl SubscriptionRunner {
         if let Some(sub) = next {
             return Ok(Ok(sub));
         }
-        // (look again every few minutes: subscriptions may be changed by
-        // other processes, such as the command line)
-        let wait = soonest.map_or(300, |s| (s + START_BUFFER + 1 - t).clamp(1, 300));
+        // Recheck persisted options even when no work is due. Active work is
+        // polled at the reference manager's half-second cadence.
+        let wait = soonest.map_or(30, |s| (s + START_BUFFER + 1 - t).clamp(1, 30));
         Ok(Err(Duration::from_secs(wait as u64)))
     }
 
     async fn run(&self) {
+        let mut workers = tokio::task::JoinSet::new();
+        let mut task_ids = HashMap::new();
+        let mut finished = HashMap::new();
         loop {
-            let wait = match self.next() {
+            if self.shutdown.load(std::sync::atomic::Ordering::SeqCst) && workers.is_empty() {
+                break;
+            }
+            let wait = match self.next(&finished) {
                 Ok(Ok(sub)) => {
                     let job = Job::new();
-                    *self.job.lock() = Some((sub.name.clone(), std::sync::Arc::clone(&job)));
-                    let result = self.downloader.run_subscription(sub.id, &job).await;
-                    *self.job.lock() = None;
-                    match result {
-                        Ok(report) => {
-                            let mut notices = self.notices.lock();
-                            notices.extend(report.notices);
-                            while notices.len() > 100 {
-                                notices.pop_front();
-                            }
-                        }
-                        Err(e) => tracing::error!("subscription \"{}\": {e}", sub.name),
+                    // Reserve the id before spawning, so no tick can admit it twice.
+                    // Check shutdown while holding the same lock cancel_all uses.
+                    let mut jobs = self.jobs.lock();
+                    if !self.shutdown.load(std::sync::atomic::Ordering::SeqCst) {
+                        jobs.insert(sub.id, (sub.name.clone(), std::sync::Arc::clone(&job)));
+                        let downloader = std::sync::Arc::clone(&self.downloader);
+                        let id = sub.id;
+                        let task = workers.spawn(async move {
+                            let result = downloader.run_subscription(id, &job).await;
+                            (id, sub.name, result)
+                        });
+                        task_ids.insert(task.id(), id);
                     }
-                    // a little breathing room between subscriptions
-                    Duration::from_secs(1)
+                    Duration::from_millis(500)
                 }
                 Ok(Err(wait)) => wait,
                 Err(e) => {
@@ -1160,14 +1242,166 @@ impl SubscriptionRunner {
                     Duration::from_secs(60)
                 }
             };
-            let _ = tokio::time::timeout(wait, self.wake.notified()).await;
+            let wait = if workers.is_empty() {
+                wait
+            } else {
+                wait.min(Duration::from_millis(500))
+            };
+            tokio::select! {
+                () = self.wake.notified() => {},
+                () = tokio::time::sleep(wait) => {},
+                joined = workers.join_next_with_id(), if !workers.is_empty() => {
+                    match joined {
+                        Some(Ok((task_id, (id, name, result)))) => {
+                            task_ids.remove(&task_id);
+                            self.jobs.lock().remove(&id);
+                            if !self.downloader.subscriptions_paused() {
+                                finished.insert(id, now().saturating_add(FINISHED_BUFFER));
+                            }
+                            match result {
+                                Ok(report) => {
+                                    let mut notices = self.notices.lock();
+                                    notices.extend(report.notices);
+                                    while notices.len() > 100 {
+                                        notices.pop_front();
+                                    }
+                                }
+                                Err(e) => tracing::error!("subscription \"{name}\": {e}"),
+                            }
+                        }
+                        Some(Err(error)) => {
+                            if let Some(id) = task_ids.remove(&error.id()) {
+                                self.jobs.lock().remove(&id);
+                                finished.insert(id, now().saturating_add(FINISHED_BUFFER));
+                            }
+                            tracing::error!("subscription task: {error}");
+                        }
+                        None => {},
+                    }
+                },
+            }
         }
+        self.stopped
+            .store(true, std::sync::atomic::Ordering::SeqCst);
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn manager_admission_replays_reference_due_pause_live_limits_and_single_flight() {
+        let recording = hydrus_testkit::fixture_json("subscription_concurrency.json");
+        let dir = tempfile::tempdir().unwrap();
+        let store = hydrus_store::Store::open(dir.path()).unwrap();
+        let net = std::sync::Arc::new(
+            hydrus_net::NetEngine::new(
+                std::sync::Arc::clone(&store),
+                hydrus_net::NetOptions {
+                    obey_bandwidth: false,
+                    ..hydrus_net::NetOptions::default()
+                },
+            )
+            .unwrap(),
+        );
+        let importer = hydrus_import::FileImporter::new(
+            std::sync::Arc::clone(&store),
+            hydrus_media::MediaTools::new(),
+        );
+        let downloader = std::sync::Arc::new(
+            Downloader::new(std::sync::Arc::clone(&store), net, importer).unwrap(),
+        );
+        let runner = SubscriptionRunner::new(downloader);
+        let pairs = store
+            .write(|ctx| {
+                ["sub 10", "sub 2", "sub 1"]
+                    .into_iter()
+                    .map(|name| {
+                        let id = store_subs::create_subscription(
+                            ctx.conn(),
+                            name,
+                            &SubscriptionSettings::default(),
+                        )?
+                        .unwrap();
+                        let queue = store_subs::add_query(
+                            ctx.conn(),
+                            id,
+                            &hydrus_core::subscriptions::QueryState::new(name),
+                            0,
+                        )?;
+                        Ok((id, queue, name.to_owned()))
+                    })
+                    .collect::<Result<Vec<_>, hydrus_store::StoreError>>()
+            })
+            .unwrap();
+        let at = recording["now"].as_i64().unwrap();
+        for case in recording["cases"].as_array().unwrap() {
+            // Native editor transactions do not pause the daemon while their
+            // drafts are open; this broader manager difference is not claimed.
+            if case["editing"].as_bool().unwrap() {
+                continue;
+            }
+            let limit = u32::try_from(case["limit"].as_u64().unwrap()).unwrap();
+            store
+                .write(|ctx| {
+                    let mut settings: hydrus_store::network::NetworkSettings =
+                        hydrus_store::settings::get(ctx.conn())?;
+                    settings.max_simultaneous_subscriptions = limit;
+                    settings.process_subs_in_random_order = false;
+                    hydrus_store::settings::set(ctx.conn(), &settings)?;
+                    let pauses = Pauses {
+                        subscriptions: case["paused"].as_bool().unwrap(),
+                        network_traffic: case["traffic_paused"].as_bool().unwrap(),
+                        ..Pauses::default()
+                    };
+                    hydrus_store::settings::set(ctx.conn(), &pauses)?;
+                    for (_, queue, _) in &pairs {
+                        let mut state = store_subs::query(ctx.conn(), *queue)?.unwrap().state;
+                        state.next_check_time = case["due"].as_i64().unwrap();
+                        store_subs::set_query_state(ctx.conn(), *queue, &state)?;
+                    }
+                    Ok(())
+                })
+                .unwrap();
+            runner.jobs.lock().clear();
+            for name in case["running"].as_array().unwrap() {
+                let (id, _, name) = pairs
+                    .iter()
+                    .find(|(_, _, n)| n == name.as_str().unwrap())
+                    .unwrap();
+                runner.jobs.lock().insert(*id, (name.clone(), Job::new()));
+            }
+            let expected = case["chosen"].as_str();
+            let chosen = runner.next_at(&HashMap::new(), at).unwrap().ok();
+            assert_eq!(
+                chosen.as_ref().map(|sub| sub.name.as_str()),
+                expected,
+                "{}",
+                case["case"]
+            );
+            assert_eq!(
+                runner.status().active.len(),
+                case["running_after"].as_array().unwrap().len()
+            );
+        }
+        runner.jobs.lock().clear();
+        let buffer = recording["finished_run_buffer"].as_i64().unwrap();
+        assert_eq!(FINISHED_BUFFER, buffer);
+        let finished = pairs.iter().map(|(id, _, _)| (*id, at + buffer)).collect();
+        assert!(
+            runner
+                .next_at(&finished, at + buffer + START_BUFFER)
+                .unwrap()
+                .is_err()
+        );
+        assert!(
+            runner
+                .next_at(&finished, at + buffer + START_BUFFER + 1)
+                .unwrap()
+                .is_ok()
+        );
+    }
 
     #[test]
     fn outer_typed_exception_budget_replays_recorded_classes_and_reset() {

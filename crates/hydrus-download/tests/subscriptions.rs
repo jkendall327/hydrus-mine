@@ -1085,3 +1085,171 @@ async fn none_disables_abandonment_for_real_escaped_store_failures() {
         0
     );
 }
+
+fn runner_subscriptions(s: &Setup) -> Vec<i64> {
+    s.store
+        .write(|ctx| {
+            ["sub 1", "sub 2", "sub 10"]
+                .into_iter()
+                .map(|name| {
+                    let settings = SubscriptionSettings {
+                        gug_key: GUG_KEY.into(),
+                        gug_name: GUG_NAME.into(),
+                        ..SubscriptionSettings::default()
+                    };
+                    let id = subs::create_subscription(ctx.conn(), name, &settings)?.unwrap();
+                    let query = QueryState::new(name.replace(' ', "_"));
+                    subs::add_query(ctx.conn(), id, &query, 0)?;
+                    Ok(id)
+                })
+                .collect()
+        })
+        .unwrap()
+}
+
+fn runner_limit(s: &Setup, limit: u32) {
+    s.store
+        .write(|ctx| {
+            let mut settings: hydrus_store::network::NetworkSettings =
+                hydrus_store::settings::get(ctx.conn())?;
+            settings.max_simultaneous_subscriptions = limit;
+            settings.process_subs_in_random_order = false;
+            hydrus_store::settings::set(ctx.conn(), &settings)
+        })
+        .unwrap();
+}
+
+async fn wait_runner(mut ready: impl FnMut() -> bool) {
+    tokio::time::timeout(std::time::Duration::from_secs(15), async {
+        while !ready() {
+            tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+        }
+    })
+    .await
+    .expect("subscription runner did not reach the expected state");
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn subscription_runner_bounds_real_http_overlap_and_reloads_live_limit() {
+    use hydrus_download::subscriptions::SubscriptionRunner;
+    let s = setup().await;
+    let recording = hydrus_testkit::fixture_json("subscription_concurrency.json");
+    let ids = runner_subscriptions(&s);
+    let held = Arc::new(tokio::sync::Notify::new());
+    *s.site.hold.lock() = Some(Arc::clone(&held));
+    runner_limit(&s, 1);
+    let runner = SubscriptionRunner::new(Arc::clone(&s.downloader));
+    runner.start();
+    runner.start(); // Starting twice must not create a second scheduler.
+    wait_runner(|| s.site.hits.lock().contains_key("search/sub_1/1")).await;
+    assert_eq!(runner.status().active.len(), 1);
+    assert_eq!(runner.status().active[0].0, ids[0]);
+    assert_eq!(recording["cases"][0]["chosen"], "sub 1");
+    runner_limit(&s, 2);
+    runner.wake();
+    wait_runner(|| s.site.hits.lock().contains_key("search/sub_2/1")).await;
+    assert_eq!(runner.status().active.len(), 2, "real requests overlap");
+    assert_eq!(recording["cases"][2]["chosen"], "sub 2");
+    tokio::time::sleep(std::time::Duration::from_millis(600)).await;
+    assert_eq!(
+        s.site.hits.lock().len(),
+        2,
+        "limit prevents a third request"
+    );
+    runner_limit(&s, 1);
+    runner.wake();
+    tokio::time::sleep(std::time::Duration::from_millis(600)).await;
+    assert_eq!(
+        runner.status().active.len(),
+        2,
+        "lowering leaves jobs running"
+    );
+    assert_eq!(s.site.hits.lock().len(), 2);
+    assert!(recording["cases"][5]["chosen"].is_null());
+    s.store
+        .write(|ctx| {
+            let mut pauses: hydrus_store::settings::Pauses =
+                hydrus_store::settings::get(ctx.conn())?;
+            pauses.subscriptions = true;
+            hydrus_store::settings::set(ctx.conn(), &pauses)
+        })
+        .unwrap();
+    runner_limit(&s, 3);
+    runner.wake();
+    tokio::time::sleep(std::time::Duration::from_millis(600)).await;
+    assert_eq!(
+        s.site.hits.lock().len(),
+        2,
+        "global pause prevents admission"
+    );
+    assert!(recording["cases"][6]["chosen"].is_null());
+    s.store
+        .write(|ctx| {
+            let mut pauses: hydrus_store::settings::Pauses =
+                hydrus_store::settings::get(ctx.conn())?;
+            pauses.subscriptions = false;
+            hydrus_store::settings::set(ctx.conn(), &pauses)
+        })
+        .unwrap();
+    runner.wake();
+    wait_runner(|| s.site.hits.lock().contains_key("search/sub_10/1")).await;
+    assert_eq!(runner.status().active.len(), 3);
+    assert_eq!(recording["cases"][4]["chosen"], "sub 10");
+    assert!(
+        s.site.hits.lock().values().all(|count| *count == 1),
+        "each id is single-flight"
+    );
+    *s.site.hold.lock() = None;
+    held.notify_waiters();
+    wait_runner(|| runner.status().active.is_empty()).await;
+    assert!(runner.status().running.is_none());
+    assert_eq!(s.site.hits.lock().len(), 3);
+    runner.shutdown();
+    tokio::time::timeout(std::time::Duration::from_secs(15), runner.wait_stopped())
+        .await
+        .unwrap();
+    runner.wake();
+    runner.start();
+    tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+    assert!(runner.status().active.is_empty());
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn subscription_runner_cancels_selected_peer_and_joins_all_on_shutdown() {
+    use hydrus_download::subscriptions::SubscriptionRunner;
+    let s = setup().await;
+    let ids = runner_subscriptions(&s);
+    let held = Arc::new(tokio::sync::Notify::new());
+    *s.site.hold.lock() = Some(Arc::clone(&held));
+    runner_limit(&s, 3);
+    let runner = SubscriptionRunner::new(Arc::clone(&s.downloader));
+    runner.start();
+    wait_runner(|| s.site.hits.lock().len() == 3).await;
+    assert_eq!(runner.status().active.len(), 3);
+    assert!(!runner.cancel(-1));
+    assert!(runner.cancel(ids[1]));
+    wait_runner(|| runner.status().active.len() == 2).await;
+    let active: Vec<_> = runner
+        .status()
+        .active
+        .into_iter()
+        .map(|row| row.0)
+        .collect();
+    assert_eq!(active, [ids[0], ids[2]], "cancellation is id-scoped");
+    let cancelled = s
+        .store
+        .read(|conn| subs::subscription(conn, ids[1]))
+        .unwrap()
+        .unwrap();
+    assert!(
+        cancelled.settings.no_work_until > hydrus_core::time::TimestampMs::now().millis() / 1000
+    );
+    runner.shutdown();
+    tokio::time::timeout(std::time::Duration::from_secs(15), runner.wait_stopped())
+        .await
+        .unwrap();
+    assert!(runner.status().active.is_empty());
+    assert!(s.site.hits.lock().values().all(|count| *count == 1));
+    *s.site.hold.lock() = None;
+    held.notify_waiters();
+}

@@ -935,6 +935,7 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         }
         // stopping: on a signal, or (attached) with the input closing
         let (stop, stopped) = tokio::sync::watch::channel(false);
+        let stopping_subscriptions = state.subscriptions.clone();
         tokio::spawn(async move {
             if attached {
                 tokio::select! {
@@ -945,11 +946,19 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 shutdown_signal().await;
             }
             println!("stopping");
+            if let Some(subscriptions) = &stopping_subscriptions {
+                subscriptions.shutdown();
+            }
             let _ = stop.send(true);
         });
         // the Client API, if it is on: one that can't start stops nothing
         // else, as in the reference
+        let subscriptions = state.subscriptions.clone();
         let served = client_api_listener::run(state, port, bind, stopped, say).await;
+        if let Some(subscriptions) = &subscriptions {
+            subscriptions.shutdown();
+            subscriptions.wait_stopped().await;
+        }
         // (the queues' live state stops being kept before it is cleared,
         // so it isn't kept again after)
         let _ = network_stop.send(true);
