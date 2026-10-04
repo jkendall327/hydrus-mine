@@ -1665,6 +1665,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         |s| s.session_backups.keep as i64,
                         |s, value| s.session_backups.keep = value as usize,
                     ),
+                    check(
+                        "Show warning popup if session size exceeds 10,000,000: ",
+                        |s| s.gui_sessions.warn_large_session,
+                        |s, value| s.gui_sessions.warn_large_session = value,
+                    ),
                 ],
             )],
         ),

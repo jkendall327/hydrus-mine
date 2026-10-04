@@ -128,3 +128,25 @@ fn real_auxiliary_dialog_mouse_and_api_actions_update_independent_idle_timers() 
         }
     }
 }
+
+#[test]
+fn size_warning_replays_real_threshold_seed_weight_disabled_and_one_boot_latch() {
+    let fixture = hydrus_testkit::fixture_json("session_warning.json");
+    let mut warning = hydrus_gui_model::session_lifecycle::SizeWarning::default();
+    assert_eq!(
+        GuiSessionSettings::default().warn_large_session,
+        fixture["default_enabled"].as_bool().unwrap()
+    );
+    for step in fixture["steps"].as_array().unwrap() {
+        if step["new_boot"] == true {
+            warning = hydrus_gui_model::session_lifecycle::SizeWarning::default();
+        }
+        let weight = step["hashes"].as_u64().unwrap() + step["seeds"].as_u64().unwrap() * 20;
+        let message = warning.message(weight, step["enabled"].as_bool().unwrap());
+        assert_eq!(
+            serde_json::json!(message.into_iter().collect::<Vec<_>>()),
+            step["messages"]
+        );
+        assert_eq!(warning.shown(), step["shown"].as_bool().unwrap());
+    }
+}

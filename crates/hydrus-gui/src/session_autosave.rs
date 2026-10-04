@@ -1,6 +1,6 @@
 //! Historical autosaves alongside the live Client API session synchronization.
 use crate::{MainWindow, Pages};
-use hydrus_gui_model::session_lifecycle::{Action, Autosave, Idle};
+use hydrus_gui_model::session_lifecycle::{Action, Autosave, Idle, SizeWarning};
 use hydrus_store::settings::{self, GuiIdleSettings, GuiSessionSettings};
 use std::{
     cell::RefCell,
@@ -79,6 +79,7 @@ struct Inner {
     idle: RefCell<Idle>,
     previous: RefCell<Option<String>>,
     api_seen: std::cell::Cell<i64>,
+    size_warning: RefCell<SizeWarning>,
     timer: slint::Timer,
 }
 
@@ -110,6 +111,7 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>) -> Monitor {
         idle: RefCell::new(Idle::new(now)),
         previous: RefCell::new(None),
         api_seen: std::cell::Cell::new(0),
+        size_warning: RefCell::new(SizeWarning::default()),
         timer: slint::Timer::default(),
     }));
     MONITORS.with(|monitors| monitors.borrow_mut().push(Rc::downgrade(&monitor.0)));
@@ -167,6 +169,25 @@ impl Monitor {
         self.0.idle.borrow().eligible(now_ms, &config)
     }
 
+    /// Check the live session's computed weight and publish its one-boot warning.
+    /// The regular monitor tick supplies Pages::session_weight; desktop replay
+    /// supplies reference counts without constructing millions of fake seeds.
+    pub fn check_size(&self, weight: u64, now_ms: i64) -> hydrus_store::Result<bool> {
+        let store = self.0.pages.borrow().store().clone();
+        let config: GuiSessionSettings = store.read(settings::get)?;
+        let Some(text) = self
+            .0
+            .size_warning
+            .borrow_mut()
+            .message(weight, config.warn_large_session)
+        else {
+            return Ok(false);
+        };
+        let job = hydrus_store::popups::Job::text(text, now_ms as f64 / 1_000.0);
+        store.write(move |ctx| hydrus_store::popups::add(ctx.conn(), &job, now_ms / 1_000))?;
+        Ok(true)
+    }
+
     /// One real timer tick, also available for deterministic desktop replay.
     /// Return whether a changed snapshot was saved.
     pub fn poll_at(&self, now_ms: i64) -> hydrus_store::Result<bool> {
@@ -175,6 +196,10 @@ impl Monitor {
         }
         let store = self.0.pages.borrow().store().clone();
         let config: GuiSessionSettings = store.read(settings::get)?;
+        if config.warn_large_session && !self.0.size_warning.borrow().shown() {
+            let weight = self.0.pages.borrow().session_weight();
+            self.check_size(weight, now_ms)?;
+        }
         if self
             .0
             .schedule

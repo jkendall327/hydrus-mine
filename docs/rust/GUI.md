@@ -2132,3 +2132,10 @@ restores it. Both settings apply to the open viewer, persist on Apply and
 remain unchanged on Cancel. Duration drag blocking defaults off; cursor hiding
 defaults on except macOS, matching the reference. `viewer_pointer_options.json`
 records real Qt drag acceptance, geometry and cursor transitions.
+GUI Sessions exposes the large-session warning preference. When active page
+weight exceeds 10,000,000, the client adds the reference's warning text to the
+popup stack once per boot. The weight includes twenty per importer seed and
+excludes closed pages. Disabling the preference suppresses the warning without
+using that boot's allowance; dismissing a warning does not cause it to repeat.
+`oracle/record_session_warning.py` records the threshold, disabled state, seed
+weighting and exact popup messages from the reference's live menu-count updater.

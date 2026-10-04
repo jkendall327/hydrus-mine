@@ -310,3 +310,86 @@ fn non_page_api_activity_marker_drives_idle_retry_and_expiry_after_reopen() {
         Some(request_at)
     );
 }
+
+#[test]
+fn applied_size_warning_creates_exact_popup_once_and_resets_only_at_new_boot() {
+    const WARNING: &str = "Show warning popup if session size exceeds 10,000,000: ";
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("session_warning.json");
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let before: GuiSessionSettings = store.read(settings::get).unwrap();
+    assert_eq!(
+        before.warn_large_session,
+        fixture["default_enabled"].as_bool().unwrap()
+    );
+    let window = options(&ui, &bound);
+    window.invoke_check_toggled(row(&window, WARNING), false);
+    window.invoke_cancel();
+    assert_eq!(
+        store.read(settings::get::<GuiSessionSettings>).unwrap(),
+        before
+    );
+    let window = options(&ui, &bound);
+    window.invoke_check_toggled(row(&window, WARNING), false);
+    window.invoke_apply();
+    let now = hydrus_core::TimestampMs::now().0;
+    assert!(!bound.session_autosave.check_size(10_000_001, now).unwrap());
+    assert!(
+        !store
+            .read(settings::get::<GuiSessionSettings>)
+            .unwrap()
+            .warn_large_session
+    );
+    let window = options(&ui, &bound);
+    window.invoke_check_toggled(row(&window, WARNING), true);
+    window.invoke_apply();
+    assert!(!bound.session_autosave.check_size(10_000_000, now).unwrap());
+    let message = fixture["steps"][3]["messages"][0].as_str().unwrap();
+    assert!(bound.session_autosave.check_size(10_000_001, now).unwrap());
+    std::thread::sleep(std::time::Duration::from_millis(300));
+    slint::platform::update_timers_and_animations();
+    let popups = ui.get_popups();
+    let popup = (0..popups.row_count())
+        .find(|&index| popups.row_data(index).unwrap().text_1 == message)
+        .unwrap();
+    ui.invoke_popup_dismiss(i32::try_from(popup).unwrap());
+    assert!(
+        !bound
+            .session_autosave
+            .check_size(20_000_000, now + 1_000)
+            .unwrap()
+    );
+    assert!(
+        store
+            .read(|conn| hydrus_store::popups::all(conn, now / 1_000))
+            .unwrap()
+            .iter()
+            .all(|job| job.status_text_1.as_deref() != Some(message))
+    );
+    // A new bound client is a new boot; the durable setting survives but the
+    // one-boot warning latch does not. No re-enable/reopen repeats within boot.
+    let reopened_ui = MainWindow::new().unwrap();
+    let reopened = bind(&reopened_ui, Pages::open(store.clone()).unwrap());
+    assert!(
+        store
+            .read(settings::get::<GuiSessionSettings>)
+            .unwrap()
+            .warn_large_session
+    );
+    assert!(
+        reopened
+            .session_autosave
+            .check_size(10_000_020, now + 2_000)
+            .unwrap()
+    );
+    let expected = fixture["steps"][5]["messages"][0].as_str().unwrap();
+    assert!(
+        store
+            .read(|conn| hydrus_store::popups::all(conn, now / 1_000 + 2))
+            .unwrap()
+            .iter()
+            .any(|job| job.status_text_1.as_deref() == Some(expected))
+    );
+}

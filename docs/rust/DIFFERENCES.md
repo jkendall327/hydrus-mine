@@ -1356,7 +1356,7 @@ Legacy historical snapshot import remains deferred.
 Startup sessions load before showing the native main window; the reference
 defers its initial load by a quarter second. Ordinary blank, missing, last and
 named-session outcomes match the recorded reference. The reference's bad-shutdown
-recovery question and large-session warning are still deferred. Loading an empty
+recovery question is still deferred. Loading an empty
 saved tree retains the native single blank search page.
 Source PNG exports use native SVG fonts and wrapping for their readable header;
 the text placement and decorative icon differ from Qt, while the grayscale
@@ -1401,3 +1401,7 @@ another movement. The animation start percentage remains unimplemented: the
 fresh recording also captures v688's cold-start zero frame and warm-start
 previous-frame-count ordering, rather than treating the control's intended
 percentage of the new animation as proven behavior.
+
+The large-session warning uses the native popup stack with the exact reference
+text and once-per-boot allowance. Active weight is checked by the one-second
+session monitor; the reference checks when its page-count menu becomes dirty.

@@ -84,3 +84,24 @@ impl Idle {
             && passed(now_ms, self.api, settings.api_seconds)
     }
 }
+
+/// One active-session size warning per client boot, independently of autosaves.
+#[derive(Debug, Default)]
+pub struct SizeWarning {
+    shown: bool,
+}
+impl SizeWarning {
+    pub fn shown(&self) -> bool {
+        self.shown
+    }
+    pub fn message(&mut self, weight: u64, enabled: bool) -> Option<String> {
+        if !enabled || weight <= 10_000_000 || self.shown {
+            return None;
+        }
+        self.shown = true;
+        Some(format!(
+            "Your session weight is {}, which is pretty big! To keep your UI lag-free, please try to close some pages or clear some finished downloaders!",
+            hydrus_core::numbers::human_int(weight)
+        ))
+    }
+}
