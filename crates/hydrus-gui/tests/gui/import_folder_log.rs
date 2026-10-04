@@ -72,8 +72,8 @@ fn choose(log: &FileLogWindow, path: &[&str]) {
 #[test]
 fn copied_cache_replays_reference_child_apply_cancel_and_folder_cancel_then_manager_commit() {
     let fixture = hydrus_testkit::fixture_json("import_folder_log.json");
+    let windows = headless::init();
     for case in fixture["cases"].as_array().unwrap() {
-        let windows = headless::init();
         let (_dirs, store) = crate::subscriptions::store();
         let work = tempfile::tempdir().unwrap();
         let path = work.path().to_string_lossy().into_owned();
@@ -160,7 +160,7 @@ fn copied_cache_replays_reference_child_apply_cancel_and_folder_cancel_then_mana
             !store.read(queues::any_nudged).unwrap(),
             "private edits never wake the live folder"
         );
-        let pixels = headless::render(&windows.get(3).unwrap(), 1000, 600);
+        let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1000, 600);
         headless::save_png(
             &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("import_folder_log.png"),
             &pixels,
