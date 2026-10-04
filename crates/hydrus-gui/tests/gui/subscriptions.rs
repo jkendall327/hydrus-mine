@@ -543,6 +543,11 @@ fn add_uses_a_separate_gallery_list_then_the_editor() {
         .unwrap();
         // Cancellation must leave the list and store empty, including with one gallery.
         chooser.invoke_cancel();
+        chooser.invoke_accept();
+        assert!(
+            bound.edit_subscription.borrow().is_none(),
+            "cancel invalidates the old chooser callback"
+        );
         assert!(!list.get_gallery_open());
         assert!(bound.subscription_gallery.borrow().is_none());
         assert!(rows(&list).is_empty());
@@ -610,6 +615,23 @@ fn add_uses_a_separate_gallery_list_then_the_editor() {
     list.invoke_apply();
     let written = store.read(subscriptions::subscriptions).unwrap();
     assert_eq!(written[0].settings.gug_name, "alpha");
+    // Closing the parent also invalidates a retained chooser handle.
+    let list = open_dialog(&ui, &bound);
+    list.invoke_add();
+    let chooser = bound
+        .subscription_gallery
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    list.invoke_cancel();
+    assert!(bound.subscriptions.borrow().is_none());
+    assert!(bound.subscription_gallery.borrow().is_none());
+    chooser.invoke_accept();
+    assert!(bound.edit_subscription.borrow().is_none());
+    let unchanged = store.read(subscriptions::subscriptions).unwrap();
+    assert_eq!(unchanged.len(), 1);
+    assert_eq!(unchanged[0].settings.gug_name, "alpha");
     // Clearing configured galleries cannot resurrect either old choices or presets.
     store
         .write(|ctx| hydrus_store::settings::set(ctx.conn(), &hydrus_parse::Downloaders::default()))

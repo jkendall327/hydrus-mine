@@ -8,7 +8,7 @@
 //! "apply", which writes what changed back to the store (only that, as the
 //! daemon may have run a subscription meanwhile).
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -659,11 +659,18 @@ fn select_gallery(
                 .collect::<Vec<_>>(),
         )));
     }
+    let active = Rc::new(Cell::new(true));
     let close: Rc<dyn Fn()> = {
-        let slot = slot.clone();
+        let slot = Rc::downgrade(slot);
         let parent = parent.clone();
+        let active = active.clone();
         Rc::new(move || {
-            if let Some(window) = slot.borrow_mut().take() {
+            if !active.replace(false) {
+                return;
+            }
+            if let Some(slot) = slot.upgrade()
+                && let Some(window) = slot.borrow_mut().take()
+            {
                 let _ = window.hide();
             }
             if let Some(parent) = parent.upgrade() {
@@ -675,6 +682,9 @@ fn select_gallery(
         let weak = window.as_weak();
         let close = close.clone();
         move || {
+            if !active.get() {
+                return;
+            }
             let selected = weak
                 .upgrade()
                 .and_then(|w| usize::try_from(w.get_selected()).ok());
@@ -729,8 +739,12 @@ pub(crate) fn open(
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
-            if let Some(window) = gallery.borrow_mut().take() {
-                let _ = window.hide();
+            let chooser = gallery
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(window) = chooser {
+                window.invoke_cancel();
             }
             // (the edit dialog goes with it)
             if let Some(window) = edit.borrow_mut().take() {
