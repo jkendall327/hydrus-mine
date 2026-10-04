@@ -136,7 +136,7 @@ fn backup_menu_labels_match_the_reference() {
             "backup test".into(),
             vec![fixture["timestamp"].as_i64().unwrap()],
         )],
-        ..Default::default()
+        ..hydrus_gui_model::main_menu::Facts::default()
     };
     let pages = hydrus_gui_model::main_menu::menubar(&facts);
     fn find<'a>(

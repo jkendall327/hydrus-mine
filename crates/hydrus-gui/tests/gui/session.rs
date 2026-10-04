@@ -1962,7 +1962,7 @@ fn tab_close_focus_settings_and_context_navigation_reach_consumers() {
                     ctx.conn(),
                     &NotebookSettings {
                         close_focus_left: left,
-                        ..Default::default()
+                        ..NotebookSettings::default()
                     },
                 )
             })
@@ -2090,7 +2090,7 @@ fn send_down_and_rename_prompts_match_reference_including_cancellation() {
                     ctx.conn(),
                     &NotebookSettings {
                         rename_sent_notebooks: step["rename"].as_bool().unwrap(),
-                        ..Default::default()
+                        ..NotebookSettings::default()
                     },
                 )
             })
@@ -2297,7 +2297,7 @@ fn downloader_backup_and_freshest_load_survive_source_queue_deletion() {
                         data_for_comparison: url.into(),
                         source_time: None,
                         referral_url: None,
-                        meta: Default::default(),
+                        meta: queues::FileSeedMeta::default(),
                     }],
                     false,
                     100,
@@ -2321,7 +2321,7 @@ fn downloader_backup_and_freshest_load_survive_source_queue_deletion() {
                     data_for_comparison: later.into(),
                     source_time: None,
                     referral_url: None,
-                    meta: Default::default(),
+                    meta: queues::FileSeedMeta::default(),
                 }],
                 false,
                 110,
