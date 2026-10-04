@@ -11,7 +11,7 @@ use hydrus_store::{
 };
 use slint::{ComponentHandle as _, Model as _, ModelRc, SharedString};
 
-fn index(model: ModelRc<SharedString>, text: &str) -> i32 {
+fn index(model: &ModelRc<SharedString>, text: &str) -> i32 {
     (0..model.row_count())
         .find(|&i| model.row_data(i).unwrap().contains(text))
         .and_then(|i| i32::try_from(i).ok())
@@ -59,12 +59,12 @@ fn favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches()
     w.set_name("editable reference".into());
     w.invoke_save_sort_ticked(true);
     w.invoke_save_collect_ticked(true);
-    w.invoke_location_chosen(index(w.get_location_choices(), "all known files"));
+    w.invoke_location_chosen(index(&w.get_location_choices(), "all known files"));
     assert_eq!(w.get_tags_label(), "downloader tags");
-    w.invoke_tag_chosen(index(w.get_tag_choices(), "all known tags"));
+    w.invoke_tag_chosen(index(&w.get_tag_choices(), "all known tags"));
     assert_eq!(w.get_location_label(), "my files");
     w.invoke_tag_chosen(index(
-        w.get_tag_choices(),
+        &w.get_tag_choices(),
         f["local_tag_service"].as_str().unwrap(),
     ));
     w.invoke_tag_status_ticked(false, false);
@@ -73,7 +73,7 @@ fn favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches()
     w.invoke_tag_status_ticked(false, true);
     w.invoke_tag_status_ticked(true, true);
     let before = w.get_location_label();
-    w.invoke_location_chosen(index(w.get_location_choices(), "multiple/deleted"));
+    w.invoke_location_chosen(index(&w.get_location_choices(), "multiple/deleted"));
     assert!(w.get_selecting_locations());
     let ticks = w.get_location_ticks();
     let deleted = (0..ticks.row_count())
@@ -82,21 +82,21 @@ fn favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches()
     w.invoke_location_ticked(i32::try_from(deleted).unwrap(), true);
     w.invoke_locations_answered(false);
     assert_eq!(w.get_location_label(), before);
-    w.invoke_location_chosen(index(w.get_location_choices(), "multiple/deleted"));
+    w.invoke_location_chosen(index(&w.get_location_choices(), "multiple/deleted"));
     w.invoke_location_ticked(i32::try_from(deleted).unwrap(), true);
     w.invoke_locations_answered(true);
     assert!(w.get_location_label().contains("current and deleted"));
     assert_eq!(
         w.get_location_index(),
-        index(w.get_location_choices(), "multiple/deleted")
+        index(&w.get_location_choices(), "multiple/deleted")
     );
-    w.invoke_location_chosen(index(w.get_location_choices(), "my files"));
-    w.invoke_sort_chosen(index(w.get_sort_choices(), "dimensions: width"));
+    w.invoke_location_chosen(index(&w.get_location_choices(), "my files"));
+    w.invoke_sort_chosen(index(&w.get_sort_choices(), "dimensions: width"));
     w.invoke_sort_order_chosen(1);
     assert_eq!(w.get_sort_order(), 1);
-    w.invoke_sort_chosen(index(w.get_sort_choices(), "tags: series-creator"));
+    w.invoke_sort_chosen(index(&w.get_sort_choices(), "tags: series-creator"));
     assert_eq!(w.get_sort_order(), 0);
-    w.invoke_sort_chosen(index(w.get_sort_choices(), "rating: stars"));
+    w.invoke_sort_chosen(index(&w.get_sort_choices(), "rating: stars"));
     assert_eq!(w.get_sort_order(), 1);
     let choices = w.get_collect_choices();
     for label in ["creator", "stars"] {
@@ -107,15 +107,15 @@ fn favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches()
     }
     w.invoke_collect_unmatched_ticked(false);
     w.invoke_collect_tag_chosen(index(
-        w.get_tag_choices(),
+        &w.get_tag_choices(),
         f["local_tag_service"].as_str().unwrap(),
     ));
     w.set_typed("blue".into());
     w.invoke_typed_edited();
-    let suggested = index(w.get_suggestions(), "blue eyes");
+    let suggested = index(&w.get_suggestions(), "blue eyes");
     w.invoke_suggestion_chosen(suggested);
     assert!(w.get_predicates().iter().any(|p| p == "blue eyes"));
-    let limit = index(w.get_suggestions(), "system:limit");
+    let limit = index(&w.get_suggestions(), "system:limit");
     w.invoke_suggestion_chosen(limit);
     assert!(w.get_child_open());
     let child = bound
@@ -198,7 +198,7 @@ fn favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches()
         .as_ref()
         .unwrap()
         .clone_strong();
-    cancel.invoke_suggestion_chosen(index(cancel.get_suggestions(), "system:limit"));
+    cancel.invoke_suggestion_chosen(index(&cancel.get_suggestions(), "system:limit"));
     let old_child = bound
         .favourites
         .predicate_editor
@@ -219,7 +219,7 @@ fn favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches()
         .as_ref()
         .unwrap()
         .clone_strong();
-    next.invoke_suggestion_chosen(index(next.get_suggestions(), "system:limit"));
+    next.invoke_suggestion_chosen(index(&next.get_suggestions(), "system:limit"));
     let new_child = bound
         .favourites
         .predicate_editor
