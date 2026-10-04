@@ -510,12 +510,7 @@ fn open_objects<T: Clone + 'static>(
                         w.set_ready(true);
                     }
                     "browse-json" if !importing && w.get_json_enabled() => {
-                        if let Some(path) = rfd::FileDialog::new()
-                            .set_title("select where to save the json file")
-                            .add_filter("JSON", &["json"])
-                            .set_file_name("export.json")
-                            .save_file()
-                        {
+                        if let Some(path) = crate::pick_exchange_export() {
                             w.set_path(path.to_string_lossy().as_ref().into());
                         }
                     }

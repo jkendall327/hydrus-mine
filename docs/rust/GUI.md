@@ -147,8 +147,8 @@ containers, and imports legacy type3 versions8–10 with embedded histories and 
 import options converted through the reference rules. Fresh history identities
 invalidate cached velocity exactly as the reference does. Modern containers retain
 settings, query headers, cached example/velocity data and both URL histories. `oracle/record_subscription_exchange.py` records the actual Qt list
-clipboard flow and reference PNG. Manage subscriptions now opens an owned
-import/export child: clipboard/JSON text or JSON/PNG files are reviewed, imported
+clipboard flow and reference PNG. Manage subscriptions now exposes the original clipboard/JSON/PNG transport
+menus, dispatching to an owned import/export child: clipboard/JSON text or JSON/PNG files are reviewed, imported
 subscriptions remain staged; JSON export asks before overwriting an existing file,
 and multiple JSON or PNG files can be imported as one reviewed selection. Apply
 persists both URL histories and retained header examples. Missing query histories ask the original named confirmation

@@ -22,6 +22,7 @@ def record(session):
         from hydrus.client.gui import ClientGUISubscriptions as G, ClientGUIDialogsMessage as M, ClientGUIDialogsQuick as D, ClientGUIDialogsFiles as FD
         from hydrus.client.importing import ClientImportSubscriptions as Subs, ClientImportSubscriptionQuery as Query, ClientImportFileSeeds as Files, ClientImportGallerySeeds as Galleries
         from hydrus.client import ClientSerialisable as PNG
+        from hydrus.client.gui.widgets import ClientGUIMenuButton as MB
         old_now, old_generate = T.GetNow, Query.GenerateQueryLogContainerName
         counter = [0]
         def fresh():
@@ -73,6 +74,7 @@ def record(session):
         try:
             listing.SelectDatas([current]); exchange._ExportToClipboard()
             single = json.loads(copied[-1][2]); out = {'single':single}
+            out['menus']={button.text():[item.GetTitle() for item in button._menu_template_items] for button in exchange.findChildren(MB.MenuButton) if button.text() in ('export','import')}
             # Actual import through clipboard, preserving all histories but changing identities.
             c.GetClipboardText = lambda: json.dumps(single)
             exchange._ImportFromClipboard()

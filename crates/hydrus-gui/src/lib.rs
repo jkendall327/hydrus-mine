@@ -4066,6 +4066,19 @@ pub(crate) fn pick_exchange_files(title: &str, extension: &str) -> Vec<std::path
         .unwrap_or_default()
 }
 
+/// Pick a reference JSON export path, with the existing injected picker boundary.
+pub(crate) fn pick_exchange_export() -> Option<std::path::PathBuf> {
+    const TITLE: &str = "select where to save the json file";
+    if let Some(picker) = PICKER.with(|p| p.borrow().clone()) {
+        return picker(Pick::Files, TITLE).into_iter().next();
+    }
+    rfd::FileDialog::new()
+        .set_title(TITLE)
+        .add_filter("JSON", &["json"])
+        .set_file_name("export.json")
+        .save_file()
+}
+
 /// Read pasted text from `paster` rather than the clipboard (for tests),
 /// on this thread.
 pub fn set_paster(paster: impl Fn() -> String + 'static) {

@@ -1255,3 +1255,109 @@ fn legacy_subscription_clipboard_import_reaches_saved_query_settings_and_full_hi
     );
     dialog.invoke_cancel();
 }
+
+#[test]
+fn actual_subscription_list_transport_choices_dispatch_frozen_packages_and_guard_owners() {
+    use hydrus_downloader_exchange::subscriptions as exchange;
+    use std::{cell::RefCell, rc::Rc};
+    fn child(bound: &Bound) -> hydrus_gui::DownloaderExchangeWindow {
+        bound
+            .subscription_exchange
+            .0
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong()
+    }
+    let reference = hydrus_testkit::fixture_json("subscription_exchange.json");
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let dialog = open_dialog(&ui, &bound);
+    for (actual, expected) in [
+        (
+            dialog.get_exchange_export_labels(),
+            &reference["menus"]["export"],
+        ),
+        (
+            dialog.get_exchange_import_labels(),
+            &reference["menus"]["import"],
+        ),
+    ] {
+        assert_eq!(
+            actual.iter().map(|s| s.to_string()).collect::<Vec<_>>(),
+            expected
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|s| s.as_str().unwrap().to_owned())
+                .collect::<Vec<_>>()
+        );
+    }
+    let text = reference["single"].to_string();
+    hydrus_gui::set_paster(move || text.clone());
+    dialog.invoke_exchange_mode(3);
+    assert!(child(&bound).get_ready());
+    assert!(rows(&dialog).is_empty());
+    child(&bound).invoke_action("accept".into());
+    assert_eq!(rows(&dialog)[0].0[0], "Artist");
+    let copies = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_clipper({
+        let copies = copies.clone();
+        move |clip| copies.borrow_mut().push(clip.clone())
+    });
+    dialog.invoke_exchange_mode(0);
+    assert!(!bound.subscription_exchange.has_open());
+    let exported = match &copies.borrow()[0] {
+        hydrus_gui::Clip::Text(text) => exchange::decode_text(text).unwrap(),
+        hydrus_gui::Clip::Files(_) => panic!("selected subscriptions must export serialized text"),
+    };
+    assert_eq!(exported[0].name, "Artist");
+    assert_eq!(
+        exported[0].queries[0].log.as_ref().unwrap().file_seeds[0].note,
+        "ignored\nrecorded reason"
+    );
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("selected.json");
+    let picked = path.clone();
+    hydrus_gui::set_picker(move |_, title| {
+        assert_eq!(title, "select where to save the json file");
+        vec![picked.clone()]
+    });
+    dialog.invoke_exchange_mode(1);
+    assert_eq!(
+        exchange::decode_text(&std::fs::read_to_string(&path).unwrap()).unwrap(),
+        exported
+    );
+    child(&bound).invoke_action("cancel".into());
+    let picked = path.clone();
+    hydrus_gui::set_picker(move |_, title| {
+        assert_eq!(title, "select the json or jsons with the serialised data");
+        vec![picked.clone()]
+    });
+    dialog.invoke_exchange_mode(4);
+    assert!(child(&bound).get_ready());
+    child(&bound).invoke_action("accept".into());
+    assert_eq!(rows(&dialog).len(), 2);
+    dialog.invoke_exchange_mode(2);
+    let png = hydrus_gui::png_export_window::last().unwrap();
+    assert!(child(&bound).get_png_child());
+    let stale_path = dir.path().join("closed.png");
+    png.set_path(stale_path.to_string_lossy().as_ref().into());
+    png.set_png_title("closed subscription package".into());
+    dialog.invoke_cancel();
+    assert!(!bound.subscription_exchange.has_open());
+    assert!(!bound.subscription_exchange.1.has_open());
+    let before = copies.borrow().len();
+    dialog.invoke_exchange_mode(0);
+    dialog.invoke_exchange_mode(3);
+    png.invoke_action("export".into());
+    assert!(!stale_path.exists());
+    assert_eq!(copies.borrow().len(), before);
+    assert!(!bound.subscription_exchange.has_open());
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    hydrus_gui::set_picker(|_, _| Vec::new());
+    hydrus_gui::set_clipper(|_| {});
+    drop(windows);
+}

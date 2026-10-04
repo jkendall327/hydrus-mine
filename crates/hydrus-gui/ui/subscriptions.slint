@@ -9,6 +9,25 @@ import { Theme } from "theme.slint";
 import { ImportFavouriteRow, ImportFavouritesButton } from "import_options_favourites.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 
+// The list's original three transport choices (full selected package).
+component SubscriptionExchangeButton inherits ContextMenuArea {
+    in property <string> label;
+    in property <[string]> choices;
+    in property <bool> available;
+    callback selected(int);
+    preferred-width: button.preferred-width;
+    preferred-height: button.preferred-height;
+    enabled: root.available;
+    Menu {
+        for choice[i] in root.choices: MenuItem { title: choice; activated => { root.selected(i); } }
+    }
+    button := Button {
+        width: parent.width; height: parent.height;
+        text: root.label; enabled: root.available;
+        clicked => { root.show({ x: 0px, y: self.height }); }
+    }
+}
+
 // A question asked in a window (the reference's quick dialogs): its title
 // and message, and its answers as buttons (`SelectFromListButtons`, a
 // yes/no), or a text box to fill in (`EnterText`, whose first button is
@@ -137,6 +156,9 @@ export component SubscriptionsWindow inherits Window {
     in property <bool> gallery-open;
     in property <bool> exchange-open;
     callback exchange(bool);
+    callback exchange-mode(int);
+    in property <[string]> exchange-export-labels: ["to clipboard", "to json file", "to png file"];
+    in property <[string]> exchange-import-labels: ["from clipboard", "from json files", "from png files (you can also drag and drop pngs onto this list)"];
     in-out property <string> import-status;
     // subscriptions paused from the network menu
     in property <bool> globally-paused;
@@ -270,8 +292,8 @@ export component SubscriptionsWindow inherits Window {
                     enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.delete(); }
                 }
-                Button { text: "export"; enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open; clicked => { root.exchange(false); } }
-                Button { text: "import"; enabled: !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open; clicked => { root.exchange(true); } }
+                SubscriptionExchangeButton { label: "export"; choices: root.exchange-export-labels; available: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open; selected(mode) => { root.exchange-mode(mode); } }
+                SubscriptionExchangeButton { label: "import"; choices: root.exchange-import-labels; available: !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open; selected(mode) => { root.exchange-mode(mode + 3); } }
                 Rectangle { width: 12px; }
                 Button {
                     text: "duplicate";

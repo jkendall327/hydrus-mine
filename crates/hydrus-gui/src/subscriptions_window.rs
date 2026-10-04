@@ -1574,6 +1574,66 @@ pub(crate) fn open(
             }
         }
     });
+    window.on_exchange_mode({
+        let active = active.clone();
+        let weak = window.as_weak();
+        let slots = exchange.clone();
+        move |mode| {
+            if !active.get() || slots.has_open() || !(0..=5).contains(&mode) {
+                return;
+            }
+            let Some(parent) = weak.upgrade() else {
+                return;
+            };
+            parent.invoke_exchange(mode >= 3);
+            let child = slots
+                .0
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            let Some(child) = child else {
+                return;
+            };
+            match mode {
+                0 => {
+                    child.invoke_action("copy".into());
+                    if child.get_error().is_empty() {
+                        child.invoke_action("cancel".into());
+                    }
+                }
+                1 => {
+                    child.invoke_action("browse-json".into());
+                    if child.get_path().is_empty() {
+                        child.invoke_action("cancel".into());
+                    } else {
+                        child.invoke_action("save-json".into());
+                    }
+                }
+                2 => {
+                    child.invoke_export_png();
+                }
+                3 => {
+                    child.invoke_action("paste".into());
+                    if child.get_error().is_empty() {
+                        child.invoke_action("review".into());
+                    }
+                }
+                _ => {
+                    child.invoke_action(
+                        if mode == 4 {
+                            "import-jsons"
+                        } else {
+                            "import-pngs"
+                        }
+                        .into(),
+                    );
+                    if !child.get_ready() && child.get_error().is_empty() {
+                        child.invoke_action("cancel".into());
+                    }
+                }
+            }
+        }
+    });
     window.on_apply({
         let exchange = exchange.clone();
         let active = active.clone();
