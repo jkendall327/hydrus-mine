@@ -2980,3 +2980,11 @@ local deletion records use their recorded import/deletion times. Accepted
 repairs go through the content writer and refresh the main page's actual media
 results; an intervening archive/inbox/time edit is preserved. Closing, replacing
 or invalidating the owner prevents a retained confirmation from starting work.
+
+Database > view file history opens an independent local-domain chart. It reads
+current/deleted imports, deletions, inbox and archive memories to draw the four
+reference sampled series. Series toggles, count/date ranges and both refit
+buttons affect the plot; refresh preserves custom ranges. Typed tags and system
+predicates run actual independent current/deleted queries. Cancelling, refreshing
+or closing prevents an older background result from replacing the current chart.
+The parent page's predicates and session tree are unaffected.

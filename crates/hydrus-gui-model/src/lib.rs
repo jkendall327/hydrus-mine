@@ -125,3 +125,5 @@ pub mod rating_example;
 pub mod tab_presentation;
 
 pub mod archive_repair;
+
+pub mod file_history;

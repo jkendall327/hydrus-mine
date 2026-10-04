@@ -43,6 +43,7 @@ mod edit_subscription_window;
 mod embedded_metadata_window;
 pub mod export_files_window;
 pub mod favourites_window;
+pub mod file_history_window;
 mod file_log_window;
 mod filename_regex_menu;
 mod filename_tagging_window;
@@ -279,6 +280,8 @@ pub struct Bound {
     pub services_editor: services_editor_window::Slots,
     /// Owned global archive-time maintenance window.
     pub archive_repair: archive_repair_window::Slot,
+    /// Independent global file-history frame.
+    pub file_history: file_history_window::Slot,
     /// The checker options editor while one is open (from the options
     /// window).
     pub checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>>,
@@ -1776,6 +1779,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let services_review: Rc<RefCell<Option<ServicesReviewWindow>>> = Rc::default();
     let services_editor = services_editor_window::Slots::default();
     let archive_repair = archive_repair_window::Slot::default();
+    let file_history = file_history_window::Slot::default();
     let network_data = network_data_window::Slots::default();
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
@@ -2126,6 +2130,25 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     match session_dialog::open(&pages, name.as_deref(), scope, &slot) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not save the session: {e}"),
+                    }
+                })
+            },
+            file_history: {
+                let pages = pages.clone();
+                let slot = file_history.clone();
+                let weak = window.as_weak();
+                Rc::new(move || {
+                    if slot.borrow().is_some() {
+                        return;
+                    }
+                    let owner = Rc::new({
+                        let weak = weak.clone();
+                        move || weak.upgrade().is_some_and(|w| w.window().is_visible())
+                    });
+                    if let Err(error) =
+                        file_history_window::open(pages.borrow().store(), &slot, owner)
+                    {
+                        eprintln!("could not open file history: {error}");
                     }
                 })
             },
@@ -3854,6 +3877,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         network_controls,
         services_editor,
         archive_repair,
+        file_history,
         checker_options,
         session_dialog,
         tab_name_dialog,

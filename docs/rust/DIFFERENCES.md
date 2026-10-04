@@ -2036,5 +2036,22 @@ before import keep the recorded reference behavior (the last is counted but
 cannot be filled). Reference repair writes do not refresh an already cached
 media timestamp immediately; the recorder verifies the committed SQL and actual
 media consumer after restarting. Native refresh reloads its timestamp consumer
-on completion. Database file history remains unavailable pending its independent
-search, four-series chart, date/count axes, refit and cancellation workflow.
+on completion. Database file history is assessed separately below.
+
+File history is partial. The native frame has real local-domain and typed tag/
+system-predicate query consumers, four sampled series, visibility, count/date
+range controls, refit, refresh and asynchronous cancellation/owner guards. It
+uses a local-domain dropdown, predicate list and typed input; the reference's
+full shared read autocomplete results/favourites/children, tag-service/current/
+pending controls, source editor, OR/system children, predicate context menus and
+synchronisation controls are not yet embedded here. Its SVG chart compresses
+flat runs for painting, shows endpoint dates/counts and uses ISO date text
+editors; Qt's 25 rotated date ticks, full count grid/legend, native date picker
+and persisted frame geometry remain different. Reversed ranges show a native
+validation error and preserve the prior range. The store retains the recorded
+sample boundaries (including omitted terminal events and repeated reverse event
+timestamps). No completion is claimed for the broad file-history leaf or its
+Database parent. Only simple single current local domains are accepted; complex
+locations show the reference's simpler-domain message. Query cancellation keeps
+the previous chart data internally and hides it until a successful refresh;
+retired work cannot publish into a successor frame.

@@ -252,6 +252,7 @@ pub enum Command {
     FileMaintenance(bool),
     /// Scan and optionally fill missing global archive times.
     RepairArchiveTimes,
+    FileHistory,
     /// Forget a repository's pending content, asking first.
     ForgetPending(ServiceKey),
     OpenUrl(&'static str),
@@ -874,7 +875,7 @@ fn database_menu(facts: &Facts) -> Entry {
             todo(dots("locations")),
             SEP,
             todo("how boned am I?"),
-            todo("view file history"),
+            item("view file history", Command::FileHistory),
             SEP,
             menu(
                 "file maintenance",
