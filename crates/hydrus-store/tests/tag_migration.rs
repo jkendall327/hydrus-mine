@@ -1145,10 +1145,10 @@ fn published_job_events_match_reference_phases_and_committed_prefixes() {
                 let rows = rusqlite::Connection::open(path)
                     .unwrap()
                     .query_row("SELECT count(*) FROM mappings", [], |row| {
-                        row.get::<_, usize>(0)
+                        row.get::<_, i64>(0)
                     })
                     .unwrap();
-                assert_eq!(rows, done.accepted);
+                assert_eq!(usize::try_from(rows).unwrap(), done.accepted);
             } else {
                 assert_eq!(
                     usize::try_from(count(&store, &request.destination, false)).unwrap(),
