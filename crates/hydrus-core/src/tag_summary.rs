@@ -119,22 +119,21 @@ impl TagSummaryGenerator {
         if !self.show {
             return String::new();
         }
-        let mut subtags: Vec<(&str, Vec<String>)> = self
+        // Duplicate namespace rows repeat their presentation, not their tags.
+        let mut subtags: std::collections::BTreeMap<&str, Vec<String>> = self
             .namespace_info
             .iter()
             .map(|i| (i.namespace.as_str(), Vec::new()))
             .collect();
         for tag in tags {
             let (namespace, subtag) = crate::tag::split_tag(tag);
-            for (wanted, found) in &mut subtags {
-                if *wanted == namespace {
-                    found.push(render(subtag));
-                }
+            if let Some(found) = subtags.get_mut(namespace) {
+                found.push(render(subtag));
             }
         }
         let mut texts = Vec::new();
         for info in &self.namespace_info {
-            let Some((_, found)) = subtags.iter().find(|(n, _)| *n == info.namespace) else {
+            let Some(found) = subtags.get(info.namespace.as_str()) else {
                 continue;
             };
             if found.is_empty() {
@@ -143,7 +142,7 @@ impl TagSummaryGenerator {
             let mut sorted = found.clone();
             crate::sort::human_sort(&mut sorted);
             // (`CollapseMultipleSortedNumericTagsToMinMax`)
-            let decimal = |s: &String| !s.is_empty() && s.chars().all(|c| c.is_ascii_digit());
+            let decimal = |s: &String| crate::tag_presentation::is_decimal(s);
             if sorted.len() > 2 && sorted.iter().all(decimal) {
                 sorted = vec![sorted[0].clone(), sorted[sorted.len() - 1].clone()];
             }

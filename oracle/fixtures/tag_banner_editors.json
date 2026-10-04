@@ -1,0 +1,3173 @@
+{
+  "initial": {
+    "thumbnail_top": {
+      "background": [
+        223,
+        227,
+        230,
+        255
+      ],
+      "text": [
+        1,
+        17,
+        26,
+        255
+      ],
+      "namespace_info": [
+        {
+          "namespace": "creator",
+          "prefix": "",
+          "separator": ", "
+        },
+        {
+          "namespace": "series",
+          "prefix": "",
+          "separator": ", "
+        },
+        {
+          "namespace": "title",
+          "prefix": "",
+          "separator": ", "
+        }
+      ],
+      "separator": " - ",
+      "example_tags": [
+        "creator:creator",
+        "series:series",
+        "title:title"
+      ],
+      "show": true
+    },
+    "thumbnail_bottom_right": {
+      "background": [
+        223,
+        227,
+        230,
+        255
+      ],
+      "text": [
+        1,
+        17,
+        26,
+        255
+      ],
+      "namespace_info": [
+        {
+          "namespace": "volume",
+          "prefix": "v",
+          "separator": "-"
+        },
+        {
+          "namespace": "chapter",
+          "prefix": "c",
+          "separator": "-"
+        },
+        {
+          "namespace": "page",
+          "prefix": "p",
+          "separator": "-"
+        }
+      ],
+      "separator": "-",
+      "example_tags": [
+        "chapter:10",
+        "page:330",
+        "page:331",
+        "volume:3"
+      ],
+      "show": true
+    },
+    "media_viewer_top": {
+      "background": [
+        223,
+        227,
+        230,
+        255
+      ],
+      "text": [
+        1,
+        17,
+        26,
+        255
+      ],
+      "namespace_info": [
+        {
+          "namespace": "creator",
+          "prefix": "",
+          "separator": ", "
+        },
+        {
+          "namespace": "series",
+          "prefix": "",
+          "separator": ", "
+        },
+        {
+          "namespace": "title",
+          "prefix": "",
+          "separator": ", "
+        },
+        {
+          "namespace": "volume",
+          "prefix": "v",
+          "separator": "-"
+        },
+        {
+          "namespace": "chapter",
+          "prefix": "c",
+          "separator": "-"
+        },
+        {
+          "namespace": "page",
+          "prefix": "p",
+          "separator": "-"
+        }
+      ],
+      "separator": " - ",
+      "example_tags": [
+        "chapter:1",
+        "creator:creator",
+        "page:1",
+        "series:series",
+        "title:title",
+        "volume:1"
+      ],
+      "show": true
+    }
+  },
+  "events": [
+    {
+      "action": "appearance/examples",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta",
+      "numeric": "",
+      "summary": "alpha / beta"
+    },
+    {
+      "action": "hide",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": false
+      },
+      "preview": "not showing",
+      "numeric": "",
+      "summary": ""
+    },
+    {
+      "action": "show",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta",
+      "numeric": "",
+      "summary": "alpha / beta"
+    },
+    {
+      "action": "add namespace",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "page",
+            "prefix": "p=",
+            "separator": ".."
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / p=2..3..10..alpha",
+      "numeric": "p=2..10",
+      "summary": "alpha / beta / p=2..3..10..\uff11\uff12..\uff11\uff13..\uff11\uff14..alpha"
+    },
+    {
+      "action": "move up",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "page",
+            "prefix": "p=",
+            "separator": ".."
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / p=2..3..10..alpha / beta",
+      "numeric": "p=2..10",
+      "summary": "alpha / p=2..3..10..\uff11\uff12..\uff11\uff13..\uff11\uff14..alpha / beta"
+    },
+    {
+      "action": "move down",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "page",
+            "prefix": "p=",
+            "separator": ".."
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / p=2..3..10..alpha",
+      "numeric": "p=2..10",
+      "summary": "alpha / beta / p=2..3..10..\uff11\uff12..\uff11\uff13..\uff11\uff14..alpha"
+    },
+    {
+      "action": "edit namespace",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "",
+            "prefix": "plain=",
+            "separator": " + "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / plain=blue_eyes",
+      "numeric": "",
+      "summary": "alpha / beta / plain=blue_eyes"
+    },
+    {
+      "action": "cancel namespace",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "",
+            "prefix": "plain=",
+            "separator": " + "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / plain=blue_eyes",
+      "numeric": "",
+      "summary": "alpha / beta / plain=blue_eyes"
+    },
+    {
+      "action": "cancel delete",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "",
+            "prefix": "plain=",
+            "separator": " + "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / plain=blue_eyes",
+      "numeric": "",
+      "summary": "alpha / beta / plain=blue_eyes"
+    },
+    {
+      "action": "delete",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta",
+      "numeric": "",
+      "summary": "alpha / beta"
+    },
+    {
+      "action": "appearance/examples",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta",
+      "numeric": "",
+      "summary": "alpha / beta"
+    },
+    {
+      "action": "hide",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": false
+      },
+      "preview": "not showing",
+      "numeric": "",
+      "summary": ""
+    },
+    {
+      "action": "show",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta",
+      "numeric": "",
+      "summary": "alpha / beta"
+    },
+    {
+      "action": "add namespace",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "page",
+            "prefix": "p=",
+            "separator": ".."
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / p=2..3..10..alpha",
+      "numeric": "p=2..10",
+      "summary": "alpha / beta / p=2..3..10..\uff11\uff12..\uff11\uff13..\uff11\uff14..alpha"
+    },
+    {
+      "action": "move up",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "page",
+            "prefix": "p=",
+            "separator": ".."
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / p=2..3..10..alpha / beta",
+      "numeric": "p=2..10",
+      "summary": "alpha / p=2..3..10..\uff11\uff12..\uff11\uff13..\uff11\uff14..alpha / beta"
+    },
+    {
+      "action": "move down",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "page",
+            "prefix": "p=",
+            "separator": ".."
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / p=2..3..10..alpha",
+      "numeric": "p=2..10",
+      "summary": "alpha / beta / p=2..3..10..\uff11\uff12..\uff11\uff13..\uff11\uff14..alpha"
+    },
+    {
+      "action": "edit namespace",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "",
+            "prefix": "plain=",
+            "separator": " + "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / plain=blue_eyes",
+      "numeric": "",
+      "summary": "alpha / beta / plain=blue_eyes"
+    },
+    {
+      "action": "cancel namespace",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "",
+            "prefix": "plain=",
+            "separator": " + "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / plain=blue_eyes",
+      "numeric": "",
+      "summary": "alpha / beta / plain=blue_eyes"
+    },
+    {
+      "action": "cancel delete",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "",
+            "prefix": "plain=",
+            "separator": " + "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / plain=blue_eyes",
+      "numeric": "",
+      "summary": "alpha / beta / plain=blue_eyes"
+    },
+    {
+      "action": "delete",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta",
+      "numeric": "",
+      "summary": "alpha / beta"
+    },
+    {
+      "action": "appearance/examples",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "p2-3-10-alpha",
+      "numeric": "p2-10",
+      "summary": "p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha"
+    },
+    {
+      "action": "hide",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": false
+      },
+      "preview": "not showing",
+      "numeric": "",
+      "summary": ""
+    },
+    {
+      "action": "show",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "p2-3-10-alpha",
+      "numeric": "p2-10",
+      "summary": "p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha"
+    },
+    {
+      "action": "add namespace",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p=",
+            "separator": ".."
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "p2-3-10-alpha / p=2..3..10..alpha",
+      "numeric": "p2-10 / p=2..10",
+      "summary": "p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha / p=2..3..10..\uff11\uff12..\uff11\uff13..\uff11\uff14..alpha"
+    },
+    {
+      "action": "move up",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p=",
+            "separator": ".."
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "p=2..3..10..alpha / p2-3-10-alpha",
+      "numeric": "p=2..10 / p2-10",
+      "summary": "p=2..3..10..\uff11\uff12..\uff11\uff13..\uff11\uff14..alpha / p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha"
+    },
+    {
+      "action": "move down",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p=",
+            "separator": ".."
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "p2-3-10-alpha / p=2..3..10..alpha",
+      "numeric": "p2-10 / p=2..10",
+      "summary": "p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha / p=2..3..10..\uff11\uff12..\uff11\uff13..\uff11\uff14..alpha"
+    },
+    {
+      "action": "edit namespace",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          },
+          {
+            "namespace": "",
+            "prefix": "plain=",
+            "separator": " + "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "p2-3-10-alpha / plain=blue_eyes",
+      "numeric": "p2-10",
+      "summary": "p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha / plain=blue_eyes"
+    },
+    {
+      "action": "cancel namespace",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          },
+          {
+            "namespace": "",
+            "prefix": "plain=",
+            "separator": " + "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "p2-3-10-alpha / plain=blue_eyes",
+      "numeric": "p2-10",
+      "summary": "p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha / plain=blue_eyes"
+    },
+    {
+      "action": "cancel delete",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          },
+          {
+            "namespace": "",
+            "prefix": "plain=",
+            "separator": " + "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "p2-3-10-alpha / plain=blue_eyes",
+      "numeric": "p2-10",
+      "summary": "p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha / plain=blue_eyes"
+    },
+    {
+      "action": "delete",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "p2-3-10-alpha",
+      "numeric": "p2-10",
+      "summary": "p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha"
+    },
+    {
+      "action": "appearance/examples",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / p2-3-10-alpha",
+      "numeric": "p2-10",
+      "summary": "alpha / beta / p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha"
+    },
+    {
+      "action": "hide",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": false
+      },
+      "preview": "not showing",
+      "numeric": "",
+      "summary": ""
+    },
+    {
+      "action": "show",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / p2-3-10-alpha",
+      "numeric": "p2-10",
+      "summary": "alpha / beta / p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha"
+    },
+    {
+      "action": "add namespace",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p=",
+            "separator": ".."
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / p2-3-10-alpha / p=2..3..10..alpha",
+      "numeric": "p2-10 / p=2..10",
+      "summary": "alpha / beta / p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha / p=2..3..10..\uff11\uff12..\uff11\uff13..\uff11\uff14..alpha"
+    },
+    {
+      "action": "move up",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p=",
+            "separator": ".."
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / p=2..3..10..alpha / p2-3-10-alpha",
+      "numeric": "p=2..10 / p2-10",
+      "summary": "alpha / beta / p=2..3..10..\uff11\uff12..\uff11\uff13..\uff11\uff14..alpha / p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha"
+    },
+    {
+      "action": "move down",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p=",
+            "separator": ".."
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / p2-3-10-alpha / p=2..3..10..alpha",
+      "numeric": "p2-10 / p=2..10",
+      "summary": "alpha / beta / p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha / p=2..3..10..\uff11\uff12..\uff11\uff13..\uff11\uff14..alpha"
+    },
+    {
+      "action": "edit namespace",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          },
+          {
+            "namespace": "",
+            "prefix": "plain=",
+            "separator": " + "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / p2-3-10-alpha / plain=blue_eyes",
+      "numeric": "p2-10",
+      "summary": "alpha / beta / p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha / plain=blue_eyes"
+    },
+    {
+      "action": "cancel namespace",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          },
+          {
+            "namespace": "",
+            "prefix": "plain=",
+            "separator": " + "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / p2-3-10-alpha / plain=blue_eyes",
+      "numeric": "p2-10",
+      "summary": "alpha / beta / p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha / plain=blue_eyes"
+    },
+    {
+      "action": "cancel delete",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          },
+          {
+            "namespace": "",
+            "prefix": "plain=",
+            "separator": " + "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / p2-3-10-alpha / plain=blue_eyes",
+      "numeric": "p2-10",
+      "summary": "alpha / beta / p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha / plain=blue_eyes"
+    },
+    {
+      "action": "delete",
+      "value": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "preview": "alpha / beta / p2-3-10-alpha",
+      "numeric": "p2-10",
+      "summary": "alpha / beta / p2-3-10-\uff11\uff12-\uff11\uff13-\uff11\uff14-alpha"
+    }
+  ],
+  "questions": [
+    {
+      "text": "Edit namespace.",
+      "default": "",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit prefix.",
+      "default": "",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit separator.",
+      "default": ", ",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit namespace.",
+      "default": "page",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit prefix.",
+      "default": "p=",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit separator.",
+      "default": "..",
+      "allow_blank": true
+    },
+    {
+      "delete": "Remove 1 selected?"
+    },
+    {
+      "delete": "Remove 1 selected?"
+    },
+    {
+      "text": "Edit namespace.",
+      "default": "",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit prefix.",
+      "default": "",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit separator.",
+      "default": ", ",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit namespace.",
+      "default": "page",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit prefix.",
+      "default": "p=",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit separator.",
+      "default": "..",
+      "allow_blank": true
+    },
+    {
+      "delete": "Remove 1 selected?"
+    },
+    {
+      "delete": "Remove 1 selected?"
+    },
+    {
+      "text": "Edit namespace.",
+      "default": "",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit prefix.",
+      "default": "",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit separator.",
+      "default": ", ",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit namespace.",
+      "default": "page",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit prefix.",
+      "default": "p=",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit separator.",
+      "default": "..",
+      "allow_blank": true
+    },
+    {
+      "delete": "Remove 1 selected?"
+    },
+    {
+      "delete": "Remove 1 selected?"
+    },
+    {
+      "text": "Edit namespace.",
+      "default": "",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit prefix.",
+      "default": "",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit separator.",
+      "default": ", ",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit namespace.",
+      "default": "page",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit prefix.",
+      "default": "p=",
+      "allow_blank": true
+    },
+    {
+      "text": "Edit separator.",
+      "default": "..",
+      "allow_blank": true
+    },
+    {
+      "delete": "Remove 1 selected?"
+    },
+    {
+      "delete": "Remove 1 selected?"
+    }
+  ],
+  "routes": [
+    {
+      "key": "thumbnail_top",
+      "before": {
+        "background": [
+          223,
+          227,
+          230,
+          255
+        ],
+        "text": [
+          1,
+          17,
+          26,
+          255
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " - ",
+        "example_tags": [
+          "creator:creator",
+          "series:series",
+          "title:title"
+        ],
+        "show": true
+      },
+      "after": {
+        "background": [
+          223,
+          227,
+          230,
+          255
+        ],
+        "text": [
+          1,
+          17,
+          26,
+          255
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " - ",
+        "example_tags": [
+          "creator:creator",
+          "series:series",
+          "title:title"
+        ],
+        "show": true
+      },
+      "label": "creator - series - title",
+      "saved_before_parent": {
+        "background": [
+          223,
+          227,
+          230,
+          255
+        ],
+        "text": [
+          1,
+          17,
+          26,
+          255
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " - ",
+        "example_tags": [
+          "creator:creator",
+          "series:series",
+          "title:title"
+        ],
+        "show": true
+      }
+    },
+    {
+      "key": "thumbnail_top",
+      "before": {
+        "background": [
+          223,
+          227,
+          230,
+          255
+        ],
+        "text": [
+          1,
+          17,
+          26,
+          255
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " - ",
+        "example_tags": [
+          "creator:creator",
+          "series:series",
+          "title:title"
+        ],
+        "show": true
+      },
+      "after": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "label": "alpha / beta",
+      "saved_before_parent": {
+        "background": [
+          223,
+          227,
+          230,
+          255
+        ],
+        "text": [
+          1,
+          17,
+          26,
+          255
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          }
+        ],
+        "separator": " - ",
+        "example_tags": [
+          "creator:creator",
+          "series:series",
+          "title:title"
+        ],
+        "show": true
+      }
+    },
+    {
+      "key": "thumbnail_bottom_right",
+      "before": {
+        "background": [
+          223,
+          227,
+          230,
+          255
+        ],
+        "text": [
+          1,
+          17,
+          26,
+          255
+        ],
+        "namespace_info": [
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": "-",
+        "example_tags": [
+          "chapter:10",
+          "page:330",
+          "page:331",
+          "volume:3"
+        ],
+        "show": true
+      },
+      "after": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "label": "p2-3-10-alpha",
+      "saved_before_parent": {
+        "background": [
+          223,
+          227,
+          230,
+          255
+        ],
+        "text": [
+          1,
+          17,
+          26,
+          255
+        ],
+        "namespace_info": [
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": "-",
+        "example_tags": [
+          "chapter:10",
+          "page:330",
+          "page:331",
+          "volume:3"
+        ],
+        "show": true
+      }
+    },
+    {
+      "key": "media_viewer_top",
+      "before": {
+        "background": [
+          223,
+          227,
+          230,
+          255
+        ],
+        "text": [
+          1,
+          17,
+          26,
+          255
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": " - ",
+        "example_tags": [
+          "chapter:1",
+          "creator:creator",
+          "page:1",
+          "series:series",
+          "title:title",
+          "volume:1"
+        ],
+        "show": true
+      },
+      "after": {
+        "background": [
+          12,
+          34,
+          56,
+          78
+        ],
+        "text": [
+          210,
+          180,
+          140,
+          120
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": " / ",
+        "example_tags": [
+          "blue_eyes",
+          "creator:alpha",
+          "page:10",
+          "page:2",
+          "page:3",
+          "page:alpha",
+          "title:beta"
+        ],
+        "show": true
+      },
+      "label": "alpha / beta / p2-3-10-alpha",
+      "saved_before_parent": {
+        "background": [
+          223,
+          227,
+          230,
+          255
+        ],
+        "text": [
+          1,
+          17,
+          26,
+          255
+        ],
+        "namespace_info": [
+          {
+            "namespace": "creator",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "series",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "title",
+            "prefix": "",
+            "separator": ", "
+          },
+          {
+            "namespace": "volume",
+            "prefix": "v",
+            "separator": "-"
+          },
+          {
+            "namespace": "chapter",
+            "prefix": "c",
+            "separator": "-"
+          },
+          {
+            "namespace": "page",
+            "prefix": "p",
+            "separator": "-"
+          }
+        ],
+        "separator": " - ",
+        "example_tags": [
+          "chapter:1",
+          "creator:creator",
+          "page:1",
+          "series:series",
+          "title:title",
+          "volume:1"
+        ],
+        "show": true
+      }
+    }
+  ],
+  "saved": {
+    "thumbnail_top": {
+      "background": [
+        12,
+        34,
+        56,
+        78
+      ],
+      "text": [
+        210,
+        180,
+        140,
+        120
+      ],
+      "namespace_info": [
+        {
+          "namespace": "creator",
+          "prefix": "",
+          "separator": ", "
+        },
+        {
+          "namespace": "series",
+          "prefix": "",
+          "separator": ", "
+        },
+        {
+          "namespace": "title",
+          "prefix": "",
+          "separator": ", "
+        }
+      ],
+      "separator": " / ",
+      "example_tags": [
+        "blue_eyes",
+        "creator:alpha",
+        "page:10",
+        "page:2",
+        "page:3",
+        "page:alpha",
+        "title:beta"
+      ],
+      "show": true
+    },
+    "thumbnail_bottom_right": {
+      "background": [
+        12,
+        34,
+        56,
+        78
+      ],
+      "text": [
+        210,
+        180,
+        140,
+        120
+      ],
+      "namespace_info": [
+        {
+          "namespace": "volume",
+          "prefix": "v",
+          "separator": "-"
+        },
+        {
+          "namespace": "chapter",
+          "prefix": "c",
+          "separator": "-"
+        },
+        {
+          "namespace": "page",
+          "prefix": "p",
+          "separator": "-"
+        }
+      ],
+      "separator": " / ",
+      "example_tags": [
+        "blue_eyes",
+        "creator:alpha",
+        "page:10",
+        "page:2",
+        "page:3",
+        "page:alpha",
+        "title:beta"
+      ],
+      "show": true
+    },
+    "media_viewer_top": {
+      "background": [
+        12,
+        34,
+        56,
+        78
+      ],
+      "text": [
+        210,
+        180,
+        140,
+        120
+      ],
+      "namespace_info": [
+        {
+          "namespace": "creator",
+          "prefix": "",
+          "separator": ", "
+        },
+        {
+          "namespace": "series",
+          "prefix": "",
+          "separator": ", "
+        },
+        {
+          "namespace": "title",
+          "prefix": "",
+          "separator": ", "
+        },
+        {
+          "namespace": "volume",
+          "prefix": "v",
+          "separator": "-"
+        },
+        {
+          "namespace": "chapter",
+          "prefix": "c",
+          "separator": "-"
+        },
+        {
+          "namespace": "page",
+          "prefix": "p",
+          "separator": "-"
+        }
+      ],
+      "separator": " / ",
+      "example_tags": [
+        "blue_eyes",
+        "creator:alpha",
+        "page:10",
+        "page:2",
+        "page:3",
+        "page:alpha",
+        "title:beta"
+      ],
+      "show": true
+    }
+  },
+  "consumers": {
+    "tags": [
+      "blue_eyes",
+      "creator:alpha",
+      "page:10",
+      "page:2",
+      "page:3",
+      "page:alpha",
+      "title:beta",
+      "title:pending"
+    ],
+    "viewer_title": "alpha / beta, pending / p2-3-10-alpha",
+    "file": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "thumbnail_top": "alpha / beta, pending",
+    "thumbnail_bottom_right": "p2-3-10-alpha"
+  }
+}

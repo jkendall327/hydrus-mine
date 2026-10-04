@@ -1917,3 +1917,8 @@ from the database immediately, while cached media ratings refresh through their
 existing viewer/page lifecycle. The service review parent remains partial;
 this slice covers only the two local bulk-maintenance leaves.
 
+The tag-banner draft model and fresh child-editor oracle are implemented; native
+editor widgets and Options routes are still pending. Existing summary generation
+now preserves repeated namespace rows without duplicating their underlying tags,
+and numeric collapse accepts the reference's Unicode decimal subtags.
+

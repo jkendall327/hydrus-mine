@@ -2865,3 +2865,8 @@ use physical storage membership, so a file still in trash remains local.
 Counts refresh on acceptance and survive reopening. Each question captures its
 service/action, blocks replacement and selection, and retires with its owner.
 
+Tag-banner editing now has a detached model for appearance, cleaned examples and
+ordered namespace rows. A fresh Qt recording drives all three actual Options
+buttons, child Apply/Cancel, namespace CRUD/movement and live preview. Native
+window/Options wiring follows in the next slice.
+
