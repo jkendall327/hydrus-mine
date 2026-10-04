@@ -31,10 +31,12 @@ pub fn seed(fixture: &Value) -> (tempfile::TempDir, Arc<Store>, Vec<HashId>) {
     store
         .write_content(move |writer| {
             for row in corpus.as_array().unwrap() {
-                let service = snapshot
-                    .services
-                    .by_name(row["service"].as_str().unwrap())?
-                    .id;
+                let service_name = row["service"].as_str().unwrap();
+                let service = snapshot.services.by_name(service_name).ok_or_else(|| {
+                    hydrus_store::StoreError::Invalid(format!(
+                        "recorded tag service {service_name:?} is missing from the basic fixture"
+                    ))
+                })?.id;
                 let tag = hydrus_store::master::intern_tag(
                     writer.conn(),
                     &Tag::new(row["tag"].as_str().unwrap()).unwrap(),
