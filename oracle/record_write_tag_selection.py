@@ -16,6 +16,9 @@ and actual mouse press/move/release handlers record deselection and reversible
 add/remove dragging, including an inherited parent row. The actual tagsPasted
 signal is also consumed twice by a single-file Manage Tags child, recording its
 all-file storage counts and preserved input independently from suggestion labels.
+Successive replacements,
+normal typing, Undo/Redo and redo invalidation use real input key events and
+capture both draft text and restored selection/cursor.
 """
 import json,os,sys,tempfile
 HERE=os.path.dirname(os.path.abspath(__file__));sys.path.insert(0,HERE)
@@ -189,7 +192,36 @@ def record(session):
         clipboard_rows=[{'tag':term.GetTag(),'label':''.join(text for text,_ in managed._tags_box._GetRowsOfTextsAndColours(term)[0])} for term in managed._tags_box._ordered_terms if term.GetTag() in pasted]
         manage_clipboard={'text':managed._add_tag_box._text_ctrl.text(),'rows':clipboard_rows}
         manage.deleteLater()
-        return dict(tags=tags,rows=rows,steps=steps,menus=menus,normal_paste=paste_events,keyboard=dict(page_rows=3,steps=keyboard),escape=escape,drag=drag,manage_clipboard=manage_clipboard)
+        # Drive reference replacement history and fresh typing through real keys.
+        history=[]
+        try:
+            ClientGUIDialogsQuick.GetYesNo=lambda *args,**kwargs:QtWidgets.QDialog.DialogCode.Rejected
+            sequences=[
+                ('successive_replacements','draft content',[('paste','first replacement',0,5),('paste','second replacement',6,11),('undo',),('undo',),('redo',),('redo',)]),
+                ('typing_invalidates_redo','draft content',[('paste','first replacement',0,5),('paste','second replacement',6,11),('undo',),('type','x'),('redo',),('undo',)]),
+                ('typing_after_replacement','draft content',[('paste','first replacement',0,5),('type','x'),('undo',),('undo',),('redo',),('redo',)]),
+                ('replace_suffix','draft content',[('paste','suffix',6,7),('undo',),('redo',)]),
+            ]
+            for name,text,actions in sequences:
+                ac._text_ctrl.setText(text)
+                history_steps=[]
+                for action in actions:
+                    kind=action[0]
+                    if kind=='paste':
+                        _,pasted,anchor,length=action
+                        ac._text_ctrl.setSelection(anchor,length)
+                        QtWidgets.QApplication.clipboard().setText(pasted)
+                        key=QtCore.Qt.Key.Key_V;modifiers=QtCore.Qt.KeyboardModifier.ControlModifier;value='v'
+                    elif kind in ('undo','redo'):
+                        key=QtCore.Qt.Key.Key_Z;modifiers=QtCore.Qt.KeyboardModifier.ControlModifier;value='z'
+                        if kind=='redo':modifiers|=QtCore.Qt.KeyboardModifier.ShiftModifier
+                    else:
+                        value=action[1];key=QtCore.Qt.Key.Key_X;modifiers=QtCore.Qt.KeyboardModifier.NoModifier
+                    QtWidgets.QApplication.sendEvent(ac._text_ctrl,QtGui.QKeyEvent(QtCore.QEvent.Type.KeyPress,key,modifiers,value))
+                    history_steps.append({'action':list(action),'text':ac._text_ctrl.text(),'cursor':ac._text_ctrl.cursorPosition(),'selection_start':ac._text_ctrl.selectionStart(),'selected':ac._text_ctrl.selectedText()})
+                history.append({'name':name,'initial':text,'steps':history_steps})
+        finally:ClientGUIDialogsQuick.GetYesNo=old_yes_no
+        return dict(tags=tags,rows=rows,steps=steps,menus=menus,normal_paste=paste_events,normal_paste_history=history,manage_clipboard=manage_clipboard,keyboard=dict(page_rows=3,steps=keyboard),escape=escape,drag=drag)
     try:out=qt(replay)
     finally:c.CallToThread=old_thread
     return dict(files=[h.hex() for h in hashes],corpus=[dict(tag=t,hashes=[h.hex() for h in fs]) for t,fs in corpus],siblings=siblings,parents=parents,**out)

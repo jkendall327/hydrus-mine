@@ -1370,11 +1370,16 @@ Manage Tags' write autocomplete now has storage counts, typed/ideal elevation,
 parent and sibling rows, manual fetch, a scrollable suggestions list, multiline
 paste and all six Tag Editing autocomplete preferences. Favourites and children now use the shared tabs. Logical multi-selection, batch activation, selected copy/search/relationship menus and local tag-display regeneration work across shared write inputs. Regeneration publishes recalculated display graphs and counts atomically; Qt queues a subsequent display-maintenance pass and shows its database job progress. Native regeneration currently waits on its writer without that job-progress panel.
 Declining a multiline paste resumes the native line editor at the retained
-cursor/selection. The shared write input uses Slint's native TextInput cursor/selection/IME/undo
-engine with a short multiline allowance during normal paste, retaining Qt's
+cursor/selection. The shared write input uses Slint's native TextInput cursor/selection/IME
+with a short multiline allowance during normal paste, retaining Qt's
 raw newline draft text instead of standard Slint LineEdit's newline-to-space
 conversion. Accepted clipboard tags preserve an existing text draft in both
-clients. Platform widget appearance differs. Import additional-tags and whitelist fields now open a detached shared write-tag editor; their raw multiline fields remain available as well. Expanded
+clients. Undo/Redo uses history owned by each input, keeping a replacement paste
+atomic, separating subsequent typing and invalidating redo on a fresh edit.
+This avoids Slint's separate selection-deletion and insertion undo items. Undo
+restores the pre-edit selection; redo restores that edit's saved post-edit
+caret, while Qt can retain a later command's caret/selection at a redo boundary.
+Platform widget appearance differs. Import additional-tags and whitelist fields now open a detached shared write-tag editor; their raw multiline fields remain available as well. Expanded
 parent rows enter their originating child, matching Qt's logical-list selection.
 
 File Search list heights and floating policy reach new-page presentation;

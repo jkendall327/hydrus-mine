@@ -17,6 +17,15 @@ pub(crate) fn open(
     applied: Rc<dyn Fn()>,
 ) -> Result<ManageTagsWindow, slint::PlatformError> {
     let window = ManageTagsWindow::new()?;
+    window
+        .global::<crate::TagTextHistory>()
+        .on_record(crate::write_tag_history::record);
+    window
+        .global::<crate::TagTextHistory>()
+        .on_undo(crate::write_tag_history::undo);
+    window
+        .global::<crate::TagTextHistory>()
+        .on_redo(crate::write_tag_history::redo);
     window.set_use_listbook(model.dialog_preferences().use_listbook);
     let names: Vec<SharedString> = model
         .service_names()

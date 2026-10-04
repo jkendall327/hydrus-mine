@@ -98,6 +98,15 @@ fn open_internal(
         return Ok(existing.clone_strong());
     }
     let window = WriteTagsWindow::new()?;
+    window
+        .global::<crate::TagTextHistory>()
+        .on_record(crate::write_tag_history::record);
+    window
+        .global::<crate::TagTextHistory>()
+        .on_undo(crate::write_tag_history::undo);
+    window
+        .global::<crate::TagTextHistory>()
+        .on_redo(crate::write_tag_history::redo);
     window.set_window_title(title.into());
     let location = store
         .read(hydrus_store::settings::get::<hydrus_store::settings::SearchDefaults>)

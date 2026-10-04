@@ -2705,7 +2705,10 @@ editor's normal paste at its cursor/selection, rather than discarding the
 paste. Both sibling/parent sides, Manage Tags and detached editors share this
 behavior; cancellation invalidates a pending answer. Qt key events, selected
 text replacement and accepted clipboard signals are recorded in
-`write_tag_selection.json`.
+`write_tag_selection.json`. Each input now owns Undo/Redo history: replacement
+paste is one action, later typing is separate, and fresh editing invalidates
+redo. Undo restores the replaced selection without changing another open
+editor's draft.
 
 Login required-cookie Add/Edit now opens the name matcher followed by the value
 matcher, using the reference titles and initial rules. Cancel at either stage

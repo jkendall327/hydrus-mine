@@ -126,6 +126,7 @@ mod viewer_presentation;
 mod viewing_tracking;
 mod watcher;
 pub mod windows;
+mod write_tag_history;
 pub mod write_tag_menu;
 pub mod write_tag_window;
 pub mod zoom;

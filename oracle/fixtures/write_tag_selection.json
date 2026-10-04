@@ -67,7 +67,7 @@
     },
     {
       "tag": "parity:multi alpha old",
-      "text": "parity:multi alpha old (1) → parity:multi alpha"
+      "text": "parity:multi alpha old (1) \u2192 parity:multi alpha"
     },
     {
       "tag": "parity:multi alpha old",
@@ -964,5 +964,240 @@
         "label": "parity:paste two (1)"
       }
     ]
-  }
+  },
+  "normal_paste_history": [
+    {
+      "name": "successive_replacements",
+      "initial": "draft content",
+      "steps": [
+        {
+          "action": [
+            "paste",
+            "first replacement",
+            0,
+            5
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "paste",
+            "second replacement",
+            6,
+            11
+          ],
+          "text": "first second replacement content",
+          "cursor": 24,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": 6,
+          "selected": "replacement"
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "draft content",
+          "cursor": 5,
+          "selection_start": 0,
+          "selected": "draft"
+        },
+        {
+          "action": [
+            "redo"
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": 6,
+          "selected": "replacement"
+        },
+        {
+          "action": [
+            "redo"
+          ],
+          "text": "first second replacement content",
+          "cursor": 24,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "typing_invalidates_redo",
+      "initial": "draft content",
+      "steps": [
+        {
+          "action": [
+            "paste",
+            "first replacement",
+            0,
+            5
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "paste",
+            "second replacement",
+            6,
+            11
+          ],
+          "text": "first second replacement content",
+          "cursor": 24,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": 6,
+          "selected": "replacement"
+        },
+        {
+          "action": [
+            "type",
+            "x"
+          ],
+          "text": "first x content",
+          "cursor": 7,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "redo"
+          ],
+          "text": "first x content",
+          "cursor": 7,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": 6,
+          "selected": "replacement"
+        }
+      ]
+    },
+    {
+      "name": "typing_after_replacement",
+      "initial": "draft content",
+      "steps": [
+        {
+          "action": [
+            "paste",
+            "first replacement",
+            0,
+            5
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "type",
+            "x"
+          ],
+          "text": "first replacementx content",
+          "cursor": 18,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "draft content",
+          "cursor": 5,
+          "selection_start": 0,
+          "selected": "draft"
+        },
+        {
+          "action": [
+            "redo"
+          ],
+          "text": "first replacement content",
+          "cursor": 18,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "redo"
+          ],
+          "text": "first replacementx content",
+          "cursor": 18,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "replace_suffix",
+      "initial": "draft content",
+      "steps": [
+        {
+          "action": [
+            "paste",
+            "suffix",
+            6,
+            7
+          ],
+          "text": "draft suffix",
+          "cursor": 12,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "draft content",
+          "cursor": 13,
+          "selection_start": 6,
+          "selected": "content"
+        },
+        {
+          "action": [
+            "redo"
+          ],
+          "text": "draft suffix",
+          "cursor": 12,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    }
+  ]
 }

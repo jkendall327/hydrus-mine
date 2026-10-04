@@ -50,6 +50,15 @@ pub(crate) fn open(
     applied: Rc<dyn Fn()>,
 ) -> Result<TagRelationshipsWindow, slint::PlatformError> {
     let window = TagRelationshipsWindow::new()?;
+    window
+        .global::<crate::TagTextHistory>()
+        .on_record(crate::write_tag_history::record);
+    window
+        .global::<crate::TagTextHistory>()
+        .on_undo(crate::write_tag_history::undo);
+    window
+        .global::<crate::TagTextHistory>()
+        .on_redo(crate::write_tag_history::redo);
     window.set_use_listbook(model.use_listbook());
     window.set_siblings(model.kind() == hydrus_store::display::RelationKind::Siblings);
     window.set_service_names(ModelRc::new(VecModel::from(

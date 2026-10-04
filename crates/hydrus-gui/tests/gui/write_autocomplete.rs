@@ -1623,3 +1623,111 @@ fn keyboard_result_selection_copy_and_native_text_copy_use_their_own_focus() {
     assert!(slot.borrow().is_none());
     hydrus_gui::set_clipper(|_| {});
 }
+
+#[test]
+fn replacement_history_replays_real_keys_typing_undo_redo_and_independent_owners() {
+    use slint::platform::{Key, WindowEvent};
+
+    fn key(window: &slint::Window, text: &str, control: bool, shift: bool) {
+        if control {
+            window.dispatch_event(WindowEvent::KeyPressed {
+                text: Key::Control.into(),
+            });
+        }
+        if shift {
+            window.dispatch_event(WindowEvent::KeyPressed {
+                text: Key::Shift.into(),
+            });
+        }
+        window.dispatch_event(WindowEvent::KeyPressed { text: text.into() });
+        window.dispatch_event(WindowEvent::KeyReleased { text: text.into() });
+        if shift {
+            window.dispatch_event(WindowEvent::KeyReleased {
+                text: Key::Shift.into(),
+            });
+        }
+        if control {
+            window.dispatch_event(WindowEvent::KeyReleased {
+                text: Key::Control.into(),
+            });
+        }
+    }
+
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
+    let service = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let other_slot = hydrus_gui::write_tag_window::Slot::default();
+    let other = hydrus_gui::write_tag_window::open(
+        &store,
+        service.clone(),
+        &[],
+        "independent draft",
+        &other_slot,
+        Rc::new(|_| panic!("Cancelled independent draft must not apply")),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    other.invoke_edited("untouched draft".into());
+    for case in fixture["normal_paste_history"].as_array().unwrap() {
+        let slot = hydrus_gui::write_tag_window::Slot::default();
+        let child = hydrus_gui::write_tag_window::open(
+            &store,
+            service.clone(),
+            &[],
+            "replacement history",
+            &slot,
+            Rc::new(|_| panic!("Cancelled replay must not apply")),
+            Rc::new(|| {}),
+        )
+        .unwrap();
+        child.invoke_edited(case["initial"].as_str().unwrap().into());
+        for step in case["steps"].as_array().unwrap() {
+            let action = step["action"].as_array().unwrap();
+            match action[0].as_str().unwrap() {
+                "paste" => {
+                    let anchor = i32::try_from(action[2].as_i64().unwrap()).unwrap();
+                    let cursor = anchor + i32::try_from(action[3].as_i64().unwrap()).unwrap();
+                    child.invoke_select_input(anchor, cursor);
+                    let pasted = action[1].as_str().unwrap().to_owned();
+                    headless::set_clipboard_text(&pasted);
+                    hydrus_gui::set_paster(move || pasted.clone());
+                    key(child.window(), "v", true, false);
+                    assert!(child.get_question().is_empty());
+                }
+                "type" => key(child.window(), action[1].as_str().unwrap(), false, false),
+                "undo" => key(child.window(), "z", true, false),
+                "redo" => key(child.window(), "z", true, true),
+                action => panic!("Unknown recorded history action {action}"),
+            }
+            assert_eq!(
+                child.get_text(),
+                step["text"].as_str().unwrap(),
+                "{case} {step}"
+            );
+            // Undo must also restore the original selection. Copy through the
+            // native editor proves subsequent typing replaces that exact range.
+            if action[0] == "undo" && !step["selected"].as_str().unwrap().is_empty() {
+                headless::set_clipboard_text("not yet copied");
+                key(child.window(), "c", true, false);
+                assert_eq!(
+                    headless::clipboard_text().as_deref(),
+                    step["selected"].as_str()
+                );
+            }
+            assert_eq!(other.get_text(), "untouched draft");
+        }
+        child.invoke_cancel();
+        child.invoke_apply();
+        assert!(slot.borrow().is_none());
+    }
+    other.invoke_undo_input();
+    assert_eq!(other.get_text(), "untouched draft");
+    other.invoke_cancel();
+}
