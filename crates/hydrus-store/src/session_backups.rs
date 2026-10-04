@@ -376,7 +376,7 @@ mod importer_tests {
                     referral_url: None,
                     meta: queues::FileSeedMeta {
                         tags: ["source:recorded".into()].into(),
-                        ..Default::default()
+                        ..queues::FileSeedMeta::default()
                     },
                 }],
                 false,
@@ -402,7 +402,7 @@ mod importer_tests {
                     status: SeedStatus::from_code(gallery["status"].as_i64().unwrap()).unwrap(),
                     note: gallery["note"].as_str().unwrap().into(),
                     referral_url: None,
-                    meta: Default::default(),
+                    meta: queues::GallerySeedMeta::default(),
                 }],
             )
             .unwrap();
@@ -418,7 +418,7 @@ mod importer_tests {
                     sort: None,
                     page: Some(Box::new(DownloaderPageState {
                         highlighted: Some(old),
-                        ..Default::default()
+                        ..DownloaderPageState::default()
                     })),
                 },
             }],
@@ -441,7 +441,7 @@ mod importer_tests {
                 data_for_comparison: later.into(),
                 source_time: None,
                 referral_url: None,
-                meta: Default::default(),
+                meta: queues::FileSeedMeta::default(),
             }],
             false,
             110,
@@ -479,7 +479,7 @@ mod importer_tests {
                 data_for_comparison: copy.into(),
                 source_time: None,
                 referral_url: None,
-                meta: Default::default(),
+                meta: queues::FileSeedMeta::default(),
             }],
             false,
             120,
