@@ -133,3 +133,5 @@ mod read_autocomplete;
 mod read_or;
 
 mod manage_tag_counts;
+
+mod incremental_tagging;

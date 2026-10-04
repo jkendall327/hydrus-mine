@@ -111,3 +111,5 @@ mod viewing_statistics;
 mod search_or;
 
 mod manage_tag_counts;
+
+mod incremental_tagging;

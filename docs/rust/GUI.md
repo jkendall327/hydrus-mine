@@ -2821,3 +2821,15 @@ and deleted `(Xn)` counts, including current counts when every selected file has
 the tag. Apply commits the private mapping draft; Cancel and callbacks retained
 after closure cannot change it. The real Qt recording
 `manage_tag_counts_incremental.json` covers two local services and reopening.
+
+Manage Tags' ± Incremental Tagging button now opens an owned child for multi-file
+selections. Namespace, prefix and suffix remember each edit immediately, including
+Cancel; start defaults to the first file's smallest numerical namespace tag,
+step defaults to one, and reverse numbers the original selection backwards.
+The preview reports the exact tag sequence and existing namespace conflicts.
+Child Apply adds one tag per original file to the selected service's private
+Manage Tags draft, preserving other namespace tags. Parent Apply commits it;
+child/parent Cancel and window closure discard pending mappings and invalidate
+retained callbacks. While the child is open, service changes, tag entry and
+parent Apply are blocked. Actual Qt recorded child/parent cancellation, negative
+steps, reverse order, remembered reopening and persisted per-file mappings.

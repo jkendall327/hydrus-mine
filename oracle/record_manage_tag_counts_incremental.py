@@ -79,6 +79,8 @@ def record(session):
         for package in p._GetContentUpdatePackages():c.WriteSynchronous('content_updates',package)
         p.deleteLater();p=panel();deleted.append({'step':'parent_apply_reopen','state':snapshot(p)})
         p.deleteLater()
+        p=panel();page(p).EnterTags({'checkpoint:cycle'});page(p).EnterTags({'checkpoint:cycle'})
+        fresh_cycle={'state':snapshot(p),'has_changes':page(p).HasChanges()};p.deleteLater()
         # Actual child factory/callback with ordered parent media and real controls.
         scenarios=[{'name':'child_cancel','namespace':'sequence','prefix':'v','suffix':'x','start':-2,'step':-3,'reverse':True,'accept':False},
                    {'name':'child_apply_parent_cancel','namespace':'page','prefix':'','suffix':'','start':8,'step':2,'reverse':False,'accept':True},
@@ -105,7 +107,7 @@ def record(session):
             reopened=media()
             incremental.append({'input':scenario,'child':child_states,'staged':staged,'preferences':{key:c.new_options.GetString('last_incremental_tagging_'+key) for key in ('namespace','prefix','suffix')},'reopened_tags':[sorted(m.GetTagsManager().GetCurrent(local,0)) for m in reopened]})
         W.DialogEdit.exec=old_exec;c.CallAfterQtSafe=old_after;ClientGUIDialogsQuick.GetYesNo=old_yes
-        return {'files':[h.hex() for h in hashes],'corpus':corpus,'deleted':deleted,'incremental':incremental}
+        return {'files':[h.hex() for h in hashes],'corpus':corpus,'deleted':deleted,'incremental':incremental,'fresh_cycle':fresh_cycle}
     return c.CallBlockingToQt(c.gui,work)
 
 def child(out):

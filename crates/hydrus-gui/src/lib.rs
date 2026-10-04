@@ -60,6 +60,7 @@ pub mod import_options_panel_window;
 mod import_options_window;
 mod import_window;
 mod importer_list_menu;
+pub mod incremental_tagging_window;
 pub mod locations_window;
 pub mod login_cookies_window;
 pub mod login_credential_window;
@@ -228,6 +229,7 @@ pub struct Bound {
     pub viewer_deletion: delete_files_window::Slot,
     /// The manage tags window while one is open.
     pub manage_tags: Rc<RefCell<Option<ManageTagsWindow>>>,
+    pub incremental_tags: incremental_tagging_window::Slot,
     /// Siblings or parents while the corresponding editor is open.
     pub tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     /// Display/search or relationship application configuration.
@@ -1335,6 +1337,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     // F3: manage tags; once applied, the tags are counted again
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
+    let incremental_tags = incremental_tagging_window::Slot::default();
     let tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>> = Rc::default();
     let tag_display: Rc<RefCell<Option<TagDisplayWindow>>> = Rc::default();
     let tag_migration = tag_migration_window::Slot::default();
@@ -1358,13 +1361,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     let open_manage_tags = {
         let manage_tags = manage_tags.clone();
+        let incremental_tags = incremental_tags.clone();
         let page = page.clone();
         move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
+            if let Some(window) = manage_tags.borrow().as_ref() {
+                let _ = window.show();
+                return;
+            }
             let Some(mut model) = manage_tags::ManageTags::new(store, files) else {
                 return;
             };
             model.set_location(page().borrow().location().clone());
-            match manage_tags_window::open(model, &manage_tags, applied) {
+            match manage_tags_window::open(model, &manage_tags, &incremental_tags, applied) {
                 Ok(window) => *manage_tags.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage tags: {e}"),
             }
@@ -3721,6 +3729,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         viewer,
         viewer_deletion,
         manage_tags,
+        incremental_tags,
         tag_relationships,
         tag_display,
         tag_migration,
