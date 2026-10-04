@@ -417,3 +417,34 @@ fn native_focus_registry_delivers_to_owned_callback_once_and_releases_dead_viewe
     observe_native_focus(id, true);
     assert_eq!(*events.borrow(), [true, false]);
 }
+
+#[test]
+fn application_focus_observer_preserves_transient_none_and_identifies_other_windows() {
+    use hydrus_gui::session_autosave::{
+        ApplicationFocusCallback, observe_native_focus, watch_native_application_focus,
+    };
+    use std::{cell::RefCell, rc::Rc};
+    let first = slint::winit_030::winit::window::WindowId::from(1);
+    let other = slint::winit_030::winit::window::WindowId::from(2);
+    let events = Rc::new(RefCell::new(Vec::new()));
+    let callback: ApplicationFocusCallback = Rc::new({
+        let events = events.clone();
+        move |focused| events.borrow_mut().push(focused)
+    });
+    let weak = Rc::downgrade(&callback);
+    watch_native_application_focus(&callback);
+    observe_native_focus(first, true);
+    observe_native_focus(first, false);
+    observe_native_focus(other, true);
+    // A late unfocus from the prior window does not erase the current identity.
+    observe_native_focus(first, false);
+    assert_eq!(
+        &events.borrow()[1..],
+        [Some(first), None, Some(other), Some(other)]
+    );
+    drop(callback);
+    assert!(weak.upgrade().is_none());
+    let count = events.borrow().len();
+    observe_native_focus(other, false);
+    assert_eq!(events.borrow().len(), count);
+}

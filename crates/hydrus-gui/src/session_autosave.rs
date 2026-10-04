@@ -10,10 +10,35 @@ use std::{
 thread_local! {
     static MONITORS: RefCell<Vec<Weak<Inner>>> = const { RefCell::new(Vec::new()) };
     static FOCUS_OBSERVERS: RefCell<Vec<FocusObserver>> = const { RefCell::new(Vec::new()) };
+    static APPLICATION_FOCUS_OBSERVERS: RefCell<Vec<ApplicationFocusObserver>> = const { RefCell::new(Vec::new()) };
+    static ACTIVE_NATIVE_WINDOW: std::cell::Cell<Option<slint::winit_030::winit::window::WindowId>> = const { std::cell::Cell::new(None) };
 }
 
 /// Hold this callback in the viewer's owned state; the registry keeps only Weak.
 pub type FocusCallback = Rc<dyn Fn(bool)>;
+/// Distinguish another active application window from the transient no-window gap.
+pub type ApplicationFocusCallback = Rc<dyn Fn(Option<slint::winit_030::winit::window::WindowId>)>;
+struct ApplicationFocusObserver {
+    callback: Weak<dyn Fn(Option<slint::winit_030::winit::window::WindowId>)>,
+}
+
+/// Weakly subscribe and immediately report the last observed active native window.
+pub fn watch_native_application_focus(callback: &ApplicationFocusCallback) {
+    APPLICATION_FOCUS_OBSERVERS.with(|observers| {
+        let mut observers = observers.borrow_mut();
+        observers.retain(|observer| observer.callback.strong_count() > 0);
+        if !observers
+            .iter()
+            .any(|observer| observer.callback.ptr_eq(&Rc::downgrade(callback)))
+        {
+            observers.push(ApplicationFocusObserver {
+                callback: Rc::downgrade(callback),
+            });
+        }
+    });
+    callback(ACTIVE_NATIVE_WINDOW.with(std::cell::Cell::get));
+}
+
 struct FocusObserver {
     window_id: slint::winit_030::winit::window::WindowId,
     callback: Weak<dyn Fn(bool)>,
@@ -48,6 +73,25 @@ pub fn watch_native_focus_id(
 
 /// Dispatch one OS window focus notification without consuming the native event.
 pub fn observe_native_focus(window_id: slint::winit_030::winit::window::WindowId, focused: bool) {
+    let active = ACTIVE_NATIVE_WINDOW.with(|active| {
+        if focused {
+            active.set(Some(window_id));
+        } else if active.get() == Some(window_id) {
+            active.set(None);
+        }
+        active.get()
+    });
+    let application_callbacks = APPLICATION_FOCUS_OBSERVERS.with(|observers| {
+        let mut observers = observers.borrow_mut();
+        observers.retain(|observer| observer.callback.strong_count() > 0);
+        observers
+            .iter()
+            .filter_map(|observer| observer.callback.upgrade())
+            .collect::<Vec<_>>()
+    });
+    for callback in application_callbacks {
+        callback(active);
+    }
     let callbacks = FOCUS_OBSERVERS.with(|observers| {
         let mut observers = observers.borrow_mut();
         observers.retain(|observer| observer.callback.strong_count() > 0);
@@ -81,8 +125,14 @@ impl slint::winit_030::CustomApplicationHandler for ActivityHandler {
         _slint_window: Option<&slint::Window>,
         event: &slint::winit_030::winit::event::WindowEvent,
     ) -> slint::winit_030::EventResult {
-        if let slint::winit_030::winit::event::WindowEvent::Focused(focused) = event {
-            observe_native_focus(window_id, *focused);
+        match event {
+            slint::winit_030::winit::event::WindowEvent::Focused(focused) => {
+                observe_native_focus(window_id, *focused)
+            }
+            slint::winit_030::winit::event::WindowEvent::Destroyed => {
+                observe_native_focus(window_id, false)
+            }
+            _ => {}
         }
         observe_window_event(event);
         slint::winit_030::EventResult::Propagate
