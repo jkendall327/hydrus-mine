@@ -77,3 +77,63 @@ fn subscription_exchange_reports_missing_logs_and_rejects_invalid_packages_atomi
     assert!(exchange::encode_text(&[]).is_err());
     assert!(exchange::decode_png(b"not PNG").is_err());
 }
+
+#[test]
+fn actual_legacy_subscription_list_imports_match_converted_settings_histories_and_caches() {
+    let reference = hydrus_testkit::fixture_json("subscription_legacy_exchange.json");
+    let now = reference["now"].as_i64().unwrap();
+    for case in reference["cases"].as_array().unwrap() {
+        let mut imported = exchange::decode_text_at(&case["source"].to_string(), now).unwrap();
+        assert_eq!(imported.len(), 1);
+        let expected = &case["normalised"];
+        let mut direct = exchange::tuple(&imported[0]).unwrap();
+        let direct_expected = &case["direct_normalised"];
+        direct[2][0][3][1][0][2][0] = direct_expected[2][0][3][1][0][2][0].clone();
+        direct[2][1][2][0][1][1] = direct_expected[2][1][2][0][1][1].clone();
+        assert_eq!(direct, *direct_expected, "direct legacy conversion");
+        let query = &mut imported[0].queries[0];
+        exchange::rename_history(
+            query,
+            expected[2][0][3][1][0][2][0].as_str().unwrap().into(),
+        );
+        assert_eq!(
+            exchange::tuple(&imported[0]).unwrap(),
+            *expected,
+            "version {}",
+            case["version"]
+        );
+        // Current Python exports made after its legacy conversion also contain
+        // a legacy type6 tag object within a version3 header. Consume that shape.
+        let modern = exchange::decode_text(&case["upgraded"].to_string()).unwrap();
+        assert_eq!(exchange::tuple(&modern[0]).unwrap(), *expected);
+        assert!(case["native_shape_accepted"].as_bool().unwrap());
+        assert_eq!(imported[0].settings.no_work_until_reason, "");
+        assert_eq!(
+            imported[0].queries[0].log.as_ref().unwrap().file_seeds[0].notes,
+            [("note".into(), "first\n\nsecond".into())]
+        );
+    }
+}
+
+#[test]
+fn malformed_and_unsupported_legacy_subscriptions_fail_without_reducing_history() {
+    let reference = hydrus_testkit::fixture_json("subscription_legacy_exchange.json");
+    let valid = reference["cases"][2]["source"].clone();
+    let mut invalid = valid.clone();
+    invalid[2] = json!(99);
+    assert!(exchange::decode_text(&invalid.to_string()).is_err());
+    invalid = valid.clone();
+    invalid[3][1][0][1] = json!(99);
+    assert!(exchange::decode_text(&invalid.to_string()).is_err());
+    invalid = valid.clone();
+    invalid[3][1][0][2][8] = json!([8, 99, [26, 3, []]]);
+    assert!(exchange::decode_text(&invalid.to_string()).is_err());
+    invalid = valid;
+    let _ = invalid[3].as_array_mut().unwrap().pop();
+    assert!(exchange::decode_text(&invalid.to_string()).is_err());
+    assert!(exchange::decode_text(&json!([90, 1, []]).to_string()).is_err());
+    assert!(
+        exchange::decode_text(&json!([90, 1, [[88, "empty", 4, []], [26, 3, []]]]).to_string())
+            .is_err()
+    );
+}

@@ -142,15 +142,16 @@ as Qt's do; a press anywhere else closes them. What works so far:
 - help: the help, links and changelog in the browser, and advanced mode
   (which adds hydrus's advanced entries).
 
-A standalone subscription exchange codec now reads and writes complete reference
-containers: settings, query headers, cached example/velocity data and both URL
-histories. `oracle/record_subscription_exchange.py` records the actual Qt list
+The subscription exchange codec reads and writes complete modern reference
+containers, and imports legacy type3 versions8–10 with embedded histories and old
+import options converted through the reference rules. Fresh history identities
+invalidate cached velocity exactly as the reference does. Modern containers retain
+settings, query headers, cached example/velocity data and both URL histories. `oracle/record_subscription_exchange.py` records the actual Qt list
 clipboard flow and reference PNG. Manage subscriptions now opens an owned
 import/export child: clipboard/JSON text or JSON/PNG files are reviewed, imported
 subscriptions remain staged; JSON export asks before overwriting an existing file,
 and multiple JSON or PNG files can be imported as one reviewed selection. Apply
-persists both URL histories and retained
-header examples. Missing query histories ask the original named confirmation
+persists both URL histories and retained header examples. Missing query histories ask the original named confirmation
 before that object enters the draft; rejecting leaves it out and accepting
 initialises empty histories on Apply. Cancel invalidates the child and its callbacks.
 

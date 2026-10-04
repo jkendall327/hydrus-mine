@@ -24,6 +24,19 @@ fn staged_full_subscription_import_resolves_names_and_persists_both_histories() 
         first.exchange.as_ref().unwrap().log_name,
         second.exchange.as_ref().unwrap().log_name
     );
+    let cached = exchange::query_header_tuple(first.exchange.as_ref().unwrap()).unwrap();
+    assert_eq!(
+        cached[2][8],
+        reference["bundle"][2][1][1][2][0][3][1][0][2][8]
+    );
+    assert_eq!(
+        cached[2][13],
+        reference["bundle"][2][1][1][2][0][3][1][0][2][13]
+    );
+    assert_eq!(
+        cached[2][14],
+        reference["bundle"][2][1][1][2][0][3][1][0][2][14]
+    );
     assert_eq!(
         first.files.get(&hydrus_store::queues::SeedStatus::Vetoed),
         Some(&1)

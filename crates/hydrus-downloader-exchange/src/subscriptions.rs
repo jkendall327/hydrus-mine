@@ -1,7 +1,7 @@
 //! Complete reference subscription containers, including both URL histories.
 //! Cached header data is retained alongside native settings and query state.
 use crate::{Error, MAX_BYTES, MAX_OBJECTS, Result, encode, import_options, transport};
-use hydrus_core::import_options::ImportOptionsSlice;
+use hydrus_core::import_options::{ImportOptionsSlice, TagImportOptions};
 use hydrus_core::subscriptions::{QueryState, SubscriptionSettings};
 use hydrus_legacy::{
     objects::subscriptions as legacy,
@@ -35,7 +35,51 @@ pub struct Query {
     pub reference_header: Option<Value>,
 }
 
-fn object(value: &Value) -> Result<SerialisableObject> {
+/// The reference invalidates velocity when assigning a new history identity.
+pub fn rename_history(query: &mut Query, name: String) {
+    query.log_name = name;
+    if let Some(log) = &mut query.log {
+        log.name.clone_from(&query.log_name);
+    }
+    if let Some(header) = &mut query.reference_header {
+        header[2][0] = json!(query.log_name);
+        header[2][8] = json!(1);
+        let velocity = if header[1] == json!(1) { 11 } else { 13 };
+        header[2][velocity] = json!([0, 1]);
+        header[2][velocity + 1] = json!("unknown");
+    }
+}
+fn tag_tuple(tags: &TagImportOptions) -> Result<Value> {
+    let options = import_options::tuple(&ImportOptionsSlice {
+        tags: Some(tags.clone()),
+        ..ImportOptionsSlice::default()
+    })?;
+    Ok(options[2][2][0][1][1].clone())
+}
+fn normalise_headers(value: &Value) -> Result<Value> {
+    let mut value = value.clone();
+    if let Some(headers) = value
+        .get_mut(2)
+        .and_then(|v| v.get_mut(0))
+        .and_then(|v| v.get_mut(3))
+        .and_then(|v| v.get_mut(1))
+        .and_then(Value::as_array_mut)
+    {
+        for header in headers {
+            // Python's legacy subscription converter retains type6 inside v3 headers.
+            if header[1] == json!(3) && header[2][12][0] == json!(6) {
+                let converted = hydrus_legacy::objects::legacy_import_options::tag_import_options(
+                    &object(&header[2][12])?,
+                )
+                .map_err(|e| Error::Unsupported(e.to_string()))?;
+                header[2][12] = tag_tuple(&converted.tags)?;
+            }
+        }
+    }
+    Ok(value)
+}
+
+pub(crate) fn object(value: &Value) -> Result<SerialisableObject> {
     let object = SerialisableObject::from_tuple_str(&value.to_string())
         .map_err(|e| Error::Invalid(e.to_string()))?;
     object
@@ -91,8 +135,11 @@ fn validate_headers(headers: &[Value]) -> Result<()> {
     }
     Ok(())
 }
-fn decode_container(value: &Value) -> Result<Subscription> {
+pub(crate) fn decode_container(value: &Value, now: i64) -> Result<Subscription> {
     let container = object(value)?;
+    if container.kind.code() == 3 {
+        return crate::subscription_legacy::convert(value, now);
+    }
     if container.kind.code() != 90 || container.version != 1 {
         return Err(Error::Unsupported(format!(
             "expected subscription container type 90 version 1, got type {} version {}",
@@ -100,12 +147,15 @@ fn decode_container(value: &Value) -> Result<Subscription> {
             container.version
         )));
     }
+    let normalised = normalise_headers(value)?;
+    let value = &normalised;
     let info = value[2]
         .as_array()
         .filter(|a| a.len() == 2)
         .ok_or_else(|| Error::Invalid("Malformed subscription container.".into()))?;
     let subscription =
         legacy::subscription(&object(&info[0])?).map_err(|e| Error::Unsupported(e.to_string()))?;
+    hex::decode(&subscription.gug_key).map_err(|e| Error::Invalid(e.to_string()))?;
     if !subscription.unconverted.is_empty() {
         return Err(Error::Unsupported(subscription.unconverted.join("; ")));
     }
@@ -172,27 +222,31 @@ fn decode_container(value: &Value) -> Result<Subscription> {
         orphaned_logs,
     })
 }
-fn collect(value: &Value, depth: usize, out: &mut Vec<Subscription>) -> Result<()> {
+fn collect(value: &Value, depth: usize, now: i64, out: &mut Vec<Subscription>) -> Result<()> {
     if depth > 32 || out.len() >= MAX_OBJECTS {
         return Err(Error::Limit);
     }
     if object(value)?.kind.code() == 26 {
         for value in values(value)? {
-            collect(&value, depth + 1, out)?;
+            collect(&value, depth + 1, now, out)?;
         }
     } else {
-        out.push(decode_container(value)?);
+        out.push(decode_container(value, now)?);
     }
     Ok(())
 }
 /// Decode the complete selection before staging any changes in its list owner.
 pub fn decode_text(text: &str) -> Result<Vec<Subscription>> {
+    decode_text_at(text, hydrus_core::time::TimestampMs::now().millis() / 1000)
+}
+/// Decode with the reference header-cache clock supplied by a caller or replay.
+pub fn decode_text_at(text: &str, now: i64) -> Result<Vec<Subscription>> {
     if text.len() > MAX_BYTES {
         return Err(Error::Limit);
     }
     let value: Value = serde_json::from_str(text).map_err(|e| Error::Invalid(e.to_string()))?;
     let mut out = Vec::new();
-    collect(&value, 0, &mut out)?;
+    collect(&value, 0, now, &mut out)?;
     if out.is_empty() {
         return Err(Error::Invalid(
             "The package contains no subscriptions.".into(),
@@ -272,11 +326,7 @@ pub fn log_tuple(log: &legacy::QueryLog) -> Value {
 /// Encode native query fields while preserving cached reference header data.
 pub fn query_header_tuple(query: &Query) -> Result<Value> {
     let s = &query.state;
-    let options = import_options::tuple(&ImportOptionsSlice {
-        tags: Some(s.tag_import_options.clone()),
-        ..ImportOptionsSlice::default()
-    })?;
-    let tags = &options[2][2][0][1][1];
+    let tags = tag_tuple(&s.tag_import_options)?;
     let cached = |index: usize, default: Value| {
         query.reference_header.as_ref().map_or(default, |h| {
             let index = if h[1] == json!(1) && index >= 13 {

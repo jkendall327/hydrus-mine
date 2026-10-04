@@ -63,10 +63,10 @@ pub fn stage(dialog: &mut Subscriptions, incoming: Vec<Subscription>) -> Result<
             .queries
             .into_iter()
             .map(|mut query| {
-                query.log_name = hydrus_core::pages::PageKey::random().to_hex();
-                if let Some(log) = &mut query.log {
-                    log.name.clone_from(&query.log_name);
-                }
+                exchange::rename_history(
+                    &mut query,
+                    hydrus_core::pages::PageKey::random().to_hex(),
+                );
                 let mut draft = DialogQuery::new(query.state.clone());
                 if let Some(log) = &query.log {
                     for seed in &log.file_seeds {
@@ -106,6 +106,9 @@ pub fn copy_header(conn: &rusqlite::Connection, from: i64, to: i64) -> hydrus_st
     let mut headers: Headers = settings::get(conn)?;
     if let Some(mut header) = headers.0.get(&from).cloned() {
         header[2][0] = serde_json::json!(hydrus_core::pages::PageKey::random().to_hex());
+        header[2][8] = serde_json::json!(1);
+        header[2][13] = serde_json::json!([0, 1]);
+        header[2][14] = serde_json::json!("unknown");
         headers.0.insert(to, header);
         settings::set(conn, &headers)?;
     }
