@@ -3,7 +3,8 @@
   "agent": "overnight_tag_filters",
   "baseline": "d92abea9",
   "implementation_commits": [
-    "be626af1a79553028d8ba9ec1f685670e07019bf"
+    "be626af1a79553028d8ba9ec1f685670e07019bf",
+    "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
   ],
   "claims": [
     {
@@ -67,12 +68,86 @@
         "No remote/IPFS/listener/account scope; no additional aliases or parent promotions.",
         "Rust regressions authored for root hosted CI; no local Cargo build, test or mutation test."
       ]
+    },
+    {
+      "reference_id": "audit-media-services-missing-rating-preview",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Local like/dislike, numerical and inc/dec service configuration has four independent interactive examples labelled Thumbnails, Media Viewer, Preview Window and Dialog (Default). Staged colour/shape/star-count/padding/fraction changes repaint actual graphics. Like left/right toggles; numerical left chooses and right clears; counter left/right changes and middle value Accept/Cancel affects only its sample. Owned counter prompt blocks child Apply until answered. Samples never enter ServiceKind or file ratings. Child Apply stages actual service configuration, parent Apply persists it, reopen initializes fresh samples from saved configuration; child/parent Cancel and retained closed-child callbacks cannot commit or clear a successor. Numerical samples retain the recorded opening click conversion while live count changes repaint the stored fraction.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/rating_example.rs",
+          "line": 21,
+          "symbol": "pub struct Example",
+          "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/services_editor_window.rs",
+          "line": 158,
+          "symbol": "fn edit(",
+          "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/services_editor_window.rs",
+          "line": 317,
+          "symbol": "w.set_examples",
+          "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/services_editor.slint",
+          "line": 147,
+          "symbol": "for e[i] in root.examples",
+          "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/viewer.slint",
+          "line": 61,
+          "symbol": "export component RatingGraphic",
+          "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/services_editor.rs",
+          "line": 503,
+          "symbol": "fn rating_examples_replay_qt_samples_live_configuration_and_no_saved_values",
+          "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/services_editor.rs",
+          "line": 396,
+          "symbol": "fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners",
+          "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_service_rating_preview.py",
+        "fixture": "oracle/fixtures/service_rating_preview.json",
+        "screenshots": [
+          "oracle/fixtures/service_rating_preview_7.png",
+          "oracle/fixtures/service_rating_preview_6.png",
+          "oracle/fixtures/service_rating_preview_22.png"
+        ],
+        "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467",
+        "executed_at": "2026-10-04 21:58:08\u201321:58:09 UTC",
+        "result": "Passed actual Qt three local kinds; initial state and each left/right/middle action replayed, queued actual live data changes settled, exact fraction output and opening numerical conversion captured. All examples return empty persistence contribution and original service dictionaries remain unchanged. Fresh temporary basic fixture, no reference edits or service commits; only real counter dialog exec decision scripted. Three actual example PNGs inspected."
+      },
+      "limitations": [
+        "Thumbnail/media viewer examples use their real typed sizing preferences; separate preview/dialog sizing settings are not native yet, so those examples use recorded 12px defaults.",
+        "Native uses existing shared rating graphics and inline owned counter-value prompt rather than a separate Qt modal child. Named SVG graphics retain existing fallback.",
+        "Reference keeps opening numerical click conversion, including star count and allow-zero, while live display settings repaint stored fraction; native mirrors this observed contract.",
+        "Service management and rating preferences parents stay partial; no remote/IPFS/account/listener scope, aliases or parent promotions.",
+        "Rust model/native/store-consumer regressions authored for root hosted CI; no local Cargo build/test or mutation test."
+      ],
+      "native_png": "service-rating-examples.png (hosted CARGO_TARGET_TMPDIR)"
     }
   ],
-  "implementation_leaf_count": 1,
+  "implementation_leaf_count": 2,
   "parent_promotions": 0,
   "validation": {
-    "reference": "executed actual Qt; PNG inspected",
+    "reference": "Executed actual Qt deleted-record and three-kind rating example recordings; all four reference PNGs inspected",
     "source": "fmt/diff/Python/cached Slint passed",
     "rust": "root hosted CI pending"
   },
@@ -91,5 +166,50 @@
         "owner": "Captured physical-storage service/action; pending question retires with review owner"
       }
     ]
-  }
+  },
+  "continuation_native_components": [
+    {
+      "component": "EditServiceWindow",
+      "existing_native_id": "catalog.editservicewindow",
+      "parent": "ServicesEditorWindow",
+      "parent_status": "partial",
+      "reference_id": "audit-media-services-missing-rating-preview",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/services_editor_window.rs",
+          "line": 158,
+          "symbol": "fn edit(",
+          "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/services_editor.slint",
+          "line": 144,
+          "symbol": "if root.rating: VerticalBox",
+          "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/services_editor.rs",
+          "line": 396,
+          "symbol": "fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners",
+          "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+        }
+      ],
+      "children": [
+        {
+          "label": "example display",
+          "controls": [
+            "expanded/collapsed header",
+            "Thumbnails sample",
+            "Media Viewer sample",
+            "Preview Window sample",
+            "Dialog (Default) sample",
+            "counter middle-click value prompt with Accept/Cancel"
+          ],
+          "ownership": "Four per-child samples and pending counter index, all retired with child or parent; no global preview registry"
+        }
+      ]
+    }
+  ]
 }
