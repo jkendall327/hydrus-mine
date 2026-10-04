@@ -752,6 +752,10 @@ pub struct DefinitionEditor {
     pub gallery_position: usize,
     pub gallery_identifier: String,
     pub gallery_delta: String,
+    /// Presentation mode only; changing it never alters the saved mask.
+    pub domain_mode: usize,
+    /// Independent tester input, initialized from the original example URL.
+    pub domain_test: String,
 }
 
 impl DefinitionEditor {
@@ -770,7 +774,19 @@ impl DefinitionEditor {
             }
             _ => (0, String::new(), "1".into()),
         };
+        let (domain_mode, domain_test) = match &value {
+            EditValue::Class(c) => (
+                usize::from(
+                    c.domain_mask.raw_domains.len() != 1
+                        || !c.domain_mask.domain_regexes.is_empty(),
+                ),
+                hydrus_core::url::functions::url_domain(&c.example_url).unwrap_or_default(),
+            ),
+            _ => (0, String::new()),
+        };
         Self {
+            domain_mode,
+            domain_test,
             value,
             tab: 0,
             rule_tab: 0,
@@ -790,12 +806,15 @@ impl DefinitionEditor {
             EditValue::Class(c) => match id {
                 0 => c.name = text,
                 3 | 4 => {
-                    let lines = text
-                        .lines()
-                        .map(str::trim)
-                        .filter(|s| !s.is_empty())
-                        .map(str::to_owned)
-                        .collect();
+                    let lines = if id == 3 && self.domain_mode == 0 {
+                        vec![text]
+                    } else {
+                        text.lines()
+                            .map(str::trim)
+                            .filter(|s| !s.is_empty())
+                            .map(str::to_owned)
+                            .collect()
+                    };
                     let mask = &c.domain_mask;
                     c.domain_mask = if id == 3 {
                         DomainMask::new(
@@ -813,6 +832,7 @@ impl DefinitionEditor {
                         )
                     };
                 }
+                31 => self.domain_test = text,
                 21 => self.gallery_identifier = text,
                 22 => self.gallery_delta = text,
                 40 => c.example_url = text,
@@ -878,6 +898,14 @@ impl DefinitionEditor {
                     c.referral.mode = ReferralMode::from_code(i64::try_from(index).unwrap_or(0))
                         .unwrap_or_default();
                 }
+                30 => {
+                    if index <= 1
+                        && c.domain_mask.raw_domains.len() == 1
+                        && c.domain_mask.domain_regexes.is_empty()
+                    {
+                        self.domain_mode = index;
+                    }
+                }
                 20 => self.gallery_position = index,
                 _ => (),
             },
@@ -900,6 +928,9 @@ impl DefinitionEditor {
         match &mut self.value {
             EditValue::Class(c) => match id {
                 5 | 6 => {
+                    if id == 6 && !c.domain_mask.match_subdomains {
+                        return;
+                    }
                     let m = &c.domain_mask;
                     c.domain_mask = DomainMask::new(
                         m.raw_domains.clone(),
@@ -948,6 +979,27 @@ impl DefinitionEditor {
                 position,
                 delta: self.gallery_delta.parse().unwrap_or(1),
             });
+        }
+    }
+
+    /// Match and normalize the independent domain tester without touching the class.
+    pub fn domain_preview(&self) -> (String, String) {
+        let EditValue::Class(c) = &self.value else {
+            return (String::new(), String::new());
+        };
+        let domain = self.domain_test.trim();
+        if domain.is_empty() {
+            return (String::new(), String::new());
+        }
+        if c.domain_mask.matches(domain) {
+            (
+                "Matches!".into(),
+                c.domain_mask
+                    .normalise(domain)
+                    .unwrap_or_else(|e| format!("Error: {e}")),
+            )
+        } else {
+            ("Does not match.".into(), String::new())
         }
     }
 

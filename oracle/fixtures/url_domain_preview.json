@@ -1,0 +1,1013 @@
+{
+ "domain_steps": [
+  {
+   "action": "initial",
+   "mode": 0,
+   "mode_enabled": true,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    "mask.example"
+   ],
+   "regex": [],
+   "match": false,
+   "keep": false,
+   "keep_enabled": false,
+   "test": "",
+   "status": "",
+   "normalised": "",
+   "readonly": true
+  },
+  {
+   "action": "test",
+   "mode": 0,
+   "mode_enabled": true,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    "mask.example"
+   ],
+   "regex": [],
+   "match": false,
+   "keep": false,
+   "keep_enabled": false,
+   "test": " mask.example ",
+   "status": "Matches!",
+   "normalised": "mask.example",
+   "readonly": true
+  },
+  {
+   "action": "test",
+   "mode": 0,
+   "mode_enabled": true,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    "mask.example"
+   ],
+   "regex": [],
+   "match": false,
+   "keep": false,
+   "keep_enabled": false,
+   "test": "www2.mask.example",
+   "status": "Matches!",
+   "normalised": "mask.example",
+   "readonly": true
+  },
+  {
+   "action": "test",
+   "mode": 0,
+   "mode_enabled": true,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    "mask.example"
+   ],
+   "regex": [],
+   "match": false,
+   "keep": false,
+   "keep_enabled": false,
+   "test": "img.mask.example",
+   "status": "Does not match.",
+   "normalised": "",
+   "readonly": true
+  },
+  {
+   "action": "test",
+   "mode": 0,
+   "mode_enabled": true,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    "mask.example"
+   ],
+   "regex": [],
+   "match": false,
+   "keep": false,
+   "keep_enabled": false,
+   "test": "other.example",
+   "status": "Does not match.",
+   "normalised": "",
+   "readonly": true
+  },
+  {
+   "action": "test",
+   "mode": 0,
+   "mode_enabled": true,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    "mask.example"
+   ],
+   "regex": [],
+   "match": false,
+   "keep": false,
+   "keep_enabled": false,
+   "test": "",
+   "status": "",
+   "normalised": "",
+   "readonly": true
+  },
+  {
+   "action": "match subdomains",
+   "mode": 0,
+   "mode_enabled": true,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    "mask.example"
+   ],
+   "regex": [],
+   "match": true,
+   "keep": false,
+   "keep_enabled": true,
+   "test": "img.mask.example",
+   "status": "Matches!",
+   "normalised": "mask.example",
+   "readonly": true
+  },
+  {
+   "action": "keep subdomains",
+   "mode": 0,
+   "mode_enabled": true,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    "mask.example"
+   ],
+   "regex": [],
+   "match": true,
+   "keep": true,
+   "keep_enabled": true,
+   "test": "img.mask.example",
+   "status": "Matches!",
+   "normalised": "img.mask.example",
+   "readonly": true
+  },
+  {
+   "action": "disable match retains keep",
+   "mode": 0,
+   "mode_enabled": true,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    "mask.example"
+   ],
+   "regex": [],
+   "match": false,
+   "keep": true,
+   "keep_enabled": false,
+   "test": "img.mask.example",
+   "status": "Does not match.",
+   "normalised": "",
+   "readonly": true
+  },
+  {
+   "action": "full",
+   "mode": 1,
+   "mode_enabled": true,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    "mask.example"
+   ],
+   "regex": [],
+   "match": false,
+   "keep": true,
+   "keep_enabled": false,
+   "test": "img.mask.example",
+   "status": "Does not match.",
+   "normalised": "",
+   "readonly": true
+  },
+  {
+   "action": "multiple",
+   "mode": 1,
+   "mode_enabled": false,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    "mask.example",
+    "second.example"
+   ],
+   "regex": [],
+   "match": false,
+   "keep": true,
+   "keep_enabled": false,
+   "test": "img.mask.example",
+   "status": "Does not match.",
+   "normalised": "",
+   "readonly": true
+  },
+  {
+   "action": "regex",
+   "mode": 1,
+   "mode_enabled": false,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    "mask.example",
+    "second.example"
+   ],
+   "regex": [
+    "img\\d+\\.cdn\\.example"
+   ],
+   "match": false,
+   "keep": true,
+   "keep_enabled": false,
+   "test": "img3.cdn.example",
+   "status": "Matches!",
+   "normalised": "img3.cdn.example",
+   "readonly": true
+  },
+  {
+   "action": "single again",
+   "mode": 1,
+   "mode_enabled": true,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    "mask.example"
+   ],
+   "regex": [],
+   "match": false,
+   "keep": true,
+   "keep_enabled": false,
+   "test": "img3.cdn.example",
+   "status": "Does not match.",
+   "normalised": "",
+   "readonly": true
+  },
+  {
+   "action": "simple edit",
+   "mode": 0,
+   "mode_enabled": true,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    "new.example"
+   ],
+   "regex": [],
+   "match": false,
+   "keep": true,
+   "keep_enabled": false,
+   "test": "new.example",
+   "status": "Matches!",
+   "normalised": "new.example",
+   "readonly": true
+  },
+  {
+   "action": "empty simple",
+   "mode": 0,
+   "mode_enabled": true,
+   "choices": [
+    "simple - just one fixed domain",
+    "full - multiple fixed domains and/or regex domain patterns"
+   ],
+   "raw": [
+    ""
+   ],
+   "regex": [],
+   "match": false,
+   "keep": true,
+   "keep_enabled": false,
+   "test": "new.example",
+   "status": "Does not match.",
+   "normalised": "",
+   "readonly": true
+  }
+ ],
+ "preview_steps": [
+  {
+   "name": "valid",
+   "class": [
+    50,
+    "preview",
+    15,
+    [
+     "d74da838aedf4deb3051f7909eb2b3ed3e35dafa1439ba66da63f331a485491f",
+     3,
+     "https",
+     [
+      139,
+      1,
+      [
+       [
+        "preview.example"
+       ],
+       [],
+       false,
+       false
+      ]
+     ],
+     [
+      true,
+      false,
+      false,
+      true,
+      false,
+      true,
+      false
+     ],
+     [
+      [
+       [
+        51,
+        1,
+        [
+         0,
+         "search",
+         null,
+         null,
+         "example string"
+        ]
+       ],
+       null
+      ]
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         127,
+         2,
+         [
+          "page",
+          [
+           51,
+           1,
+           [
+            1,
+            2,
+            null,
+            null,
+            "1"
+           ]
+          ],
+          false,
+          null,
+          [
+           84,
+           1,
+           [
+            26,
+            3,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     false,
+     [
+      51,
+      1,
+      [
+       3,
+       "",
+       null,
+       null,
+       "example string"
+      ]
+     ],
+     [],
+     [
+      55,
+      2,
+      [
+       [],
+       "https://hostname.com/post/page.php?id=123456&s=view"
+      ]
+     ],
+     0,
+     [
+      55,
+      2,
+      [
+       [],
+       "https://hostname.com/post/page.php?id=123456&s=view"
+      ]
+     ],
+     1,
+     "page",
+     1,
+     "https://preview.example/search?page=2"
+    ]
+   ],
+   "status": "Example matches ok!",
+   "outputs": [
+    "https://preview.example/search?page=2",
+    "https://preview.example/search?page=2",
+    "none set",
+    "normal referral url",
+    "https://preview.example/search?page=3"
+   ],
+   "readonly": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "name": "next",
+   "class": [
+    50,
+    "preview",
+    15,
+    [
+     "d74da838aedf4deb3051f7909eb2b3ed3e35dafa1439ba66da63f331a485491f",
+     3,
+     "https",
+     [
+      139,
+      1,
+      [
+       [
+        "preview.example"
+       ],
+       [],
+       false,
+       false
+      ]
+     ],
+     [
+      true,
+      false,
+      false,
+      true,
+      false,
+      true,
+      false
+     ],
+     [
+      [
+       [
+        51,
+        1,
+        [
+         0,
+         "search",
+         null,
+         null,
+         "example string"
+        ]
+       ],
+       null
+      ]
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         127,
+         2,
+         [
+          "page",
+          [
+           51,
+           1,
+           [
+            1,
+            2,
+            null,
+            null,
+            "1"
+           ]
+          ],
+          false,
+          null,
+          [
+           84,
+           1,
+           [
+            26,
+            3,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     false,
+     [
+      51,
+      1,
+      [
+       3,
+       "",
+       null,
+       null,
+       "example string"
+      ]
+     ],
+     [],
+     [
+      55,
+      2,
+      [
+       [],
+       "https://hostname.com/post/page.php?id=123456&s=view"
+      ]
+     ],
+     0,
+     [
+      55,
+      2,
+      [
+       [],
+       "https://hostname.com/post/page.php?id=123456&s=view"
+      ]
+     ],
+     1,
+     "page",
+     1,
+     "https://preview.example/search?page=9"
+    ]
+   ],
+   "status": "Example matches ok!",
+   "outputs": [
+    "https://preview.example/search?page=9",
+    "https://preview.example/search?page=9",
+    "none set",
+    "normal referral url",
+    "https://preview.example/search?page=10"
+   ],
+   "readonly": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "name": "invalid",
+   "class": [
+    50,
+    "preview",
+    15,
+    [
+     "d74da838aedf4deb3051f7909eb2b3ed3e35dafa1439ba66da63f331a485491f",
+     3,
+     "https",
+     [
+      139,
+      1,
+      [
+       [
+        "preview.example"
+       ],
+       [],
+       false,
+       false
+      ]
+     ],
+     [
+      true,
+      false,
+      false,
+      true,
+      false,
+      true,
+      false
+     ],
+     [
+      [
+       [
+        51,
+        1,
+        [
+         0,
+         "search",
+         null,
+         null,
+         "example string"
+        ]
+       ],
+       null
+      ]
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         127,
+         2,
+         [
+          "page",
+          [
+           51,
+           1,
+           [
+            1,
+            2,
+            null,
+            null,
+            "1"
+           ]
+          ],
+          false,
+          null,
+          [
+           84,
+           1,
+           [
+            26,
+            3,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     false,
+     [
+      51,
+      1,
+      [
+       3,
+       "",
+       null,
+       null,
+       "example string"
+      ]
+     ],
+     [],
+     [
+      55,
+      2,
+      [
+       [],
+       "https://hostname.com/post/page.php?id=123456&s=view"
+      ]
+     ],
+     0,
+     [
+      55,
+      2,
+      [
+       [],
+       "https://hostname.com/post/page.php?id=123456&s=view"
+      ]
+     ],
+     1,
+     "page",
+     1,
+     "https://other.example/search?page=2"
+    ]
+   ],
+   "status": "Example does not match - other.example did not match URL Domain Mask: \"preview.example\"",
+   "outputs": [
+    "",
+    "",
+    "",
+    "normal referral url",
+    "https://preview.example/search?page=10"
+   ],
+   "readonly": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  }
+ ],
+ "extra_previews": [
+  {
+   "name": "api",
+   "class": [
+    50,
+    "api",
+    15,
+    [
+     "624da91b6aa3c62a368940611a496df4c13d9d072380235e31a654b02fe3edb8",
+     3,
+     "https",
+     [
+      139,
+      1,
+      [
+       [
+        "preview.example"
+       ],
+       [],
+       false,
+       false
+      ]
+     ],
+     [
+      true,
+      false,
+      false,
+      true,
+      false,
+      true,
+      false
+     ],
+     [
+      [
+       [
+        51,
+        1,
+        [
+         0,
+         "search",
+         null,
+         null,
+         "example string"
+        ]
+       ],
+       null
+      ]
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         127,
+         2,
+         [
+          "page",
+          [
+           51,
+           1,
+           [
+            1,
+            2,
+            null,
+            null,
+            "1"
+           ]
+          ],
+          false,
+          null,
+          [
+           84,
+           1,
+           [
+            26,
+            3,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     false,
+     [
+      51,
+      1,
+      [
+       3,
+       "",
+       null,
+       null,
+       "example string"
+      ]
+     ],
+     [],
+     [
+      55,
+      2,
+      [
+       [
+        [
+         9,
+         [
+          "/search",
+          "/api"
+         ]
+        ]
+       ],
+       "example string"
+      ]
+     ],
+     0,
+     [
+      55,
+      2,
+      [
+       [],
+       "https://hostname.com/post/page.php?id=123456&s=view"
+      ]
+     ],
+     null,
+     null,
+     1,
+     "https://preview.example/search?page=2"
+    ]
+   ],
+   "status": "Example matches ok!",
+   "outputs": [
+    "https://preview.example/search?page=2",
+    "https://preview.example/api?page=2",
+    "https://preview.example/api?page=2",
+    "Not used, as API converter will redirect.",
+    "none set"
+   ],
+   "readonly": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "name": "referral",
+   "class": [
+    50,
+    "referral",
+    15,
+    [
+     "cc17ce0568e100f94b358a5ce26ea890424b33264671a6460daa899f2c00c63a",
+     3,
+     "https",
+     [
+      139,
+      1,
+      [
+       [
+        "preview.example"
+       ],
+       [],
+       false,
+       false
+      ]
+     ],
+     [
+      true,
+      false,
+      false,
+      true,
+      false,
+      true,
+      false
+     ],
+     [
+      [
+       [
+        51,
+        1,
+        [
+         0,
+         "search",
+         null,
+         null,
+         "example string"
+        ]
+       ],
+       null
+      ]
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         127,
+         2,
+         [
+          "page",
+          [
+           51,
+           1,
+           [
+            1,
+            2,
+            null,
+            null,
+            "1"
+           ]
+          ],
+          false,
+          null,
+          [
+           84,
+           1,
+           [
+            26,
+            3,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     false,
+     [
+      51,
+      1,
+      [
+       3,
+       "",
+       null,
+       null,
+       "example string"
+      ]
+     ],
+     [],
+     [
+      55,
+      2,
+      [
+       [],
+       "https://hostname.com/post/page.php?id=123456&s=view"
+      ]
+     ],
+     3,
+     [
+      55,
+      2,
+      [
+       [
+        [
+         9,
+         [
+          "/search",
+          "/referral"
+         ]
+        ]
+       ],
+       "example string"
+      ]
+     ],
+     null,
+     null,
+     1,
+     "https://preview.example/search?page=2"
+    ]
+   ],
+   "status": "Example matches ok!",
+   "outputs": [
+    "https://preview.example/search?page=2",
+    "https://preview.example/search?page=2",
+    "none set",
+    "https://preview.example/referral?page=2",
+    "none set"
+   ],
+   "readonly": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  }
+ ]
+}

@@ -869,6 +869,106 @@
         "localCargoBuildsOrTests": false,
         "ci": "Parent runs asynchronous GitHub CI; new regressions authored, not locally run."
       }
+    },
+    {
+      "originalID": "url-domain",
+      "before": "partial",
+      "proposedStatus": "partial",
+      "exactBehavior": "Adds reference simple/full mode and exact choices, mode disabled with multiple fixed domains or regexes, independent trimmed-domain match/status and selectable read-only normalized result. Initialized from original example host; WWW variants, regex matching, empty/test/mismatch, retained disabled keep-subdomain checkbox values, Apply/Cancel/reopen and installed URL-mask consumer covered. Mode/test state is presentation-only; masks persist through existing staged class editor.",
+      "limits": [
+        "Full masks retain native bulk multiline editing. Reference per-item Add/Edit/Delete modal dialogs, including regex favourites, remain unimplemented in this specific owner; leaf stays partial and is not counted complete."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_definitions.rs",
+          "symbol": "pub fn domain_preview(",
+          "line": 986
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_definitions_window.rs",
+          "symbol": "fn show_editor(",
+          "line": 588
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/downloader_definitions.slint",
+          "symbol": "if root.url-class && root.tab == 0:",
+          "line": 171
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/downloader_definitions.rs",
+          "symbol": "fn domain_mask_modes_tester_and_selectable_previews_apply_cancel_and_reopen()",
+          "line": 569
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/downloader_definitions.rs",
+          "symbol": "fn domain_mode_and_independent_tester_replay_reference_and_preserve_disabled_values()",
+          "line": 554
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_url_domain_preview.py",
+        "fixture": "oracle/fixtures/url_domain_preview.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintSourceCompilation": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; new regressions authored, not locally run."
+      }
+    },
+    {
+      "originalID": "url-preview",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Five separately selectable read-only output controls with exact normalised/request/API/referral/next-page labels and actual class-engine outputs. Example text/flags/converters/pagination changes refresh the same outputs. Actual Qt reference recordings cover gallery next-page, API redirect request, referral converter and invalid-example transition (clear normalised/request/API, retain last referral/next). Existing Apply validation/Cancel/reopen remains staged; saved masks and actual class normalization consumers verified.",
+      "limits": [
+        "Native read-only text controls rather than Qt single-line widgets. No extra copy button is invented."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_definitions.rs",
+          "symbol": "pub fn class_preview(",
+          "line": 631
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_definitions_window.rs",
+          "symbol": "fn show_editor(",
+          "line": 588
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/downloader_definitions.slint",
+          "symbol": "if root.url-class: VerticalLayout",
+          "line": 240
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/downloader_definitions.rs",
+          "symbol": "fn domain_mask_modes_tester_and_selectable_previews_apply_cancel_and_reopen()",
+          "line": 569
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/downloader_definitions.rs",
+          "symbol": "fn selectable_preview_values_use_recorded_api_referral_and_gallery_consumers()",
+          "line": 629
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_url_domain_preview.py",
+        "fixture": "oracle/fixtures/url_domain_preview.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintSourceCompilation": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; new regressions authored, not locally run."
+      }
     }
   ],
   "nativeComponents": [
@@ -1178,6 +1278,63 @@
         }
       ],
       "newPhysicalWindow": false
+    },
+    {
+      "name": "DownloaderDefinitionEditWindow",
+      "referenceIDs": [
+        "url-domain",
+        "url-preview"
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_definitions.rs",
+          "symbol": "pub fn domain_preview(",
+          "line": 986
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_definitions_window.rs",
+          "symbol": "fn show_editor(",
+          "line": 588
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/downloader_definitions.slint",
+          "symbol": "if root.url-class && root.tab == 0:",
+          "line": 171
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/downloader_definitions.rs",
+          "symbol": "fn domain_mask_modes_tester_and_selectable_previews_apply_cancel_and_reopen()",
+          "line": 569
+        }
+      ],
+      "actionGroups": [
+        {
+          "label": "domain mask",
+          "actions": [
+            "simple/full mode",
+            "fixed domain or regex edits",
+            "subdomain matching",
+            "retain matched subdomains",
+            "independent domain test",
+            "select normalized domain"
+          ]
+        },
+        {
+          "label": "URL example results",
+          "actions": [
+            "select normalised URL",
+            "select request URL",
+            "select API/redirect URL",
+            "select referral URL",
+            "select next gallery page URL"
+          ]
+        }
+      ],
+      "limits": [
+        "No new native Window added. Domain owner remains partial until per-item full-mask entry dialogs are implemented."
+      ]
     }
   ]
 }

@@ -66,13 +66,6 @@ fn field(id: i32, label: &str, text: impl Into<String>) -> DefinitionField {
     }
 }
 
-fn multiline(id: i32, label: &str, text: String) -> DefinitionField {
-    DefinitionField {
-        kind: 3,
-        ..field(id, label, text)
-    }
-}
-
 fn choice(id: i32, label: &str, options: &[&str], chosen: usize) -> DefinitionField {
     DefinitionField {
         kind: 1,
@@ -444,22 +437,6 @@ fn class_fields(editor: &Editor, c: &UrlClass) -> Vec<DefinitionField> {
                 &["http", "https"],
                 usize::from(c.preferred_scheme == "https"),
             ),
-            multiline(
-                3,
-                "domains (one per line):",
-                c.domain_mask.raw_domains.join("\n"),
-            ),
-            multiline(
-                4,
-                "domain regexes (one per line):",
-                c.domain_mask.domain_regexes.join("\n"),
-            ),
-            tick(5, "match subdomains", c.domain_mask.match_subdomains),
-            tick(
-                6,
-                "keep matched subdomains",
-                c.domain_mask.keep_matched_subdomains,
-            ),
             tick(
                 7,
                 "do not allow extra path components",
@@ -618,6 +595,36 @@ fn show_editor(window: &DownloaderDefinitionEditWindow, editor: &Editor, whole: 
     window.set_selected_rule(editor.selected_rule.map_or(-1, int));
     window.set_rules(strings(editor.rules()));
     window.set_preview(editor.preview().into());
+    let is_class = matches!(&editor.value, Value::Class(_));
+    window.set_url_class(is_class);
+    if let Value::Class(c) = &editor.value {
+        window.set_domain_mode(int(editor.domain_mode));
+        window.set_domain_mode_enabled(
+            c.domain_mask.raw_domains.len() == 1 && c.domain_mask.domain_regexes.is_empty(),
+        );
+        // Keep unfinished trailing newlines/spaces while the user types a full list.
+        if whole {
+            window.set_domain_raw(c.domain_mask.raw_domains.join("\n").into());
+            window.set_domain_regex(c.domain_mask.domain_regexes.join("\n").into());
+        }
+        window.set_domain_match(c.domain_mask.match_subdomains);
+        window.set_domain_keep(c.domain_mask.keep_matched_subdomains);
+        window.set_domain_test(editor.domain_test.clone().into());
+        let (status, normalised) = editor.domain_preview();
+        window.set_domain_status(status.into());
+        window.set_domain_normalised(normalised.into());
+        let preview = definitions::class_preview(c, editor.classes.collapse_leading_slashes);
+        let invalid = preview.status.starts_with("Example does not match");
+        window.set_preview_status(preview.status.into());
+        window.set_preview_normalised(preview.normalised.into());
+        window.set_preview_request(preview.request.into());
+        window.set_preview_api(preview.api.into());
+        // Qt clears these three outputs on a mismatch, retaining its last referral/next.
+        if !invalid {
+            window.set_preview_referral(preview.referral.into());
+            window.set_preview_next(preview.next.into());
+        }
+    }
     if let Value::Gug(AnyGug::Nested(n)) = &editor.value {
         window.set_members(ModelRc::new(VecModel::from(
             editor

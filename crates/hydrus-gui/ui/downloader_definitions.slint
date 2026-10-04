@@ -125,6 +125,22 @@ export component DownloaderDefinitionEditWindow inherits Window {
     in property <bool> child-open;
     in property <string> note;
     in property <string> preview;
+    in property <bool> url-class;
+    in property <int> domain-mode;
+    in property <bool> domain-mode-enabled;
+    in-out property <string> domain-raw;
+    in-out property <string> domain-regex;
+    in property <bool> domain-match;
+    in property <bool> domain-keep;
+    in-out property <string> domain-test;
+    in property <string> domain-status;
+    in property <string> domain-normalised;
+    in property <string> preview-status;
+    in property <string> preview-normalised;
+    in property <string> preview-request;
+    in property <string> preview-api;
+    in property <string> preview-referral;
+    in property <string> preview-next;
     in property <string> error;
     in property <string> question;
     callback tab-chosen(int);
@@ -152,6 +168,37 @@ export component DownloaderDefinitionEditWindow inherits Window {
             VerticalLayout {
                 spacing: 8px;
                 alignment: start;
+                if root.url-class && root.tab == 0: VerticalLayout {
+                    spacing: 6px; vertical-stretch: 0;
+                    Text { text: "domain"; color: Theme.text; }
+                    ComboBox {
+                        model: ["simple - just one fixed domain", "full - multiple fixed domains and/or regex domain patterns"];
+                        current-index: root.domain-mode;
+                        enabled: root.domain-mode-enabled && !root.child-open;
+                        selected => { root.choice-edited(30,self.current-index); }
+                    }
+                    if root.domain-mode == 0: LineEdit {
+                        text <=> root.domain-raw; enabled: !root.child-open;
+                        edited(t) => { root.text-edited(3,t); }
+                    }
+                    if root.domain-mode == 1: VerticalLayout {
+                        Text { text: "domains (one per line):"; color: Theme.text; }
+                        TextEdit { height: 70px; text <=> root.domain-raw; enabled: !root.child-open; edited(t) => { root.text-edited(3,t); } }
+                        Text { text: "domain regexes (one per line):"; color: Theme.text; }
+                        TextEdit { height: 70px; text <=> root.domain-regex; enabled: !root.child-open; edited(t) => { root.text-edited(4,t); } }
+                    }
+                    CheckBox { text: "match subdomains:"; checked: root.domain-match; enabled: !root.child-open; toggled => { root.toggled(5,self.checked); } }
+                    CheckBox { text: "keep matched subdomains:"; checked: root.domain-keep; enabled: root.domain-match && !root.child-open; toggled => { root.toggled(6,self.checked); } }
+                    Text { text: root.domain-status; color: root.domain-status == "Matches!" ? Theme.good : Theme.error; }
+                    HorizontalLayout {
+                        Text { width: 245px; text: "test domain:"; color: Theme.text; }
+                        LineEdit { text <=> root.domain-test; placeholder-text: "Enter a domain here to test if it matches."; enabled: !root.child-open; edited(t) => { root.text-edited(31,t); } }
+                    }
+                    HorizontalLayout {
+                        Text { width: 245px; text: "normalised domain:"; color: Theme.text; }
+                        TextEdit { height: 32px; read-only: true; text: root.domain-normalised; }
+                    }
+                }
                 Fields {
                     fields: root.fields;
                     enabled: !root.child-open;
@@ -189,7 +236,21 @@ export component DownloaderDefinitionEditWindow inherits Window {
                     for member[i] in root.members: CheckBox { text: member.cells[0]; checked: member.selected; enabled: !root.child-open; toggled => { root.member-toggled(i); } }
                 }
                 if root.note != "": Text { text: root.note; color: Theme.text; wrap: word-wrap; }
-                Text { text: root.preview; color: Theme.text; wrap: word-wrap; }
+                if !root.url-class: Text { text: root.preview; color: Theme.text; wrap: word-wrap; }
+                if root.url-class: VerticalLayout {
+                    vertical-stretch: 0; spacing: 6px;
+                    Text { text: root.preview-status; color: Theme.text; wrap: word-wrap; }
+                    for item in [
+                        {label: "normalised url:",value: root.preview-normalised},
+                        {label: "request url:",value: root.preview-request},
+                        {label: "api/redirect url:",value: root.preview-api},
+                        {label: "referral url:",value: root.preview-referral},
+                        {label: "next gallery page url:",value: root.preview-next}
+                    ]: HorizontalLayout {
+                        Text { width: 245px; text: item.label; color: Theme.text; }
+                        TextEdit { height: 32px; read-only: true; text: item.value; }
+                    }
+                }
             }
         }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }

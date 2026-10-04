@@ -549,3 +549,110 @@ fn editor_controls_change_matching_normalisation_and_validate_pagination() {
         "Please ensure your generator can make an example url!"
     );
 }
+
+#[test]
+fn domain_mode_and_independent_tester_replay_reference_and_preserve_disabled_values() {
+    use definitions::{DefinitionEditor, EditValue};
+    let fixture = hydrus_testkit::fixture_json("url_domain_preview.json");
+    let mut class = domain::url_class(&object(&fixture["preview_steps"][0]["class"])).unwrap();
+    class.domain_mask =
+        hydrus_core::url::DomainMask::new(vec!["mask.example".into()], Vec::new(), false, false);
+    let draft = Draft::new(
+        UrlClassSettings::default(),
+        Downloaders::default(),
+        Kind::Classes,
+    );
+    let mut editor = DefinitionEditor::new(EditValue::Class(Box::new(class)), &draft);
+    for step in fixture["domain_steps"].as_array().unwrap() {
+        let mode = usize::try_from(step["mode"].as_u64().unwrap()).unwrap();
+        if mode == 1 {
+            editor.choose(30, mode);
+        }
+        editor.text(
+            3,
+            step["raw"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|s| s.as_str().unwrap())
+                .collect::<Vec<_>>()
+                .join("\n"),
+        );
+        editor.text(
+            4,
+            step["regex"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|s| s.as_str().unwrap())
+                .collect::<Vec<_>>()
+                .join("\n"),
+        );
+        if mode == 0 {
+            editor.choose(30, mode);
+        }
+        editor.toggle(5, true);
+        editor.toggle(6, step["keep"].as_bool().unwrap());
+        editor.toggle(5, step["match"].as_bool().unwrap());
+        editor.text(31, step["test"].as_str().unwrap().into());
+        assert_eq!(editor.domain_mode, mode);
+        let (status, normalised) = editor.domain_preview();
+        assert_eq!(status, step["status"].as_str().unwrap());
+        assert_eq!(normalised, step["normalised"].as_str().unwrap());
+        let EditValue::Class(c) = &editor.value else {
+            panic!("class");
+        };
+        assert_eq!(json!(c.domain_mask.raw_domains), step["raw"]);
+        assert_eq!(json!(c.domain_mask.domain_regexes), step["regex"]);
+        assert_eq!(
+            c.domain_mask.keep_matched_subdomains,
+            step["keep"].as_bool().unwrap()
+        );
+    }
+    editor.choose(30, 1);
+    editor.text(3, "mask.example\nother.example".into());
+    editor.choose(30, 0);
+    assert_eq!(
+        editor.domain_mode, 1,
+        "multiple domains cannot be discarded by mode switch"
+    );
+    editor.text(4, "[".into());
+    editor.text(31, "mask.example".into());
+    assert_eq!(
+        editor.domain_preview(),
+        ("Does not match.".into(), String::new())
+    );
+    assert!(editor.validate().is_err());
+}
+
+#[test]
+fn selectable_preview_values_use_recorded_api_referral_and_gallery_consumers() {
+    let fixture = hydrus_testkit::fixture_json("url_domain_preview.json");
+    for step in fixture["preview_steps"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .chain(fixture["extra_previews"].as_array().unwrap())
+    {
+        let class = domain::url_class(&object(&step["class"])).unwrap();
+        let preview = definitions::class_preview(&class, false);
+        assert_eq!(preview.status, step["status"].as_str().unwrap());
+        if step["name"] != "invalid" {
+            assert_eq!(
+                json!([
+                    preview.normalised,
+                    preview.request,
+                    preview.api,
+                    preview.referral,
+                    preview.next
+                ]),
+                step["outputs"]
+            );
+        } else {
+            assert!(preview.normalised.is_empty());
+            assert!(preview.request.is_empty());
+            assert!(preview.api.is_empty());
+        }
+        assert_eq!(step["readonly"], json!([true; 5]));
+    }
+}

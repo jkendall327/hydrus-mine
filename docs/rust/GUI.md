@@ -2457,3 +2457,12 @@ the chosen tag service when applicable. Apply refreshes the active page, and
 background pages refresh when activated; Cancel leaves saved values intact.
 The real Qt `unselected_tag_cap.json` recording covers twenty combinations of
 limits, sort direction, collections, selection and tag service.
+
+URL-class domain masks have the reference simple/full selector, locked while
+multiple domains or regexes are present, and an independent domain tester. The
+tester trims input and shows matching and normalized domain results; the
+subdomain controls retain disabled values. Full masks remain editable as one
+fixed domain or regex per line. URL previews now provide separately selectable,
+read-only stored, request, API, referral, and next-page outputs. Invalid examples
+clear stored/request/API outputs and retain prior referral/next results, matching
+the recorded Qt owner transition.
