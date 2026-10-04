@@ -120,12 +120,12 @@ pub(crate) fn open(
                 ))
             };
             let (left_input, right_input) = &binding.inputs[model.service()];
-            let (file, tags) = left_input.domain_labels();
-            window.set_left_file_label(file.into());
-            window.set_left_tag_label(tags.into());
-            let (file, tags) = right_input.domain_labels();
-            window.set_right_file_label(file.into());
-            window.set_right_tag_label(tags.into());
+            let (file_label, tag_label) = left_input.domain_labels();
+            window.set_left_file_label(file_label.into());
+            window.set_left_tag_label(tag_label.into());
+            let (file_label, tag_label) = right_input.domain_labels();
+            window.set_right_file_label(file_label.into());
+            window.set_right_tag_label(tag_label.into());
             let suggestions = |input: &WriteAutocomplete| {
                 ModelRc::new(VecModel::from(
                     input
