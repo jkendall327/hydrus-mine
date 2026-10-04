@@ -82,7 +82,7 @@ fn check(id: i32, label: &str, value: bool) -> DefinitionField {
 #[derive(Clone)]
 enum Value {
     Page(PageParser),
-    Content(ContentEditor),
+    Content(Box<ContentEditor>),
 }
 struct Editor {
     errors: std::collections::BTreeMap<i32, String>,
@@ -391,7 +391,11 @@ fn open_editor(
                 return;
             }
             if let Ok(index) = usize::try_from(index) {
-                edit_choice(&mut state.borrow_mut().value, id, index);
+                let mut e = state.borrow_mut();
+                edit_choice(&mut e.value, id, index);
+                if id == 1 {
+                    e.errors.clear();
+                }
             }
             refresh();
         }
@@ -490,7 +494,7 @@ fn open_editor(
         if blocked() { return; } let Some(w) = weak.upgrade() else { return; };
         let result = (|| -> Result<(),String> {
             match action.as_str() {
-                "apply" => { if !state.borrow().errors.is_empty() { return Err(state.borrow().errors.values().cloned().collect::<Vec<_>>().join("\n")); } let value = match &state.borrow().value { Value::Content(e) => Value::Content(ContentEditor::new(&e.value(),e.test.clone())), v => v.clone() }; applied(value)?; close(); }
+                "apply" => { if !state.borrow().errors.is_empty() { return Err(state.borrow().errors.values().cloned().collect::<Vec<_>>().join("\n")); } let value = match &state.borrow().value { Value::Content(e) => Value::Content(Box::new(ContentEditor::new(&e.value(),e.test.clone()))), v => v.clone() }; applied(value)?; close(); }
                 "cancel" => { let changed = { let e = state.borrow(); match (&e.value,&e.original) { (Value::Page(p),Value::Page(o)) => p != o, (Value::Content(e),_) => e.changed(), _ => false } }; if changed { w.set_question(if page { "It looks like you have made changes to the parser--are you sure you want to cancel?" } else { model::CONTENT_CANCEL }.into()); } else { close(); } }
                 "test" => { let mut test = test_data(&w,true)?; let mut e = state.borrow_mut(); let parsed = match &mut e.value { Value::Page(p) => p.parse(&mut test.context,&test.text), Value::Content(c) => { c.test = test; c.preview().map(|p| vec![p]) } }; w.set_preview(match parsed { Ok(posts) => model::preview_text(&posts), Err(error) => error.to_string() }.into()); }
                 "delete-content" => { let mut e = state.borrow_mut(); if let Some(index) = e.selected.take() && let Value::Page(p) = &mut e.value && index < p.content_parsers.len() { p.content_parsers.remove(index); } }
@@ -500,10 +504,10 @@ fn open_editor(
                     let parser = original.clone().unwrap_or_else(model::new_content);
                     let test = FormulaTestData { text: converted, collapse_newlines: !matches!(parser.kind,ContentKind::Note { .. }), ..test };
                     let done: Done = Rc::new({ let state = state.clone(); let active = active.clone(); move |v| { if !active.get() { return Ok(()); } let Value::Content(c) = v else { return Ok(()); }; let mut e = state.borrow_mut(); let Value::Page(p) = &mut e.value else { return Ok(()); }; if let Some(index) = at { if p.content_parsers.get(index) != original.as_ref() { return Err("The content parser changed while its editor was open.".into()); } p.content_parsers[index] = c.value(); } else { p.content_parsers.push(c.value()); } Ok(()) } });
-                    let child = open_editor(&store,Value::Content(ContentEditor::new(&parser,test.clone())),test,&slots,done).map_err(|e| e.to_string())?;
+                    let child = open_editor(&store,Value::Content(Box::new(ContentEditor::new(&parser,test.clone()))),test,&slots,done).map_err(|e| e.to_string())?;
                     let refresh = refresh.clone(); child.on_closed(move || refresh()); *slots.content.borrow_mut() = Some(child);
                 }
-                "formula" => { let test = test_data(&w,true)?; let Value::Content(e) = &state.borrow().value else { return Ok(()); }; let formula = e.parser.formula.clone(); let test = FormulaTestData { collapse_newlines: !matches!(e.parser.kind,ContentKind::Note { .. }), ..test }; let done = Rc::new({ let state = state.clone(); let active = active.clone(); move |formula| { if active.get() && let Value::Content(e) = &mut state.borrow_mut().value { e.parser.formula = formula; } } }); let child = crate::formula_window::open(&store,&formula,test,&slots.formula,done).map_err(|e| e.to_string())?; let refresh = refresh.clone(); child.on_closed(move || refresh()); *slots.formula.formula.borrow_mut() = Some(child); }
+                "formula" => { let test = test_data(&w,true)?; let Value::Content(e) = &state.borrow().value else { return Ok(()); }; let formula = e.parser.formula.clone(); let test = FormulaTestData { collapse_newlines: !matches!(e.parser.kind,ContentKind::Note { .. }), ..test }; let done = Rc::new({ let state = state.clone(); let active = active.clone(); move |formula| { if active.get() && let Value::Content(e) = &mut state.borrow_mut().value { e.parser.formula = formula; } } }); let child = crate::formula_window::open(&store,&formula,test,&slots.formula,done).map_err(|e| e.to_string())?; let refresh = refresh.clone(); child.on_closed(move |_| refresh()); *slots.formula.formula.borrow_mut() = Some(child); }
                 "converter" => { let Value::Page(p) = &state.borrow().value else { return Ok(()); }; let converter = p.converter.clone(); let done = Rc::new({ let state = state.clone(); let active = active.clone(); move |converter| { if active.get() && let Value::Page(p) = &mut state.borrow_mut().value { p.converter = converter; } } }); let child = crate::string_processor_window::open_converter(&converter,Some(w.get_document().to_string()),&slots.formula.strings,done).map_err(|e| e.to_string())?; let refresh = refresh.clone(); child.on_closed(move || refresh()); *slots.formula.strings.converter.borrow_mut() = Some(child); }
                 "match" => { let matcher = match &state.borrow().value { Value::Content(e) => match &e.parser.kind { ContentKind::Veto { string_match,.. } => string_match.clone(), _ => return Ok(()) }, _ => return Ok(()) }; let done = Rc::new({ let state = state.clone(); let active = active.clone(); let refresh = refresh.clone(); move |matcher| { if active.get() && let Value::Content(e) = &mut state.borrow_mut().value && let ContentKind::Veto { string_match,.. } = &mut e.parser.kind { *string_match = matcher; } refresh(); } }); crate::string_processor_window::open_match(&store,&matcher,&slots.formula.strings,done); if let Some(child)=slots.formula.strings.step.borrow().as_ref() { let refresh=refresh.clone(); child.on_closed(move ||refresh()); } }
                 _ => (),
