@@ -770,6 +770,7 @@ impl NetEngine {
     }
 
     pub fn new(store: Arc<Store>, options: NetOptions) -> Result<Self, NetError> {
+        static NEXT_EPOCH: AtomicU64 = AtomicU64::new(1);
         let client = http_client(&options)?;
         let now = now();
         let (bandwidth_settings, usage, history_resets) = store
@@ -802,7 +803,12 @@ impl NetEngine {
             jobs: Arc::new(Mutex::default()),
             next_job: Arc::new(AtomicU64::new(1)),
             recent_errors: Arc::new(Mutex::default()),
-            epoch: format!("{}:{}", std::process::id(), now_ms()),
+            epoch: format!(
+                "{}:{}:{}",
+                std::process::id(),
+                now_ms(),
+                NEXT_EPOCH.fetch_add(1, Ordering::Relaxed)
+            ),
             options: Arc::new(RwLock::new(options)),
         })
     }
@@ -1421,11 +1427,12 @@ impl NetEngine {
                         });
                         // The global process belongs to the engine, independently
                         // of the downloader request that first needed it.
+                        let owner = LoginOwner(self.login.clone());
                         let mut task = tokio::spawn({
                             let engine = self.clone();
                             async move {
                                 let _permit = permit;
-                                let _owner = LoginOwner(engine.login.clone());
+                                let _owner = owner;
                                 let execution = crate::login::execute(
                                     &engine,
                                     &engine.store,

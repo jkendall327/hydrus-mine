@@ -683,6 +683,10 @@ async fn cancelled_trigger_keeps_reference_global_login_alive_for_another_engine
     let site = site().await;
     save_demand(&site.store, &site.domain, true);
     let sibling = NetEngine::new(site.store.clone(), site.engine.options()).unwrap();
+    assert_ne!(
+        site.engine.runtime_snapshot().epoch,
+        sibling.runtime_snapshot().epoch
+    );
     let trigger = Job::new();
     let url = format!("http://{}/data", site.domain);
     let request = Request::get(&url);
@@ -869,4 +873,50 @@ async fn global_process_cancel_uses_its_owner_id_and_persists_reference_delay_wi
         job: process.id,
         action: JobAction::CancelLogin
     }));
+}
+
+#[test]
+fn abandoned_unpolled_login_worker_releases_metadata_and_the_shared_admission_gate() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    save_demand(&store, "127.0.0.1:9", true);
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .unwrap();
+    let engine = runtime.block_on(async {
+        let engine = NetEngine::new(
+            store,
+            NetOptions {
+                obey_bandwidth: false,
+                detect_sleep: false,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let job = Job::new();
+        let request = hydrus_net::Request::get("http://127.0.0.1:9/data");
+        let mut fetch = Box::pin(engine.fetch(&request, &job));
+        // Poll admission once on the current-thread runtime, then drop its outer
+        // request and the runtime before its detached login worker can be polled.
+        std::future::poll_fn(|cx| match std::future::Future::poll(fetch.as_mut(), cx) {
+            std::task::Poll::Pending => std::task::Poll::Ready(()),
+            std::task::Poll::Ready(result) => {
+                panic!("admission ended before spawning login: {result:?}")
+            }
+        })
+        .await;
+        assert!(engine.runtime_snapshot().login.is_some());
+        drop(fetch);
+        engine
+    });
+    drop(runtime);
+    assert!(engine.runtime_snapshot().login.is_none());
+    assert!(engine.runtime_snapshot().jobs.is_empty());
+    let command = hydrus_store::network_runtime::Command {
+        epoch: engine.runtime_snapshot().epoch,
+        job: 2,
+        action: hydrus_store::network_runtime::JobAction::CancelLogin,
+    };
+    assert!(!engine.runtime_command(&command));
 }
