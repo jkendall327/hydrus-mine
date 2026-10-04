@@ -1523,8 +1523,10 @@ import-options default management and external-program command editing still hav
 separate incomplete coverage; this does not complete those broader controls.
 
 Login global/step cookie requirements are now editable through a shared child list
-with a staged row and separate name/value matcher buttons; the reference embeds
-the list and asks sequential matcher dialogs. Independent matcher objects with
+with immediate sequential **edit cookie name** and **edit match** dialogs.
+Cancel at either stage retains the whole original pair, and edit dialogs preload
+the original matchers. The reference embeds its list in the script/step editor;
+the native editor still opens that list in an owned child Window. Independent matcher objects with
 identical descriptions remain distinct, as in Python. Explicit matcher edits
 canonicalize their unused auxiliary matcher values. The three argument-list topology
 and selection gap is closed; example-domain add/edit/delete and the reference

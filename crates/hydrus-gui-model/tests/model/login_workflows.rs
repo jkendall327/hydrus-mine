@@ -346,7 +346,7 @@ fn cookie_requirements_match_real_qt_pair_edits_cancel_and_duplicate_looking_key
     let mut editor = CookiesEditor::new(&script.required_cookies);
     for state in &fixture["cookie_states"].as_array().unwrap()[1..] {
         let values = state["answers"].as_array().unwrap();
-        if let Some(value) = values[1].as_str() {
+        if let Some(value) = values.get(1).and_then(serde_json::Value::as_str) {
             let index = if state["action"] == "edit" {
                 editor.rows.iter().position(|row| {
                     row.name == hydrus_core::url::strings::StringMatch::fixed("token")

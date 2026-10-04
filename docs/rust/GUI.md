@@ -2650,3 +2650,8 @@ paste. Both sibling/parent sides, Manage Tags and detached editors share this
 behavior; cancellation invalidates a pending answer. Qt key events, selected
 text replacement and accepted clipboard signals are recorded in
 `write_tag_selection.json`.
+
+Login required-cookie Add/Edit now opens the name matcher followed by the value
+matcher, using the reference titles and initial rules. Cancel at either stage
+leaves the pair intact; accepted pairs are sorted and selected. Independent
+matcher objects with identical descriptions remain separate entries.

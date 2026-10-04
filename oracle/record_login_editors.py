@@ -202,12 +202,14 @@ def record(session):
         cookie_states = []
         cookie_answers = []
         cookie_dialogs = []
+        cookie_initial = []
         class CookieDialog(QW.QWidget):
             def __init__(self, parent, title, *args, **kwargs):
                 super().__init__(gui); cookie_dialogs.append(title)
             def __enter__(self): return self
             def __exit__(self, *args): return False
-            def SetPanel(self, panel): self.panel = panel
+            def SetPanel(self, panel):
+                self.panel = panel; cookie_initial.append(panel.GetValue().GetSerialisableTuple())
             def exec(self):
                 text = cookie_answers.pop(0)
                 if text is None: return QW.QDialog.DialogCode.Rejected
@@ -220,12 +222,12 @@ def record(session):
             value = HydrusSerialisable.SerialisableDictionary(cookie_control.GetValue()).GetSerialisableTuple()
             return {'value': value, 'rows': table(cookie_control._listctrl)}
         cookie_states.append({'state': cookie_state()})
-        for action, values in [('add', ['token', 'ready']), ('edit', ['edited', 'changed']), ('add', ['discarded', None]), ('add', ['session', 'ok'])]:
+        for action, values in [('add', ['token', 'ready']), ('edit', ['edited', 'changed']), ('add', ['discarded', None]), ('add', ['session', 'ok']), ('add', [None]), ('edit', ['discarded edit', None])]:
             if action == 'edit': cookie_control._listctrl.SelectDatas([cookie_control._listctrl.GetData()[-1]], deselect_others=True)
-            cookie_answers[:] = values; cookie_dialogs.clear()
+            cookie_answers[:] = values; cookie_dialogs.clear(); cookie_initial.clear()
             if action == 'add': cookie_control._Add()
             else: cookie_control._Edit()
-            cookie_states.append({'action': action, 'answers': values, 'dialogs': list(cookie_dialogs), 'state': cookie_state()})
+            cookie_states.append({'action': action, 'answers': values, 'dialogs': list(cookie_dialogs), 'initial': list(cookie_initial), 'state': cookie_state()})
         cookie_panel.deleteLater()
 
         domains_panel = G.EditLoginsPanel(gui, controller.network_engine, [script], manager._domains_to_login_info)

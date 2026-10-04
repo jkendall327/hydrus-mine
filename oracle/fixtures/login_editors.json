@@ -446,6 +446,30 @@
     "edit cookie name",
     "edit match"
    ],
+   "initial": [
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ],
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ]
+   ],
    "state": {
     "value": [
      21,
@@ -534,6 +558,30 @@
    "dialogs": [
     "edit cookie name",
     "edit match"
+   ],
+   "initial": [
+    [
+     51,
+     1,
+     [
+      0,
+      "token",
+      null,
+      null,
+      "token"
+     ]
+    ],
+    [
+     51,
+     1,
+     [
+      0,
+      "ready",
+      null,
+      null,
+      "ready"
+     ]
+    ]
    ],
    "state": {
     "value": [
@@ -624,6 +672,30 @@
     "edit cookie name",
     "edit match"
    ],
+   "initial": [
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ],
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ]
+   ],
    "state": {
     "value": [
      21,
@@ -712,6 +784,311 @@
    "dialogs": [
     "edit cookie name",
     "edit match"
+   ],
+   "initial": [
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ],
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ]
+   ],
+   "state": {
+    "value": [
+     21,
+     2,
+     [
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "edited",
+          null,
+          null,
+          "edited"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "changed",
+          null,
+          null,
+          "changed"
+         ]
+        ]
+       ]
+      ],
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ],
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "rows": [
+     [
+      "edited",
+      "changed"
+     ],
+     [
+      "session",
+      "ok"
+     ],
+     [
+      "session",
+      "ok"
+     ]
+    ]
+   }
+  },
+  {
+   "action": "add",
+   "answers": [
+    null
+   ],
+   "dialogs": [
+    "edit cookie name"
+   ],
+   "initial": [
+    [
+     51,
+     1,
+     [
+      3,
+      "",
+      null,
+      null,
+      "example string"
+     ]
+    ]
+   ],
+   "state": {
+    "value": [
+     21,
+     2,
+     [
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "edited",
+          null,
+          null,
+          "edited"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "changed",
+          null,
+          null,
+          "changed"
+         ]
+        ]
+       ]
+      ],
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ],
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "rows": [
+     [
+      "edited",
+      "changed"
+     ],
+     [
+      "session",
+      "ok"
+     ],
+     [
+      "session",
+      "ok"
+     ]
+    ]
+   }
+  },
+  {
+   "action": "edit",
+   "answers": [
+    "discarded edit",
+    null
+   ],
+   "dialogs": [
+    "edit cookie name",
+    "edit match"
+   ],
+   "initial": [
+    [
+     51,
+     1,
+     [
+      0,
+      "session",
+      null,
+      null,
+      "session"
+     ]
+    ],
+    [
+     51,
+     1,
+     [
+      0,
+      "ok",
+      null,
+      null,
+      "ok"
+     ]
+    ]
    ],
    "state": {
     "value": [
