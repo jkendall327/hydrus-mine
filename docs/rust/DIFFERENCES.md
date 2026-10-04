@@ -991,7 +991,7 @@ Checked by the `popups` conformance scenario.
 
 - **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions and repository/IPFS account administration remain unavailable. Local trash clear/undelete, double-confirmed deleted-file-record clearing and all three local rating-clear populations are implemented; bulk rating choices and confirmations use native inline controls rather than Qt popup menus/dialogs. Opening a replacement review retires the previous owner's pending maintenance confirmation.
 
-- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields and there is no live rating preview; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available; HTTPS, normie Eris and external URL overrides are preserved imported values, with an explicit control to disable unsupported HTTPS. A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
+- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields with four live, independently interactive rating examples; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available; HTTPS, normie Eris and external URL overrides are preserved imported values, with an explicit control to disable unsupported HTTPS. A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
 
 ## Manual file exports
 
@@ -1954,3 +1954,14 @@ therefore place fullwidth numeric subtags before alphabetic ones while retaining
 the reference's mixed ASCII/Unicode chunk ordering; the existing40-state exact
 banner replay remains unchanged. A fresh live Qt preview recording covers eight
 Unicode/mixed-script/zero boundaries and four sort-key equalities.
+
+The rating configuration example uses the existing native star/counter graphics
+and an owned inline counter-value prompt rather than a Qt modal child. Thumbnail
+and media-viewer samples use their actual typed sizing preferences; preview and
+dialog samples use the recorded 12px defaults, since their separate sizing
+preferences are not yet native settings. Named SVG rendering retains the existing
+fallback. Numerical examples retain the reference opening click conversion while
+star-count changes repaint the stored fraction; the allow-zero checkbox changes
+the saved service configuration, without changing the opening preview conversion.
+This implements the local example-panel leaf; broader service management and
+rating sizing/preferences remain partial.

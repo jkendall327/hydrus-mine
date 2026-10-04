@@ -498,3 +498,112 @@ fn writer_rechecks_last_domain_and_rating_limits() {
         );
     }
 }
+
+#[test]
+fn rating_examples_replay_qt_samples_live_configuration_and_no_saved_values() {
+    use hydrus_gui_model::rating_example::{self, Example, Sample};
+    use hydrus_store::services::{PenBrush, Rgb, StarAppearance, StarShape};
+
+    let recorded = hydrus_testkit::fixture_json("service_rating_preview.json");
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let dir = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let before = registry(&store);
+    for result in recorded["results"].as_array().unwrap() {
+        let service = store
+            .snapshot()
+            .services
+            .by_name(result["name"].as_str().unwrap())
+            .unwrap()
+            .clone();
+        let mut kind = service.kind.clone();
+        let mut example = Example::new(&kind).unwrap();
+        assert_eq!(json!(rating_example::LABELS), result["labels"]);
+        assert_eq!(result["example_value"], json!({}));
+        assert_eq!(result["original_unchanged"], true);
+        for event in result["events"].as_array().unwrap() {
+            let index = event["index"].as_u64().map(|i| usize::try_from(i).unwrap());
+            match event["action"].as_str().unwrap() {
+                "left" | "right" => example.click(index.unwrap(), event["action"] == "right", 0.5),
+                "middle_accept" => example.set_counter(
+                    index.unwrap(),
+                    u32::try_from(event["value"].as_u64().unwrap()).unwrap(),
+                ),
+                "middle_cancel" | "initial" | "configured" => {}
+                _ => panic!("unrecorded example action"),
+            }
+            for (sample, expected) in example
+                .samples()
+                .iter()
+                .zip(event["samples"].as_array().unwrap())
+            {
+                let (state, value) = match sample {
+                    Sample::Like(None) => (2, serde_json::Value::Null),
+                    Sample::Like(Some(true)) => (0, serde_json::Value::Null),
+                    Sample::Like(Some(false)) => (1, serde_json::Value::Null),
+                    Sample::Numerical(value) => (
+                        if value.is_some() { 3 } else { 2 },
+                        json!(value.unwrap_or(0.0)),
+                    ),
+                    Sample::IncDec(value) => (3, json!(value)),
+                };
+                assert_eq!(json!(state), expected["state"]);
+                assert_eq!(value, expected["rating"]);
+                if let Sample::IncDec(value) = sample {
+                    assert_eq!(
+                        rating_example::counter_width(12.0, *value),
+                        expected["icon"][0].as_f64().unwrap()
+                    );
+                }
+            }
+        }
+        let colour = PenBrush {
+            pen: Rgb([17, 34, 51]),
+            brush: Rgb([68, 85, 102]),
+        };
+        assert_eq!(
+            json!([colour.pen.0, colour.brush.0]),
+            result["configured"]["colours"][0][1]
+        );
+        match &mut kind {
+            ServiceKind::RatingLike(c) => {
+                assert_eq!(result["configured"]["shape"], 40);
+                c.appearance = StarAppearance::Shape(StarShape(40));
+                c.display.colours.like = colour;
+            }
+            ServiceKind::RatingNumerical(c) => {
+                c.appearance = StarAppearance::Shape(StarShape(40));
+                c.display.colours.like = colour;
+                c.num_stars = 7;
+                c.custom_pad = 3;
+                c.show_fraction_beside_stars = 2;
+            }
+            ServiceKind::RatingIncDec(c) => c.colours.like = colour,
+            _ => panic!("not a rating fixture"),
+        }
+        for i in 0..4 {
+            let control = example.control(i, &kind).unwrap();
+            assert_eq!(control.colours.like, colour);
+            if matches!(kind, ServiceKind::RatingNumerical(_)) {
+                let configured = result["events"].as_array().unwrap().last().unwrap();
+                assert_eq!(
+                    json!(example.fraction(i, &kind)),
+                    configured["rendered"][i]["fraction"]
+                );
+                assert_eq!(control.shapes().len(), 7);
+            }
+        }
+        // Samples are deliberately absent from the ServiceKind serialization.
+        let saved = serde_json::to_value(&kind).unwrap();
+        assert!(!saved.to_string().contains("12345"));
+        let reopened = Example::new(&kind).unwrap();
+        assert_ne!(reopened.samples(), example.samples());
+    }
+    assert_eq!(registry(&store), before);
+    assert!(Example::new(&ServiceKind::LocalTags).is_none());
+}

@@ -142,3 +142,12 @@ content publication. No remote service is exercised.
 record-clear decisions, accepted store updates, local domain counts and import
 status of a permanent deletion versus a trash file (executed 2026-10-04 21:43:09
 UTC on a freshly unpacked basic fixture). The review panel PNG is recorded too.
+
+
+`record_service_rating_preview.py` opens the actual local like/dislike, numerical
+and inc/dec service configuration panels on a copied basic fixture. It records
+four independent sample controls, normal/right/middle-click decisions, live
+colour/shape/star-count/padding/fraction updates, opening numerical conversion,
+empty example persistence values and unchanged original services. The counter's
+real edit-value dialog receives scripted accept/cancel decisions. Qt example PNGs
+are saved beside `service_rating_preview.json`; no fixture service edits commit.

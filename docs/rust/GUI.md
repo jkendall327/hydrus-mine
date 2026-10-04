@@ -2900,3 +2900,13 @@ status transition from deleted to unknown are in `service_deleted.json`.
 Opening another service review cancels the previous owner's pending question;
 retained callbacks from that retired owner cannot clear records or close the
 replacement review.
+
+Local rating service edits include an expanded “example display” with independent
+Thumbnails, Media Viewer, Preview Window and Dialog (Default) samples. Colours,
+shape, numerical star count, spacing and fraction placement repaint the draft.
+Like/dislike samples toggle; numerical right-click clears; counter clicks add or
+subtract, with middle-click opening an owned value prompt. Sample values are
+never saved as file ratings. Child Apply stages only the service configuration;
+parent Apply persists it. Cancel, reopening and closed-owner callbacks leave
+samples and unapplied configuration behind. The actual three-kind Qt replay is
+`service_rating_preview.json`; hosted native coverage also saves a populated PNG.
