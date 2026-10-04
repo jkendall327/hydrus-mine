@@ -181,7 +181,6 @@ pub fn open(
     timer.start(TimerMode::Repeated, Duration::from_millis(30), {
         let weak = window.as_weak();
         let receiver = receiver.clone();
-        let valid = valid.clone();
         let close = close.clone();
         let active = active.clone();
         move || {
