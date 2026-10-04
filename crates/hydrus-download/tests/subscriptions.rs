@@ -816,6 +816,7 @@ async fn a_subscription_shows_what_it_does_in_a_popup_which_can_cancel_it() {
 fn pending_seed(url: String) -> queues::NewFileSeed {
     queues::NewFileSeed {
         seed_type: queues::SeedType::Url,
+        data_for_comparison: url.clone(),
         data: url,
         source_time: None,
         referral_url: None,

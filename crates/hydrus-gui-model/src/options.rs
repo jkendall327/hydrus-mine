@@ -1131,7 +1131,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             none("no limit", 5, (1, 1_000_000), Some("errors")),
                             |s| signed(s.network.subscription_file_error_cancel_threshold),
                             |s, value| {
-                                s.network.subscription_file_error_cancel_threshold = unsigned(value)
+                                s.network.subscription_file_error_cancel_threshold = unsigned(value);
                             },
                         ),
                         check(
