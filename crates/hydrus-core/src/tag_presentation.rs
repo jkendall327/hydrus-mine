@@ -145,25 +145,28 @@ impl TagPresentation {
 }
 
 /// The first of each block of ten Unicode decimal digits (category Nd), as
-/// Python 3.11's `str.isdecimal` knows them (Unicode 14).
-const DECIMAL_ZEROS: [u32; 66] = [
+/// Python 3.13's `str.isdecimal` knows them (Unicode 15.1).
+const DECIMAL_ZEROS: [u32; 68] = [
     0x30, 0x660, 0x6F0, 0x7C0, 0x966, 0x9E6, 0xA66, 0xAE6, 0xB66, 0xBE6, 0xC66, 0xCE6, 0xD66,
     0xDE6, 0xE50, 0xED0, 0xF20, 0x1040, 0x1090, 0x17E0, 0x1810, 0x1946, 0x19D0, 0x1A80, 0x1A90,
     0x1B50, 0x1BB0, 0x1C40, 0x1C50, 0xA620, 0xA8D0, 0xA900, 0xA9D0, 0xA9F0, 0xAA50, 0xABF0, 0xFF10,
     0x104A0, 0x10D30, 0x11066, 0x110F0, 0x11136, 0x111D0, 0x112F0, 0x11450, 0x114D0, 0x11650,
-    0x116C0, 0x11730, 0x118E0, 0x11950, 0x11C50, 0x11D50, 0x11DA0, 0x16A60, 0x16AC0, 0x16B50,
-    0x1D7CE, 0x1D7D8, 0x1D7E2, 0x1D7EC, 0x1D7F6, 0x1E140, 0x1E2F0, 0x1E950, 0x1FBF0,
+    0x116C0, 0x11730, 0x118E0, 0x11950, 0x11C50, 0x11D50, 0x11DA0, 0x11F50, 0x16A60, 0x16AC0,
+    0x16B50, 0x1D7CE, 0x1D7D8, 0x1D7E2, 0x1D7EC, 0x1D7F6, 0x1E140, 0x1E2F0, 0x1E4F0, 0x1E950,
+    0x1FBF0,
 ];
 
 /// Python's `str.isdecimal`: not empty, and every character a decimal digit.
 pub fn is_decimal(s: &str) -> bool {
-    !s.is_empty()
-        && s.chars().all(|c| {
-            let c = u32::from(c);
-            DECIMAL_ZEROS
-                .iter()
-                .any(|&zero| (zero..zero + 10).contains(&c))
-        })
+    !s.is_empty() && s.chars().all(|c| decimal_digit(c).is_some())
+}
+
+/// A Python Unicode decimal digit's numerical value, sharing the display table.
+pub fn decimal_digit(c: char) -> Option<u32> {
+    let c = u32::from(c);
+    DECIMAL_ZEROS
+        .iter()
+        .find_map(|zero| c.checked_sub(*zero).filter(|digit| *digit < 10))
 }
 
 /// The colours tags and predicates are listed in, by namespace (the old

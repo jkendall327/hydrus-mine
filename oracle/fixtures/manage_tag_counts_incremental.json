@@ -840,5 +840,207 @@
       ]
     },
     "has_changes": true
-  }
+  },
+  "initial_cases": [
+    {
+      "subtags": [
+        "١٢"
+      ],
+      "sorted": [
+        "١٢"
+      ],
+      "initial_start": 12,
+      "summary": "For the 3 files, you are setting page:v12x, page:v13x, page:v14x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v12x, page:v12x, page:v12x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "１２"
+      ],
+      "sorted": [
+        "１２"
+      ],
+      "initial_start": 12,
+      "summary": "For the 3 files, you are setting page:v12x, page:v13x, page:v14x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v12x, page:v12x, page:v12x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "١2٣"
+      ],
+      "sorted": [
+        "١2٣"
+      ],
+      "initial_start": 123,
+      "summary": "For the 3 files, you are setting page:v123x, page:v124x, page:v125x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v123x, page:v123x, page:v123x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "100",
+        "٢"
+      ],
+      "sorted": [
+        "100",
+        "٢"
+      ],
+      "initial_start": 100,
+      "summary": "For the 3 files, you are setting page:v100x, page:v101x, page:v102x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v100x, page:v100x, page:v100x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "-4",
+        "١٢"
+      ],
+      "sorted": [
+        "١٢",
+        "-4"
+      ],
+      "initial_start": 12,
+      "summary": "For the 3 files, you are setting page:v12x, page:v13x, page:v14x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v12x, page:v12x, page:v12x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "-4"
+      ],
+      "sorted": [
+        "-4"
+      ],
+      "initial_start": 1,
+      "summary": "For the 3 files, you are setting page:v1x, page:v2x, page:v3x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v1x, page:v1x, page:v1x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "²",
+        "١٢"
+      ],
+      "sorted": [
+        "١٢",
+        "²"
+      ],
+      "initial_start": 12,
+      "summary": "For the 3 files, you are setting page:v12x, page:v13x, page:v14x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v12x, page:v12x, page:v12x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "0",
+        "١٢"
+      ],
+      "sorted": [
+        "0",
+        "١٢"
+      ],
+      "initial_start": 0,
+      "summary": "For the 3 files, you are setting page:v0x, page:v1x, page:v2x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v0x, page:v0x, page:v0x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "99999999"
+      ],
+      "sorted": [
+        "99999999"
+      ],
+      "initial_start": 10000000,
+      "summary": "For the 3 files, you are setting page:v10000000x, page:v10000001x, page:v10000002x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v10000000x, page:v10000000x, page:v10000000x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "𑽕𑽓"
+      ],
+      "sorted": [
+        "𑽕𑽓"
+      ],
+      "initial_start": 53,
+      "summary": "For the 3 files, you are setting page:v53x, page:v54x, page:v55x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v53x, page:v53x, page:v53x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "𞓰𞓵"
+      ],
+      "sorted": [
+        "𞓰𞓵"
+      ],
+      "initial_start": 5,
+      "summary": "For the 3 files, you are setting page:v5x, page:v6x, page:v7x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v5x, page:v5x, page:v5x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    }
+  ],
+  "unicode_version": "15.1.0",
+  "decimal_zeros": [
+    48,
+    1632,
+    1776,
+    1984,
+    2406,
+    2534,
+    2662,
+    2790,
+    2918,
+    3046,
+    3174,
+    3302,
+    3430,
+    3558,
+    3664,
+    3792,
+    3872,
+    4160,
+    4240,
+    6112,
+    6160,
+    6470,
+    6608,
+    6784,
+    6800,
+    6992,
+    7088,
+    7232,
+    7248,
+    42528,
+    43216,
+    43264,
+    43472,
+    43504,
+    43600,
+    44016,
+    65296,
+    66720,
+    68912,
+    69734,
+    69872,
+    69942,
+    70096,
+    70384,
+    70736,
+    70864,
+    71248,
+    71360,
+    71472,
+    71904,
+    72016,
+    72784,
+    73040,
+    73120,
+    73552,
+    92768,
+    92864,
+    93008,
+    120782,
+    120792,
+    120802,
+    120812,
+    120822,
+    123200,
+    123632,
+    124144,
+    125264,
+    130032
+  ]
 }
