@@ -462,7 +462,7 @@ fn bind_tags(window: &FilenameTaggingWindow, state: &Rc<RefCell<State>>, store: 
                     return;
                 }
             };
-            let tags = crate::write_autocomplete::pasted_tags(&raw);
+            let tags = hydrus_gui_model::write_autocomplete::pasted_tags(&raw);
             if single {
                 let selected = state.selected();
                 state.tab_mut().add_single(&selected, &tags);
