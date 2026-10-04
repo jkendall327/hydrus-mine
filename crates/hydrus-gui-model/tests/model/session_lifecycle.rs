@@ -15,7 +15,7 @@ fn autosave_replays_idle_retries_period_changes_and_stopping_for_other_startup()
         fixture["default_only_idle"].as_bool().unwrap()
     );
     let mut saving = Autosave::new(0, &config);
-    assert_eq!(saving.poll(299999, true, &config), Action::Wait);
+    assert_eq!(saving.poll(299_999, true, &config), Action::Wait);
     for step in fixture["steps"].as_array().unwrap() {
         config.startup = Some(step["startup"].as_str().unwrap().into());
         config.only_during_idle = step["only_idle"].as_bool().unwrap();
@@ -25,7 +25,7 @@ fn autosave_replays_idle_retries_period_changes_and_stopping_for_other_startup()
         if let Some(call) = step["calls"].as_array().unwrap().first() {
             assert_eq!(
                 saving.next().unwrap() - now,
-                call["delay"].as_i64().unwrap() * 1000
+                call["delay"].as_i64().unwrap() * 1_000
             );
             assert_eq!(
                 action,
@@ -41,11 +41,11 @@ fn autosave_replays_idle_retries_period_changes_and_stopping_for_other_startup()
         }
     }
     config.startup = Some(hydrus_store::sessions::LAST_SESSION.into());
-    assert_eq!(saving.poll(10000000, true, &config), Action::Stopped);
+    assert_eq!(saving.poll(10_000_000, true, &config), Action::Stopped);
     config.autosave_minutes = 0;
-    assert_eq!(Autosave::new(0, &config).next(), Some(60000));
+    assert_eq!(Autosave::new(0, &config).next(), Some(60_000));
     config.autosave_minutes = u16::MAX;
-    assert_eq!(Autosave::new(0, &config).next(), Some(86400000));
+    assert_eq!(Autosave::new(0, &config).next(), Some(86_400_000));
 }
 
 #[test]
@@ -57,18 +57,18 @@ fn idle_requires_boot_user_mouse_and_api_timeouts_and_enabled_normal_work() {
         api_seconds: None,
     };
     let mut idle = Idle::new(0);
-    assert!(!idle.eligible(120000, &settings));
-    assert!(idle.eligible(120001, &settings));
-    idle.user(120001);
-    assert!(!idle.eligible(130001, &settings));
-    assert!(idle.eligible(130002, &settings));
-    idle.mouse(130002);
-    assert!(!idle.eligible(135002, &settings));
-    assert!(idle.eligible(135003, &settings));
+    assert!(!idle.eligible(120_000, &settings));
+    assert!(idle.eligible(120_001, &settings));
+    idle.user(120_001);
+    assert!(!idle.eligible(130_001, &settings));
+    assert!(idle.eligible(130_002, &settings));
+    idle.mouse(130_002);
+    assert!(!idle.eligible(135_002, &settings));
+    assert!(idle.eligible(135_003, &settings));
     settings.api_seconds = Some(2);
-    idle.api(135003);
-    assert!(!idle.eligible(137003, &settings));
-    assert!(idle.eligible(137004, &settings));
+    idle.api(135_003);
+    assert!(!idle.eligible(137_003, &settings));
+    assert!(idle.eligible(137_004, &settings));
     settings.enabled = false;
     assert!(!idle.eligible(i64::MAX, &settings));
 

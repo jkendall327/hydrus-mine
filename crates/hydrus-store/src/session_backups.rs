@@ -67,7 +67,7 @@ pub fn save(conn: &Connection, session: &Session, now_ms: i64) -> Result<()> {
             [&session.name],
             |row| row.get::<_, i64>(0),
         )?;
-        let timestamp = saved.saturating_mul(1000);
+        let timestamp = saved.saturating_mul(1_000);
         insert(conn, &previous, timestamp)?;
         latest = Some(timestamp);
     }
@@ -78,7 +78,7 @@ pub fn save(conn: &Connection, session: &Session, now_ms: i64) -> Result<()> {
         (SELECT timestamp_ms FROM session_snapshots WHERE name = ? ORDER BY timestamp_ms DESC LIMIT ?)",
         params![session.name, session.name, i64::try_from(settings.keep.clamp(1, 32)).unwrap_or(32)])?;
     insert(conn, session, timestamp)?;
-    sessions::save(conn, session, timestamp / 1000)
+    sessions::save(conn, session, timestamp / 1_000)
 }
 
 /// Suppress unchanged automatic saves, as the controller's last-session hash
@@ -306,7 +306,7 @@ mod tests {
         let conn = connection();
         let fixture = hydrus_testkit::fixture_json("session_autosave.json");
         let mut saved = session(sessions::LAST_SESSION);
-        sessions::save(&conn, &saved, 1700100000).unwrap();
+        sessions::save(&conn, &saved, 1_700_100_000).unwrap();
         let mut previous = None;
         for step in fixture["steps"].as_array().unwrap() {
             if let Some(name) = step["add_notebook"].as_str() {
@@ -345,7 +345,7 @@ mod tests {
         assert_eq!(latest.session, saved);
         // This running client hash is not persisted: a new boot saves once.
         assert!(
-            save_automatic(&conn, &saved, 1700100500000, None)
+            save_automatic(&conn, &saved, 1_700_100_500_000, None)
                 .unwrap()
                 .is_some()
         );

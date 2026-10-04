@@ -101,19 +101,19 @@ fn applied_idle_and_period_controls_drive_real_archives_with_unchanged_suppressi
     let due = bound.session_autosave.next().unwrap();
     bound.session_autosave.user_at(due);
     assert!(!bound.session_autosave.poll_at(due).unwrap());
-    assert_eq!(bound.session_autosave.next(), Some(due + 60000));
+    assert_eq!(bound.session_autosave.next(), Some(due + 60_000));
     assert!(
         store
             .read(|conn| hydrus_store::session_backups::latest(conn, sessions::LAST_SESSION))
             .unwrap()
             .is_none()
     );
-    assert!(bound.session_autosave.poll_at(due + 60000).unwrap());
-    assert_eq!(bound.session_autosave.next(), Some(due + 180000));
+    assert!(bound.session_autosave.poll_at(due + 60_000).unwrap());
+    assert_eq!(bound.session_autosave.next(), Some(due + 180_000));
     let snapshots = store.read(hydrus_store::session_backups::names).unwrap();
     bound.current.borrow().borrow_mut().select(0);
     (bound.sync)();
-    assert!(!bound.session_autosave.poll_at(due + 180000).unwrap());
+    assert!(!bound.session_autosave.poll_at(due + 180_000).unwrap());
     assert_eq!(
         store.read(hydrus_store::session_backups::names).unwrap(),
         snapshots
@@ -123,7 +123,7 @@ fn applied_idle_and_period_controls_drive_real_archives_with_unchanged_suppressi
     ui.invoke_new_page();
     ui.invoke_chooser_pressed(6);
     ui.invoke_chooser_pressed(8);
-    assert!(bound.session_autosave.poll_at(due + 300000).unwrap());
+    assert!(bound.session_autosave.poll_at(due + 300_000).unwrap());
     let snapshot = store
         .read(|conn| hydrus_store::session_backups::latest(conn, sessions::LAST_SESSION))
         .unwrap()
@@ -159,7 +159,7 @@ fn actual_key_and_pointer_events_reset_idle_and_other_startup_stops_autosave() {
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     ui.show().unwrap();
     ui.set_search_focus_requests(ui.get_search_focus_requests() + 1);
-    let future = hydrus_core::TimestampMs::now().0 + 120001;
+    let future = hydrus_core::TimestampMs::now().0 + 120_001;
     bound.session_autosave.user_at(0);
     bound.session_autosave.mouse_at(0);
     assert!(bound.session_autosave.idle_at(future));

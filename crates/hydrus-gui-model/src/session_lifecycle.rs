@@ -8,6 +8,7 @@ pub enum Action {
     Stopped,
 }
 
+#[derive(Debug)]
 pub struct Autosave {
     next: Option<i64>,
 }
@@ -28,7 +29,7 @@ impl Autosave {
             return Action::Wait;
         }
         if settings.only_during_idle && !idle {
-            self.next = Some(now_ms.saturating_add(60000));
+            self.next = Some(now_ms.saturating_add(60_000));
             Action::Wait
         } else if settings.startup.as_deref() != Some(hydrus_store::sessions::LAST_SESSION) {
             self.next = None;
@@ -40,7 +41,7 @@ impl Autosave {
     }
 }
 fn period(settings: &GuiSessionSettings) -> i64 {
-    i64::from(settings.autosave_minutes.clamp(1, 1440)) * 60000
+    i64::from(settings.autosave_minutes.clamp(1, 1440)) * 60_000
 }
 
 #[derive(Debug)]
@@ -71,12 +72,13 @@ impl Idle {
     pub fn eligible(&self, now_ms: i64, settings: &GuiIdleSettings) -> bool {
         fn passed(now: i64, at: i64, seconds: Option<u64>) -> bool {
             seconds.is_none_or(|seconds| {
-                now > at
-                    .saturating_add(i64::try_from(seconds.saturating_mul(1000)).unwrap_or(i64::MAX))
+                now > at.saturating_add(
+                    i64::try_from(seconds.saturating_mul(1_000)).unwrap_or(i64::MAX),
+                )
             })
         }
         settings.enabled
-            && now_ms > self.boot.saturating_add(120000)
+            && now_ms > self.boot.saturating_add(120_000)
             && passed(now_ms, self.user, settings.user_seconds)
             && passed(now_ms, self.mouse, settings.mouse_seconds)
             && passed(now_ms, self.api, settings.api_seconds)
