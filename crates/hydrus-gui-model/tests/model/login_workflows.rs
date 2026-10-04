@@ -1,6 +1,6 @@
 //! Reference Qt credential rows, advisory prompts, script identities and storage.
 use hydrus_gui_model::login_workflows::{
-    ArgumentKind, CredentialsEditor, ScriptsEditor, StepEditor,
+    ArgumentKind, CookiesEditor, CredentialsEditor, ScriptsEditor, StepEditor,
 };
 use hydrus_legacy::{objects::logins as legacy, serialisable::SerialisableObject};
 use hydrus_parse::login::CredentialKind;
@@ -333,4 +333,61 @@ fn request_arguments_replay_real_qt_rename_duplicates_blank_values_and_cancel() 
     assert!(!editor.step.static_args.contains_key("empty"));
     assert_eq!(editor.step.credentials["account"], "account_param");
     assert_eq!(editor.step.temp_args["csrf"], "token");
+}
+
+#[test]
+fn cookie_requirements_match_real_qt_pair_edits_cancel_and_duplicate_looking_keys() {
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let mut script = manager(&fixture).scripts.remove(0);
+    let mut editor = CookiesEditor::new(&script.required_cookies);
+    for state in &fixture["cookie_states"].as_array().unwrap()[1..] {
+        let values = state["answers"].as_array().unwrap();
+        if let Some(value) = values[1].as_str() {
+            let index = if state["action"] == "edit" {
+                editor.rows.iter().position(|row| {
+                    row.name == hydrus_core::url::strings::StringMatch::fixed("token")
+                })
+            } else {
+                None
+            };
+            editor.put(
+                index,
+                hydrus_parse::login::CookieRequirement {
+                    name: hydrus_core::url::strings::StringMatch::fixed(
+                        values[0].as_str().unwrap(),
+                    ),
+                    value: hydrus_core::url::strings::StringMatch::fixed(value),
+                    reference_auxiliary: None,
+                },
+            );
+        }
+        script.required_cookies = editor.value();
+        assert_eq!(
+            hydrus_downloader_exchange::logins::script_tuple(&script).unwrap()[3][1],
+            state["state"]["value"]
+        );
+        assert_eq!(
+            json!(
+                editor
+                    .value()
+                    .iter()
+                    .map(|row| vec![
+                        row.name.describe(false, false),
+                        row.value.describe(false, false)
+                    ])
+                    .collect::<Vec<_>>()
+            ),
+            state["state"]["rows"]
+        );
+    }
+    assert_eq!(
+        editor.rows.len(),
+        3,
+        "independent Python matcher objects may look identical"
+    );
+    let order = editor.order();
+    editor.selection.select_many(&order[..2]);
+    editor.delete();
+    assert_eq!(editor.rows.len(), 1);
+    assert!(editor.selection.is_empty());
 }

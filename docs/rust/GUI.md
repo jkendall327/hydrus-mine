@@ -2186,3 +2186,10 @@ chosen result to every selected subscription, including the reference's behavior
 after its topmost-selection warning. Profile edits persist independently of the
 subscription dialog. The list offers no save-current action, and closing it cancels
 its open profile/overwrite children and invalidates retained callbacks.
+
+Scripts and steps open a shared required-cookie editor with sorted name/value
+matcher rows, extended selection, add/edit and confirmed delete. Each matcher uses
+the existing live permitted-input editor. A row and its whole list can be canceled
+independently; accepted lists remain staged beneath their step/script/list owners.
+Matcher updates persist through reopening, and the HTTP consumer regression shows
+an edited cookie value rejecting the actual loopback response cookie.

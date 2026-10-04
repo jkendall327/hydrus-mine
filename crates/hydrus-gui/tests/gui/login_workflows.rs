@@ -911,3 +911,158 @@ fn step_argument_draft_rejects_duplicates_stages_cancel_and_reaches_actual_http(
     window.invoke_action("apply".into());
     assert!(accepted.borrow().is_none());
 }
+
+fn fixed_cookie_matcher(slots: &hydrus_gui::login_cookies_window::Slots, text: &str) {
+    let child = slots.strings.step.borrow().as_ref().unwrap().clone_strong();
+    child.set_match_type(1);
+    child.set_fixed(text.into());
+    child.invoke_changed();
+    child.invoke_apply();
+}
+#[test]
+fn shared_cookie_list_owns_matchers_and_stages_both_script_and_step_consumers() {
+    let (_dir, store, original) = store();
+    headless::init();
+    let slots = Slots::default();
+    let list = windows::open_scripts(&store, &slots).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let script = slots.script.borrow().as_ref().unwrap().clone_strong();
+    script.invoke_action("cookies".into());
+    let cookies = slots
+        .cookies
+        .window
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(script.get_child_open());
+    cookies.invoke_action("add".into());
+    cookies.invoke_action("name-match".into());
+    assert!(cookies.get_child_open());
+    fixed_cookie_matcher(&slots.cookies, "probe");
+    cookies.invoke_action("value-match".into());
+    fixed_cookie_matcher(&slots.cookies, "ready");
+    cookies.invoke_action("save-row".into());
+    assert_eq!(cookies.get_rows().row_count(), 2);
+    cookies.invoke_action("apply".into());
+    assert!(!script.get_child_open());
+    assert_eq!(script.get_cookies().row_count(), 2);
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+    script.invoke_step_clicked(1);
+    script.invoke_action("edit-step".into());
+    let step = slots.step.step.borrow().as_ref().unwrap().clone_strong();
+    step.invoke_action("cookies".into());
+    let child = slots
+        .step
+        .cookies
+        .window
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    child.invoke_row_clicked(0, false, false);
+    child.invoke_action("edit".into());
+    child.invoke_action("value-match".into());
+    fixed_cookie_matcher(&slots.step.cookies, "updated");
+    child.invoke_action("save-row".into());
+    child.invoke_action("apply".into());
+    step.invoke_action("apply".into());
+    script.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    let saved = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(saved.scripts[0].required_cookies.len(), 2);
+    assert!(
+        saved.scripts[0]
+            .required_cookies
+            .iter()
+            .any(|row| row.name == hydrus_core::url::strings::StringMatch::fixed("probe"))
+    );
+    assert_eq!(
+        saved.scripts[0].steps[1].required_cookies[0].value,
+        hydrus_core::url::strings::StringMatch::fixed("updated")
+    );
+    let site = LoginSite::start();
+    let mut executing = saved.scripts[0].clone();
+    executing.steps[0].subdomain = None;
+    store
+        .write_and_refresh(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::network::NetworkSettings {
+                    detect_sleep: false,
+                    max_connection_attempts: 1,
+                    max_get_attempts: 1,
+                    network_timeout: 2,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
+    let run = hydrus_gui::login_test_window::RunSlot::default();
+    let finished = Rc::new(RefCell::new(None));
+    run.start(
+        hydrus_gui::login_test_window::Input {
+            source: store.clone(),
+            script: executing,
+            domain: site.domain.clone(),
+            credentials: original
+                .domains
+                .values()
+                .next()
+                .unwrap()
+                .credentials
+                .clone(),
+            test: true,
+        },
+        Rc::new(|_| {}),
+        Rc::new({
+            let finished = finished.clone();
+            move |result| *finished.borrow_mut() = Some(result)
+        }),
+    );
+    until_login(|| !run.busy());
+    assert!(
+        matches!(&finished.borrow().as_ref().unwrap().outcome,hydrus_net::login::Outcome::Verification(error) if error.contains("updated"))
+    );
+    assert_eq!(site.requests.lock().unwrap().len(), 2);
+
+    let list = windows::open_scripts(&store, &slots).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let script = slots.script.borrow().as_ref().unwrap().clone_strong();
+    script.invoke_action("cookies".into());
+    let cookies = slots
+        .cookies
+        .window
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    cookies.invoke_row_clicked(0, false, false);
+    cookies.invoke_row_clicked(1, true, false);
+    cookies.invoke_action("delete".into());
+    assert!(cookies.get_deleting());
+    cookies.invoke_action("back".into());
+    assert_eq!(cookies.get_rows().row_count(), 2);
+    cookies.invoke_action("delete".into());
+    cookies.invoke_action("confirm-delete".into());
+    assert_eq!(cookies.get_rows().row_count(), 0);
+    cookies.invoke_action("add".into());
+    cookies.invoke_action("name-match".into());
+    let matcher = slots
+        .cookies
+        .strings
+        .step
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    script.invoke_action("cancel".into());
+    assert!(slots.cookies.window.borrow().is_none());
+    assert!(!matcher.window().is_visible());
+    matcher.invoke_apply();
+    cookies.invoke_action("apply".into());
+    list.invoke_action("cancel".into());
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
+}

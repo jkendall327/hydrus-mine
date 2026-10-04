@@ -1426,3 +1426,10 @@ semantics through the native shared editors. Their warnings use the existing
 native information panel, and their popup style follows the native theme. Global
 import-options default management and external-program command editing still have
 separate incomplete coverage; this does not complete those broader controls.
+
+Login global/step cookie requirements are now editable through a shared child list
+with a staged row and separate name/value matcher buttons; the reference embeds
+the list and asks sequential matcher dialogs. Independent matcher objects with
+identical descriptions remain distinct, as in Python. Explicit matcher edits
+canonicalize their unused auxiliary matcher values. Script example-domain editing
+and the step argument list topology/extended-selection gap remain outstanding.

@@ -55,6 +55,7 @@ export component LoginStepWindow inherits Window {
         }
         Text { text: "cookies required to consider step successful"; color: Theme.text; font-weight: 700; }
         ListTable { vertical-stretch: 1; columns: [{title: "cookie name", width: 350px}, {title: "permitted value", width: 450px, stretch: true}]; rows: root.cookies; }
+        Button { text: "edit required cookies"; enabled: !root.child-open && !root.deleting && !root.variable-editing; clicked => { root.action("cookies"); } }
         Text { text: "content parsers"; color: Theme.text; font-weight: 700; }
         ListTable { vertical-stretch: 1; columns: [{title: "name", width: 350px}, {title: "produces", width: 450px, stretch: true}]; rows: root.content; row-clicked(i,c,s) => { if !root.child-open && !root.deleting { root.content-clicked(i,c,s); } } row-activated(i) => { if !root.child-open && !root.deleting { root.content-activated(i); } } delete-pressed => { if !root.child-open && !root.deleting { root.action("delete-content"); } } }
         HorizontalLayout { spacing: 6px;

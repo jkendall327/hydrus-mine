@@ -159,6 +159,37 @@ def record(session):
             argument_states.append({'kind': kind, 'action': action, 'answers': values, 'prompts': list(prompts), 'state': arguments_panel.GetValue().GetSerialisableTuple()})
         arguments_panel.deleteLater()
 
+        cookie_panel = G.EditLoginScriptPanel(gui, script)
+        cookie_control = cookie_panel._required_cookies_info
+        cookie_states = []
+        cookie_answers = []
+        cookie_dialogs = []
+        class CookieDialog(QW.QWidget):
+            def __init__(self, parent, title, *args, **kwargs):
+                super().__init__(gui); cookie_dialogs.append(title)
+            def __enter__(self): return self
+            def __exit__(self, *args): return False
+            def SetPanel(self, panel): self.panel = panel
+            def exec(self):
+                text = cookie_answers.pop(0)
+                if text is None: return QW.QDialog.DialogCode.Rejected
+                self.panel._match_type.SetValue(S.STRING_MATCH_FIXED)
+                self.panel._match_value_fixed_input.setText(text)
+                self.panel.GetValue()
+                return QW.QDialog.DialogCode.Accepted
+        G.ClientGUITopLevelWindowsPanels.DialogEdit = CookieDialog
+        def cookie_state():
+            value = HydrusSerialisable.SerialisableDictionary(cookie_control.GetValue()).GetSerialisableTuple()
+            return {'value': value, 'rows': table(cookie_control._listctrl)}
+        cookie_states.append({'state': cookie_state()})
+        for action, values in [('add', ['token', 'ready']), ('edit', ['edited', 'changed']), ('add', ['discarded', None]), ('add', ['session', 'ok'])]:
+            if action == 'edit': cookie_control._listctrl.SelectDatas([cookie_control._listctrl.GetData()[-1]], deselect_others=True)
+            cookie_answers[:] = values; cookie_dialogs.clear()
+            if action == 'add': cookie_control._Add()
+            else: cookie_control._Edit()
+            cookie_states.append({'action': action, 'answers': values, 'dialogs': list(cookie_dialogs), 'state': cookie_state()})
+        cookie_panel.deleteLater()
+
         domains_panel = G.EditLoginsPanel(gui, controller.network_engine, [script], manager._domains_to_login_info)
         domains_control = domains_panel._domains_and_login_info
         def domain_state():
@@ -199,7 +230,7 @@ def record(session):
             login_actions.append({'mode': mode, 'accepted': allow, 'questions': list(questions), 'warnings': list(warnings), 'okayed': list(okayed), 'domains': route._domains_to_login_after_ok})
             route.deleteLater()
 
-        return {'argument_states': argument_states, 'domain_login_actions': login_actions, 'domain_states': domain_states, 'step_states': step_states, 'permitted_content_types': permitted, 'manager': original_manager, 'script_rows': script_rows, 'script_list': script_list, 'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
+        return {'cookie_states': cookie_states, 'argument_states': argument_states, 'domain_login_actions': login_actions, 'domain_states': domain_states, 'step_states': step_states, 'permitted_content_types': permitted, 'manager': original_manager, 'script_rows': script_rows, 'script_list': script_list, 'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
                 'credential_types': [[i, L.credential_type_str_lookup[i]] for i in [0, 1]], 'access_types': [[i, L.login_access_type_str_lookup[i], L.login_access_type_default_description_lookup[i]] for i in range(4)]}
     return controller.CallBlockingToQt(gui, qt)
 recorder.record = record

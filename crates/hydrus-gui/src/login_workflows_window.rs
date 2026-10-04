@@ -24,6 +24,7 @@ pub struct Slots {
     pub step: crate::login_step_window::Slots,
     pub run: crate::login_test_window::RunSlot,
     pub result: crate::login_test_window::ResultSlot,
+    pub cookies: crate::login_cookies_window::Slots,
     pub definition: crate::login_credential_window::DefinitionSlot,
     pub credentials: crate::login_credential_window::CredentialsSlot,
     pub strings: crate::string_processor_window::Slots,
@@ -59,6 +60,7 @@ impl Slots {
         crate::login_test_window::cancel_result(&self.result);
         self.domains.cancel();
         self.step.cancel();
+        self.cookies.cancel();
         crate::login_credential_window::cancel_definition(&self.definition);
         crate::login_credential_window::cancel_credentials(&self.credentials);
         self.strings.cancel_all();
@@ -250,6 +252,7 @@ pub fn open_script(
         let definition = slots.definition.clone();
         let run = slots.run.clone();
         let result = slots.result.clone();
+        let cookies = slots.cookies.clone();
         let step = slots.step.clone();
         let credentials = slots.credentials.clone();
         let strings = slots.strings.clone();
@@ -261,6 +264,7 @@ pub fn open_script(
             run.stop();
             crate::login_test_window::cancel_result(&result);
             step.cancel();
+            cookies.cancel();
             crate::login_credential_window::cancel_definition(&definition);
             crate::login_credential_window::cancel_credentials(&credentials);
             strings.cancel_all();
@@ -513,6 +517,7 @@ pub fn open_script(
         let credentials_slot = slots.credentials.clone();
         let run = slots.run.clone();
         let result_slot = slots.result.clone();
+        let cookies = slots.cookies.clone();
         let begin_test = begin_test.clone();
         let test_requested = test_requested.clone();
         let step_slot = slots.step.clone();
@@ -552,6 +557,36 @@ pub fn open_script(
                 return;
             }
             match action.as_str() {
+                "cookies" => {
+                    let values = state.borrow().script.required_cookies.clone();
+                    let accepted: crate::login_cookies_window::Applied = Rc::new({
+                        let weak = weak.clone();
+                        let state = state.clone();
+                        let active = active.clone();
+                        move |values| {
+                            if !active.get() {
+                                return Err("The login script editor has closed.".into());
+                            }
+                            state.borrow_mut().script.required_cookies = values;
+                            if let Some(window) = weak.upgrade() {
+                                show_script(&window, &state.borrow());
+                            }
+                            Ok(())
+                        }
+                    });
+                    match crate::login_cookies_window::open(&store, &values, &cookies, accepted) {
+                        Ok(child) => {
+                            window.set_child_open(true);
+                            let weak = weak.clone();
+                            child.on_closed(move || {
+                                if let Some(window) = weak.upgrade() {
+                                    window.set_child_open(false);
+                                }
+                            });
+                        }
+                        Err(error) => window.set_error(error.to_string().into()),
+                    }
+                }
                 "review-result" => {
                     let selected = state.borrow().result_selected;
                     let result = selected.and_then(|i| state.borrow().results.get(i).cloned());
@@ -851,6 +886,7 @@ pub fn open_scripts(store: &Arc<Store>, slots: &Slots) -> Result<LoginScriptsWin
         step: slots.step.clone(),
         run: slots.run.clone(),
         result: slots.result.clone(),
+        cookies: slots.cookies.clone(),
         definition: slots.definition.clone(),
         credentials: slots.credentials.clone(),
         strings: slots.strings.clone(),

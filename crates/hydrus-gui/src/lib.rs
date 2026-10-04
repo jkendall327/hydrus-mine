@@ -54,6 +54,7 @@ mod import_options_window;
 mod import_window;
 mod importer_list_menu;
 pub mod locations_window;
+pub mod login_cookies_window;
 pub mod login_credential_window;
 pub mod login_domains_window;
 pub mod login_step_window;

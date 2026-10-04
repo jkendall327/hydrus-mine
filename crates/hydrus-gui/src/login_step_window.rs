@@ -21,6 +21,7 @@ pub struct Slots {
     pub step: Rc<RefCell<Option<LoginStepWindow>>>,
     pub parsers: crate::parser_editors_window::Slots,
     pub exchange: crate::downloader_interchange_window::Slots,
+    pub cookies: crate::login_cookies_window::Slots,
 }
 /// Accepted step; script persistence still waits for the owner.
 pub type Applied = Rc<dyn Fn(LoginStep) -> Result<(), String>>;
@@ -140,6 +141,7 @@ pub fn open(
         let slot = Rc::downgrade(&slots.step);
         let parsers = slots.parsers.clone();
         let exchange = slots.exchange.clone();
+        let cookies = slots.cookies.clone();
         let active = active.clone();
         move || {
             if !active.replace(false) {
@@ -147,6 +149,7 @@ pub fn open(
             }
             exchange.cancel();
             parsers.cancel();
+            cookies.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -303,6 +306,8 @@ pub fn open(
         let selected_argument = selected_argument.clone();
         let edited_argument = edited_argument.clone();
         let deleting_argument = deleting_argument.clone();
+        let cookies = slots.cookies.clone();
+        let store = store.clone();
         move |action| {
             if !active.get() {
                 return;
@@ -326,6 +331,36 @@ pub fn open(
                 return;
             }
             match action.as_str() {
+                "cookies" => {
+                    let values = editor.borrow().step.required_cookies.clone();
+                    let accepted: crate::login_cookies_window::Applied = Rc::new({
+                        let weak = weak.clone();
+                        let editor = editor.clone();
+                        let active = active.clone();
+                        move |values| {
+                            if !active.get() {
+                                return Err("The login step editor has closed.".into());
+                            }
+                            editor.borrow_mut().step.required_cookies = values;
+                            if let Some(window) = weak.upgrade() {
+                                show(&window, &editor.borrow());
+                            }
+                            Ok(())
+                        }
+                    });
+                    match crate::login_cookies_window::open(&store, &values, &cookies, accepted) {
+                        Ok(child) => {
+                            window.set_child_open(true);
+                            let weak = weak.clone();
+                            child.on_closed(move || {
+                                if let Some(window) = weak.upgrade() {
+                                    window.set_child_open(false);
+                                }
+                            });
+                        }
+                        Err(error) => window.set_error(error.to_string().into()),
+                    }
+                }
                 "add-variable" | "edit-variable" => {
                     let selected = if action == "edit-variable" {
                         selected_argument.borrow().clone()

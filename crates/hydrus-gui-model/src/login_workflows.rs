@@ -435,3 +435,53 @@ impl StepEditor {
         .collect()
     }
 }
+
+/// Detached cookie requirement list; matcher objects may have identical descriptions.
+#[derive(Debug, Clone)]
+pub struct CookiesEditor {
+    pub rows: Vec<hydrus_parse::login::CookieRequirement>,
+    pub selection: ListSelection<usize>,
+}
+impl CookiesEditor {
+    pub fn new(rows: &[hydrus_parse::login::CookieRequirement]) -> Self {
+        Self {
+            rows: rows.to_vec(),
+            selection: ListSelection::default(),
+        }
+    }
+    pub fn order(&self) -> Vec<usize> {
+        let mut order = (0..self.rows.len()).collect::<Vec<_>>();
+        order.sort_by_cached_key(|&i| {
+            (
+                self.rows[i].name.describe(false, false),
+                self.rows[i].value.describe(false, false),
+            )
+        });
+        order
+    }
+    pub fn value(&self) -> Vec<hydrus_parse::login::CookieRequirement> {
+        self.order()
+            .into_iter()
+            .map(|i| self.rows[i].clone())
+            .collect()
+    }
+    pub fn put(&mut self, index: Option<usize>, value: hydrus_parse::login::CookieRequirement) {
+        let index = if let Some(index) = index.filter(|&i| i < self.rows.len()) {
+            self.rows[index] = value;
+            index
+        } else {
+            self.rows.push(value);
+            self.rows.len() - 1
+        };
+        self.selection.select_only(Some(index));
+    }
+    pub fn delete(&mut self) {
+        let selected = self.selection.in_order(&self.order());
+        self.rows = std::mem::take(&mut self.rows)
+            .into_iter()
+            .enumerate()
+            .filter_map(|(i, row)| (!selected.contains(&i)).then_some(row))
+            .collect();
+        self.selection.select_only(None);
+    }
+}
