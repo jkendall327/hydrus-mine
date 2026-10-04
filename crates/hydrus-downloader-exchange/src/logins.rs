@@ -118,7 +118,7 @@ pub fn encode_text(scripts: &[LoginScript]) -> Result<String> {
     Ok(text)
 }
 fn decode_object(
-    object: SerialisableObject,
+    object: &SerialisableObject,
     depth: usize,
     scripts: &mut Vec<LoginScript>,
 ) -> Result<()> {
@@ -138,10 +138,10 @@ fn decode_object(
                     "bundle contains a non-script value".into(),
                 ));
             };
-            decode_object(*object, depth + 1, scripts)?;
+            decode_object(&object, depth + 1, scripts)?;
         }
     } else {
-        let script = logins::login_script(&object).map_err(error)?;
+        let script = logins::login_script(object).map_err(error)?;
         script_tuple(&script)?;
         scripts.push(script);
     }
@@ -155,7 +155,7 @@ pub fn decode_text(text: &str) -> Result<Vec<LoginScript>> {
     let object = SerialisableObject::from_tuple_str(text)
         .map_err(|error| Error::Invalid(error.to_string()))?;
     let mut scripts = Vec::new();
-    decode_object(object, 0, &mut scripts)?;
+    decode_object(&object, 0, &mut scripts)?;
     if scripts.is_empty() {
         return Err(Error::Invalid(
             "The package contains no login scripts.".into(),
