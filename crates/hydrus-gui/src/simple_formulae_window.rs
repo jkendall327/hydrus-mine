@@ -145,10 +145,10 @@ pub fn open(
                 Ok(child) => {
                     state.borrow_mut().child_open = true;
                     let state = state.clone();
-                    let refresh = refresh.clone();
+                    let child_closed = refresh.clone();
                     child.on_closed(move || {
                         state.borrow_mut().child_open = false;
-                        refresh();
+                        child_closed();
                     });
                     refresh();
                 }
