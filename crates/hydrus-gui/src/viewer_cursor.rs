@@ -148,7 +148,7 @@ impl NativeCursor {
             return;
         };
         let options: ViewerCursorSettings = self.store.read(settings::get).unwrap_or_default();
-        let delay = options.autohide_ms.map(|delay| delay.clamp(100, 100000));
+        let delay = options.autohide_ms.map(|delay| delay.clamp(100, 100_000));
         // Slint 1.18's popup stack is the actual menu lifecycle, including
         // cancellation paths that do not invoke a MenuItem callback.
         let menu_open =

@@ -3705,7 +3705,10 @@ fn subscription_concurrency_options_replay_bounds_parent_apply_cancel_and_reopen
             fixture["options"]["maximum"]
         );
         assert_eq!(serde_json::json!(saved()), state["saved_before"]);
-        window.invoke_number_edited(at, i32::try_from(state["given"].as_i64().unwrap()).unwrap());
+        // SpinBox emits its range-clamped value. The callback bypasses the
+        // widget here, so drive its recorded edit through those same bounds.
+        let given = i32::try_from(state["given"].as_i64().unwrap()).unwrap();
+        window.invoke_number_edited(at, given.clamp(control.minimum, control.maximum));
         show_page(&window, "downloading");
         assert_eq!(
             serde_json::json!(row(&window, label).1.number),

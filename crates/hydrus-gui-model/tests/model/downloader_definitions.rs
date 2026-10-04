@@ -636,7 +636,11 @@ fn selectable_preview_values_use_recorded_api_referral_and_gallery_consumers() {
         let class = domain::url_class(&object(&step["class"])).unwrap();
         let preview = definitions::class_preview(&class, false);
         assert_eq!(preview.status, step["status"].as_str().unwrap());
-        if step["name"] != "invalid" {
+        if step["name"] == "invalid" {
+            assert!(preview.normalised.is_empty());
+            assert!(preview.request.is_empty());
+            assert!(preview.api.is_empty());
+        } else {
             assert_eq!(
                 json!([
                     preview.normalised,
@@ -647,10 +651,6 @@ fn selectable_preview_values_use_recorded_api_referral_and_gallery_consumers() {
                 ]),
                 step["outputs"]
             );
-        } else {
-            assert!(preview.normalised.is_empty());
-            assert!(preview.request.is_empty());
-            assert!(preview.api.is_empty());
         }
         assert_eq!(step["readonly"], json!(vec![true; 5]));
     }

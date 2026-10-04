@@ -219,7 +219,7 @@ fn fields(value: &Value, permitted_types: &[usize]) -> Vec<DefinitionField> {
                     ));
                 }
                 ContentKind::Timestamp { .. } => {
-                    fields.push(choice(8, "timestamp type", &["source time"], 0))
+                    fields.push(choice(8, "timestamp type", &["source time"], 0));
                 }
                 ContentKind::Title { priority } => {
                     fields.push(text(3, "priority (0–100)", &priority.to_string()));
@@ -1519,9 +1519,8 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                             move |yes| {
                                 if !picker_active.replace(false) { return; }
                                 if let Some(child) = weak.upgrade() {
-                                    if yes && active.get() && let Some((_, Some(parser))) = usize::try_from(child.get_selected_index()).ok().and_then(|i| choices.get(i)) {
-                                        if let Err(error) = state.borrow_mut().draft.link(&key, Some(parser)) && let Some(parent) = parent.upgrade() { parent.set_error(error.into()); }
-                                    }
+                                    if yes && active.get() && let Some((_, Some(parser))) = usize::try_from(child.get_selected_index()).ok().and_then(|i| choices.get(i))
+                                        && let Err(error) = state.borrow_mut().draft.link(&key, Some(parser)) && let Some(parent) = parent.upgrade() { parent.set_error(error.into()); }
                                     let _ = child.hide();
                                 }
                                 slot.borrow_mut().take(); refresh();

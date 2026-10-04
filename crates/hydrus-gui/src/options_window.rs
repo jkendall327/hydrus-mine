@@ -225,7 +225,7 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     .into();
                 }
                 (Kind::NamespaceSorts, Value::NamespaceSorts(_)) => {
-                    out.kind = 20;
+                    out.kind = 21;
                     out.text = "edit namespace sorting schemes".into();
                 }
                 (Kind::ImportOptions, Value::ImportOptions(_)) => {

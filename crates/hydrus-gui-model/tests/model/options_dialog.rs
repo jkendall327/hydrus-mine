@@ -1732,8 +1732,8 @@ fn cursor_autohide_control_matches_reference_default_bounds_and_none() {
     }
     editor.number(row, 99);
     assert_eq!(editor.applied().0.viewer_cursor.autohide_ms, Some(100));
-    editor.number(row, 100001);
-    assert_eq!(editor.applied().0.viewer_cursor.autohide_ms, Some(100000));
+    editor.number(row, 100_001);
+    assert_eq!(editor.applied().0.viewer_cursor.autohide_ms, Some(100_000));
     assert_eq!(store.read(Settings::load).unwrap(), settings);
 }
 

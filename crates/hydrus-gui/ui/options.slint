@@ -24,7 +24,8 @@ export struct OptionRow {
     // a tag sort (its type, order and grouping), 13 checker options (a
     // button, `text`, opening their editor), 14 regex favourites,
     // 15 tag service/session, 16 local location, 17 favourite tags,
-    // 18 notebook chooser (reserved), 19 gallery source, 20 directory path.
+    // 18 import options, 19 gallery source, 20 directory path,
+    // 21 namespace sorting schemes.
     kind: int,
     label: string,
     // how many boxes it is in
@@ -316,7 +317,7 @@ export component OptionsWindow inherits Window {
                                 text: row.text;
                                 clicked => { root.favourite-tags-clicked(); }
                             }
-                            if row.kind == 20: Button {
+                            if row.kind == 21: Button {
                                 text: row.text;
                                 clicked => { root.namespace-sorts-clicked(); }
                             }
