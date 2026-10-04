@@ -128,3 +128,10 @@ recorded as sha256 + length.
 
 Where the reference is wrong (a bug users would not rely on), the Rust side
 does not copy it: the difference is recorded in `docs/rust/DIFFERENCES.md`.
+
+`record_service_bulk.py` records actual local trash clear/undelete and like,
+numerical and inc/dec rating-clear panels on a freshly unpacked basic fixture,
+including declined/accepted exact questions, enabled controls and reopened
+counts. Reference cached rating values intentionally remain recorded separately
+from database-backed service counts because bulk rating writes suppress media
+content publication. No remote service is exercised.

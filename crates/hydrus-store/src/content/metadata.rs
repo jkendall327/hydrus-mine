@@ -30,6 +30,17 @@ pub enum FileTime {
     LastViewed(CanvasType),
 }
 
+/// Which physical-storage population a service review rating clear affects.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RatingClearScope {
+    /// Files with a deletion record in physical local storage.
+    Deleted,
+    /// Files absent from physical local storage, including never-local hashes.
+    NonLocal,
+    /// Every rated hash on the chosen service.
+    All,
+}
+
 impl ContentWriter<'_> {
     /// A file's notes, by name.
     pub fn notes(&self, hash: HashId) -> Result<BTreeMap<String, String>> {
@@ -128,6 +139,32 @@ impl ContentWriter<'_> {
             }
         }
         Ok(())
+    }
+
+    /// Clear one local rating service's chosen population in this content transaction.
+    /// Trash remains local until physical deletion, as in the reference.
+    pub fn clear_ratings(&mut self, service: ServiceId, scope: RatingClearScope) -> Result<usize> {
+        let table = match self.snap.services.get(service)?.kind {
+            ServiceKind::RatingLike(_) | ServiceKind::RatingNumerical(_) => "ratings",
+            ServiceKind::RatingIncDec(_) => "ratings_incdec",
+            _ => return Err(StoreError::Invalid("not a local rating service".into())),
+        };
+        let condition = match scope {
+            RatingClearScope::Deleted => {
+                "AND hash_id IN (SELECT hash_id FROM file_domain_deleted WHERE service_id = ?2)"
+            }
+            RatingClearScope::NonLocal => {
+                "AND hash_id NOT IN (SELECT hash_id FROM file_domain_current WHERE service_id = ?2)"
+            }
+            RatingClearScope::All => "",
+        };
+        let sql = format!("DELETE FROM {table} WHERE service_id = ?1 {condition}");
+        Ok(if scope == RatingClearScope::All {
+            self.conn.execute(&sql, [service])?
+        } else {
+            self.conn
+                .execute(&sql, params![service, self.roles.local_file_storage])?
+        })
     }
 
     /// Record views: add to the counts and set the last viewed time.

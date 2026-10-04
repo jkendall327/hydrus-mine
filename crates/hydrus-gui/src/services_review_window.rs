@@ -1,9 +1,13 @@
 //! The local service review window with live native statistics and key copying.
 use crate::ServicesReviewWindow;
-use hydrus_gui_model::services_review::{self, Row};
+use hydrus_gui_model::services_review::{self, Action, Row};
 use hydrus_store::Store;
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
-use std::{cell::RefCell, rc::Rc, sync::Arc};
+use std::{
+    cell::{Cell, RefCell},
+    rc::Rc,
+    sync::Arc,
+};
 
 fn show(window: &ServicesReviewWindow, rows: &[Row], index: usize) {
     if let Some(row) = rows.get(index) {
@@ -13,6 +17,15 @@ fn show(window: &ServicesReviewWindow, rows: &[Row], index: usize) {
             row.service_type.as_str(),
             "local tag domain" | "hydrus tag repository"
         ));
+        window.set_trash_service(
+            row.service_type == hydrus_core::ServiceType::LocalFileTrashDomain.name(),
+        );
+        window.set_trash_nonempty(row.actions.contains(&Action::ClearTrash));
+        window.set_rating_service(
+            row.actions
+                .iter()
+                .any(|a| matches!(a, Action::ClearRatings(_))),
+        );
         window.set_selected(i32::try_from(index).unwrap_or(0));
         window.set_name_and_type(format!("{} - {}", row.name, row.service_type).into());
         window.set_statistics(row.statistics.as_str().into());
@@ -32,6 +45,9 @@ pub fn open_with_changed(
     changed: Rc<dyn Fn()>,
 ) -> Result<ServicesReviewWindow, String> {
     let window = ServicesReviewWindow::new().map_err(|e| e.to_string())?;
+    let active = Rc::new(Cell::new(true));
+    let pending = Rc::new(RefCell::new(None::<(hydrus_core::ServiceKey, Action)>));
+    let content_changed = changed.clone();
     let migration_slot = crate::tag_migration_window::Slot::default();
     let slots = crate::client_api_admin_window::Slots::default();
     let rows = Rc::new(RefCell::new(
@@ -49,8 +65,16 @@ pub fn open_with_changed(
     window.on_selected_service({
         let rows = rows.clone();
         let weak = window.as_weak();
+        let pending = pending.clone();
         move |i| {
             if let (Some(w), Ok(i)) = (weak.upgrade(), usize::try_from(i)) {
+                if let Some((key, _)) = pending.borrow().as_ref() {
+                    if let Some(index) = rows.borrow().iter().position(|r| &r.key == key) {
+                        w.set_selected(i32::try_from(index).unwrap_or(0));
+                    }
+                    return;
+                }
+                w.set_rating_menu(false);
                 show(&w, &rows.borrow(), i);
             }
         }
@@ -61,6 +85,9 @@ pub fn open_with_changed(
         let store = store.clone();
         move || {
             let Some(w) = weak.upgrade() else { return };
+            if !w.get_question().is_empty() {
+                return;
+            }
             let key = usize::try_from(w.get_selected())
                 .ok()
                 .and_then(|i| rows.borrow().get(i).map(|r| r.key.clone()));
@@ -131,6 +158,80 @@ pub fn open_with_changed(
             }
         }
     });
+    window.on_rating_menu_open({
+        let weak = window.as_weak();
+        let active = active.clone();
+        move || {
+            if active.get()
+                && let Some(w) = weak.upgrade()
+                && w.window().is_visible()
+                && w.get_question().is_empty()
+                && w.get_rating_service()
+            {
+                w.set_rating_menu(!w.get_rating_menu());
+            }
+        }
+    });
+    window.on_maintenance({
+        let weak = window.as_weak();
+        let rows = rows.clone();
+        let active = active.clone();
+        let pending = pending.clone();
+        move |index| {
+            if !active.get() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else { return };
+            if !w.window().is_visible() || pending.borrow().is_some() {
+                return;
+            }
+            let Some(action) = Action::from_index(index) else {
+                return;
+            };
+            let selected = usize::try_from(w.get_selected()).unwrap_or(usize::MAX);
+            let rows = rows.borrow();
+            let Some(row) = rows.get(selected) else {
+                return;
+            };
+            if !row.actions.contains(&action) {
+                return;
+            }
+            *pending.borrow_mut() = Some((row.key.clone(), action));
+            w.set_rating_menu(false);
+            w.set_question(action.question().into());
+        }
+    });
+    window.on_answer({
+        let weak = window.as_weak();
+        let store = store.clone();
+        let active = active.clone();
+        let pending = pending.clone();
+        move |accepted| {
+            if !active.get() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else { return };
+            if !w.window().is_visible() {
+                return;
+            }
+            let Some((key, action)) = pending.borrow_mut().take() else {
+                return;
+            };
+            w.set_question(SharedString::new());
+            if accepted {
+                match services_review::apply(&store, key, action) {
+                    Ok(()) => {
+                        content_changed();
+                    }
+                    Err(error) => {
+                        w.set_error(error.to_string().into());
+                        return;
+                    }
+                }
+            }
+            w.invoke_refresh_clicked();
+        }
+    });
     window.on_manage_api_keys({
         let weak = window.as_weak();
         let rows = rows.clone();
@@ -148,16 +249,29 @@ pub fn open_with_changed(
         }
     });
     window.on_close_clicked({
+        let active = active.clone();
+        let pending = pending.clone();
         let slots = slots.clone();
         let weak = window.as_weak();
         move || {
+            active.set(false);
+            pending.borrow_mut().take();
             if let Some(w) = weak.upgrade() {
+                w.set_question(SharedString::new());
+                w.set_rating_menu(false);
                 slots.close();
                 let _ = w.hide();
             }
         }
     });
+    let weak = window.as_weak();
     window.window().on_close_requested(move || {
+        active.set(false);
+        pending.borrow_mut().take();
+        if let Some(window) = weak.upgrade() {
+            window.set_question(SharedString::new());
+            window.set_rating_menu(false);
+        }
         slots.close();
         slint::CloseRequestResponse::HideWindow
     });

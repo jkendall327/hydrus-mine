@@ -339,6 +339,27 @@ impl ContentWriter<'_> {
         Ok(())
     }
 
+    /// Trash review clears the current trash through normal physical deletion.
+    /// Delete locks still apply; physical deletion is queued by the existing lifecycle.
+    pub fn clear_trash(&mut self) -> Result<()> {
+        let hashes = self.trash_hashes()?;
+        self.delete_files(self.roles.local_file_storage, &hashes, None)
+    }
+
+    /// Restore every current trash file to all its former local domains.
+    pub fn undelete_trash(&mut self) -> Result<()> {
+        let hashes = self.trash_hashes()?;
+        self.undelete_files(self.roles.trash, &hashes)
+    }
+
+    fn trash_hashes(&self) -> Result<Vec<HashId>> {
+        Ok(self
+            .conn
+            .prepare_cached("SELECT hash_id FROM file_domain_current WHERE service_id = ?")?
+            .query_map([self.roles.trash], |row| row.get(0))?
+            .collect::<rusqlite::Result<_>>()?)
+    }
+
     /// Archive files that are in the inbox, recording when.
     pub fn archive(&mut self, hashes: &[HashId]) -> Result<()> {
         let mut stmt = self
