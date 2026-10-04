@@ -1417,9 +1417,14 @@ fn raw_content_preview_preserves_clipboard_context_and_detects_fetched_png_bytes
     test.context.insert("post_index".into(), "7".into());
     test.context.insert("custom".into(), "kept".into());
     let mut parser = new_content();
-    parser.formula = hydrus_parse::formula::Formula::new(FormulaKind::ContextVariable {
-        variable: "url".into(),
-    });
+    parser.formula = hydrus_parse::formula::Formula {
+        reference_auxiliary: None,
+        name: String::new(),
+        kind: FormulaKind::ContextVariable {
+            variable: "url".into(),
+        },
+        processor: hydrus_core::url::strings::StringProcessor::default(),
+    };
     let content = windows::open_content(
         &store,
         &parser,

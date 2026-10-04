@@ -90,8 +90,9 @@ pub fn open_with_summary(
         return Ok(w);
     }
     let w = PngExportWindow::new().map_err(|e| e.to_string())?;
-    w.set_payload_description(summary.clone().into());
-    w.set_png_title(summary.clone().into());
+    let summary: slint::SharedString = summary.into();
+    w.set_payload_description(summary.clone());
+    w.set_png_title(summary.clone());
     let directory = store
         .read(settings::get::<model::Directory>)
         .map_err(|e| e.to_string())?;
