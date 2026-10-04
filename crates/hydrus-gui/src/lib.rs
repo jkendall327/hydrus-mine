@@ -4406,6 +4406,13 @@ fn open_viewer(
             viewer_presentation::refresh(&window, model.store(), model.current());
             let shown = viewer::shown(model.store(), model.current());
             window.set_info_line(shown.line.into());
+            window.set_location_strings(ModelRc::new(VecModel::from(
+                shown
+                    .locations
+                    .into_iter()
+                    .map(slint::SharedString::from)
+                    .collect::<Vec<_>>(),
+            )));
             window.set_file_inbox(shown.inbox);
             window.set_file_trashed(shown.trashed);
             window.set_file_local(shown.local);

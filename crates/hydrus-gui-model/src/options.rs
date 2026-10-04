@@ -32,8 +32,8 @@ use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FavouriteTags, FileHandlingSettings, FileSearchSettings,
     FileViewingStatistics, FolderSettings, GuiSettings, NotebookCreationSettings,
     OptionsPreferences, PageSettings, SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
-    ViewerCanvasSettings, ViewerClosingSettings, ViewerFocusSettings, ViewerHoverSettings,
-    ViewerPointerSettings,
+    ViewerBackgroundSettings, ViewerCanvasSettings, ViewerClosingSettings, ViewerFocusSettings,
+    ViewerHoverSettings, ViewerPointerSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -115,6 +115,7 @@ settings! {
     url_classes: UrlClassSettings,
     windows: WindowSettings,
     viewer_canvas: ViewerCanvasSettings,
+    viewer_background: ViewerBackgroundSettings,
     viewer_hovers: ViewerHoverSettings,
     viewer_pointer: ViewerPointerSettings,
     viewer_focus: ViewerFocusSettings,
@@ -2013,11 +2014,33 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             vec![
                 boxed(
                     "background",
-                    vec![check(
-                        "Draw index text (bottom-right) in the viewer background:",
-                        |settings| settings.viewer_hovers.index_background,
-                        |settings, value| settings.viewer_hovers.index_background = value,
-                    )],
+                    vec![
+                        check(
+                            "Draw tags (left) in the viewer background:",
+                            |settings| settings.viewer_background.tags,
+                            |settings, value| settings.viewer_background.tags = value,
+                        ),
+                        check(
+                            "Draw file information (top) in the viewer background:",
+                            |settings| settings.viewer_background.information,
+                            |settings, value| settings.viewer_background.information = value,
+                        ),
+                        check(
+                            "Draw ratings and locations (top-right) in the viewer background:",
+                            |settings| settings.viewer_background.ratings,
+                            |settings, value| settings.viewer_background.ratings = value,
+                        ),
+                        check(
+                            "Draw notes (right) in the viewer background:",
+                            |settings| settings.viewer_background.notes,
+                            |settings, value| settings.viewer_background.notes = value,
+                        ),
+                        check(
+                            "Draw index text (bottom-right) in the viewer background:",
+                            |settings| settings.viewer_hovers.index_background,
+                            |settings, value| settings.viewer_hovers.index_background = value,
+                        ),
+                    ],
                 ),
                 boxed(
                     "hover windows",

@@ -1390,8 +1390,8 @@ not change that preference.
 
 The tags, ratings/locations, and notes hover enable switches and passive
 bottom-right zoom/index background switch now have native consumers. Native
-hover panels retain their existing layout and contents; the other passive
-background copies remain unimplemented. The separate focus requirement now
+hover panels retain their existing layout and contents; their four passive
+background copies are now configurable, as described below. The separate focus requirement now
 consumes native desktop activity, as described below.
 The passive index uses native text styling and palette rather than Qt font
 metrics. Its text format, bottom-right three-pixel inset, and placement behind
@@ -1536,3 +1536,12 @@ separate, so enabling both can request activation twice. Existing viewer
 shortcut/menu differences remain outside these ordinary close preferences.
 
 Regex matcher favourites use a dedicated “favourites” popup button, containing the same submenu entries and copy/manage behavior as the reference RegexInput’s combined regex button. Existing regex help/components controls remain separate. The clipboard instruction is enabled but copies nothing, matching the actual Qt action. Favourite validity remains advisory, and the shared manager accepts fragments; its Apply persists global choices independently of accepting the enclosing matcher.
+
+Passive tags, file-information, ratings/locations and notes copies now consume
+all four background preferences independently of popup and focus settings.
+They paint before the media, preserving occlusion and the reference's notes
+origin dependency on the top-right copy. Existing native fonts, information-line
+content and rating layout remain in use, so the copies follow the native hover
+presentation rather than reproducing Qt glyph metrics. Preview-window passive
+copies and hover menu/dominance rules remain separate gaps. The already-supported
+index background preference is unchanged by these four controls.

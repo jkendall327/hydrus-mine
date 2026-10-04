@@ -2330,3 +2330,15 @@ The real Qt `viewer_closing_options.json` recording covers all sixteen preferenc
 combinations plus missing media, multiple selection, unowned and closed sources.
 
 Regex string matchers offer the reference favourites menu: manage favourites, the enabled no-copy clipboard instruction, and saved descriptions that copy their phrase without changing the regex input. Opening the popup rereads global favourites, so an existing matcher sees choices accepted by another editor. The retained manager stages edits until Apply, cancels without writes, and closes with its matcher; accepted global changes survive cancelling the enclosing matcher.
+
+The four media-viewer background preferences now independently paint passive
+copies of tags, file information, ratings/locations and notes behind the media.
+They do not depend on pop-in hover enables or window focus and never take input.
+Ratings reuse the hover's rating drawing; inbox/trash icons, sorted local and
+remote domain names (including pending/petitioned markers), and displayed URLs
+join the top-right copy. Notes start below that copy while enabled and return to
+the top when disabled, as in the reference. Apply changes the open viewer,
+Cancel retains its saved policy, and legacy keys migrate. The fresh real Qt
+`viewer_background_options.json` recording observes actual QPainter calls and
+pixel occupancy for all sixteen combinations with popups enabled and disabled.
+Native rendered regressions also check that opaque media covers these copies.

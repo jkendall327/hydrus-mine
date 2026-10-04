@@ -3209,3 +3209,179 @@ fn cancelled_closing_options_and_stale_viewers_cannot_redirect_the_live_owner() 
     );
     set_activation_observer(None);
 }
+
+#[test]
+#[allow(clippy::float_cmp)] // logical background origin is exact zero or exact layout height
+fn passive_background_options_paint_independent_copies_behind_opaque_media() {
+    use hydrus_store::settings::{self, ViewerBackgroundSettings};
+    let fixture = hydrus_testkit::fixture_json("viewer_background_options.json");
+    let (_dirs, store) = store();
+    let id = store
+        .read(|conn| {
+            hydrus_store::master::hash_id(conn, &fixture["hash"].as_str().unwrap().parse().unwrap())
+        })
+        .unwrap()
+        .unwrap();
+    for (name, text) in fixture["notes"].as_object().unwrap() {
+        let (name, text) = (name.clone(), text.as_str().unwrap().to_owned());
+        store
+            .write_content(move |writer| writer.set_note(id, &name, &text))
+            .unwrap();
+    }
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let mut pages = Pages::single(hydrus_gui::SearchPage::new(store.clone()));
+    pages.open_files(
+        hydrus_search::LocationContext::single(
+            hydrus_core::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE,
+        ),
+        vec![id],
+        None,
+        None,
+    );
+    let bound = bind(&ui, pages);
+    ui.invoke_thumbnail_activated(0);
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    assert!(viewer.get_tags().row_count() > 0);
+    assert!(viewer.get_ratings().row_count() > 0);
+    assert_eq!(viewer.get_notes().row_count(), 2);
+    assert!(!viewer.get_info_line().is_empty());
+    assert!(
+        viewer.get_location_strings().row_count() > 0,
+        "real file domain names join ratings and URLs"
+    );
+    headless::render(&drawn, 1000, 750); // settle initial canvas resize before isolating its background
+    let labels = [
+        "Draw tags (left) in the viewer background:",
+        "Draw file information (top) in the viewer background:",
+        "Draw ratings and locations (top-right) in the viewer background:",
+        "Draw notes (right) in the viewer background:",
+    ];
+    let popup_labels = [
+        "Pop-in tags (left) hover window on mouseover:",
+        "Pop-in ratings and locations (top-right) hover window on mouseover:",
+        "Pop-in notes (right) hover window on mouseover:",
+    ];
+    let occupancy = |pixels: &[u8]| {
+        pixels
+            .chunks_exact(4)
+            .filter(|pixel| pixel[..3] != [32, 32, 32])
+            .count()
+    };
+    for event in fixture["events"].as_array().unwrap() {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer hovers");
+        for (label, value) in labels.iter().zip(event["values"].as_array().unwrap()) {
+            options.invoke_check_toggled(row(&options, label).0, value.as_bool().unwrap());
+        }
+        for label in popup_labels {
+            options.invoke_check_toggled(
+                row(&options, label).0,
+                event["hovers_enabled"].as_bool().unwrap(),
+            );
+        }
+        options.invoke_check_toggled(
+            row(
+                &options,
+                "Draw index text (bottom-right) in the viewer background:",
+            )
+            .0,
+            false,
+        );
+        options.invoke_apply();
+        let saved = store
+            .read(settings::get::<ViewerBackgroundSettings>)
+            .unwrap();
+        assert_eq!(
+            serde_json::json!([saved.tags, saved.information, saved.ratings, saved.notes]),
+            event["values"]
+        );
+        assert_eq!(
+            [
+                viewer.get_draw_tags_background(),
+                viewer.get_draw_information_background(),
+                viewer.get_draw_ratings_background(),
+                viewer.get_draw_notes_background()
+            ],
+            [saved.tags, saved.information, saved.ratings, saved.notes]
+        );
+        viewer
+            .window()
+            .dispatch_event(slint::platform::WindowEvent::PointerExited);
+        viewer.set_media(slint::Image::default());
+        viewer.set_sharp_shown(false);
+        viewer.set_sharp(slint::Image::default());
+        viewer.set_media_x(0.0);
+        viewer.set_media_y(0.0);
+        viewer.set_media_width(1000.0);
+        viewer.set_media_height(750.0);
+        let pixels = headless::render(&drawn, 1000, 750);
+        assert_eq!(
+            occupancy(&pixels) > 0,
+            event["visible_pixels"].as_u64().unwrap() > 0,
+            "{event:?}"
+        );
+        assert!(
+            !viewer.get_tags_showing()
+                && !viewer.get_ratings_showing()
+                && !viewer.get_notes_showing()
+        );
+        assert_eq!(
+            viewer.get_background_notes_y(),
+            if saved.ratings {
+                viewer.get_background_ratings_height()
+            } else {
+                0.0
+            }
+        );
+        if saved.ratings {
+            assert!(viewer.get_background_notes_y() > 0.0);
+        }
+        let calls = event["calls"].as_array().unwrap();
+        if let Some(notes) = calls.iter().find(|call| call["kind"] == "Notes") {
+            assert_eq!(notes["input_y"].as_u64().unwrap() > 0, saved.ratings);
+        }
+        // Opaque media painted after the passive text covers all of it. An
+        // empty image above isolated the real metadata/preferences' drawing.
+        let mut cover = slint::SharedPixelBuffer::<slint::Rgba8Pixel>::new(4, 3);
+        cover.make_mut_slice().fill(slint::Rgba8Pixel {
+            r: 32,
+            g: 32,
+            b: 32,
+            a: 255,
+        });
+        viewer.set_media(slint::Image::from_rgba8(cover));
+        let pixels = headless::render(&drawn, 1000, 750);
+        assert_eq!(
+            occupancy(&pixels),
+            event["opaque_cover_pixels"].as_u64().unwrap() as usize,
+            "media covers passive copies: {event:?}"
+        );
+    }
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer hovers");
+    for label in labels {
+        assert!(row(&options, label).1.checked);
+        options.invoke_check_toggled(row(&options, label).0, false);
+    }
+    options.invoke_cancel();
+    assert!(
+        viewer.get_draw_tags_background()
+            && viewer.get_draw_information_background()
+            && viewer.get_draw_ratings_background()
+            && viewer.get_draw_notes_background()
+    );
+    viewer.invoke_close_requested();
+    ui.invoke_thumbnail_activated(0);
+    let reopened = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert!(
+        reopened.get_draw_tags_background()
+            && reopened.get_draw_information_background()
+            && reopened.get_draw_ratings_background()
+            && reopened.get_draw_notes_background()
+    );
+    reopened.invoke_close_requested();
+}

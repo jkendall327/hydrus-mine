@@ -694,6 +694,30 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             viewer_canvas.seek_nub_width = (*value).clamp(1, 63) as u32;
         }
         insert_setting(&mut input, &viewer_canvas)?;
+        let mut viewer_background = crate::settings::ViewerBackgroundSettings::default();
+        for (key, target) in [
+            (
+                "draw_tags_hover_in_media_viewer_background",
+                &mut viewer_background.tags,
+            ),
+            (
+                "draw_top_hover_in_media_viewer_background",
+                &mut viewer_background.information,
+            ),
+            (
+                "draw_top_right_hover_in_media_viewer_background",
+                &mut viewer_background.ratings,
+            ),
+            (
+                "draw_notes_hover_in_media_viewer_background",
+                &mut viewer_background.notes,
+            ),
+        ] {
+            if let Some(&value) = options.booleans.get(key) {
+                *target = value;
+            }
+        }
+        insert_setting(&mut input, &viewer_background)?;
         let mut viewer_closing = crate::settings::ViewerClosingSettings::default();
         for (key, field) in [
             (
@@ -2954,6 +2978,50 @@ mod tests {
                 seek_height: 37,
                 seek_hidden_height: None,
                 seek_nub_width: 19
+            }
+        );
+    }
+
+    #[test]
+    fn passive_background_options_import_each_draw_key() {
+        use crate::settings::ViewerBackgroundSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerBackgroundSettings>(
+                input.settings["viewer_background"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), ViewerBackgroundSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "draw_tags_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_tags_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_top_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_top_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_top_right_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_top_right_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_notes_hover_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_notes_hover_in_media_viewer_background"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerBackgroundSettings {
+                tags: false,
+                information: false,
+                ratings: false,
+                notes: false
             }
         );
     }

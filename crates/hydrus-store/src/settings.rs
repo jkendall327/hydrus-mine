@@ -407,6 +407,29 @@ impl Setting for hydrus_core::pages::SortSettings {
     const KEY: &'static str = "sorts";
 }
 
+/// Passive copies of hover content, painted behind media independently of popups.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerBackgroundSettings {
+    pub tags: bool,
+    pub information: bool,
+    pub ratings: bool,
+    pub notes: bool,
+}
+impl Default for ViewerBackgroundSettings {
+    fn default() -> Self {
+        Self {
+            tags: true,
+            information: true,
+            ratings: true,
+            notes: true,
+        }
+    }
+}
+impl Setting for ViewerBackgroundSettings {
+    const KEY: &'static str = "viewer_background";
+}
+
 /// How the GUI opens pages.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

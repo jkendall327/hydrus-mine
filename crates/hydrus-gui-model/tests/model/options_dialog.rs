@@ -1530,3 +1530,78 @@ fn closing_controls_stage_all_reference_preferences_without_persisting() {
     }
     assert_eq!(store.read(Settings::load).unwrap(), settings);
 }
+
+#[test]
+fn passive_background_controls_match_reference_and_stage_independent_copies() {
+    use hydrus_gui_model::options::{Editor, Row as EditorRow};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("viewer_background_options.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    assert_eq!(
+        serde_json::json!([
+            settings.viewer_background.tags,
+            settings.viewer_background.information,
+            settings.viewer_background.ratings,
+            settings.viewer_background.notes
+        ]),
+        fixture["initial"]
+    );
+    let registry = pages(&settings);
+    let page = registry
+        .iter()
+        .find(|page| page.name == "media viewer hovers")
+        .unwrap();
+    let reference = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "media viewer hovers")
+        .unwrap();
+    let problems = page_problems(page, &reference["items"], &settings, &store);
+    assert!(problems.is_empty(), "{problems:?}");
+    let mut editor = Editor::new(settings.clone());
+    let page = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "media viewer hovers")
+        .unwrap();
+    editor.show_page(page);
+    let labels = [
+        "Draw tags (left) in the viewer background:",
+        "Draw file information (top) in the viewer background:",
+        "Draw ratings and locations (top-right) in the viewer background:",
+        "Draw notes (right) in the viewer background:",
+    ];
+    let rows: Vec<_> = labels
+        .iter()
+        .map(|label| {
+            editor
+                .rows()
+                .iter()
+                .position(|row| matches!(row, EditorRow::Opt {option,..} if option.label == *label))
+                .unwrap()
+        })
+        .collect();
+    for event in fixture["events"].as_array().unwrap() {
+        for (&index, value) in rows.iter().zip(event["values"].as_array().unwrap()) {
+            editor.check(index, value.as_bool().unwrap());
+        }
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty(), "{problems:?}");
+        assert_eq!(
+            serde_json::json!([
+                applied.viewer_background.tags,
+                applied.viewer_background.information,
+                applied.viewer_background.ratings,
+                applied.viewer_background.notes
+            ]),
+            event["values"]
+        );
+        assert_eq!(
+            applied.viewer_hovers, settings.viewer_hovers,
+            "passive copies do not change popups"
+        );
+    }
+    assert_eq!(store.read(Settings::load).unwrap(), settings);
+}

@@ -195,6 +195,7 @@ pub(crate) fn shape(store: &Store, id: HashId) -> Option<(hydrus_core::Mime, Opt
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub(crate) struct Shown {
     pub line: String,
+    pub locations: Vec<String>,
     pub notes: Vec<(String, String)>,
     /// In the inbox: its archive button archives (else re-inboxes).
     pub inbox: bool,
@@ -232,8 +233,45 @@ pub(crate) fn shown(store: &Store, id: HashId) -> Shown {
             let trashed =
                 of_type(ServiceType::LocalFileTrashDomain).any(|t| media.is_current_in(t));
             let here = of_type(ServiceType::HydrusLocalFileStorage).any(|l| media.is_current_in(l));
+            let mut local: Vec<_> = snapshot
+                .services
+                .all()
+                .filter(|service| service.service_type() == ServiceType::LocalFileDomain)
+                .filter(|service| media.is_current_in(service.id))
+                .map(|service| service.name.clone())
+                .collect();
+            local.sort();
+            let mut remote: Vec<_> = snapshot
+                .services
+                .all()
+                .filter(|service| {
+                    matches!(
+                        service.service_type(),
+                        ServiceType::FileRepository | ServiceType::Ipfs
+                    )
+                })
+                .filter_map(|service| {
+                    if media.pending.contains(&service.id) {
+                        Some((service.name.clone(), format!("{} (+)", service.name)))
+                    } else if media.is_current_in(service.id) {
+                        Some((
+                            service.name.clone(),
+                            if media.petitioned.contains(&service.id) {
+                                format!("{} (-)", service.name)
+                            } else {
+                                service.name.clone()
+                            },
+                        ))
+                    } else {
+                        None
+                    }
+                })
+                .collect();
+            remote.sort_by(|left, right| left.0.cmp(&right.0));
+            local.extend(remote.into_iter().map(|(_, display)| display));
             Shown {
                 line,
+                locations: local,
                 inbox: media.inbox,
                 trashed,
                 local: here && !trashed,
