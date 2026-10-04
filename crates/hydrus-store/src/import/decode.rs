@@ -171,6 +171,21 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &tag_editing)?;
+    let mut autocomplete_tabs = crate::settings::TagAutocompleteTabs::default();
+    if let Some(value) = options.as_ref().and_then(|o| {
+        o.noneable_integers
+            .get("num_to_show_in_ac_dropdown_children_tab")
+    }) {
+        autocomplete_tabs.children_limit = value.map(|n| usize::try_from(n).unwrap_or(1).max(1));
+    }
+    if let Some(options) = &options {
+        autocomplete_tabs.most_used = options
+            .suggested_tags_favourites
+            .iter()
+            .map(|(key, tags)| (key.to_hex(), tags.clone()))
+            .collect();
+    }
+    insert_setting(&mut input, &autocomplete_tabs)?;
     let notebook_creation = crate::settings::NotebookCreationSettings {
         rename_new_notebooks: options.as_ref().is_some_and(|options| {
             options.booleans.get("rename_page_of_pages_on_pick_new") == Some(&true)

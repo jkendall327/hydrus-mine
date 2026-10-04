@@ -353,3 +353,134 @@ fn detached_import_tag_lists_replay_reference_and_never_mutate_caller() {
         assert_eq!(caller, ["parity:caller initial"]);
     }
 }
+
+#[test]
+fn favourite_and_count_ordered_children_tabs_replay_reference_caps_and_context() {
+    use hydrus_gui_model::write_autocomplete::Tab;
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let (_dir, store) = seeded(&fixture);
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let mut input = WriteAutocomplete::new(store.clone(), key.clone(), LocationContext::default());
+    for event in fixture["tabs"].as_array().unwrap() {
+        let data = event.clone();
+        let display = key.clone();
+        let count_key = store
+            .snapshot()
+            .services
+            .by_name(event["service"].as_str().unwrap_or("my tags"))
+            .unwrap()
+            .key
+            .clone();
+        store
+            .write(move |ctx| {
+                let mut widgets: hydrus_store::tag_display_config::AutocompleteWidgetSettings =
+                    settings::get(ctx.conn())?;
+                let mut options = widgets.options(&display);
+                options.write_tag_service = count_key;
+                widgets.services.insert(display.to_hex(), options);
+                settings::set(ctx.conn(), &widgets)?;
+                if data["tab"] == "favourites" {
+                    settings::set(
+                        ctx.conn(),
+                        &settings::FavouriteTags(
+                            serde_json::from_value(data["tags"].clone()).unwrap(),
+                        ),
+                    )?;
+                } else {
+                    let mut tabs: settings::TagAutocompleteTabs = settings::get(ctx.conn())?;
+                    tabs.children_limit =
+                        data["limit"].as_u64().map(|n| usize::try_from(n).unwrap());
+                    settings::set(ctx.conn(), &tabs)?;
+                }
+                Ok(())
+            })
+            .unwrap();
+        if event["tab"] == "favourites" {
+            input.set_tab(Tab::Favourites);
+        } else {
+            input.set_context_tags(
+                event["context"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|t| t.as_str().unwrap().to_owned()),
+            );
+            input.set_tab(Tab::Children);
+        }
+        let mut actual: Vec<Value> = Vec::new();
+        for row in input.rows() {
+            if row.parent_row {
+                actual.last_mut().unwrap()["rows"]
+                    .as_array_mut()
+                    .unwrap()
+                    .push(json!(row.label));
+            } else {
+                actual.push(json!({"tag":row.tag,"rows":[row.label]}));
+            }
+        }
+        let mut expected = event["rows"].clone();
+        // Favourite String terms store parents in Python sets. Their base row/order
+        // is exact; the unordered expanded-parent group is compared as a sorted set.
+        if event["tab"] == "favourites" {
+            for row in &mut actual {
+                let rows = row["rows"].as_array_mut().unwrap();
+                rows[1..].sort_by(|a, b| a.as_str().cmp(&b.as_str()));
+            }
+            for row in expected.as_array_mut().unwrap() {
+                let rows = row["rows"].as_array_mut().unwrap();
+                rows[1..].sort_by(|a, b| a.as_str().cmp(&b.as_str()));
+            }
+        }
+        assert_eq!(json!(actual), expected, "{event}");
+        assert!(input.rows().iter().all(|row| !row.counted));
+    }
+}
+
+#[test]
+fn children_limit_option_matches_reference_and_persists_only_accepted_drafts() {
+    use hydrus_gui_model::options::{Editor, Row, Settings, Value};
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let (_dir, store) = seeded(&fixture);
+    let original = store.read(Settings::load).unwrap();
+    assert_eq!(original.tag_autocomplete_tabs.children_limit, Some(40));
+    let mut editor = Editor::new(original.clone());
+    let page = editor
+        .page_names()
+        .iter()
+        .position(|n| *n == "tag autocomplete tabs")
+        .unwrap();
+    editor.show_page(page);
+    let row = editor.rows().iter().position(|r| matches!(r, Row::Opt { option, .. } if option.label == "How many tags to show in the children tab: ")).unwrap();
+    assert!(matches!(
+        editor.rows()[row],
+        Row::Opt {
+            value: Value::Noneable(Some(40)),
+            ..
+        }
+    ));
+    editor.number(row, 1);
+    assert_eq!(
+        editor.applied().0.tag_autocomplete_tabs.children_limit,
+        Some(1)
+    );
+    let stored: settings::TagAutocompleteTabs = store.read(settings::get).unwrap();
+    assert_eq!(stored.children_limit, Some(40));
+    editor.none(row, true);
+    let (accepted, _, _) = editor.applied();
+    assert_eq!(accepted.tag_autocomplete_tabs.children_limit, None);
+    store
+        .write(move |ctx| accepted.save(ctx.conn(), &original))
+        .unwrap();
+    let persisted: settings::TagAutocompleteTabs = store.read(settings::get).unwrap();
+    assert_eq!(persisted.children_limit, None);
+    assert_eq!(
+        fixture["children_control"],
+        json!({"value":40,"min":1,"max":1_000_000})
+    );
+}

@@ -22,6 +22,7 @@ export component ManageTagsWindow inherits Window {
     in property <[ListText]> tags;
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
+    in property <int> autocomplete-tab;
     in property <string> error;
     in property <string> question;
     in property <int> autocomplete-height: 11;
@@ -30,6 +31,7 @@ export component ManageTagsWindow inherits Window {
     callback service-chosen(int);
     callback text-edited(string);
     callback fetch();
+    callback tab-chosen(int);
     callback refresh-autocomplete();
     callback entered();
     callback suggestion-chosen(int);
@@ -86,6 +88,8 @@ export component ManageTagsWindow inherits Window {
                 text <=> root.text;
                 suggestions: root.suggestions;
                 highlighted: root.highlighted;
+                tab-index: root.autocomplete-tab;
+                tab-chosen(i) => { root.tab-chosen(i); }
                 list-height: root.autocomplete-height;
                 edited(text) => { root.text-edited(text); }
                 entered => { root.entered(); }

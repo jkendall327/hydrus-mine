@@ -1239,8 +1239,8 @@ shortcuts before that same multi-domain selector.
 
 Manage Tags' write autocomplete now has storage counts, typed/ideal elevation,
 parent and sibling rows, manual fetch, a scrollable suggestions list, multiline
-paste and all six Tag Editing autocomplete preferences. The reference's
-favourite/children suggestion tabs and tag context menus are still absent.
+paste and all six Tag Editing autocomplete preferences. Favourites and children now use the shared tabs; full tag context menus remain
+outstanding.
 Declining a multiline paste leaves the existing text draft intact; Qt returns
 that event to its line editor's normal paste handling. Import additional-tags and whitelist fields now open a detached shared write-tag editor; their raw multiline fields remain available as well. Expanded
 parent rows enter their originating child, matching Qt's logical-list selection.
@@ -1268,8 +1268,10 @@ current subset. The executor's existing explicit-limit semantics are preserved.
 The import tag child uses the shared write-input behavior and detached Apply/
 Cancel transaction. Its lists and button layout differ from Qt's input-tags
 modal dialog, and the parent still offers its existing raw multiline fields.
-Full autocomplete context menus, favourite and child tabs remain outstanding
-across the write inputs. Expanded-row viewport height uses native fixed row
+Full autocomplete context menus remain outstanding across the write inputs.
+The native tab selector is a compact dropdown rather than Qt tab buttons.
+Children and favourites use the real service and domain contexts; unknown
+favourites remain selectable and zero-count known children remain in the list. Expanded-row viewport height uses native fixed row
 pixels rather than Qt's font-metric character height.
 
 Downloader cog actions now reach the daemon through request/epoch-scoped local

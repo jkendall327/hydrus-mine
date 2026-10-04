@@ -1,5 +1,5 @@
 // One write-tag input for editors. State, fetching and paste decisions live in Rust.
-import { Button, LineEdit, ScrollView, ListView } from "std-widgets.slint";
+import { Button, ComboBox, LineEdit, ScrollView, ListView } from "std-widgets.slint";
 import { Question } from "favourites.slint";
 import { ListText, Theme } from "theme.slint";
 
@@ -7,8 +7,10 @@ export component WriteTagInput inherits FocusScope {
     in-out property <string> text;
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
+    in-out property <int> tab-index;
     in property <int> list-height: 11;
     in property <string> placeholder: "enter a tag";
+    callback tab-chosen(int);
     callback edited(string);
     callback entered();
     callback fetch();
@@ -38,6 +40,12 @@ export component WriteTagInput inherits FocusScope {
                 accepted => { root.entered(); }
             }
             Button { enabled: root.enabled; text: "paste"; clicked => { root.paste(true); } }
+        }
+        ComboBox {
+            enabled: root.enabled;
+            model: ["tags", "favourites", "children"];
+            current-index <=> root.tab-index;
+            selected => { root.tab-chosen(self.current-index); }
         }
         if root.suggestions.length > 0: Rectangle {
             border-width: 1px;
@@ -78,9 +86,11 @@ export component WriteTagsWindow inherits Window {
     in property <[ListText]> tags;
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
+    in property <int> tab-index;
     in property <int> list-height: 11;
     in property <string> question;
     in property <string> error;
+    callback tab-chosen(int);
     callback edited(string);
     callback entered();
     callback fetch();
@@ -113,6 +123,8 @@ export component WriteTagsWindow inherits Window {
                 text <=> root.text;
                 suggestions: root.suggestions;
                 highlighted: root.highlighted;
+                tab-index: root.tab-index;
+                tab-chosen(i) => { root.tab-chosen(i); }
                 list-height: root.list-height;
                 edited(text) => { root.edited(text); }
                 entered => { root.entered(); }

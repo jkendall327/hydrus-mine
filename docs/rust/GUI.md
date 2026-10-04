@@ -1973,3 +1973,13 @@ domain. Domain Apply saves its draft while preserving concurrent script edits;
 Cancel closes credential children and ignores stale handles. Flip active, scrub
 delays and scrub invalidity work on extended selection. Adding domains, changing
 scripts, logged-in cookie status/reset and executing login attempts are still absent.
+
+Shared write-tag inputs now offer tags, favourites and children in Manage Tags,
+both sibling/parent inputs, and detached import additional-tags/whitelist
+editors. Favourites use the configured count service's sibling/parent
+decorations. Children follow the current selected tags, remove already-present
+tags, sort by display counts and show countless rows. The Tag autocomplete tabs
+option limits children to 40 by default; a staged limit or “show all” reaches
+open consumers only after Apply. `oracle/record_write_tag_autocomplete.py`
+drives the real Qt favourites decorator worker, children database query and
+noneable limit control; model and native-window regressions replay their output.

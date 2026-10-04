@@ -30,6 +30,12 @@ struct Binding {
 }
 
 impl Binding {
+    fn sync_context(&mut self) {
+        let (left, right) = self.model.inputs();
+        let pair = &mut self.inputs[self.model.service()];
+        pair.0.set_context_tags(left);
+        pair.1.set_context_tags(right);
+    }
     fn input_mut(&mut self, right: bool) -> &mut WriteAutocomplete {
         let pair = &mut self.inputs[self.model.service()];
         if right { &mut pair.1 } else { &mut pair.0 }
@@ -80,7 +86,8 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            let binding = binding.borrow();
+            let mut binding = binding.borrow_mut();
+            binding.sync_context();
             let model = &binding.model;
             let presentation: hydrus_core::tag_presentation::TagPresentation = model
                 .store()
@@ -116,12 +123,14 @@ pub(crate) fn open(
             let suggestions = |input: &WriteAutocomplete| {
                 ModelRc::new(VecModel::from(
                     input
-                        .suggestions()
+                        .rows()
                         .iter()
-                        .map(|(t, label)| crate::list_text(label, colours.tag(t)))
+                        .map(|r| crate::list_text(&r.label, colours.tag(&r.colour_tag)))
                         .collect::<Vec<_>>(),
                 ))
             };
+            window.set_left_tab(i32::try_from(left_input.tab().index()).unwrap_or(0));
+            window.set_right_tab(i32::try_from(right_input.tab().index()).unwrap_or(0));
             window.set_left_suggestions(suggestions(left_input));
             window.set_right_suggestions(suggestions(right_input));
             window.set_left_highlighted(
@@ -389,6 +398,22 @@ pub(crate) fn open(
                 return;
             }
             binding.borrow_mut().input_mut(right).set_text(&text);
+            refresh();
+        }
+    });
+    window.on_autocomplete_tab({
+        let binding = binding.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        move |right, i| {
+            if !active.get() || binding.borrow().operation.is_some() {
+                return;
+            }
+            binding.borrow_mut().input_mut(right).set_tab(
+                hydrus_gui_model::write_autocomplete::Tab::from_index(
+                    usize::try_from(i).unwrap_or(0),
+                ),
+            );
             refresh();
         }
     });

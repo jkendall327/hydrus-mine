@@ -31,7 +31,7 @@ use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FileHandlingSettings, FileSearchSettings, FileViewingStatistics,
     FolderSettings, GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings,
-    SearchDefaults, ThumbnailLayout,
+    SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -97,6 +97,7 @@ settings! {
     search_defaults: SearchDefaults,
     file_search: FileSearchSettings,
     tag_editing: TagEditingSettings,
+    tag_autocomplete_tabs: TagAutocompleteTabs,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
     sorts: SortSettings,
@@ -1928,6 +1929,18 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         |s, v| s.network.wake_delay_period = v as u64,
                     ),
                 ],
+            )],
+        ),
+        page(
+            "tag autocomplete tabs",
+            vec![boxed(
+                "children tags",
+                vec![noneable(
+                    "How many tags to show in the children tab: ",
+                    none("show all", 40, (1, 1_000_000), None),
+                    |s| s.tag_autocomplete_tabs.children_limit.map(|n| n as i64),
+                    |s, n| s.tag_autocomplete_tabs.children_limit = n.map(|n| n as usize),
+                )],
             )],
         ),
         page(

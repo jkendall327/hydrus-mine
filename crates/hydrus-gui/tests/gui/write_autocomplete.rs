@@ -281,3 +281,146 @@ fn import_whitelist_child_unlocks_on_cancel_and_closes_with_its_parent() {
     assert!(bound.folders.import_options.borrow().is_none());
     assert!(!child.window().is_visible());
 }
+
+#[test]
+fn favourite_children_tabs_and_applied_cap_feed_manage_tags_and_import_tag_child() {
+    use hydrus_core::Tag;
+    use hydrus_store::{
+        content::tag_relations::{self, RelationAction, RelationUpdate},
+        display::RelationKind,
+    };
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let service = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .clone();
+    let id = service.id;
+    let file = store
+        .read(|c| {
+            Ok(c.query_row("SELECT hash_id FROM files LIMIT 1", [], |r| {
+                r.get::<_, hydrus_core::HashId>(0)
+            })?)
+        })
+        .unwrap();
+    store
+        .write_content(move |w| {
+            let tag =
+                hydrus_store::master::intern_tag(w.conn(), &Tag::new("parity:gui root").unwrap())?;
+            w.update_mappings(id, &hydrus_store::content::MappingAction::Add, tag, &[file])?;
+            Ok(())
+        })
+        .unwrap();
+    tag_relations::apply(
+        &store,
+        RelationKind::Parents,
+        [
+            "parity:gui child1",
+            "parity:gui child2",
+            "parity:gui child3",
+        ]
+        .into_iter()
+        .map(|tag| RelationUpdate {
+            service: id,
+            left: Tag::new(tag).unwrap(),
+            right: Tag::new("parity:gui root").unwrap(),
+            action: RelationAction::Add,
+        })
+        .collect(),
+    )
+    .unwrap();
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &settings::FavouriteTags(vec!["parity:gui favourite".into()]),
+            )
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    let w = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    w.invoke_tab_chosen(1);
+    assert_eq!(
+        w.get_suggestions().row_data(0).unwrap().text,
+        "parity:gui favourite"
+    );
+    w.invoke_suggestion_chosen(0);
+    assert!(
+        w.get_tags()
+            .iter()
+            .any(|row| row.text == "parity:gui favourite")
+    );
+    w.invoke_tab_chosen(2);
+    assert_eq!(w.get_suggestions().row_count(), 3);
+    // The real options dialog stages the cap, then the already-open consumer reads Apply.
+    ui.invoke_menu_title_pressed(0, 20.0, 22.0);
+    let pane = ui.get_menu_panes().row_data(0).unwrap();
+    let index = pane
+        .lines
+        .iter()
+        .position(|row| row.label == "options\u{2026}")
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(index).unwrap(), 0.0, 0.0, 0.0);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    let page = options
+        .get_pages()
+        .iter()
+        .position(|row| row.text == "tag autocomplete tabs")
+        .unwrap();
+    options.invoke_page_chosen(i32::try_from(page).unwrap());
+    let row = options
+        .get_rows()
+        .iter()
+        .position(|row| row.label == "How many tags to show in the children tab: ")
+        .unwrap();
+    let control = options.get_rows().row_data(row).unwrap();
+    assert_eq!(
+        (control.minimum, control.maximum, control.number),
+        (1, 1_000_000, 40)
+    );
+    assert_eq!(control.none_phrase, "show all");
+    options.invoke_number_edited(i32::try_from(row).unwrap(), 1);
+    w.invoke_fetch();
+    assert_eq!(w.get_suggestions().row_count(), 3);
+    options.invoke_apply();
+    w.invoke_fetch();
+    assert_eq!(w.get_suggestions().row_count(), 1);
+    assert_eq!(
+        w.get_suggestions().row_data(0).unwrap().text,
+        "parity:gui child1"
+    );
+    w.invoke_cancel();
+    let child_slot = hydrus_gui::write_tag_window::Slot::default();
+    let child = hydrus_gui::write_tag_window::open(
+        &store,
+        service.key,
+        &["parity:gui root".into()],
+        "edit tags",
+        &child_slot,
+        Rc::new(|_| {}),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    child.invoke_tab_chosen(2);
+    assert_eq!(child.get_suggestions().row_count(), 1);
+    child.invoke_chosen(0);
+    assert!(
+        child
+            .get_tags()
+            .iter()
+            .any(|row| row.text == "parity:gui child1")
+    );
+    child.invoke_tab_chosen(1);
+    assert_eq!(
+        child.get_suggestions().row_data(0).unwrap().text,
+        "parity:gui favourite"
+    );
+    child.invoke_cancel();
+}

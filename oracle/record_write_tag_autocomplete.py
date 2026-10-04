@@ -78,6 +78,47 @@ def record(session):
         queries.append(qt(show))
     fetch('parity:amb');fetch('parity:amb',True);fetch('parity:am');fetch('parity:amber old',False,False);fetch('parity:amber old',False,False,False,False)
     fetch('parity:amb',False,False,True,True,CC.COMBINED_TAG_SERVICE_KEY)
+    def tabs():
+        from hydrus.client.gui import ClientGUIAsync
+        from hydrus.client.gui.panels.options.TagsPanel import TagsPanel
+        events=[]
+        favourite_tags=['parity:root','parity:amber old','parity:favorite new']
+        c.new_options.SetStringList('favourite_tags',favourite_tags)
+        def rows(box):
+            result=[]
+            for term in box._ordered_terms:
+                texts=term.GetRowsOfPresentationTextsWithNamespaces(True,box._show_sibling_decorators,' → ',None,box._show_parent_decorators,box._extra_parent_rows_allowed)
+                result.append({'tag':term.GetTag() if hasattr(term,'GetTag') else term.GetPredicate().GetValue(),'rows':[''.join(t[0] for t in row) for row in texts]})
+            return result
+        old_threads=c.CallToThread
+        favourite_box=ac._favourites_list
+        c.CallToThread=lambda func,*args,**kw:None if getattr(getattr(func,'__self__',None),'_win',None) is favourite_box else old_threads(func,*args,**kw)
+        try:
+            for service in (local,CC.COMBINED_TAG_SERVICE_KEY):
+                favourite_box.SetTagServiceKey(service);ac.RefreshFavouriteTags()
+                with favourite_box._async_text_info_lock:favourite_box._pending_async_text_info_terms.update(favourite_box._ordered_terms)
+                updater=favourite_box._async_text_info_updater
+                updater._publish_callable(updater._work_callable(updater._pre_work_callable()))
+                events.append({'tab':'favourites','service':c.services_manager.GetName(service),'tags':favourite_tags,'rows':rows(favourite_box)})
+        finally:c.CallToThread=old_threads
+        # Run the real children worker/publisher synchronously, so no thread race
+        # changes the snapshot. It still performs real descendants/count DB reads.
+        old_start=ClientGUIAsync.AsyncQtJob.start
+        ClientGUIAsync.AsyncQtJob.start=lambda job:job._publish_callable(job._work_callable())
+        try:
+            ac._children_list.SetTagServiceKey(local)
+            for context,limit in [(['parity:root'],40),(['parity:root'],1),(['parity:root'],None),(['parity:root','parity:colour'],40)]:
+                c.new_options.SetNoneableInteger('num_to_show_in_ac_dropdown_children_tab',limit)
+                ac._children_list.NotifyNeedsUpdating();ac._children_list.UpdateChildrenIfNeeded(context)
+                events.append({'tab':'children','context':context,'limit':limit,'rows':rows(ac._children_list)})
+        finally:ClientGUIAsync.AsyncQtJob.start=old_start
+        c.new_options.SetNoneableInteger('num_to_show_in_ac_dropdown_children_tab',40)
+        panel=TagsPanel(c.gui,c.new_options)
+        control=panel._num_to_show_in_ac_dropdown_children_tab
+        bounds={'value':control.GetValue(),'min':control._number_value.minimum(),'max':control._number_value.maximum()}
+        panel.deleteLater()
+        return events,bounds
+    tab_events,children_control=qt(tabs)
     paste_events=[]
     for text,skip,yes,button in [(' Parity:Amber \nparity:new\nparity:new\n\n',False,False,False),(' Parity:Amber \nparity:new\nparity:new\n\n',False,True,False),('parity:skip a\nparity:skip b',True,False,False),('parity:button a\nparity:button b',False,False,True),('parity:single',False,False,False)]:
         clipboard['text']=text;answer['yes']=yes;qt(lambda:c.new_options.SetBoolean('skip_yesno_on_write_autocomplete_multiline_paste',skip))
@@ -121,7 +162,7 @@ def record(session):
         return events
     detached_inputs=qt(detached_tag_lists)
     qt(ac.deleteLater);c.CallToThread=old_thread;c.GetClipboardText=old_clipboard
-    return {'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
+    return {'tabs':tab_events,'children_control':children_control,'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
 def child(out):
     import hydrus_driver,record_api
     result=hydrus_driver.run_client(record_api.unpack_fixture('basic'),record)
