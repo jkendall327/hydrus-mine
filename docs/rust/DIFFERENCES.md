@@ -1643,3 +1643,11 @@ is honored by the existing mpv consumer. The configured hover switch is frozen
 at viewer construction, matching the reference button callback; reopening a
 viewer uses a newly applied choice. Backend error reporting and player-specific
 Options controls remain separate gaps.
+
+The two advanced tag-list display defaults now reach real native page sidebars
+and media viewers, preserving their opening modes and the reference's raw,
+display and independently filtered tag sets. The recorded all-known-tags storage
+lists show raw spelling without sibling/parent decorations, and native follows
+that boundary. Existing tag-list context-menu switching and richer service-specific
+storage-list decorations remain separate gaps. These two dropdown leaves do not
+complete the broader Tag Presentation parent.

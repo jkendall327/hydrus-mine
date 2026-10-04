@@ -117,3 +117,4 @@ mod network_job_control;
 mod gallery_source;
 
 mod namespace_sorts;
+mod tag_list_display_types;

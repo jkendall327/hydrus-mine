@@ -8,6 +8,58 @@ use serde::{Deserialize, Serialize};
 use crate::tag::split_tag;
 use crate::tag_sort::{TagSort, default_user_namespaces};
 
+/// The four display modes offered to newly opened media tag lists.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TagDisplayType {
+    Storage,
+    Display,
+    SingleMedia,
+    SelectionList,
+}
+impl TagDisplayType {
+    pub const CHOICES: [Self; 4] = [
+        Self::SelectionList,
+        Self::SingleMedia,
+        Self::Display,
+        Self::Storage,
+    ];
+    pub const LABELS: [&str; 4] = [
+        "multiple media view tags",
+        "single media view tags",
+        "display tags",
+        "stored tags",
+    ];
+    pub fn code(self) -> i64 {
+        match self {
+            Self::Storage => 0,
+            Self::Display => 1,
+            Self::SingleMedia => 2,
+            Self::SelectionList => 3,
+        }
+    }
+    pub fn from_code(code: i64) -> Option<Self> {
+        match code {
+            0 => Some(Self::Storage),
+            1 => Some(Self::Display),
+            2 => Some(Self::SingleMedia),
+            3 => Some(Self::SelectionList),
+            _ => None,
+        }
+    }
+    pub fn choice(self) -> usize {
+        match self {
+            Self::SelectionList => 0,
+            Self::SingleMedia => 1,
+            Self::Display => 2,
+            Self::Storage => 3,
+        }
+    }
+    pub fn from_choice(choice: usize) -> Option<Self> {
+        Self::CHOICES.get(choice).copied()
+    }
+}
+
 /// The user's tag presentation options.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default)]
@@ -25,6 +77,10 @@ pub struct TagPresentation {
     pub sibling_connector: String,
     /// Cap sorted thumbnail items counted when none are selected; `None` has no limit.
     pub unselected_tag_limit: Option<u32>,
+    /// Opening default for page sidebar tag lists; existing lists retain their mode.
+    pub sidebar_display_type: TagDisplayType,
+    /// Opening default for media viewer tag lists.
+    pub viewer_display_type: TagDisplayType,
     /// `replace_tag_underscores_with_spaces`.
     pub replace_underscores: bool,
     /// `replace_tag_emojis_with_boxes`.
@@ -48,6 +104,8 @@ impl Default for TagPresentation {
             namespace_connector: ":".into(),
             sibling_connector: " → ".into(),
             unselected_tag_limit: Some(4096),
+            sidebar_display_type: TagDisplayType::SelectionList,
+            viewer_display_type: TagDisplayType::SingleMedia,
             replace_underscores: false,
             replace_emojis: false,
             user_namespaces: default_user_namespaces(),

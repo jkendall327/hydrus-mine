@@ -63,6 +63,8 @@ pub struct SearchPage {
     /// The selection's tags (or, with nothing selected, the page's): each
     /// tag, and its row as the list shows it.
     tags: Vec<(String, String)>,
+    /// Display mode captured when this tag list opens.
+    tag_display_type: hydrus_core::tag_presentation::TagDisplayType,
     /// The limit actually applied to the latest no-selection tag computation.
     tag_computation_limit: Option<u32>,
     error: Option<String>,
@@ -218,6 +220,8 @@ impl SearchPage {
             ..FileSearchContext::default()
         };
         autocomplete.set_context(&context.location, &context.tags);
+        let presentation: hydrus_core::tag_presentation::TagPresentation =
+            store.read(hydrus_store::settings::get).unwrap_or_default();
         Self {
             autocomplete,
             store,
@@ -238,6 +242,7 @@ impl SearchPage {
             results: Vec::new(),
             selection: Selection::default(),
             tags: Vec::new(),
+            tag_display_type: presentation.sidebar_display_type,
             tag_computation_limit: None,
             error: None,
             editor_wanted: None,
@@ -2314,6 +2319,11 @@ impl SearchPage {
         title
     }
 
+    /// The tag display mode captured when this page's sidebar opened.
+    pub fn tag_display_type(&self) -> hydrus_core::tag_presentation::TagDisplayType {
+        self.tag_display_type
+    }
+
     /// The tag list's rows: selected files' tags or the capped thumbnail prefix,
     /// with how many files have each (`tag (3) (+1)`).
     pub fn tag_rows(&self) -> Vec<&str> {
@@ -2380,7 +2390,13 @@ impl SearchPage {
             .ok()
             .filter(|s| s.service_type() != hydrus_core::ServiceType::CombinedTag)
             .map(|s| s.id);
-        self.tags = tag_rows(&self.store, &files, service, TagList::Selection);
+        self.tags = tag_rows(
+            &self.store,
+            &files,
+            service,
+            TagList::Selection,
+            self.tag_display_type,
+        );
     }
 
     fn search(&mut self) {
@@ -2529,6 +2545,7 @@ pub(crate) fn tag_rows(
     files: &[HashId],
     service: Option<hydrus_core::ServiceId>,
     list: TagList,
+    display_type: hydrus_core::tag_presentation::TagDisplayType,
 ) -> Vec<(String, String)> {
     use hydrus_core::tag_sort::sort_tags;
     let snapshot = store.snapshot();
@@ -2537,18 +2554,27 @@ pub(crate) fn tag_rows(
         use hydrus_store::tag_display::{TagDisplayFilters, TagView};
         let presentation: TagPresentation = hydrus_store::settings::get(conn)?;
         let filters: TagDisplayFilters = hydrus_store::settings::get(conn)?;
-        let view = match list {
-            TagList::Selection => TagView::SelectionList,
-            TagList::MediaViewer => TagView::SingleMedia,
+        let view = match display_type {
+            hydrus_core::tag_presentation::TagDisplayType::SelectionList => {
+                Some(TagView::SelectionList)
+            }
+            hydrus_core::tag_presentation::TagDisplayType::SingleMedia => {
+                Some(TagView::SingleMedia)
+            }
+            hydrus_core::tag_presentation::TagDisplayType::Display
+            | hydrus_core::tag_presentation::TagDisplayType::Storage => None,
         };
-        let hidden = filters.by_service(view, &snapshot.services);
-        let counts = hydrus_store::media::tag_counts(
+        let hidden = view
+            .map(|view| filters.by_service(view, &snapshot.services))
+            .unwrap_or_default();
+        let counts = hydrus_store::media::tag_counts_for_display(
             conn,
             &snapshot.services,
             &snapshot.display,
             service,
             files,
             &hidden,
+            display_type == hydrus_core::tag_presentation::TagDisplayType::Storage,
         )?;
         let ids: Vec<_> = counts
             .current
@@ -2593,7 +2619,12 @@ pub(crate) fn tag_rows(
     );
     rows.into_iter()
         .map(|(tag, [current, pending, petitioned])| {
-            let mut row = presentation.render(&tag);
+            let mut row = if display_type == hydrus_core::tag_presentation::TagDisplayType::Storage
+            {
+                tag.clone()
+            } else {
+                presentation.render(&tag)
+            };
             for (n, prefix) in [(current, ""), (pending, "+"), (petitioned, "-")] {
                 if n == 0 {
                     continue;

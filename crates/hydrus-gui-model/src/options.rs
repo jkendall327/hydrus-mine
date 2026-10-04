@@ -2482,6 +2482,39 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                     ],
                 ),
+                boxed(
+                    "default taglist display type (advanced)",
+                    vec![
+                        boxed(
+                            "Do not edit these unless you know exactly what they do!",
+                            Vec::new(),
+                        ),
+                        choice(
+                            "Tag display type for new page sidebar taglists: ",
+                            &hydrus_core::tag_presentation::TagDisplayType::LABELS,
+                            |s| s.tag_presentation.sidebar_display_type.choice(),
+                            |s, n| {
+                                if let Some(mode) =
+                                    hydrus_core::tag_presentation::TagDisplayType::from_choice(n)
+                                {
+                                    s.tag_presentation.sidebar_display_type = mode;
+                                }
+                            },
+                        ),
+                        choice(
+                            "Tag display type for new media viewer taglists: ",
+                            &hydrus_core::tag_presentation::TagDisplayType::LABELS,
+                            |s| s.tag_presentation.viewer_display_type.choice(),
+                            |s, n| {
+                                if let Some(mode) =
+                                    hydrus_core::tag_presentation::TagDisplayType::from_choice(n)
+                                {
+                                    s.tag_presentation.viewer_display_type = mode;
+                                }
+                            },
+                        ),
+                    ],
+                ),
             ],
         ),
         page(

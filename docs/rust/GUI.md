@@ -2489,3 +2489,13 @@ switch offers the reference's four fit/fit-and-fill choices with optional viewer
 centering. Its command is captured when the viewer opens; right-click/keyboard
 zoom switching retains its separate normal 100%/fit action. Both options stage
 until Apply, persist, and migrate their legacy values.
+
+Tag Presentation > default taglist display type now saves independent defaults
+for new page sidebars and new media viewers. Both dropdowns offer the reference's
+multiple-media view, single-media view, display-tag and stored-tag choices. Each
+new list captures its opening value; Apply does not change an existing list.
+The two filtered views use their own display filters, display tags apply siblings
+and parents without those filters, and stored tags retain raw mappings and
+spelling. Options edits wait for Apply, Cancel preserves the saved defaults, and
+legacy integer values migrate. `tag_list_display_types.json` records the actual
+Qt choices and both real consumers, including changes after each list opens.
