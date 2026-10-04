@@ -165,10 +165,15 @@ fn tracker_counts_once_on_change_or_close_reads_live_policy_and_preserves_latest
             .find(|s| s.canvas == CanvasType::MediaViewer)
             .unwrap()
     };
+    // set_views(None) intentionally keeps an imported timestamp, or uses now
+    // for a new row. Place the held clock after that actual setup state so
+    // latest-start preservation is tested independently of the fixture date.
+    let held_origin = stats().last_viewed.unwrap().0;
+    let at = |offset| held_origin + offset;
     let mut first = Tracker::new(store.clone(), CanvasType::MediaViewer);
-    first.show(Some(file), 123_000).unwrap();
-    first.show(Some(file), 123_050).unwrap();
-    first.close(125_000).unwrap();
+    first.show(Some(file), at(123_000)).unwrap();
+    first.show(Some(file), at(123_050)).unwrap();
+    first.close(at(125_000)).unwrap();
     let recorded = stats();
     assert_eq!(
         (
@@ -176,10 +181,10 @@ fn tracker_counts_once_on_change_or_close_reads_live_policy_and_preserves_latest
             recorded.viewtime_ms,
             recorded.last_viewed.unwrap().0
         ),
-        (1, 1000, 123_000)
+        (1, 1000, at(123_000))
     );
-    first.close(130_000).unwrap();
-    first.show(Some(file), 140_000).unwrap();
+    first.close(at(130_000)).unwrap();
+    first.show(Some(file), at(140_000)).unwrap();
     assert_eq!(
         stats(),
         recorded,
@@ -187,20 +192,20 @@ fn tracker_counts_once_on_change_or_close_reads_live_policy_and_preserves_latest
     );
     let mut older = Tracker::new(store.clone(), CanvasType::ArchiveDeleteFilter);
     let mut newer = Tracker::new(store.clone(), CanvasType::MediaViewer);
-    older.show(Some(file), 150_000).unwrap();
-    newer.show(Some(file), 151_000).unwrap();
-    newer.close(153_000).unwrap();
-    older.close(154_000).unwrap();
+    older.show(Some(file), at(150_000)).unwrap();
+    newer.show(Some(file), at(151_000)).unwrap();
+    newer.close(at(153_000)).unwrap();
+    older.close(at(154_000)).unwrap();
     assert_eq!(
         (
             stats().views,
             stats().viewtime_ms,
             stats().last_viewed.unwrap().0
         ),
-        (3, 3000, 151_000)
+        (3, 3000, at(151_000))
     );
     let mut disabled = Tracker::new(store.clone(), CanvasType::MediaViewer);
-    disabled.show(Some(file), 160_000).unwrap();
+    disabled.show(Some(file), at(160_000)).unwrap();
     store
         .write(|ctx| {
             hydrus_store::settings::set(
@@ -212,7 +217,7 @@ fn tracker_counts_once_on_change_or_close_reads_live_policy_and_preserves_latest
             )
         })
         .unwrap();
-    disabled.close(165_000).unwrap();
+    disabled.close(at(165_000)).unwrap();
     assert_eq!(stats().views, 3, "policy is read when interval finishes");
 }
 
