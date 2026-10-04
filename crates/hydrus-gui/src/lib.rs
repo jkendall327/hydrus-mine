@@ -925,6 +925,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let open_editor = {
         let slot = predicate_editor.clone();
         let shown = shown.clone();
+        let current_page = page.clone();
+        let main = window.as_weak();
         move |page: Rc<RefCell<SearchPage>>| {
             let Some(blank) = page.borrow_mut().take_editor_wanted() else {
                 return;
@@ -947,16 +949,38 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let editor = predicate_editors::Editor::new(blank, &context);
             let viewing = store.read(hydrus_store::settings::get).unwrap_or_default();
             let text = hydrus_search::TextContext::from_store(&snapshot.services, &viewing);
+            let owner: Rc<dyn Fn() -> bool> = Rc::new({
+                let original = Rc::downgrade(&page);
+                let current_page = current_page.clone();
+                let main = main.clone();
+                move || {
+                    original.upgrade().is_some_and(|original| {
+                        Rc::ptr_eq(&original, &current_page()) && original.borrow().lock().is_none()
+                    }) && main
+                        .upgrade()
+                        .is_some_and(|window| window.window().is_visible())
+                }
+            });
             let chosen: Rc<dyn Fn(Vec<hydrus_search::Predicate>)> = Rc::new({
                 let shown = shown.clone();
+                let owner = owner.clone();
                 move |predicates| {
+                    if !owner() {
+                        return;
+                    }
                     page.borrow_mut().add_predicates(&predicates);
                     shown(true);
                 }
             });
-            if let Err(e) =
-                predicate_editor_window::open(&slot, &store, editor, context, text, chosen)
-            {
+            if let Err(e) = predicate_editor_window::open(
+                &slot,
+                &store,
+                editor,
+                context,
+                text,
+                chosen,
+                Some(owner),
+            ) {
                 eprintln!("could not open the predicate editor: {e}");
             }
         }

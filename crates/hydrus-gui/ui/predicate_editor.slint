@@ -211,6 +211,7 @@ export component PredicateEditorWindow inherits Window {
     callback defaults-action(int, string);
     callback ok(int);
     callback cancel();
+    callback closed();
 
     forward-focus: keys;
     keys := FocusScope {

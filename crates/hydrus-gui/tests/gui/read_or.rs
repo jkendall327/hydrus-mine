@@ -53,6 +53,7 @@ fn native_or_keys_replay_drafts_and_commit_real_query_without_saving_cancelled_t
     seed_corpus(&store, fixture["corpus"].clone());
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let context = FileSearchContext {
         location: LocationContext::single(ServiceKey::new(
             hydrus_core::service::builtin_keys::MY_FILES,
@@ -192,6 +193,7 @@ fn actual_basic_and_advanced_children_apply_cancel_reopen_and_reject_stale_owner
         .unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     seed_corpus(&store, fixture["corpus"].clone());
     let key = store
         .snapshot()
@@ -270,6 +272,24 @@ fn actual_basic_and_advanced_children_apply_cancel_reopen_and_reject_stale_owner
                 serde_json::from_value::<Vec<String>>(dialog["tags"].clone()).unwrap()
             );
         }
+        if dialog["accepted"].as_bool().unwrap()
+            && (advanced || dialog["tags"].as_array().unwrap().len() == 2)
+        {
+            let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 720, 530);
+            assert!(pixels.chunks_exact(4).any(|pixel| pixel[3] == 255));
+            assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(if advanced {
+                    "read-or-advanced.png"
+                } else {
+                    "read-or-basic.png"
+                }),
+                &pixels,
+                720,
+                530,
+            )
+            .unwrap();
+        }
         if dialog["accepted"].as_bool().unwrap() {
             child.invoke_apply();
         } else {
@@ -336,6 +356,40 @@ fn actual_basic_and_advanced_children_apply_cancel_reopen_and_reject_stale_owner
         .unwrap()
         .clone_strong();
     assert!(system.window().is_visible());
+    assert!(outer.get_blocked());
+    outer.invoke_edited("blocked child".into());
+    outer.invoke_apply();
+    assert_eq!(outer.get_input(), "");
+    assert!(outer.window().is_visible());
+    // Child Cancel unblocks immediately; a retired handle cannot clear its successor.
+    system.invoke_cancel();
+    assert!(!outer.get_blocked());
+    outer.invoke_chosen(i32::try_from(limit).unwrap());
+    let successor = bound
+        .search_or
+        .system
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(outer.get_blocked());
+    system.invoke_cancel();
+    assert!(successor.window().is_visible());
+    assert!(bound.search_or.system.borrow().is_some());
+    assert!(outer.get_blocked());
+    successor
+        .window()
+        .dispatch_event(WindowEvent::CloseRequested);
+    assert!(!outer.get_blocked());
+    assert!(bound.search_or.system.borrow().is_none());
+    outer.invoke_chosen(i32::try_from(limit).unwrap());
+    let system = bound
+        .search_or
+        .system
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
     outer.invoke_cancel();
     assert!(!system.window().is_visible());
     assert!(bound.search_or.system.borrow().is_none());
@@ -361,4 +415,146 @@ fn actual_basic_and_advanced_children_apply_cancel_reopen_and_reject_stale_owner
     assert_eq!(child.get_input(), "");
     assert_eq!(child.get_preview(), "");
     child.invoke_cancel();
+}
+
+#[test]
+fn system_children_gate_immediate_durable_actions_on_hidden_switched_and_locked_owners() {
+    use hydrus_core::search::{
+        predicate::{Predicate, SystemPredicate},
+        recent::RecentPredicates,
+    };
+    let _windows = headless::init();
+    for caller in ["read", "or"] {
+        for invalidation in ["hide", "switch", "lock"] {
+            let (_dirs, store) = super::subscriptions::store();
+            let mut recent = RecentPredicates::default();
+            recent.push(&[SystemPredicate::Limit(91)]);
+            let defaults = settings::CustomPredicateDefaults {
+                predicates: vec![Predicate::System(SystemPredicate::Limit(91))],
+            };
+            let keep_recent = recent.clone();
+            let keep_defaults = defaults.clone();
+            store
+                .write(move |ctx| {
+                    settings::set(ctx.conn(), &keep_recent)?;
+                    settings::set(ctx.conn(), &keep_defaults)
+                })
+                .unwrap();
+            let ui = MainWindow::new().unwrap();
+            ui.show().unwrap();
+            let mut page = SearchPage::new(store.clone());
+            page.set_synchronised(false);
+            let mut pages = Pages::single(page);
+            pages.new_search_page();
+            pages.select(0, 0);
+            let bound = bind(&ui, pages);
+            let original = bound.current.borrow().clone();
+            let outer = if caller == "or" {
+                ui.invoke_search_or_action(3);
+                Some(bound.search_or.borrow().as_ref().unwrap().clone_strong())
+            } else {
+                None
+            };
+            let system = if let Some(outer) = &outer {
+                let at = outer
+                    .get_suggestions()
+                    .iter()
+                    .position(|row| row.text == "system:limit")
+                    .unwrap();
+                outer.invoke_chosen(i32::try_from(at).unwrap());
+                assert!(outer.get_blocked());
+                bound
+                    .search_or
+                    .system
+                    .borrow()
+                    .as_ref()
+                    .unwrap()
+                    .clone_strong()
+            } else {
+                let at = ui
+                    .get_suggestions()
+                    .iter()
+                    .position(|row| row.text == "system:limit")
+                    .unwrap();
+                ui.invoke_suggestion_chosen(i32::try_from(at).unwrap());
+                let previous = bound
+                    .predicate_editor
+                    .borrow()
+                    .as_ref()
+                    .unwrap()
+                    .clone_strong();
+                let closed = std::rc::Rc::new(std::cell::Cell::new(0));
+                previous.on_closed({
+                    let closed = closed.clone();
+                    move || closed.set(closed.get() + 1)
+                });
+                ui.invoke_suggestion_chosen(i32::try_from(at).unwrap());
+                let successor = bound
+                    .predicate_editor
+                    .borrow()
+                    .as_ref()
+                    .unwrap()
+                    .clone_strong();
+                assert!(!previous.window().is_visible());
+                assert_eq!(closed.get(), 1);
+                previous.invoke_cancel();
+                assert_eq!(closed.get(), 1);
+                assert!(bound.predicate_editor.borrow().is_some());
+                assert!(successor.window().is_visible());
+                successor
+            };
+            assert!(system.get_recent().row_count() > 0);
+            system.invoke_number_edited(0, 1, 259);
+            match invalidation {
+                "hide" => ui.hide().unwrap(),
+                "switch" => ui.invoke_tab_chosen(0, 1),
+                "lock" => ui.invoke_lock_search(),
+                _ => unreachable!(),
+            }
+            let expected = original.borrow().predicates();
+            assert!(system.window().is_visible()); // No timer polling invalidates this handle first.
+            system.invoke_recent_forgotten(0);
+            system.invoke_defaults_action(0, "set this as new default".into());
+            system.invoke_defaults_action(0, "reset to original default".into());
+            system.invoke_ok(0);
+            assert_eq!(
+                store.read::<RecentPredicates>(settings::get).unwrap(),
+                recent,
+                "{caller}/{invalidation}"
+            );
+            assert_eq!(
+                store
+                    .read::<settings::CustomPredicateDefaults>(settings::get)
+                    .unwrap(),
+                defaults,
+                "{caller}/{invalidation}"
+            );
+            assert_eq!(
+                original.borrow().predicates(),
+                expected,
+                "{caller}/{invalidation}"
+            );
+            system.invoke_cancel();
+            // Even explicitly showing a retained retired handle cannot revive writes.
+            system.show().unwrap();
+            system.invoke_recent_forgotten(0);
+            system.invoke_defaults_action(0, "set this as new default".into());
+            system.invoke_ok(0);
+            assert_eq!(
+                store.read::<RecentPredicates>(settings::get).unwrap(),
+                recent
+            );
+            assert_eq!(
+                store
+                    .read::<settings::CustomPredicateDefaults>(settings::get)
+                    .unwrap(),
+                defaults
+            );
+            system.hide().unwrap();
+            if let Some(outer) = outer {
+                outer.invoke_cancel();
+            }
+            ui.hide().unwrap();
+        }
+    }
 }

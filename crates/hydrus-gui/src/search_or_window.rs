@@ -142,11 +142,31 @@ fn system_editor(window: &SearchOrWindow, state: &Rc<State>) {
         context,
         state.text.clone(),
         applied,
+        Some(Rc::new({
+            let state = state.clone();
+            move || state.valid()
+        })),
     ) {
         window.set_error(error.into());
+    } else {
+        let child = state
+            .system
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        if let Some(child) = child {
+            window.set_blocked(true);
+            let weak = window.as_weak();
+            let state = state.clone();
+            child.on_closed(move || {
+                if state.valid()
+                    && let Some(window) = weak.upgrade()
+                {
+                    show(&window, &state);
+                }
+            });
+        }
     }
-    // The shared system editor manages its own lifetime; its chosen callback
-    // refreshes this owner after the slot has closed.
 }
 /// Every child validates its live caller again before applying, including nested editors.
 pub fn open(

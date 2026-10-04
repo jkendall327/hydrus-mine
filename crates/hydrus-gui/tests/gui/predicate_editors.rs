@@ -566,6 +566,7 @@ fn the_editor_window_adds_what_it_makes_to_the_search() {
     let (_dirs, store) = store();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     let editor = || {
         bound
@@ -656,6 +657,7 @@ fn native_viewtime_milliseconds_survive_accept_recent_reopen_and_cancel() {
     let (_dirs, store) = store();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("".into());
     for milliseconds in [345, 1001] {
@@ -739,6 +741,7 @@ fn the_editor_window_shows_what_trees_and_buttons_change() {
     let (_dirs, store) = store();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     let editor = || {
         bound
@@ -919,6 +922,7 @@ fn more_suggestions_than_fit_scroll_rather_than_spill_over() {
         .unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let _bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     let main_window = windows.get(0).unwrap();
     let (width, height) = (1100_usize, 900_usize);
@@ -987,6 +991,7 @@ fn predicate_star_save_and_reset_survive_cancel_and_reach_future_searches() {
     let (dirs, store) = store();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     let editor = || {
         bound
@@ -1122,6 +1127,7 @@ fn regex_star_save_is_immediate_but_acceptance_checks_and_viewtime_keeps_millise
     let (_dirs, store) = store();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("".into());
     ui.invoke_suggestion_chosen(suggestion(&ui, "system:urls"));
@@ -1282,6 +1288,7 @@ fn imported_predicate_defaults_reach_panels_and_reset_never_resurrects_legacy_va
     );
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     let open = || {
         ui.invoke_search_edited("".into());

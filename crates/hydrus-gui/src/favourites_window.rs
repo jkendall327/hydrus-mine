@@ -882,6 +882,16 @@ fn open_edit(
                     context,
                     words.text.clone(),
                     chosen,
+                    Some(Rc::new({
+                        let active = active.clone();
+                        let weak = weak.clone();
+                        move || {
+                            active.get()
+                                && weak
+                                    .upgrade()
+                                    .is_some_and(|window| window.window().is_visible())
+                        }
+                    })),
                 ) {
                     Ok(()) => {
                         window.set_child_open(true);

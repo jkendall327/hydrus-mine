@@ -5,7 +5,7 @@
 
 use std::sync::Arc;
 
-use slint::Model as _;
+use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_core::search::recent::RecentPredicates;
 use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
@@ -31,6 +31,7 @@ fn the_editor_window_keeps_and_shows_recent_predicates() {
     let (_dirs, store) = store();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     let editor = || {
         bound
