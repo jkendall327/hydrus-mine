@@ -65,7 +65,7 @@ fn prompt(window: &TagBannerWindow, pending: &Prompt) {
         _ => ("Edit separator.", &pending.info.separator),
     };
     window.set_message(message.into());
-    window.set_prompt_text(text.into());
+    window.set_prompt_text(text.as_str().into());
     window.set_asking(true);
 }
 pub fn open(
@@ -97,11 +97,11 @@ pub fn open(
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
                 if let Some(slot) = slot.upgrade() {
-                    if slot
+                    let owns_slot = slot
                         .borrow()
                         .as_ref()
-                        .is_some_and(|current| std::ptr::eq(current.window(), window.window()))
-                    {
+                        .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
+                    if owns_slot {
                         slot.borrow_mut().take();
                     }
                 }
