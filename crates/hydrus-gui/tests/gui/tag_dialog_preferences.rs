@@ -1,6 +1,6 @@
 //! Native options transactions, rendered service navigators and storage list decoration.
 #[path = "../../../hydrus-gui-model/tests/support/tag_dialog_preferences.rs"]
-mod fixture;
+pub(super) mod fixture;
 use hydrus_gui::{MainWindow, ManageTagsWindow, OptionsWindow, Pages, SearchPage, bind, headless};
 use hydrus_store::{settings, tag_editing::TagEditingSettings};
 use serde_json::{Value, json};

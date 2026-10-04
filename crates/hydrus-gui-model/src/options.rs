@@ -2359,6 +2359,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "other rendering",
                     vec![
+                        text(
+                            "Sibling connecting string: ",
+                            |s| s.tag_presentation.sibling_connector.clone(),
+                            |s, t| {
+                                t.clone_into(&mut s.tag_presentation.sibling_connector);
+                                Ok(())
+                            },
+                        ),
                         check(
                             "EXPERIMENTAL: Replace all underscores with spaces: ",
                             |s| s.tag_presentation.replace_underscores,

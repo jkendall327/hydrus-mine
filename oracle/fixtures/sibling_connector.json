@@ -1,0 +1,167 @@
+{
+  "options": {
+    "shown": " → ",
+    "before_apply": " → ",
+    "cancelled": " → ",
+    "applied": " = custom = ",
+    "global_after": " → "
+  },
+  "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+  ],
+  "corpus": [
+    {
+      "tag": "parity:connector ideal",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    },
+    {
+      "tag": "parity:connector old",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    }
+  ],
+  "siblings": [
+    [
+      "parity:connector old",
+      "parity:connector ideal"
+    ]
+  ],
+  "parents": [],
+  "file_context": [
+    "6c6f63616c2066696c6573"
+  ],
+  "tag_service": "6c6f63616c2074616773",
+  "query": "parity:connector old",
+  "cases": [
+    {
+      "connector": " → ",
+      "storage": [
+        {
+          "tag": "parity:connector ideal",
+          "rows": [
+            "parity:connector ideal (2)"
+          ]
+        },
+        {
+          "tag": "parity:connector old",
+          "rows": [
+            "parity:connector old (1) → parity:connector ideal"
+          ]
+        }
+      ],
+      "write": [
+        {
+          "tag": "parity:connector ideal",
+          "rows": [
+            "parity:connector ideal (1)"
+          ]
+        },
+        {
+          "tag": "parity:connector old",
+          "rows": [
+            "parity:connector old (1) → parity:connector ideal"
+          ]
+        }
+      ]
+    },
+    {
+      "connector": " = custom = ",
+      "storage": [
+        {
+          "tag": "parity:connector ideal",
+          "rows": [
+            "parity:connector ideal (2)"
+          ]
+        },
+        {
+          "tag": "parity:connector old",
+          "rows": [
+            "parity:connector old (1) = custom = parity:connector ideal"
+          ]
+        }
+      ],
+      "write": [
+        {
+          "tag": "parity:connector ideal",
+          "rows": [
+            "parity:connector ideal (1)"
+          ]
+        },
+        {
+          "tag": "parity:connector old",
+          "rows": [
+            "parity:connector old (1) = custom = parity:connector ideal"
+          ]
+        }
+      ]
+    },
+    {
+      "connector": "",
+      "storage": [
+        {
+          "tag": "parity:connector ideal",
+          "rows": [
+            "parity:connector ideal (2)"
+          ]
+        },
+        {
+          "tag": "parity:connector old",
+          "rows": [
+            "parity:connector old (1)parity:connector ideal"
+          ]
+        }
+      ],
+      "write": [
+        {
+          "tag": "parity:connector ideal",
+          "rows": [
+            "parity:connector ideal (1)"
+          ]
+        },
+        {
+          "tag": "parity:connector old",
+          "rows": [
+            "parity:connector old (1)parity:connector ideal"
+          ]
+        }
+      ]
+    },
+    {
+      "connector": " ⇢ 🦊 ",
+      "storage": [
+        {
+          "tag": "parity:connector ideal",
+          "rows": [
+            "parity:connector ideal (2)"
+          ]
+        },
+        {
+          "tag": "parity:connector old",
+          "rows": [
+            "parity:connector old (1) ⇢ 🦊 parity:connector ideal"
+          ]
+        }
+      ],
+      "write": [
+        {
+          "tag": "parity:connector ideal",
+          "rows": [
+            "parity:connector ideal (1)"
+          ]
+        },
+        {
+          "tag": "parity:connector old",
+          "rows": [
+            "parity:connector old (1) ⇢ 🦊 parity:connector ideal"
+          ]
+        }
+      ]
+    }
+  ]
+}

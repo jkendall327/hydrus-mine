@@ -483,7 +483,7 @@ impl WriteAutocomplete {
             if prefs.autocomplete_show_siblings
                 && let Some(ideal) = ideal
             {
-                label.push_str(" → ");
+                label.push_str(&presentation.sibling_connector);
                 label.push_str(&presentation.render(&ideal));
             }
             if !parents.is_empty()

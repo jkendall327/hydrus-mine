@@ -77,6 +77,7 @@ mod favourite_search_editor;
 mod regex_favourites;
 mod tab_context;
 
+mod sibling_connector;
 mod tag_dialog_defaults;
 mod tag_dialog_preferences;
 

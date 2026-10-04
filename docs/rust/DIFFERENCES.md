@@ -1552,3 +1552,9 @@ Both clients show at most nine file-search entries; extra entries are omitted,
 so top placement can keep combined domains or storage available in a large
 service registry. The native chooser remains the existing in-window number pad
 rather than a separate Qt dialog; this slice adds no petitions-menu behavior.
+
+The sibling connecting string now persists, migrates from legacy options and
+reaches native Manage Tags and shared write-tag labels. The related Qt connector
+fade and separate connector namespace-colour options remain unimplemented:
+native rows still use a single namespace colour for the full label. This text
+control does not complete the broader tag-presentation parent.

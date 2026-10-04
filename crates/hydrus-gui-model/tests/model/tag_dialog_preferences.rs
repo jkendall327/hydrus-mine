@@ -1,6 +1,6 @@
 //! Actual storage-tag list defaults, independent of write autocomplete settings.
 #[path = "../support/tag_dialog_preferences.rs"]
-mod fixture;
+pub(super) mod fixture;
 use hydrus_gui_model::{
     manage_tags::ManageTags,
     options::{Editor, Row, Settings},
