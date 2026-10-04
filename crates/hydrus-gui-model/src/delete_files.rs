@@ -344,7 +344,7 @@ impl ReasonQueue {
                 .map(|(i, v)| (i as u64, v.clone()))
                 .collect(),
             next: values.len() as u64,
-            selection: Default::default(),
+            selection: crate::list_selection::ListSelection::default(),
         }
     }
     pub fn rows(&self) -> &[(u64, String)] {
@@ -414,6 +414,6 @@ impl ReasonQueue {
     pub fn remove_selected(&mut self) {
         self.rows
             .retain(|(key, _)| !self.selection.is_selected(*key));
-        self.selection = Default::default();
+        self.selection = crate::list_selection::ListSelection::default();
     }
 }

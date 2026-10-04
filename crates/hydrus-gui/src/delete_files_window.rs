@@ -16,13 +16,6 @@ pub type Guard = Rc<dyn Fn() -> bool>;
 /// Refresh the owner after the accepted mutation.
 pub type Applied = Rc<dyn Fn()>;
 
-thread_local! {static LAST: RefCell<Option<slint::Weak<DeleteFilesWindow>>> = const {RefCell::new(None)};}
-/// Last visible deletion draft, for rendered parent/consumer inspection.
-pub fn last_opened() -> Option<DeleteFilesWindow> {
-    LAST.with(|last| last.borrow().as_ref().and_then(slint::Weak::upgrade))
-        .filter(|w| w.window().is_visible())
-}
-
 /// Discard the owned draft, including callbacks retained by a stale handle.
 pub fn cancel(slot: &Slot) {
     let window = slot
@@ -164,7 +157,9 @@ pub fn open(
                     close();
                     applied();
                 }
-                Err(error) => window.set_error(error.to_string().into()),
+                Err(error) => {
+                    window.set_error(error.to_string().into());
+                }
             }
         }
     });
@@ -177,7 +172,6 @@ pub fn open(
         slint::CloseRequestResponse::HideWindow
     });
     *slot.borrow_mut() = Some(window.clone_strong());
-    LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));
     window.show().map_err(|e| e.to_string())?;
     Ok(Some(window))
 }

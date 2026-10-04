@@ -12,26 +12,23 @@ pub(crate) struct Binding {
     pub cancel: Rc<dyn Fn()>,
     pub has_open: Rc<dyn Fn() -> bool>,
 }
-thread_local! {static LAST: RefCell<Option<slint::Weak<SessionDialog>>> = const {RefCell::new(None)};}
-/// The last visible custom-reason child, for rendered consumer inspection.
-pub fn last_reason_editor() -> Option<SessionDialog> {
-    LAST.with(|last| last.borrow().as_ref().and_then(slint::Weak::upgrade))
-        .filter(|w| w.window().is_visible())
-}
+/// The custom reason Enter Text/question child explicitly owned by Options.
+pub type Slot = Rc<RefCell<Option<SessionDialog>>>;
 
 pub(crate) fn bind(
     window: &OptionsWindow,
     editor: &Rc<RefCell<Editor>>,
     active: &Rc<Cell<bool>>,
+    child: &Slot,
 ) -> Binding {
     let queue = Rc::new(RefCell::new(ReasonQueue::new(
         &editor.borrow().edited_deletion_reasons(),
     )));
-    let child: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
+    let child = child.clone();
     let show: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let queue = queue.clone();
-        let child = child.clone();
+        let child = Rc::downgrade(&child);
         move || {
             if let Some(window) = weak.upgrade() {
                 let queue = queue.borrow();
@@ -46,7 +43,11 @@ pub(crate) fn bind(
                         .collect::<Vec<_>>(),
                 )));
                 window.set_reason_selected(!queue.selection.is_empty());
-                window.set_reason_child_open(child.borrow().is_some());
+                window.set_reason_child_open(
+                    child
+                        .upgrade()
+                        .is_some_and(|child| child.borrow().is_some()),
+                );
             }
         }
     });
@@ -212,7 +213,6 @@ pub(crate) fn bind(
                 slint::CloseRequestResponse::HideWindow
             });
             *child.borrow_mut() = Some(dialog.clone_strong());
-            LAST.with(|last| *last.borrow_mut() = Some(dialog.as_weak()));
             let _ = dialog.show();
             show();
         }

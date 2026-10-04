@@ -223,6 +223,8 @@ pub struct Bound {
     pub current: Rc<RefCell<Rc<RefCell<SearchPage>>>>,
     pub rows: Rc<ThumbnailRows>,
     pub viewer: Rc<RefCell<Option<MediaViewerWindow>>>,
+    /// The current viewer's explicitly owned advanced deletion child.
+    pub viewer_deletion: delete_files_window::Slot,
     /// The manage tags window while one is open.
     pub manage_tags: Rc<RefCell<Option<ManageTagsWindow>>>,
     /// Siblings or parents while the corresponding editor is open.
@@ -249,6 +251,8 @@ pub struct Bound {
     pub manage_urls: Rc<RefCell<Option<ManageUrlsWindow>>>,
     /// The options window while it is open.
     pub options: Rc<RefCell<Option<OptionsWindow>>>,
+    /// Options-owned custom reason Enter Text/question child.
+    pub options_reason_child: options_deletion::Slot,
     /// The Ctrl+P command palette while open.
     pub command_palette: command_palette_window::Slot,
     /// The about window while it is open.
@@ -1238,6 +1242,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     let viewer: Rc<RefCell<Option<MediaViewerWindow>>> = Rc::default();
+    let viewer_deletion: delete_files_window::Slot = Rc::default();
     // files deleted from the page's domain leave it
     let removed: Removed = Rc::new({
         let page = page.clone();
@@ -1618,6 +1623,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let tab_name_dialog = tab_context_window::bind(window, &pages, Rc::new(change_pages.clone()));
     // the menu bar, its titles shown again as what they say changes
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
+    let options_reason_child: options_deletion::Slot = Rc::default();
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
     let services_review: Rc<RefCell<Option<ServicesReviewWindow>>> = Rc::default();
     let services_editor = services_editor_window::Slots::default();
@@ -1785,6 +1791,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             options: {
                 let pages = pages.clone();
                 let slot = options.clone();
+                let reason_slot = options_reason_child.clone();
                 let checker_slot = checker_options.clone();
                 let viewer = viewer.clone();
                 let change_pages = change_pages.clone();
@@ -1822,7 +1829,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             });
                         }
                     });
-                    match options_window::open(&store, &slot, &checker_slot, applied) {
+                    match options_window::open(&store, &slot, &checker_slot, &reason_slot, applied)
+                    {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not open the options: {e}"),
                     }
@@ -2997,6 +3005,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let reveal_viewer_exit = reveal_viewer_exit.clone();
         let page = page.clone();
         let viewer = viewer.clone();
+        let viewer_deletion = viewer_deletion.clone();
         let viewing = viewing.clone();
         let change_pages: ChangePages = Rc::new(change_pages.clone());
         let open_manage_notes = open_manage_notes.clone();
@@ -3017,6 +3026,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             };
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
+                deletion: viewer_deletion.clone(),
                 closing_owner: viewer_closing::Owner::new(
                     None,
                     weak_main.clone(),
@@ -3049,6 +3059,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let reveal_viewer_exit = reveal_viewer_exit.clone();
         let page = page.clone();
         let viewer = viewer.clone();
+        let viewer_deletion = viewer_deletion.clone();
         let viewing = viewing.clone();
         let change_pages: ChangePages = Rc::new(change_pages.clone());
         let open_manage_notes = open_manage_notes.clone();
@@ -3083,6 +3094,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let model = model.with_location(page.location().clone());
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
+                deletion: viewer_deletion.clone(),
                 closing_owner,
                 viewing: viewing.clone(),
                 removed: removed.clone(),
@@ -3626,6 +3638,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         current,
         rows,
         viewer,
+        viewer_deletion,
         manage_tags,
         tag_relationships,
         tag_display,
@@ -3639,6 +3652,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         embedded_metadata,
         manage_urls,
         options,
+        options_reason_child,
         command_palette,
         about,
         services_review,
@@ -4392,6 +4406,7 @@ type OpenOnFiles = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn()>
 /// What a viewer tells its page of, and how it opens manage tags and
 /// notes.
 struct ViewerHooks {
+    deletion: delete_files_window::Slot,
     closing_owner: Rc<viewer_closing::Owner>,
     /// The viewer and the file it shows, for the Client API.
     viewing: Viewing,
@@ -4439,6 +4454,7 @@ fn open_viewer(
     hooks: ViewerHooks,
 ) -> Result<MediaViewerWindow, slint::PlatformError> {
     let ViewerHooks {
+        deletion: viewer_delete,
         closing_owner,
         viewing,
         removed,
@@ -4454,6 +4470,7 @@ fn open_viewer(
         embedded_metadata,
         change_pages,
     } = hooks;
+    delete_files_window::cancel(&viewer_delete);
     let window = MediaViewerWindow::new()?;
     let viewing_stats = viewing_tracking::CanvasTracker::new(
         model.store().clone(),
@@ -5131,7 +5148,6 @@ fn open_viewer(
             }
         }
     });
-    let viewer_delete: delete_files_window::Slot = Rc::default();
     let pending: Rc<RefCell<Option<ViewerAsked>>> = Rc::default();
     let ask = {
         let pending = pending.clone();
@@ -5156,11 +5172,13 @@ fn open_viewer(
                     {
                         let guard: delete_files_window::Guard = Rc::new({
                             let weak = weak.clone();
-                            let viewer_slot = viewer_slot.clone();
+                            let viewer_slot = Rc::downgrade(&viewer_slot);
                             move || {
                                 weak.upgrade().is_some_and(|window| {
-                                    viewer_slot.borrow().as_ref().is_some_and(|current| {
-                                        std::ptr::eq(current.window(), window.window())
+                                    viewer_slot.upgrade().is_some_and(|slot| {
+                                        slot.borrow().as_ref().is_some_and(|current| {
+                                            std::ptr::eq(current.window(), window.window())
+                                        })
                                     })
                                 })
                             }

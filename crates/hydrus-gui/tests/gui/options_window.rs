@@ -4797,7 +4797,12 @@ fn advanced_deletion_queue_stages_custom_reason_cancel_and_real_consumer() {
     options.invoke_check_toggled(advanced, true);
     assert!(row(&options, "Remember the last reason: ").1.enabled);
     options.invoke_reason_action("add".into());
-    let child = hydrus_gui::options_deletion::last_reason_editor().unwrap();
+    let child = bound
+        .options_reason_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
     assert_eq!(child.get_message(), "Enter the reason");
     assert_eq!(child.get_text(), "I do not like the file.");
     child.invoke_name_entered("synthetic staged reason 日本".into());
@@ -4808,13 +4813,19 @@ fn advanced_deletion_queue_stages_custom_reason_cancel_and_real_consumer() {
     );
     options.invoke_reason_clicked(0, false, false);
     options.invoke_reason_action("edit".into());
-    let stale = hydrus_gui::options_deletion::last_reason_editor().unwrap();
+    let stale = bound
+        .options_reason_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
     options.invoke_apply();
     assert!(
         bound.options.borrow().is_some(),
         "child blocks parent Apply"
     );
     options.invoke_cancel();
+    assert!(bound.options_reason_child.borrow().is_none());
     assert!(!stale.window().is_visible());
     stale.invoke_name_entered("stale replacement".into());
     options.invoke_apply();
@@ -4831,9 +4842,14 @@ fn advanced_deletion_queue_stages_custom_reason_cancel_and_real_consumer() {
     let (advanced, _) = row(&options, "Use the advanced file deletion dialog: ");
     options.invoke_check_toggled(advanced, true);
     options.invoke_reason_action("add".into());
-    hydrus_gui::options_deletion::last_reason_editor()
+    let child = bound
+        .options_reason_child
+        .borrow()
+        .as_ref()
         .unwrap()
-        .invoke_name_entered("synthetic applied reason 日本".into());
+        .clone_strong();
+    child.invoke_name_entered("synthetic applied reason 日本".into());
+    assert!(bound.options_reason_child.borrow().is_none());
     let (remember, _) = row(&options, "Remember the last action: ");
     options.invoke_check_toggled(remember, true);
     options.invoke_reason_clicked(0, false, false);
@@ -4861,7 +4877,12 @@ fn advanced_deletion_queue_stages_custom_reason_cancel_and_real_consumer() {
     );
     options.invoke_reason_action("up".into());
     options.invoke_reason_action("delete".into());
-    let question = hydrus_gui::options_deletion::last_reason_editor().unwrap();
+    let question = bound
+        .options_reason_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
     assert_eq!(question.get_message(), "Remove 1 selected?");
     question.invoke_answered(false);
     assert_eq!(options.get_reason_rows().row_count(), original.len());

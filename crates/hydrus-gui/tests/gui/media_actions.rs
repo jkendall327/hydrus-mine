@@ -328,11 +328,17 @@ fn closing_viewer_discards_advanced_deletion_and_reopening_recalls_applied_choic
     ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
     let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
     viewer.invoke_delete();
-    let child = delete_files_window::last_opened().unwrap();
+    let child = bound
+        .viewer_deletion
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
     let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 720, 640);
     assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
     let before: DeletionPreferences = store.read(hydrus_store::settings::get).unwrap();
     viewer.invoke_close_requested();
+    assert!(bound.viewer_deletion.borrow().is_none());
     assert!(!child.window().is_visible());
     child.set_custom("closed owner".into());
     child.invoke_accept_deletion();
@@ -346,7 +352,12 @@ fn closing_viewer_discards_advanced_deletion_and_reopening_recalls_applied_choic
     ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
     let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
     viewer.invoke_delete();
-    let child = delete_files_window::last_opened().unwrap();
+    let child = bound
+        .viewer_deletion
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
     let index = (0..child.get_reasons().row_count())
         .find(|&i| child.get_reasons().row_data(i).unwrap() == "custom")
         .unwrap();

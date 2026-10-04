@@ -132,6 +132,11 @@ fn clean_delete_preserves_locked_files_and_remembered_fields_merge_with_options(
             ..DeletionPreferences::default()
         },
     );
+    let before_locked = store
+        .read(|c| hydrus_store::media::load(c, &store.snapshot().services, None, &[file]))
+        .unwrap();
+    let original_reason = before_locked.results[0].deletion_reason.clone();
+    let original_deleted = before_locked.results[0].deleted.clone();
     let mut draft = Draft::load(&store, &[file], None, DEFAULT_REASON).unwrap();
     draft.action = draft
         .choices
@@ -161,7 +166,8 @@ fn clean_delete_preserves_locked_files_and_remembered_fields_merge_with_options(
                 .local_file_storage
         )
     );
-    assert!(batch.results[0].deletion_reason.is_none());
+    assert_eq!(batch.results[0].deletion_reason, original_reason);
+    assert_eq!(batch.results[0].deleted, original_deleted);
     hydrus_gui_model::media_actions::inbox(&store, &[file]).unwrap();
     draft.apply(&store).unwrap();
     let batch = store

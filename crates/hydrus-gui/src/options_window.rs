@@ -310,6 +310,7 @@ pub(crate) fn open(
     store: &Arc<Store>,
     slot: &Rc<RefCell<Option<OptionsWindow>>>,
     checker_slot: &Rc<RefCell<Option<CheckerOptionsWindow>>>,
+    reason_slot: &crate::options_deletion::Slot,
     applied: Rc<dyn Fn()>,
 ) -> Result<OptionsWindow, String> {
     let settings = store
@@ -348,7 +349,7 @@ pub(crate) fn open(
         .collect();
     window.set_pages(ModelRc::new(VecModel::from(names)));
     let show_providers = crate::options_palette::bind(&window, &editor, &active);
-    let reason_queue = crate::options_deletion::bind(&window, &editor, &active);
+    let reason_queue = crate::options_deletion::bind(&window, &editor, &active, reason_slot);
     // (the rows are made anew only as the page changes: an edit leaves its
     // control as the user left it)
     let show_page = {

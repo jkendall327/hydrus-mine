@@ -3973,7 +3973,7 @@ mod tests {
             .unwrap();
         editor.show_page(trash);
         let rows = editor.rows();
-        // (the delete lock's box title is a row of its own)
+        // Each reference box title is a separate row.
         let titles: Vec<_> = rows
             .iter()
             .filter_map(|r| match r {
@@ -3981,7 +3981,13 @@ mod tests {
                 Row::Opt { .. } => None,
             })
             .collect();
-        assert_eq!(titles, [("delete lock", 0)]);
+        assert_eq!(
+            titles,
+            [
+                ("delete lock", 0),
+                ("advanced file deletion and custom reasons", 0)
+            ]
+        );
         let find = |label: &str| {
             rows.iter()
                 .position(|row| matches!(row, Row::Opt { option, .. } if option.label == label))
