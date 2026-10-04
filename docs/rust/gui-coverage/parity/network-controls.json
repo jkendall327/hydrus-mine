@@ -20,7 +20,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/network_job_control.rs",
-          "line": 358,
+          "line": 360,
           "symbol": "fn action(&self"
         },
         {
@@ -115,7 +115,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/network_job_control.rs",
-          "line": 358,
+          "line": 360,
           "symbol": "fn action(&self"
         },
         {
@@ -702,6 +702,59 @@
         "formatAndDiff": "passed",
         "cachedSlintSourceCompilation": "passed",
         "scopedCargoTests": "Not run locally; parent asynchronous CI."
+      }
+    },
+    {
+      "originalID": "audit-network-matcher-favourites",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Regex matcher favourites popup has exact manage/instruction/separator/description order; enabled instruction closes without copying, descriptions copy raw phrases without modifying input. Menu opening reloads current global preferences, management stages valid or invalid regex fragments, cancel is inert, Apply saves globally and refreshes choices, accepted choices survive parent matcher Cancel and reopen. Owner close cancels manager and invalidates retained menu/manager actions.",
+      "limits": [
+        "Native dedicated favourites popup contains the reference favourites submenu; the existing help/components controls stay separate rather than sharing the entire RegexButton menu.",
+        "Reference heading is bold; native menu currently uses normal menu typography.",
+        "Favourite management behavior already existed; this slice adds the actual popup and live global refresh, without a second claim for the existing manager."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/regex_favourites.rs",
+          "symbol": "pub fn menu(",
+          "line": 171
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/string_processor_window.rs",
+          "symbol": "fn bind_step_favourites(",
+          "line": 721
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/string_processor.slint",
+          "symbol": "callback favourite-menu(",
+          "line": 256
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/regex_favourites.rs",
+          "symbol": "fn matcher_favourite_menu_matches_actual_qt_actions_and_copy_payloads(",
+          "line": 120
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/regex_favourites.rs",
+          "symbol": "fn matcher_favourite_popup_copies_refreshes_and_owns_persisted_management(",
+          "line": 269
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_matcher_favourites.py",
+        "fixture": "oracle/fixtures/matcher_favourites.json",
+        "executed": true,
+        "behavior": "Actual EditStringMatchPanel RegexInput button/QActions, clipboard pub outputs, real owned DialogEdit with real Apply/Cancel and staged list edits."
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintCachedCompiler": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent asynchronous GitHub CI."
       }
     }
   ],

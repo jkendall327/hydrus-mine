@@ -115,3 +115,31 @@ fn regex_clipboard_components_match_real_qt() {
     }
     assert!(regex_tools(3).is_empty());
 }
+
+#[test]
+fn matcher_favourite_menu_matches_actual_qt_actions_and_copy_payloads() {
+    use hydrus_gui_model::{
+        main_menu::Entry,
+        regex_favourites::{MenuAction, menu},
+    };
+    let fixture = hydrus_testkit::fixture_json("matcher_favourites.json");
+    let value = favourites(&fixture["initial"]);
+    let (entries, actions) = menu(&value);
+    let rows = entries
+        .iter()
+        .map(|entry| match entry {
+            Entry::Separator => json!({"separator": true}),
+            _ => json!({"label": entry.label(), "enabled": entry.usable()}),
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(json!(rows), fixture["menus"][0]);
+    assert_eq!(actions[0], MenuAction::Manage);
+    assert_eq!(actions[1], MenuAction::Instruction);
+    assert_eq!(actions[2], MenuAction::Copy("a+".into()));
+    assert_eq!(actions[3], MenuAction::Copy("[".into()));
+    // The reference label is enabled but performs no clipboard action.
+    assert!(entries[2].usable());
+    let (empty, actions) = menu(&RegexFavourites(Vec::new()));
+    assert_eq!(actions, [MenuAction::Manage, MenuAction::Instruction]);
+    assert!(empty[0].usable());
+}

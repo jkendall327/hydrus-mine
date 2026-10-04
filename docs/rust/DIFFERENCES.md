@@ -1534,3 +1534,5 @@ headless regression observes actual activation attempts without replacing that
 request. The reference's separate advanced and debug notifications remain
 separate, so enabling both can request activation twice. Existing viewer
 shortcut/menu differences remain outside these ordinary close preferences.
+
+Regex matcher favourites use a dedicated “favourites” popup button, containing the same submenu entries and copy/manage behavior as the reference RegexInput’s combined regex button. Existing regex help/components controls remain separate. The clipboard instruction is enabled but copies nothing, matching the actual Qt action. Favourite validity remains advisory, and the shared manager accepts fragments; its Apply persists global choices independently of accepting the enclosing matcher.

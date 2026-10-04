@@ -735,6 +735,74 @@ fn bind_step_favourites(
     window.set_favourites(strings(
         favourites.borrow().0.iter().map(|row| row.1.clone()),
     ));
+    let popup = crate::popup_menu::Popup::new();
+    window.set_favourite_panes(popup.model());
+    window.on_favourite_menu({
+        let popup = popup.clone();
+        let favourites = favourites.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        let store = store.clone();
+        let slots = slots.clone();
+        move |x, y| {
+            if !active.get() || slots.has_step_children() {
+                popup.close();
+                return;
+            }
+            let Some(window) = weak.upgrade() else { return };
+            if !window.get_show_match_regex() && window.get_kind() != 3 {
+                return;
+            }
+            match store.read(hydrus_store::regex_favourites::load) {
+                Ok(value) => {
+                    window.set_favourites(strings(value.0.iter().map(|row| row.1.clone())));
+                    let (entries, actions) = hydrus_gui_model::regex_favourites::menu(&value);
+                    *favourites.borrow_mut() = value;
+                    popup.open(entries, actions, x, y);
+                }
+                Err(error) => window.set_veto(error.to_string().into()),
+            }
+        }
+    });
+    window.on_favourite_line_hovered({
+        let popup = popup.clone();
+        move |p, l, r, t, left| popup.hover(p, l, r, t, left)
+    });
+    window.on_favourite_placed({
+        let popup = popup.clone();
+        move |p, x, y, w| popup.placed(p, x, y, w)
+    });
+    window.on_favourite_dismissed({
+        let popup = popup.clone();
+        move || popup.close()
+    });
+    window.on_favourite_line_clicked({
+        let popup = popup.clone();
+        let active = active.clone();
+        let slots = slots.clone();
+        let weak = window.as_weak();
+        move |p, l, r, t, left| {
+            if !active.get() || slots.has_step_children() {
+                popup.close();
+                return;
+            }
+            let Some(crate::popup_menu::Chosen::Action(action)) = popup.click(p, l, r, t, left)
+            else {
+                return;
+            };
+            let Some(window) = weak.upgrade() else { return };
+            match action {
+                hydrus_gui_model::regex_favourites::MenuAction::Manage => {
+                    window.invoke_manage_favourites();
+                }
+                hydrus_gui_model::regex_favourites::MenuAction::Instruction => {}
+                hydrus_gui_model::regex_favourites::MenuAction::Copy(phrase) => {
+                    crate::copy_to_clipboard(&phrase);
+                    window.set_favourite_status("Copied regex phrase to clipboard.".into());
+                }
+            }
+        }
+    });
     window.on_favourite_copied({
         let favourites = favourites.clone();
         let weak = window.as_weak();

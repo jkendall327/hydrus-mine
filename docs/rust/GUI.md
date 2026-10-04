@@ -2328,3 +2328,5 @@ close, independently and in that order. Both use the weak main window's native
 focus request. Options wait for Apply, persist and import their reference keys.
 The real Qt `viewer_closing_options.json` recording covers all sixteen preference
 combinations plus missing media, multiple selection, unowned and closed sources.
+
+Regex string matchers offer the reference favourites menu: manage favourites, the enabled no-copy clipboard instruction, and saved descriptions that copy their phrase without changing the regex input. Opening the popup rereads global favourites, so an existing matcher sees choices accepted by another editor. The retained manager stages edits until Apply, cancels without writes, and closes with its matcher; accepted global changes survive cancelling the enclosing matcher.

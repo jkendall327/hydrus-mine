@@ -158,3 +158,41 @@ pub fn regex_tools(category: usize) -> Vec<(String, String)> {
     }
     rows
 }
+
+/// Actions in the RegexButton favourites submenu. Copy never inserts into input.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum MenuAction {
+    Manage,
+    Instruction,
+    Copy(String),
+}
+
+/// Reference order, including the enabled instruction that never copies.
+pub fn menu(value: &RegexFavourites) -> (Vec<crate::main_menu::Entry>, Vec<MenuAction>) {
+    use crate::main_menu::{Command, Entry};
+    let mut actions = vec![MenuAction::Manage, MenuAction::Instruction];
+    let mut entries = vec![
+        Entry::Item {
+            label: "manage favourites".into(),
+            command: Some(Command::Popup(0)),
+            enabled: true,
+        },
+        Entry::Separator,
+        Entry::Item {
+            label: "click below to copy to clipboard".into(),
+            command: Some(Command::Popup(1)),
+            enabled: true,
+        },
+        Entry::Separator,
+    ];
+    for (phrase, description) in &value.0 {
+        let index = actions.len();
+        actions.push(MenuAction::Copy(phrase.clone()));
+        entries.push(Entry::Item {
+            label: description.clone(),
+            command: Some(Command::Popup(index)),
+            enabled: true,
+        });
+    }
+    (entries, actions)
+}
