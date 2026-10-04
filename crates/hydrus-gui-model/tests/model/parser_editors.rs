@@ -283,3 +283,41 @@ fn recorded_recursive_subsidiaries_preserve_context_documents_and_runtime_output
         }
     }
 }
+
+#[test]
+fn recorded_subsidiary_queue_import_and_duplicate_preserve_keys_and_select_new_rows() {
+    let reference = hydrus_testkit::fixture_json("subsidiary_exchange.json");
+    let parsers =
+        hydrus_downloader_exchange::subsidiaries::decode_text(&reference["bundle"].to_string())
+            .unwrap();
+    let mut page = editors::new_page();
+    let added = editors::append_subsidiaries(&mut page, parsers.clone());
+    assert_eq!(added, [0, 1]);
+    assert_eq!(
+        serde_json::json!(
+            page.subsidiary
+                .iter()
+                .map(|p| &p.parser.name)
+                .collect::<Vec<_>>()
+        ),
+        reference["imported_names"]
+    );
+    let duplicated = editors::append_subsidiaries(&mut page, parsers.clone());
+    assert_eq!(duplicated, [1, 3]);
+    assert_eq!(
+        serde_json::json!(
+            page.subsidiary
+                .iter()
+                .map(|p| &p.parser.name)
+                .collect::<Vec<_>>()
+        ),
+        reference["duplicated_names"]
+    );
+    for (row, original) in duplicated.iter().zip(&parsers) {
+        assert_eq!(page.subsidiary[*row].parser.key, original.parser.key);
+        assert_eq!(
+            hydrus_downloader_exchange::subsidiaries::tuple(&page.subsidiary[*row]).unwrap(),
+            hydrus_downloader_exchange::subsidiaries::tuple(original).unwrap()
+        );
+    }
+}

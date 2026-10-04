@@ -500,3 +500,24 @@ fn can_link(class: &UrlClass) -> bool {
         UrlType::Post | UrlType::Gallery | UrlType::Watchable
     ) && !class.uses_api_url()
 }
+
+/// Append a subsidiary package, sort the queue and return exactly the added rows.
+/// Duplicate keys remain intact, as reference subsidiary clipboard imports do.
+pub fn append_subsidiaries(
+    page: &mut PageParser,
+    imported: Vec<SubsidiaryPageParser>,
+) -> Vec<usize> {
+    let mut rows = std::mem::take(&mut page.subsidiary)
+        .into_iter()
+        .map(|parser| (false, parser))
+        .collect::<Vec<_>>();
+    rows.extend(imported.into_iter().map(|parser| (true, parser)));
+    rows.sort_by_cached_key(|(_, parser)| hydrus_core::casefold::casefold(&parser.parser.name));
+    let added = rows
+        .iter()
+        .enumerate()
+        .filter_map(|(i, (added, _))| added.then_some(i))
+        .collect();
+    page.subsidiary = rows.into_iter().map(|(_, parser)| parser).collect();
+    added
+}

@@ -1552,7 +1552,11 @@ Network > downloaders > parsers now opens the native named parser list
 (add/edit/duplicate/delete), and url class links opens staged direct parser
 associations. Page editors edit names, example URLs, pre-parsing converters and
 content nodes. Subsidiary rows support add, edit and delete, including recursive child pages,
-separation formulae and source-time sorting. Child content and recursive editors
+separation formulae and source-time sorting. The queue supports extended selection,
+duplicate, confirmed deletion and standalone wrapper clipboard/PNG import/export.
+Imported wrappers retain separator/sort settings, recursive pages, parser keys and
+reference editor context; changes stay staged until the owning page/list applies.
+Child content and recursive editors
 receive separated examples with their source URLs and context variables.
 Separation formula editors receive the raw inherited document and preserve
 parsed newlines. All edits stay staged until their page and parser list apply;
