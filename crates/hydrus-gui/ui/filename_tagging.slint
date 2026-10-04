@@ -342,13 +342,17 @@ export component FilenameTaggingWindow inherits Window {
             color: Theme.error;
         }
         HorizontalLayout {
+            height: 32px;
+            vertical-stretch: 0;
             alignment: end;
             spacing: 6px;
             Button {
+                vertical-stretch: 0;
                 text: "apply";
                 clicked => { root.apply(); }
             }
             Button {
+                vertical-stretch: 0;
                 text: "cancel";
                 clicked => { root.cancel(); }
             }
