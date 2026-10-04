@@ -1,5 +1,6 @@
 import { Button, CheckBox, ComboBox, LineEdit, ListView, TextEdit } from "std-widgets.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
+import { WriteTagInput } from "write_autocomplete.slint";
 import { Theme, ListText } from "theme.slint";
 
 export component TagRelationshipsWindow inherits Window {
@@ -13,6 +14,11 @@ export component TagRelationshipsWindow inherits Window {
     in property <[TableRow]> rows;
     in property <[ListText]> left-tags;
     in property <[ListText]> right-tags;
+    in property <[ListText]> left-suggestions;
+    in property <[ListText]> right-suggestions;
+    in property <int> left-highlighted: -1;
+    in property <int> right-highlighted: -1;
+    in property <int> autocomplete-height: 11;
     in-out property <string> left-input;
     in-out property <string> right-input;
     in property <bool> can-add;
@@ -32,6 +38,11 @@ export component TagRelationshipsWindow inherits Window {
     in-out property <string> reason;
     callback service-chosen(int);
     callback enter-tags(bool, string);
+    callback autocomplete-edited(bool, string);
+    callback autocomplete-fetch(bool);
+    callback autocomplete-move(bool, int);
+    callback autocomplete-chosen(bool, int);
+    callback autocomplete-paste(bool, bool) -> bool;
     callback remove-input(bool, int);
     callback filters-changed();
     callback wipe-workspace();
@@ -116,7 +127,19 @@ export component TagRelationshipsWindow inherits Window {
                             }
                         }
                     }
-                    LineEdit { text <=> root.left-input; placeholder-text: "enter a tag"; accepted => { root.enter-tags(false, self.text); } }
+                    WriteTagInput {
+                        enabled: root.question == "";
+                        text <=> root.left-input;
+                        suggestions: root.left-suggestions;
+                        highlighted: root.left-highlighted;
+                        list-height: root.autocomplete-height;
+                        edited(text) => { root.autocomplete-edited(false, text); }
+                        entered => { root.enter-tags(false, self.text); }
+                        fetch => { root.autocomplete-fetch(false); }
+                        move-highlight(by) => { root.autocomplete-move(false, by); }
+                        chosen(i) => { root.autocomplete-chosen(false, i); }
+                        paste(button) => { root.autocomplete-paste(false, button) }
+                    }
                 }
                 VerticalLayout {
                     Text { text: root.siblings ? "set new ideal tag" : "set parents"; color: Theme.text; horizontal-alignment: center; }
@@ -130,7 +153,19 @@ export component TagRelationshipsWindow inherits Window {
                             }
                         }
                     }
-                    LineEdit { text <=> root.right-input; placeholder-text: "enter a tag"; accepted => { root.enter-tags(true, self.text); } }
+                    WriteTagInput {
+                        enabled: root.question == "";
+                        text <=> root.right-input;
+                        suggestions: root.right-suggestions;
+                        highlighted: root.right-highlighted;
+                        list-height: root.autocomplete-height;
+                        edited(text) => { root.autocomplete-edited(true, text); }
+                        entered => { root.enter-tags(true, self.text); }
+                        fetch => { root.autocomplete-fetch(true); }
+                        move-highlight(by) => { root.autocomplete-move(true, by); }
+                        chosen(i) => { root.autocomplete-chosen(true, i); }
+                        paste(button) => { root.autocomplete-paste(true, button) }
+                    }
                 }
             }
             if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }

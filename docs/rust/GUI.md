@@ -1614,6 +1614,20 @@ switches over. The real Qt watcher and URL-routing policy are recorded by
 `oracle/record_clipboard_urls.py`; native tests cover page routing, nested
 notebooks, menu persistence and failure recovery.
 
+Login definitions have typed script, step, credential, cookie and example-domain
+representations. The bounded interchange codec reads/writes reference login script
+JSON and compressed PNG, upgrades old fixed cookie names, and retains matcher
+and formula editor data. `oracle/record_login_editors.py` records the actual Qt
+credential panels, script-list import/rename and script validation. Network >
+logins > login scripts opens a staged script list with add/edit/delete, extended
+selection and JSON/PNG exchange. Script edits preserve their keys; additions and
+imports regenerate keys and make names unique. Credential definitions expose their
+name, normal/password presentation and shared permitted-input matcher. Credential
+entry masks passwords, validates live and reproduces the advisory acceptance
+question for blank or invalid values. Child edits wait for the owning script and
+script-list Apply; closing a parent cancels its children. Existing step, cookie
+and example-domain rows are preserved and shown, but remain read-only in this slice.
+
 ## Network sessions and HTTP headers
 
 Network > data > review session cookies browses persisted domain and imported
@@ -1815,3 +1829,109 @@ Changes to these options stay staged until Apply; selecting a service tab in
 a manage-tags dialog remembers it immediately when enabled, even if the tag
 edits are later cancelled. New notebooks can separately prompt for a name after
 the page chooser creates them.
+
+File Search options can start new search pages paused or searching immediately,
+and show or hide `system:everything` in read autocomplete. Apply persists both
+preferences; Cancel discards edits. Existing pages retain their pause state, and
+resuming a paused page executes the query it has accumulated.
+
+Tab context menus now append a saved session inside the clicked tab row's
+notebook. Clicking a page of pages also offers saving its contents to an existing
+non-reserved session or creating a new one, with that notebook's name suggested.
+The overwrite, duplicate-name, reserved-name and cancellation steps follow the
+actual reference dialog recording in `oracle/record_notebook_sessions.py`.
+Saving targets the clicked notebook's key, independently of the selected sibling;
+its wrapper is omitted from the saved tree. Copies retain independent page media,
+selection and importer snapshots. Appending into a background notebook remembers
+its new child selection while preserving the visible sibling, and survives reopen.
+
+The network engine's local job-control protocol distinguishes connection retries, server bandwidth retries, domain errors and gallery waits. Commands validate the daemon epoch and live request identifier. A recent-error journal lets the owning control display a failure even after its request leaves the live list. The reference recording also establishes that the visible error menu contains only show and copy; clearing belongs to the control's owner.
+
+The File Search default/fallback local location button edits current importable
+file domains in a child selector, including multiple domains. Its Apply stages
+the location in Options; Options Apply persists it. Blank search pages and new
+notebooks use it, as does switching an all-known-file search to all known tags.
+Missing services are removed; an empty default resolves to all local file domains.
+
+Manage Tags now uses the shared write-autocomplete model: known zero-count tags
+stay available, typed tags and their ideal sibling are elevated, counts follow
+the configured write domain and tag service, and parent/sibling decorations use
+the edited service. Ctrl+Space fetches when automatic fetching is disabled.
+Suggestions scroll without the old twelve-result cap and can be entered by
+clicking. Tag Editing's six autocomplete controls set the first counted result,
+multiline paste confirmation, parent/sibling decorations, expanded parent rows,
+and visible list height (1–128 rows). Clipboard paste adds cleaned unique tags
+without toggling existing tags off; its question and all staged tags are dropped
+when the owner is cancelled or closed. The running Qt client's synthetic corpus,
+rendered rows and paste decisions are in `write_tag_autocomplete.json`.
+
+Read autocomplete now captures the File Search active-predicate height (6 rows
+by default), results height (22 rows), and floating policy when each page is
+created. Both heights accept 1–128 text rows and scroll additional entries. The
+active predicates appear above the search input. Floating results overlay the
+page while the input is focused; embedded results reserve sidebar space.
+
+The tab popup refreshes a leaf or every initialized descendant of a notebook,
+without changing the selected page. Paused searches resume, locked searches stay
+fixed, and importer thumbnails reapply their current sort while retaining
+selection. Empty notebooks omit the refresh action. Advanced mode adds a copyable
+page-weight label for the clicked subtree: each child contributes its file count
+and each importer file or gallery seed contributes twenty, including repeated
+files shown in separate children. `oracle/record_tab_refresh.py` records the real
+recursive dispatch, search states, weights and clipboard text.
+
+The sibling and parent editors now share the same write input on both sides.
+Each service retains its own typed drafts, suggestions and highlighted result;
+keyboard entry and clicked suggestions use the selected tag, Ctrl+Space forces
+fetch, and pasted tags only add to selections. Pasting a tag on the opposite
+side removes it from the original side. A pending paste cannot apply the
+relationship editor; closing its owner invalidates subsequent answers. The real
+Qt sibling/parent preview selections are recorded alongside write suggestions.
+
+Subscription import options can be copied as the reference JSON container,
+pasted into selected subscriptions and cleared after confirmation. Clipboard
+changes remain staged until Apply. The subscription popup preserves v688's
+observed callback routing: merge-paste replaces the slice, fill-in-gaps-paste
+merges incoming custom kinds, and replace-paste fills currently inherited kinds.
+The real Qt recording is `oracle/record_subscription_import_options.py`; native
+regressions cover clipboard output, all three modes, invalid input, declined
+clearing, reopening and callbacks retained after the owner closes.
+
+File Search can set an implicit search limit (none by default; 1–100,000,000).
+The shared query engine applies it only without an explicit `system:limit`, so an
+explicit larger limit overrides it. The sort-refresh preference defaults on:
+changing a supported database sort reruns a synchronized, explicitly limited
+local search to choose its new sorted subset. Paused searches, implicit-only
+limits, all-known-file locations, and unsupported sorts keep the current subset.
+
+Import options' additional-tags and file whitelist lists can also be edited in
+a detached shared write-tag window. It uses the additional-tags service or all
+known tags for whitelist suggestions. Typed entry toggles a listed tag, paste
+only adds, and Apply returns the accepted list to the parent options draft.
+Child Cancel/native close preserves the caller's list, unlocks the parent, and
+parent closure cancels the child and invalidates its pending answers.
+
+Tab popups offer “new page” for the clicked row's notebook and “new page here”
+before the clicked tab. The chooser keeps those destination keys when selection
+changes, and cancellation clears the pending insertion. Right-clicking a row's
+unused space also opens its new-page action. GUI Pages exposes “Put new page tabs
+on” with all four reference choices; legacy preferences import and applied changes
+reach new-page creation immediately, while an explicit “here” position overrides
+the preference. The real chooser outputs for all positions and cancellation are
+recorded in `oracle/record_tab_new_page.py`.
+
+The file and search download controls on URL, simple downloader, gallery and
+watcher pages now have the reference cog menu. Its decoded URL label copies the
+original URL, and its bandwidth-rules submenu opens the existing detached rule
+editor directly. Default contexts appear once; temporary page instances never
+get their own rule editor. Applicable actions reattempt a connection or a server
+bandwidth wait, scrub domain errors, override this job's bandwidth, or skip this
+job's gallery wait. The five-second automatic override belongs to that page's
+file/search control and survives changing the highlighted query. Closing a page
+retires its policy; accepted overrides remain in effect for the current job.
+
+A failed request leaves a last-error button on the owning page control. Its menu
+has only **show error** and **copy error**. The error window uses the reference
+**Network Error** title and preserves the text. Removing a finished job keeps its
+error; the owner's explicit clear hides the button and suppresses replay of the
+same stored failure. Parser fetch ownership is being connected separately.

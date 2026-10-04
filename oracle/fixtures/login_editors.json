@@ -1,0 +1,1721 @@
+{
+ "manager": [
+  48,
+  1,
+  [
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       73,
+       "synthetic login",
+       2,
+       [
+        "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        [
+         21,
+         2,
+         [
+          [
+           [
+            2,
+            [
+             51,
+             1,
+             [
+              0,
+              "session",
+              null,
+              null,
+              "session"
+             ]
+            ]
+           ],
+           [
+            2,
+            [
+             51,
+             1,
+             [
+              0,
+              "ok",
+              null,
+              null,
+              "ok"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            72,
+            "username",
+            1,
+            [
+             0,
+             [
+              51,
+              1,
+              [
+               2,
+               "^[a-z]+$",
+               3,
+               null,
+               "alice"
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           2,
+           [
+            72,
+            "password",
+            1,
+            [
+             1,
+             [
+              51,
+              1,
+              [
+               3,
+               "",
+               4,
+               null,
+               "example string"
+              ]
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            74,
+            "establish session",
+            2,
+            [
+             "http",
+             "GET",
+             ".",
+             "/start",
+             {},
+             {
+              "lang": "en"
+             },
+             {},
+             [
+              21,
+              2,
+              []
+             ],
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 30,
+                 7,
+                 [
+                  "csrf variable",
+                  14,
+                  [
+                   136,
+                   1,
+                   [
+                    "dummy-csrf",
+                    1,
+                    "",
+                    [
+                     84,
+                     1,
+                     [
+                      26,
+                      3,
+                      []
+                     ]
+                    ]
+                   ]
+                  ],
+                  "csrf"
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           2,
+           [
+            74,
+            "send credentials",
+            2,
+            [
+             "http",
+             "POST",
+             null,
+             "/login",
+             {
+              "username": "user",
+              "password": "pass"
+             },
+             {
+              "mode": "login"
+             },
+             {
+              "csrf": "token"
+             },
+             [
+              21,
+              2,
+              [
+               [
+                [
+                 2,
+                 [
+                  51,
+                  1,
+                  [
+                   0,
+                   "session",
+                   null,
+                   null,
+                   "session"
+                  ]
+                 ]
+                ],
+                [
+                 2,
+                 [
+                  51,
+                  1,
+                  [
+                   0,
+                   "ok",
+                   null,
+                   null,
+                   "ok"
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ],
+             [
+              26,
+              3,
+              []
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         [
+          "login.example",
+          0,
+          "Login required to access any content."
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   {
+    "login.example": [
+     [
+      "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "synthetic login"
+     ],
+     {
+      "username": "alice",
+      "password": "dummy-pass"
+     },
+     0,
+     "Login required to access any content.",
+     true,
+     1,
+     "",
+     0,
+     ""
+    ]
+   }
+  ]
+ ],
+ "script_rows": {
+  "credentials": [
+   [
+    "password",
+    "hidden (password)",
+    "at least 4 characters"
+   ],
+   [
+    "username",
+    "normal",
+    "at least 3 characters, matching regex \"^[a-z]+$\", such as \"alice\""
+   ]
+  ],
+  "examples": [
+   [
+    "login.example",
+    "Everything",
+    "Login required to access any content."
+   ]
+  ]
+ },
+ "script_list": [
+  {
+   "state": {
+    "rows": [
+     [
+      "synthetic login",
+      "login.example"
+     ]
+    ],
+    "keys": [
+     "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+    ],
+    "names": [
+     "synthetic login"
+    ]
+   }
+  },
+  {
+   "do": "import duplicate",
+   "state": {
+    "rows": [
+     [
+      "synthetic login",
+      "login.example"
+     ],
+     [
+      "synthetic login (1)",
+      "login.example"
+     ]
+    ],
+    "keys": [
+     "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+     "7777777777777777777777777777777777777777777777777777777777777777"
+    ],
+    "names": [
+     "synthetic login",
+     "synthetic login (1)"
+    ]
+   }
+  },
+  {
+   "do": "rename duplicate",
+   "state": {
+    "rows": [
+     [
+      "renamed script",
+      "login.example"
+     ],
+     [
+      "synthetic login",
+      "login.example"
+     ]
+    ],
+    "keys": [
+     "7777777777777777777777777777777777777777777777777777777777777777",
+     "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+    ],
+    "names": [
+     "renamed script",
+     "synthetic login"
+    ]
+   }
+  }
+ ],
+ "definition": {
+  "before": [
+   72,
+   "username",
+   1,
+   [
+    0,
+    [
+     51,
+     1,
+     [
+      2,
+      "^[a-z]+$",
+      3,
+      null,
+      "alice"
+     ]
+    ]
+   ]
+  ],
+  "after": [
+   72,
+   "account",
+   1,
+   [
+    1,
+    [
+     51,
+     1,
+     [
+      0,
+      "token",
+      null,
+      null,
+      "token"
+     ]
+    ]
+   ]
+  ]
+ },
+ "credentials": [
+  {
+   "state": [
+    {
+     "name": "username",
+     "value": "a",
+     "hidden": false,
+     "label": "Could not validate \"username\" credential: \"a\" had fewer than 3 characters",
+     "valid": false
+    },
+    {
+     "name": "password",
+     "value": "",
+     "hidden": true,
+     "label": "at least 4 characters",
+     "valid": false
+    }
+   ]
+  },
+  {
+   "do": {
+    "username": "alice",
+    "password": "dummy-pass"
+   },
+   "answer": false,
+   "accepted": true,
+   "questions": [],
+   "state": [
+    {
+     "name": "username",
+     "value": "alice",
+     "hidden": false,
+     "label": "looks good ✓",
+     "valid": true
+    },
+    {
+     "name": "password",
+     "value": "dummy-pass",
+     "hidden": true,
+     "label": "looks good ✓",
+     "valid": true
+    }
+   ],
+   "value": {
+    "username": "alice",
+    "password": "dummy-pass"
+   }
+  },
+  {
+   "do": {
+    "username": "1?!",
+    "password": "x"
+   },
+   "answer": false,
+   "accepted": false,
+   "questions": [
+    "These values are invalid--are you sure this is ok?\n\nFor username: Could not validate \"username\" credential: \"1?!\" did not match \"^[a-z]+$\"\nFor password: Could not validate \"password\" credential: \"x\" had fewer than 4 characters"
+   ],
+   "state": [
+    {
+     "name": "username",
+     "value": "1?!",
+     "hidden": false,
+     "label": "Could not validate \"username\" credential: \"1?!\" did not match \"^[a-z]+$\"",
+     "valid": false
+    },
+    {
+     "name": "password",
+     "value": "x",
+     "hidden": true,
+     "label": "Could not validate \"password\" credential: \"x\" had fewer than 4 characters",
+     "valid": false
+    }
+   ],
+   "value": {
+    "username": "1?!",
+    "password": "x"
+   }
+  },
+  {
+   "do": {
+    "username": "",
+    "password": "x"
+   },
+   "answer": true,
+   "accepted": true,
+   "questions": [
+    "These values are invalid--are you sure this is ok?\n\nValue for username is blank!\nFor password: Could not validate \"password\" credential: \"x\" had fewer than 4 characters"
+   ],
+   "state": [
+    {
+     "name": "username",
+     "value": "",
+     "hidden": false,
+     "label": "at least 3 characters, matching regex \"^[a-z]+$\", such as \"alice\"",
+     "valid": false
+    },
+    {
+     "name": "password",
+     "value": "x",
+     "hidden": true,
+     "label": "Could not validate \"password\" credential: \"x\" had fewer than 4 characters",
+     "valid": false
+    }
+   ],
+   "value": {
+    "username": "",
+    "password": "x"
+   }
+  }
+ ],
+ "script": [
+  73,
+  "synthetic login",
+  2,
+  [
+   "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+   [
+    21,
+    2,
+    [
+     [
+      [
+       2,
+       [
+        51,
+        1,
+        [
+         0,
+         "session",
+         null,
+         null,
+         "session"
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        51,
+        1,
+        [
+         0,
+         "ok",
+         null,
+         null,
+         "ok"
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       72,
+       "username",
+       1,
+       [
+        0,
+        [
+         51,
+         1,
+         [
+          2,
+          "^[a-z]+$",
+          3,
+          null,
+          "alice"
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       72,
+       "password",
+       1,
+       [
+        1,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          4,
+          null,
+          "example string"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       74,
+       "establish session",
+       2,
+       [
+        "http",
+        "GET",
+        ".",
+        "/start",
+        {},
+        {
+         "lang": "en"
+        },
+        {},
+        [
+         21,
+         2,
+         []
+        ],
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "csrf variable",
+             14,
+             [
+              136,
+              1,
+              [
+               "dummy-csrf",
+               1,
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             "csrf"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       74,
+       "send credentials",
+       2,
+       [
+        "http",
+        "POST",
+        null,
+        "/login",
+        {
+         "username": "user",
+         "password": "pass"
+        },
+        {
+         "mode": "login"
+        },
+        {
+         "csrf": "token"
+        },
+        [
+         21,
+         2,
+         [
+          [
+           [
+            2,
+            [
+             51,
+             1,
+             [
+              0,
+              "session",
+              null,
+              null,
+              "session"
+             ]
+            ]
+           ],
+           [
+            2,
+            [
+             51,
+             1,
+             [
+              0,
+              "ok",
+              null,
+              null,
+              "ok"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     "login.example",
+     0,
+     "Login required to access any content."
+    ]
+   ]
+  ]
+ ],
+ "legacy_script": [
+  73,
+  "synthetic login",
+  1,
+  [
+   "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+   [
+    21,
+    2,
+    [
+     [
+      [
+       0,
+       "session"
+      ],
+      [
+       2,
+       [
+        51,
+        1,
+        [
+         0,
+         "ok",
+         null,
+         null,
+         "ok"
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       72,
+       "username",
+       1,
+       [
+        0,
+        [
+         51,
+         1,
+         [
+          2,
+          "^[a-z]+$",
+          3,
+          null,
+          "alice"
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       72,
+       "password",
+       1,
+       [
+        1,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          4,
+          null,
+          "example string"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       74,
+       "establish session",
+       2,
+       [
+        "http",
+        "GET",
+        ".",
+        "/start",
+        {},
+        {
+         "lang": "en"
+        },
+        {},
+        [
+         21,
+         2,
+         []
+        ],
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "csrf variable",
+             14,
+             [
+              136,
+              1,
+              [
+               "dummy-csrf",
+               1,
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             "csrf"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       74,
+       "send credentials",
+       2,
+       [
+        "http",
+        "POST",
+        null,
+        "/login",
+        {
+         "username": "user",
+         "password": "pass"
+        },
+        {
+         "mode": "login"
+        },
+        {
+         "csrf": "token"
+        },
+        [
+         21,
+         2,
+         [
+          [
+           [
+            2,
+            [
+             51,
+             1,
+             [
+              0,
+              "session",
+              null,
+              null,
+              "session"
+             ]
+            ]
+           ],
+           [
+            2,
+            [
+             51,
+             1,
+             [
+              0,
+              "ok",
+              null,
+              null,
+              "ok"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     "login.example",
+     0,
+     "Login required to access any content."
+    ]
+   ]
+  ]
+ ],
+ "upgraded_script": [
+  73,
+  "synthetic login",
+  2,
+  [
+   "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+   [
+    21,
+    2,
+    [
+     [
+      [
+       2,
+       [
+        51,
+        1,
+        [
+         0,
+         "session",
+         null,
+         null,
+         "session"
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        51,
+        1,
+        [
+         0,
+         "ok",
+         null,
+         null,
+         "ok"
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       72,
+       "username",
+       1,
+       [
+        0,
+        [
+         51,
+         1,
+         [
+          2,
+          "^[a-z]+$",
+          3,
+          null,
+          "alice"
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       72,
+       "password",
+       1,
+       [
+        1,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          4,
+          null,
+          "example string"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       74,
+       "establish session",
+       2,
+       [
+        "http",
+        "GET",
+        ".",
+        "/start",
+        {},
+        {
+         "lang": "en"
+        },
+        {},
+        [
+         21,
+         2,
+         []
+        ],
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "csrf variable",
+             14,
+             [
+              136,
+              1,
+              [
+               "dummy-csrf",
+               1,
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             "csrf"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       74,
+       "send credentials",
+       2,
+       [
+        "http",
+        "POST",
+        null,
+        "/login",
+        {
+         "username": "user",
+         "password": "pass"
+        },
+        {
+         "mode": "login"
+        },
+        {
+         "csrf": "token"
+        },
+        [
+         21,
+         2,
+         [
+          [
+           [
+            2,
+            [
+             51,
+             1,
+             [
+              0,
+              "session",
+              null,
+              null,
+              "session"
+             ]
+            ]
+           ],
+           [
+            2,
+            [
+             51,
+             1,
+             [
+              0,
+              "ok",
+              null,
+              null,
+              "ok"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     "login.example",
+     0,
+     "Login required to access any content."
+    ]
+   ]
+  ]
+ ],
+ "bundle": [
+  26,
+  3,
+  [
+   [
+    2,
+    [
+     73,
+     "synthetic login",
+     2,
+     [
+      "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      [
+       21,
+       2,
+       [
+        [
+         [
+          2,
+          [
+           51,
+           1,
+           [
+            0,
+            "session",
+            null,
+            null,
+            "session"
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           51,
+           1,
+           [
+            0,
+            "ok",
+            null,
+            null,
+            "ok"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          72,
+          "username",
+          1,
+          [
+           0,
+           [
+            51,
+            1,
+            [
+             2,
+             "^[a-z]+$",
+             3,
+             null,
+             "alice"
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          72,
+          "password",
+          1,
+          [
+           1,
+           [
+            51,
+            1,
+            [
+             3,
+             "",
+             4,
+             null,
+             "example string"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          74,
+          "establish session",
+          2,
+          [
+           "http",
+           "GET",
+           ".",
+           "/start",
+           {},
+           {
+            "lang": "en"
+           },
+           {},
+           [
+            21,
+            2,
+            []
+           ],
+           [
+            26,
+            3,
+            [
+             [
+              2,
+              [
+               30,
+               7,
+               [
+                "csrf variable",
+                14,
+                [
+                 136,
+                 1,
+                 [
+                  "dummy-csrf",
+                  1,
+                  "",
+                  [
+                   84,
+                   1,
+                   [
+                    26,
+                    3,
+                    []
+                   ]
+                  ]
+                 ]
+                ],
+                "csrf"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          74,
+          "send credentials",
+          2,
+          [
+           "http",
+           "POST",
+           null,
+           "/login",
+           {
+            "username": "user",
+            "password": "pass"
+           },
+           {
+            "mode": "login"
+           },
+           {
+            "csrf": "token"
+           },
+           [
+            21,
+            2,
+            [
+             [
+              [
+               2,
+               [
+                51,
+                1,
+                [
+                 0,
+                 "session",
+                 null,
+                 null,
+                 "session"
+                ]
+               ]
+              ],
+              [
+               2,
+               [
+                51,
+                1,
+                [
+                 0,
+                 "ok",
+                 null,
+                 null,
+                 "ok"
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           [
+            26,
+            3,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       [
+        "login.example",
+        0,
+        "Login required to access any content."
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    2,
+    [
+     73,
+     "synthetic login",
+     2,
+     [
+      "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      [
+       21,
+       2,
+       [
+        [
+         [
+          2,
+          [
+           51,
+           1,
+           [
+            0,
+            "session",
+            null,
+            null,
+            "session"
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           51,
+           1,
+           [
+            0,
+            "ok",
+            null,
+            null,
+            "ok"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          72,
+          "username",
+          1,
+          [
+           0,
+           [
+            51,
+            1,
+            [
+             2,
+             "^[a-z]+$",
+             3,
+             null,
+             "alice"
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          72,
+          "password",
+          1,
+          [
+           1,
+           [
+            51,
+            1,
+            [
+             3,
+             "",
+             4,
+             null,
+             "example string"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          74,
+          "establish session",
+          2,
+          [
+           "http",
+           "GET",
+           ".",
+           "/start",
+           {},
+           {
+            "lang": "en"
+           },
+           {},
+           [
+            21,
+            2,
+            []
+           ],
+           [
+            26,
+            3,
+            [
+             [
+              2,
+              [
+               30,
+               7,
+               [
+                "csrf variable",
+                14,
+                [
+                 136,
+                 1,
+                 [
+                  "dummy-csrf",
+                  1,
+                  "",
+                  [
+                   84,
+                   1,
+                   [
+                    26,
+                    3,
+                    []
+                   ]
+                  ]
+                 ]
+                ],
+                "csrf"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          74,
+          "send credentials",
+          2,
+          [
+           "http",
+           "POST",
+           null,
+           "/login",
+           {
+            "username": "user",
+            "password": "pass"
+           },
+           {
+            "mode": "login"
+           },
+           {
+            "csrf": "token"
+           },
+           [
+            21,
+            2,
+            [
+             [
+              [
+               2,
+               [
+                51,
+                1,
+                [
+                 0,
+                 "session",
+                 null,
+                 null,
+                 "session"
+                ]
+               ]
+              ],
+              [
+               2,
+               [
+                51,
+                1,
+                [
+                 0,
+                 "ok",
+                 null,
+                 null,
+                 "ok"
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           [
+            26,
+            3,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       [
+        "login.example",
+        0,
+        "Login required to access any content."
+       ]
+      ]
+     ]
+    ]
+   ]
+  ]
+ ],
+ "checks": [
+  {
+   "given": {},
+   "error": "Missing required credentials: password, username"
+  },
+  {
+   "given": {
+    "username": "a",
+    "password": "dummy-pass"
+   },
+   "error": "Could not validate \"username\" credential: \"a\" had fewer than 3 characters"
+  },
+  {
+   "given": {
+    "username": "alice",
+    "password": "dummy-pass",
+    "ignored": "value"
+   },
+   "error": null
+  }
+ ],
+ "missing_definitions": "Missing required credential definitions: password, username",
+ "missing_variables": "Missing temp variables for login step \"send credentials\": csrf",
+ "credential_types": [
+  [
+   0,
+   "normal"
+  ],
+  [
+   1,
+   "hidden (password)"
+  ]
+ ],
+ "access_types": [
+  [
+   0,
+   "Everything",
+   "Login required to access any content."
+  ],
+  [
+   1,
+   "NSFW",
+   "Login required to access NSFW content."
+  ],
+  [
+   2,
+   "Special",
+   "Login required to access special content."
+  ],
+  [
+   3,
+   "User prefs",
+   "Login only required to access user preferences."
+  ]
+ ]
+}

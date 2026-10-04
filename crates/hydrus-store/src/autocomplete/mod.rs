@@ -16,7 +16,10 @@ use serde::{Deserialize, Serialize};
 use hydrus_core::ServiceKey;
 
 pub use input::{AutocompleteInput, AutocompleteRules, TagQuery};
-pub use search::{CountDomain, CountRange, TagDisplayType, TagMatch, TagSearchScope, search_tags};
+pub use search::{
+    CountDomain, CountRange, TagDisplayType, TagMatch, TagSearchScope, search_tags,
+    search_tags_for_write,
+};
 
 use crate::settings::Setting;
 

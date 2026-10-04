@@ -924,9 +924,10 @@ into the new manual settings; choices made in this window are persisted.
 
 ## Tag relationship editors
 
-The first siblings/parents editors use clean-tag text inputs and preview
-lists; the reference's full write autocomplete, paste buttons, tag context
-menus, and default service-tab preference are not connected yet. Import/export
+The siblings/parents editors share write-autocomplete, counts, decorated
+suggestions, manual fetch and add-only paste with Manage Tags. The reference's
+tag context menus, favourite/children tabs and default service-tab preference
+are not connected yet. Import/export
 are direct clipboard and .txt buttons rather than two popup menus. Relationship
 rows are loaded synchronously when the dialog opens, so opening a service with
 very many pairs can pause the UI; reference background fetch/progress states
@@ -1027,6 +1028,17 @@ Clipboard URL monitoring runs while the desktop is open. Fatal clipboard access
 errors use the shared popup queue so they remain visible on downloader and
 notebook pages. The reference watcher policy and toggle resets are replayed from
 `oracle/fixtures/clipboard_urls.json`.
+
+Login script types, bounded JSON/PNG interchange and credential/temporary-variable
+validation are available through the native login script list and credential
+definition/entry windows. Native script management stages changes until Apply;
+questions appear inline instead of in Qt modal dialogs. Credential checks in the
+script window validate the entered values without making network requests. Step,
+cookie and example-domain editing, domain credential management, test results and
+HTTP login execution remain unimplemented. Full preserved domain credentials are
+loaded without discarding their fields, and script-list Apply preserves concurrent
+domain changes. Requests continue using their existing cookies until a login
+execution consumer is implemented.
 
 ## Network session and HTTP-header management
 
@@ -1136,10 +1148,23 @@ standalone formulas/content nodes belong in their matching native editors.
 Login scripts and domain metadata packages are explicitly unsupported here.
 
 Tab context menus expose close, select, move-page, sort-pages and send-down submenus,
-rename, duplicate, collapse and grouped close actions. Per-notebook session
-append/save and the remaining page-selector child workflows are deferred. As in
+rename, duplicate, collapse, grouped close and per-notebook saved-session
+append/save actions. The remaining page-selector child workflows are deferred. As in
 the reference, a page not opened/initialised contributes zero to the size sort;
 kept file counts and persisted importer progress still participate in count sorts.
+
+Tab refresh and advanced page-weight information now follow the reference popup.
+Recursive refresh skips unopened descendants and preserves notebook selection;
+importer refresh re-sorts media without starting paused transfers. Duplicate
+sidebar counts are read when the active page is rendered rather than dispatching
+an independent background sidebar job.
+
+The tab popup's new-page actions now target their notebook and preserve an
+explicit insertion anchor through the chooser. The four default insertion
+positions import and apply through GUI Pages. A removed destination or insertion
+anchor is rejected before creating importer queues. Unlike the reference's
+retained `_next_new_page_index` after a cancelled chooser, native cancellation
+clears that pending position so it cannot affect a subsequent page creation.
 
 Named GUI session saves now retain selectable immutable snapshots; automatic
 `last session` synchronization still writes the live session without historical
@@ -1159,8 +1184,7 @@ the native question offers yes/no. Other context submenus remain deferred.
 
 Duplicate and collapse tab actions now work on native page trees; collapse uses
 the native default local search domain (my files). The broader reference default
-local-location preference is still deferred. Session-per-notebook menus remain
-unimplemented. An accepted collapse freezes the media shown when its confirmation
+local-location preference is still deferred. An accepted collapse freezes the media shown when its confirmation
 opened; if its source keys have left their shared notebook, it does nothing.
 
 ## Downloader and URL display
@@ -1180,7 +1204,72 @@ The tag-dialog default service and remembering preference are consumed by native
 manage-tags windows. Their service tabs are limited to local tag services; the
 reference also offers repository tag services. Missing or unsupported saved
 services fall back to the first local service by name.
-- The file-search options page exposes the default tag service; its other
+- The file-search options page exposes the default tag service, initial search
+  synchronization and `system:everything` visibility; its remaining
   autocomplete and search-limit controls are absent. Tag-editing exposes only
   service memory and the default service; ManageTags currently has local tag
   service tabs, so a repository default falls back to its first local tab.
+
+The File Search initial synchronization and `system:everything` controls now
+reach new-page creation and read autocomplete. Hiding the suggestion does not
+prevent entering that predicate manually. Other File Search presentation and
+location controls are still assessed separately.
+
+Notebook session save dialogs use the existing native text/warning/question
+window: reserved-name warnings appear inline rather than as a second Qt warning
+window. Append reports a missing destination/session as an error without creating
+a notebook; saving a source notebook removed before acceptance reports an error.
+Automatic GUI-session lifecycle history and legacy historical snapshot import
+remain outside the manual notebook session menu implementation.
+
+The network runtime now exposes request-scoped retry, domain scrub, gallery-token and five-second bandwidth override commands. Recent failures remain available after short requests finish (128 entries per daemon epoch, long text follows the reference's displayed prefix). These commands are being connected to the page controls; the existing current-job review remains separately scoped. See `oracle/fixtures/network_job_control.json`.
+
+The default/fallback local search location is editable and consumed by native
+blank-page creation and tag-domain fallback. Its native button opens the current
+importable-domain tick list directly; the reference offers single-domain menu
+shortcuts before that same multi-domain selector.
+
+Manage Tags' write autocomplete now has storage counts, typed/ideal elevation,
+parent and sibling rows, manual fetch, a scrollable suggestions list, multiline
+paste and all six Tag Editing autocomplete preferences. The reference's
+favourite/children suggestion tabs and tag context menus are still absent.
+Declining a multiline paste leaves the existing text draft intact; Qt returns
+that event to its line editor's normal paste handling. Import additional-tags and whitelist fields now open a detached shared write-tag editor; their raw multiline fields remain available as well. Expanded
+parent rows enter their originating child, matching Qt's logical-list selection.
+
+File Search list heights and floating policy reach new-page presentation;
+existing pages retain the values captured at construction, as in the reference.
+Native list rows use the desktop client's 22-pixel text-row spacing rather than
+Qt's platform font-metric size hint. Floating results share their highlighting,
+scrolling and selection behavior with embedded results.
+
+Subscription import-option clipboard commands preserve the reference custom-paste
+callback, which replaces directly; the favourites custom-overwrite chooser and
+favourites controls remain separate work. The exchange codec accepts all
+eight native kinds, upgrades supported old versions through the legacy reader,
+and preserves stored external-program definitions. Current and deleted location contexts are both retained during exchange.
+Native presentation consumers still assess their domain filtering separately. PNG exchange is available in the typed codec; its subscription UI entry is
+assessed separately. These remaining limits keep the broad exchange items partial.
+
+The implicit search limit and explicit-limit sort-refresh controls now reach the
+shared search engine and native search pages. Sort-refresh eligibility matches
+the reference's supported system sorts and excludes all-known-file searches;
+namespace/rating sorts and the other unsupported system sorts only reorder the
+current subset. The executor's existing explicit-limit semantics are preserved.
+
+The import tag child uses the shared write-input behavior and detached Apply/
+Cancel transaction. Its lists and button layout differ from Qt's input-tags
+modal dialog, and the parent still offers its existing raw multiline fields.
+Full autocomplete context menus, favourite and child tabs remain outstanding
+across the write inputs. Expanded-row viewport height uses native fixed row
+pixels rather than Qt's font-metric character height.
+
+Downloader cog actions now reach the daemon through request/epoch-scoped local
+IPC; a stale menu cannot act on a replacement request. The automatic policy is
+local to a page control, as in Qt, and is not an application setting. Rule edits
+use native detached apply/cancel drafts. Native page controls also expose recent
+failed-request text through show/copy, although the Python importer sidebars do
+not currently call `SetError`; the shared error widget's Python consumer is the
+parser fetch owner, whose hook is a separate slice. The native error dialog is a
+scrollable window rather than Qt's critical message box. No explicit clear menu
+item is added: `ClearError` belongs to the owner, while `ClearNetworkJob` keeps it.

@@ -116,6 +116,7 @@ fn the_list_menus_are_the_references() {
 fn presentation_summaries_are_the_references() {
     for case in recorded()["summaries"].as_array().unwrap() {
         let options = PresentationOptions {
+            deleted_location: Vec::new(),
             status: match case["status"].as_i64().unwrap() {
                 0 => PresentationStatus::AnyGood,
                 1 => PresentationStatus::NewOnly,

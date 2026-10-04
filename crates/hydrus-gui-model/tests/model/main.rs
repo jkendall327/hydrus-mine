@@ -22,6 +22,7 @@ mod formula_editors;
 mod import_options_editor;
 mod importer_menu;
 mod local_import_dialog;
+mod login_workflows;
 mod main_menu;
 mod manage_notes;
 mod merge_options_editor;
@@ -39,6 +40,7 @@ mod string_converter_editor;
 mod string_match_editor;
 mod string_processor_editor;
 mod string_tag_filter_tests;
+mod subscription_import_options;
 mod subscriptions_buttons;
 mod subscriptions_dedupe;
 mod subscriptions_list;
@@ -71,3 +73,7 @@ mod regex_favourites;
 mod tab_context;
 
 mod tag_dialog_defaults;
+
+mod write_autocomplete;
+
+mod network_job_control;

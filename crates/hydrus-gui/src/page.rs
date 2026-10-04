@@ -207,12 +207,21 @@ impl SearchPage {
         autocomplete.clear();
         let sorts: hydrus_core::pages::SortSettings =
             store.read(hydrus_store::settings::get).unwrap_or_default();
+        let file_search: hydrus_store::settings::FileSearchSettings =
+            store.read(hydrus_store::settings::get).unwrap_or_default();
+        let defaults: hydrus_store::settings::SearchDefaults =
+            store.read(hydrus_store::settings::get).unwrap_or_default();
+        let context = FileSearchContext {
+            location: defaults.resolved_local_location(&store.snapshot().services),
+            ..FileSearchContext::default()
+        };
+        autocomplete.set_context(&context.location, &context.tags);
         Self {
             autocomplete,
             store,
-            context: FileSearchContext::default(),
+            context,
             predicates: Vec::new(),
-            synchronised: true,
+            synchronised: file_search.search_immediately,
             locked: false,
             lock_syncs: HashLock::default(),
             note: None,
@@ -1590,7 +1599,10 @@ impl SearchPage {
             .read(hydrus_store::settings::get)
             .unwrap_or_default();
         let mut domains = self.domains();
-        domains.choose_tags(service, &defaults.local_location);
+        domains.choose_tags(
+            service,
+            &defaults.resolved_local_location(&self.store.snapshot().services),
+        );
         self.set_domains(domains);
     }
 
@@ -1906,13 +1918,39 @@ impl SearchPage {
             .is_none_or(|c| c.default_ascending);
         self.sort = PageSort { by, ascending };
         self.sort_changed = true;
-        self.resort();
+        self.sort_changed_search_or_resort();
     }
 
     pub fn set_sort_order(&mut self, order: SortOrder) {
         self.sort.ascending = order == SortOrder::Ascending;
         self.sort_changed = true;
-        self.resort();
+        self.sort_changed_search_or_resort();
+    }
+
+    fn sort_changed_search_or_resort(&mut self) {
+        let settings: hydrus_store::settings::FileSearchSettings = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let explicit_limit = self.predicates.iter().any(|predicate| {
+            matches!(
+                predicate,
+                Predicate::System(hydrus_search::predicate::SystemPredicate::Limit(_))
+            )
+        });
+        let database_sort = system_sort(&self.sort)
+            .is_some_and(|sort| sort.by.can_sort_at_database_level(&self.context.location));
+        if settings.refresh_limited_sort
+            && self.synchronised
+            && explicit_limit
+            && database_sort
+            && self.note.is_none()
+            && !self.locked
+        {
+            self.search();
+        } else {
+            self.resort();
+        }
     }
 
     /// Sort the files shown again (a new sort doesn't search again), as
@@ -2176,6 +2214,17 @@ impl SearchPage {
         if self.note.is_none() && !self.locked {
             self.synchronised = true;
             self.search();
+        }
+    }
+
+    /// The tab popup's RefreshQuery: search pages refresh, importer pages
+    /// broadcast their current sort, and duplicate numbers are read by the
+    /// sidebar when shown. Retain the stored optional sort representation.
+    pub fn refresh_tab(&mut self) {
+        if self.note.is_none() {
+            self.refresh();
+        } else if self.duplicates.is_none() {
+            self.resort();
         }
     }
 

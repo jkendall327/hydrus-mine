@@ -161,6 +161,44 @@ impl Setting for NotebookCreationSettings {
     const KEY: &'static str = "gui_notebook_creation";
 }
 
+/// `default_new_page_goes`, in the reference choice order.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub enum PageInsertion {
+    FarLeft,
+    LeftOfCurrent,
+    RightOfCurrent,
+    #[default]
+    FarRight,
+}
+
+impl PageInsertion {
+    pub fn from_code(code: i64) -> Option<Self> {
+        match code {
+            0 => Some(Self::FarLeft),
+            1 => Some(Self::LeftOfCurrent),
+            2 => Some(Self::RightOfCurrent),
+            3 => Some(Self::FarRight),
+            _ => None,
+        }
+    }
+
+    pub fn index(self, current: Option<usize>, count: usize) -> usize {
+        let Some(current) = current else {
+            return 0;
+        };
+        match self {
+            Self::FarLeft => 0,
+            Self::LeftOfCurrent => current.min(count),
+            Self::RightOfCurrent => (current + 1).min(count),
+            Self::FarRight => count,
+        }
+    }
+}
+
+impl Setting for PageInsertion {
+    const KEY: &'static str = "gui_page_insertion";
+}
+
 /// Which recognised URL types the desktop watches for in changed clipboard text.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
@@ -335,8 +373,69 @@ impl Default for SearchDefaults {
     }
 }
 
+impl SearchDefaults {
+    /// Match GetDefaultLocalLocationContext: discard missing domains, then
+    /// use all local file domains if none remain.
+    pub fn resolved_local_location(
+        &self,
+        services: &crate::services::ServiceRegistry,
+    ) -> hydrus_core::search::context::LocationContext {
+        use hydrus_core::search::context::LocationContext;
+        let location = LocationContext::new(
+            self.local_location
+                .current()
+                .iter()
+                .filter(|key| services.by_key(key).is_ok())
+                .cloned(),
+            self.local_location
+                .deleted()
+                .iter()
+                .filter(|key| services.by_key(key).is_ok())
+                .cloned(),
+        );
+        if location.current().is_empty() && location.deleted().is_empty() {
+            LocationContext::single(hydrus_core::ServiceKey::new(
+                hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+            ))
+        } else {
+            location
+        }
+    }
+}
+
 impl Setting for SearchDefaults {
     const KEY: &'static str = "search_defaults";
+}
+
+/// Read autocomplete and the initial state of a newly created search page.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct FileSearchSettings {
+    pub search_immediately: bool,
+    pub show_system_everything: bool,
+    pub active_predicate_rows: u32,
+    pub autocomplete_rows: u32,
+    pub float_autocomplete: bool,
+    pub implicit_limit: Option<u64>,
+    pub refresh_limited_sort: bool,
+}
+
+impl Default for FileSearchSettings {
+    fn default() -> Self {
+        Self {
+            search_immediately: true,
+            show_system_everything: true,
+            active_predicate_rows: 6,
+            autocomplete_rows: 22,
+            float_autocomplete: true,
+            implicit_limit: None,
+            refresh_limited_sort: true,
+        }
+    }
+}
+
+impl Setting for FileSearchSettings {
+    const KEY: &'static str = "file_search";
 }
 
 /// Export folders.

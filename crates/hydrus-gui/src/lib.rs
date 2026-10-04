@@ -52,6 +52,8 @@ mod import_options_window;
 mod import_window;
 mod importer_list_menu;
 pub mod locations_window;
+pub mod login_credential_window;
+pub mod login_workflows_window;
 mod manage_notes_window;
 mod manage_ratings_window;
 pub(crate) mod manage_tags_window;
@@ -93,6 +95,7 @@ mod viewer;
 pub mod viewer_menu;
 mod watcher;
 pub mod windows;
+pub mod write_tag_window;
 pub mod zoom;
 
 /// A window's zoomed file ([`zoom::Zoomed`]), drawn in its `media-x`,
@@ -222,6 +225,7 @@ pub struct Bound {
     pub about: Rc<RefCell<Option<AboutWindow>>>,
     /// Live network reviews and their detached rules editor.
     pub network_data: network_data_window::Slots,
+    pub network_controls: network_job_control::Binding,
     /// The review services window while it is open.
     pub services_review: Rc<RefCell<Option<ServicesReviewWindow>>>,
     /// Staged local service editors while open.
@@ -240,6 +244,8 @@ pub struct Bound {
     pub subscription_gallery: Rc<RefCell<Option<SubscriptionGalleryWindow>>>,
     /// URL class and gallery URL generator definition editors.
     pub downloader_definitions: downloader_definitions_window::Slots,
+    /// Login script lists and their staged descendants.
+    pub login_workflows: login_workflows_window::Slots,
     /// Native parser and URL-class link windows.
     pub parser_editors: parser_editors_window::Slots,
     pub network_sessions: network_sessions_window::Slots,
@@ -594,6 +600,32 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let store = {
                 let mut pages = pages.borrow_mut();
                 pages.new_page_in(None);
+                pages.store().clone()
+            };
+            *chooser.borrow_mut() = Some(page_chooser::PageChooser::new(&store));
+            show_chooser();
+        }
+    });
+    window.on_tab_new_page_requested({
+        let chooser = chooser.clone();
+        let pages = pages.clone();
+        let show_chooser = show_chooser.clone();
+        move |parent, before| {
+            let parse = |text: slint::SharedString| {
+                if text.is_empty() {
+                    Some(None)
+                } else {
+                    hydrus_core::pages::PageKey::from_hex(text.as_str()).map(Some)
+                }
+            };
+            let (Some(parent), Some(before)) = (parse(parent), parse(before)) else {
+                return;
+            };
+            let store = {
+                let mut pages = pages.borrow_mut();
+                if pages.new_page_at(parent, before).is_err() {
+                    return;
+                }
                 pages.store().clone()
             };
             *chooser.borrow_mut() = Some(page_chooser::PageChooser::new(&store));
@@ -1300,6 +1332,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
     let subscription_gallery: Rc<RefCell<Option<SubscriptionGalleryWindow>>> = Rc::default();
     let downloader_definitions = downloader_definitions_window::Slots::default();
+    let login_workflows = login_workflows_window::Slots::default();
     let parser_editors = parser_editors_window::Slots::default();
     let network_sessions = network_sessions_window::Slots::default();
     let edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>> = Rc::default();
@@ -1531,6 +1564,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 })
             },
+            manage_login_scripts: {
+                let pages = pages.clone();
+                let slots = login_workflows.clone();
+                Rc::new(move || {
+                    let store = pages.borrow().store().clone();
+                    if let Err(error) = login_workflows_window::open_scripts(&store, &slots) {
+                        eprintln!("could not open login scripts: {error}");
+                    }
+                })
+            },
             manage_downloader_definitions: {
                 let pages = pages.clone();
                 let slots = downloader_definitions.clone();
@@ -1592,11 +1635,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             save_session: {
                 let pages = pages.clone();
                 let slot = session_dialog.clone();
-                Rc::new(move |name| {
+                Rc::new(move |name, scope| {
                     if slot.borrow().is_some() {
                         return;
                     }
-                    match session_dialog::open(&pages, name.as_deref(), &slot) {
+                    match session_dialog::open(&pages, name.as_deref(), scope, &slot) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not save the session: {e}"),
                     }
@@ -1862,6 +1905,37 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             page().borrow().cancel_download(kind);
         }
     });
+    let network_controls = network_job_control::bind_owned(
+        window,
+        page().borrow().store().clone(),
+        Rc::new({
+            let page = page.clone();
+            move |gallery| {
+                page().borrow().importer().filter(|i| !i.local).map(|i| {
+                    hydrus_gui_model::network_job_control::Target {
+                        queue: i.queue,
+                        gallery,
+                    }
+                })
+            }
+        }),
+        Rc::new({
+            let pages = pages.clone();
+            move || hex::encode(pages.borrow().shown().key.0)
+        }),
+        network_data.clone(),
+    );
+    network_controls.set_owner_alive(Rc::new({
+        let pages = pages.clone();
+        move |key| {
+            pages
+                .borrow()
+                .session()
+                .all_pages()
+                .iter()
+                .any(|page| hex::encode(page.key.0) == key)
+        }
+    }));
     let simple_formulae = simple_formulae_window::Slots::default();
     window.on_simple_edit_formulae({
         let page = page.clone();
@@ -3210,6 +3284,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         about,
         services_review,
         network_data,
+        network_controls,
         services_editor,
         checker_options,
         session_dialog,
@@ -3217,6 +3292,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         subscriptions,
         subscription_gallery,
         downloader_definitions,
+        login_workflows,
         parser_editors,
         network_sessions,
         edit_subscription,
@@ -5335,6 +5411,10 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
     window.set_can_filter(page.duplicates().is_some());
     window.set_can_lock_search(page.note().is_none());
     window.set_synchronised(page.synchronised());
+    let presentation = page.autocomplete().presentation_settings();
+    window.set_active_predicate_rows(presentation.active_predicate_rows as i32);
+    window.set_autocomplete_rows(presentation.autocomplete_rows as i32);
+    window.set_float_autocomplete(presentation.float_autocomplete);
     let snapshot = page.store().snapshot();
     window.set_location_label(domains::location_label(&snapshot.services, page.location()).into());
     let tags = page.tag_context();
@@ -5433,3 +5513,5 @@ pub mod client_api_admin_window;
 pub mod network_sessions_window;
 
 pub mod network_data_window;
+
+pub mod network_job_control;

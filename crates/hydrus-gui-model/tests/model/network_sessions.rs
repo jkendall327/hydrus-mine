@@ -550,6 +550,7 @@ fn automatic_header_questions_replay_reference_deduplicate_and_reject_changed_pa
                     at: 100,
                     jobs: vec![job(1), job(2)],
                     usage: Vec::new(),
+                    ..Snapshot::default()
                 },
             )
         })

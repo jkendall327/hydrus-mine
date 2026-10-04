@@ -28,6 +28,7 @@ mod import_options;
 mod importer_list_menu;
 mod info_lines;
 mod list_drag;
+mod login_workflows;
 mod main_shortcuts;
 mod manage_notes;
 mod manage_ratings;
@@ -40,6 +41,9 @@ mod media_sort;
 mod menu_bar;
 mod merge_options;
 mod mpv;
+mod notebook_new_page;
+mod notebook_refresh;
+mod notebook_sessions;
 mod options_window;
 mod page_scroll;
 mod popups;
@@ -97,3 +101,7 @@ mod downloader_display;
 mod favourite_search_editor;
 
 mod tag_dialog_defaults;
+
+mod write_autocomplete;
+
+mod network_job_control;

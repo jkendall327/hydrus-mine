@@ -1,0 +1,150 @@
+{
+  "initial": {
+    "current": [
+      "6c6f63616c2066696c6573"
+    ],
+    "deleted": [],
+    "label": "my files"
+  },
+  "choices": [
+    {
+      "label": "art",
+      "data": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    },
+    {
+      "label": "my files",
+      "data": "6c6f63616c2066696c6573"
+    }
+  ],
+  "events": [
+    {
+      "selected": {
+        "current": [],
+        "deleted": [],
+        "label": "nothing"
+      },
+      "resolved": {
+        "current": [
+          "616c6c206c6f63616c206d65646961"
+        ],
+        "deleted": [],
+        "label": "combined local file domains"
+      },
+      "new_page": {
+        "current": [
+          "616c6c206c6f63616c206d65646961"
+        ],
+        "deleted": [],
+        "label": "combined local file domains"
+      },
+      "fallback": {
+        "current": [
+          "616c6c206c6f63616c206d65646961"
+        ],
+        "deleted": [],
+        "label": "combined local file domains"
+      }
+    },
+    {
+      "selected": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": [],
+        "label": "my files"
+      },
+      "resolved": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": [],
+        "label": "my files"
+      },
+      "new_page": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": [],
+        "label": "my files"
+      },
+      "fallback": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": [],
+        "label": "my files"
+      }
+    },
+    {
+      "selected": {
+        "current": [
+          "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+        ],
+        "deleted": [],
+        "label": "art"
+      },
+      "resolved": {
+        "current": [
+          "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+        ],
+        "deleted": [],
+        "label": "art"
+      },
+      "new_page": {
+        "current": [
+          "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+        ],
+        "deleted": [],
+        "label": "art"
+      },
+      "fallback": {
+        "current": [
+          "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+        ],
+        "deleted": [],
+        "label": "art"
+      }
+    },
+    {
+      "selected": {
+        "current": [
+          "6c6f63616c2066696c6573",
+          "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+        ],
+        "deleted": [],
+        "label": "art, my files"
+      },
+      "resolved": {
+        "current": [
+          "6c6f63616c2066696c6573",
+          "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+        ],
+        "deleted": [],
+        "label": "art, my files"
+      },
+      "new_page": {
+        "current": [
+          "6c6f63616c2066696c6573",
+          "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+        ],
+        "deleted": [],
+        "label": "art, my files"
+      },
+      "fallback": {
+        "current": [
+          "6c6f63616c2066696c6573",
+          "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+        ],
+        "deleted": [],
+        "label": "art, my files"
+      }
+    }
+  ],
+  "missing": {
+    "current": [
+      "616c6c206c6f63616c206d65646961"
+    ],
+    "deleted": [],
+    "label": "combined local file domains"
+  }
+}

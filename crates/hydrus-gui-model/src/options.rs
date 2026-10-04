@@ -29,9 +29,9 @@ use hydrus_store::regex_favourites::RegexFavourites;
 use hydrus_store::session_backups::SessionBackupSettings;
 use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
-    AdvancedMode, ExportSettings, FileHandlingSettings, FileViewingStatistics, FolderSettings,
-    GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings, SearchDefaults,
-    ThumbnailLayout,
+    AdvancedMode, ExportSettings, FileHandlingSettings, FileSearchSettings, FileViewingStatistics,
+    FolderSettings, GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings,
+    SearchDefaults, ThumbnailLayout,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -88,12 +88,14 @@ settings! {
     network: NetworkSettings,
     notebooks: NotebookSettings,
     notebook_creation: NotebookCreationSettings,
+    page_insertion: hydrus_store::settings::PageInsertion,
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
     regex_favourites: RegexFavourites => hydrus_store::regex_favourites::load,
     session_backups: SessionBackupSettings,
     search_defaults: SearchDefaults,
+    file_search: FileSearchSettings,
     tag_editing: TagEditingSettings,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
@@ -141,6 +143,7 @@ pub enum Value {
     /// The editable regular expression/description pairs.
     RegexFavourites(RegexFavourites),
     TagService(hydrus_core::ServiceKey),
+    Location(hydrus_core::search::context::LocationContext),
 }
 
 /// What kind of control an option has.
@@ -192,6 +195,8 @@ pub enum Kind {
     Checker,
     /// A button opening the transactional favourites list editor.
     RegexFavourites,
+    /// Importable current file domains, edited in a child selector.
+    LocalLocation,
     /// Real tag services, optionally including all known tags.
     TagService {
         combined: bool,
@@ -1275,16 +1280,87 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "file search",
-            vec![boxed(
-                "file search autocomplete",
-                vec![tag_service(
-                    "Default tag service in search pages:",
-                    true,
-                    |settings| settings.search_defaults.tag_service.clone(),
-                    |settings, service| settings.search_defaults.tag_service = service,
-                    |_| true,
-                )],
-            )],
+            vec![
+                boxed(
+                    "file search autocomplete",
+                    vec![
+                        int(
+                            "Active Search Predicates list height:",
+                            (1, 128),
+                            |settings| i64::from(settings.file_search.active_predicate_rows),
+                            |settings, value| {
+                                settings.file_search.active_predicate_rows = value as u32
+                            },
+                        ),
+                        opt(
+                            "Default/Fallback local file search location:",
+                            Kind::LocalLocation,
+                            Rc::new(|settings| {
+                                Value::Location(settings.search_defaults.local_location.clone())
+                            }),
+                            Rc::new(|settings, value| match value {
+                                Value::Location(location) => {
+                                    settings.search_defaults.local_location = location.clone();
+                                    Ok(())
+                                }
+                                _ => Err(wrong("Default/Fallback local file search location:")),
+                            }),
+                        ),
+                        tag_service(
+                            "Default tag service in search pages:",
+                            true,
+                            |settings| settings.search_defaults.tag_service.clone(),
+                            |settings, service| settings.search_defaults.tag_service = service,
+                            |_| true,
+                        ),
+                        check(
+                            "Autocomplete dropdown floats over file search pages:",
+                            |settings| settings.file_search.float_autocomplete,
+                            |settings, value| settings.file_search.float_autocomplete = value,
+                        ),
+                        int(
+                            "Autocomplete list height:",
+                            (1, 128),
+                            |settings| i64::from(settings.file_search.autocomplete_rows),
+                            |settings, value| settings.file_search.autocomplete_rows = value as u32,
+                        ),
+                        check(
+                            "Start new search pages in 'searching immediately':",
+                            |settings| settings.file_search.search_immediately,
+                            |settings, value| settings.file_search.search_immediately = value,
+                        ),
+                        check(
+                            "Show system:everything:",
+                            |settings| settings.file_search.show_system_everything,
+                            |settings, value| settings.file_search.show_system_everything = value,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "file search",
+                    vec![
+                        noneable(
+                            "Implicit system:limit for all searches: ",
+                            none("no limit", 10_000, (1, 100_000_000), None),
+                            |settings| {
+                                settings
+                                    .file_search
+                                    .implicit_limit
+                                    .map(|value| value as i64)
+                            },
+                            |settings, value| {
+                                settings.file_search.implicit_limit =
+                                    value.map(|value| value as u64)
+                            },
+                        ),
+                        check(
+                            "If explicit system:limit, then refresh search when file sort changes: ",
+                            |settings| settings.file_search.refresh_limited_sort,
+                            |settings, value| settings.file_search.refresh_limited_sort = value,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "file sort/collect",
@@ -1441,6 +1517,27 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "opening and closing",
                     vec![
+                        choice(
+                            "Put new page tabs on: ",
+                            &[
+                                "the far left",
+                                "left of current page tab",
+                                "right of current page tab",
+                                "the far right",
+                            ],
+                            |s| match s.page_insertion {
+                                hydrus_store::settings::PageInsertion::FarLeft => 0,
+                                hydrus_store::settings::PageInsertion::LeftOfCurrent => 1,
+                                hydrus_store::settings::PageInsertion::RightOfCurrent => 2,
+                                hydrus_store::settings::PageInsertion::FarRight => 3,
+                            },
+                            |s, value| {
+                                s.page_insertion = hydrus_store::settings::PageInsertion::from_code(
+                                    i64::try_from(value).unwrap_or(3),
+                                )
+                                .unwrap_or_default()
+                            },
+                        ),
                         choice(
                             "When closing the current tab, move focus: ",
                             &[
@@ -1835,23 +1932,61 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "tag editing",
-            vec![boxed(
-                "tag dialogs",
-                vec![
-                    check(
-                        "Remember last used default tag service in manage tag dialogs: ",
-                        |settings| settings.tag_editing.remember_service,
-                        |settings, value| settings.tag_editing.remember_service = value,
-                    ),
-                    tag_service(
-                        "Default tag service in tag dialogs: ",
-                        false,
-                        |settings| settings.tag_editing.default_service.clone(),
-                        |settings, service| settings.tag_editing.default_service = service,
-                        |settings| !settings.tag_editing.remember_service,
-                    ),
-                ],
-            )],
+            vec![
+                boxed(
+                    "tag dialogs",
+                    vec![
+                        check(
+                            "Remember last used default tag service in manage tag dialogs: ",
+                            |settings| settings.tag_editing.remember_service,
+                            |settings, value| settings.tag_editing.remember_service = value,
+                        ),
+                        tag_service(
+                            "Default tag service in tag dialogs: ",
+                            false,
+                            |settings| settings.tag_editing.default_service.clone(),
+                            |settings, service| settings.tag_editing.default_service = service,
+                            |settings| !settings.tag_editing.remember_service,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "tag edit autocomplete",
+                    vec![
+                        check(
+                            "By default, select the first tag result with actual count in write-autocomplete: ",
+                            |s| s.tag_editing.select_first_with_count,
+                            |s, v| s.tag_editing.select_first_with_count = v,
+                        ),
+                        check(
+                            "When pasting multiline content into a write-autocomplete, skip the yes/no check: ",
+                            |s| s.tag_editing.skip_multiline_paste_confirmation,
+                            |s, v| s.tag_editing.skip_multiline_paste_confirmation = v,
+                        ),
+                        check(
+                            "Show parent info by default on edit/write autocomplete taglists: ",
+                            |s| s.tag_editing.autocomplete_show_parents,
+                            |s, v| s.tag_editing.autocomplete_show_parents = v,
+                        ),
+                        check(
+                            "Show parents expanded by default on edit/write autocomplete taglists: ",
+                            |s| s.tag_editing.autocomplete_expand_parents,
+                            |s, v| s.tag_editing.autocomplete_expand_parents = v,
+                        ),
+                        check(
+                            "Show sibling info by default on edit/write autocomplete taglists: ",
+                            |s| s.tag_editing.autocomplete_show_siblings,
+                            |s, v| s.tag_editing.autocomplete_show_siblings = v,
+                        ),
+                        int(
+                            "Autocomplete list height: ",
+                            (1, 128),
+                            |s| i64::from(s.tag_editing.autocomplete_list_height),
+                            |s, v| s.tag_editing.autocomplete_list_height = v as u32,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "tag presentation",
@@ -2435,6 +2570,16 @@ impl Editor {
     pub fn choose(&mut self, row: usize, index: usize) {
         if let Some(i) = self.option_at(row) {
             self.values[self.page][i] = Value::Choice(index);
+        }
+    }
+
+    /// Accept the location selector's draft even if another page is now shown.
+    pub fn set_local_location(&mut self, location: hydrus_core::search::context::LocationContext) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::Location(_)) {
+                *value = Value::Location(location);
+                return;
+            }
         }
     }
 

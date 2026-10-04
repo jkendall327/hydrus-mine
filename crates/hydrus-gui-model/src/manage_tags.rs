@@ -9,13 +9,9 @@ use std::sync::Arc;
 
 use hydrus_core::{HashId, ServiceId, ServiceType, Tag};
 use hydrus_store::Store;
-use hydrus_store::autocomplete::{
-    self, AutocompleteInput, AutocompleteSettings, TagDisplayType, TagSearchScope,
-};
 use hydrus_store::content::MappingAction;
 
-/// How many suggestions are offered.
-const SUGGESTIONS: usize = 12;
+use crate::write_autocomplete::WriteAutocomplete;
 
 pub struct ManageTags {
     store: Arc<Store>,
@@ -29,9 +25,7 @@ pub struct ManageTags {
     /// Each service's changes waiting to be applied: a tag added (`true`)
     /// to the files lacking it, or removed from them all.
     staged: Vec<BTreeMap<String, bool>>,
-    text: String,
-    suggestions: Vec<(String, String)>,
-    highlighted: usize,
+    input: WriteAutocomplete,
 }
 
 impl std::fmt::Debug for ManageTags {
@@ -75,23 +69,30 @@ impl ManageTags {
             .iter()
             .map(|(service, _)| current_tags(&store, *service, &files))
             .collect();
+        let location = hydrus_core::search::context::LocationContext::default();
+        let input = WriteAutocomplete::new(
+            store.clone(),
+            snapshot.services.get(services[service].0).ok()?.key.clone(),
+            location.clone(),
+        );
         Some(Self {
             staged: vec![BTreeMap::new(); services.len()],
             store,
             files,
-            location: hydrus_core::search::context::LocationContext::default(),
+            location,
             services,
             service,
             stored,
-            text: String::new(),
-            suggestions: Vec::new(),
-            highlighted: 0,
+            input,
         })
     }
 
     /// File domain of the page/viewer that launched this editor.
     pub fn set_location(&mut self, location: hydrus_core::search::context::LocationContext) {
         self.location = location;
+        if let Some(key) = self.migration_service_key() {
+            self.input.set_context(key, self.location.clone());
+        }
     }
     /// Selected file IDs used to launch migration.
     pub fn files(&self) -> &[HashId] {
@@ -140,7 +141,9 @@ impl ManageTags {
             self.store
                 .write(move |ctx| hydrus_store::tag_editing::remember_service(ctx.conn(), &key))?;
             self.service = index;
-            self.set_text(&self.text.clone());
+            if let Some(key) = self.migration_service_key() {
+                self.input.set_context(key, self.location.clone());
+            }
         }
         Ok(())
     }
@@ -212,9 +215,7 @@ impl ManageTags {
         } else {
             staged.insert(tag, true);
         }
-        self.text.clear();
-        self.suggestions.clear();
-        self.highlighted = 0;
+        self.input.clear();
         Ok(())
     }
 
@@ -262,143 +263,51 @@ impl ManageTags {
     }
 
     pub fn text(&self) -> &str {
-        &self.text
+        self.input.text()
     }
-
-    /// The input's text changed: suggest the service's tags matching it,
-    /// the exact match first, then the most used.
     pub fn set_text(&mut self, text: &str) {
-        text.clone_into(&mut self.text);
-        self.highlighted = 0;
-        self.suggestions = self.search(false).unwrap_or_default();
+        self.input.set_text(text);
     }
-
-    /// (tag, label) of each suggestion.
     pub fn suggestions(&self) -> &[(String, String)] {
-        &self.suggestions
+        self.input.suggestions()
     }
-
     pub fn highlighted(&self) -> Option<usize> {
-        (!self.suggestions.is_empty()).then_some(self.highlighted)
+        self.input.highlighted()
     }
-
     pub fn move_highlight(&mut self, by: isize) {
-        let n = self.suggestions.len();
-        if n > 0 {
-            self.highlighted = self.highlighted.saturating_add_signed(by).min(n - 1);
-        }
+        self.input.move_highlight(by);
     }
-
-    /// Enter the input: the suggestion highlighted, else the text; with
-    /// nothing typed, nothing (the window applies).
     pub fn enter_input(&mut self) -> Result<(), String> {
-        let chosen = self
-            .highlighted()
-            .and_then(|i| self.suggestions.get(i))
-            .map(|(tag, _)| tag.clone());
-        match chosen {
-            Some(tag) => self.enter(&tag),
-            None if self.text.trim().is_empty() => Ok(()),
-            None => {
-                let text = self.text.clone();
-                self.enter(&text)
+        if let Some(tag) = self.input.chosen(None) {
+            self.enter(&tag)?;
+        }
+        Ok(())
+    }
+    pub fn choose_suggestion(&mut self, index: usize) -> Result<(), String> {
+        if let Some((tag, _)) = self.suggestions().get(index).cloned() {
+            self.enter(&tag)?;
+        }
+        Ok(())
+    }
+    pub fn fetch(&mut self) {
+        self.input.fetch();
+    }
+    pub fn autocomplete_options(&self) -> hydrus_store::tag_editing::TagEditingSettings {
+        self.input.options()
+    }
+    /// Clipboard entry only adds: unlike typed entry it never toggles existing tags off.
+    pub fn paste_tags(&mut self, tags: &[String]) -> Result<(), String> {
+        let cleaned: Vec<Tag> = tags
+            .iter()
+            .map(|t| Tag::new(t).ok_or_else(|| format!("\"{t}\" is not a valid tag")))
+            .collect::<Result<_, _>>()?;
+        for tag in cleaned {
+            if self.tags().get(tag.as_str()) != Some(&self.files.len()) {
+                self.enter(tag.as_str())?;
             }
         }
-    }
-
-    /// Explicitly fetch suggestions even when fetch-as-you-type is disabled.
-    pub fn fetch(&mut self) {
-        self.suggestions = self.search(true).unwrap_or_default();
-    }
-
-    fn search(&self, manual: bool) -> Option<Vec<(String, String)>> {
-        if self.text.trim().is_empty() {
-            return Some(Vec::new());
-        }
-        let input = AutocompleteInput::parse(&self.text);
-        let snapshot = self.store.snapshot();
-        let registry = &snapshot.services;
-        let service = self.services[self.service].0;
-        let key = registry.get(service).ok()?.key.clone();
-        let options = self
-            .store
-            .read(
-                hydrus_store::settings::get::<
-                    hydrus_store::tag_display_config::AutocompleteWidgetSettings,
-                >,
-            )
-            .ok()?
-            .options(&key);
-        let location = if options.override_location {
-            &options.write_location
-        } else {
-            &self.location
-        };
-        // The reference avoids all-known files × all-known tags for writes.
-        let local_storage;
-        let location = if location.is_all_known_files()
-            && options.write_tag_service.as_bytes()
-                == hydrus_core::service::builtin_keys::COMBINED_TAG
-        {
-            local_storage = hydrus_core::search::context::LocationContext::single(
-                hydrus_core::ServiceKey::new(
-                    hydrus_core::service::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE.to_vec(),
-                ),
-            );
-            &local_storage
-        } else {
-            location
-        };
-        let domains = crate::autocomplete::count_domains(registry, location);
-        let scope = TagSearchScope {
-            domains,
-            tag_service: registry
-                .by_key(&options.write_tag_service)
-                .ok()
-                .filter(|s| s.service_type() != ServiceType::CombinedTag)
-                .map(|s| s.id),
-            display: TagDisplayType::Storage,
-            include_current: true,
-            include_pending: true,
-        };
-        let mut matches = self
-            .store
-            .read(|conn| {
-                let rules = hydrus_store::settings::get::<AutocompleteSettings>(conn)?.rules(&key);
-                let Some(query) = options.query(&input, &rules, manual) else {
-                    return Ok(Vec::new());
-                };
-                autocomplete::search_tags(conn, registry, &snapshot.display, &scope, &query)
-            })
-            .ok()?;
-        let typed = input.search_text();
-        matches.sort_by(|a, b| {
-            (b.tag == typed)
-                .cmp(&(a.tag == typed))
-                .then(b.count.min_total().cmp(&a.count.min_total()))
-                .then(a.tag.cmp(&b.tag))
-        });
-        let presentation: hydrus_core::tag_presentation::TagPresentation = self
-            .store
-            .read(hydrus_store::settings::get)
-            .unwrap_or_default();
-        let mut out: Vec<(String, String)> = matches
-            .into_iter()
-            .take(SUGGESTIONS)
-            .map(|m| {
-                let label = format!("{} {}", presentation.render(&m.tag), m.count.suffix());
-                (m.tag, label)
-            })
-            .collect();
-        // the tag as typed comes first, so enter adds just that, as the
-        // reference's tag entry does
-        if let Some(typed) = Tag::new(&self.text)
-            && !out.iter().any(|(tag, _)| tag == typed.as_str())
-        {
-            let tag = typed.as_str().to_owned();
-            out.insert(0, (tag.clone(), presentation.render(&tag)));
-        }
-        Some(out)
+        self.input.clear();
+        Ok(())
     }
 }
 

@@ -30,7 +30,7 @@ pub(crate) fn serialisable_list(values: Vec<Value>) -> Value {
         ),
     )
 }
-fn string_match(m: &StringMatch) -> Value {
+pub(crate) fn string_match(m: &StringMatch) -> Value {
     let (kind, value) = match &m.kind {
         MatchKind::Fixed(s) => (0, json!(s)),
         MatchKind::Flexible(f) => (1, json!(*f as i64)),
@@ -273,7 +273,7 @@ fn formula(f: &Formula) -> Result<Value> {
     Ok(encoded)
 }
 
-fn content(c: &ContentParser) -> Result<Value> {
+pub(crate) fn content(c: &ContentParser) -> Result<Value> {
     let (kind, extra) = match &c.kind {
         ContentKind::Url { url_type, priority } => (7, json!([url_type, priority])),
         ContentKind::Tag { namespace } => (0, json!(namespace)),
@@ -336,7 +336,7 @@ fn page(p: &PageParser) -> Result<Value> {
     Ok(encoded)
 }
 
-fn valid_key(key: &str) -> Result<()> {
+pub(crate) fn valid_key(key: &str) -> Result<()> {
     let bytes = hex::decode(key)
         .map_err(|_| Error::Invalid("Definition key is not hexadecimal.".into()))?;
     if bytes.is_empty() || bytes.len() > 128 {

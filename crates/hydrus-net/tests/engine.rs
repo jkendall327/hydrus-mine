@@ -304,6 +304,11 @@ async fn flaky(State(s): State<Arc<Server>>, Path(kind): Path<String>) -> Respon
             .header(header::RETRY_AFTER, "0")
             .body(Body::from("slow down"))
             .unwrap(),
+        "429long" if n <= 1 => Response::builder()
+            .status(StatusCode::TOO_MANY_REQUESTS)
+            .header(header::RETRY_AFTER, "60")
+            .body(Body::from("slow down"))
+            .unwrap(),
         "always429" => Response::builder()
             .status(StatusCode::TOO_MANY_REQUESTS)
             .header(header::RETRY_AFTER, "0")
@@ -1129,4 +1134,150 @@ async fn independent_engines_add_new_usage_without_replacing_each_other_or_doubl
     let usage = read();
     assert_eq!(usage.all_usage(BandwidthType::Data), fresh.bytes_read);
     assert_eq!(usage.all_usage(BandwidthType::Requests), 1);
+}
+
+#[tokio::test]
+async fn runtime_cog_server_retry_domain_scrub_and_retained_error() {
+    use hydrus_store::network_runtime::{Command, JobAction, WaitReason};
+    let s = setup(|_| Vec::new()).await;
+    let request = Request::get(format!("{}/flaky/429long", s.base));
+    let job = Job::new();
+    let mut fetch = Box::pin(s.engine.fetch(&request, &job));
+    let start = std::time::Instant::now();
+    loop {
+        tokio::select! { _ = &mut fetch => panic!("server retry wait was skipped"), () = tokio::time::sleep(std::time::Duration::from_millis(10)) => {} }
+        if job.state().wait == WaitReason::ServerBandwidth {
+            break;
+        }
+        assert!(start.elapsed() < std::time::Duration::from_secs(2));
+    }
+    let snapshot = s.engine.runtime_snapshot();
+    let command = |action| Command {
+        epoch: snapshot.epoch.clone(),
+        job: snapshot.jobs[0].id,
+        action,
+    };
+    assert!(
+        !s.engine
+            .runtime_command(&command(JobAction::OverrideConnectionWait))
+    );
+    assert!(
+        s.engine
+            .runtime_command(&command(JobAction::OverrideServerBandwidthWait))
+    );
+    tokio::time::timeout(std::time::Duration::from_secs(1), fetch)
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(s.server.hits.lock().get("429long"), Some(&2));
+    assert!(!s.engine.runtime_command(&command(JobAction::Cancel)));
+
+    let engine = NetEngine::new(
+        s.store.clone(),
+        NetOptions {
+            domain_error_number: 1,
+            ..s.engine.options()
+        },
+    )
+    .unwrap();
+    let mut fail = Request::get(format!("{}/flaky/500", s.base));
+    fail.one_shot = true;
+    assert!(engine.fetch(&fail, &Job::new()).await.is_err());
+    let snapshot = engine.runtime_snapshot();
+    assert!(snapshot.jobs.is_empty());
+    assert_eq!(snapshot.errors.len(), 1);
+    assert_eq!(snapshot.errors[0].url, fail.url);
+    assert_eq!(snapshot.errors[0].text, "broken");
+    let request = Request::get(format!("{}/echo", s.base));
+    let job = Job::new();
+    let mut fetch = Box::pin(engine.fetch(&request, &job));
+    tokio::select! { _ = &mut fetch => panic!("domain gate was skipped"), () = tokio::time::sleep(std::time::Duration::from_millis(30)) => {} }
+    let snapshot = engine.runtime_snapshot();
+    assert_eq!(snapshot.jobs[0].wait, WaitReason::Domain);
+    assert!(!snapshot.controls[0].domain_ok);
+    assert!(engine.runtime_command(&Command {
+        epoch: snapshot.epoch,
+        job: snapshot.jobs[0].id,
+        action: JobAction::ScrubDomainErrors
+    }));
+    tokio::time::timeout(std::time::Duration::from_secs(1), fetch)
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(engine.runtime_snapshot().errors.len(), 1);
+}
+
+#[tokio::test]
+async fn runtime_cog_gallery_override_does_not_release_other_gallery_waiters() {
+    use hydrus_core::bandwidth::{GalleryTokenKind, Rules};
+    use hydrus_net::BandwidthScope;
+    use hydrus_store::{
+        bandwidth::BandwidthSettings,
+        network_runtime::{Command, JobAction, WaitReason},
+        settings,
+    };
+    let s = setup(|_| Vec::new()).await;
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &BandwidthSettings {
+                    rules: vec![(NetworkContext::global(), Rules::new([]))],
+                    gallery_page_wait_pages: 60,
+                    ..BandwidthSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let engine = NetEngine::new(
+        s.store.clone(),
+        NetOptions {
+            obey_bandwidth: true,
+            ..s.engine.options()
+        },
+    )
+    .unwrap();
+    let mut request = Request::get(format!("{}/echo", s.base));
+    request.gallery_page = true;
+    let scope = BandwidthScope {
+        gallery_token: Some(GalleryTokenKind::DownloadPage),
+        ..BandwidthScope::default()
+    };
+    engine
+        .fetch(&request, &Job::scoped(scope.clone()))
+        .await
+        .unwrap();
+    let job = Job::scoped(scope.clone());
+    let other = Job::scoped(scope);
+    let mut fetch = Box::pin(engine.fetch(&request, &job));
+    let mut waiting = Box::pin(engine.fetch(&request, &other));
+    tokio::select! { _ = &mut fetch => panic!("gallery delay was skipped"), _ = &mut waiting => panic!("gallery delay was skipped"), () = tokio::time::sleep(std::time::Duration::from_millis(30)) => {} }
+    let snapshot = engine.runtime_snapshot();
+    assert_eq!(snapshot.jobs.len(), 2);
+    assert!(snapshot.jobs.iter().all(|j| j.wait == WaitReason::Gallery));
+    assert!(snapshot.controls.iter().all(|c| c.gallery));
+    assert!(engine.runtime_command(&Command {
+        epoch: snapshot.epoch.clone(),
+        job: snapshot.jobs[0].id,
+        action: JobAction::OverrideGalleryWait
+    }));
+    // IDs are insertion-ordered in the registry. The override goes to one request.
+    let completed = tokio::time::timeout(std::time::Duration::from_secs(1), async {
+        tokio::select! { result = &mut fetch => result, result = &mut waiting => result }
+    })
+    .await
+    .unwrap();
+    completed.unwrap();
+    let snapshot = engine.runtime_snapshot();
+    assert_eq!(snapshot.jobs.len(), 1);
+    assert_eq!(snapshot.jobs[0].wait, WaitReason::Gallery);
+    assert!(engine.runtime_command(&Command {
+        epoch: snapshot.epoch,
+        job: snapshot.jobs[0].id,
+        action: JobAction::Cancel
+    }));
+    // Drop both futures: the completed one must not be polled a second time.
+    drop(fetch);
+    drop(waiting);
+    assert!(engine.runtime_snapshot().jobs.is_empty());
 }

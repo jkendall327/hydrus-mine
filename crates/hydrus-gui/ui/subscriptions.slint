@@ -131,9 +131,10 @@ export component SubscriptionsWindow inherits Window {
     in property <string> window-title: "manage subscriptions";
     title: root.window-title;
     preferred-width: 1180px;
-    preferred-height: 520px;
+    preferred-height: 560px;
     background: Theme.window;
     in property <bool> gallery-open;
+    in-out property <string> import-status;
     // subscriptions paused from the network menu
     in property <bool> globally-paused;
     in property <[TableRow]> rows;
@@ -180,6 +181,9 @@ export component SubscriptionsWindow inherits Window {
     callback select-subscriptions();
     callback deduplicate();
     callback duplicate();
+    callback copy-import-options();
+    callback paste-import-options(int);
+    callback clear-import-options();
     callback chosen(int);
     callback cancelled();
     callback ticked(int, bool);
@@ -187,6 +191,11 @@ export component SubscriptionsWindow inherits Window {
     callback cancel();
 
     forward-focus: keys;
+    Timer {
+        interval: 2s;
+        running: root.import-status != "";
+        triggered => { root.import-status = ""; }
+    }
     keys := FocusScope {
         capture-key-pressed(event) => {
             if root.gallery-open { return accept; }
@@ -333,6 +342,52 @@ export component SubscriptionsWindow inherits Window {
                     text: "overwrite checker options";
                     enabled: root.any-selected && !root.asking && !root.gallery-open;
                     clicked => { root.overwrite-checker(); }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: end;
+                Text { text: "import options:"; color: Theme.text; vertical-alignment: center; }
+                Text { text: root.import-status; color: Theme.text; vertical-alignment: center; }
+                Button {
+                    text: "copy";
+                    enabled: root.one-selected && !root.asking && !root.gallery-open;
+                    clicked => { root.copy-import-options(); }
+                }
+                Rectangle {
+                    width: 66px;
+                    height: 28px;
+                    Button {
+                        width: parent.width;
+                        height: parent.height;
+                        text: "paste";
+                        enabled: root.any-selected && !root.asking && !root.gallery-open;
+                        clicked => { paste-menu.show(); }
+                    }
+                    paste-menu := PopupWindow {
+                        y: parent.height;
+                        width: 300px;
+                        height: 148px;
+                        Rectangle {
+                            background: Theme.panel;
+                            border-width: 1px;
+                            border-color: Theme.border;
+                            VerticalLayout {
+                                padding: 4px;
+                                spacing: 2px;
+                                Button { text: "custom paste: choose what you want"; clicked => { paste-menu.close(); root.paste-import-options(3); } }
+                                Rectangle { height: 1px; background: Theme.border; }
+                                Button { text: "merge-paste"; clicked => { paste-menu.close(); root.paste-import-options(0); } }
+                                Button { text: "fill-in-gaps-paste"; clicked => { paste-menu.close(); root.paste-import-options(1); } }
+                                Button { text: "replace-paste"; clicked => { paste-menu.close(); root.paste-import-options(2); } }
+                            }
+                        }
+                    }
+                }
+                Button {
+                    text: "clear";
+                    enabled: root.any-selected && !root.asking && !root.gallery-open;
+                    clicked => { root.clear-import-options(); }
                 }
             }
             if root.asking: Asking {

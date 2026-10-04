@@ -213,6 +213,8 @@ struct Bandwidth {
     worker: Worker,
     timer: Timer,
     active: Cell<bool>,
+    direct: Cell<bool>,
+    requested_edit: RefCell<Option<NetworkContext>>,
     review: RefCell<Option<Review>>,
     order: RefCell<Vec<NetworkContext>>,
     selected: RefCell<Option<NetworkContext>>,
@@ -374,6 +376,10 @@ impl Bandwidth {
                 Event::Review(Ok(review)) => {
                     *self.review.borrow_mut() = Some(review);
                     self.show();
+                    let requested = self.requested_edit.borrow_mut().take();
+                    if let Some(context) = requested {
+                        self.edit(context);
+                    }
                 }
                 Event::Review(Err(error)) => self.window.set_status(error.into()),
                 Event::Written(result) => {
@@ -401,6 +407,14 @@ impl Bandwidth {
     fn close_edit(&self) {
         if let Some(edit) = self.edit.borrow_mut().take() {
             let _ = edit.window.hide();
+        }
+        if self.direct.get() {
+            self.active.set(false);
+            self.timer.stop();
+            let _ = self.worker.send.send(Operation::Stop);
+            if let Some(owner) = self.owner.upgrade() {
+                owner.borrow_mut().take();
+            }
         }
     }
     fn edit(self: &Rc<Self>, context: NetworkContext) {
@@ -630,6 +644,8 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
         worker: Worker::start(store),
         timer: Timer::default(),
         active: Cell::new(true),
+        direct: Cell::new(false),
+        requested_edit: RefCell::default(),
         review: RefCell::default(),
         order: RefCell::default(),
         selected: RefCell::default(),
@@ -819,6 +835,28 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
     *slots.bandwidth.borrow_mut() = Some(state);
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
+}
+
+/// Open the same detached rules editor directly from a job's context submenu.
+/// A hidden loading owner is closed with the draft; an existing review stays open.
+pub fn open_rules(store: Arc<Store>, slots: &Slots, context: NetworkContext) -> Result<(), String> {
+    let existing = slots.bandwidth.borrow().is_some();
+    let window = open_bandwidth(store, slots)?;
+    let state = slots
+        .bandwidth
+        .borrow()
+        .clone()
+        .ok_or("Rules owner was closed.")?;
+    if !existing {
+        window.hide().map_err(|e| e.to_string())?;
+        state.direct.set(true);
+    }
+    if state.review.borrow().is_some() {
+        state.edit(context);
+    } else {
+        *state.requested_edit.borrow_mut() = Some(context);
+    }
+    Ok(())
 }
 
 struct Jobs {

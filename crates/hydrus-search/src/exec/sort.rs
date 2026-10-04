@@ -87,6 +87,16 @@ impl SortBy {
         SortBy::AverageColourHue,
     ];
 
+    /// Whether a limited search should rerun for a changed sort, matching
+    /// MediaSort.CanSortAtDBLevel (all-known-file searches cannot).
+    pub fn can_sort_at_database_level(self, location: &crate::context::LocationContext) -> bool {
+        !location.is_all_known_files()
+            && !matches!(
+                self,
+                Self::Mime | Self::NumTags | Self::HasAudio | Self::NumCollectionFiles
+            )
+    }
+
     /// The reference's `CC.SORT_FILES_BY_*` code.
     pub fn code(self) -> u8 {
         Self::ALL

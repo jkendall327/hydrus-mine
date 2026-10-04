@@ -136,6 +136,36 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         {
             tag_editing.remember_service = value;
         }
+        if let Some(&value) = options.booleans.get("ac_select_first_with_count") {
+            tag_editing.select_first_with_count = value;
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("skip_yesno_on_write_autocomplete_multiline_paste")
+        {
+            tag_editing.skip_multiline_paste_confirmation = value;
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("show_parent_decorators_on_storage_autocomplete_taglists")
+        {
+            tag_editing.autocomplete_show_parents = value;
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("expand_parents_on_storage_autocomplete_taglists")
+        {
+            tag_editing.autocomplete_expand_parents = value;
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("show_sibling_decorators_on_storage_autocomplete_taglists")
+        {
+            tag_editing.autocomplete_show_siblings = value;
+        }
+        if let Some(&value) = options.integers.get("ac_write_list_height_num_chars") {
+            tag_editing.autocomplete_list_height = u32::try_from(value).unwrap_or(11).clamp(1, 128);
+        }
         if let Some(key) = options.keys.get("default_tag_service_tab") {
             tag_editing.default_service = ServiceKey::new(key.clone());
         }
@@ -146,6 +176,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             options.booleans.get("rename_page_of_pages_on_pick_new") == Some(&true)
         }),
     };
+    let insertion = options
+        .as_ref()
+        .and_then(|options| options.integers.get("default_new_page_goes"))
+        .and_then(|&code| crate::settings::PageInsertion::from_code(code))
+        .unwrap_or_default();
+    insert_setting(&mut input, &insertion)?;
     insert_setting(&mut input, &notebook_creation)?;
     let mut backups = crate::session_backups::SessionBackupSettings::default();
     if let Some(options) = &options
@@ -502,6 +538,40 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             );
         }
         insert_setting(&mut input, &search_defaults)?;
+        let mut file_search = crate::settings::FileSearchSettings::default();
+        file_search.search_immediately = options
+            .booleans
+            .get("default_search_synchronised")
+            .copied()
+            .unwrap_or(file_search.search_immediately);
+        file_search.show_system_everything = options
+            .booleans
+            .get("show_system_everything")
+            .copied()
+            .unwrap_or(file_search.show_system_everything);
+        file_search.float_autocomplete = options
+            .booleans
+            .get("autocomplete_float_main_gui")
+            .copied()
+            .unwrap_or(file_search.float_autocomplete);
+        if let Some(rows) = options
+            .integers
+            .get("active_search_predicates_height_num_chars")
+        {
+            file_search.active_predicate_rows = (*rows).clamp(1, 128) as u32;
+        }
+        if let Some(rows) = options.integers.get("ac_read_list_height_num_chars") {
+            file_search.autocomplete_rows = (*rows).clamp(1, 128) as u32;
+        }
+        if let Some(limit) = options.noneable_integers.get("forced_search_limit") {
+            file_search.implicit_limit = limit.map(|value| value.clamp(1, 100_000_000) as u64);
+        }
+        file_search.refresh_limited_sort = options
+            .booleans
+            .get("refresh_search_page_on_system_limited_sort_changed")
+            .copied()
+            .unwrap_or(file_search.refresh_limited_sort);
+        insert_setting(&mut input, &file_search)?;
         let mut summaries = hydrus_core::tag_summary::TagSummaries::default();
         for (name, field) in [
             ("thumbnail_top", &mut summaries.thumbnail_top),
@@ -2491,6 +2561,63 @@ mod tests {
                     [key(builtin_keys::MY_FILES), key(builtin_keys::TRASH)],
                     []
                 ),
+            }
+        );
+    }
+
+    #[test]
+    fn file_search_defaults_convert_user_values() {
+        use crate::settings::FileSearchSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<FileSearchSettings>(input.settings["file_search"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), FileSearchSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "default_search_synchronised"], [0, true]]"#,
+                    r#"[[0, "default_search_synchronised"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "show_system_everything"], [0, true]]"#,
+                    r#"[[0, "show_system_everything"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "autocomplete_float_main_gui"], [0, true]]"#,
+                    r#"[[0, "autocomplete_float_main_gui"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "active_search_predicates_height_num_chars"], [0, 6]]"#,
+                    r#"[[0, "active_search_predicates_height_num_chars"], [0, 9]]"#,
+                ),
+                (
+                    r#"[[0, "ac_read_list_height_num_chars"], [0, 22]]"#,
+                    r#"[[0, "ac_read_list_height_num_chars"], [0, 24]]"#,
+                ),
+                (
+                    r#"[[0, "forced_search_limit"], [0, null]]"#,
+                    r#"[[0, "forced_search_limit"], [0, 3]]"#,
+                ),
+                (
+                    r#"[[0, "refresh_search_page_on_system_limited_sort_changed"], [0, true]]"#,
+                    r#"[[0, "refresh_search_page_on_system_limited_sort_changed"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            FileSearchSettings {
+                search_immediately: false,
+                show_system_everything: false,
+                float_autocomplete: false,
+                active_predicate_rows: 9,
+                autocomplete_rows: 24,
+                implicit_limit: Some(3),
+                refresh_limited_sort: false,
             }
         );
     }

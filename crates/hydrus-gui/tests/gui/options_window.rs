@@ -1404,3 +1404,426 @@ fn removed_default_service_falls_back_in_options_and_waits_for_apply() {
         );
     }
 }
+
+#[test]
+fn search_defaults_apply_to_new_pages_and_the_real_autocomplete() {
+    use hydrus_core::ServiceKey;
+    use hydrus_core::service::builtin_keys;
+    use hydrus_gui::page_chooser::NewPage;
+    use hydrus_store::settings::{FileSearchSettings, get};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("file_search_defaults.json");
+    let saved = || store.read(get::<FileSearchSettings>).unwrap();
+    assert_eq!(
+        saved().search_immediately,
+        fixture["initial"]["search_immediately"].as_bool().unwrap()
+    );
+    assert_eq!(
+        saved().show_system_everything,
+        fixture["initial"]["show_system_everything"]
+            .as_bool()
+            .unwrap()
+    );
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "file search");
+    let (sync_row, _) = row(
+        &window,
+        "Start new search pages in 'searching immediately':",
+    );
+    let (everything_row, _) = row(&window, "Show system:everything:");
+    window.invoke_check_toggled(sync_row, false);
+    window.invoke_check_toggled(everything_row, false);
+    window.invoke_cancel();
+    assert!(saved().search_immediately && saved().show_system_everything);
+
+    let mut first_page = None;
+    for event in fixture["events"].as_array().unwrap() {
+        let enabled = event["enabled"].as_bool().unwrap();
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "file search");
+        let (sync_row, _) = row(
+            &window,
+            "Start new search pages in 'searching immediately':",
+        );
+        let (everything_row, _) = row(&window, "Show system:everything:");
+        window.invoke_check_toggled(sync_row, enabled);
+        window.invoke_check_toggled(everything_row, enabled);
+        window.invoke_apply();
+        assert_eq!(saved().search_immediately, enabled);
+        assert_eq!(saved().show_system_everything, enabled);
+        bound
+            .pages
+            .borrow_mut()
+            .new_page(&NewPage::Search {
+                domain: ServiceKey::new(builtin_keys::MY_FILES.to_vec()),
+                name: "synthetic search default recording".into(),
+            })
+            .unwrap();
+        let page = bound.pages.borrow_mut().current();
+        let first = first_page.get_or_insert_with(|| page.clone());
+        assert_eq!(
+            page.borrow().synchronised(),
+            event["new_page_synchronised"].as_bool().unwrap()
+        );
+        assert_eq!(
+            first.borrow().synchronised(),
+            event["first_page_synchronised"].as_bool().unwrap()
+        );
+        for offered in event["offered"].as_array().unwrap() {
+            let mut autocomplete = hydrus_gui::autocomplete::Autocomplete::new(store.clone());
+            let location = hydrus_core::search::context::LocationContext::single(
+                ServiceKey::from_hex(offered["location"].as_str().unwrap()).unwrap(),
+            );
+            autocomplete.set_context(
+                &location,
+                &hydrus_core::search::context::TagContext::default(),
+            );
+            assert_eq!(
+                autocomplete
+                    .suggestions()
+                    .iter()
+                    .any(|item| item.predicate == "system:everything"),
+                offered["everything"].as_bool().unwrap()
+            );
+            assert!(
+                autocomplete
+                    .suggestions()
+                    .iter()
+                    .any(|item| item.predicate == "system:limit")
+            );
+        }
+        assert!(page.borrow_mut().add_predicate("system:everything"));
+        if !enabled {
+            assert!(
+                page.borrow().results().is_empty(),
+                "paused page must defer its query"
+            );
+            page.borrow_mut().set_synchronised(true);
+        }
+        assert!(
+            !page.borrow().results().is_empty(),
+            "resuming must execute the staged query"
+        );
+        // Keep the first page paused while the new-page default changes next.
+        page.borrow_mut().set_synchronised(enabled);
+    }
+    open(&ui);
+    let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&reopened, "file search");
+    assert!(row(&reopened, "Show system:everything:").1.checked);
+    reopened.invoke_cancel();
+}
+
+#[test]
+fn default_local_location_child_draft_drives_blank_pages_and_tag_fallback() {
+    use hydrus_core::ServiceKey;
+    use hydrus_core::search::context::LocationContext;
+    use hydrus_core::service::builtin_keys;
+    use hydrus_store::settings::{SearchDefaults, get};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("default_search_location.json");
+    let defaults = || store.read(get::<SearchDefaults>).unwrap();
+    let before = defaults();
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "file search");
+    let (location_row, location) = row(&window, "Default/Fallback local file search location:");
+    assert_eq!(location.text, fixture["initial"]["label"].as_str().unwrap());
+    window.invoke_local_location_clicked(location_row);
+    let child = hydrus_gui::locations_window::last_opened().unwrap();
+    child.invoke_toggled(0, true);
+    window.invoke_cancel();
+    assert!(!child.window().is_visible());
+    child.invoke_apply();
+    assert_eq!(defaults(), before, "cancel invalidates child callbacks");
+
+    for event in fixture["events"].as_array().unwrap() {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "file search");
+        let (location_row, _) = row(&window, "Default/Fallback local file search location:");
+        window.invoke_local_location_clicked(location_row);
+        let child = hydrus_gui::locations_window::last_opened().unwrap();
+        let choices = fixture["choices"].as_array().unwrap();
+        assert_eq!(child.get_ticks().row_count(), choices.len());
+        for (index, choice) in choices.iter().enumerate() {
+            assert_eq!(
+                child.get_ticks().row_data(index).unwrap().label,
+                choice["label"].as_str().unwrap()
+            );
+            let selected = event["selected"]["current"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|key| key == &choice["data"]);
+            child.invoke_toggled(index as i32, selected);
+        }
+        let unchanged = defaults();
+        child.invoke_apply();
+        assert_eq!(
+            defaults(),
+            unchanged,
+            "child Apply only changes parent draft"
+        );
+        window.invoke_apply();
+        let keys = |location: &LocationContext| {
+            location
+                .current()
+                .iter()
+                .map(ServiceKey::to_hex)
+                .collect::<Vec<_>>()
+        };
+        let expected = |field: &str| {
+            event[field]["current"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|value| value.as_str().unwrap().to_owned())
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(keys(&defaults().local_location), expected("selected"));
+        bound.pages.borrow_mut().new_search_page();
+        let page = bound.pages.borrow_mut().current();
+        assert_eq!(keys(page.borrow().location()), expected("new_page"));
+        page.borrow_mut()
+            .choose_location(LocationContext::single(ServiceKey::new(
+                builtin_keys::COMBINED_FILE.to_vec(),
+            )));
+        page.borrow_mut()
+            .choose_tag_service(ServiceKey::new(builtin_keys::COMBINED_TAG.to_vec()));
+        assert_eq!(keys(page.borrow().location()), expected("fallback"));
+        let standalone = hydrus_gui::SearchPage::new(store.clone());
+        assert_eq!(keys(standalone.location()), expected("resolved"));
+    }
+    store
+        .write(|ctx| {
+            let mut value = get::<SearchDefaults>(ctx.conn())?;
+            value.local_location =
+                LocationContext::single(ServiceKey::new(b"missing synthetic file domain".to_vec()));
+            hydrus_store::settings::set(ctx.conn(), &value)
+        })
+        .unwrap();
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "file search");
+    assert_eq!(
+        row(&window, "Default/Fallback local file search location:")
+            .1
+            .text,
+        fixture["missing"]["label"].as_str().unwrap()
+    );
+    window.invoke_apply();
+    assert_eq!(
+        defaults()
+            .local_location
+            .current()
+            .iter()
+            .map(ServiceKey::to_hex)
+            .collect::<Vec<_>>(),
+        fixture["missing"]["current"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|key| key.as_str().unwrap().to_owned())
+            .collect::<Vec<_>>()
+    );
+}
+
+#[test]
+fn read_list_sizes_and_float_policy_reach_rendered_new_pages() {
+    use hydrus_core::ServiceKey;
+    use hydrus_core::service::builtin_keys;
+    use hydrus_gui::page_chooser::NewPage;
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("file_search_presentation.json");
+    ui.show().unwrap();
+    let main = windows.get(0).unwrap();
+    main.dispatch_event(slint::platform::WindowEvent::WindowActiveChanged(true));
+    let mut first = None;
+    let mut floated_tags_y = None;
+    for (index, event) in fixture["events"].as_array().unwrap().iter().enumerate() {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "file search");
+        let (active_row, active) = row(&window, "Active Search Predicates list height:");
+        let (suggestion_row, suggestions) = row(&window, "Autocomplete list height:");
+        assert_eq!((active.minimum, active.maximum), (1, 128));
+        assert_eq!((suggestions.minimum, suggestions.maximum), (1, 128));
+        let (float_row, _) = row(
+            &window,
+            "Autocomplete dropdown floats over file search pages:",
+        );
+        window.invoke_number_edited(active_row, event["active_rows"].as_i64().unwrap() as i32);
+        window.invoke_number_edited(
+            suggestion_row,
+            event["autocomplete_rows"].as_i64().unwrap() as i32,
+        );
+        window.invoke_check_toggled(float_row, event["floating"].as_bool().unwrap());
+        window.invoke_apply();
+        (bound.open_page)(&NewPage::Search {
+            domain: ServiceKey::new(builtin_keys::MY_FILES.to_vec()),
+            name: "synthetic search presentation recording".into(),
+        });
+        let page = bound.pages.borrow_mut().current();
+        let original = first.get_or_insert_with(|| page.clone());
+        let config = original
+            .borrow()
+            .autocomplete()
+            .presentation_settings()
+            .clone();
+        assert_eq!(
+            config.active_predicate_rows,
+            event["first_view"]["active"]["rows"].as_u64().unwrap() as u32
+        );
+        assert_eq!(
+            config.autocomplete_rows,
+            event["first_view"]["autocomplete"]["rows"]
+                .as_u64()
+                .unwrap() as u32
+        );
+        assert_eq!(
+            config.float_autocomplete,
+            event["first_view"]["floating"].as_bool().unwrap()
+        );
+        assert_eq!(
+            ui.get_active_predicate_rows(),
+            event["view"]["active"]["rows"].as_i64().unwrap() as i32
+        );
+        assert_eq!(
+            ui.get_autocomplete_rows(),
+            event["view"]["autocomplete"]["rows"].as_i64().unwrap() as i32
+        );
+        assert_eq!(
+            !ui.get_float_autocomplete(),
+            event["view"]["embedded_in_layout"].as_bool().unwrap()
+        );
+        ui.set_search_focus_requests(ui.get_search_focus_requests() + 1);
+        // Layout publishes geometry from the conditional sidebar. Flush those
+        // change handlers, then render its correctly placed overlay.
+        headless::render(&main, 1100, 1500);
+        slint::platform::update_timers_and_animations();
+        let pixels = headless::render(&main, 1100, 1500);
+        assert!(pixels.iter().any(|pixel| *pixel != 0));
+        assert!(ui.get_active_predicate_list_height() >= 28.0);
+        assert!(
+            ui.get_active_predicate_list_height() <= ui.get_active_predicate_preferred_height()
+        );
+        if index == 0 {
+            assert!(ui.get_search_focused());
+            assert!(ui.get_autocomplete_overlay_visible());
+            floated_tags_y = Some(ui.get_search_tags_y());
+        } else if index == 1 {
+            assert!(!ui.get_autocomplete_overlay_visible());
+            assert!(
+                ui.get_search_tags_y() > floated_tags_y.unwrap() + 200.0,
+                "embedded results must occupy sidebar layout space; floating results overlay it"
+            );
+        }
+        ui.set_search_focused(false);
+        assert!(
+            !ui.get_autocomplete_overlay_visible(),
+            "floating results hide without input focus"
+        );
+    }
+}
+
+#[test]
+fn implicit_limit_options_reach_queries_and_limited_sort_refresh() {
+    use hydrus_search::{SortBy, SortOrder};
+    use hydrus_store::settings::{FileSearchSettings, get};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("file_search_limits.json");
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "file search");
+    let (limit_row, limit) = row(&window, "Implicit system:limit for all searches: ");
+    assert_eq!((limit.minimum, limit.maximum), (1, 100_000_000));
+    assert_eq!(limit.none_phrase, "no limit");
+    assert_eq!(limit.is_none, fixture["initial"]["limit"].is_null());
+    window.invoke_none_toggled(limit_row, false);
+    window.invoke_number_edited(limit_row, 3);
+    window.invoke_cancel();
+    assert!(
+        store
+            .read(get::<FileSearchSettings>)
+            .unwrap()
+            .implicit_limit
+            .is_none()
+    );
+    for case in fixture["refreshes"].as_array().unwrap() {
+        let enabled = case["enabled"].as_bool().unwrap();
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "file search");
+        let (limit_row, _) = row(&window, "Implicit system:limit for all searches: ");
+        let (refresh_row, _) = row(
+            &window,
+            "If explicit system:limit, then refresh search when file sort changes: ",
+        );
+        window.invoke_none_toggled(limit_row, false);
+        window.invoke_number_edited(limit_row, 3);
+        window.invoke_check_toggled(refresh_row, enabled);
+        window.invoke_apply();
+        let saved = store.read(get::<FileSearchSettings>).unwrap();
+        assert_eq!(saved.implicit_limit, Some(3));
+        assert_eq!(saved.refresh_limited_sort, enabled);
+        let mut page = hydrus_gui::SearchPage::new(store.clone());
+        page.set_sort_by(SortBy::Hash);
+        page.set_sort_order(SortOrder::Ascending);
+        assert!(page.add_predicate("system:everything"));
+        assert_eq!(
+            page.results().len(),
+            3,
+            "implicit limit reaches the search engine"
+        );
+        if case["explicit"].as_bool().unwrap() {
+            assert!(page.add_predicate("system:limit is 3"));
+        }
+        let original = page
+            .results()
+            .iter()
+            .copied()
+            .collect::<std::collections::BTreeSet<_>>();
+        page.set_synchronised(case["sync"].as_bool().unwrap());
+        page.set_sort_by(SortBy::from_code(case["code"].as_i64().unwrap()).unwrap());
+        page.set_sort_order(SortOrder::Descending);
+        let after = page
+            .results()
+            .iter()
+            .copied()
+            .collect::<std::collections::BTreeSet<_>>();
+        if case["refresh_count"].as_u64().unwrap() > 0 {
+            assert_ne!(
+                after, original,
+                "rerun must choose the other end of the hash-sorted search"
+            );
+        } else {
+            assert_eq!(
+                after, original,
+                "guarded sort changes only reorder the current subset"
+            );
+        }
+    }
+    let mut page = hydrus_gui::SearchPage::new(store.clone());
+    assert!(page.add_predicate("system:everything"));
+    assert!(page.add_predicate("system:limit is 8"));
+    assert_eq!(
+        page.results().len(),
+        8,
+        "larger explicit limit overrides the implicit limit"
+    );
+}

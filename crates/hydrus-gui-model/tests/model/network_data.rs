@@ -144,6 +144,7 @@ fn fresh_live_usage_wins_until_the_daemon_heartbeat_expires() {
                     at: 100,
                     usage: vec![(NetworkContext::global(), tracker)],
                     jobs: Vec::new(),
+                    ..Snapshot::default()
                 },
             )
         })

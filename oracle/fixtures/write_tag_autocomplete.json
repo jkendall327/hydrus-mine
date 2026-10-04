@@ -1,0 +1,512 @@
+{
+  "detached_inputs": [
+    {
+      "kind": "additional",
+      "action": "initial",
+      "tags": [
+        "parity:caller initial"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "additional",
+      "action": "paste",
+      "tags": [
+        "parity:caller initial",
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "additional",
+      "action": "repeat_paste",
+      "tags": [
+        "parity:caller initial",
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "additional",
+      "action": "typed_toggle",
+      "tags": [
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "additional",
+      "action": "cancel",
+      "tags": [
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "initial",
+      "tags": [
+        "parity:caller initial"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "paste",
+      "tags": [
+        "parity:caller initial",
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "repeat_paste",
+      "tags": [
+        "parity:caller initial",
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "typed_toggle",
+      "tags": [
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    },
+    {
+      "kind": "whitelist",
+      "action": "cancel",
+      "tags": [
+        "parity:child new"
+      ],
+      "caller": [
+        "parity:caller initial"
+      ]
+    }
+  ],
+  "relationship_inputs": [
+    {
+      "kind": "siblings",
+      "action": "paste_left",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": []
+    },
+    {
+      "kind": "siblings",
+      "action": "repeat_left",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": []
+    },
+    {
+      "kind": "siblings",
+      "action": "paste_right",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste right"
+      ]
+    },
+    {
+      "kind": "siblings",
+      "action": "repeat_right",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste right"
+      ]
+    },
+    {
+      "kind": "siblings",
+      "action": "move_to_right",
+      "left": [
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste left a"
+      ]
+    },
+    {
+      "kind": "parents",
+      "action": "paste_left",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": []
+    },
+    {
+      "kind": "parents",
+      "action": "repeat_left",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": []
+    },
+    {
+      "kind": "parents",
+      "action": "paste_right",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste right a",
+        "parity:paste right b"
+      ]
+    },
+    {
+      "kind": "parents",
+      "action": "repeat_right",
+      "left": [
+        "parity:paste left a",
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste right a",
+        "parity:paste right b"
+      ]
+    },
+    {
+      "kind": "parents",
+      "action": "move_to_right",
+      "left": [
+        "parity:paste left b"
+      ],
+      "right": [
+        "parity:paste left a",
+        "parity:paste right a",
+        "parity:paste right b"
+      ]
+    }
+  ],
+  "controls": {
+    "values": [
+      false,
+      false,
+      true,
+      true,
+      true
+    ],
+    "height": 11,
+    "minimum": 1,
+    "maximum": 128
+  },
+  "corpus": [
+    {
+      "tag": "parity:amber",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
+    },
+    {
+      "tag": "parity:amber old",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    },
+    {
+      "tag": "parity:amethyst",
+      "hashes": [
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    },
+    {
+      "tag": "parity:amaranth",
+      "hashes": [
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
+    }
+  ],
+  "queries": [
+    {
+      "text": "parity:amb",
+      "first_with_count": false,
+      "expanded": true,
+      "parents": true,
+      "siblings": true,
+      "service": "my tags",
+      "suggestions": [
+        {
+          "tag": "parity:amb",
+          "count": false,
+          "rows": [
+            "parity:amb"
+          ]
+        },
+        {
+          "tag": "parity:amber",
+          "count": true,
+          "rows": [
+            "parity:amber (3)",
+            "    parity:colour",
+            "    parity:root"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "count": true,
+          "rows": [
+            "parity:amber old (1) → parity:amber",
+            "    parity:colour",
+            "    parity:root"
+          ]
+        }
+      ],
+      "selected": [
+        "parity:amb"
+      ]
+    },
+    {
+      "text": "parity:amb",
+      "first_with_count": true,
+      "expanded": true,
+      "parents": true,
+      "siblings": true,
+      "service": "my tags",
+      "suggestions": [
+        {
+          "tag": "parity:amb",
+          "count": false,
+          "rows": [
+            "parity:amb"
+          ]
+        },
+        {
+          "tag": "parity:amber",
+          "count": true,
+          "rows": [
+            "parity:amber (3)",
+            "    parity:colour",
+            "    parity:root"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "count": true,
+          "rows": [
+            "parity:amber old (1) → parity:amber",
+            "    parity:colour",
+            "    parity:root"
+          ]
+        }
+      ],
+      "selected": [
+        "parity:amber"
+      ]
+    },
+    {
+      "text": "parity:am",
+      "first_with_count": false,
+      "expanded": true,
+      "parents": true,
+      "siblings": true,
+      "service": "my tags",
+      "suggestions": [
+        {
+          "tag": "parity:am",
+          "count": false,
+          "rows": [
+            "parity:am"
+          ]
+        }
+      ],
+      "selected": [
+        "parity:am"
+      ]
+    },
+    {
+      "text": "parity:amber old",
+      "first_with_count": false,
+      "expanded": false,
+      "parents": true,
+      "siblings": true,
+      "service": "my tags",
+      "suggestions": [
+        {
+          "tag": "parity:amber",
+          "count": true,
+          "rows": [
+            "parity:amber (3) (2 parents)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "count": true,
+          "rows": [
+            "parity:amber old (1) → parity:amber (2 parents)"
+          ]
+        }
+      ],
+      "selected": [
+        "parity:amber"
+      ]
+    },
+    {
+      "text": "parity:amber old",
+      "first_with_count": false,
+      "expanded": false,
+      "parents": false,
+      "siblings": false,
+      "service": "my tags",
+      "suggestions": [
+        {
+          "tag": "parity:amber",
+          "count": true,
+          "rows": [
+            "parity:amber (3)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "count": true,
+          "rows": [
+            "parity:amber old (1)"
+          ]
+        }
+      ],
+      "selected": [
+        "parity:amber"
+      ]
+    },
+    {
+      "text": "parity:amb",
+      "first_with_count": false,
+      "expanded": false,
+      "parents": true,
+      "siblings": true,
+      "service": "all known tags",
+      "suggestions": [
+        {
+          "tag": "parity:amb",
+          "count": false,
+          "rows": [
+            "parity:amb"
+          ]
+        },
+        {
+          "tag": "parity:amber",
+          "count": true,
+          "rows": [
+            "parity:amber (3) (2 parents)"
+          ]
+        },
+        {
+          "tag": "parity:amber old",
+          "count": true,
+          "rows": [
+            "parity:amber old (1) → parity:amber (2 parents)"
+          ]
+        }
+      ],
+      "selected": [
+        "parity:amb"
+      ]
+    }
+  ],
+  "paste": [
+    {
+      "text": " Parity:Amber \nparity:new\nparity:new\n\n",
+      "skip": false,
+      "answer": false,
+      "button": false,
+      "consumed": false,
+      "asked": [
+        {
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
+          "title": "Want to paste everything?"
+        }
+      ],
+      "pasted": []
+    },
+    {
+      "text": " Parity:Amber \nparity:new\nparity:new\n\n",
+      "skip": false,
+      "answer": true,
+      "button": false,
+      "consumed": true,
+      "asked": [
+        {
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:new\nparity:amber",
+          "title": "Want to paste everything?"
+        }
+      ],
+      "pasted": [
+        [
+          "parity:amber",
+          "parity:new"
+        ]
+      ]
+    },
+    {
+      "text": "parity:skip a\nparity:skip b",
+      "skip": true,
+      "answer": false,
+      "button": false,
+      "consumed": true,
+      "asked": [],
+      "pasted": [
+        [
+          "parity:skip a",
+          "parity:skip b"
+        ]
+      ]
+    },
+    {
+      "text": "parity:button a\nparity:button b",
+      "skip": false,
+      "answer": false,
+      "button": true,
+      "consumed": null,
+      "asked": [],
+      "pasted": [
+        [
+          "parity:button a",
+          "parity:button b"
+        ]
+      ]
+    },
+    {
+      "text": "parity:single",
+      "skip": false,
+      "answer": false,
+      "button": false,
+      "consumed": false,
+      "asked": [],
+      "pasted": []
+    }
+  ]
+}

@@ -293,3 +293,60 @@ pub fn collapse_question(files: usize, pages: usize, single: bool) -> String {
         )
     }
 }
+
+/// Session entries belong to the clicked row; saving targets the clicked
+/// notebook itself while append uses its parent notebook.
+pub fn session_entries(
+    parent: Option<hydrus_core::pages::PageKey>,
+    notebook: Option<(hydrus_core::pages::PageKey, &str)>,
+    names: &[String],
+) -> Vec<Entry> {
+    let mut entries = Vec::new();
+    if !names.is_empty() || notebook.is_some() {
+        entries.push(Entry::Separator);
+    }
+    if !names.is_empty() {
+        entries.push(Entry::Menu {
+            label: "append session".into(),
+            enabled: true,
+            entries: names
+                .iter()
+                .map(|name| Entry::Item {
+                    label: name.clone(),
+                    enabled: true,
+                    command: Some(Command::AppendNotebookSession {
+                        notebook: parent,
+                        name: name.clone(),
+                    }),
+                })
+                .collect(),
+        });
+    }
+    if let Some((key, suggested_name)) = notebook {
+        let save = |name: Option<String>| Command::SaveNotebookSession {
+            key,
+            name,
+            suggested_name: suggested_name.into(),
+        };
+        let mut sessions: Vec<_> = names
+            .iter()
+            .filter(|name| !crate::session_saving::RESERVED.contains(&name.as_str()))
+            .map(|name| Entry::Item {
+                label: name.clone(),
+                enabled: true,
+                command: Some(save(Some(name.clone()))),
+            })
+            .collect();
+        sessions.push(Entry::Item {
+            label: "create a new session".into(),
+            enabled: true,
+            command: Some(save(None)),
+        });
+        entries.push(Entry::Menu {
+            label: "save this page of pages to a session".into(),
+            enabled: true,
+            entries: sessions,
+        });
+    }
+    entries
+}
