@@ -133,6 +133,8 @@ pub enum Command {
     NudgeSubscriptions,
     /// Close every page (asking first) and load the saved session.
     ClearAndLoadSession(String),
+    /// Refresh a clicked page or all initialized descendants of a notebook.
+    RefreshTab(PageKey),
     /// Append a fresh named session into this notebook's sibling row.
     AppendNotebookSession {
         notebook: Option<PageKey>,
