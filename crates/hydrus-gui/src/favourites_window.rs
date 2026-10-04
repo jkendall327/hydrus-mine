@@ -507,7 +507,7 @@ fn open_edit(
             window.set_tags_label(
                 crate::domains::tag_label(&snapshot.services, &edit.search.tags).into(),
             );
-            window.set_location_index(location_choices.iter().position(|r| matches!(&r.choice, crate::domains::Choice::Location(l) if *l == edit.search.location)).and_then(|i| i32::try_from(i).ok()).unwrap_or(-1));
+            window.set_location_index(location_choices.iter().position(|r| matches!(&r.choice, crate::domains::Choice::Location(l) if *l == edit.search.location)).or_else(|| location_choices.iter().position(|r| matches!(r.choice, crate::domains::Choice::Multiple))).and_then(|i| i32::try_from(i).ok()).unwrap_or(-1));
             window.set_tag_index(tag_choices.iter().position(|r| matches!(&r.choice, crate::domains::Choice::Tags(t) if *t == edit.search.tags.service)).and_then(|i| i32::try_from(i).ok()).unwrap_or(-1));
             window.set_include_current(edit.search.tags.include_current);
             window.set_include_pending(edit.search.tags.include_pending);

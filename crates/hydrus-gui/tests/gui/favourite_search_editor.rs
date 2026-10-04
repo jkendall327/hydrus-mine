@@ -86,6 +86,10 @@ fn favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches()
     w.invoke_location_ticked(i32::try_from(deleted).unwrap(), true);
     w.invoke_locations_answered(true);
     assert!(w.get_location_label().contains("current and deleted"));
+    assert_eq!(
+        w.get_location_index(),
+        index(w.get_location_choices(), "multiple/deleted")
+    );
     w.invoke_location_chosen(index(w.get_location_choices(), "my files"));
     w.invoke_sort_chosen(index(w.get_sort_choices(), "dimensions: width"));
     w.invoke_sort_order_chosen(1);

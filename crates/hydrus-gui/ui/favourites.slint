@@ -333,6 +333,11 @@ export component FavouriteEditWindow inherits Window {
                 CheckBox { text: "include current tags"; checked: root.include-current; enabled: root.can-edit; toggled => { root.tag-status-ticked(false, self.checked); } }
                 CheckBox { text: "include pending tags"; checked: root.include-pending; enabled: root.can-edit; toggled => { root.tag-status-ticked(true, self.checked); } }
             }
+            Text {
+                text: "files: " + root.location-label;
+                color: Theme.text;
+                wrap: word-wrap;
+            }
             if root.selecting-locations: VerticalLayout {
                 for tick[i] in root.location-ticks: CheckBox {
                     text: tick.label;
