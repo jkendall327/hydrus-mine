@@ -331,6 +331,7 @@ pub(crate) fn open(
         }
     });
     window.on_recent_forgotten({
+        let store = store.clone();
         let state = state.clone();
         let show_page = show_page.clone();
         let weak = window.as_weak();
