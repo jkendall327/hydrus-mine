@@ -2901,6 +2901,13 @@ Opening another service review cancels the previous owner's pending question;
 retained callbacks from that retired owner cannot clear records or close the
 replacement review.
 
+Numerical rating examples keep their opening allow-zero setting even when the
+live star count drops to one. The displayed sample remains “1/1” for an opening
+nonzero scale; saving the one-star service still forces allow-zero, as Qt does.
+`rating_preview_one_star.json` records all four samples through that transition
+and back to seven stars, including checkbox changes that affect only the saved
+configuration.
+
 Local rating service edits include an expanded “example display” with independent
 Thumbnails, Media Viewer, Preview Window and Dialog (Default) samples. Colours,
 shape, numerical star count, spacing and fraction placement repaint the draft.

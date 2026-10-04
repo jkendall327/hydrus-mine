@@ -1,0 +1,153 @@
+{
+  "name": "stars",
+  "opening_num_stars": 5,
+  "opening_allow_zero": false,
+  "events": [
+    {
+      "action": "centre_clicks",
+      "num_stars": 5,
+      "checkbox_allow_zero": false,
+      "saved_allow_zero": false,
+      "live_allow_zero": false,
+      "samples": [
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "3/5"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "3/5"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "3/5"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "3/5"
+        }
+      ]
+    },
+    {
+      "action": "one_star",
+      "num_stars": 1,
+      "checkbox_allow_zero": false,
+      "saved_allow_zero": true,
+      "live_allow_zero": false,
+      "samples": [
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "1/1"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "1/1"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "1/1"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "1/1"
+        }
+      ]
+    },
+    {
+      "action": "allow_zero_checked",
+      "num_stars": 1,
+      "checkbox_allow_zero": true,
+      "saved_allow_zero": true,
+      "live_allow_zero": false,
+      "samples": [
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "1/1"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "1/1"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "1/1"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "1/1"
+        }
+      ]
+    },
+    {
+      "action": "seven_stars",
+      "num_stars": 7,
+      "checkbox_allow_zero": true,
+      "saved_allow_zero": true,
+      "live_allow_zero": false,
+      "samples": [
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "4/7"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "4/7"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "4/7"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "4/7"
+        }
+      ]
+    },
+    {
+      "action": "allow_zero_unchecked",
+      "num_stars": 7,
+      "checkbox_allow_zero": false,
+      "saved_allow_zero": false,
+      "live_allow_zero": false,
+      "samples": [
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "4/7"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "4/7"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "4/7"
+        },
+        {
+          "rating": 0.5,
+          "state": 3,
+          "fraction": "4/7"
+        }
+      ]
+    }
+  ],
+  "original_unchanged": true
+}
