@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Record reference demand-login eligibility and ordinary loopback downloader admission."""
+"""Record demand eligibility, forced/global login coordination and loopback admission."""
 import http.server
 import json
 import os
@@ -81,6 +81,28 @@ def record(session):
                 if not job.IsDone():job.Cancel();raise AssertionError(f'reference demand request did not finish: {job.GetStatus()} requests={requests}')
                 job.WaitUntilDone()
                 runtime.append({'name':name,'active':active,'initial_cookie':cookie,'trigger_cancelled':name=='cancel-trigger','requests':list(requests),'logged_in':script.IsLoggedIn(engine,ctx),'after':manager.GetSerialisableTuple()})
+            # Forced/manual processes use the same engine-owned global slot as
+            # demand, and force still runs when the required cookie already exists.
+            manager.SetLoginScripts([script]);manager.SetDomainsToLoginInfo({domain:base})
+            engine.session_manager.ClearSession(context(domain));requests.clear()
+            engine.ForceLogins([domain])
+            deadline=time.monotonic()+5
+            while not requests and time.monotonic()<deadline:time.sleep(.02)
+            assert requests and requests[0]['path']=='/login'
+            job=J.NetworkJob('GET',f'http://{domain}/data');job.OverrideBandwidth();engine.AddJob(job)
+            deadline=time.monotonic()+10
+            while not job.IsDone() and time.monotonic()<deadline:time.sleep(.02)
+            assert job.IsDone();job.WaitUntilDone()
+            forced_requests=list(requests)
+            deadline=time.monotonic()+5
+            while engine._current_login_process is not None and time.monotonic()<deadline:time.sleep(.02)
+            assert engine._current_login_process is None
+            assert script.IsLoggedIn(engine,context(domain))
+            requests.clear();engine.ForceLogins([domain])
+            deadline=time.monotonic()+10
+            while (not requests or engine._current_login_process is not None) and time.monotonic()<deadline:time.sleep(.02)
+            assert requests and engine._current_login_process is None
+            forced={'initially_logged_in':False,'requests':forced_requests,'repeat_initially_logged_in':True,'repeat_requests':list(requests),'after':manager.GetSerialisableTuple()}
             popup=[]
             original_pub=c.pub
             def capture(topic,*args,**kwargs):
@@ -123,7 +145,7 @@ def record(session):
                 try:job.WaitUntilDone();error=None
                 except Exception as e:error=str(e)
                 blocked.append({'name':name,'before_cancel':before,'error':error,'requests':list(requests)})
-            return {'now':now,'cancelled_process':cancelled_process,'blocked':blocked,'script':script.GetSerialisableTuple(),'states':states,'runtime':runtime,'ordinary_waits':J.NetworkJob.WILLING_TO_WAIT_ON_INVALID_LOGIN,'subscription_waits':J.NetworkJobSubscription.WILLING_TO_WAIT_ON_INVALID_LOGIN}
+            return {'now':now,'forced':forced,'cancelled_process':cancelled_process,'blocked':blocked,'script':script.GetSerialisableTuple(),'states':states,'runtime':runtime,'ordinary_waits':J.NetworkJob.WILLING_TO_WAIT_ON_INVALID_LOGIN,'subscription_waits':J.NetworkJobSubscription.WILLING_TO_WAIT_ON_INVALID_LOGIN}
         finally:engine.login_manager=original
     try:return c.CallBlockingToQt(c.gui,qt)
     finally:server.shutdown();server.server_close();thread.join()

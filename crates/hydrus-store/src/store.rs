@@ -34,6 +34,12 @@ pub const SERVE_LOCK_FILE: &str = "serve.lock";
 /// open.
 pub const GUI_LOCK_FILE: &str = "gui.lock";
 
+/// Take the crash-safe login admission lock for all engines using this store.
+/// The returned file owns the lease until it is dropped, including on process exit.
+pub fn lock_login(dir: &Path) -> std::io::Result<Option<std::fs::File>> {
+    lock(dir, "login.lock")
+}
+
 /// Changes to snapshot-backed state, shared between independently opened stores.
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
 struct SnapshotRevision(u64);

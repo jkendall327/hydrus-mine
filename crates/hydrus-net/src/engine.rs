@@ -464,7 +464,7 @@ pub struct NetEngine {
     next_job: Arc<AtomicU64>,
     recent_errors: Arc<Mutex<Vec<network_runtime::JobError>>>,
     epoch: String,
-    login: Arc<LoginRuntime>,
+    login: Arc<Mutex<Option<Arc<Job>>>>,
 }
 
 /// Why one attempt failed, and so what happens next.
@@ -523,43 +523,15 @@ impl Drop for RegisteredJob<'_> {
     }
 }
 
-#[derive(Debug)]
-struct ActiveLogin {
-    id: u64,
-    domain: String,
-    script: String,
-    epoch: String,
-    job: Arc<Job>,
+// Engine clones own their current control; admission itself belongs to the store.
+struct LoginOwner {
+    lease: hydrus_store::login_runtime::Lease,
+    control: Arc<Mutex<Option<Arc<Job>>>>,
 }
-#[derive(Debug)]
-struct LoginRuntime {
-    gate: Arc<Semaphore>,
-    active: Mutex<Option<ActiveLogin>>,
-}
-struct LoginOwner(Arc<LoginRuntime>);
 impl Drop for LoginOwner {
     fn drop(&mut self) {
-        self.0.active.lock().take();
+        self.control.lock().take();
     }
-}
-type LoginRuntimes = std::collections::HashMap<PathBuf, std::sync::Weak<LoginRuntime>>;
-// Engine copies and independently opened engines share one login process per store.
-fn login_runtime(store: &Store) -> Arc<LoginRuntime> {
-    static RUNTIMES: std::sync::OnceLock<Mutex<LoginRuntimes>> = std::sync::OnceLock::new();
-    let mut runtimes = RUNTIMES.get_or_init(Mutex::default).lock();
-    runtimes.retain(|_, runtime| runtime.strong_count() > 0);
-    if let Some(runtime) = runtimes
-        .get(store.path())
-        .and_then(std::sync::Weak::upgrade)
-    {
-        return runtime;
-    }
-    let runtime = Arc::new(LoginRuntime {
-        gate: Arc::new(Semaphore::new(1)),
-        active: Mutex::default(),
-    });
-    runtimes.insert(store.path().to_owned(), Arc::downgrade(&runtime));
-    runtime
 }
 
 fn now_ms() -> i64 {
@@ -651,40 +623,29 @@ impl NetEngine {
                 }
             })
             .collect();
+        let usage = self.bandwidth.lock().0.all_trackers();
+        let errors = self.recent_errors.lock().clone();
+        let login = self.login_process();
         network_runtime::Snapshot {
             epoch: self.epoch.clone(),
             at: now(),
             jobs,
-            usage: self.bandwidth.lock().0.all_trackers(),
+            usage,
             controls,
-            errors: self.recent_errors.lock().clone(),
-            login: self
-                .login
-                .active
-                .lock()
-                .as_ref()
-                .map(|active| network_runtime::LoginProcess {
-                    id: active.id,
-                    domain: active.domain.clone(),
-                    script: active.script.clone(),
-                    epoch: active.epoch.clone(),
-                    status: active.job.state().stage,
-                }),
+            errors,
+            login,
         }
     }
 
     /// Apply a command only to the live request and daemon that were reviewed.
     pub fn runtime_command(&self, command: &network_runtime::Command) -> bool {
         if command.action == network_runtime::JobAction::CancelLogin {
-            let active = self.login.active.lock();
-            if let Some(active) = active
-                .as_ref()
-                .filter(|active| active.id == command.job && active.epoch == command.epoch)
-            {
-                active.job.cancel();
-                return true;
-            }
-            return false;
+            return hydrus_store::login_runtime::cancel(
+                &self.store,
+                command.epoch.clone(),
+                command.job,
+            )
+            .unwrap_or(false);
         }
         if command.epoch != self.epoch {
             return false;
@@ -770,7 +731,6 @@ impl NetEngine {
     }
 
     pub fn new(store: Arc<Store>, options: NetOptions) -> Result<Self, NetError> {
-        static NEXT_EPOCH: AtomicU64 = AtomicU64::new(1);
         let client = http_client(&options)?;
         let now = now();
         let (bandwidth_settings, usage, history_resets) = store
@@ -785,9 +745,11 @@ impl NetEngine {
         let mut manager = Manager::new(bandwidth_settings.rules.clone());
         manager.set_trackers(usage.clone());
         let saved_bandwidth = (usage, history_resets.clone());
+        let epoch = hydrus_store::login_runtime::next_epoch(&store)
+            .map_err(|error| NetError::Io(error.to_string()))?;
         Ok(Self {
             client: Arc::new(RwLock::new(client)),
-            login: login_runtime(&store),
+            login: Arc::new(Mutex::default()),
             store,
             slots: Arc::new(RwLock::new(Arc::new(Semaphore::new(
                 options.max_jobs.max(1),
@@ -803,12 +765,7 @@ impl NetEngine {
             jobs: Arc::new(Mutex::default()),
             next_job: Arc::new(AtomicU64::new(1)),
             recent_errors: Arc::new(Mutex::default()),
-            epoch: format!(
-                "{}:{}:{}",
-                std::process::id(),
-                now_ms(),
-                NEXT_EPOCH.fetch_add(1, Ordering::Relaxed)
-            ),
+            epoch,
             options: Arc::new(RwLock::new(options)),
         })
     }
@@ -1368,6 +1325,124 @@ impl NetEngine {
         }
     }
 
+    fn login_process(&self) -> Option<network_runtime::LoginProcess> {
+        let mut process = hydrus_store::login_runtime::current(&self.store)
+            .ok()
+            .flatten()?;
+        let control = self.login.lock().clone();
+        if process.epoch == self.epoch
+            && let Some(control) = control
+        {
+            process.status = control.state().stage;
+        }
+        Some(process)
+    }
+
+    fn try_login_owner(
+        &self,
+        domain: &str,
+        script: &str,
+        control: &Arc<Job>,
+    ) -> Result<Option<LoginOwner>, NetError> {
+        let process = network_runtime::LoginProcess {
+            id: self.next_job.fetch_add(1, Ordering::Relaxed),
+            domain: domain.into(),
+            script: script.into(),
+            epoch: self.epoch.clone(),
+            status: control.state().stage,
+        };
+        let lease = hydrus_store::login_runtime::try_acquire(&self.store, process)
+            .map_err(|error| NetError::Io(error.to_string()))?;
+        Ok(lease.map(|lease| {
+            *self.login.lock() = Some(control.clone());
+            LoginOwner {
+                lease,
+                control: self.login.clone(),
+            }
+        }))
+    }
+
+    // Neither the store writer nor an in-memory lock is held across HTTP or waits.
+    #[allow(clippy::too_many_arguments)]
+    async fn execute_login_owned(
+        &self,
+        owner: LoginOwner,
+        script: &hydrus_parse::login::LoginScript,
+        domain: &str,
+        credentials: &std::collections::BTreeMap<String, String>,
+        control: &Job,
+        result_ready: impl FnMut(&crate::login::TestResult),
+    ) -> Result<(crate::login::Execution, bool), NetError> {
+        let execution = crate::login::execute_with_results(
+            self,
+            &self.store,
+            script,
+            domain,
+            credentials,
+            control,
+            result_ready,
+        );
+        tokio::pin!(execution);
+        let mut ticks = tokio::time::interval(Duration::from_millis(50));
+        let execution = loop {
+            tokio::select! {
+                result = &mut execution => break result,
+                _ = ticks.tick() => {
+                    match owner.lease.pulse(control.state().stage) {
+                        Ok(true) => control.cancel(),
+                        Ok(false) => {},
+                        Err(error) => { control.cancel(); return Err(NetError::Io(error.to_string())); },
+                    }
+                }
+            }
+        };
+        // Save before releasing admission so a queued downloader sees the outcome.
+        let outcome = execution.outcome.clone();
+        let domain = domain.to_owned();
+        let key = script.key.clone();
+        let applied = self
+            .store
+            .write_and_refresh(move |ctx| {
+                let mut manager = hydrus_store::logins::load(ctx.conn())?;
+                let applied = manager
+                    .domains
+                    .get_mut(&domain)
+                    .is_some_and(|login| outcome.update_domain(login, &key, now()));
+                if applied {
+                    hydrus_store::logins::save(ctx.conn(), &manager)?;
+                }
+                Ok(applied)
+            })
+            .map_err(|error| NetError::Io(error.to_string()))?;
+        Ok((execution, applied))
+    }
+
+    /// Execute a manual or forced login through the same per-store lease as demand.
+    /// Test editors use an isolated store and may keep their direct execution path.
+    pub async fn run_login_with_results(
+        &self,
+        script: &hydrus_parse::login::LoginScript,
+        domain: &str,
+        credentials: &std::collections::BTreeMap<String, String>,
+        control: &Arc<Job>,
+        result_ready: impl FnMut(&crate::login::TestResult),
+    ) -> Result<crate::login::Execution, NetError> {
+        let owner = loop {
+            if control.is_cancelled() {
+                return Err(NetError::Cancelled);
+            }
+            if let Some(owner) = self.try_login_owner(domain, &script.name, control)? {
+                break owner;
+            }
+            control.set_wait(WaitReason::Login);
+            control.set_status("waiting in login queue…");
+            control.sleep(0.05).await?;
+        };
+        self.execute_login_owned(owner, script, domain, credentials, control, result_ready)
+            .await
+            .map(|(execution, _)| execution)
+    }
+
     fn wait_for_login<'a>(
         &'a self,
         domain: &'a str,
@@ -1380,23 +1455,13 @@ impl NetEngine {
                 if job.is_cancelled() {
                     return Err(NetError::Cancelled);
                 }
-                let current_domain = self
-                    .login
-                    .active
-                    .lock()
-                    .as_ref()
-                    .map(|active| active.domain.clone());
-                if current_domain
-                    .as_ref()
-                    .is_some_and(|current| current == domain)
+                if self
+                    .login_process()
+                    .is_some_and(|active| active.domain == domain)
                 {
                     job.set_wait(WaitReason::Login);
                     job.set_status("waiting in login queue…");
-                    let permit = tokio::select! {
-                        permit = self.login.gate.acquire() => permit.expect("never closed"),
-                        () = job.cancel.cancelled() => return Err(NetError::Cancelled),
-                    };
-                    drop(permit);
+                    job.sleep(0.05).await?;
                     continue;
                 }
                 match demand(&self.store, domain, now()).map_err(NetError::Io)? {
@@ -1404,67 +1469,44 @@ impl NetEngine {
                     Demand::Blocked { error, .. } => {
                         Self::wait_invalid_login(domain, request, job, &error).await?;
                     }
-                    Demand::Ready(_) => {
+                    Demand::Ready(login) => {
                         job.set_wait(WaitReason::Login);
                         job.set_status("waiting in login queue…");
-                        let permit = tokio::select! {
-                            permit = self.login.gate.clone().acquire_owned() => permit.expect("never closed"),
-                            () = job.cancel.cancelled() => return Err(NetError::Cancelled),
+                        let control = Job::new();
+                        let Some(owner) =
+                            self.try_login_owner(&login.domain, &login.script.name, &control)?
+                        else {
+                            job.sleep(0.05).await?;
+                            continue;
                         };
+                        let expected_domain = login.domain;
+                        let expected_key = login.script.key;
                         let Demand::Ready(login) =
                             demand(&self.store, domain, now()).map_err(NetError::Io)?
                         else {
                             continue;
                         };
+                        if login.domain != expected_domain || login.script.key != expected_key {
+                            continue;
+                        }
                         job.set_status("logging in…");
-                        let control = Job::new();
-                        *self.login.active.lock() = Some(ActiveLogin {
-                            id: self.next_job.fetch_add(1, Ordering::Relaxed),
-                            domain: login.domain.clone(),
-                            script: login.script.name.clone(),
-                            epoch: self.epoch.clone(),
-                            job: control.clone(),
-                        });
-                        // The global process belongs to the engine, independently
-                        // of the downloader request that first needed it.
-                        let owner = LoginOwner(self.login.clone());
+                        // The guard exists before spawning, including an unpolled
+                        // worker dropped with its runtime. Cancelling the trigger
+                        // detaches the process; only its reviewed owner cancels it.
                         let mut task = tokio::spawn({
                             let engine = self.clone();
                             async move {
-                                let _permit = permit;
-                                let _owner = owner;
-                                let execution = crate::login::execute(
-                                    &engine,
-                                    &engine.store,
-                                    &login.script,
-                                    &login.domain,
-                                    &login.credentials,
-                                    &control,
-                                )
-                                .await;
-                                let outcome = execution.outcome;
-                                let saved_outcome = outcome.clone();
-                                let applied = engine
-                                    .store
-                                    .write_and_refresh(move |ctx| {
-                                        let mut manager = hydrus_store::logins::load(ctx.conn())?;
-                                        let applied = manager
-                                            .domains
-                                            .get_mut(&login.domain)
-                                            .is_some_and(|domain| {
-                                                saved_outcome.update_domain(
-                                                    domain,
-                                                    &login.script.key,
-                                                    now(),
-                                                )
-                                            });
-                                        if applied {
-                                            hydrus_store::logins::save(ctx.conn(), &manager)?;
-                                        }
-                                        Ok(applied)
-                                    })
-                                    .map_err(|error| NetError::Io(error.to_string()))?;
-                                Ok::<_, NetError>(applied.then_some(outcome))
+                                let (execution, applied) = engine
+                                    .execute_login_owned(
+                                        owner,
+                                        &login.script,
+                                        &login.domain,
+                                        &login.credentials,
+                                        &control,
+                                        |_| {},
+                                    )
+                                    .await?;
+                                Ok::<_, NetError>(applied.then_some(execution.outcome))
                             }
                         });
                         let outcome = tokio::select! {

@@ -682,7 +682,11 @@ async fn cancelled_trigger_keeps_reference_global_login_alive_for_another_engine
     use hydrus_net::{NetError, Request};
     let site = site().await;
     save_demand(&site.store, &site.domain, true);
-    let sibling = NetEngine::new(site.store.clone(), site.engine.options()).unwrap();
+    let sibling = NetEngine::new(
+        Store::open(site.store.dir()).unwrap(),
+        site.engine.options(),
+    )
+    .unwrap();
     assert_ne!(
         site.engine.runtime_snapshot().epoch,
         sibling.runtime_snapshot().epoch
@@ -801,7 +805,11 @@ async fn global_process_cancel_uses_its_owner_id_and_persists_reference_delay_wi
     use hydrus_net::Request;
     use hydrus_store::network_runtime::{Command, JobAction};
     let site = site().await;
-    let sibling = NetEngine::new(site.store.clone(), site.engine.options()).unwrap();
+    let sibling = NetEngine::new(
+        Store::open(site.store.dir()).unwrap(),
+        site.engine.options(),
+    )
+    .unwrap();
     let fixture = hydrus_testkit::fixture_json("login_demand.json");
     let case = &fixture["cancelled_process"];
     let mut manager = demand_manager(&site.domain, true);
@@ -920,4 +928,90 @@ fn abandoned_unpolled_login_worker_releases_metadata_and_the_shared_admission_ga
         action: hydrus_store::network_runtime::JobAction::CancelLogin,
     };
     assert!(!engine.runtime_command(&command));
+}
+
+#[tokio::test]
+async fn forced_manual_login_serializes_demand_across_independently_opened_engines() {
+    use hydrus_net::{NetError, Request};
+    let site = site().await;
+    save_demand(&site.store, &site.domain, true);
+    let manager = site.store.read(hydrus_store::logins::load).unwrap();
+    let script = &manager.scripts[0];
+    let control = Job::new();
+    let manual_engine = NetEngine::new(
+        Store::open(site.store.dir()).unwrap(),
+        site.engine.options(),
+    )
+    .unwrap();
+    let credentials = BTreeMap::new();
+    let manual =
+        manual_engine.run_login_with_results(script, &site.domain, &credentials, &control, |_| {});
+    tokio::pin!(manual);
+    tokio::select! {
+        result = &mut manual => panic!("manual login completed before its first HTTP step: {result:?}"),
+        () = wait_for_login_request(&site) => {},
+    }
+    let owner = site.engine.runtime_snapshot().login.unwrap();
+    assert_eq!(owner.epoch, manual_engine.runtime_snapshot().epoch);
+    // A forced second manual attempt waits on the same lease and cancellation
+    // retires only that queued attempt, leaving the current global process alive.
+    let queued = Job::new();
+    let second =
+        site.engine
+            .run_login_with_results(script, &site.domain, &credentials, &queued, |_| {});
+    tokio::pin!(second);
+    tokio::select! {
+        result = &mut second => panic!("a second manual process bypassed admission: {result:?}"),
+        () = tokio::time::sleep(Duration::from_millis(75)) => {},
+    }
+    assert_eq!(queued.state().status, "waiting in login queue…");
+    queued.cancel();
+    assert_eq!(second.await.unwrap_err(), NetError::Cancelled);
+    assert_eq!(site.engine.runtime_snapshot().login.unwrap().id, owner.id);
+    let download = Job::new();
+    let request = Request::get(format!("http://{}/data", site.domain));
+    let fetch = site.engine.fetch(&request, &download);
+    tokio::pin!(fetch);
+    tokio::select! {
+        result = &mut fetch => panic!("demand bypassed the active same-domain manual login: {result:?}"),
+        () = tokio::time::sleep(Duration::from_millis(75)) => {},
+    }
+    assert_eq!(download.state().status, "waiting in login queue…");
+    assert_eq!(site.requests.lock().unwrap().len(), 1);
+    let (execution, downloaded) = tokio::join!(manual, fetch);
+    assert_eq!(execution.unwrap().outcome, Outcome::Success);
+    downloaded.unwrap();
+    let fixture = hydrus_testkit::fixture_json("login_demand.json");
+    let recorded = |requests: &[Value]| {
+        json!(
+            requests
+                .iter()
+                .map(|request| json!({"path":request["path"], "cookie":request["cookie"]}))
+                .collect::<Vec<_>>()
+        )
+    };
+    assert_eq!(
+        recorded(&site.requests.lock().unwrap()),
+        fixture["forced"]["requests"]
+    );
+    assert!(site.engine.runtime_snapshot().login.is_none());
+    assert_eq!(
+        site.store.read(hydrus_store::logins::load).unwrap().domains[&site.domain].validity,
+        Validity::Valid
+    );
+    // Forced execution still runs with existing cookies, rather than being
+    // silently swallowed by automatic demand's logged-in eligibility check.
+    let forced = Job::new();
+    assert_eq!(
+        manual_engine
+            .run_login_with_results(script, &site.domain, &credentials, &forced, |_| {})
+            .await
+            .unwrap()
+            .outcome,
+        Outcome::Success
+    );
+    assert_eq!(
+        recorded(&site.requests.lock().unwrap()[2..]),
+        fixture["forced"]["repeat_requests"]
+    );
 }
