@@ -400,7 +400,14 @@ fn change(
                 .iter()
                 .position(|f| matches!(f, Field::Button(label) if label == text))
                 .unwrap();
-            if let Pressed::Warning(said) = panel.press(i) {
+            let pressed = panel.press(i);
+            let pressed = if matches!(pressed, Pressed::Confirm(_)) {
+                // The original recording answers the cleanup question yes.
+                panel.press_confirmed(i)
+            } else {
+                pressed
+            };
+            if let Pressed::Warning(said) = pressed {
                 warnings.push(said);
             }
             true
@@ -644,6 +651,7 @@ fn the_editor_window_adds_what_it_makes_to_the_search() {
 
 #[test]
 fn the_editor_window_shows_what_trees_and_buttons_change() {
+    let boundaries = hydrus_testkit::fixture_json("predicate_boundaries.json");
     let (_dirs, store) = store();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
@@ -688,11 +696,48 @@ fn the_editor_window_shows_what_trees_and_buttons_change() {
     assert_eq!(rows.len(), 7 + 12);
     assert_eq!(rows[1], ("jpeg".to_owned(), false));
     assert_eq!(rows[13], ("animation".to_owned(), false));
+    let check_tree = |step: usize| {
+        let rows = field(&window, 0, 2).rows;
+        let group = rows.row_data(0).unwrap();
+        let state = if group.partial {
+            1
+        } else if group.ticked {
+            2
+        } else {
+            0
+        };
+        assert_eq!(state, boundaries["mime"][step]["state"].as_u64().unwrap());
+        let selected: Vec<u64> = rows
+            .iter()
+            .skip(1)
+            .take(12)
+            .map(|row| if row.ticked { 2 } else { 0 })
+            .collect();
+        let recorded: Vec<u64> = boundaries["mime"][step]["children"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|value| value.as_u64().unwrap())
+            .collect();
+        assert_eq!(selected, recorded);
+    };
+    check_tree(0);
+    window.invoke_tree_ticked(0, 2, 0, 1, true);
+    check_tree(1);
+    window.invoke_tree_ticked(0, 2, 0, -1, true);
+    check_tree(2);
+    window.invoke_tree_ticked(0, 2, 0, 0, false);
+    check_tree(3);
+    window.invoke_tree_ticked(0, 2, 0, -1, false);
+    check_tree(4);
     window.invoke_tree_ticked(0, 2, 0, 1, true);
     window.invoke_tree_ticked(0, 2, 1, -1, true);
     let rows = shown_rows(&window);
     assert!(rows[2].1, "png ticked");
     assert!(rows[13].1, "animation ticked");
+    let tree = field(&window, 0, 2).rows;
+    assert!(tree.row_data(0).unwrap().partial);
+    assert!(!tree.row_data(13).unwrap().partial);
     window.invoke_expanded(0, 2, 0, false);
     assert_eq!(shown_rows(&window).len(), 7);
     window.invoke_ok(0);
@@ -715,8 +760,27 @@ fn the_editor_window_shows_what_trees_and_buttons_change() {
     );
     assert!(window.get_error().contains("\"not a hash\""));
     window.invoke_pressed(0, 4);
+    assert_eq!(
+        window.get_question(),
+        boundaries["hash"][0]["questions"][0].as_str().unwrap()
+    );
+    window.invoke_text_edited(0, 2, "changed while question pending".into());
+    window.invoke_ok(0);
+    assert!(bound.predicate_editor.borrow().is_some());
+    assert!(field(&window, 0, 2).text.contains("not a hash"));
+    window.invoke_answer(false);
+    assert!(window.get_question().is_empty());
+    assert_eq!(
+        field(&window, 0, 2).text,
+        boundaries["hash"][0]["text"].as_str().unwrap()
+    );
+    window.invoke_pressed(0, 4);
+    window.invoke_answer(true);
     assert_eq!(window.get_error(), "");
-    assert_eq!(field(&window, 0, 2).text, md5);
+    assert_eq!(
+        field(&window, 0, 2).text,
+        boundaries["hash"][1]["text"].as_str().unwrap()
+    );
     let types = field(&window, 0, 5);
     assert_eq!(
         types

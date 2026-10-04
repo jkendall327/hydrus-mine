@@ -142,6 +142,8 @@ pub enum Pressed {
     Done,
     /// Something to tell the user, the panel left as it was.
     Warning(String),
+    /// Ask before removing invalid input; confirmation applies the cleanup.
+    Confirm(String),
     /// Paste an image's hashes into the panel (which the window does: it
     /// needs the clipboard).
     Paste,
@@ -575,6 +577,15 @@ impl Panel {
 
     /// Press button `i`.
     pub fn press(&mut self, i: usize) -> Pressed {
+        self.press_inner(i, false)
+    }
+
+    /// Apply a button after its confirmation was accepted.
+    pub fn press_confirmed(&mut self, i: usize) -> Pressed {
+        self.press_inner(i, true)
+    }
+
+    fn press_inner(&mut self, i: usize, confirmed: bool) -> Pressed {
         let Some(Field::Button(label)) = self.fields.get(i) else {
             return Pressed::Done;
         };
@@ -597,6 +608,9 @@ impl Panel {
                 Pressed::Done
             }
             (Kind::Hash, _) => {
+                if !confirmed {
+                    return Pressed::Confirm("You sure?".into());
+                }
                 let all: Vec<&str> = HASH_TYPES.iter().map(|(t, _)| *t).collect();
                 let (hashes, suspected, _) = parse_hashes(self.lines_of(2), &all);
                 self.set_lines(2, hashes.join("\n"));

@@ -151,6 +151,8 @@ export component PredicateEditorWindow inherits Window {
     in property <bool> two-columns;
     in property <[EditorPanel]> panels;
     in property <string> error;
+    in property <string> question;
+    callback answer(bool);
     // the shown page's recent predicates, each a button adding it with
     // one beside it forgetting it
     in property <[string]> recent;
@@ -179,6 +181,10 @@ export component PredicateEditorWindow inherits Window {
     keys := FocusScope {
         key-pressed(event) => {
             if (event.text == Key.Escape) {
+                if (root.question != "") {
+                    root.answer(false);
+                    return accept;
+                }
                 root.cancel();
                 return accept;
             }
@@ -313,6 +319,11 @@ export component PredicateEditorWindow inherits Window {
                 text: root.error;
                 wrap: word-wrap;
                 color: Theme.error;
+            }
+            if root.question != "": HorizontalLayout {
+                Text { text: root.question; color: Theme.text; }
+                Button { text: "yes"; clicked => { root.answer(true); } }
+                Button { text: "no"; clicked => { root.answer(false); } }
             }
             HorizontalLayout {
                 alignment: end;
