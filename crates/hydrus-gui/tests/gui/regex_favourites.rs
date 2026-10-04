@@ -64,7 +64,7 @@ fn matcher_favourites_manager_saves_global_choices_and_parent_cancel_closes_it()
     let matcher = StringMatch {
         kind: MatchKind::Regex(PyRegex::new("a+")),
         example: "a".into(),
-        ..StringMatch::default()
+        ..StringMatch::any()
     };
     hydrus_gui::string_processor_window::open_match(&store, &matcher, &slots, Rc::new(|_| {}));
     let step = slots.step.borrow().as_ref().unwrap().clone_strong();
@@ -113,7 +113,7 @@ fn shared_regex_menus_copy_without_changing_text() {
     let matcher = StringMatch {
         kind: MatchKind::Regex(PyRegex::new("a+")),
         example: "a".into(),
-        ..StringMatch::default()
+        ..StringMatch::any()
     };
     hydrus_gui::string_processor_window::open_match(&store, &matcher, &slots, Rc::new(|_| {}));
     let step = slots.step.borrow().as_ref().unwrap().clone_strong();
