@@ -254,3 +254,59 @@ fn auxiliary_native_window_events_reset_only_input_idle_and_preserve_autosave_re
             .is_some()
     );
 }
+
+#[test]
+fn non_page_api_activity_marker_drives_idle_retry_and_expiry_after_reopen() {
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    store
+        .write(move |ctx| {
+            settings::set(
+                ctx.conn(),
+                &GuiIdleSettings {
+                    enabled: true,
+                    user_seconds: None,
+                    mouse_seconds: None,
+                    api_seconds: Some(600),
+                },
+            )?;
+            settings::set(
+                ctx.conn(),
+                &GuiSessionSettings {
+                    only_during_idle: true,
+                    ..GuiSessionSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let due = bound.session_autosave.next().unwrap();
+    bound.session_autosave.api_at(0);
+    assert!(bound.session_autosave.idle_at(due));
+    let request_at = hydrus_core::TimestampMs::now().0;
+    hydrus_store::api_activity::touch(store.dir(), request_at).unwrap();
+    assert!(!bound.session_autosave.idle_at(due));
+    assert!(!bound.session_autosave.poll_at(due).unwrap());
+    assert_eq!(bound.session_autosave.next(), Some(due + 60_000));
+    assert!(!bound.session_autosave.idle_at(request_at + 600_000));
+    assert!(bound.session_autosave.idle_at(request_at + 600_001));
+    assert!(
+        bound
+            .session_autosave
+            .poll_at(request_at + 600_001)
+            .unwrap()
+    );
+    let reopened_ui = MainWindow::new().unwrap();
+    let reopened = bind(&reopened_ui, Pages::open(store.clone()).unwrap());
+    reopened.session_autosave.api_at(0);
+    assert!(
+        !reopened
+            .session_autosave
+            .idle_at(reopened.session_autosave.next().unwrap())
+    );
+    assert_eq!(
+        hydrus_store::api_activity::latest(store.dir()).unwrap(),
+        Some(request_at)
+    );
+}

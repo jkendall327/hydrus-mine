@@ -2106,3 +2106,9 @@ staged definitions unchanged. Applying while a test runs is blocked. Review open
 read-only URL/body/data/variable/cookie/result fields; the data preview contains
 at most 1024 Unicode characters, and copy transfers the complete response.
 Closing the owner cancels the run and its result review, and stale actions do nothing.
+
+Client API requests now publish an atomic timestamp-only activity marker before
+authentication, including rejected requests and database-busy responses. The GUI
+reads it when evaluating idle, so ordinary API reads also postpone idle-only
+session autosaves. This IPC remains available while the API's SQLite pool is
+paused and records no request paths, credentials or payloads.

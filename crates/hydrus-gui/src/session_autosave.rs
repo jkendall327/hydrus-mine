@@ -78,6 +78,7 @@ struct Inner {
     schedule: RefCell<Autosave>,
     idle: RefCell<Idle>,
     previous: RefCell<Option<String>>,
+    api_seen: std::cell::Cell<i64>,
     timer: slint::Timer,
 }
 
@@ -108,6 +109,7 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>) -> Monitor {
         schedule: RefCell::new(Autosave::new(now, &config)),
         idle: RefCell::new(Idle::new(now)),
         previous: RefCell::new(None),
+        api_seen: std::cell::Cell::new(0),
         timer: slint::Timer::default(),
     }));
     MONITORS.with(|monitors| monitors.borrow_mut().push(Rc::downgrade(&monitor.0)));
@@ -155,6 +157,13 @@ impl Monitor {
             .store()
             .read(settings::get)
             .unwrap_or_default();
+        if let Ok(Some(at)) =
+            hydrus_store::api_activity::latest(self.0.pages.borrow().store().dir())
+            && at > self.0.api_seen.get()
+        {
+            self.0.api_seen.set(at);
+            self.api_at(at);
+        }
         self.0.idle.borrow().eligible(now_ms, &config)
     }
 

@@ -1379,3 +1379,8 @@ main window on tag-search activation is still absent; its default is off.
 Native idle tracking covers input in every desktop window through the event-loop
 handler. The reference also polls the operating system's global cursor position;
 movement outside native application windows does not yet reset the mouse timer.
+
+API idle activity uses a timestamp-only file shared with the GUI, independent of
+the API database lock. The autosave monitor consumes it on its next timer tick;
+its resolution is milliseconds. API activity is separate from user and mouse
+activity, as in the reference.
