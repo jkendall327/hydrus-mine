@@ -358,7 +358,12 @@ fn build(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let state = state.clone();
         move || {
+            let sidecars = state.borrow().sidecars.clone();
+            if let Some(sidecars) = sidecars {
+                sidecars.slots.cancel();
+            }
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }

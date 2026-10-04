@@ -345,6 +345,7 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         let weak = window.as_weak();
         let slots = slots.clone();
         move || {
+            slots.sidecars.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -732,7 +733,9 @@ fn open_import_folder(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let sidecars = slots.sidecars.clone();
         move || {
+            sidecars.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -1131,6 +1134,7 @@ pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         let weak = window.as_weak();
         let slots = slots.clone();
         move || {
+            slots.sidecars.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -1356,7 +1360,9 @@ fn open_export_folder(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let sidecars = sidecars.clone();
         move || {
+            sidecars.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }

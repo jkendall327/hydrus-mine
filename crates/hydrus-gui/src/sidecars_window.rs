@@ -26,6 +26,8 @@ use crate::{SidecarNodeWindow, SidecarRouterWindow, SidecarRoutersWindow, TableR
 #[derive(Clone, Default)]
 pub struct Slots {
     pub routers: Rc<RefCell<Option<SidecarRoutersWindow>>>,
+    /// Scoped router clipboard and PNG children.
+    pub exchange: crate::downloader_interchange_window::Slots,
     pub router: Rc<RefCell<Option<SidecarRouterWindow>>>,
     pub node: Rc<RefCell<Option<SidecarNodeWindow>>>,
     /// The string processor editor, from a router or source.
@@ -36,6 +38,37 @@ pub struct Slots {
     pub test_objects: Rc<RefCell<Vec<editors::TestObject>>>,
 }
 impl Slots {
+    /// Force-close a router owner and invalidate every retained descendant.
+    pub fn cancel(&self) {
+        let owner = self
+            .routers
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        if let Some(owner) = owner {
+            owner.invoke_cancel();
+        } else {
+            let router = self
+                .router
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(router) = router {
+                router.invoke_cancel();
+            }
+            let node = self
+                .node
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(node) = node {
+                node.invoke_cancel();
+            }
+            self.strings.cancel_all();
+            self.formula.cancel();
+            self.exchange.cancel();
+        }
+    }
     /// Supply the same bounded examples to the router and its source children.
     pub fn set_test_objects(&self, mut objects: Vec<editors::TestObject>) {
         objects.truncate(editors::TEST_OBJECT_LIMIT);
@@ -1003,6 +1036,9 @@ pub fn open_router(
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
+            if let Some(window) = weak.upgrade() {
+                window.invoke_closed();
+            }
         }
     };
     // "ok"'s next question, or done
@@ -1135,78 +1171,143 @@ pub fn open_routers(
     slots: &Slots,
     applied: Rc<dyn Fn(Vec<Router>)>,
 ) -> Result<SidecarRoutersWindow, slint::PlatformError> {
+    if let Some(window) = slots.routers.borrow().as_ref() {
+        return Ok(window.clone_strong());
+    }
     let window = SidecarRoutersWindow::new()?;
     window.set_window_title(editors::ROUTERS_TITLE.into());
-    let templates = editors::templates(context, &store.snapshot().services);
+    let active = Rc::new(std::cell::Cell::new(true));
     let state = Rc::new(RefCell::new(RoutersState {
         routers,
         selection: ListSelection::default(),
         asking: None,
-        templates,
+        templates: editors::templates(context, &store.snapshot().services),
     }));
-    let refresh: Rc<dyn Fn()> = {
+    let refresh: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let state = state.clone();
         let store = store.clone();
-        Rc::new(move || {
-            if let Some(window) = weak.upgrade() {
+        let slots = slots.clone();
+        let active = active.clone();
+        move || {
+            if active.get()
+                && let Some(window) = weak.upgrade()
+            {
                 show_routers(&window, &state.borrow(), &store);
+                window.set_child_open(
+                    slots.router.borrow().is_some()
+                        || slots.node.borrow().is_some()
+                        || slots.exchange.has_open(),
+                );
             }
-        })
-    };
-    refresh();
-    let edit_router = {
+        }
+    });
+    let blocked: Rc<dyn Fn() -> bool> = Rc::new({
+        let active = active.clone();
+        let state = state.clone();
+        let slots = slots.clone();
+        move || {
+            !active.get()
+                || state.borrow().asking.is_some()
+                || slots.router.borrow().is_some()
+                || slots.node.borrow().is_some()
+                || slots.exchange.has_open()
+        }
+    });
+    let edit_router = Rc::new({
         let state = state.clone();
         let refresh = refresh.clone();
         let store = store.clone();
         let slots = slots.clone();
-        Rc::new(move |router: Router, at: Option<usize>| {
-            let done: Rc<dyn Fn(Router)> = {
+        let active = active.clone();
+        let blocked = blocked.clone();
+        let weak = window.as_weak();
+        move |router: Router, at: Option<usize>| {
+            if blocked() {
+                return;
+            }
+            let original = router.clone();
+            let done: Rc<dyn Fn(Router)> = Rc::new({
                 let state = state.clone();
                 let refresh = refresh.clone();
-                Rc::new(move |router| {
+                let active = active.clone();
+                let weak = weak.clone();
+                move |router| {
+                    if !active.get() {
+                        return;
+                    }
                     let mut s = state.borrow_mut();
-                    match at {
-                        Some(i) if i < s.routers.len() => s.routers[i] = router,
-                        _ => s.routers.push(router),
+                    if let Some(i) = at {
+                        if s.routers.get(i) != Some(&original) {
+                            if let Some(window) = weak.upgrade() {
+                                window.set_error(
+                                    "The router changed while its editor was open.".into(),
+                                );
+                            }
+                            return;
+                        }
+                        s.routers[i] = router;
+                    } else {
+                        s.routers.push(router);
                     }
                     drop(s);
                     refresh();
-                })
-            };
+                }
+            });
             match open_router(&store, context, router, &slots, done) {
-                Ok(w) => *slots.router.borrow_mut() = Some(w),
-                Err(e) => eprintln!("could not open the router: {e}"),
+                Ok(w) => {
+                    let refresh = refresh.clone();
+                    w.on_closed(move || refresh());
+                    *slots.router.borrow_mut() = Some(w);
+                }
+                Err(e) => {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_error(e.to_string().into());
+                    }
+                }
             }
-        })
-    };
+            refresh();
+        }
+    });
     window.on_row_clicked({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |row, ctrl, shift| {
+            if blocked() {
+                return;
+            }
             if let Ok(row) = usize::try_from(row) {
                 let mut s = state.borrow_mut();
-                let order: Vec<usize> = (0..s.routers.len()).collect();
+                let order = (0..s.routers.len()).collect::<Vec<_>>();
                 s.selection.click(&order, row, ctrl, shift);
             }
             refresh();
         }
     });
-    let edit_selected = {
+    let edit_selected = Rc::new({
         let state = state.clone();
         let edit_router = edit_router.clone();
-        Rc::new(move |row: Option<usize>| {
+        let blocked = blocked.clone();
+        move |row: Option<usize>| {
+            if blocked() {
+                return;
+            }
             let picked = {
                 let s = state.borrow();
-                let order: Vec<usize> = (0..s.routers.len()).collect();
-                row.or_else(|| s.selection.in_order(&order).first().copied())
-                    .and_then(|i| s.routers.get(i).cloned().map(|r| (i, r)))
+                let order = (0..s.routers.len()).collect::<Vec<_>>();
+                row.or_else(|| {
+                    s.selection
+                        .one()
+                        .or_else(|| s.selection.in_order(&order).first().copied())
+                })
+                .and_then(|i| s.routers.get(i).cloned().map(|router| (i, router)))
             };
             if let Some((i, router)) = picked {
                 edit_router(router, Some(i));
             }
-        })
-    };
+        }
+    });
     window.on_row_activated({
         let edit_selected = edit_selected.clone();
         move |row| edit_selected(usize::try_from(row).ok())
@@ -1216,63 +1317,173 @@ pub fn open_routers(
     window.on_delete({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move || {
-            {
-                let mut s = state.borrow_mut();
-                let order: Vec<usize> = (0..s.routers.len()).collect();
-                let selected = s.selection.in_order(&order);
-                if !selected.is_empty() {
-                    let q = Question::yes_no(&editors::remove_question(selected.len()));
-                    s.asking = Some((selected, q));
-                }
+            if blocked() {
+                return;
             }
+            let mut s = state.borrow_mut();
+            let order = (0..s.routers.len()).collect::<Vec<_>>();
+            let selected = s.selection.in_order(&order);
+            if !selected.is_empty() {
+                s.asking = Some((
+                    selected.clone(),
+                    Question::yes_no(&editors::remove_question(selected.len())),
+                ));
+            }
+            drop(s);
             refresh();
         }
     });
     window.on_template({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |i| {
-            {
-                let mut s = state.borrow_mut();
-                let added = usize::try_from(i)
-                    .ok()
-                    .and_then(|i| s.templates.get(i))
-                    .map(|(_, _, routers)| routers.clone())
-                    .unwrap_or_default();
-                s.routers.extend(added);
+            if blocked() {
+                return;
             }
+            let mut s = state.borrow_mut();
+            let added = usize::try_from(i)
+                .ok()
+                .and_then(|i| s.templates.get(i))
+                .map(|(_, _, routers)| routers.clone())
+                .unwrap_or_default();
+            s.routers.extend(added);
+            drop(s);
             refresh();
         }
     });
-    let answer = {
+    window.on_duplicate({
         let state = state.clone();
         let refresh = refresh.clone();
-        move |chosen: Option<usize>| {
-            {
-                let mut s = state.borrow_mut();
-                if let (Some((mut rows, _)), Some(0)) = (s.asking.take(), chosen) {
-                    rows.sort_unstable();
-                    for i in rows.into_iter().rev() {
-                        if i < s.routers.len() {
-                            s.routers.remove(i);
-                        }
+        let blocked = blocked.clone();
+        move || {
+            if blocked() {
+                return;
+            }
+            let mut s = state.borrow_mut();
+            let order = (0..s.routers.len()).collect::<Vec<_>>();
+            let mut selected = s.selection.in_order(&order);
+            let copies = selected
+                .iter()
+                .map(|i| s.routers[*i].clone())
+                .collect::<Vec<_>>();
+            let first = s.routers.len();
+            s.routers.extend(copies);
+            selected.extend(first..s.routers.len());
+            s.selection.select_many(&selected);
+            drop(s);
+            refresh();
+        }
+    });
+    window.on_exchange({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let slots = slots.clone();
+        let active = active.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move |importing| {
+            if blocked() {
+                return;
+            }
+            let routers = {
+                let s = state.borrow();
+                let order = (0..s.routers.len()).collect::<Vec<_>>();
+                s.selection.in_order(&order).into_iter()
+                    .map(|i| s.routers[i].clone()).collect::<Vec<_>>()
+            };
+            if !importing && routers.is_empty() {
+                return;
+            }
+            let preview = Rc::new({
+                let store = store.clone();
+                move |routers: Vec<Router>| {
+                    editors::validate_router_import(context, &routers).map_err(|error| {
+                        format!("The imported objects were wrong for this control:\n\n{error}")
+                    })?;
+                    let descriptions = routers.iter()
+                        .map(|router| router_text(router, true, &namer(&store)))
+                        .collect::<Vec<_>>().join("\n");
+                    Ok(format!("Add {} metadata routers:\n{descriptions}\nChanges are saved only when you apply the owning editor.", routers.len()))
+                }
+            });
+            let applied = Rc::new({
+                let state = state.clone();
+                let active = active.clone();
+                let refresh = refresh.clone();
+                move |routers: Vec<Router>| {
+                    if !active.get() {
+                        return Ok(());
                     }
-                    s.selection = ListSelection::default();
+                    editors::validate_router_import(context, &routers).map_err(|error| {
+                        format!("The imported objects were wrong for this control:\n\n{error}")
+                    })?;
+                    let mut s = state.borrow_mut();
+                    let order = (0..s.routers.len()).collect::<Vec<_>>();
+                    let mut selected = s.selection.in_order(&order);
+                    let first = s.routers.len();
+                    s.routers.extend(routers);
+                    selected.extend(first..s.routers.len());
+                    s.selection.select_many(&selected);
+                    drop(s);
+                    refresh();
+                    Ok(())
+                }
+            });
+            match crate::downloader_interchange_window::open_routers(
+                &slots.exchange, importing, routers, preview, applied,
+            ) {
+                Ok(child) => {
+                    let refresh = refresh.clone();
+                    child.on_closed(move || refresh());
+                }
+                Err(error) => {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_error(error.into());
+                    }
                 }
             }
             refresh();
         }
-    };
+    });
+    let answer = Rc::new({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        move |chosen: Option<usize>| {
+            if !active.get() {
+                return;
+            }
+            let mut s = state.borrow_mut();
+            if let (Some((mut rows, _)), Some(0)) = (s.asking.take(), chosen) {
+                rows.sort_unstable();
+                for i in rows.into_iter().rev() {
+                    if i < s.routers.len() {
+                        s.routers.remove(i);
+                    }
+                }
+                s.selection = ListSelection::default();
+            }
+            drop(s);
+            refresh();
+        }
+    });
     window.on_chosen({
         let answer = answer.clone();
         move |i| answer(usize::try_from(i).ok())
     });
     window.on_cancelled(move || answer(None));
-    let close = {
+    let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slots = slots.clone();
+        let active = active.clone();
         move || {
+            if !active.replace(false) {
+                return;
+            }
             let node = slots.node.borrow_mut().take();
             if let Some(node) = node {
                 node.invoke_cancel();
@@ -1281,16 +1492,23 @@ pub fn open_routers(
             if let Some(router) = router {
                 router.invoke_cancel();
             }
+            slots.exchange.cancel();
+            slots.strings.cancel_all();
+            slots.formula.cancel();
+            slots.routers.borrow_mut().take();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
-            slots.routers.borrow_mut().take();
         }
-    };
+    });
     window.on_apply({
         let state = state.clone();
         let close = close.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             let routers = state.borrow().routers.clone();
             close();
             applied(routers);
@@ -1304,6 +1522,7 @@ pub fn open_routers(
         close();
         slint::CloseRequestResponse::HideWindow
     });
+    refresh();
     window.show()?;
     Ok(window)
 }

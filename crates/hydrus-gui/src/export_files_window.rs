@@ -124,21 +124,7 @@ pub fn open(
         move || {
             state.borrow().cancel.store(true, Ordering::Release);
             slots.timer.stop();
-            macro_rules! hide_slot {
-                ($slot:expr) => {
-                    if let Some(w) = $slot.borrow_mut().take() {
-                        let _ = w.hide();
-                    }
-                };
-            }
-            hide_slot!(slots.sidecars.node);
-            hide_slot!(slots.sidecars.router);
-            hide_slot!(slots.sidecars.routers);
-            hide_slot!(slots.sidecars.strings.processor);
-            hide_slot!(slots.sidecars.strings.step);
-            hide_slot!(slots.sidecars.strings.converter);
-            hide_slot!(slots.sidecars.strings.conversion);
-            hide_slot!(slots.sidecars.strings.tag_filter);
+            slots.sidecars.cancel();
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
             }
