@@ -335,6 +335,36 @@ impl Default for SearchDefaults {
     }
 }
 
+impl SearchDefaults {
+    /// Match GetDefaultLocalLocationContext: discard missing domains, then
+    /// use all local file domains if none remain.
+    pub fn resolved_local_location(
+        &self,
+        services: &crate::services::ServiceRegistry,
+    ) -> hydrus_core::search::context::LocationContext {
+        use hydrus_core::search::context::LocationContext;
+        let location = LocationContext::new(
+            self.local_location
+                .current()
+                .iter()
+                .filter(|key| services.by_key(key).is_ok())
+                .cloned(),
+            self.local_location
+                .deleted()
+                .iter()
+                .filter(|key| services.by_key(key).is_ok())
+                .cloned(),
+        );
+        if location.current().is_empty() && location.deleted().is_empty() {
+            LocationContext::single(hydrus_core::ServiceKey::new(
+                hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+            ))
+        } else {
+            location
+        }
+    }
+}
+
 impl Setting for SearchDefaults {
     const KEY: &'static str = "search_defaults";
 }

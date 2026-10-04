@@ -209,10 +209,17 @@ impl SearchPage {
             store.read(hydrus_store::settings::get).unwrap_or_default();
         let file_search: hydrus_store::settings::FileSearchSettings =
             store.read(hydrus_store::settings::get).unwrap_or_default();
+        let defaults: hydrus_store::settings::SearchDefaults =
+            store.read(hydrus_store::settings::get).unwrap_or_default();
+        let context = FileSearchContext {
+            location: defaults.resolved_local_location(&store.snapshot().services),
+            ..FileSearchContext::default()
+        };
+        autocomplete.set_context(&context.location, &context.tags);
         Self {
             autocomplete,
             store,
-            context: FileSearchContext::default(),
+            context,
             predicates: Vec::new(),
             synchronised: file_search.search_immediately,
             locked: false,
@@ -1592,7 +1599,10 @@ impl SearchPage {
             .read(hydrus_store::settings::get)
             .unwrap_or_default();
         let mut domains = self.domains();
-        domains.choose_tags(service, &defaults.local_location);
+        domains.choose_tags(
+            service,
+            &defaults.resolved_local_location(&self.store.snapshot().services),
+        );
         self.set_domains(domains);
     }
 

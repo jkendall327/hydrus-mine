@@ -142,6 +142,7 @@ pub enum Value {
     /// The editable regular expression/description pairs.
     RegexFavourites(RegexFavourites),
     TagService(hydrus_core::ServiceKey),
+    Location(hydrus_core::search::context::LocationContext),
 }
 
 /// What kind of control an option has.
@@ -193,6 +194,8 @@ pub enum Kind {
     Checker,
     /// A button opening the transactional favourites list editor.
     RegexFavourites,
+    /// Importable current file domains, edited in a child selector.
+    LocalLocation,
     /// Real tag services, optionally including all known tags.
     TagService {
         combined: bool,
@@ -1279,6 +1282,20 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             vec![boxed(
                 "file search autocomplete",
                 vec![
+                    opt(
+                        "Default/Fallback local file search location:",
+                        Kind::LocalLocation,
+                        Rc::new(|settings| {
+                            Value::Location(settings.search_defaults.local_location.clone())
+                        }),
+                        Rc::new(|settings, value| match value {
+                            Value::Location(location) => {
+                                settings.search_defaults.local_location = location.clone();
+                                Ok(())
+                            }
+                            _ => Err(wrong("Default/Fallback local file search location:")),
+                        }),
+                    ),
                     tag_service(
                         "Default tag service in search pages:",
                         true,
@@ -2448,6 +2465,16 @@ impl Editor {
     pub fn choose(&mut self, row: usize, index: usize) {
         if let Some(i) = self.option_at(row) {
             self.values[self.page][i] = Value::Choice(index);
+        }
+    }
+
+    /// Accept the location selector's draft even if another page is now shown.
+    pub fn set_local_location(&mut self, location: hydrus_core::search::context::LocationContext) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::Location(_)) {
+                *value = Value::Location(location);
+                return;
+            }
         }
     }
 

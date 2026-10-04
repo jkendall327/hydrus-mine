@@ -291,6 +291,11 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
                 || theirs["collect_unmatched"] != collect.collect_unmatched)
                 .then(|| format!("collect {label:?} {ours:?} {}", collect.collect_unmatched))
         }
+        (Kind::LocalLocation, Value::Location(location)) => {
+            let label =
+                hydrus_gui_model::domains::location_label(&store.snapshot().services, location);
+            (theirs["button"] != label).then(|| format!("location {label:?}"))
+        }
         // (the button; its checker options are checker_options' test's)
         (Kind::Checker, Value::Checker(_)) => {
             (theirs["button"] != "checker options").then(|| "checker options".to_owned())
@@ -966,5 +971,48 @@ fn file_search_boolean_controls_replay_reference_defaults_and_staged_edits() {
             settings,
             "editor values stay staged"
         );
+    }
+}
+
+#[test]
+fn local_location_option_matches_reference_and_keeps_child_changes_staged() {
+    use hydrus_core::ServiceKey;
+    use hydrus_core::search::context::LocationContext;
+    use hydrus_gui_model::options::Editor;
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    let fixture = hydrus_testkit::fixture_json("default_search_location.json");
+    let mut editor = Editor::new(settings.clone());
+    for event in fixture["events"].as_array().unwrap() {
+        let chosen = LocationContext::new(
+            event["selected"]["current"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|value| ServiceKey::from_hex(value.as_str().unwrap()).unwrap()),
+            [],
+        );
+        editor.set_local_location(chosen.clone());
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty());
+        assert_eq!(applied.search_defaults.local_location, chosen);
+        let resolved = applied
+            .search_defaults
+            .resolved_local_location(&store.snapshot().services);
+        assert_eq!(
+            resolved
+                .current()
+                .iter()
+                .map(ServiceKey::to_hex)
+                .collect::<Vec<_>>(),
+            event["resolved"]["current"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|value| value.as_str().unwrap().to_owned())
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(store.read(Settings::load).unwrap(), settings);
     }
 }

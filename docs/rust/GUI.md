@@ -1810,3 +1810,9 @@ File Search options can start new search pages paused or searching immediately,
 and show or hide `system:everything` in read autocomplete. Apply persists both
 preferences; Cancel discards edits. Existing pages retain their pause state, and
 resuming a paused page executes the query it has accumulated.
+
+The File Search default/fallback local location button edits current importable
+file domains in a child selector, including multiple domains. Its Apply stages
+the location in Options; Options Apply persists it. Blank search pages and new
+notebooks use it, as does switching an all-known-file search to all known tags.
+Missing services are removed; an empty default resolves to all local file domains.

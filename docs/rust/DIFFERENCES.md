@@ -1186,3 +1186,8 @@ The File Search initial synchronization and `system:everything` controls now
 reach new-page creation and read autocomplete. Hiding the suggestion does not
 prevent entering that predicate manually. Other File Search presentation and
 location controls are still assessed separately.
+
+The default/fallback local search location is editable and consumed by native
+blank-page creation and tag-domain fallback. Its native button opens the current
+importable-domain tick list directly; the reference offers single-domain menu
+shortcuts before that same multi-domain selector.

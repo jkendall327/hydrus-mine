@@ -49,7 +49,7 @@ pub(crate) fn open(
 ) -> Result<(), String> {
     let hydrus_store::settings::AdvancedMode(advanced) =
         store.read(hydrus_store::settings::get).unwrap_or_default();
-    open_with_domains(slot, store, current, chosen, advanced)
+    open_with_domains(slot, store, current, chosen, advanced, false)
 }
 
 /// Autocomplete defaults can always select all known files, even outside
@@ -60,7 +60,24 @@ pub(crate) fn open_for_autocomplete(
     current: &LocationContext,
     chosen: Rc<dyn Fn(LocationContext)>,
 ) -> Result<(), String> {
-    open_with_domains(slot, store, current, chosen, true)
+    open_with_domains(slot, store, current, chosen, true, false)
+}
+
+/// Default local searches offer current importable domains only.
+pub(crate) fn open_importable(
+    slot: &Rc<RefCell<Option<LocationsWindow>>>,
+    store: Arc<Store>,
+    current: &LocationContext,
+    chosen: Rc<dyn Fn(LocationContext)>,
+) -> Result<(), String> {
+    open_with_domains(slot, store, current, chosen, false, true)
+}
+
+pub(crate) fn cancel(slot: &Rc<RefCell<Option<LocationsWindow>>>) {
+    let window = slot.borrow().as_ref().map(LocationsWindow::clone_strong);
+    if let Some(window) = window {
+        window.invoke_cancel();
+    }
 }
 
 fn open_with_domains(
@@ -69,12 +86,27 @@ fn open_with_domains(
     current: &LocationContext,
     chosen: Rc<dyn Fn(LocationContext)>,
     advanced: bool,
+    importable_only: bool,
 ) -> Result<(), String> {
     if let Some(window) = slot.borrow().as_ref() {
         return window.show().map_err(|e| e.to_string());
     }
     let window = LocationsWindow::new().map_err(|e| e.to_string())?;
-    let ticks = domains::multiple_ticks(&store.snapshot().services, advanced);
+    let ticks = if importable_only {
+        domains::in_order(
+            &store.snapshot().services,
+            &[hydrus_core::service::ServiceType::LocalFileDomain],
+        )
+        .into_iter()
+        .map(|(service, label, _)| Tick {
+            label,
+            deleted: false,
+            service,
+        })
+        .collect()
+    } else {
+        domains::multiple_ticks(&store.snapshot().services, advanced)
+    };
     let ticked = Rc::new(RefCell::new(ticked_for(&ticks, current)));
     let ticks = Rc::new(ticks);
     let show = {
