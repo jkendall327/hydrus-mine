@@ -4,6 +4,7 @@
 //! a package is decoded completely before its caller can stage any changes.
 
 mod encode;
+pub mod processing;
 mod transport;
 mod upgrade;
 

@@ -39,6 +39,7 @@ pub struct Slots {
     pub tag_filter: crate::tag_filter_window::Slot,
     pub converter: Rc<RefCell<Option<StringConverterWindow>>>,
     pub conversion: Rc<RefCell<Option<ConversionWindow>>>,
+    pub exchange: crate::downloader_interchange_window::Slots,
 }
 
 impl std::fmt::Debug for Slots {
@@ -59,7 +60,8 @@ impl Slots {
     }
     /// Unfinished step, converter, conversion or tag-filter drafts.
     pub fn has_processor_children(&self) -> bool {
-        self.step.borrow().is_some()
+        self.exchange.has_open()
+            || self.step.borrow().is_some()
             || self.converter.borrow().is_some()
             || self.has_converter_children()
             || self.has_step_children()
@@ -79,6 +81,7 @@ impl Slots {
     }
     /// Discard all processor descendants before disposing of the processor.
     pub fn cancel_processor_children(&self) {
+        self.exchange.cancel();
         self.cancel_step_children();
         self.cancel_converter_children();
         cancel_slot(&self.step, StringStepWindow::invoke_cancel);
@@ -206,6 +209,60 @@ pub fn open(
                 show(&window, &state.borrow());
                 window.set_child_open(slots.has_processor_children());
             }
+        }
+    });
+    window.on_exchange({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let slots = slots.clone();
+        let active = active.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move |action| {
+            if blocked() {
+                return;
+            }
+            let importing = action != "export";
+            let steps = if importing {
+                Vec::new()
+            } else {
+                state.borrow().editor.export_steps()
+            };
+            let applied = Rc::new({
+                let state = state.clone();
+                let active = active.clone();
+                let refresh = refresh.clone();
+                move |steps: Vec<ProcessingStep>| {
+                    if !active.get() {
+                        return Err("This processor editor has closed.".into());
+                    }
+                    for step in steps {
+                        state.borrow_mut().editor.add(step);
+                    }
+                    refresh();
+                    Ok(())
+                }
+            });
+            let result = crate::downloader_interchange_window::open_steps(
+                &slots.exchange,
+                importing,
+                steps,
+                applied,
+            );
+            if let Some(window) = weak.upgrade() {
+                match result {
+                    Ok(child) => {
+                        let refresh = refresh.clone();
+                        child.on_closed(move || refresh());
+                        window.set_exchange_error("".into());
+                        if action == "paste" {
+                            child.invoke_action("paste".into());
+                        }
+                    }
+                    Err(error) => window.set_exchange_error(error.into()),
+                }
+            }
+            refresh();
         }
     });
     let close: Rc<dyn Fn()> = Rc::new({

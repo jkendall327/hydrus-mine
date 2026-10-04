@@ -284,6 +284,25 @@ impl ProcessorEditor {
         self.selected.push(false);
     }
 
+    /// Selected queue entries, in their execution order, for reference export.
+    pub fn export_steps(&self) -> Vec<ProcessingStep> {
+        self.selected()
+            .into_iter()
+            .map(|i| self.steps[i].clone())
+            .collect()
+    }
+
+    /// Append a fully validated reference package without changing selection.
+    pub fn import_text(&mut self, text: &str) -> Result<usize, String> {
+        let steps =
+            hydrus_downloader_exchange::processing::decode_text(text).map_err(|e| e.to_string())?;
+        let count = steps.len();
+        for step in steps {
+            self.add(step);
+        }
+        Ok(count)
+    }
+
     /// The step "edit" edits: the first selected.
     pub fn editing(&self) -> Option<(usize, &ProcessingStep)> {
         let index = self.selected.iter().position(|&s| s)?;

@@ -1,7 +1,9 @@
 import { Button, LineEdit, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component DownloaderExchangeWindow inherits Window {
-    title: root.importing ? "import downloader definitions" : "export downloader definitions";
+    in property <string> window-title: root.importing ? "import downloader definitions" : "export downloader definitions";
+    title: root.window-title;
+    in property <string> instructions: root.importing ? "Paste reference downloader text or open a hydrus PNG. Review the definitions before importing." : "Copy reference downloader text or save a hydrus PNG to share these definitions.";
     preferred-width: 880px; preferred-height: 610px;
     background: Theme.window;
     in property <bool> importing;
@@ -15,7 +17,7 @@ export component DownloaderExchangeWindow inherits Window {
     callback closed();
     VerticalLayout {
         padding: 12px; spacing: 8px;
-        Text { text: root.importing ? "Paste reference downloader text or open a hydrus PNG. Review the definitions before importing." : "Copy reference downloader text or save a hydrus PNG to share these definitions."; color: Theme.text; wrap: word-wrap; }
+        Text { text: root.instructions; color: Theme.text; wrap: word-wrap; }
         TextEdit { vertical-stretch: 1; text <=> root.text; read-only: root.text-read-only; enabled: !root.ready; }
         HorizontalLayout {
             Button { text: root.importing ? "paste" : "copy"; enabled: !root.ready; clicked => { root.action(root.importing ? "paste" : "copy"); } }

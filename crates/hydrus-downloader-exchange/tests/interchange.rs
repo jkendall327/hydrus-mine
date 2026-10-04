@@ -256,3 +256,33 @@ fn date_conversions_keep_reference_codes_through_definition_exchange() {
         vec!["1709078400"]
     );
 }
+
+#[test]
+fn selected_processing_steps_match_qt_clipboard_and_png_exports() {
+    use hydrus_downloader_exchange::processing;
+    let fixture = hydrus_testkit::fixture_json("processing_exchange.json");
+    for key in ["single", "multiple"] {
+        let steps = processing::decode_text(&fixture[key].to_string()).unwrap();
+        let encoded: Value =
+            serde_json::from_str(&processing::encode_text(&steps).unwrap()).unwrap();
+        assert_eq!(encoded, fixture[key]);
+        assert_eq!(
+            processing::decode_png(&processing::encode_png(&steps).unwrap()).unwrap(),
+            steps
+        );
+    }
+    let png =
+        std::fs::read(hydrus_testkit::fixtures_dir().join("processing_exchange.png")).unwrap();
+    assert_eq!(
+        processing::decode_png(&png).unwrap(),
+        processing::decode_text(&fixture["multiple"].to_string()).unwrap()
+    );
+    assert!(processing::decode_text("not JSON").is_err());
+    assert!(
+        processing::decode_text(
+            &json!([26,3,[[2,fixture["single"]],[2,[999,1,{"keep":"data"}]]]]).to_string()
+        )
+        .is_err()
+    );
+    assert!(processing::encode_text(&[]).is_err());
+}

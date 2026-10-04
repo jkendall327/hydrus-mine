@@ -97,7 +97,7 @@ fn converter(c: &StringConverter) -> Result<Value> {
         .collect::<Result<Vec<_>>>()?;
     Ok(object(55, 2, json!([conversions, c.example])))
 }
-fn processor(p: &StringProcessor) -> Result<Value> {
+pub(super) fn processor(p: &StringProcessor) -> Result<Value> {
     let steps = p
         .steps
         .iter()

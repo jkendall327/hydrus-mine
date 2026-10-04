@@ -86,6 +86,8 @@ export component StringProcessorWindow inherits Window {
     in property <string> asking-title;
     in property <string> asking-message;
     in property <[string]> asking-choices;
+    in property <string> exchange-error;
+    callback exchange(string);
     callback row-clicked(int, bool, bool);
     callback row-activated(int);
     callback up();
@@ -156,6 +158,13 @@ export component StringProcessorWindow inherits Window {
                 }
             }
         }
+        HorizontalLayout {
+            spacing: 6px;
+            Button { text: "import"; enabled: !root.asking && !root.child-open; clicked => { root.exchange("import"); } }
+            Button { text: "export selected"; enabled: root.any-selected && !root.asking && !root.child-open; clicked => { root.exchange("export"); } }
+            Button { text: "paste"; enabled: !root.asking && !root.child-open; clicked => { root.exchange("paste"); } }
+        }
+        if root.exchange-error != "": Text { text: root.exchange-error; color: Theme.error; wrap: word-wrap; }
         Box {
             vertical-stretch: 1;
             title: "test results";

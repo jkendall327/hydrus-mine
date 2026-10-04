@@ -569,3 +569,55 @@ fn date_conversion_fields_preview_and_cancel_reach_the_converter() {
         }
     ));
 }
+
+#[test]
+fn processing_exchange_reviews_append_and_parent_cancel_invalidates_children() {
+    use hydrus_core::url::strings::StringProcessor;
+    use hydrus_gui::string_processor_window::{Slots, open};
+    use std::{cell::RefCell, rc::Rc};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let slots = Slots::default();
+    let accepted = Rc::new(RefCell::new(None));
+    let window = open(
+        &store,
+        &StringProcessor::default(),
+        vec!["a,b".into()],
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |value| *accepted.borrow_mut() = Some(value)
+        }),
+    )
+    .unwrap();
+    let fixture = hydrus_testkit::fixture_json("processing_exchange.json");
+    window.invoke_exchange("import".into());
+    let child = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    assert!(window.get_child_open());
+    child.set_text("not JSON".into());
+    child.invoke_action("review".into());
+    assert!(!child.get_ready());
+    assert!(!child.get_error().is_empty());
+    assert_eq!(window.get_steps().row_count(), 0);
+    child.set_text(fixture["multiple"].to_string().into());
+    child.invoke_action("review".into());
+    assert!(child.get_ready());
+    assert!(child.get_review().contains("Append 2 processing steps"));
+    assert_eq!(window.get_steps().row_count(), 0);
+    child.invoke_action("accept".into());
+    assert_eq!(window.get_steps().row_count(), 2);
+    assert!(!window.get_child_open());
+    window.invoke_row_clicked(1, false, false);
+    window.invoke_exchange("export".into());
+    let export = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(export.get_text().as_str()).unwrap(),
+        fixture["single"]
+    );
+    window.invoke_cancel();
+    assert!(!slots.has_open());
+    assert!(!export.window().is_visible());
+    child.invoke_action("accept".into());
+    window.invoke_apply();
+    assert!(accepted.borrow().is_none());
+}

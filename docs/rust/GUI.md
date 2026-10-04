@@ -365,6 +365,13 @@ reference interchange codes 10/12/14; older native preserved date payloads also
 execute. `oracle/dump_string_dates.py` and `oracle/record_string_date_editor.py`
 record timezone/fraction/pre-epoch and Qt accept/cancel/reorder boundaries.
 
+The processor step list has import, export selected, and paste controls. Its
+exchange window reads bounded reference JSON/PNG, reviews appended steps, copies
+selected entries in execution order, and saves reference PNGs. Import updates
+per-step/final previews in the draft; parent Cancel closes and invalidates the
+exchange child. `oracle/record_processing_exchange.py` records real Qt single/
+multiple selection exports, clipboard append, invalid input and a reference PNG.
+
 Help > about opens the about window (`ui/about.slint`,
 `src/about_window.rs`, `hydrus-gui-model/src/about.rs`), as the
 reference's "about hydrus": the name, version and site link over the

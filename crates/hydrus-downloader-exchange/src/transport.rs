@@ -5,6 +5,10 @@ use std::io::{Cursor, Read, Write};
 
 /// Read a real hydrus PNG, including RGB bitmap copies and old plain JSON.
 pub fn decode_png(bytes: &[u8]) -> Result<Vec<Definition>> {
+    decode_text(&decode_payload(bytes)?)
+}
+
+pub(super) fn decode_payload(bytes: &[u8]) -> Result<String> {
     if bytes.len() > MAX_BYTES {
         return Err(Error::Limit);
     }
@@ -71,11 +75,17 @@ pub fn decode_png(bytes: &[u8]) -> Result<Vec<Definition>> {
     }
     let text = std::str::from_utf8(&decoded)
         .map_err(|_| Error::Invalid("PNG payload is not compressed or plain UTF-8 JSON.".into()))?;
-    decode_text(text)
+    Ok(text.to_owned())
 }
 /// Export the reference's grayscale PNG format with a small white header.
 pub fn encode_png(definitions: &[Definition]) -> Result<Vec<u8>> {
-    let text = encode_text(definitions)?;
+    encode_payload(&encode_text(definitions)?)
+}
+
+pub(super) fn encode_payload(text: &str) -> Result<Vec<u8>> {
+    if text.len() > MAX_BYTES {
+        return Err(Error::Limit);
+    }
     let mut compressor = ZlibEncoder::new(Vec::new(), Compression::best());
     compressor
         .write_all(text.as_bytes())

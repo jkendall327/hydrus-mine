@@ -47,9 +47,9 @@ impl Slots {
     }
 }
 /// Validate a package without mutations and describe its concrete decisions.
-pub type Preview = Rc<dyn Fn(Vec<Definition>) -> Result<String, String>>;
+pub type Preview<T = Definition> = Rc<dyn Fn(Vec<T>) -> Result<String, String>>;
 /// Stage or save the package after the user accepts that review.
-pub type Apply = Rc<dyn Fn(Vec<Definition>) -> Result<(), String>>;
+pub type Apply<T = Definition> = Rc<dyn Fn(Vec<T>) -> Result<(), String>>;
 
 /// Open a scoped editor's exchange child. Export payloads come from its draft.
 pub fn open(
@@ -59,20 +59,99 @@ pub fn open(
     preview: Preview,
     applied: Apply,
 ) -> Result<DownloaderExchangeWindow, String> {
+    open_objects(
+        slots,
+        importing,
+        definitions,
+        preview,
+        applied,
+        Codec {
+            encode_text: model::encode_text,
+            decode_text: model::decode_text,
+            encode_png: model::encode_png,
+            decode_png: model::decode_png,
+            processing: false,
+        },
+    )
+}
+
+struct Codec<T> {
+    encode_text: fn(&[T]) -> hydrus_downloader_exchange::Result<String>,
+    decode_text: fn(&str) -> hydrus_downloader_exchange::Result<Vec<T>>,
+    encode_png: fn(&[T]) -> hydrus_downloader_exchange::Result<Vec<u8>>,
+    decode_png: fn(&[u8]) -> hydrus_downloader_exchange::Result<Vec<T>>,
+    processing: bool,
+}
+
+/// Import/export the shared processor editor's selected steps using reference
+/// JSON, clipboard text or PNG. Applying appends only to the owner's draft.
+pub fn open_steps(
+    slots: &Slots,
+    importing: bool,
+    steps: Vec<hydrus_core::url::strings::ProcessingStep>,
+    applied: Apply<hydrus_core::url::strings::ProcessingStep>,
+) -> Result<DownloaderExchangeWindow, String> {
+    use hydrus_downloader_exchange::processing;
+    let preview = Rc::new(|steps: Vec<hydrus_core::url::strings::ProcessingStep>| {
+        Ok(format!(
+            "Append {} processing steps:\n{}\nChanges are saved only when you apply the owning editor.",
+            steps.len(),
+            steps
+                .iter()
+                .map(|step| step.describe(false, true))
+                .collect::<Vec<_>>()
+                .join("\n")
+        ))
+    });
+    open_objects(
+        slots,
+        importing,
+        steps,
+        preview,
+        applied,
+        Codec {
+            encode_text: processing::encode_text,
+            decode_text: processing::decode_text,
+            encode_png: processing::encode_png,
+            decode_png: processing::decode_png,
+            processing: true,
+        },
+    )
+}
+
+fn open_objects<T: Clone + 'static>(
+    slots: &Slots,
+    importing: bool,
+    definitions: Vec<T>,
+    preview: Preview<T>,
+    applied: Apply<T>,
+    codec: Codec<T>,
+) -> Result<DownloaderExchangeWindow, String> {
     if let Some(w) = slots.0.borrow().as_ref() {
         return Ok(w.clone_strong());
     }
     let w = DownloaderExchangeWindow::new().map_err(|e| e.to_string())?;
     w.set_importing(importing);
+    if codec.processing {
+        w.set_window_title(
+            if importing {
+                "import processing steps"
+            } else {
+                "export processing steps"
+            }
+            .into(),
+        );
+        w.set_instructions(if importing { "Paste reference processing-step text or open a hydrus PNG. Review the steps before appending them." } else { "Copy selected processing steps in queue order or save a hydrus PNG to share them." }.into());
+    }
     if !importing {
         w.set_text(
-            model::encode_text(&definitions)
+            (codec.encode_text)(&definitions)
                 .map_err(|e| e.to_string())?
                 .into(),
         );
     }
     let active = Rc::new(Cell::new(true));
-    let pending = Rc::new(RefCell::new(None::<Vec<Definition>>));
+    let pending = Rc::new(RefCell::new(None::<Vec<T>>));
     let close: Rc<dyn Fn()> = Rc::new({
         let active = active.clone();
         let slot = Rc::downgrade(&slots.0);
@@ -130,7 +209,7 @@ pub fn open(
                         if path.is_empty() {
                             return Err("Choose an export path first.".into());
                         }
-                        let data = model::encode_png(&definitions).map_err(|e| e.to_string())?;
+                        let data = (codec.encode_png)(&definitions).map_err(|e| e.to_string())?;
                         let parent = Path::new(path.as_str())
                             .parent()
                             .filter(|parent| !parent.as_os_str().is_empty())
@@ -143,9 +222,9 @@ pub fn open(
                     }
                     "open" | "review" => {
                         let definitions = if action == "open" {
-                            read_file(w.get_path().as_str())?
+                            read_file(w.get_path().as_str(), &codec)?
                         } else {
-                            model::decode_text(w.get_text().as_str()).map_err(|e| e.to_string())?
+                            (codec.decode_text)(w.get_text().as_str()).map_err(|e| e.to_string())?
                         };
                         let description = preview(definitions.clone())?;
                         w.set_review(description.into());
@@ -175,16 +254,16 @@ pub fn open(
     *slots.0.borrow_mut() = Some(w.clone_strong());
     Ok(w)
 }
-fn read_file(path: &str) -> Result<Vec<Definition>, String> {
+fn read_file<T>(path: &str, codec: &Codec<T>) -> Result<Vec<T>, String> {
     let file = std::fs::File::open(path).map_err(|e| e.to_string())?;
     let mut bytes = Vec::new();
     file.take((hydrus_downloader_exchange::MAX_BYTES + 1) as u64)
         .read_to_end(&mut bytes)
         .map_err(|e| e.to_string())?;
     if bytes.starts_with(b"\x89PNG") {
-        model::decode_png(&bytes).map_err(|e| e.to_string())
+        (codec.decode_png)(&bytes).map_err(|e| e.to_string())
     } else {
-        model::decode_text(std::str::from_utf8(&bytes).map_err(|e| e.to_string())?)
+        (codec.decode_text)(std::str::from_utf8(&bytes).map_err(|e| e.to_string())?)
             .map_err(|e| e.to_string())
     }
 }

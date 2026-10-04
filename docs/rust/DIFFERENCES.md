@@ -675,8 +675,10 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   import and export buttons.
 - **The string processor editor** has no starting strings to test with
   from the sidecar editors (the reference takes them from its example
-  files; the single example can be typed), and no import, export or
-  paste buttons. "add" lists its kinds' descriptions in
+  files; the single example can be typed). Import/export/paste use a shared
+  text/PNG review window. Unsupported mixed packages are rejected atomically;
+  the reference may append permitted entries and warn about rejected ones.
+  "add" lists its kinds' descriptions in
   its question. A sorter's or match's error for a regex that won't
   compile is in hydrus-rs's words, not Python's ("That regex did not
   work! ..."); the match editor's regex box has no menu of favourite
