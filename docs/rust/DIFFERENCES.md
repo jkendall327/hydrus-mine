@@ -691,7 +691,13 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   common ISO/English automatic dates are supported. The easy parser supports
   relative English units (seconds through years), now/today/yesterday/tomorrow,
   but not dateparser's full multilingual and fuzzy grammar. Locale-dependent
-  date phrases use English/C forms. A bad hex or base64 string's error is in
+  date phrases use English/C forms. Advanced parsing validates Python's
+  six-digit microsecond limit, ignores recognised UTC/GMT/system timezone names
+  as Python does, and rejects year zero and non-Python directives. Jiff's
+  compatible local-time resolution chooses the earlier repeated time and shifts
+  nonexistent times forward; platform-specific Python choices can differ at DST
+  transitions. Platform-specific strftime extensions such as %s are outside the
+  supported format grammar. A bad hex or base64 string's error is in
   hydrus-rs's words too where Python's says more.
 - **The import and export folders dialogs**: an import folder's filename
   tagging is added for a tag service chosen from a list beside "add" (the

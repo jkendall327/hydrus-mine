@@ -15,8 +15,125 @@ fn err(error: impl std::fmt::Display) -> String {
     error.to_string()
 }
 
-fn datetime(text: &str, phrase: &str) -> Result<(DateTime, Option<Offset>), String> {
-    let mut parsed = strtime::parse(phrase, text).map_err(err)?;
+fn python_parse_phrase(
+    text: &str,
+    phrase: &str,
+    system_zone: &TimeZone,
+) -> Result<(String, String), String> {
+    let mut pattern = String::from("^");
+    let mut translated = String::new();
+    let mut directives = phrase.chars();
+    let mut special = false;
+    while let Some(c) = directives.next() {
+        if c != '%' {
+            pattern.push_str(&regex::escape(&c.to_string()));
+            translated.push(c);
+            continue;
+        }
+        let directive = directives
+            .next()
+            .ok_or_else(|| "stray % in format".to_owned())?;
+        if !"aAwdbBmyYHIpMSfzZjUWcxXGuV%".contains(directive) {
+            return Err(format!(
+                "'{directive}' is a bad directive in format '{phrase}'"
+            ));
+        }
+        match directive {
+            'f' => {
+                special = true;
+                pattern.push_str("(?P<fraction>[0-9]+)");
+                translated.push_str("%f");
+            }
+            'Z' => {
+                special = true;
+                pattern.push_str("(?P<zone>[A-Za-z0-9_+\\-]+)");
+            }
+            '%' => {
+                pattern.push('%');
+                translated.push_str("%%");
+            }
+            'Y' | 'G' => {
+                pattern.push_str("[0-9]{4}");
+                translated.push('%');
+                translated.push(directive);
+            }
+            'y' => {
+                pattern.push_str("[0-9]{2}");
+                translated.push_str("%y");
+            }
+            'm' | 'd' | 'H' | 'I' | 'M' | 'S' => {
+                pattern.push_str("[0-9]{1,2}");
+                translated.push('%');
+                translated.push(directive);
+            }
+            'c' => {
+                pattern.push_str("(?s:.*?)");
+                translated.push_str("%a %b %e %H:%M:%S %Y");
+            }
+            'x' => {
+                pattern.push_str("(?s:.*?)");
+                translated.push_str("%m/%d/%y");
+            }
+            'X' => {
+                pattern.push_str("(?s:.*?)");
+                translated.push_str("%H:%M:%S");
+            }
+            _ => {
+                pattern.push_str("(?s:.*?)");
+                translated.push('%');
+                translated.push(directive);
+            }
+        }
+    }
+    if !special {
+        return Ok((text.to_owned(), translated));
+    }
+    pattern.push('$');
+    let regex = regex::Regex::new(&pattern).map_err(err)?;
+    let captures = regex
+        .captures(text)
+        .ok_or_else(|| format!("time data '{text}' does not match format '{phrase}'"))?;
+    if captures
+        .name("fraction")
+        .is_some_and(|v| v.as_str().len() > 6)
+    {
+        return Err("fractional seconds must contain 1 to 6 digits".into());
+    }
+    let mut text = text.to_owned();
+    if let Some(zone) = captures.name("zone") {
+        let current = Timestamp::now().to_zoned(system_zone.clone());
+        let mut names = vec!["UTC".to_owned(), "GMT".to_owned()];
+        for month in [1, 7] {
+            if let Ok(local) = jiff::civil::date(current.year(), month, 1)
+                .at(0, 0, 0, 0)
+                .to_zoned(current.time_zone().clone())
+            {
+                if let Ok(name) = strtime::format("%Z", &local) {
+                    names.push(name);
+                }
+            }
+        }
+        if !names
+            .iter()
+            .any(|name| name.eq_ignore_ascii_case(zone.as_str()))
+        {
+            return Err(format!(
+                "time data '{text}' does not match format '{phrase}'"
+            ));
+        }
+        // Python strptime recognises these names but returns a naive datetime.
+        text.replace_range(zone.range(), "");
+    }
+    Ok((text, translated))
+}
+
+fn datetime(
+    text: &str,
+    phrase: &str,
+    system_zone: &TimeZone,
+) -> Result<(DateTime, Option<Offset>), String> {
+    let (text, translated) = python_parse_phrase(text, phrase, system_zone)?;
+    let mut parsed = strtime::parse(&translated, &text).map_err(err)?;
     // Python defaults omitted date fields to 1900-01-01, time to midnight.
     if parsed.year().is_none() {
         parsed.set_year(Some(1900)).map_err(err)?;
@@ -44,7 +161,11 @@ fn datetime(text: &str, phrase: &str) -> Result<(DateTime, Option<Offset>), Stri
     }
     // strptime accepts a weekday that disagrees with the date.
     parsed.set_weekday(None);
-    Ok((parsed.to_datetime().map_err(err)?, parsed.offset()))
+    let dt = parsed.to_datetime().map_err(err)?;
+    if dt.year() < 1 {
+        return Err("year is out of range".into());
+    }
+    Ok((dt, parsed.offset()))
 }
 
 pub(super) fn decode(
@@ -53,11 +174,21 @@ pub(super) fn decode(
     timezone: DateTimezone,
     offset: i64,
 ) -> Result<String, String> {
-    let (dt, parsed_offset) = datetime(text, phrase)?;
+    decode_in_zone(text, phrase, timezone, offset, &TimeZone::system())
+}
+
+fn decode_in_zone(
+    text: &str,
+    phrase: &str,
+    timezone: DateTimezone,
+    offset: i64,
+    system_zone: &TimeZone,
+) -> Result<String, String> {
+    let (dt, parsed_offset) = datetime(text, phrase, system_zone)?;
     let timestamp = match timezone {
         DateTimezone::Local => match parsed_offset {
             Some(offset) => offset.to_timestamp(dt).map_err(err)?,
-            None => dt.to_zoned(TimeZone::system()).map_err(err)?.timestamp(),
+            None => dt.to_zoned(system_zone.clone()).map_err(err)?.timestamp(),
         },
         DateTimezone::Utc | DateTimezone::Offset => {
             // The reference reconstructs a UTC datetime, discarding fractions
@@ -77,7 +208,15 @@ pub(super) fn decode(
 }
 
 pub(super) fn encode(text: &str, phrase: &str, timezone: DateTimezone) -> Result<String, String> {
-    let digits: String = text.trim().chars().filter(|c| *c != '_').collect();
+    let trimmed = text.trim();
+    let unsigned = trimmed.strip_prefix(['+', '-']).unwrap_or(trimmed);
+    if !unsigned
+        .split('_')
+        .all(|part| !part.is_empty() && part.bytes().all(|c| c.is_ascii_digit()))
+    {
+        return Err(format!("\"{text}\" was not an integer!"));
+    }
+    let digits: String = trimmed.chars().filter(|c| *c != '_').collect();
     let seconds: i64 = digits
         .parse()
         .map_err(|_| format!("\"{text}\" was not an integer!"))?;
@@ -90,8 +229,13 @@ pub(super) fn encode(text: &str, phrase: &str, timezone: DateTimezone) -> Result
         Offset::UTC
     };
     let dt = offset.to_datetime(timestamp);
+    if dt.year() < 1 {
+        return Err("date value out of range".into());
+    }
     let phrase = encode_phrase(phrase);
-    strtime::format(&phrase, dt).map_err(err)
+    strtime::BrokenDownTime::from(dt)
+        .to_string_with_config(&strtime::Config::new().lenient(true), &phrase)
+        .map_err(err)
 }
 
 fn encode_phrase(phrase: &str) -> String {
@@ -105,6 +249,7 @@ fn encode_phrase(phrase: &str) -> String {
         match chars.next() {
             Some('z' | 'Z') => {}
             Some('f') => result.push_str("000000"),
+            Some('Q') => result.push_str("%%Q"),
             Some('c') => result.push_str("%a %b %e %H:%M:%S %Y"),
             Some('x') => result.push_str("%m/%d/%y"),
             Some('X') => result.push_str("%H:%M:%S"),
@@ -180,7 +325,7 @@ fn parse_at(text: &str, now: Zoned) -> Result<i64, String> {
         "%b %d, %Y",
         "%a, %d %b %Y %H:%M:%S %z",
     ] {
-        if let Ok((dt, offset)) = datetime(text, phrase) {
+        if let Ok((dt, offset)) = datetime(text, phrase, now.time_zone()) {
             return match offset {
                 Some(offset) => offset.to_timestamp(dt).map(|t| t.as_second()).map_err(err),
                 None => dt
@@ -259,6 +404,29 @@ mod tests {
                 assert_eq!(actual.split("\": ").next(), expected.split("\": ").next());
             } else {
                 assert_eq!(actual.unwrap(), expected, "{case}");
+            }
+        }
+    }
+
+    #[test]
+    fn local_names_and_dst_boundaries_match_recorded_reference_platform() {
+        let fixture: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../../oracle/fixtures/string_dates.json"
+        ))
+        .unwrap();
+        for case in fixture["local_contexts"].as_array().unwrap() {
+            let timezone = TimeZone::get(case["system_timezone"].as_str().unwrap()).unwrap();
+            let result = decode_in_zone(
+                case["text"].as_str().unwrap(),
+                case["phrase"].as_str().unwrap(),
+                DateTimezone::Local,
+                0,
+                &timezone,
+            );
+            if case["error"] == true {
+                assert!(result.is_err(), "{case}");
+            } else {
+                assert_eq!(result.unwrap(), case["result"].as_str().unwrap(), "{case}");
             }
         }
     }
