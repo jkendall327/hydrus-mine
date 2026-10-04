@@ -1384,3 +1384,9 @@ API idle activity uses a timestamp-only file shared with the GUI, independent of
 the API database lock. The autosave monitor consumes it on its next timer tick;
 its resolution is milliseconds. API activity is separate from user and mouse
 activity, as in the reference.
+
+An imported named startup session retains both its saved name and the native
+live last-session identity. Its named snapshot shares no mutable importer-log
+dependency with subsequent startup copies. Other imported saved sessions still
+use the existing placeholder conversion for downloader pages; historical legacy
+session backups remain deferred.

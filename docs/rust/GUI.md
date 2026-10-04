@@ -2112,3 +2112,8 @@ authentication, including rejected requests and database-busy responses. The GUI
 reads it when evaluating idle, so ordinary API reads also postpone idle-only
 session autosaves. This IPC remains available while the API's SQLite pool is
 paused and records no request paths, credentials or payloads.
+
+Importing a reference database whose startup preference selects a named session
+keeps that original name as an immutable snapshot as well as the native live
+last session. Startup can therefore load the configured name after conversion;
+its media and importer logs survive replacement of the initially staged pages.
