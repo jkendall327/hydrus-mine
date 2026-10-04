@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "agent": "parity-sessions",
+  "baseline": "d50df26beb3e45638b3a0ddb6d20cc1d108518a8",
+  "claims": [
+    {
+      "reference_id": "audit-options-tabs-context-action-2270-saved-session-name",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Append the freshest saved session as an independent notebook inside the frozen clicked tab row parent, retain background visible sibling and remember destination child selection; preserve files, selection and importer snapshot data independently of live source.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "b3472973",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1183,
+          "commit": "b3472973",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 299,
+          "commit": "b3472973",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 75,
+          "commit": "b3472973",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 244,
+          "commit": "b3472973",
+          "kind": "independent_state_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_notebook_sessions.py",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/notebook_sessions.json",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual popup labels/reserved-name exclusions, 7 save question/invalid/cancel outcomes, serialized children and background append selection."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2287-non-reserved-session-name",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Save only clicked notebook children to selected existing non-reserved named session after exact overwrite question; cancellation writes nothing. Source notebook key remains fixed despite a different selected sibling, copied tree omits wrapper and rolling immutable snapshots retain media/importer state.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "b3472973",
+      "limits": [
+        "Reserved-name warnings use the existing inline native warning area instead of a separate Qt warning window.",
+        "A source notebook removed before acceptance reports an error instead of saving a detached closed Qt object."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1338,
+          "commit": "b3472973",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 299,
+          "commit": "b3472973",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 75,
+          "commit": "b3472973",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 244,
+          "commit": "b3472973",
+          "kind": "independent_state_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_notebook_sessions.py",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/notebook_sessions.json",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual popup labels/reserved-name exclusions, 7 save question/invalid/cancel outcomes, serialized children and background append selection."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2290-create-a-new-session",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Create a named session from clicked notebook children, suggest notebook name, reject reserved names with retry, ask exact existing-name overwrite question, support choose-another-name/name cancellation/question closure; retain independent copied snapshots.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "b3472973",
+      "limits": [
+        "Reserved-name warnings use the existing inline native warning area instead of a separate Qt warning window.",
+        "A source notebook removed before acceptance reports an error instead of saving a detached closed Qt object."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1338,
+          "commit": "b3472973",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 299,
+          "commit": "b3472973",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 75,
+          "commit": "b3472973",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 244,
+          "commit": "b3472973",
+          "kind": "independent_state_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_notebook_sessions.py",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/notebook_sessions.json",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual popup labels/reserved-name exclusions, 7 save question/invalid/cancel outcomes, serialized children and background append selection."
+      }
+    }
+  ],
+  "completedOriginalLeafCount": 3,
+  "validation": {
+    "reference": "Real-client recorder completed cleanly.",
+    "local": [
+      "cargo fmt --all",
+      "git diff --check"
+    ],
+    "cargo": "Deferred to root hosted CI; no local builds or mutation tests."
+  },
+  "remaining": [
+    "Tab new-page-here/refresh-all/advanced page-weight actions.",
+    "GUI session autosave lifecycle/history and imported historical backups.",
+    "Remaining page selector and drag workflows."
+  ]
+}
