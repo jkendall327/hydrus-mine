@@ -1816,3 +1816,13 @@ snapshot; Qt schedules work/publish with stale-domain checks. This slice records
 the typing/tab-switch pending state separately from final query results. Read
 result multi-selection/context menus, interactive OR construction and advanced
 OR input remain distinct gaps, so the search-autocomplete parent stays partial.
+
+Automatic domain login now runs before downloader connection admission and uses
+the shared persisted session cookies. Its per-store gate spans engine instances
+within one process; forced/manual login and separate GUI/daemon process gates
+still need a common durable lease. The native domain manager monitors and cancels
+fresh daemon login processes instead of showing the reference JobStatus popup.
+A triggering downloader cancellation leaves its engine-owned login alive, while
+process cancellation stops later steps and records the reference four-hour delay.
+Invalid ordinary requests wait 60 seconds; subscriptions retain the exact
+reference cancellation note.

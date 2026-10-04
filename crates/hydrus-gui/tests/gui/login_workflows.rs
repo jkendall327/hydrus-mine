@@ -580,8 +580,9 @@ impl LoginSite {
                     }
                     let request = String::from_utf8_lossy(&bytes[..count]).into_owned();
                     let post = request.starts_with("POST ");
+                    let login_get = request.starts_with("GET /login ");
                     requests.lock().unwrap().push(request);
-                    let (body, cookie) = if post {
+                    let (body, cookie) = if post || login_get {
                         ("login response", "session=ok; Path=/")
                     } else {
                         (
@@ -2016,4 +2017,127 @@ fn script_test_domain_prompt_replays_memory_cancel_clear_timing_and_real_http() 
             .unwrap()
             .is_empty()
     );
+}
+
+#[test]
+fn reopened_domain_manager_monitors_and_cancels_actual_engine_owned_demand_process() {
+    let fixture = hydrus_testkit::fixture_json("login_demand.json");
+    let case = &fixture["cancelled_process"];
+    let (_dir, store, mut manager) = store();
+    let site = LoginSite::start();
+    manager.scripts = vec![
+        legacy::login_script(
+            &SerialisableObject::from_tuple_str(&case["script"].to_string()).unwrap(),
+        )
+        .unwrap(),
+    ];
+    let mut login = manager.domains.remove("login.example").unwrap();
+    login.script_key.clone_from(&manager.scripts[0].key);
+    login.script_name.clone_from(&manager.scripts[0].name);
+    login.active = true;
+    login.validity = hydrus_parse::login::Validity::Untested;
+    login.validity_error.clear();
+    login.no_work_until = 0;
+    login.delay_reason.clear();
+    login.credentials.clear();
+    manager.domains.clear();
+    manager.domains.insert(site.domain.clone(), login);
+    store
+        .write_and_refresh(move |ctx| hydrus_store::logins::save(ctx.conn(), &manager))
+        .unwrap();
+    let _rendered = headless::init();
+    let trigger = hydrus_net::Job::new();
+    let (send, receive) = std::sync::mpsc::channel();
+    let thread = std::thread::spawn({
+        let store = store.clone();
+        let trigger = trigger.clone();
+        let domain = site.domain.clone();
+        move || {
+            tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap().block_on(async move {
+                let engine = Arc::new(hydrus_net::NetEngine::new(store, hydrus_net::NetOptions { obey_bandwidth: false, detect_sleep: false, max_jobs: 1, max_jobs_per_domain: 1, network_timeout: 2, max_get_attempts: 1, max_connection_attempts: 1, ..Default::default() }).unwrap());
+                send.send(engine.clone()).unwrap();
+                let request = hydrus_net::Request::get(format!("http://{domain}/data"));
+                let fetch = engine.fetch(&request,&trigger);
+                tokio::pin!(fetch);
+                loop {
+                    tokio::select! {
+                        result = &mut fetch => { engine.publish_runtime().unwrap(); break result; },
+                        () = tokio::time::sleep(Duration::from_millis(25)) => { engine.publish_runtime().unwrap(); }
+                    }
+                }
+            })
+        }
+    });
+    let engine = receive.recv_timeout(Duration::from_secs(5)).unwrap();
+    until_login(|| {
+        engine.runtime_snapshot().login.is_some() && !site.requests.lock().unwrap().is_empty()
+    });
+    engine.publish_runtime().unwrap();
+    let slots = hydrus_gui::login_domains_window::Slots::default();
+    let first = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    assert!(first.get_running());
+    assert!(
+        first
+            .get_status()
+            .starts_with(&format!("Logging in {}", site.domain))
+    );
+    first.invoke_action("cancel".into());
+    assert!(
+        engine.runtime_snapshot().login.is_some(),
+        "closing the monitor preserves the engine-owned login"
+    );
+    let window = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    assert!(window.get_running());
+    let before = store.read(hydrus_store::logins::load).unwrap();
+    window.invoke_action("delete".into());
+    assert!(window.get_question().is_empty());
+    window.invoke_action("cancel-login".into());
+    until_login(|| !window.get_running());
+    assert!(
+        trigger
+            .state()
+            .status
+            .contains("User cancelled the login process.")
+    );
+    trigger.cancel();
+    assert_eq!(
+        thread.join().unwrap().unwrap_err(),
+        hydrus_net::NetError::Cancelled
+    );
+    assert_eq!(
+        trigger.cancelled_note(),
+        case["queued_error"].as_str().unwrap()
+    );
+    let saved = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(
+        saved.domains[&site.domain].delay_reason,
+        "User cancelled the login process."
+    );
+    assert!(saved.domains[&site.domain].no_work_until > jiff::Timestamp::now().as_second());
+    assert_eq!(saved.scripts, before.scripts);
+    let requests = site.requests.lock().unwrap();
+    assert_eq!(requests.len(), 1);
+    assert!(requests[0].starts_with("GET /login "));
+    drop(requests);
+    window.invoke_action("cancel".into());
+    window.invoke_action("cancel-login".into());
+    assert!(
+        store
+            .write(|ctx| hydrus_store::network_runtime::take_commands(ctx.conn()))
+            .unwrap()
+            .is_empty()
+    );
+    let reopened = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    assert!(!reopened.get_running());
+    assert!(
+        reopened
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(6)
+            .unwrap()
+            .contains("User cancelled the login process.")
+    );
+    reopened.invoke_action("cancel".into());
 }

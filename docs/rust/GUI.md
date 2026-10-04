@@ -2736,3 +2736,14 @@ enters its predicate in the actual search; removing a predicate updates children
 Typing returns to results, while choosing a tab preserves the draft. Options
 Cancel/Apply and restored-page consumers are covered against
 `oracle/fixtures/read_tag_tabs.json`. Empty tabs retain the tab selector.
+
+Downloader HTTP requests now perform domain login admission before acquiring a
+connection slot. Active most-specific login domains use current credentials and
+shared cookies; inactive/already logged-in domains proceed directly. One
+engine-owned login process serves queued requests across engine instances sharing
+a store in the same process. Login-step requests bypass this admission. Cancelling
+a triggering download preserves the login for other requests. The reopened domain
+manager monitors fresh daemon process progress and can cancel that process by its
+reviewed owner identifier; this cancellation persists the reference login delay.
+Ordinary jobs show invalid/delayed-login status and wait; subscription jobs cancel
+with the reference explanatory note.

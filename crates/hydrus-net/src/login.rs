@@ -88,6 +88,7 @@ pub fn plan(
         url.push_str(&raw);
     }
     let mut request = Request::get(url);
+    request.for_login = true;
     request.referral_url = referral.map(str::to_owned);
     request.override_bandwidth_after = Some(0);
     let test_body = if step.method == "POST" {
@@ -554,4 +555,98 @@ async fn execute_with_observer(
         Err(error) => execution.outcome = Outcome::Unusual(error),
     }
     execution
+}
+
+/// One active domain login selected by the reference's most-specific domain lookup.
+#[derive(Debug, Clone, PartialEq)]
+pub struct DemandLogin {
+    pub domain: String,
+    pub script: Box<LoginScript>,
+    pub credentials: BTreeMap<String, String>,
+}
+/// Request admission before any downloader worker/connection slot is acquired.
+#[derive(Debug, Clone, PartialEq)]
+pub enum Demand {
+    None,
+    Blocked { domain: String, error: String },
+    Ready(DemandLogin),
+}
+fn save_resolution(
+    store: &Store,
+    domain: &str,
+    old: &DomainLogin,
+    replacement: DomainLogin,
+) -> Result<(), String> {
+    let domain = domain.to_owned();
+    let old = old.clone();
+    store
+        .write_and_refresh(move |ctx| {
+            let mut manager = hydrus_store::logins::load(ctx.conn())?;
+            if manager.domains.get(&domain) == Some(&old) {
+                manager.domains.insert(domain, replacement);
+                hydrus_store::logins::save(ctx.conn(), &manager)?;
+            }
+            Ok(())
+        })
+        .map_err(|error| error.to_string())
+}
+/// Read current scripts/credentials/cookies on every admission retry. Inactive
+/// specific domains mask active parent domains, and www remains a possible owner.
+pub fn demand(store: &Store, requested: &str, now: i64) -> Result<Demand, String> {
+    let manager = store
+        .read(hydrus_store::logins::load)
+        .map_err(|error| error.to_string())?;
+    let Some((domain, login)) = std::iter::once(requested.to_owned())
+        .chain(hydrus_core::url::psl::all_applicable_domains(requested))
+        .find_map(|domain| manager.domains.get(&domain).map(|login| (domain, login)))
+    else {
+        return Ok(Demand::None);
+    };
+    if !login.active {
+        return Ok(Demand::None);
+    }
+    let blocked = |error: &str| Demand::Blocked {
+        domain: domain.clone(),
+        error: format!("The domain \"{domain}\" cannot log in: {error}"),
+    };
+    let Some(script) = manager.script(login) else {
+        let error = format!("Could not find the login script for \"{domain}\"!");
+        let mut replacement = login.clone();
+        replacement.validity = Validity::Invalid;
+        replacement.validity_error.clone_from(&error);
+        save_resolution(store, &domain, login, replacement)?;
+        return Ok(blocked(&error));
+    };
+    let mut replacement = login.clone();
+    replacement.script_key.clone_from(&script.key);
+    replacement.script_name.clone_from(&script.name);
+    if let Err(error) = script
+        .check_valid()
+        .and_then(|()| script.check_credentials(&login.credentials))
+    {
+        replacement.validity = Validity::Invalid;
+        replacement.validity_error.clone_from(&error);
+        save_resolution(store, &domain, login, replacement)?;
+        return Ok(blocked(&error));
+    }
+    if replacement.validity == Validity::Untested {
+        replacement.validity_error.clear();
+    }
+    if &replacement != login {
+        save_resolution(store, &domain, login, replacement)?;
+    }
+    if logged_in(store, script, &domain)? {
+        return Ok(Demand::None);
+    }
+    if login.validity == Validity::Invalid {
+        return Ok(blocked(&login.validity_error));
+    }
+    if login.no_work_until >= now && login.no_work_until != 0 {
+        return Ok(blocked(&login.delay_reason));
+    }
+    Ok(Demand::Ready(DemandLogin {
+        domain,
+        script: Box::new(script.clone()),
+        credentials: login.credentials.clone(),
+    }))
 }

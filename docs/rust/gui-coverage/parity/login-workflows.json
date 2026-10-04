@@ -2,7 +2,7 @@
   "schema_version": 1,
   "agent": "login-workflows",
   "baseline_git_head": "d50df26b",
-  "implementation_git_head": "0840ae34",
+  "implementation_git_head": "268469d2",
   "implementation_commits": [
     "44840f22",
     "da3c06f2",
@@ -26,13 +26,17 @@
     "96baafe4",
     "e920b2b4",
     "b4f490ee",
-    "0840ae34"
+    "0840ae34",
+    "268469d2"
   ],
   "validation": {
     "referenceRecording": "oracle/record_login_editors.py executed through shared with-oracle lock using the real Qt client; fixture oracle/fixtures/login_editors.json; oracle/record_login_execution.py executed actual reference HTTP jobs and real Qt result reviews on synthetic loopback, fixture oracle/fixtures/login_execution.json; oracle/record_login_sessions.py executed through shared with-oracle lock, real Qt manager rows/actions and real session-manager resets on synthetic domains; oracle/fixtures/login_sessions.json; oracle/record_login_domains.py executed 15 real Qt domain Add/change-script/Delete chains through shared with-oracle lock; oracle/fixtures/login_domains.json; login_sessions recording rerun with other.example.net (a genuinely separate registrable session), and explicit reference resolved session contexts; seeded native fixtures use session_for exactly like real consumers.; oracle/record_login_execution.py rerun actual loopback reference execution with per-step callback timing/counts; oracle/fixtures/login_execution.json; oracle/record_login_test_prompts.py executed through shared with-oracle lock, real Qt _DoTest/domain text/credentials and queued-worker launch capture (6 chains); oracle/fixtures/login_test_prompts.json",
     "cargo_fmt": "passed",
     "rust_tests": "Root parity-models SUCCESS for corrected cookie session fixtures. New domain-chain/stream/prompt assertions await root asynchronous CI. No local Cargo builds/tests.",
-    "slint_syntax": "Cached source compiler passed owned runtime domain prompt, default-preserving SessionDialog label hook, LoginDomainEntryWindow and login result consumers; no Cargo builds."
+    "slint_syntax": "Cached source compiler passed owned runtime domain prompt, default-preserving SessionDialog label hook, LoginDomainEntryWindow and login result consumers; no Cargo builds.",
+    "checks": [
+      "New demand/monitor slice: cargo fmt, git diff --check and cached Slint compilation passed; actual Qt demand recording executed successfully; authored backend/native runtime assertions await root GitHub CI, no local Cargo builds/tests."
+    ]
   },
   "claims": [
     {
@@ -197,16 +201,20 @@
       "id": "logins",
       "before": "missing",
       "proposedStatus": "partial",
-      "exactBehavior": "Real domain menu/list with extended selection, preserved complete preferences, editable credentials/activation, scrub delays/invalidity, optimistic staged domains-only save retaining current scripts. Confirmed selected active/non-invalid/existing-script/not-logged-in domains save the parent and close before sequential actual HTTP attempts; source cookies persist and keyed outcome updates survive reopening, while status/cancel controls are available on reopening the manager. Logged-in rows read shared required cookies independently of activation, with session-cookie precedence/earliest expiry and reference pretty delay text. Exact confirmed reset immediately deletes selected resolved cookie sessions, survives parent Cancel, preserves other sessions and reaches an already-open HTTP engine; rows and Do login/scrub eligibility refresh while open. Reference Add script/example-or-other-domain/access/description/credentials/activation prompt chain; duplicate/no-script warnings; matching-first change-script choices with no-op separator/current script, preserved credentials/valid activation and reset validity/delays; confirmed extended-selection staged Delete. Final-description Cancel keeps default; parent Cancel discards incomplete descriptions/credential descendants, and stale child handles cannot modify saved state.",
+      "exactBehavior": "Real domain menu/list with extended selection, preserved complete preferences, editable credentials/activation, scrub delays/invalidity, optimistic staged domains-only save retaining current scripts. Confirmed selected active/non-invalid/existing-script/not-logged-in domains save the parent and close before sequential actual HTTP attempts; source cookies persist and keyed outcome updates survive reopening, while status/cancel controls are available on reopening the manager. Logged-in rows read shared required cookies independently of activation, with session-cookie precedence/earliest expiry and reference pretty delay text. Exact confirmed reset immediately deletes selected resolved cookie sessions, survives parent Cancel, preserves other sessions and reaches an already-open HTTP engine; rows and Do login/scrub eligibility refresh while open. Reference Add script/example-or-other-domain/access/description/credentials/activation prompt chain; duplicate/no-script warnings; matching-first change-script choices with no-op separator/current script, preserved credentials/valid activation and reset validity/delays; confirmed extended-selection staged Delete. Final-description Cancel keeps default; parent Cancel discards incomplete descriptions/credential descendants, and stale child handles cannot modify saved state. Automatic ordinary/downloader request admission resolves the most-specific applicable login domain (including www), reads live active/validity/delay/scripts/credentials/shared cookies, repairs saved name fallback keys and persists missing/invalid script errors. Login-step requests bypass recursion. Login runs before any connection slot; one shared process per store across engine instances in this process, rechecking cookies after queue waits. Trigger-download Cancel leaves the engine-owned login running for other requests; global process Cancel targets the reviewed epoch/id, stops later steps and persists four-hour delay. Ordinary invalid jobs wait 60 seconds with recorded status; subscription jobs cancel with exact reference cancellation note. Reopened domain manager reads fresh daemon login process/status and cancels that actual global process, while parent-close preserves it and stale owner callbacks cannot submit commands.",
       "limits": [
-        "Automatic downloader-demand login/global process monitoring remain absent; manager stays partial. Cookie-state refresh polls once per second. Sequential reference prompts share one owned native prompt Window, with a separate credential child."
+        "Automatic processes share one per-store gate within a process. Forced/manual login runs and separate GUI/daemon process gates are not yet unified by a durable global lease. Global login progress/cancellation uses the existing native manager monitor rather than the reference JobStatus popup. Cookie-state refresh polls once per second. Sequential reference prompts share one owned native prompt Window, with a separate credential child."
       ],
       "source": [
         "crates/hydrus-gui/src/login_domains_window.rs:61",
         "crates/hydrus-net/src/login.rs:179",
         "crates/hydrus-gui-model/src/login_workflows.rs:295",
         "crates/hydrus-gui/src/login_domain_entry.rs:175",
-        "crates/hydrus-gui-model/src/login_workflows.rs:662"
+        "crates/hydrus-gui-model/src/login_workflows.rs:662",
+        "crates/hydrus-net/src/login.rs:595",
+        "crates/hydrus-net/src/engine.rs:1365",
+        "crates/hydrus-store/src/network_runtime.rs:80",
+        "crates/hydrus-gui/src/login_domains_window.rs:146"
       ],
       "testAnchors": [
         "crates/hydrus-gui/tests/gui/login_workflows.rs:423",
@@ -216,9 +224,15 @@
         "crates/hydrus-gui/tests/gui/login_workflows.rs:1283",
         "crates/hydrus-gui-model/tests/model/login_workflows.rs:588",
         "crates/hydrus-gui/tests/gui/login_workflows.rs:1467",
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:1630"
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1630",
+        "crates/hydrus-net/tests/login.rs:521",
+        "crates/hydrus-net/tests/login.rs:591",
+        "crates/hydrus-net/tests/login.rs:676",
+        "crates/hydrus-net/tests/login.rs:739",
+        "crates/hydrus-net/tests/login.rs:795",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:2023"
       ],
-      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json domain_states; domain_login_actions captures real Qt DoLogin decline/accept/ineligible; actual reference HTTP pipeline recorded by oracle/record_login_execution.py.; oracle/record_login_sessions.py executed real Qt manager and shared reference session manager; oracle/fixtures/login_sessions.json; oracle/record_login_domains.py executed real Qt Add/change/Delete with actual script validation; oracle/fixtures/login_domains.json (15 chains)"
+      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json domain_states; domain_login_actions captures real Qt DoLogin decline/accept/ineligible; actual reference HTTP pipeline recorded by oracle/record_login_execution.py.; oracle/record_login_sessions.py executed real Qt manager and shared reference session manager; oracle/fixtures/login_sessions.json; oracle/record_login_domains.py executed real Qt Add/change/Delete with actual script validation; oracle/fixtures/login_domains.json (15 chains) Executed oracle/record_login_demand.py against real NetworkLoginManager/NetworkJob/NetworkJobSubscription and actual engine admission to loopback HTTP: 10 eligibility cases, automatic/existing-cookie/inactive/cancel-trigger request sequences, ordinary/subscription invalid-login cancellation notes, and real global JobStatus cancellation/title/per-step status/four-hour manager delay/queued demand status. login_demand.json; port 80 used only to avoid reference cookie-domain port mismatch, native regression substitutes ephemeral loopback authority."
     },
     {
       "id": "login-test-results",
@@ -349,7 +363,8 @@
         "crates/hydrus-gui/tests/gui/login_workflows.rs:730",
         "crates/hydrus-gui/tests/gui/login_workflows.rs:1285",
         "crates/hydrus-gui/tests/gui/login_workflows.rs:1467",
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:1630"
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1630",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:2023"
       ],
       "child_control_groups": [
         "Sorted domain/script/access/active/validity/delay extended list",
@@ -362,7 +377,8 @@
         "live cookie refresh and Do-login/scrub eligibility",
         "Add domain script/example/custom/access/description/credentials/activation chain",
         "Change top-selected script matching-first/current selection and no-op separator",
-        "Confirmed extended-selection staged Delete"
+        "Confirmed extended-selection staged Delete",
+        "Fresh engine-owned automatic-login progress / cancellation by reviewed process owner ID"
       ],
       "shared_editor_refs": [
         "LoginCredentialsWindow",

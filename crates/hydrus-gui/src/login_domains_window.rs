@@ -142,6 +142,33 @@ fn show(window: &LoginDomainsWindow, editor: &DomainsEditor, store: &Store) {
             })
     }));
 }
+type ProcessSlot = Rc<RefCell<Option<(String, u64)>>>;
+fn monitor_process(
+    window: &LoginDomainsWindow,
+    run: &crate::login_test_window::RunSlot,
+    status: &RefCell<String>,
+    store: &Store,
+    process: &RefCell<Option<(String, u64)>>,
+) {
+    let snapshot = store
+        .read(hydrus_store::settings::get::<hydrus_store::network_runtime::Snapshot>)
+        .ok();
+    let active = snapshot
+        .filter(|snapshot| snapshot.fresh(jiff::Timestamp::now().as_second()))
+        .and_then(|snapshot| snapshot.login.map(|login| (login.epoch.clone(), login)));
+    if !run.busy()
+        && let Some((epoch, login)) = active
+    {
+        window.set_running(true);
+        window.set_status(format!("Logging in {} — {}", login.domain, login.status).into());
+        *process.borrow_mut() = Some((epoch, login.id));
+    } else {
+        process.borrow_mut().take();
+        window.set_running(run.busy());
+        window.set_status(status.borrow().as_str().into());
+    }
+}
+
 /// Load preserved/native domain credentials and stage all edits until Apply.
 pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, String> {
     if let Some(window) = slots.domains.borrow().as_ref() {
@@ -158,6 +185,8 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
     let pending = Rc::new(RefCell::new(None::<String>));
     let attempts = Rc::new(RefCell::new(Vec::<crate::login_test_window::Input>::new()));
     let resetting = Rc::new(RefCell::new(Vec::<String>::new()));
+    let process = ProcessSlot::default();
+    monitor_process(&window, &slots.run, &slots.status, store, &process);
     let timer = Rc::new(slint::Timer::default());
     timer.start(
         slint::TimerMode::Repeated,
@@ -169,13 +198,17 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
             let editor = editor.clone();
             let store = store.clone();
             let ticks = Cell::new(0_u8);
+            let process = process.clone();
             move || {
                 if let Some(window) = weak.upgrade() {
-                    window.set_running(run.busy());
-                    window.set_status(status.borrow().as_str().into());
+                    if run.busy() {
+                        window.set_running(true);
+                        window.set_status(status.borrow().as_str().into());
+                    }
                     ticks.set(ticks.get() + 1);
                     if ticks.get() == 20 {
                         ticks.set(0);
+                        monitor_process(&window, &run, &status, &store, &process);
                         show(&window, &editor.borrow(), &store);
                     }
                 }
@@ -230,11 +263,17 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
             }
         }
     });
-    window.on_action({let weak=window.as_weak();let editor=editor.clone();let store=store.clone();let credentials=slots.credentials.clone();let active=active.clone();let close=close.clone();let pending=pending.clone();let attempts=attempts.clone();let resetting=resetting.clone();let run=slots.run.clone();let status=slots.status.clone();let entry=slots.entry.clone();move|action|{
+    window.on_action({let weak=window.as_weak();let editor=editor.clone();let store=store.clone();let credentials=slots.credentials.clone();let active=active.clone();let close=close.clone();let pending=pending.clone();let attempts=attempts.clone();let resetting=resetting.clone();let run=slots.run.clone();let status=slots.status.clone();let entry=slots.entry.clone();let process=process.clone();move|action|{
         if !active.get(){return;}let Some(window)=weak.upgrade()else{return;};
         if action=="cancel"{close();return;}
-        if action=="cancel-login"{run.cancel();return;}
-        if run.busy(){return;}
+        if action=="cancel-login"{
+            if run.busy(){run.cancel();}
+            else if let Some((epoch, id))=process.borrow().clone(){
+                if let Err(error)=store.write(move |ctx|hydrus_store::network_runtime::send(ctx.conn(), hydrus_store::network_runtime::Command {epoch, job:id, action:hydrus_store::network_runtime::JobAction::CancelLogin})){window.set_error(error.to_string().into());}
+            }
+            return;
+        }
+        if window.get_running(){return;}
         if window.get_child_open(){return;}
         if !window.get_question().is_empty()&&!matches!(action.as_str(),"activate"|"leave-inactive"|"confirm-login"|"back-login"|"confirm-reset"|"back-reset"|"confirm-delete"|"back-delete"){return;}
         match action.as_str(){
