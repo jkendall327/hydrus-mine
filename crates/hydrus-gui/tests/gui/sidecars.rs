@@ -1396,3 +1396,232 @@ fn export_folder_query_examples_refresh_media_and_reach_source_children() {
             .collect::<Vec<_>>()
     );
 }
+
+fn json_object_name_child(slots: &hydrus_gui::sidecars_window::Slots) -> hydrus_gui::SessionDialog {
+    slots.object_name.borrow().as_ref().unwrap().clone_strong()
+}
+
+#[test]
+fn json_object_names_use_staged_text_children_and_saved_router_worker() {
+    use hydrus_core::url::strings::StringProcessor;
+    use hydrus_gui::{
+        sidecar_editors::Context,
+        sidecars_window::{self, Node, Slots},
+    };
+    use hydrus_parse::sidecar::{Importer, Router, SidecarNaming};
+    use std::{cell::RefCell, rc::Rc, sync::atomic::AtomicBool};
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let slots = Slots::default();
+    let accepted = Rc::new(RefCell::new(None));
+    let initial = Exporter::Json {
+        naming: SidecarNaming {
+            remove_actual_filename_ext: false,
+            suffix: String::new(),
+            filename_converter: hydrus_core::url::strings::StringConverter::default(),
+        },
+        nested_object_names: Vec::new(),
+    };
+    let open = || {
+        sidecars_window::open_node(
+            &store,
+            Context::Export,
+            &Node::Destination(initial.clone()),
+            &slots,
+            Rc::new({
+                let accepted = accepted.clone();
+                move |value| *accepted.borrow_mut() = Some(value)
+            }),
+        )
+        .unwrap()
+    };
+    let node = open();
+    *slots.node.borrow_mut() = Some(node.clone_strong());
+    let reference = hydrus_testkit::fixture_json("sidecar_json_names.json");
+    for state in reference["states"].as_array().unwrap() {
+        match state["case"].as_str().unwrap() {
+            "add" => {
+                node.invoke_nested_action("add".into());
+                let child = json_object_name_child(&slots);
+                assert_eq!(child.get_window_title(), "Enter Text");
+                assert_eq!(
+                    child.get_message(),
+                    reference["inputs"][0]["message"].as_str().unwrap()
+                );
+                assert!(child.get_text().is_empty());
+                // The parent cannot Apply while its modal text child owns input.
+                node.invoke_apply();
+                assert!(accepted.borrow().is_none());
+                child.invoke_name_entered(
+                    state["names"]
+                        .as_array()
+                        .unwrap()
+                        .last()
+                        .unwrap()
+                        .as_str()
+                        .unwrap()
+                        .into(),
+                );
+            }
+            "cancel_add" | "blank_add_veto" => {
+                node.invoke_nested_action("add".into());
+                let child = json_object_name_child(&slots);
+                if state["case"] == "blank_add_veto" {
+                    child.invoke_name_entered("".into());
+                    assert_eq!(
+                        child.get_warning(),
+                        reference["inputs"][6]["error"].as_str().unwrap()
+                    );
+                    assert!(slots.object_name.borrow().is_some());
+                }
+                child.invoke_cancelled();
+                child.invoke_name_entered("stale must not add".into());
+            }
+            "edit_first_of_selection" => {
+                node.invoke_nested_clicked(1, false, false);
+                node.invoke_nested_clicked(3, true, false);
+                node.invoke_nested_action("edit".into());
+                let child = json_object_name_child(&slots);
+                assert_eq!(
+                    child.get_text(),
+                    reference["inputs"][7]["default"].as_str().unwrap()
+                );
+                child
+                    .invoke_name_entered(reference["inputs"][7]["answer"].as_str().unwrap().into());
+            }
+            "cancel_edit" => {
+                node.invoke_nested_action("edit".into());
+                json_object_name_child(&slots).invoke_cancelled();
+            }
+            "up_selected" => {
+                node.invoke_nested_action("up".into());
+            }
+            "down_selected" => {
+                node.invoke_nested_action("down".into());
+            }
+            "cancel_delete" | "delete_selected" => {
+                node.invoke_nested_action("delete".into());
+                let child = json_object_name_child(&slots);
+                assert_eq!(child.get_message(), "Remove 2 selected?");
+                child.invoke_answered(state["case"] == "delete_selected");
+            }
+            _ => {}
+        }
+        assert_eq!(
+            serde_json::json!(labels(&node.get_nested_rows())),
+            state["names"]
+        );
+        assert_eq!(
+            serde_json::json!(
+                node.get_nested_rows()
+                    .iter()
+                    .enumerate()
+                    .filter_map(|(i, row)| row.selected.then_some(i))
+                    .collect::<Vec<_>>()
+            ),
+            state["selected"]
+        );
+        assert!(slots.object_name.borrow().is_none());
+    }
+    let rendered = headless::render(&windows.get(windows.count() - 1).unwrap(), 640, 560);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("sidecar_json_names.png"),
+        &rendered,
+        640,
+        560,
+    )
+    .unwrap();
+    node.invoke_apply();
+    let Node::Destination(exporter) = accepted.borrow_mut().take().unwrap() else {
+        panic!("JSON exporter");
+    };
+    let Exporter::Json {
+        ref nested_object_names,
+        ..
+    } = exporter
+    else {
+        panic!("JSON exporter");
+    };
+    assert_eq!(
+        serde_json::json!(nested_object_names),
+        reference["states"].as_array().unwrap().last().unwrap()["names"]
+    );
+    let router = Router {
+        importers: vec![Importer {
+            processor: StringProcessor::default(),
+            source: Source::MediaUrls,
+        }],
+        processor: StringProcessor::default(),
+        exporter,
+    };
+    let persisted = hydrus_gui_model::export_files::Preferences {
+        routers: vec![router],
+        ..hydrus_gui_model::export_files::Preferences::default()
+    };
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &persisted))
+        .unwrap();
+    let saved: hydrus_gui_model::export_files::Preferences = store.read(settings::get).unwrap();
+    let file = hydrus_core::HashId(1);
+    let url = "https://sidecar-keys.example/one".to_owned();
+    store
+        .write_content(move |writer| writer.add_urls(&[file], &[url]))
+        .unwrap();
+    let directory = tempfile::tempdir().unwrap();
+    let plan = hydrus_gui_model::export_files::Plan {
+        directory: directory.path().to_owned(),
+        rows: hydrus_gui_model::export_files::preview(
+            &store,
+            &[file],
+            directory.path().to_str().unwrap(),
+            "{file_id}",
+        )
+        .unwrap(),
+        routers: saved.routers,
+        trash: false,
+        symlinks: false,
+    };
+    let Exporter::Json { naming, .. } = &plan.routers[0].exporter else {
+        panic!("JSON exporter");
+    };
+    let path = naming.path(plan.rows[0].destination.to_str().unwrap(), "json");
+    std::fs::write(
+        &path,
+        r#"{"keep":{"unknown":true},"files":{"other":"preserved"}}"#,
+    )
+    .unwrap();
+    let result =
+        hydrus_gui_model::export_files::run(&store, &plan, &AtomicBool::new(false), |_| {});
+    assert!(result.error.is_none(), "{:?}", result.error);
+    assert_eq!(result.completed, 1);
+    let output: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+    assert_eq!(output["keep"]["unknown"], true);
+    assert_eq!(output["files"]["other"], "preserved");
+    assert!(
+        output["files"]["files"]["line\nbreak"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|row| row == "https://sidecar-keys.example/one")
+    );
+    // Force-closing the parent discards the pending child and invalidates both
+    // retained handles without touching the saved router.
+    let owner = open();
+    *slots.node.borrow_mut() = Some(owner.clone_strong());
+    owner.invoke_nested_action("add".into());
+    let stale = json_object_name_child(&slots);
+    slots.cancel();
+    stale.invoke_name_entered("late".into());
+    owner.invoke_apply();
+    assert!(accepted.borrow().is_none());
+    assert!(slots.node.borrow().is_none());
+    assert!(slots.object_name.borrow().is_none());
+    assert_eq!(
+        store
+            .read(settings::get::<hydrus_gui_model::export_files::Preferences>)
+            .unwrap()
+            .routers,
+        plan.routers
+    );
+}

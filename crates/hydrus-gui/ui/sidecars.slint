@@ -336,11 +336,14 @@ export component SidecarNodeWindow inherits Window {
     in property <[string]> canvases;
     in-out property <int> canvas;
     in-out property <string> domain;
-    // a destination's forced note name, and JSON object names (a name a
-    // line)
+    // A destination's forced note name and literal ordered JSON object names.
     in-out property <bool> forced-on;
     in-out property <string> forced-name;
-    in-out property <string> nested;
+    in property <[TableRow]> nested-rows;
+    in property <bool> nested-selected;
+    in property <bool> object-child-open;
+    callback nested-clicked(int,bool,bool);
+    callback nested-action(string);
     in property <string> processing-note;
     in property <string> processing;
     in property <bool> asking;
@@ -365,7 +368,7 @@ export component SidecarNodeWindow inherits Window {
         spacing: 6px;
         Button {
             text: root.type-label;
-            enabled: !root.asking;
+            enabled: !root.asking && !root.object-child-open;
             clicked => { root.change-type(); }
         }
         if root.show-tags: VerticalLayout {
@@ -375,7 +378,7 @@ export component SidecarNodeWindow inherits Window {
                 Button {
                     horizontal-stretch: 1;
                     text: root.service-label;
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.object-child-open;
                     clicked => { root.choose-service(); }
                 }
             }
@@ -442,16 +445,29 @@ export component SidecarNodeWindow inherits Window {
             alignment: end;
             Button {
                 text: "?";
-                enabled: !root.asking;
+                enabled: !root.asking && !root.object-child-open;
                 clicked => { root.sidecar-help(); }
             }
         }
         if root.show-nested: Box {
             title: "JSON Objects structure";
-            TextEdit {
-                height: 70px;
-                text <=> root.nested;
-                edited => { root.changed(); }
+            HorizontalLayout {
+                ListTable {
+                    height: 90px;
+                    columns: [{title: "", width: 100px, stretch: true}]; rows: root.nested-rows;
+                    row-clicked(i,c,s) => {root.nested-clicked(i,c,s);}
+                    row-activated(i) => {root.nested-clicked(i,false,false);root.nested-action("edit");}
+                    delete-pressed => {root.nested-action("delete");}
+                }
+                VerticalLayout {
+                    Button {text: "↑"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("up");}}
+                    Button {text: "X"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("delete");}}
+                    Button {text: "↓"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("down");}}
+                }
+            }
+            HorizontalLayout {
+                Button {text: "add"; enabled: !root.asking && !root.object-child-open; clicked => {root.nested-action("add");}}
+                Button {text: "edit"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("edit");}}
             }
         }
         if root.show-json: Row {
@@ -459,7 +475,7 @@ export component SidecarNodeWindow inherits Window {
             Button {
                 horizontal-stretch: 1;
                 text: "edit parsing formula";
-                enabled: !root.asking;
+                enabled: !root.asking && !root.object-child-open;
                 clicked => { root.edit-formula(); }
             }
         }
@@ -506,7 +522,7 @@ export component SidecarNodeWindow inherits Window {
                 Button {
                     horizontal-stretch: 1;
                     text: root.converter-label;
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.object-child-open;
                     clicked => { root.edit-converter(); }
                 }
             }
@@ -535,7 +551,7 @@ export component SidecarNodeWindow inherits Window {
             }
             Button {
                 text: root.processing;
-                enabled: !root.asking;
+                enabled: !root.asking && !root.object-child-open;
                 clicked => { root.edit-processing(); }
             }
         }
@@ -548,7 +564,7 @@ export component SidecarNodeWindow inherits Window {
             cancelled => { root.cancelled(); }
         }
         ApplyCancel {
-            enabled: !root.asking;
+            enabled: !root.asking && !root.object-child-open;
             apply => { root.apply(); }
             cancel => { root.cancel(); }
         }
