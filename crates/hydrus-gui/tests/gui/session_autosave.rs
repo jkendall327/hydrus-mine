@@ -393,3 +393,27 @@ fn applied_size_warning_creates_exact_popup_once_and_resets_only_at_new_boot() {
             .any(|job| job.status_text_1.as_deref() == Some(expected))
     );
 }
+
+#[test]
+fn native_focus_registry_delivers_to_owned_callback_once_and_releases_dead_viewers() {
+    use hydrus_gui::session_autosave::{
+        FocusCallback, observe_native_focus, watch_native_focus_id,
+    };
+    use std::{cell::RefCell, rc::Rc};
+    let id = slint::winit_030::winit::window::WindowId::dummy();
+    let events = Rc::new(RefCell::new(Vec::new()));
+    let callback: FocusCallback = Rc::new({
+        let events = events.clone();
+        move |focused| events.borrow_mut().push(focused)
+    });
+    let weak = Rc::downgrade(&callback);
+    watch_native_focus_id(id, &callback);
+    watch_native_focus_id(id, &callback);
+    observe_native_focus(id, true);
+    observe_native_focus(id, false);
+    assert_eq!(*events.borrow(), [true, false]);
+    drop(callback);
+    assert!(weak.upgrade().is_none());
+    observe_native_focus(id, true);
+    assert_eq!(*events.borrow(), [true, false]);
+}

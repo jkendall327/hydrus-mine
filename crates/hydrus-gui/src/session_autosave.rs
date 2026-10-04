@@ -9,6 +9,57 @@ use std::{
 
 thread_local! {
     static MONITORS: RefCell<Vec<Weak<Inner>>> = const { RefCell::new(Vec::new()) };
+    static FOCUS_OBSERVERS: RefCell<Vec<FocusObserver>> = const { RefCell::new(Vec::new()) };
+}
+
+/// Hold this callback in the viewer's owned state; the registry keeps only Weak.
+pub type FocusCallback = Rc<dyn Fn(bool)>;
+struct FocusObserver {
+    window_id: slint::winit_030::winit::window::WindowId,
+    callback: Weak<dyn Fn(bool)>,
+}
+
+/// Register a native viewer after showing it. Headless windows return false.
+pub fn watch_native_focus(window: &slint::Window, callback: &FocusCallback) -> bool {
+    use slint::winit_030::WinitWindowAccessor as _;
+    window
+        .with_winit_window(|native| watch_native_focus_id(native.id(), callback))
+        .is_some()
+}
+
+/// Register by native identity, also used to replay focus in headless tests.
+pub fn watch_native_focus_id(
+    window_id: slint::winit_030::winit::window::WindowId,
+    callback: &FocusCallback,
+) {
+    FOCUS_OBSERVERS.with(|observers| {
+        let mut observers = observers.borrow_mut();
+        observers.retain(|observer| observer.callback.strong_count() > 0);
+        if !observers.iter().any(|observer| {
+            observer.window_id == window_id && observer.callback.ptr_eq(&Rc::downgrade(callback))
+        }) {
+            observers.push(FocusObserver {
+                window_id,
+                callback: Rc::downgrade(callback),
+            });
+        }
+    });
+}
+
+/// Dispatch one OS window focus notification without consuming the native event.
+pub fn observe_native_focus(window_id: slint::winit_030::winit::window::WindowId, focused: bool) {
+    let callbacks = FOCUS_OBSERVERS.with(|observers| {
+        let mut observers = observers.borrow_mut();
+        observers.retain(|observer| observer.callback.strong_count() > 0);
+        observers
+            .iter()
+            .filter(|observer| observer.window_id == window_id)
+            .filter_map(|observer| observer.callback.upgrade())
+            .collect::<Vec<_>>()
+    });
+    for callback in callbacks {
+        callback(focused);
+    }
 }
 
 /// Install the native backend before creating the first desktop window. Its
@@ -25,11 +76,14 @@ impl slint::winit_030::CustomApplicationHandler for ActivityHandler {
     fn window_event(
         &mut self,
         _event_loop: &slint::winit_030::winit::event_loop::ActiveEventLoop,
-        _window_id: slint::winit_030::winit::window::WindowId,
+        window_id: slint::winit_030::winit::window::WindowId,
         _winit_window: Option<&slint::winit_030::winit::window::Window>,
         _slint_window: Option<&slint::Window>,
         event: &slint::winit_030::winit::event::WindowEvent,
     ) -> slint::winit_030::EventResult {
+        if let slint::winit_030::winit::event::WindowEvent::Focused(focused) = event {
+            observe_native_focus(window_id, *focused);
+        }
         observe_window_event(event);
         slint::winit_030::EventResult::Propagate
     }
