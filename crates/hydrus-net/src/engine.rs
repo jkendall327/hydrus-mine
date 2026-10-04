@@ -2020,7 +2020,9 @@ mod reload_tests {
         )
         .unwrap();
         let url = "https://sub.example.com/controlled";
-        engine.report_domain_error(url);
+        // The reference scrub clears a registrable domain and its parents,
+        // so a subdomain job is blocked by this parent's recorded error.
+        engine.report_domain_error("https://example.com/parent-error");
         engine.report_domain_error("https://other.example.net/unrelated");
         assert!(!engine.domain_ok(url));
         let job = Job::new();
