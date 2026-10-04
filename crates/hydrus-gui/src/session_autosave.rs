@@ -16,6 +16,16 @@ struct Inner {
 #[derive(Clone)]
 pub struct Monitor(Rc<Inner>);
 
+impl std::fmt::Debug for Monitor {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("SessionAutosave")
+            .field("schedule", &self.0.schedule.borrow())
+            .field("idle", &self.0.idle.borrow())
+            .finish_non_exhaustive()
+    }
+}
+
 pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>) -> Monitor {
     use slint::ComponentHandle as _;
     let now = hydrus_core::TimestampMs::now().0;
