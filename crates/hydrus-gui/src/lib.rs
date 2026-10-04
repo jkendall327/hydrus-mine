@@ -450,6 +450,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let scrolls: Rc<RefCell<std::collections::HashMap<hydrus_core::pages::PageKey, f32>>> =
         Rc::default();
     let change_pages = {
+        let scrolls = scrolls.clone();
         let pages = pages.clone();
         let current = current.clone();
         let rows = rows.clone();

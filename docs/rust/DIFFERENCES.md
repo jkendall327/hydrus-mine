@@ -1374,10 +1374,9 @@ Historical GUI-session autosaves now run alongside the manual notebook menus.
 Legacy historical snapshot import remains deferred.
 
 Startup sessions load before showing the native main window; the reference
-defers its initial load by a quarter second. Ordinary blank, missing, last and
-named-session outcomes match the recorded reference. The reference's bad-shutdown
-recovery question is still deferred. Loading an empty
-saved tree retains the native single blank search page.
+defers its initial load by a quarter second. Blank, missing, last and named-session
+outcomes, including bad-shutdown recovery choices, match the recorded reference.
+Loading an empty saved tree retains the native single blank search page.
 Source PNG exports use native SVG fonts and wrapping for their readable header;
 the text placement and decorative icon differ from Qt, while the grayscale
 carrier/header-height and compressed UTF-8 payload format are compatible. The
@@ -1398,9 +1397,7 @@ separate unclaimed controls.
 Write-tag open-search and duplicate-page actions now have a main-window consumer
 and real session/query contexts. The optional reference setting that raises the
 main window on tag-search activation is still absent; its default is off.
-defers its initial load by a quarter second. Blank, missing, last and named-session
-outcomes, including bad-shutdown recovery choices, match the recorded reference.
-Loading an empty saved tree retains the native single blank search page.
+
 
 Native idle tracking covers input in every desktop window through the event-loop
 handler. The reference also polls the operating system's global cursor position;

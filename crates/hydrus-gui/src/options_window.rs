@@ -522,6 +522,7 @@ pub(crate) fn open(
     // least times if the options have it on, as the reference's reads
     // them), what it applies kept for "apply"
     window.on_checker_clicked({
+        let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let checker_slot = checker_slot.clone();
@@ -542,6 +543,7 @@ pub(crate) fn open(
                 .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
                 .is_ok_and(|a| a.0);
             let done: Rc<dyn Fn(hydrus_core::subscriptions::CheckerOptions)> = Rc::new({
+                let session_choices = session_choices.clone();
                 let editor = editor.clone();
                 let store = store.clone();
                 let weak = weak.clone();
@@ -554,7 +556,7 @@ pub(crate) fn open(
                             row,
                             OptionRow {
                                 found: editor.found(row),
-                                ..option_row(shown, &store)
+                                ..option_row(shown, &store, &session_choices)
                             },
                         );
                     }
@@ -597,6 +599,7 @@ pub(crate) fn open(
     // a sort's type (in its default order, as the reference's control
     // sets it), or its order; the row shows the type's orders
     let sort_edited = {
+        let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak = window.as_weak();
@@ -622,7 +625,7 @@ pub(crate) fn open(
                     at(i),
                     OptionRow {
                         found: editor.found(at(i)),
-                        ..option_row(row, &store)
+                        ..option_row(row, &store, &session_choices)
                     },
                 );
             }
@@ -645,6 +648,7 @@ pub(crate) fn open(
     // a tag sort's type, order or grouping; the row shows the type's
     // orders, and grouping only where the type groups
     window.on_tag_sort_chosen({
+        let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak = window.as_weak();
@@ -657,7 +661,7 @@ pub(crate) fn open(
                     at(i),
                     OptionRow {
                         found: editor.found(at(i)),
-                        ..option_row(row, &store)
+                        ..option_row(row, &store, &session_choices)
                     },
                 );
             }
@@ -665,6 +669,7 @@ pub(crate) fn open(
     });
     // a collect's choice checked or not, or its unmatched files' choice
     let collect_edited = {
+        let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak = window.as_weak();
@@ -692,7 +697,7 @@ pub(crate) fn open(
                     at(i),
                     OptionRow {
                         found: editor.found(at(i)),
-                        ..option_row(row, &store)
+                        ..option_row(row, &store, &session_choices)
                     },
                 );
             }
