@@ -671,11 +671,11 @@
       "before": "missing",
       "proposedStatus": "first_pass",
       "countAsCompletedLeaf": true,
-      "implementationCommit": "4a81784b",
-      "exactBehavior": "Select blank, last session or any frozen saved name in GUI Sessions; cancel and invalid choices retain persisted startup. Ordinary boot restores the selected saved tree with independent ordered media, selection and importer queues, falls back to blank for a missing name, and schedules the first configured autosave.",
+      "implementationCommit": "a9cde425",
+      "exactBehavior": "Select blank, last session or any frozen saved name in GUI Sessions; cancel and invalid choices retain persisted startup. Ordinary boot restores the selected saved tree with independent ordered media, selection and importer queues, falls back to blank for a missing name, and schedules the first configured autosave. After an interrupted native run, prompt only for an existing configured saved name using the exact reference title/message/buttons; yes or actual fifteen-second timeout loads the frozen displayed name, no/window-close opens blank without changing preferences. Resolve startup once, start main client workers after the choice, and clear running evidence only after clean shutdown.",
       "limits": [
-        "The bad-shutdown recovery question is a separate deferred workflow.",
-        "The native loads before showing the window instead of a quarter-second deferred Qt callback; empty named trees retain one native blank search page."
+        "The native loads before showing the main window instead of a quarter-second deferred Qt callback; empty named trees retain one native blank search page.",
+        "Native recovery uses its own running marker; the reference process marker is not copied during database import."
       ],
       "sourceAnchors": [
         {
@@ -701,6 +701,24 @@
           "line": 1248,
           "commit": "97d9074b",
           "kind": "import_named_identity"
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_startup.rs",
+          "line": 27,
+          "commit": "a9cde425",
+          "kind": "run_lifecycle"
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_startup.rs",
+          "line": 77,
+          "commit": "a9cde425",
+          "kind": "recovery_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 197,
+          "commit": "a9cde425",
+          "kind": "frozen_startup_name"
         }
       ],
       "testAnchors": [
@@ -727,6 +745,30 @@
           "line": 2027,
           "commit": "97d9074b",
           "kind": "legacy_import_snapshot_isolation"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 303,
+          "commit": "a9cde425",
+          "kind": "reference_recovery_gui_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 398,
+          "commit": "a9cde425",
+          "kind": "frozen_name_and_clean_bypass"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 458,
+          "commit": "a9cde425",
+          "kind": "interrupt_clean_reopen_marker"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 155,
+          "commit": "a9cde425",
+          "kind": "exact_question_replay"
         }
       ],
       "referenceRecording": {
@@ -743,7 +785,24 @@
           "kind": "reference_fixture"
         },
         "observed": "Actual _InitialiseSession with real controller/DB saved trees, clean shutdown: blank/missing/Last/named tree, shown child and initial 0.25-second load/300-second autosave callbacks. Exact selector labels/order/value compare against existing real Options Dialog fixture."
-      }
+      },
+      "additionalReferenceRecordings": [
+        {
+          "recorder": {
+            "path": "oracle/record_session_startup.py",
+            "line": 1,
+            "commit": "a9cde425",
+            "kind": "reference_recorder"
+          },
+          "fixture": {
+            "path": "oracle/fixtures/session_startup.json",
+            "line": 1,
+            "commit": "a9cde425",
+            "kind": "reference_fixture"
+          },
+          "observed": "Actual _InitialiseSession eight bad-shutdown cases with exact questions and yes/no/close outputs; real GetYesNo auto-yes modal waited fifteen seconds and loaded Last. Blank/missing bypass question. Ordinary startup outputs also retained."
+        }
+      ]
     },
     {
       "reference_id": "audit-options-gui-sessions-sessions-show-warning-popup-if-session-size-exceeds-10-000-000",
@@ -824,7 +883,7 @@
   },
   "remaining": [
     "Outside-application global OS cursor polling; idle-only claim remains partial.",
-    "Legacy historical GUI-session snapshot import and bad-shutdown recovery dialog.",
+    "Legacy historical GUI-session snapshot import.",
     "Remaining page selector and drag workflows."
   ]
 }
