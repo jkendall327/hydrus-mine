@@ -390,6 +390,7 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
                 | Kind::DeletionReasons
                 | Kind::FrameLocations
                 | Kind::FavouriteTags
+                | Kind::MostUsedTags
                 | Kind::GallerySource
                 | Kind::ImportOptions
                 | Kind::NamespaceSorts

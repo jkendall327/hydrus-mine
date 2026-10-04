@@ -62,6 +62,168 @@ fn tabs(ui: &MainWindow) -> Vec<String> {
 }
 
 #[test]
+fn most_used_child_stages_each_service_cancels_descendants_and_persists_options() {
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let f = hydrus_testkit::fixture_json("tag_suggestions.json");
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "tag suggestions");
+    options.invoke_number_edited(row(&options, "Width of suggested tags columns: ").0, 240);
+    options.invoke_choice_chosen(row(&options, "Column layout: ").0, 1);
+    options.invoke_choice_chosen(row(&options, "Default notebook page: ").0, 3);
+    options.invoke_most_used_tags_clicked();
+    let slots = &bound.options_suggested_tags_slot;
+    let edit = slots.editor.borrow().as_ref().unwrap().clone_strong();
+    let image_index = (0..100)
+        .take_while(|&n| windows.get(n).is_some())
+        .last()
+        .unwrap();
+    let mine = edit
+        .get_services()
+        .iter()
+        .position(|s| s == "my tags")
+        .unwrap();
+    edit.invoke_service_chosen(i32::try_from(mine).unwrap());
+    edit.invoke_edit_tags();
+    let child = slots.tags.borrow().as_ref().unwrap().clone_strong();
+    for tag in f["edited"]["tags"].as_array().unwrap() {
+        child.invoke_edited(tag.as_str().unwrap().into());
+        child.invoke_entered();
+    }
+    options.invoke_apply();
+    assert!(bound.options.borrow().is_some());
+    child.invoke_apply();
+    assert_eq!(
+        serde_json::json!(
+            edit.get_tags()
+                .iter()
+                .map(|tag| tag.to_string())
+                .collect::<Vec<_>>()
+        ),
+        f["edited"]["tags"]
+    );
+    let pixels = headless::render(&windows.get(image_index).unwrap(), 520, 440);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("most-used-tags-options.png"),
+        &pixels,
+        520,
+        440,
+    )
+    .unwrap();
+    edit.invoke_edit_tags();
+    let retired = slots.tags.borrow().as_ref().unwrap().clone_strong();
+    retired.invoke_edited("parity:cancelled".into());
+    retired.invoke_entered();
+    edit.invoke_cancel();
+    retired.invoke_apply();
+    assert!(slots.editor.borrow().is_none() && slots.tags.borrow().is_none());
+    assert!(
+        !store
+            .read(hydrus_store::settings::get::<hydrus_store::settings::TagAutocompleteTabs>)
+            .unwrap()
+            .most_used
+            .values()
+            .flatten()
+            .any(|tag| tag == "parity:cancelled")
+    );
+    options.invoke_most_used_tags_clicked();
+    let edit = slots.editor.borrow().as_ref().unwrap().clone_strong();
+    edit.invoke_service_chosen(i32::try_from(mine).unwrap());
+    edit.invoke_edit_tags();
+    let child = slots.tags.borrow().as_ref().unwrap().clone_strong();
+    for tag in f["edited"]["tags"].as_array().unwrap() {
+        child.invoke_edited(tag.as_str().unwrap().into());
+        child.invoke_entered();
+    }
+    child.invoke_apply();
+    let second = edit
+        .get_services()
+        .iter()
+        .position(|s| s == "second tags")
+        .unwrap();
+    edit.invoke_service_chosen(i32::try_from(second).unwrap());
+    edit.invoke_edit_tags();
+    let child = slots.tags.borrow().as_ref().unwrap().clone_strong();
+    child.invoke_edited("parity:second".into());
+    child.invoke_entered();
+    child.invoke_apply();
+    edit.invoke_service_chosen(i32::try_from(mine).unwrap());
+    assert_eq!(
+        serde_json::json!(
+            edit.get_tags()
+                .iter()
+                .map(|tag| tag.to_string())
+                .collect::<Vec<_>>()
+        ),
+        f["retained"]
+    );
+    edit.invoke_apply();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .to_hex();
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<hydrus_store::settings::TagAutocompleteTabs>)
+            .unwrap()
+            .most_used
+            .get(&key),
+        None
+    );
+    options.invoke_apply();
+    let saved = Store::open(store.dir()).unwrap();
+    assert_eq!(
+        serde_json::json!(
+            saved
+                .read(hydrus_store::settings::get::<hydrus_store::settings::TagAutocompleteTabs>)
+                .unwrap()
+                .most_used[&key]
+        ),
+        f["edited"]["tags"]
+    );
+    let prefs = saved
+        .read(hydrus_store::settings::get::<hydrus_store::settings::TagSuggestionSettings>)
+        .unwrap();
+    assert_eq!(prefs.width, 240);
+    assert!(prefs.columns);
+    assert_eq!(prefs.default_page, "recent");
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "tag suggestions");
+    assert_eq!(
+        row(&options, "Width of suggested tags columns: ").1.number,
+        240
+    );
+    options.invoke_most_used_tags_clicked();
+    let edit = slots.editor.borrow().as_ref().unwrap().clone_strong();
+    edit.invoke_service_chosen(i32::try_from(mine).unwrap());
+    edit.invoke_edit_tags();
+    let stale = slots.tags.borrow().as_ref().unwrap().clone_strong();
+    options.invoke_cancel();
+    stale.invoke_edited("parity:stale".into());
+    stale.invoke_entered();
+    stale.invoke_apply();
+    edit.invoke_apply();
+    options.invoke_apply();
+    assert!(slots.editor.borrow().is_none() && slots.tags.borrow().is_none());
+    assert!(
+        !saved
+            .read(hydrus_store::settings::get::<hydrus_store::settings::TagAutocompleteTabs>)
+            .unwrap()
+            .most_used[&key]
+            .contains(&"parity:stale".to_owned())
+    );
+    ui.hide().unwrap();
+}
+
+#[test]
 fn the_options_window_applies_its_changes() {
     let (_dirs, store) = store();
     let _windows = headless::init();

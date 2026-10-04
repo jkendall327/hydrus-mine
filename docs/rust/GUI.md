@@ -2988,3 +2988,24 @@ local deletion records use their recorded import/deletion times. Accepted
 repairs go through the content writer and refresh the main page's actual media
 results; an intervening archive/inbox/time edit is preserved. Closing, replacing
 or invalidating the owner prevents a retained confirmation from starting work.
+
+
+Options > tag suggestions now stages the suggested-column width, notebook or
+side-by-side layout, the original four default-page choices, and independent
+most-used tag lists for each real tag service. The owned list editor reuses
+write autocomplete, paste and selected-tag removal; its child Apply accepts a
+list, its own Apply accepts the service drafts, and Options Apply persists them.
+Cancel at any level discards that level and closes its descendants. Saved
+per-service edits merge without replacing concurrently changed other services
+or the children-tab cap.
+
+Manage Tags shows functional most-used and recent suggestion lists. Most-used
+rows follow the search-page tag sort and omit current/pending tags already on
+every selected file. Activating a selected batch only adds missing mappings;
+these additions remain staged until Manage Tags Apply. Existing most-used
+panels refresh immediate shared-menu/Options changes within 200 ms. Recent rows
+read the imported/native history, and accepted tag additions update that history.
+Opening captures width, layout, panel availability and default tab; reopening
+uses saved settings. The actual Qt replay is `tag_suggestions.json`, including
+two service drafts, removed tags, cancellation, all eight recorded available
+layout/default combinations and add-only activation.

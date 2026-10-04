@@ -1,0 +1,284 @@
+{
+  "second": [
+    "parity:second"
+  ],
+  "retained": [
+    "parity:new2",
+    "parity:new10",
+    "parity:present",
+    "parity:\u6f22\u5b57"
+  ],
+  "original": [],
+  "before_apply": [],
+  "option_rows": [
+    "parity:new2",
+    "parity:new10",
+    "parity:present",
+    "parity:\u6f22\u5b57"
+  ],
+  "edited": {
+    "tags": [
+      "parity:new2",
+      "parity:new10",
+      "parity:present",
+      "parity:\u6f22\u5b57"
+    ],
+    "width": 240,
+    "layout": "columns",
+    "page": "recent"
+  },
+  "reopened": [
+    "parity:new2",
+    "parity:new10",
+    "parity:present",
+    "parity:\u6f22\u5b57"
+  ],
+  "cancelled": [
+    "parity:new2",
+    "parity:new10",
+    "parity:present",
+    "parity:\u6f22\u5b57"
+  ],
+  "cases": [
+    {
+      "layout": "notebook",
+      "default": "favourites",
+      "labels": [
+        "most used",
+        "recent"
+      ],
+      "selected": "most used",
+      "minimum_width": 240,
+      "favourites": [
+        "parity:new2",
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ],
+      "recent": [
+        "parity:recent"
+      ],
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": [
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ]
+    },
+    {
+      "layout": "notebook",
+      "default": "related",
+      "labels": [
+        "most used",
+        "recent"
+      ],
+      "selected": "most used",
+      "minimum_width": 240,
+      "favourites": [
+        "parity:new2",
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ],
+      "recent": [
+        "parity:recent"
+      ],
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": [
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ]
+    },
+    {
+      "layout": "notebook",
+      "default": "file_lookup_scripts",
+      "labels": [
+        "most used",
+        "recent"
+      ],
+      "selected": "most used",
+      "minimum_width": 240,
+      "favourites": [
+        "parity:new2",
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ],
+      "recent": [
+        "parity:recent"
+      ],
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": [
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ]
+    },
+    {
+      "layout": "notebook",
+      "default": "recent",
+      "labels": [
+        "most used",
+        "recent"
+      ],
+      "selected": "recent",
+      "minimum_width": 240,
+      "favourites": [
+        "parity:new2",
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ],
+      "recent": [
+        "parity:recent"
+      ],
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": [
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ]
+    },
+    {
+      "layout": "columns",
+      "default": "favourites",
+      "labels": [
+        "most used",
+        "recent"
+      ],
+      "selected": null,
+      "minimum_width": 240,
+      "favourites": [
+        "parity:new2",
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ],
+      "recent": [
+        "parity:recent"
+      ],
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": [
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ]
+    },
+    {
+      "layout": "columns",
+      "default": "related",
+      "labels": [
+        "most used",
+        "recent"
+      ],
+      "selected": null,
+      "minimum_width": 240,
+      "favourites": [
+        "parity:new2",
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ],
+      "recent": [
+        "parity:recent"
+      ],
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": [
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ]
+    },
+    {
+      "layout": "columns",
+      "default": "file_lookup_scripts",
+      "labels": [
+        "most used",
+        "recent"
+      ],
+      "selected": null,
+      "minimum_width": 240,
+      "favourites": [
+        "parity:new2",
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ],
+      "recent": [
+        "parity:recent"
+      ],
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": [
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ]
+    },
+    {
+      "layout": "columns",
+      "default": "recent",
+      "labels": [
+        "most used",
+        "recent"
+      ],
+      "selected": null,
+      "minimum_width": 240,
+      "favourites": [
+        "parity:new2",
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ],
+      "recent": [
+        "parity:recent"
+      ],
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": [
+        "parity:new10",
+        "parity:\u6f22\u5b57"
+      ]
+    }
+  ]
+}

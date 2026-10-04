@@ -93,6 +93,91 @@ pub(crate) fn open(
         }
     };
     let active = Rc::new(Cell::new(true));
+    let side_lists = Rc::new(RefCell::new([
+        hydrus_gui_model::tag_suggestions::List::default(),
+        hydrus_gui_model::tag_suggestions::List::default(),
+    ]));
+    let prefs = model.borrow().suggestion_preferences().clone();
+    window.set_suggested_columns(prefs.columns);
+    window.set_suggested_width(prefs.width.clamp(20, 65535) as f32);
+    window.set_recent_tags_enabled(prefs.recent_limit.is_some());
+    window.set_suggested_page(i32::from(
+        prefs.default_page == "recent" && prefs.recent_limit.is_some(),
+    ));
+    let side_services: hydrus_store::settings::TagAutocompleteTabs = model
+        .borrow()
+        .store()
+        .read(hydrus_store::settings::get)
+        .unwrap_or_default();
+    let side_services: std::collections::BTreeSet<_> = side_services
+        .most_used
+        .into_iter()
+        .filter_map(|(key, tags)| (!tags.is_empty()).then_some(key))
+        .collect();
+    let refresh_sides = Rc::new({
+        let model = model.clone();
+        let weak = window.as_weak();
+        let lists = side_lists.clone();
+        let active = active.clone();
+        move || {
+            if !active.get() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else {
+                return;
+            };
+            let m = model.borrow();
+            let key = m.migration_service_key();
+            let enabled = key
+                .as_ref()
+                .is_some_and(|key| side_services.contains(&key.to_hex()));
+            w.set_most_used_enabled(enabled);
+            if !enabled {
+                w.set_suggested_page(1);
+            }
+            let mut lists = lists.borrow_mut();
+            for (i, list) in lists.iter_mut().enumerate() {
+                list.update(key.clone(), m.side_suggestions(i == 1));
+            }
+            let presentation: hydrus_core::tag_presentation::TagPresentation = m
+                .store()
+                .read(hydrus_store::settings::get)
+                .unwrap_or_default();
+            let rows = |list: &hydrus_gui_model::tag_suggestions::List| {
+                ModelRc::new(VecModel::from(
+                    list.tags
+                        .iter()
+                        .zip(list.mask())
+                        .map(|(tag, selected)| crate::TableRow {
+                            cells: ModelRc::new(VecModel::from(vec![SharedString::from(
+                                presentation.render(tag),
+                            )])),
+                            selected,
+                        })
+                        .collect::<Vec<_>>(),
+                ))
+            };
+            w.set_most_used_rows(rows(&lists[0]));
+            w.set_recent_tag_rows(rows(&lists[1]));
+        }
+    });
+    let base_refresh = refresh.clone();
+    let refresh = {
+        let sides = refresh_sides.clone();
+        move || {
+            base_refresh();
+            sides();
+        }
+    };
+    let side_timer = Rc::new(slint::Timer::default());
+    side_timer.start(
+        slint::TimerMode::Repeated,
+        std::time::Duration::from_millis(200),
+        {
+            let sides = refresh_sides.clone();
+            move || sides()
+        },
+    );
     let pending_paste: Rc<RefCell<Option<Vec<String>>>> = Rc::default();
     let tag_menu = crate::write_tag_menu::TagMenu::new(
         model.borrow().store().clone(),
@@ -182,6 +267,53 @@ pub(crate) fn open(
             menu.open(&entries, x, y);
         }
     });
+    window.on_side_clicked({
+        let active = active.clone();
+        let pending = pending_paste.clone();
+        let menu = tag_menu.clone();
+        let incremental = incremental_open.clone();
+        let lists = side_lists.clone();
+        let refresh = refresh_sides.clone();
+        move |p, i, c, s| {
+            if !active.get() || incremental.get() || pending.borrow().is_some() || menu.busy() {
+                return;
+            }
+            if let Ok(p) = usize::try_from(p)
+                && let Ok(i) = usize::try_from(i)
+                && let Some(list) = lists.borrow_mut().get_mut(p)
+            {
+                list.click(i, c, s);
+            }
+            refresh();
+        }
+    });
+    window.on_side_activated({
+        let active = active.clone();
+        let pending = pending_paste.clone();
+        let menu = tag_menu.clone();
+        let incremental = incremental_open.clone();
+        let lists = side_lists.clone();
+        let model = model.clone();
+        let refresh = refresh.clone();
+        move |p, i| {
+            if !active.get() || incremental.get() || pending.borrow().is_some() || menu.busy() {
+                return;
+            }
+            let tags = if let Ok(p) = usize::try_from(p)
+                && let Ok(i) = usize::try_from(i)
+                && let Some(list) = lists.borrow_mut().get_mut(p)
+            {
+                if list.selected().is_empty() {
+                    list.click(i, false, false);
+                }
+                list.selected()
+            } else {
+                Vec::new()
+            };
+            model.borrow_mut().add_side_suggestions(&tags);
+            refresh();
+        }
+    });
     let preference_timer = Rc::new(slint::Timer::default());
     let close = {
         let incremental_slot = incremental_slot.clone();
@@ -192,6 +324,7 @@ pub(crate) fn open(
         let pending_paste = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         let preference_timer = preference_timer.clone();
+        let side_timer = side_timer.clone();
         move || {
             if !active.replace(false) {
                 return;
@@ -199,6 +332,7 @@ pub(crate) fn open(
             incremental_open.set(false);
             crate::incremental_tagging_window::cancel(&incremental_slot);
             preference_timer.stop();
+            side_timer.stop();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }

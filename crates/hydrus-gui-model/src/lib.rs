@@ -74,6 +74,7 @@ pub mod subscriptions_dialog;
 pub mod subscriptions_list;
 pub mod tab_context;
 pub mod tag_filter_editor;
+pub mod tag_suggestions;
 pub mod thumbnail_icons;
 pub mod thumbnail_ratings;
 pub mod times_editor;

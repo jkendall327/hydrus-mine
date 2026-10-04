@@ -10,6 +10,8 @@ import { Question } from "favourites.slint";
 import { MenuPane } from "main_menu.slint";
 import { ListText, Theme } from "theme.slint";
 import { TagServicePanels } from "tag_service_panels.slint";
+import { TagSuggestionPanels } from "tag_suggestions.slint";
+import { TableRow } from "list_table.slint";
 
 export component ManageTagsWindow inherits Window {
     in property <[MenuPane]> tag-menu-panes;
@@ -76,6 +78,15 @@ export component ManageTagsWindow inherits Window {
     callback migrate-tags();
     callback apply();
     callback cancel();
+    in property <[TableRow]> most-used-rows;
+    in property <[TableRow]> recent-tag-rows;
+    in property <bool> most-used-enabled;
+    in property <bool> recent-tags-enabled;
+    in property <bool> suggested-columns;
+    in property <length> suggested-width:300px;
+    in-out property <int> suggested-page;
+    callback side-clicked(int,int,bool,bool);
+    callback side-activated(int,int);
 
     forward-focus: input;
     FocusScope {
@@ -92,7 +103,8 @@ export component ManageTagsWindow inherits Window {
             index: root.service-index;
             use-listbook: root.use-listbook;
             chosen(i) => { root.service-chosen(i); }
-            VerticalLayout {
+            HorizontalLayout {
+              VerticalLayout {
                 padding: 8px;
                 spacing: 6px;
                 Rectangle {
@@ -172,6 +184,16 @@ export component ManageTagsWindow inherits Window {
                         clicked => { root.cancel(); }
                     }
                 }
+              }
+              if root.most-used-enabled || root.recent-tags-enabled: TagSuggestionPanels {
+                most-used:root.most-used-rows;recent:root.recent-tag-rows;
+                most-used-enabled:root.most-used-enabled;recent-enabled:root.recent-tags-enabled;
+                columns:root.suggested-columns;column-width:root.suggested-width;selected:root.suggested-page;
+                selected-page(i)=>{root.suggested-page=i;}
+                clicked(p,i,c,s)=>{root.side-clicked(p,i,c,s);}
+                activated(p,i)=>{root.side-activated(p,i);}
+                enabled:root.question=="";
+              }
             }
         }
 

@@ -200,3 +200,12 @@ Executed successfully 2026-10-04 23:31:06–23:31:09 UTC via serialized `with-or
 on a fresh basic fixture with clean shutdown. `notes_preferences.json` and its
 inspected PNG contain the evidence. Clipboard input/publication and notifications
 are supplied/observed; no note handler or registered file content is replaced.
+
+`record_tag_suggestions.py` records the real Options tag-suggestions controls and
+per-service most-used list handlers, then the real SuggestedTagsPanel for both
+layouts and all four default choices with related/lookup disabled. It captures
+two-service retained edits/removal, Apply/reopen/cancel, filtered current tags,
+add-only selected activation, recent data and a populated PNG. Recent worker
+scheduling alone is made synchronous; real reads/publishers and all parsing,
+sorting, list, options and activation handlers remain intact. Run with the shared
+oracle lock on a fresh basic fixture.

@@ -37,6 +37,7 @@ pub struct ManageTags {
     staged: Vec<BTreeMap<String, BTreeMap<HashId, bool>>>,
     input: WriteAutocomplete,
     dialog_preferences: hydrus_store::tag_editing::TagEditingSettings,
+    suggestion_preferences: hydrus_store::settings::TagSuggestionSettings,
 }
 
 impl std::fmt::Debug for ManageTags {
@@ -98,6 +99,7 @@ impl ManageTags {
             location.clone(),
         );
         input.set_context_tags(stored[service].keys().cloned());
+        let suggestion_preferences = store.read(hydrus_store::settings::get).unwrap_or_default();
         Some(Self {
             staged: vec![BTreeMap::new(); services.len()],
             store,
@@ -109,6 +111,7 @@ impl ManageTags {
             deleted,
             input,
             dialog_preferences: preference,
+            suggestion_preferences,
         })
     }
 
@@ -451,6 +454,58 @@ impl ManageTags {
         self.input.clear();
         Ok(())
     }
+
+    /// Side panels capture their layout at opening, like the reference dialog.
+    pub fn suggestion_preferences(&self) -> &hydrus_store::settings::TagSuggestionSettings {
+        &self.suggestion_preferences
+    }
+
+    /// Re-read broadcast most-used changes, filtering current/pending tags on every file.
+    pub fn side_suggestions(&self, recent: bool) -> Vec<String> {
+        let snapshot = self.store.snapshot();
+        let service = self.services[self.service].0;
+        let source = if recent {
+            crate::tag_suggestions::recent(
+                &self.store,
+                service,
+                self.suggestion_preferences.recent_limit.unwrap_or(20),
+            )
+            .unwrap_or_default()
+        } else {
+            snapshot
+                .services
+                .get(service)
+                .map(|s| crate::tag_suggestions::most_used(&self.store, &s.key))
+                .unwrap_or_default()
+        };
+        let mut counts = self.current_tags();
+        for (tag, files) in status_tags(
+            &self.store,
+            service,
+            &self.files,
+            hydrus_core::ContentStatus::Pending,
+        ) {
+            counts.entry(tag).or_default().extend(files);
+        }
+        crate::tag_suggestions::useful(
+            source,
+            &counts
+                .into_iter()
+                .map(|(tag, files)| (tag, files.len()))
+                .collect(),
+            self.files.len(),
+        )
+    }
+
+    /// Suggestion activation only adds missing mappings, even for a stale selection.
+    pub fn add_side_suggestions(&mut self, tags: &[String]) {
+        for tag in tags.iter().filter_map(|tag| Tag::new(tag)) {
+            for file in self.files.clone() {
+                self.stage_mapping(tag.as_str(), file, true);
+            }
+        }
+        self.input.set_context_tags(self.tags().into_keys());
+    }
     fn stage_tag(&mut self, typed: &str) -> Result<(), String> {
         let tag = Tag::new(typed).ok_or_else(|| format!("\"{typed}\" is not a valid tag"))?;
         let tag = tag.as_str().to_owned();
@@ -492,6 +547,7 @@ impl ManageTags {
             }
         }
         self.store.write_content(move |w| {
+            let now = hydrus_core::time::TimestampMs::now().0;
             for (service, tag, add, files) in &changes {
                 let tag = Tag::new(tag).expect("cleaned when entered");
                 let id = hydrus_store::master::intern_tag(w.conn(), &tag)?;
@@ -501,6 +557,12 @@ impl ManageTags {
                     MappingAction::Delete
                 };
                 w.update_mappings(*service, &action, id, files)?;
+                if *add {
+                    let preferences: hydrus_store::settings::TagSuggestionSettings = hydrus_store::settings::get(w.conn())?;
+                    if preferences.recent_limit.is_some() {
+                        w.conn().execute("INSERT INTO recent_tags(service_id,tag_id,used_ms) VALUES(?,?,?) ON CONFLICT(service_id,tag_id) DO UPDATE SET used_ms=excluded.used_ms",rusqlite::params![service,id,now])?;
+                    }
+                }
             }
             Ok(())
         })

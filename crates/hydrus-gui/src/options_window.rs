@@ -248,6 +248,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     out.kind = 17;
                     out.text = "edit favourite tags".into();
                 }
+                (Kind::MostUsedTags, Value::MostUsedTags(_)) => {
+                    out.kind = 28;
+                }
                 (Kind::GallerySource, Value::GallerySource(current)) => {
                     out.kind = 19;
                     let downloaders: hydrus_parse::Downloaders =
@@ -316,6 +319,7 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
 
 /// Open the window on the store's settings; it forgets itself from `slot`
 /// when closed, and calls `applied` once changes are written.
+#[allow(clippy::too_many_arguments)] // Explicit parent-owned child slots preserve cancellation and inspection.
 pub(crate) fn open(
     store: &Arc<Store>,
     slot: &Rc<RefCell<Option<OptionsWindow>>>,
@@ -323,6 +327,7 @@ pub(crate) fn open(
     reason_slot: &crate::options_deletion::Slot,
     frame_slot: &crate::options_frames::Slot,
     banner_slot: &crate::tag_banner_window::Slot,
+    suggested_slot: &crate::tag_suggestions_window::Slots,
     applied: Rc<dyn Fn()>,
 ) -> Result<OptionsWindow, String> {
     let settings = store
@@ -411,6 +416,7 @@ pub(crate) fn open(
         let import_slot = import_slot.clone();
         let namespace_slot = namespace_slot.clone();
         let banner_slot = banner_slot.clone();
+        let suggested_slot = suggested_slot.clone();
         let regex_slot = regex_slot.clone();
         let gallery_slot = gallery_slot.clone();
         let location_slot = location_slot.clone();
@@ -434,6 +440,7 @@ pub(crate) fn open(
             crate::import_options_panel_window::cancel(&import_slot);
             crate::namespace_sorts_window::cancel(&namespace_slot);
             crate::tag_banner_window::cancel(&banner_slot);
+            crate::tag_suggestions_window::cancel(&suggested_slot);
             crate::locations_window::cancel(&location_slot);
             crate::regex_favourites_window::cancel(&regex_slot);
             crate::gallery_source_window::cancel(&gallery_slot);
@@ -557,6 +564,39 @@ pub(crate) fn open(
                 crate::write_tag_window::open_favourites(&store, &initial.0, &tag_slot, accepted)
             {
                 eprintln!("could not open favourite tags: {error}");
+            }
+        }
+    });
+    window.on_most_used_tags_clicked({
+        let store = store.clone();
+        let suggested_slot = suggested_slot.clone();
+        let editor = editor.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        move || {
+            if !active.get() || suggested_slot.editor.borrow().is_some() {
+                return;
+            }
+            let initial = editor.borrow().edited_most_used_tags();
+            let applied = Rc::new({
+                let active = active.clone();
+                let editor = editor.clone();
+                let show_page = show_page.clone();
+                move |tags| {
+                    if active.get() {
+                        editor.borrow_mut().set_most_used_tags(tags);
+                        show_page();
+                    }
+                }
+            });
+            if let Err(error) = crate::tag_suggestions_window::open(
+                &store,
+                &suggested_slot,
+                initial,
+                active.clone(),
+                applied,
+            ) {
+                eprintln!("could not edit most used tags: {error}");
             }
         }
     });
@@ -1095,6 +1135,7 @@ pub(crate) fn open(
         });
     });
     window.on_apply({
+        let suggested_slot = suggested_slot.clone();
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
         let import_slot = import_slot.clone();
@@ -1113,6 +1154,7 @@ pub(crate) fn open(
                 || import_slot.borrow().is_some()
                 || namespace_slot.borrow().is_some()
                 || banner_slot.borrow().is_some()
+                || suggested_slot.editor.borrow().is_some()
             {
                 return;
             }
