@@ -1,0 +1,175 @@
+{
+  "schema": 1,
+  "agent": "overnight_tag_filters",
+  "baseline": "c2abce109547b61a2d9027ef719a2c0ef71dc571",
+  "implementation_commits": [
+    "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+  ],
+  "claims": [
+    {
+      "reference_id": "audit-media-menu-database-fix-missing-file-archived-times",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Global Database file-maintenance action scans current local media, trash and former local deletion memories. Exact initial warning and legacy/import/both population choices precede real content timestamp writes. Legacy values use import plus 20% toward tracking start or deletion; later imports copy import time. Inbox, existing archive, unknown import and exact tracking-boundary imports are excluded; legacy deletion before import is counted but left unchanged. Closing/declining/cancelling never accepts a population. Accepted plans are revalidated inside one content transaction and actual media results reload on completion. Retired callbacks cannot clear successor slots or start work; hidden owners are immediately rejected and invalidated.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/archive_repair.rs",
+          "line": 49,
+          "symbol": "pub fn scan(",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/archive_repair.rs",
+          "line": 113,
+          "symbol": "pub fn apply(",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/archive_repair.rs",
+          "line": 5,
+          "symbol": "pub const SCAN_QUESTION",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/archive_repair_window.rs",
+          "line": 26,
+          "symbol": "pub fn open(",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 899,
+          "symbol": "Command::RepairArchiveTimes,",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/archive_repair.rs",
+          "line": 60,
+          "symbol": "fn exact_global_scan_questions",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/archive_repair.rs",
+          "line": 138,
+          "symbol": "fn captured_scan_preserves",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/archive_repair.rs",
+          "line": 50,
+          "symbol": "fn database_repair_has_owned",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_archive_time_repair.py",
+        "fixture": "oracle/fixtures/archive_time_repair.json",
+        "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c",
+        "executed_at": "2026-10-04 23:39:07 UTC",
+        "result": "Executed actual unmodified Qt Database repair dispatch on a temporary copied basic fixture. Recorded scan cancellation, initial decline, choice cancellation, legacy/import choices and independent fresh both-population acceptance, exact messages/labels/counts and committed times; restarted actual client to read fresh media timestamp consumers. Only async scheduling and decision dialogs scripted. Actual DB ForceACommit plus queued read barrier exposes committed SQL without replacing timestamp logic. Local API listen warnings are unrelated to this direct Qt/DB replay."
+      },
+      "limitations": [
+        "Native warning/choices/work status share one owned window instead of Qt dialogs and job popup.",
+        "Native cancellation rolls back the current transaction; Qt can retain earlier completed batches. Closing after a completed commit cannot undo it.",
+        "Native revalidates captured candidates, preserving intervening archive/inbox/import/deletion changes and excluding newly appearing candidates until the next scan.",
+        "Reference cached media can retain old times until reopen; recorder verifies durable SQL and actual fresh media consumer after restarting. Native completion refresh reloads media.",
+        "Database/media-menu parents remain partial. File-history leaf is not promoted or counted here.",
+        "Rust regressions and PNG capture are authored for root hosted CI; no local Cargo build/test/mutation run."
+      ]
+    }
+  ],
+  "nativeComponents": [
+    {
+      "component": "ArchiveRepairWindow",
+      "source": "crates/hydrus-gui/ui/archive_repair.slint",
+      "native_parent": "MainWindow > Database > file maintenance > fix missing file archived times",
+      "reference_id": "audit-media-menu-database-fix-missing-file-archived-times",
+      "groups": [
+        "initial scan warning: start the scan / forget it",
+        "cancellable global scan status",
+        "missing legacy/import explanations and counts",
+        "do legacy times / do import times / do both / forget it",
+        "cancellable content transaction and completion/no-missing/error status"
+      ],
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/archive_repair.rs",
+          "line": 49,
+          "symbol": "pub fn scan(",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/archive_repair.rs",
+          "line": 113,
+          "symbol": "pub fn apply(",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/archive_repair.rs",
+          "line": 5,
+          "symbol": "pub const SCAN_QUESTION",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/archive_repair_window.rs",
+          "line": 26,
+          "symbol": "pub fn open(",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 899,
+          "symbol": "Command::RepairArchiveTimes,",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/archive_repair.rs",
+          "line": 60,
+          "symbol": "fn exact_global_scan_questions",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/archive_repair.rs",
+          "line": 138,
+          "symbol": "fn captured_scan_preserves",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/archive_repair.rs",
+          "line": 50,
+          "symbol": "fn database_repair_has_owned",
+          "commit": "6dd61a8ff21ea7423f726adade7021e23ba6632c"
+        }
+      ]
+    }
+  ],
+  "remaining_work": [
+    {
+      "reference_id": "audit-media-menu-database-view-file-history",
+      "before": "missing",
+      "status": "missing",
+      "counted": false,
+      "reference_source": "hydrus/client/gui/panels/ClientGUIScrolledPanelsReview.py:383 ReviewFileHistory; hydrus/client/gui/ClientGUI.py:2507 _InitialiseMenubarGetFileHistoryUpdater; hydrus/client/gui/ClientGUICharts.py:79 FileHistory",
+      "discovered_hierarchy": [
+        "global file-history frame and independent combined-local search context",
+        "shared read autocomplete with fixed result height 8, forced system:everything, restricted all-known-files domain",
+        "search loading/status, cancel and refresh with asynchronous publication guards",
+        "four cumulative chart series: all/current, inbox, archive, deleted",
+        "independent show-all/show-inbox/show-archive/show-deleted toggles",
+        "minimum/maximum count spin boxes 0..1000000000 and refit y axis",
+        "start/end date editors and refit x axis",
+        "date/count axis formatting, series legend, custom range preservation across search refresh",
+        "simpler-domain warning for unsupported complex search domains and cancellation status"
+      ],
+      "limitations": [
+        "No native file-history chart/control implementation in this archive-only slice. Its full Qt child hierarchy and consumer capture belong a separate follow-on branch. No reduced-chart broad-leaf claim."
+      ]
+    }
+  ]
+}
