@@ -1,0 +1,714 @@
+{
+  "trash_seed": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+  ],
+  "rating_corpus": [
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "dbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdb"
+  ],
+  "events": [
+    {
+      "kind": "trash",
+      "action": "undelete",
+      "accepted": false,
+      "asked": [
+        {
+          "message": "This will instruct your database to restore all files currently in the trash to all the local file domains they have been in.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "hashes": [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+        ],
+        "clear_enabled": true,
+        "undelete_enabled": true
+      },
+      "after": {
+        "hashes": [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+        ],
+        "clear_enabled": true,
+        "undelete_enabled": true
+      }
+    },
+    {
+      "kind": "trash",
+      "action": "undelete",
+      "accepted": true,
+      "asked": [
+        {
+          "message": "This will instruct your database to restore all files currently in the trash to all the local file domains they have been in.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "hashes": [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+        ],
+        "clear_enabled": true,
+        "undelete_enabled": true
+      },
+      "after": {
+        "hashes": [],
+        "clear_enabled": false,
+        "undelete_enabled": false
+      }
+    },
+    {
+      "kind": "trash",
+      "action": "clear",
+      "accepted": false,
+      "asked": [
+        {
+          "message": "This will completely clear your trash of all its files, deleting them permanently from the client. This operation cannot be undone.\n\nIf you have many files in your trash, it will take some time to complete and for all the files to eventually be deleted.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "hashes": [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+        ],
+        "clear_enabled": true,
+        "undelete_enabled": true
+      },
+      "after": {
+        "hashes": [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+        ],
+        "clear_enabled": true,
+        "undelete_enabled": true
+      }
+    },
+    {
+      "kind": "trash",
+      "action": "clear",
+      "accepted": true,
+      "asked": [
+        {
+          "message": "This will completely clear your trash of all its files, deleting them permanently from the client. This operation cannot be undone.\n\nIf you have many files in your trash, it will take some time to complete and for all the files to eventually be deleted.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "hashes": [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+        ],
+        "clear_enabled": true,
+        "undelete_enabled": true
+      },
+      "after": {
+        "hashes": [],
+        "clear_enabled": false,
+        "undelete_enabled": false
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "favourites",
+      "service_type": 7,
+      "action": "delete_for_deleted_files",
+      "menu_label": "for deleted files",
+      "accepted": false,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for deleted files? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "after": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "favourites",
+      "service_type": 7,
+      "action": "delete_for_deleted_files",
+      "menu_label": "for deleted files",
+      "accepted": true,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for deleted files? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "after": {
+        "label": "3 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "favourites",
+      "service_type": 7,
+      "action": "delete_for_non_local_files",
+      "menu_label": "for all non-local files",
+      "accepted": false,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for non-local files? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "after": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "favourites",
+      "service_type": 7,
+      "action": "delete_for_non_local_files",
+      "menu_label": "for all non-local files",
+      "accepted": true,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for non-local files? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "after": {
+        "label": "2 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "favourites",
+      "service_type": 7,
+      "action": "delete_for_all_files",
+      "menu_label": "for all files",
+      "accepted": false,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for ALL FILES? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "after": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "favourites",
+      "service_type": 7,
+      "action": "delete_for_all_files",
+      "menu_label": "for all files",
+      "accepted": true,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for ALL FILES? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "after": {
+        "label": "0 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "stars",
+      "service_type": 6,
+      "action": "delete_for_deleted_files",
+      "menu_label": "for deleted files",
+      "accepted": false,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for deleted files? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "after": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "stars",
+      "service_type": 6,
+      "action": "delete_for_deleted_files",
+      "menu_label": "for deleted files",
+      "accepted": true,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for deleted files? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "after": {
+        "label": "3 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "stars",
+      "service_type": 6,
+      "action": "delete_for_non_local_files",
+      "menu_label": "for all non-local files",
+      "accepted": false,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for non-local files? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "after": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "stars",
+      "service_type": 6,
+      "action": "delete_for_non_local_files",
+      "menu_label": "for all non-local files",
+      "accepted": true,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for non-local files? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "after": {
+        "label": "2 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "stars",
+      "service_type": 6,
+      "action": "delete_for_all_files",
+      "menu_label": "for all files",
+      "accepted": false,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for ALL FILES? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "after": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "stars",
+      "service_type": 6,
+      "action": "delete_for_all_files",
+      "menu_label": "for all files",
+      "accepted": true,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for ALL FILES? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "after": {
+        "label": "0 files are rated",
+        "cached_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "counter",
+      "service_type": 22,
+      "action": "delete_for_deleted_files",
+      "menu_label": "for deleted files",
+      "accepted": false,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for deleted files? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          7,
+          7,
+          7,
+          7
+        ]
+      },
+      "after": {
+        "label": "4 files are rated",
+        "cached_values": [
+          7,
+          7,
+          7,
+          7
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "counter",
+      "service_type": 22,
+      "action": "delete_for_deleted_files",
+      "menu_label": "for deleted files",
+      "accepted": true,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for deleted files? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          7,
+          7,
+          7,
+          7
+        ]
+      },
+      "after": {
+        "label": "3 files are rated",
+        "cached_values": [
+          7,
+          7,
+          7,
+          7
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "counter",
+      "service_type": 22,
+      "action": "delete_for_non_local_files",
+      "menu_label": "for all non-local files",
+      "accepted": false,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for non-local files? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          7,
+          7,
+          7,
+          7
+        ]
+      },
+      "after": {
+        "label": "4 files are rated",
+        "cached_values": [
+          7,
+          7,
+          7,
+          7
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "counter",
+      "service_type": 22,
+      "action": "delete_for_non_local_files",
+      "menu_label": "for all non-local files",
+      "accepted": true,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for non-local files? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          7,
+          7,
+          7,
+          7
+        ]
+      },
+      "after": {
+        "label": "2 files are rated",
+        "cached_values": [
+          7,
+          7,
+          7,
+          7
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "counter",
+      "service_type": 22,
+      "action": "delete_for_all_files",
+      "menu_label": "for all files",
+      "accepted": false,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for ALL FILES? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          7,
+          7,
+          7,
+          7
+        ]
+      },
+      "after": {
+        "label": "4 files are rated",
+        "cached_values": [
+          7,
+          7,
+          7,
+          7
+        ]
+      }
+    },
+    {
+      "kind": "rating",
+      "service": "counter",
+      "service_type": 22,
+      "action": "delete_for_all_files",
+      "menu_label": "for all files",
+      "accepted": true,
+      "asked": [
+        {
+          "message": "Delete any ratings on this service for ALL FILES? THIS CANNOT BE UNDONE\n\nPlease note a client restart is needed to see the ratings disappear in media views.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "label": "4 files are rated",
+        "cached_values": [
+          7,
+          7,
+          7,
+          7
+        ]
+      },
+      "after": {
+        "label": "0 files are rated",
+        "cached_values": [
+          7,
+          7,
+          7,
+          7
+        ]
+      }
+    }
+  ]
+}

@@ -1641,7 +1641,7 @@ autocomplete options, sessions, shortcut sets, recent tags.
 - Slint is to be tried first (DECISIONS.md); the first milestone, a search
   page with a thumbnail grid over a real library, is where that is judged.
 
-Services → review opens the service registry with each local and built-in service's name, type, database id, service key copying and refresh. File-domain sizes and deleted counts, tag mapping/tag/file counts, and rated-file counts come from a consistent native store read and match `oracle/record_services.py`. Refresh retains the selected key. Bulk maintenance and remote administration actions show an explicit unavailable explanation.
+Services → review opens the service registry with each local and built-in service's name, type, database id, service key copying and refresh. File-domain sizes and deleted counts, tag mapping/tag/file counts, and rated-file counts come from a consistent native store read and match `oracle/record_services.py`. Refresh retains the selected key. Local trash review now offers confirmed clear/undelete actions and local rating review offers confirmed deleted/non-local/all-file clearing; unavailable remote administration actions retain an explicit explanation.
 
 Services → edit opens the manage services list (`services_editor`, `services_editor_window`, `services_editor.slint`). Add local file, local tag, like/dislike, numerical and inc/dec rating services; edit their names and rating display colours, shapes/SVG names, thumbnail flags, stars, zero, padding and fraction placement. Names acquire casefolded duplicate suffixes. Child editors and the list hold changes until their apply buttons; either cancel forgets its changes. Deletion asks before staging and again before Apply, rejects nonempty local file domains and the last local file/tag domain, and rechecks inside the atomic write. Apply republishes the registry/graphs, reconciles deleted-domain membership, rebuilds tag counts and invalidates visible thumbnails. It refreshes the current selection's tags even on a locked page and refreshes an open viewer's tags when deletion changes sibling or parent display. Concurrent service changes reject the stale editor without partial writes.
 
@@ -2820,3 +2820,13 @@ active search alone. `oracle/fixtures/system_or_activation.json` records 18
 actual Qt cases in the main read input and basic OR child, including accepted
 system recents surviving outer Cancel. Both callers use the original activation intent. Authored model replay and
 the native 18-case consumer replay await hosted CI; no native render is claimed.
+
+Local service review bulk maintenance uses the exact questions and “do it” /
+“forget it” decisions from `oracle/fixtures/service_bulk.json`. Trash controls
+disable when empty. Undelete restores every former local domain and its import
+time; clear uses the normal physical-deletion queue and honours archived-file
+delete locks. Like/dislike, numerical and inc/dec rating services offer “for
+deleted files”, “for all non-local files”, and “for all files”. The first two
+use physical storage membership, so a file still in trash remains local.
+Counts refresh on acceptance and survive reopening. Each question captures its
+service/action, blocks replacement and selection, and retires with its owner.

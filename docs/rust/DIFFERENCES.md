@@ -989,7 +989,7 @@ Checked by the `popups` conformance scenario.
   `false` for a numerical or inc/dec rating service (Python counts a bool as
   an int, so the reference stores `true` as one star).
 
-- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, repository/IPFS account administration, bulk clear/undelete maintenance actions remain unavailable and are described in the window.
+- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, repository/IPFS account administration and clearing deleted-file records remain unavailable. Local trash clear/undelete and all three local rating-clear populations are implemented; bulk rating choices and confirmations use native inline controls rather than Qt popup menus/dialogs.
 
 - **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields and there is no live rating preview; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available; HTTPS, normie Eris and external URL overrides are preserved imported values, with an explicit control to disable unsupported HTTPS. A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
 
@@ -1877,3 +1877,10 @@ Shift and use the same OR construction broadcast as tags. The executed actual
 Qt activation recording covers both consumers, accepted recents after outer
 Cancel, history-free drafts and real query counts. Authored model/native
 regression execution remains pending hosted CI.
+
+Service review trash deletion delegates physical unlinking to the existing
+deferred-delete worker and preserves its delete-lock behaviour. The recorded
+rating warning about restarting media views is retained: review counts reopen
+from the database immediately, while cached media ratings refresh through their
+existing viewer/page lifecycle. The service review parent remains partial;
+this slice covers only the two local bulk-maintenance leaves.
