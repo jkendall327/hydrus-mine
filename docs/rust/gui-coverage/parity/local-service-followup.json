@@ -5,7 +5,9 @@
   "implementation_commits": [
     "be626af1a79553028d8ba9ec1f685670e07019bf",
     "5fb75bc9c9f0c461cb205df266e0e7da6689b467",
-    "efe8fe605d685d6e3db70b5aeb4369f198af4352"
+    "efe8fe605d685d6e3db70b5aeb4369f198af4352",
+    "2a4b8e93",
+    "5bfd08f75d8c28dd5f243345a0c048e6c6bc580a"
   ],
   "claims": [
     {
@@ -76,7 +78,7 @@
       "previous_status": "missing",
       "proposedStatus": "first_pass",
       "proposed_status": "first_pass",
-      "exactBehavior": "Local like/dislike, numerical and inc/dec service configuration has four independent interactive examples labelled Thumbnails, Media Viewer, Preview Window and Dialog (Default). Staged colour/shape/star-count/padding/fraction changes repaint actual graphics. Like left/right toggles; numerical left chooses and right clears; counter left/right changes and middle value Accept/Cancel affects only its sample. Owned counter prompt blocks child Apply until answered. Samples never enter ServiceKind or file ratings. Child Apply stages actual service configuration, parent Apply persists it, reopen initializes fresh samples from saved configuration; child/parent Cancel and retained closed-child callbacks cannot commit or clear a successor. Numerical samples retain the recorded opening click conversion while live count changes repaint the stored fraction. Whole-widget numerical pointer routing includes painted fraction text and blank space, updates only while the left button is held, preserves last valid value when dragging outside, clears on outside press/right press, and ignores post-release hover. Opening fraction-side/count/allow-zero conversion and saved one-star normalization remain distinct, as recorded.",
+      "exactBehavior": "Local like/dislike, numerical and inc/dec service configuration has four independent interactive examples labelled Thumbnails, Media Viewer, Preview Window and Dialog (Default). Staged colour/shape/star-count/padding/fraction changes repaint actual graphics. Like left/right toggles; numerical left chooses and right clears; counter left/right changes and middle value Accept/Cancel affects only its sample. Owned counter prompt blocks child Apply until answered. Samples never enter ServiceKind or file ratings. Child Apply stages actual service configuration, parent Apply persists it, reopen initializes fresh samples from saved configuration; child/parent Cancel and retained closed-child callbacks cannot commit or clear a successor. Numerical samples retain the recorded opening click conversion while live count changes repaint the stored fraction. Whole-widget numerical pointer routing includes painted fraction text and blank space, updates only while the left button is held, preserves last valid value when dragging outside, clears on outside press/right press, and ignores post-release hover. Opening fraction-side/count/allow-zero conversion and saved one-star normalization remain distinct, as recorded. Left-held numerical drags survive an additional Right press/release within the widget. Chord presses retain Qt Left priority; right-only drag and hover after Left release remain inert. Cross-edge chord capture remains a documented framework limitation.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/rating_example.rs",
@@ -170,7 +172,8 @@
         "Native uses existing shared rating graphics and inline owned counter-value prompt rather than a separate Qt modal child. Named SVG graphics retain existing fallback.",
         "Reference keeps opening numerical click conversion, including star count and allow-zero, while live display settings repaint stored fraction; native mirrors this observed contract.",
         "Service management and rating preferences parents stay partial; no remote/IPFS/account/listener scope, aliases or parent promotions.",
-        "Rust model/native/store-consumer regressions authored for root hosted CI; no local Cargo build/test or mutation test."
+        "Rust model/native/store-consumer regressions authored for root hosted CI; no local Cargo build/test or mutation test.",
+        "Slint 1.18 drops its private mouse grab on every button release. In-widget Left-held movement continues across Right release, but leaving the sample then invalidates pressed state; a chord drag cannot resume on re-entry while Left remains held. Full mixed-button cross-edge capture parity is not claimed."
       ],
       "native_png": "service-rating-examples.png (hosted CARGO_TARGET_TMPDIR)",
       "continuationRecordings": [
@@ -279,6 +282,49 @@
       },
       "native_png": "service-rating-pointer.png (hosted CARGO_TARGET_TMPDIR)",
       "validation": "fmt/diff/Python/cached Slint passed; native/model regressions authored, root hosted CI pending; no local Cargo or mutation tests"
+    },
+    {
+      "reference_ids": [
+        "audit-media-services-missing-rating-preview"
+      ],
+      "kind": "bounded_pointer_repair",
+      "implementation_commit": "5bfd08f75d8c28dd5f243345a0c048e6c6bc580a",
+      "additional_original_leaf_count": 0,
+      "behavior": "Independent Left-held tracking, Qt Left-priority chord presses, delivered in-widget move after Right release; no right-only/after-release rating",
+      "referenceRecording": {
+        "script": "oracle/record_rating_preview_pointer.py",
+        "fixture": "oracle/fixtures/rating_preview_pointer.json",
+        "commit": "5bfd08f75d8c28dd5f243345a0c048e6c6bc580a",
+        "executed_at": "2026-10-04 23:05:01\u201323:05:02 UTC",
+        "result": "Actual Qt events include Left+Right press, move while both held, Right release while Left held, inside/outside/re-entered Left move, Left release and hover, right-only drag/release and hover for all three opening fraction sides. Exact state/fraction replay authored; original services unchanged."
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/ui/services_editor.slint",
+          "line": 37,
+          "symbol": "changed pressed",
+          "commit": "5bfd08f75d8c28dd5f243345a0c048e6c6bc580a"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/services_editor.rs",
+          "line": 684,
+          "symbol": "for event in case[\"chord_events\"]",
+          "commit": "5bfd08f75d8c28dd5f243345a0c048e6c6bc580a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/services_editor.rs",
+          "line": 939,
+          "symbol": "Left remains held",
+          "commit": "5bfd08f75d8c28dd5f243345a0c048e6c6bc580a"
+        }
+      ],
+      "framework_source": "Slint1.18.1 i-slint-core items/input_items.rs Released clears grabbed for every button; Exit clears pressed and only emits Cancel if previously grabbed. input.rs process_mouse_grab drops capture on EventAccepted. PointerEventKind.move remains delivered inside the widget.",
+      "limitations": [
+        "Slint 1.18 drops its private mouse grab on every button release. In-widget Left-held movement continues across Right release, but leaving the sample then invalidates pressed state; a chord drag cannot resume on re-entry while Left remains held. Full mixed-button cross-edge capture parity is not claimed."
+      ],
+      "validation": "fmt/diff/Python/cached Slint passed; authored exact model/native regressions await root hosted CI; no local Cargo or mutation test"
     }
   ]
 }
