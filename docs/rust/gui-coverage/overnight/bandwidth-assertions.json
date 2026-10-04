@@ -1,0 +1,119 @@
+{
+  "agent": "cookies",
+  "slice": "bandwidth_assertions",
+  "claims": [
+    {
+      "reference_id": "audit-network-bandwidth-rows",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "change_kind": "evidence_only_reassessment",
+      "exact_behavior": "New Qt-recorded numeric sort-key assertions cover speed/day/all-time/month values. GUI ascending/descending history sorts place 900 B and 2 KiB by numeric magnitude.",
+      "implementation_commit": "5c7c252284df086a3cca40331d736a7fb0eb2409",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_data.rs",
+          "line": 423,
+          "symbol": "fn bandwidth_history_columns_sort",
+          "commit": "5c7c252284df086a3cca40331d736a7fb0eb2409"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+          "line": 167,
+          "symbol": "fn reference_bandwidth_age",
+          "commit": "5c7c252284df086a3cca40331d736a7fb0eb2409"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/bandwidth_history.json",
+      "validation": {
+        "reference_recording_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    },
+    {
+      "reference_id": "audit-network-bandwidth-history",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "change_kind": "evidence_only_reassessment",
+      "exact_behavior": "New GUI assertions exercise week/day/month/all-time selector changes against distinct retained time buckets; custom age, show-all and persisted reopening are covered by the new-behavior filter test.",
+      "implementation_commit": "5c7c252284df086a3cca40331d736a7fb0eb2409",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_data.rs",
+          "line": 423,
+          "symbol": "fn bandwidth_history_columns_sort",
+          "commit": "5c7c252284df086a3cca40331d736a7fb0eb2409"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+          "line": 167,
+          "symbol": "fn reference_bandwidth_age",
+          "commit": "5c7c252284df086a3cca40331d736a7fb0eb2409"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/bandwidth_history.json",
+      "validation": {
+        "reference_recording_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    },
+    {
+      "reference_id": "audit-network-bandwidth-detail",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "change_kind": "evidence_only_reassessment",
+      "exact_behavior": "New GUI assertions inspect all-time text, inherited/specific ownership, per-rule usage, default/revert availability and updates after a persisted override.",
+      "implementation_commit": "5c7c252284df086a3cca40331d736a7fb0eb2409",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_data.rs",
+          "line": 423,
+          "symbol": "fn bandwidth_history_columns_sort",
+          "commit": "5c7c252284df086a3cca40331d736a7fb0eb2409"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+          "line": 167,
+          "symbol": "fn reference_bandwidth_age",
+          "commit": "5c7c252284df086a3cca40331d736a7fb0eb2409"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/bandwidth_history.json",
+      "validation": {
+        "reference_recording_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    },
+    {
+      "reference_id": "audit-network-bandwidth-defaults",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "change_kind": "evidence_only_reassessment",
+      "exact_behavior": "Real Qt default chooser keys are recorded. GUI assertions open global plus each default kind, save a distinctive request rule and check the exact persisted context.",
+      "implementation_commit": "5c7c252284df086a3cca40331d736a7fb0eb2409",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_data.rs",
+          "line": 423,
+          "symbol": "fn bandwidth_history_columns_sort",
+          "commit": "5c7c252284df086a3cca40331d736a7fb0eb2409"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+          "line": 167,
+          "symbol": "fn reference_bandwidth_age",
+          "commit": "5c7c252284df086a3cca40331d736a7fb0eb2409"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/bandwidth_history.json",
+      "validation": {
+        "reference_recording_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    }
+  ],
+  "counting": "Four evidence-only reassessments on existing controls; exclude from new implementation goal. bandwidth-context parent is deliberately unclaimed."
+}

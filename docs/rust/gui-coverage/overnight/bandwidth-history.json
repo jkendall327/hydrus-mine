@@ -1,0 +1,145 @@
+{
+  "agent": "cookies",
+  "slice": "bandwidth_history",
+  "claims": [
+    {
+      "reference_id": "bandwidth-month-chart",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "new_behavior",
+      "exact_behavior": "Selecting one context renders a scrollable monthly-byte bar chart with chronological UTC labels, exact byte labels and relative bar heights. Empty trackers show the reference empty-history message. Refresh updates the bars.",
+      "implementation_commit": "bbf1a9c5c21b2d660d017a2851d1416683de5402",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs",
+          "line": 310,
+          "symbol": "self.window.set_monthly_bars",
+          "commit": "bbf1a9c5c21b2d660d017a2851d1416683de5402"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_data.rs",
+          "line": 268,
+          "symbol": "fn bandwidth_filters_chart",
+          "commit": "bbf1a9c5c21b2d660d017a2851d1416683de5402"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/network_data.rs",
+          "line": 117,
+          "symbol": "pub fn filtered_contexts",
+          "commit": "bbf1a9c5c21b2d660d017a2851d1416683de5402"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+          "line": 167,
+          "symbol": "fn reference_bandwidth_age",
+          "commit": "5c7c252284df086a3cca40331d736a7fb0eb2409"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/bandwidth_history.json",
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      },
+      "limitations": [
+        "Chart and selected details are inline in the native all-context review rather than separate Qt frames.",
+        "Reset reaches live engine at next heartbeat; generation guards make earlier saves/snapshots unable to revive old usage.",
+        "Native last-age preferences are separate from imported Python options."
+      ]
+    },
+    {
+      "reference_id": "bandwidth-delete-history",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "new_behavior",
+      "exact_behavior": "Extended selection supports deleting all selected history after the exact reference confirmation. Cancellation retains counts; accepted deletion atomically removes durable/live-snapshot usage and preserves rules. Per-context reset generations block old engine flushes/snapshots, discard in-memory trackers at heartbeat and wake bandwidth waiters.",
+      "implementation_commit": "bbf1a9c5c21b2d660d017a2851d1416683de5402",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs",
+          "line": 723,
+          "symbol": "window.on_delete_history_clicked",
+          "commit": "bbf1a9c5c21b2d660d017a2851d1416683de5402"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_data.rs",
+          "line": 268,
+          "symbol": "fn bandwidth_filters_chart",
+          "commit": "bbf1a9c5c21b2d660d017a2851d1416683de5402"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/network_data.rs",
+          "line": 117,
+          "symbol": "pub fn filtered_contexts",
+          "commit": "bbf1a9c5c21b2d660d017a2851d1416683de5402"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+          "line": 167,
+          "symbol": "fn reference_bandwidth_age",
+          "commit": "5c7c252284df086a3cca40331d736a7fb0eb2409"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/bandwidth_history.json",
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      },
+      "limitations": [
+        "Chart and selected details are inline in the native all-context review rather than separate Qt frames.",
+        "Reset reaches live engine at next heartbeat; generation guards make earlier saves/snapshots unable to revive old usage.",
+        "Native last-age preferences are separate from imported Python options."
+      ]
+    },
+    {
+      "reference_id": "audit-network-bandwidth-filters",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "new_behavior",
+      "exact_behavior": "Filter by age of request usage using day/week/month/custom positive seconds, optional specific-rule contexts, and show-all. Defaults and ephemeral usage trackers are excluded as in reference. Last custom age/show-all persists across reopen; invalid age does not change the accepted preference.",
+      "implementation_commit": "bbf1a9c5c21b2d660d017a2851d1416683de5402",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs",
+          "line": 247,
+          "symbol": "review.filtered_contexts",
+          "commit": "bbf1a9c5c21b2d660d017a2851d1416683de5402"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_data.rs",
+          "line": 268,
+          "symbol": "fn bandwidth_filters_chart",
+          "commit": "bbf1a9c5c21b2d660d017a2851d1416683de5402"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/network_data.rs",
+          "line": 117,
+          "symbol": "pub fn filtered_contexts",
+          "commit": "bbf1a9c5c21b2d660d017a2851d1416683de5402"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/network_data.rs",
+          "line": 167,
+          "symbol": "fn reference_bandwidth_age",
+          "commit": "5c7c252284df086a3cca40331d736a7fb0eb2409"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/bandwidth_history.json",
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      },
+      "limitations": [
+        "Chart and selected details are inline in the native all-context review rather than separate Qt frames.",
+        "Reset reaches live engine at next heartbeat; generation guards make earlier saves/snapshots unable to revive old usage.",
+        "Native last-age preferences are separate from imported Python options."
+      ]
+    }
+  ],
+  "counting": "Three newly implemented existing concrete leaves. No container or evidence-only audit count."
+}
