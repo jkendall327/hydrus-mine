@@ -3,7 +3,8 @@
   "baseline": "d50df26b",
   "implementation_commits": [
     "ae7227ab0557ee277307145e9c862cf6a0306aa0",
-    "671a6d8d1f32c9ed8043a15a1008740ee1874bb8"
+    "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
+    "37affafb961b0146f229ff0c706cb8cb5c1a714e"
   ],
   "validation": {
     "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states",
@@ -188,6 +189,96 @@
         "The export-folder parent update-test-example-files search button is not yet implemented; filename tagging, import folders and manual exports supply bounded owner examples.",
         "General filesystem I/O errors include the operating-system error text; the recorded formula parse error is asserted exactly."
       ]
+    },
+    {
+      "reference_id": "sidecar-source-processing",
+      "previous_status": "partial",
+      "before": "partial",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Source processing opens with the actual first example importer texts before its processor, including duplicate strings, parsed JSON values and exact recorded parse error samples. Accepted processing remains staged, refreshes the router example table and reaches persisted real-store router processing; cancel and parent close invalidate child callbacks.",
+      "exactBehavior": "Source processing opens with the actual first example importer texts before its processor, including duplicate strings, parsed JSON values and exact recorded parse error samples. Accepted processing remains staged, refreshes the router example table and reaches persisted real-store router processing; cancel and parent close invalidate child callbacks.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sidecar_editors.rs",
+          "line": 1214,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "test_importer_strings"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/sidecars_window.rs",
+          "line": 758,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "open_router"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sidecar_editors.rs",
+          "line": 451,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "recorded_router_tables_and_child_strings_use_real_sidecars_and_read_only_media"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 632,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "router_examples_follow_reference_source_tabs_and_processor_children_without_exports"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_sidecar_testing.py",
+        "fixture": "oracle/fixtures/sidecar_testing.json",
+        "visual_reference": "oracle/fixtures/sidecar_testing.png",
+        "actual_recording": "passed: seven real Qt states, actual source editor _GetExampleTestData and router processor inputs; generated sidecars and synthetic media"
+      },
+      "limitations": [],
+      "limits": []
+    },
+    {
+      "reference_id": "sidecar-router-processing",
+      "previous_status": "partial",
+      "before": "partial",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Router processing opens with all source outputs from the first example in source order; source processors execute before these starting strings are collected. Accepted human sort processing refreshes every example table and reaches the saved real-store router consumer. Cancel and parent close discard pending processing; empty examples supply empty starting strings.",
+      "exactBehavior": "Router processing opens with all source outputs from the first example in source order; source processors execute before these starting strings are collected. Accepted human sort processing refreshes every example table and reaches the saved real-store router consumer. Cancel and parent close discard pending processing; empty examples supply empty starting strings.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sidecar_editors.rs",
+          "line": 1293,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "router_test_strings"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/sidecars_window.rs",
+          "line": 758,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "open_router"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sidecar_editors.rs",
+          "line": 451,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "recorded_router_tables_and_child_strings_use_real_sidecars_and_read_only_media"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 632,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "router_examples_follow_reference_source_tabs_and_processor_children_without_exports"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_sidecar_testing.py",
+        "fixture": "oracle/fixtures/sidecar_testing.json",
+        "visual_reference": "oracle/fixtures/sidecar_testing.png",
+        "actual_recording": "passed: seven real Qt states, actual source editor _GetExampleTestData and router processor inputs; generated sidecars and synthetic media"
+      },
+      "limitations": [],
+      "limits": []
     }
   ]
 }
