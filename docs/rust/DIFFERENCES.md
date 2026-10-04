@@ -924,8 +924,9 @@ rejected. Copies replace destinations atomically through a sibling temporary fil
 existing hardlinks are detached so other directory entries retain their bytes.
 Existing sidecars are detached before routing for the same reason.
 
-The window displays filename examples as text; it does not yet offer the
-reference's interactive pattern-example menu or selected-files tags sidebar.
+The window offers the reference's interactive pattern-shortcut clipboard menu;
+the selected-files tags sidebar is still absent. Native shortcut menus do not
+reproduce Qt's bold heading or action hover tooltips.
 "Export and close" closes the review window (the reference's quit-afterwards
 flag also closes its review frame, not the whole client). Cancellation completes
 an in-flight copy before stopping between files. Progress is in the review

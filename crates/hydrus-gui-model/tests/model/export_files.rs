@@ -371,3 +371,35 @@ fn symlinks_existing_links_and_hardlinks_preserve_source_content() {
     let progress = export_files::run(&store, &p, &AtomicBool::new(false), |_| {});
     assert!(progress.error.unwrap().contains("outside"));
 }
+
+#[test]
+fn shared_pattern_menu_copies_recorded_phrases_including_its_heading() {
+    let reference = hydrus_testkit::fixture_json("export_pattern_shortcuts.json");
+    let labels = reference["menu"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|row| !row["separator"].as_bool().unwrap())
+        .map(|row| row["label"].as_str().unwrap())
+        .collect::<Vec<_>>();
+    assert_eq!(labels[0], export_files::PATTERN_SHORTCUT_HEADING);
+    assert_eq!(
+        labels[1..],
+        export_files::PATTERN_SHORTCUTS.map(|(label, _)| label)
+    );
+    let copied = std::iter::once(7)
+        .chain(0..7)
+        .map(|index| export_files::pattern_shortcut(index).unwrap())
+        .collect::<Vec<_>>();
+    assert_eq!(serde_json::to_value(copied).unwrap(), reference["copied"]);
+    assert!(
+        reference["menu"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|row| row["enabled"] == true)
+    );
+    assert_eq!(export_files::pattern_shortcut(-1), None);
+    assert_eq!(export_files::pattern_shortcut(8), None);
+    assert_eq!(export_files::pattern_shortcut(i32::MAX), None);
+}

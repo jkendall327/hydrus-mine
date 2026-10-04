@@ -1,5 +1,5 @@
 //! Bind manual export previews and a background worker to the export window.
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::{
     Arc,
@@ -56,6 +56,30 @@ pub fn open(
         return Ok(window.clone_strong());
     }
     let window = ExportFilesWindow::new()?;
+    let active = Rc::new(Cell::new(true));
+    window.set_pattern_shortcuts(ModelRc::new(VecModel::from(
+        export_files::PATTERN_SHORTCUTS
+            .iter()
+            .map(|(label, _)| (*label).into())
+            .collect::<Vec<_>>(),
+    )));
+    window.set_pattern_heading(export_files::PATTERN_SHORTCUT_HEADING.into());
+    window.on_pattern_chosen({
+        let active = active.clone();
+        let weak = window.as_weak();
+        let sidecars = slots.sidecars.clone();
+        move |index| {
+            if active.get()
+                && sidecars.routers.borrow().is_none()
+                && weak
+                    .upgrade()
+                    .is_some_and(|window| !window.get_working() && !window.get_asking())
+                && let Some(phrase) = export_files::pattern_shortcut(index)
+            {
+                crate::copy_to_clipboard(phrase);
+            }
+        }
+    });
     let preferences: Preferences = store.read(settings::get).unwrap_or_default();
     let naming: settings::ExportSettings = store.read(settings::get).unwrap_or_default();
     window.set_destination(preferences.destination.clone().into());
@@ -121,7 +145,9 @@ pub fn open(
         let weak = window.as_weak();
         let slots = slots.clone();
         let state = state.clone();
+        let active = active.clone();
         move || {
+            active.set(false);
             state.borrow().cancel.store(true, Ordering::Release);
             slots.timer.stop();
             slots.sidecars.cancel();

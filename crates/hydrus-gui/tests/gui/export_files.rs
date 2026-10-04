@@ -130,3 +130,163 @@ fn export_files_menu_window_previews_confirmation_and_worker() {
     assert!(bound.export_files.window.borrow().is_none());
     viewer.invoke_close_requested();
 }
+
+#[test]
+fn shared_pattern_shortcuts_copy_without_editing_and_guard_closed_owners() {
+    use hydrus_gui::export_files_window::{self, Slots};
+    use std::{cell::RefCell, rc::Rc};
+    let (_dirs, store) = crate::subscriptions::store();
+    let rendered = headless::init();
+    let copied = Rc::new(RefCell::new(String::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let hydrus_gui::Clip::Text(text) = clip {
+                copied.borrow_mut().clone_from(text);
+            }
+        }
+    });
+    let reference = hydrus_testkit::fixture_json("export_pattern_shortcuts.json");
+    let slots = Slots::default();
+    let window =
+        export_files_window::open(&store, vec![hydrus_core::HashId(1)], &slots, Rc::new(|| {}))
+            .unwrap();
+    window.set_phrase("keep {hash}".into());
+    window.invoke_update();
+    let initial_rows = window
+        .get_rows()
+        .row_data(0)
+        .unwrap()
+        .cells
+        .iter()
+        .collect::<Vec<_>>();
+    assert_eq!(
+        window.get_pattern_heading(),
+        reference["menu"][0]["label"].as_str().unwrap()
+    );
+    let labels = window
+        .get_pattern_shortcuts()
+        .iter()
+        .map(|label| label.to_string())
+        .collect::<Vec<_>>();
+    assert_eq!(
+        labels,
+        reference["menu"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|row| !row["separator"].as_bool().unwrap())
+            .skip(1)
+            .map(|row| row["label"].as_str().unwrap().to_owned())
+            .collect::<Vec<_>>()
+    );
+    for (index, expected) in std::iter::once(7)
+        .chain(0..7)
+        .zip(reference["copied"].as_array().unwrap())
+    {
+        window.invoke_pattern_chosen(index);
+        assert_eq!(*copied.borrow(), expected.as_str().unwrap());
+        assert_eq!(
+            window.get_phrase(),
+            reference["phrase_after"].as_str().unwrap()
+        );
+        assert_eq!(
+            window
+                .get_rows()
+                .row_data(0)
+                .unwrap()
+                .cells
+                .iter()
+                .collect::<Vec<_>>(),
+            initial_rows
+        );
+    }
+    let previous = copied.borrow().clone();
+    window.invoke_pattern_chosen(-1);
+    window.invoke_pattern_chosen(8);
+    assert_eq!(*copied.borrow(), previous);
+    window.set_working(true);
+    window.invoke_pattern_chosen(0);
+    assert_eq!(*copied.borrow(), previous);
+    window.set_working(false);
+    window.set_asking(true);
+    window.invoke_pattern_chosen(0);
+    assert_eq!(*copied.borrow(), previous);
+    window.set_asking(false);
+    window.invoke_edit_sidecars();
+    window.invoke_pattern_chosen(0);
+    assert_eq!(*copied.borrow(), previous);
+    slots.sidecars.cancel();
+    // The copied phrase reaches the existing real filename consumer only after
+    // the user pastes it and accepts the filename edit.
+    let destination = tempfile::tempdir().unwrap();
+    window.set_destination(destination.path().to_string_lossy().into_owned().into());
+    window.invoke_pattern_chosen(0);
+    window.set_phrase(copied.borrow().clone().into());
+    window.invoke_update();
+    assert_eq!(
+        window
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(2)
+            .unwrap()
+            .to_string(),
+        destination.path().join("1.png").to_string_lossy()
+    );
+    let pixels = headless::render(&rendered.get(0).unwrap(), 880, 610);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("export-pattern-shortcuts.png"),
+        &pixels,
+        880,
+        610,
+    )
+    .unwrap();
+    window.invoke_dismissed();
+    let before = copied.borrow().clone();
+    window.invoke_pattern_chosen(1);
+    assert_eq!(*copied.borrow(), before);
+    assert_eq!(std::fs::read_dir(destination.path()).unwrap().count(), 0);
+    // The concrete folder owner uses the same menu and closes its callbacks.
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    crate::folders::open(&ui, "manage export folders\u{2026}");
+    let list = bound
+        .folders
+        .export_list
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    list.invoke_add();
+    let folder = bound
+        .folders
+        .export_edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    folder.set_phrase("keep {hash}".into());
+    for (index, expected) in std::iter::once(7)
+        .chain(0..7)
+        .zip(reference["copied"].as_array().unwrap())
+    {
+        folder.invoke_pattern_chosen(index);
+        assert_eq!(*copied.borrow(), expected.as_str().unwrap());
+        assert_eq!(folder.get_phrase(), "keep {hash}");
+    }
+    folder.invoke_edit_sidecars();
+    let before = copied.borrow().clone();
+    folder.invoke_pattern_chosen(0);
+    assert_eq!(*copied.borrow(), before);
+    folder.invoke_cancel();
+    folder.invoke_pattern_chosen(0);
+    assert_eq!(*copied.borrow(), before);
+    assert!(bound.folders.sidecars.routers.borrow().is_none());
+    list.invoke_cancel();
+    let stored = store
+        .read(hydrus_store::settings::get::<hydrus_store::settings::ExportFolders>)
+        .unwrap();
+    assert!(stored.0.is_empty());
+}
