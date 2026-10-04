@@ -454,7 +454,7 @@ fn viewing_statistics_switch_controls_actual_pair_navigation_and_cancelled_close
         .unwrap();
     let policy = |enabled| {
         store
-            .write(|ctx| {
+            .write(move |ctx| {
                 settings::set(
                     ctx.conn(),
                     &FileViewingStatistics {
