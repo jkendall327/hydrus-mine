@@ -74,6 +74,10 @@ async fn handler(
         (StatusCode::UNAUTHORIZED, "credentials denied", None)
     } else if route == "/login" && method == "GET" {
         (StatusCode::OK, "login response", Some("session=ok; Path=/"))
+    } else if route == "/data" && method == "GET" {
+        // The demand recorder's data endpoint has no Set-Cookie header. Keep
+        // the older credential-test preflight response scoped to its own routes.
+        (StatusCode::OK, "synthetic loopback response", None)
     } else if route == "/stall" {
         tokio::time::sleep(Duration::from_secs(5)).await;
         (StatusCode::OK, "late", None)
