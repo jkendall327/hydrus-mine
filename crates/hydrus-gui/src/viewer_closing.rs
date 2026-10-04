@@ -27,7 +27,7 @@ fn activate(window: &MainWindow, reason: Action) {
     // Real native focus/raise; Slint receives the OS activation normally.
     let _ = window
         .window()
-        .with_winit_window(|native| native.focus_window());
+        .with_winit_window(slint::winit_030::winit::window::Window::focus_window);
 }
 
 pub(crate) struct Owner {
