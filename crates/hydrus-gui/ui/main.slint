@@ -520,6 +520,7 @@ export component MainWindow inherits Window {
     out property <length> page-content-height: page-content.height;
     in property <[PageTreeRow]> page-tree;
     callback page-tree-chosen(string);
+    callback tab-measured(int,float,float,float);
     out property <string> tab-tooltip;
     property <length> tab-tooltip-x;
     property <length> tab-tooltip-y;
@@ -949,6 +950,7 @@ export component MainWindow inherits Window {
                     reverse-levels: root.tab-alignment == 2 || root.tab-alignment == 3;
                     elide: root.elide-tab-names;
                     chosen(level,index) => { root.tab-chosen(level,index); }
+                    measured(level,needed,available,cap) => { root.tab-measured(level,needed,available,cap); }
                     context-menu(level,index,x,y) => { root.tab-menu-requested(level,index,x,y); }
                     close(level,index) => { root.close-tab(level,index); }
                     space-pressed(level,middle) => { root.tab-space-pressed(level,middle); }

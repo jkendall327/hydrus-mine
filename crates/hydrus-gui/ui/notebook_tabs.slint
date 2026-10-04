@@ -77,6 +77,7 @@ component NotebookStrip inherits Rectangle {
     in property <bool> clockwise;
     in property <bool> elide;
     callback chosen(int);
+    callback measured(float,float,float);
     callback context-menu(int,length,length);
     callback close(int);
     callback space-pressed(bool);
@@ -84,10 +85,13 @@ component NotebookStrip inherits Rectangle {
     property <length> available: root.vertical ? root.height : root.width;
     property <length> needed: natural.preferred-width + root.data.names.length * 22px + 44px;
     property <length> cap: root.elide && root.needed > root.available ? max(42px,(root.available - 44px - 2px * root.data.names.length) / max(1,root.data.names.length)) : 0px;
+    property <{needed:length,available:length,cap:length}> sizing: {needed:root.needed,available:root.available,cap:root.cap};
+    changed sizing => { root.measured(root.sizing.needed / 1px,root.sizing.available / 1px,root.sizing.cap / 1px); }
     clip: true;
     natural := HorizontalLayout {
         visible: false;
-        for name in root.data.names: Text { text: name; }
+        spacing: 0px;
+        for name[index] in root.data.names: Text { text: name; font-weight: index == root.data.selected ? 600 : 400; }
     }
     horizontal-scroll := ScrollView {
         visible: !root.vertical;
@@ -172,6 +176,7 @@ export component NotebookNavigation inherits Rectangle {
     in property <bool> reverse-levels;
     in property <bool> elide: true;
     callback chosen(int,int);
+    callback measured(int,float,float,float);
     callback context-menu(int,int,length,length);
     callback close(int,int);
     callback space-pressed(int,bool);
@@ -183,6 +188,7 @@ export component NotebookNavigation inherits Rectangle {
         height: root.vertical ? parent.height : 28px;
         data: row; vertical: root.vertical; clockwise: root.clockwise; elide: root.elide;
         chosen(index) => { root.chosen(level,index); }
+        measured(needed,available,cap) => { root.measured(level,needed,available,cap); }
         context-menu(index,x,y) => { root.context-menu(level,index,x,y); }
         close(index) => { root.close(level,index); }
         space-pressed(middle) => { root.space-pressed(level,middle); }
