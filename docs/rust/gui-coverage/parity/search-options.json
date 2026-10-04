@@ -173,10 +173,65 @@
       "repairCommits": [
         "d7a5a364"
       ]
+    },
+    {
+      "id": "audit-options-file-search-file-search-implicit-system-limit-for-all-searches",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Noneable integer control defaults no limit, accepts1..100000000 and persists on Options Apply. Shared search execution uses the implicit limit only without an explicit top-level system:limit. Explicit limits override even when larger than the implicit value, preserving the executor's minimum-of-multiple-explicit-limits behavior.",
+      "limits": [
+        "Search execution retains existing executor-specific predicate conjunction behavior; this slice changes only effective limits and sort-refresh dispatch."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::FileSearchSettings",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-search/src/exec/mod.rs::search_with_strategy"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::file_search_limit_controls_stage_and_clamp_reference_values",
+        "crates/hydrus-gui/tests/gui/options_window.rs::implicit_limit_options_reach_queries_and_limited_sort_refresh",
+        "crates/hydrus-store/src/import/decode.rs::file_search_defaults_convert_user_values",
+        "crates/hydrus-search/tests/file_search_options.rs::implicit_limit_and_explicit_override_match_reference_database_queries"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_file_search_limits.py",
+        "fixture": "oracle/fixtures/file_search_limits.json",
+        "executed": true
+      },
+      "implementationCommit": "56eae057895bd6e09db1dcf1c4b1d99ef45941dd"
+    },
+    {
+      "id": "audit-options-file-search-file-search-if-explicit-system-limit-then-refresh-search-when-file-sort-changes",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Checkbox defaults true. Applied value is read on each page sort type/order change. Explicitly limited searches rerun only when synchronized, unlocked, a normal search page, local file context and reference-supported database sort. Paused/disabled/implicit-only/all-known/unsupported sorts only reorder the currently shown subset.",
+      "limits": [
+        "Search execution retains existing executor-specific predicate conjunction behavior; this slice changes only effective limits and sort-refresh dispatch."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::FileSearchSettings",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui/src/page.rs::SearchPage::sort_changed_search_or_resort",
+        "crates/hydrus-search/src/exec/sort.rs::SortBy::can_sort_at_database_level"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::file_search_limit_controls_stage_and_clamp_reference_values",
+        "crates/hydrus-gui/tests/gui/options_window.rs::implicit_limit_options_reach_queries_and_limited_sort_refresh",
+        "crates/hydrus-store/src/import/decode.rs::file_search_defaults_convert_user_values",
+        "crates/hydrus-search/tests/file_search_options.rs::database_sort_eligibility_matches_each_reference_system_sort_and_location"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_file_search_limits.py",
+        "fixture": "oracle/fixtures/file_search_limits.json",
+        "executed": true
+      },
+      "implementationCommit": "56eae057895bd6e09db1dcf1c4b1d99ef45941dd"
     }
   ],
   "summary": {
-    "concrete_existing_reference_controls_completed": 6,
+    "concrete_existing_reference_controls_completed": 8,
     "parent_or_alias_completions": 0
   },
   "validation": "Formatting, diff checks and Python compile pass. Rust validation delegated to root GitHub CI; no local Cargo builds."
