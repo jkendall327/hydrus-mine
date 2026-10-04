@@ -447,3 +447,40 @@ fn a_session_page_keeps_how_it_collects() {
         ]
     );
 }
+
+#[test]
+fn restoring_and_refreshing_searches_preserves_absent_and_explicit_collect_settings() {
+    use hydrus_core::pages::PageContent;
+    let f = fixture();
+    for collect in [None, Some(PageCollect::default())] {
+        let original = PageContent::Search {
+            search: FileSearchContext::default(),
+            synchronised: true,
+            sort: None,
+            lock: None,
+            collect: collect.clone(),
+        };
+        let mut page = SearchPage::restored(
+            f.store.clone(),
+            FileSearchContext::default(),
+            true,
+            None,
+            Vec::new(),
+        )
+        .with_collect(collect);
+        assert_eq!(page.content(&original), original);
+        page.refresh();
+        assert_eq!(page.content(&original), original);
+        // An explicit collect action is serialized even when no files are shown.
+        let changed = PageCollect {
+            namespaces: vec!["series".into()],
+            collect_unmatched: false,
+            ..PageCollect::default()
+        };
+        page.set_collect(changed.clone());
+        let PageContent::Search { collect, .. } = page.content(&original) else {
+            panic!("a restored search remains a search");
+        };
+        assert_eq!(collect, Some(changed));
+    }
+}

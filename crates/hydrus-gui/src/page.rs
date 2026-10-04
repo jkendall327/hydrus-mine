@@ -48,6 +48,8 @@ pub struct SearchPage {
     /// How the page collects its files, and its collections: each by its
     /// first file (the item `results` shows), with its files in order.
     collect: PageCollect,
+    /// Whether a collect action changed the restored page's saved collect value.
+    collect_changed: bool,
     collections: HashMap<HashId, Vec<HashId>>,
     /// The page's files in the order they came to it (searched, or as a
     /// session kept them), which collecting takes them in: so a
@@ -219,6 +221,7 @@ impl SearchPage {
             sort_changed: false,
             fallback: sorts.fallback_sort,
             collect: sorts.default_collect,
+            collect_changed: false,
             collections: HashMap::new(),
             came: Vec::new(),
             results: Vec::new(),
@@ -1456,6 +1459,14 @@ impl SearchPage {
         } else {
             opened_from.sort().cloned()
         };
+        let collect = if self.collect_changed {
+            Some(self.collect.clone())
+        } else {
+            match opened_from {
+                PageContent::Search { collect, .. } => collect.clone(),
+                _ => None,
+            }
+        };
         match opened_from {
             _ if self.note.is_none() => PageContent::Search {
                 search: FileSearchContext {
@@ -1465,7 +1476,7 @@ impl SearchPage {
                 synchronised: self.synchronised,
                 sort,
                 lock: self.lock(),
-                collect: Some(self.collect.clone()),
+                collect,
             },
             PageContent::Downloader {
                 kind, queues, page, ..
@@ -1847,6 +1858,7 @@ impl SearchPage {
     /// Collect the page's files anew (the reference's collect control), and
     /// sort them; as the reference's `Collect`, it selects nothing first.
     pub fn set_collect(&mut self, collect: PageCollect) {
+        self.collect_changed = true;
         self.collect = collect;
         self.selection.select_none(&self.results);
         self.resort();
@@ -1863,6 +1875,9 @@ impl SearchPage {
             Some(collect) => self.collect = collect,
             None => {}
         }
+        // Loading the control is not a user edit: retain the original optional
+        // collect representation when this restored page is synchronized.
+        self.collect_changed = false;
         self
     }
 
