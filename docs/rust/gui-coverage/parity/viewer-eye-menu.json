@@ -28,8 +28,8 @@
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/options.rs",
-          "line": 2573,
-          "commit": "6bbdea5beefe0dfe1c02cd3653f105302de111eb",
+          "line": 2638,
+          "commit": "96cc29256d14fc7d99099b0b4a68e408d587c921",
           "symbol": "Collapse \\\"window\\\" submenu"
         },
         {
@@ -85,7 +85,7 @@
         ],
         "commit": "6bbdea5beefe0dfe1c02cd3653f105302de111eb",
         "executed": true,
-        "result": "Actual Qt v688 completed 2026-10-04 22:22:23\u201326 UTC under shared oracle lock; eight real _ShowViewOptionsMenu trees on same browser viewer, three real Options checkboxes, saved/reopened values and discarded detached edits, plus five actual window-action clicks with Qt queued media-container commands processed before post-action state reads. Clean reference shutdown and inspected PNG. Reference Python unmodified; media from basic imported fixture, no authored public-site domains."
+        "result": "Actual Qt v688 completed 2026-10-04 22:22:23–26 UTC under shared oracle lock; eight real _ShowViewOptionsMenu trees on same browser viewer, three real Options checkboxes, saved/reopened values and discarded detached edits, plus five actual window-action clicks with Qt queued media-container commands processed before post-action state reads. Clean reference shutdown and inspected PNG. Reference Python unmodified; media from basic imported fixture, no authored public-site domains."
       },
       "limits": [
         "Scope is the browser media viewer's real eye-menu topology. The deeper ICC toggle, duplicate-filter checkerboard and pinned duplicates-hover actions are absent; Linux warning label and platform-specific OS window behavior differ. Broader hover/button/view-options parents remain Partial; no deeper action or parent completion claimed.",
@@ -116,8 +116,8 @@
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/options.rs",
-          "line": 2578,
-          "commit": "6bbdea5beefe0dfe1c02cd3653f105302de111eb",
+          "line": 2643,
+          "commit": "96cc29256d14fc7d99099b0b4a68e408d587c921",
           "symbol": "Collapse \\\"hovers\\\" submenu"
         },
         {
@@ -173,7 +173,7 @@
         ],
         "commit": "6bbdea5beefe0dfe1c02cd3653f105302de111eb",
         "executed": true,
-        "result": "Actual Qt v688 completed 2026-10-04 22:22:23\u201326 UTC under shared oracle lock; eight real _ShowViewOptionsMenu trees on same browser viewer, three real Options checkboxes, saved/reopened values and discarded detached edits, plus five actual window-action clicks with Qt queued media-container commands processed before post-action state reads. Clean reference shutdown and inspected PNG. Reference Python unmodified; media from basic imported fixture, no authored public-site domains."
+        "result": "Actual Qt v688 completed 2026-10-04 22:22:23–26 UTC under shared oracle lock; eight real _ShowViewOptionsMenu trees on same browser viewer, three real Options checkboxes, saved/reopened values and discarded detached edits, plus five actual window-action clicks with Qt queued media-container commands processed before post-action state reads. Clean reference shutdown and inspected PNG. Reference Python unmodified; media from basic imported fixture, no authored public-site domains."
       },
       "limits": [
         "Scope is the browser media viewer's real eye-menu topology. The deeper ICC toggle, duplicate-filter checkerboard and pinned duplicates-hover actions are absent; Linux warning label and platform-specific OS window behavior differ. Broader hover/button/view-options parents remain Partial; no deeper action or parent completion claimed.",
@@ -204,8 +204,8 @@
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/options.rs",
-          "line": 2583,
-          "commit": "6bbdea5beefe0dfe1c02cd3653f105302de111eb",
+          "line": 2648,
+          "commit": "96cc29256d14fc7d99099b0b4a68e408d587c921",
           "symbol": "Collapse \\\"rendering\\\" submenu"
         },
         {
@@ -261,7 +261,7 @@
         ],
         "commit": "6bbdea5beefe0dfe1c02cd3653f105302de111eb",
         "executed": true,
-        "result": "Actual Qt v688 completed 2026-10-04 22:22:23\u201326 UTC under shared oracle lock; eight real _ShowViewOptionsMenu trees on same browser viewer, three real Options checkboxes, saved/reopened values and discarded detached edits, plus five actual window-action clicks with Qt queued media-container commands processed before post-action state reads. Clean reference shutdown and inspected PNG. Reference Python unmodified; media from basic imported fixture, no authored public-site domains."
+        "result": "Actual Qt v688 completed 2026-10-04 22:22:23–26 UTC under shared oracle lock; eight real _ShowViewOptionsMenu trees on same browser viewer, three real Options checkboxes, saved/reopened values and discarded detached edits, plus five actual window-action clicks with Qt queued media-container commands processed before post-action state reads. Clean reference shutdown and inspected PNG. Reference Python unmodified; media from basic imported fixture, no authored public-site domains."
       },
       "limits": [
         "Scope is the browser media viewer's real eye-menu topology. The deeper ICC toggle, duplicate-filter checkerboard and pinned duplicates-hover actions are absent; Linux warning label and platform-specific OS window behavior differ. Broader hover/button/view-options parents remain Partial; no deeper action or parent completion claimed.",

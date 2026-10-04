@@ -100,9 +100,15 @@
         },
         {
           "relativepath": "crates/hydrus-gui/ui/services_editor.slint",
-          "line": 147,
-          "symbol": "for e[i] in root.examples",
-          "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+          "line": 50,
+          "symbol": "component RatingExamplePanel",
+          "commit": "96cc29256d14fc7d99099b0b4a68e408d587c921"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/services_editor.slint",
+          "line": 224,
+          "symbol": "RatingExamplePanel {",
+          "commit": "96cc29256d14fc7d99099b0b4a68e408d587c921"
         },
         {
           "relativepath": "crates/hydrus-gui/ui/viewer.slint",
@@ -164,7 +170,7 @@
           "oracle/fixtures/service_rating_preview_22.png"
         ],
         "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467",
-        "executed_at": "2026-10-04 21:58:08\u201321:58:09 UTC",
+        "executed_at": "2026-10-04 21:58:08–21:58:09 UTC",
         "result": "Passed actual Qt three local kinds; initial state and each left/right/middle action replayed, queued actual live data changes settled, exact fraction output and opening numerical conversion captured. All examples return empty persistence contribution and original service dictionaries remain unchanged. Fresh temporary basic fixture, no reference edits or service commits; only real counter dialog exec decision scripted. Three actual example PNGs inspected."
       },
       "limitations": [
@@ -182,7 +188,7 @@
           "fixture": "oracle/fixtures/rating_preview_pointer.json",
           "screenshot": "oracle/fixtures/rating_preview_pointer.png",
           "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352",
-          "executed_at": "2026-10-04 22:30:01\u201322:30:02 UTC",
+          "executed_at": "2026-10-04 22:30:01–22:30:02 UTC",
           "result": "Passed actual Qt numerical example press, held move, outside move/press, release, ordinary hover, fraction text click and right click for all three opening fraction sides. Whole-widget x/width/icon dimensions and exact rating/state/fractions captured; original service dictionary unchanged, other sample unrated, example persistence contribution empty. Real mouse events dispatched through Qt, no handlers/conversion/paint patched. Populated drag PNG inspected."
         }
       ]
@@ -277,7 +283,7 @@
         "fixture": "oracle/fixtures/rating_preview_pointer.json",
         "screenshot": "oracle/fixtures/rating_preview_pointer.png",
         "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352",
-        "executed_at": "2026-10-04 22:30:01\u201322:30:02 UTC",
+        "executed_at": "2026-10-04 22:30:01–22:30:02 UTC",
         "result": "Passed actual Qt numerical example press, held move, outside move/press, release, ordinary hover, fraction text click and right click for all three opening fraction sides. Whole-widget x/width/icon dimensions and exact rating/state/fractions captured; original service dictionary unchanged, other sample unrated, example persistence contribution empty. Real mouse events dispatched through Qt, no handlers/conversion/paint patched. Populated drag PNG inspected."
       },
       "native_png": "service-rating-pointer.png (hosted CARGO_TARGET_TMPDIR)",
@@ -295,7 +301,7 @@
         "script": "oracle/record_rating_preview_pointer.py",
         "fixture": "oracle/fixtures/rating_preview_pointer.json",
         "commit": "5bfd08f75d8c28dd5f243345a0c048e6c6bc580a",
-        "executed_at": "2026-10-04 23:05:01\u201323:05:02 UTC",
+        "executed_at": "2026-10-04 23:05:01–23:05:02 UTC",
         "result": "Actual Qt events include Left+Right press, move while both held, Right release while Left held, inside/outside/re-entered Left move, Left release and hover, right-only drag/release and hover for all three opening fraction sides. Exact state/fraction replay authored; original services unchanged."
       },
       "source_anchors": [
