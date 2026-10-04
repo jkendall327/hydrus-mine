@@ -311,6 +311,7 @@ pub fn open_node(
     slots: &Slots,
     done: Rc<dyn Fn(Node)>,
 ) -> Result<SidecarNodeWindow, slint::PlatformError> {
+    slots.strings.set_store(store);
     let slot = &slots.node;
     let window = SidecarNodeWindow::new()?;
     let snapshot = store.snapshot();

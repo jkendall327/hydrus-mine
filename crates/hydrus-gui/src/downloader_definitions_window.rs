@@ -133,6 +133,7 @@ pub fn open(
     slots: &Slots,
     classes: bool,
 ) -> Result<DownloaderDefinitionsWindow, String> {
+    slots.strings.set_store(store);
     let slot = if classes { &slots.classes } else { &slots.gugs };
     let exchange = if classes {
         &slots.class_exchange

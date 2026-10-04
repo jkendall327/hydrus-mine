@@ -167,3 +167,100 @@ fn shared_regex_menus_copy_without_changing_text() {
     conversion.invoke_regex_tool(2, 0);
     assert_eq!(copied.borrow().len(), count);
 }
+
+#[test]
+fn last_conversion_child_acceptance_survives_parent_cancel_and_fresh_slots() {
+    use hydrus_core::url::strings::{ProcessingStep, StringConverter};
+    use hydrus_gui::string_processor_window::{Slots, open_converter};
+    use hydrus_store::string_conversion::load;
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("string_conversion_preference.json");
+    for step in fixture["steps"].as_array().unwrap() {
+        let slots = Slots::default();
+        slots.set_store(&store);
+        let window = open_converter(
+            &StringConverter::default(),
+            Some("example".into()),
+            &slots,
+            Rc::new(|_| panic!("Parent Cancel must not accept its draft")),
+        )
+        .unwrap();
+        window.invoke_add();
+        let child = slots.conversion.borrow().as_ref().unwrap().clone_strong();
+        let types = child.get_types();
+        let kind = usize::try_from(child.get_kind()).unwrap();
+        assert_eq!(
+            types.row_data(kind).unwrap(),
+            step["opened"]["type"].as_str().unwrap()
+        );
+        assert_eq!(child.get_text(), step["opened"]["text"].as_str().unwrap());
+        if let Some(label) = step["do"]["type"].as_str() {
+            let index = (0..types.row_count())
+                .position(|i| types.row_data(i).unwrap() == label)
+                .unwrap();
+            child.set_kind(i32::try_from(index).unwrap());
+            child.invoke_changed();
+        }
+        if let Some(text) = step["do"]["text"].as_str() {
+            child.set_text(text.into());
+            child.invoke_changed();
+        }
+        if step["do"]["accept"] == true {
+            child.invoke_apply();
+        } else {
+            child.invoke_cancel();
+        }
+        assert!(slots.conversion.borrow().is_none());
+        window.invoke_cancel();
+        let expected =
+            hydrus_downloader_exchange::processing::decode_text(&step["saved"].to_string())
+                .unwrap();
+        let ProcessingStep::Convert(expected) = &expected[0] else {
+            panic!("reference preference is a converter")
+        };
+        assert_eq!(
+            store.read(load).unwrap().0.as_ref(),
+            expected.conversions.first()
+        );
+    }
+}
+
+#[test]
+fn failed_last_conversion_write_keeps_the_child_and_parent_draft_open() {
+    use hydrus_core::url::strings::{Conversion, StringConverter};
+    use hydrus_gui::string_processor_window::{Slots, open_converter};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let slots = Slots::default();
+    slots.set_store(&store);
+    store.write_and_refresh(|ctx| {
+        ctx.conn().execute_batch("CREATE TRIGGER refuse_last_conversion BEFORE INSERT ON settings WHEN NEW.key = 'last_used_string_conversion_step' BEGIN SELECT RAISE(ABORT, 'preference write blocked'); END;")?;
+        Ok(())
+    }).unwrap();
+    let parent =
+        open_converter(&StringConverter::default(), None, &slots, Rc::new(|_| {})).unwrap();
+    parent.invoke_add();
+    let child = slots.conversion.borrow().as_ref().unwrap().clone_strong();
+    child.set_text("new suffix".into());
+    child.invoke_changed();
+    child.invoke_apply();
+    assert!(child.get_error().contains("preference write blocked"));
+    assert!(slots.conversion.borrow().is_some());
+    assert_eq!(parent.get_rows().row_count(), 0);
+    store
+        .write_and_refresh(|ctx| {
+            ctx.conn()
+                .execute_batch("DROP TRIGGER refuse_last_conversion")?;
+            Ok(())
+        })
+        .unwrap();
+    child.invoke_apply();
+    assert!(slots.conversion.borrow().is_none());
+    assert_eq!(parent.get_rows().row_count(), 1);
+    parent.invoke_cancel();
+    assert_eq!(
+        store.read(hydrus_store::string_conversion::load).unwrap().0,
+        Some(Conversion::Append("new suffix".into()))
+    );
+}

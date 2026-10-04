@@ -3,9 +3,8 @@
 //! from `oracle/record_string_converter_editor.py`): the numbered rows with
 //! the example converted up to each, the selection and moves, what each
 //! conversion editor is given and shows, what "ok" asks, and the values.
-//! Random text and dates aren't the same run to run (random) or run at all
-//! (dates, which hydrus-rs keeps without running): those results are
-//! checked as far as they can be.
+//! Random results are checked structurally. Deterministic date execution
+//! and invalid input are covered by the separate date recorder replay.
 
 use hydrus_core::url::strings::{Conversion, ProcessingStep, StringConverter};
 use hydrus_gui_model::string_editors::{
@@ -249,4 +248,34 @@ fn replay(fixture: &str) {
             check(&editor, &step["state"], &context);
         }
     }
+}
+
+#[test]
+fn last_conversion_loads_reference_options_then_native_override() {
+    use hydrus_store::string_conversion::{LastStringConversion, load};
+    let fixture = hydrus_testkit::fixture_json("string_conversion_preference.json");
+    let conn = rusqlite::Connection::open_in_memory().unwrap();
+    conn.execute_batch("CREATE TABLE settings(key TEXT PRIMARY KEY, value TEXT); CREATE TABLE legacy_objects(source TEXT, type_id INTEGER, version INTEGER, dump TEXT);").unwrap();
+    assert_eq!(load(&conn).unwrap(), LastStringConversion::default());
+    for step in fixture["steps"].as_array().unwrap() {
+        conn.execute("DELETE FROM legacy_objects", []).unwrap();
+        conn.execute(
+            "INSERT INTO legacy_objects VALUES ('json_dumps',22,8,?)",
+            [step["options"][2].to_string()],
+        )
+        .unwrap();
+        let options = hydrus_legacy::objects::ClientOptions::from_object(
+            &SerialisableObject::from_tuple_str(&step["options"].to_string()).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(
+            load(&conn).unwrap().0,
+            options.last_used_string_conversion().unwrap()
+        );
+    }
+    let saved = LastStringConversion(Some(Conversion::Append("native".into())));
+    hydrus_store::settings::set(&conn, &saved).unwrap();
+    assert_eq!(load(&conn).unwrap(), saved);
+    hydrus_store::settings::set(&conn, &LastStringConversion(None)).unwrap();
+    assert_eq!(load(&conn).unwrap(), LastStringConversion(None));
 }

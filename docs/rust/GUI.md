@@ -364,6 +364,11 @@ update their previews live, including invalid input. Typed date values retain
 reference interchange codes 10/12/14; older native preserved date payloads also
 execute. `oracle/dump_string_dates.py` and `oracle/record_string_date_editor.py`
 record timezone/fraction/pre-epoch and Qt accept/cancel/reorder boundaries.
+Conversion child acceptance saves the last-used conversion in the store, even
+when its parent is later canceled. Add reads that shared preference after reopening
+and falls back to preserved reference options.
+`oracle/record_string_conversion_preference.py` records acceptance, child Cancel
+and option serialization/reload across fresh parent editors.
 
 The processor step list has import, export selected, and paste controls. Its
 exchange window reads bounded reference JSON/PNG, reviews appended steps, copies

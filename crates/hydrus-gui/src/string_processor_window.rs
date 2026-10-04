@@ -41,6 +41,7 @@ pub struct Slots {
     pub conversion: Rc<RefCell<Option<ConversionWindow>>>,
     pub exchange: crate::downloader_interchange_window::Slots,
     pub favourites: crate::regex_favourites_window::Slot,
+    preference_store: Rc<RefCell<Option<Arc<Store>>>>,
 }
 
 impl std::fmt::Debug for Slots {
@@ -55,6 +56,11 @@ impl std::fmt::Debug for Slots {
 }
 
 impl Slots {
+    /// Connect converter child preferences to their owning store.
+    pub fn set_store(&self, store: &Arc<Store>) {
+        *self.preference_store.borrow_mut() = Some(store.clone());
+    }
+
     /// Whether any editor in this family is still open.
     pub fn has_open(&self) -> bool {
         self.processor.borrow().is_some() || self.has_processor_children()
@@ -193,6 +199,7 @@ pub fn open(
     slots: &Slots,
     applied: Rc<dyn Fn(StringProcessor)>,
 ) -> Result<StringProcessorWindow, slint::PlatformError> {
+    slots.set_store(store);
     let window = StringProcessorWindow::new()?;
     let active = Rc::new(Cell::new(true));
     let blocked: Rc<dyn Fn() -> bool> = Rc::new({
@@ -1040,6 +1047,7 @@ pub fn open_match(
     slots: &Slots,
     applied: Rc<dyn Fn(hydrus_core::url::strings::StringMatch)>,
 ) {
+    slots.set_store(store);
     if slots.step.borrow().is_some() {
         return;
     }
@@ -1148,6 +1156,7 @@ pub fn open_converter(
         let refresh = refresh.clone();
         let slot = slots.conversion.clone();
         let active = active.clone();
+        let preference_store = slots.preference_store.clone();
         move |index, editor| {
             if !active.get() {
                 return;
@@ -1155,13 +1164,24 @@ pub fn open_converter(
             if slot.borrow().is_some() {
                 return;
             }
-            let done: Rc<dyn Fn(Conversion)> = Rc::new({
+            let done: Rc<dyn Fn(Conversion) -> Result<(), String>> = Rc::new({
+                let preference_store = preference_store.clone();
                 let state = state.clone();
                 let refresh = refresh.clone();
                 let active = active.clone();
                 move |conversion| {
                     if !active.get() {
-                        return;
+                        return Err("The converter has closed.".into());
+                    }
+                    if let Some(store) = preference_store.borrow().as_ref() {
+                        let saved = hydrus_store::string_conversion::LastStringConversion(Some(
+                            conversion.clone(),
+                        ));
+                        store
+                            .write_and_refresh(move |ctx| {
+                                hydrus_store::settings::set(ctx.conn(), &saved)
+                            })
+                            .map_err(|error| error.to_string())?;
                     }
                     LAST_CONVERSION.with(|last| *last.borrow_mut() = Some(conversion.clone()));
                     {
@@ -1172,6 +1192,7 @@ pub fn open_converter(
                         }
                     }
                     refresh();
+                    Ok(())
                 }
             });
             match open_conversion(editor, &slot, done) {
@@ -1237,12 +1258,29 @@ pub fn open_converter(
         let state = state.clone();
         let open = open.clone();
         let blocked = blocked.clone();
+        let preference_store = slots.preference_store.clone();
+        let weak = window.as_weak();
         move || {
             if blocked() {
                 return;
             }
-            let editor =
-                LAST_CONVERSION.with(|last| state.borrow().0.adding(last.borrow().as_ref()));
+            let last = if let Some(store) = preference_store.borrow().as_ref() {
+                match store.read(hydrus_store::string_conversion::load) {
+                    Ok(value) => value.0,
+                    Err(error) => {
+                        if let Some(window) = weak.upgrade() {
+                            window.set_error(error.to_string().into());
+                        }
+                        return;
+                    }
+                }
+            } else {
+                LAST_CONVERSION.with(|last| last.borrow().clone())
+            };
+            if let Some(window) = weak.upgrade() {
+                window.set_error("".into());
+            }
+            let editor = state.borrow().0.adding(last.as_ref());
             open(None, editor);
         }
     });
@@ -1424,7 +1462,7 @@ fn read_conversion(window: &ConversionWindow, editor: &mut ConversionEditor) {
 fn open_conversion(
     editor: ConversionEditor,
     slot: &Rc<RefCell<Option<ConversionWindow>>>,
-    done: Rc<dyn Fn(Conversion)>,
+    done: Rc<dyn Fn(Conversion) -> Result<(), String>>,
 ) -> Result<ConversionWindow, slint::PlatformError> {
     let window = ConversionWindow::new()?;
     let active = Rc::new(Cell::new(true));
@@ -1471,13 +1509,20 @@ fn open_conversion(
         let state = state.clone();
         let close = close.clone();
         let active = active.clone();
+        let weak = window.as_weak();
         move || {
             if !active.get() {
                 return;
             }
             let value = state.borrow().0.value();
-            close();
-            done(value);
+            match done(value) {
+                Ok(()) => close(),
+                Err(error) => {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_error(error.into());
+                    }
+                }
+            }
         }
     });
     window.on_changed({

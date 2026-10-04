@@ -636,6 +636,7 @@ export component StringConverterWindow inherits Window {
     preferred-width: 760px;
     preferred-height: 460px;
     background: Theme.window;
+    in property <string> error;
     in property <[TableRow]> rows;
     in property <bool> one-selected;
     in property <bool> any-selected;
@@ -717,6 +718,7 @@ export component StringConverterWindow inherits Window {
                 edited => { root.example-edited(); }
             }
         }
+        if root.error != "": Label { text: root.error; color: Theme.error; wrap: word-wrap; }
         if root.asking: Asking {
             title: root.asking-title;
             message: root.asking-message;
@@ -743,6 +745,7 @@ export component ConversionWindow inherits Window {
     in property <[string]> regex-components;
     in property <[string]> regex-groups;
     callback regex-tool(int, int);
+    in property <string> error;
     in property <[string]> types;
     in-out property <int> kind;
     in property <string> text-label;
@@ -916,6 +919,7 @@ export component ConversionWindow inherits Window {
             }
         }
         Rectangle { vertical-stretch: 1; }
+        if root.error != "": Label { text: root.error; color: Theme.error; wrap: word-wrap; }
         if root.asking: Asking {
             title: root.asking-title;
             message: root.asking-message;
