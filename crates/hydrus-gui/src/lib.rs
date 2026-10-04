@@ -41,6 +41,7 @@ mod embedded_metadata_window;
 pub mod export_files_window;
 pub mod favourites_window;
 mod file_log_window;
+mod filename_regex_menu;
 mod filename_tagging_window;
 mod filter_window;
 mod folders_window;

@@ -307,7 +307,12 @@ double-click returns the single selected regex to its input for correction,
 including duplicates. Child cancellation, owner cancellation and callbacks on
 closed owners cannot leak changes. Accepted rules reach local-import seed tags
 and survive saving and reopening an import folder. The real Qt handlers and
-filename results are recorded in `oracle/record_filename_rules.py`.
+filename results are recorded in `oracle/record_filename_rules.py`. Both regex
+inputs also expose the exact help URLs, component clipboard phrases and shared
+favourites manager. Clipboard choices preserve input text. Favourites Apply is
+immediate and survives cancellation of the filename-tagging draft; cancelling
+the manager preserves its stored list. Nested favourites block owner edits and
+close with their owner.
 
 File > import/export folders > "manage import folders…" and "manage
 export folders…" open the folders dialogs (`src/folders_window.rs`,

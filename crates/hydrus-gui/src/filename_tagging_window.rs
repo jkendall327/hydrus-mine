@@ -11,7 +11,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
+use slint::{ComponentHandle as _, Model as _, ModelRc, SharedString, VecModel};
 
 use hydrus_gui_model::filename_rules::{DELETE_QUESTION, Editor as RuleEditor, INTRO};
 use hydrus_parse::sidecar::Router;
@@ -27,6 +27,7 @@ use crate::{FilenameTaggingWindow, MiscRow, TableRow};
 
 struct State {
     rules: Vec<RuleEditor>,
+    regex: Option<crate::filename_regex_menu::Controls>,
     closed: bool,
     /// (key hex, name, its tab's options)
     services: Vec<(String, String, ServiceTagging)>,
@@ -63,6 +64,10 @@ pub(crate) type Done = Rc<dyn Fn(PathTags, Vec<Router>)>;
 impl State {
     fn can_edit(&self) -> bool {
         !self.closed
+            && !self
+                .regex
+                .as_ref()
+                .is_some_and(crate::filename_regex_menu::Controls::blocking)
             && !self.rules[self.current].asking()
             && !self
                 .sidecars
@@ -289,7 +294,11 @@ fn bind_rules(window: &FilenameTaggingWindow, state: &Rc<RefCell<State>>) {
                 return;
             };
             let mut state = state.borrow_mut();
-            if state.closed || !window.get_rule_child() {
+            if state.closed
+                || !window.get_rule_child()
+                || window.get_regex_child_open()
+                || window.get_regex_panes().row_count() > 0
+            {
                 return;
             }
             let current = state.current;
@@ -315,10 +324,14 @@ fn bind_rules(window: &FilenameTaggingWindow, state: &Rc<RefCell<State>>) {
                 return;
             };
             let mut state = state.borrow_mut();
-            if state.closed {
+            if state.closed || window.get_regex_child_open() {
                 return;
             }
             let current = state.current;
+            if window.get_regex_panes().row_count() > 0 {
+                window.invoke_regex_dismissed();
+                return;
+            }
             state.rules[current].cancel();
             state.errors.clear();
             window.set_rule_child(false);
@@ -457,13 +470,21 @@ fn example_path(text: &str) -> String {
 /// ("edit filename tagging options", for an import folder), showing the
 /// tags of `example`; "apply" gives the options to `done`.
 pub(crate) fn open_options(
+    store: &Arc<Store>,
     service: (String, String),
     options: hydrus_parse::folders::FilenameTagging,
     example: String,
     slot: &Rc<RefCell<Option<FilenameTaggingWindow>>>,
     done: Rc<dyn Fn(hydrus_parse::folders::FilenameTagging)>,
 ) -> Result<FilenameTaggingWindow, String> {
-    let (window, state) = build(vec![service], Vec::new(), slot, None, Rc::new(|_, _| {}))?;
+    let (window, state) = build(
+        store,
+        vec![service],
+        Vec::new(),
+        slot,
+        None,
+        Rc::new(|_, _| {}),
+    )?;
     window.set_window_title("edit filename tagging options".into());
     window.set_options_mode(true);
     window.set_example(example.as_str().into());
@@ -525,13 +546,15 @@ pub(crate) fn open(
     sidecars: Sidecars,
     done: Done,
 ) -> Result<FilenameTaggingWindow, String> {
-    let (window, _) = build(services, paths, slot, Some(sidecars), done)?;
+    let store = sidecars.store.clone();
+    let (window, _) = build(&store, services, paths, slot, Some(sidecars), done)?;
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }
 
 /// The dialog, bound but not shown, and its state.
 fn build(
+    store: &Arc<Store>,
     services: Vec<(String, String)>,
     paths: Vec<String>,
     slot: &Rc<RefCell<Option<FilenameTaggingWindow>>>,
@@ -553,6 +576,7 @@ fn build(
     let count = services.len();
     let state = Rc::new(RefCell::new(State {
         rules: (0..count).map(|_| RuleEditor::default()).collect(),
+        regex: None,
         closed: false,
         misc: vec![misc; count],
         services: services
@@ -581,6 +605,10 @@ fn build(
                 return;
             }
             state.borrow_mut().closed = true;
+            let regex = state.borrow().regex.clone();
+            if let Some(regex) = regex {
+                regex.cancel();
+            }
             let sidecars = state.borrow().sidecars.clone();
             if let Some(sidecars) = sidecars {
                 sidecars.slots.cancel();
@@ -814,6 +842,24 @@ fn build(
             slint::CloseRequestResponse::HideWindow
         }
     });
+    let alive: Rc<dyn Fn() -> bool> = Rc::new({
+        let state = Rc::downgrade(&state);
+        let weak = window.as_weak();
+        move || {
+            weak.upgrade()
+                .is_some_and(|window| !window.get_rule_delete())
+                && state.upgrade().is_some_and(|state| {
+                    let state = state.borrow();
+                    !state.closed
+                        && !state.on_sidecars
+                        && !state
+                            .sidecars
+                            .as_ref()
+                            .is_some_and(|sidecars| sidecars.slots.routers.borrow().is_some())
+                })
+        }
+    });
+    state.borrow_mut().regex = Some(crate::filename_regex_menu::bind(&window, store, alive));
     bind_rules(&window, &state);
     show(&window, &mut state.borrow_mut());
     Ok((window, state))

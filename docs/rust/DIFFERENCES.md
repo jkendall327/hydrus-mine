@@ -591,7 +591,8 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   window rather than separate Qt dialogs; namespace/regex header sorting is
   local to that editor, while Qt remembers its list-column state globally.
   Validation error details come from the native Python-compatible regex engine.
-  The shared regex-help/favourites button is not yet attached to these inputs.
+  Both inputs expose the shared component/help/favourites menus; native popup
+  presentation omits Qt bold headings and action hover tooltips.
 - **There is one review window at a time**: files dropped on the main
   window while it is open join its list, where the reference opens a
   second window.

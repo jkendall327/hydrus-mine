@@ -872,6 +872,7 @@ fn open_import_folder(
                 })
             };
             match crate::filename_tagging_window::open_options(
+                &store,
                 (key, name),
                 options,
                 example,

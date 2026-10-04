@@ -164,3 +164,43 @@ fn child_identity_is_frozen_and_unrelated_callbacks_preserve_it() {
     editor.accept("stale", "three").unwrap();
     assert!(!editor.quick_rows().iter().any(|row| row.value.0 == "stale"));
 }
+
+#[test]
+fn both_original_regex_buttons_offer_the_recorded_help_components_and_favourites() {
+    use hydrus_gui_model::filename_rules::{RegexAction, regex_menu};
+    use hydrus_gui_model::main_menu::{Command, Entry};
+    fn describe(entries: &[Entry], actions: &[RegexAction]) -> serde_json::Value {
+        serde_json::json!(entries.iter().map(|entry| match entry {
+            Entry::Separator => serde_json::json!({"kind":"separator"}),
+            Entry::Menu { label, entries, .. } => serde_json::json!({"kind":"menu", "label":label, "rows":describe(entries, actions)}),
+            Entry::Item { label, command: Some(Command::Popup(index)), enabled } => {
+                let outputs = match &actions[*index] {
+                    RegexAction::Copy(value) => vec![serde_json::json!({"kind":"copy", "value":value})],
+                    RegexAction::Help(value) => vec![serde_json::json!({"kind":"url", "value":value})],
+                    _ => vec![],
+                };
+                serde_json::json!({"kind":"item", "label":label, "enabled":enabled, "outputs":outputs})
+            }
+            _ => unreachable!(),
+        }).collect::<Vec<_>>())
+    }
+    let fixture = hydrus_testkit::fixture_json("filename_rules.json");
+    let value = hydrus_gui_model::regex_favourites::RegexFavourites(
+        serde_json::from_value(fixture["menu_favourites"].clone()).unwrap(),
+    );
+    let (entries, actions) = regex_menu(&value);
+    let actual = describe(&entries, &actions);
+    let mut expected = fixture["regex_menus"][0].clone();
+    let filename = hydrus_gui_model::regex_favourites::regex_tools(1)
+        .pop()
+        .unwrap();
+    let recorded_filename = expected[2]["rows"]
+        .as_array_mut()
+        .unwrap()
+        .last_mut()
+        .unwrap();
+    recorded_filename["label"] = serde_json::json!(filename.0);
+    recorded_filename["outputs"][0]["value"] = serde_json::json!(filename.1);
+    assert_eq!(actual, expected);
+    assert_eq!(fixture["regex_menus"][0], fixture["regex_menus"][1]);
+}
