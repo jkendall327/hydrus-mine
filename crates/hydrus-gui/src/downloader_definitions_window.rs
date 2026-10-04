@@ -977,7 +977,6 @@ fn open_editor(
         let close = close.clone();
         let state = state.clone();
         let slots = slots.clone();
-        let exchange = exchange.clone();
         move |action| {
             if editor_blocked(&state.borrow(), &slots) {
                 return;
