@@ -181,6 +181,7 @@ pub(crate) fn seeds_from_posts(
 pub(crate) enum Stop {
     Veto(String),
     Error(String),
+    DataMissing(String),
     Failed(WorkError),
 }
 
@@ -263,26 +264,43 @@ impl Downloader {
         options: &FullImportOptions,
         job: &Job,
     ) -> bool {
+        let outcome = self.work_on_url_outcome(seed, options, job).await;
+        if matches!(outcome.error, Some(WorkError::Network(_))) {
+            tokio::time::sleep(std::time::Duration::from_secs(3)).await;
+        }
+        outcome.did_work
+    }
+
+    /// Inspect the handled file failure without losing its exception class.
+    /// Subscription budgets exclude these handled failures; their outer
+    /// option-generation/query-tag exceptions have a separate five-second throttle.
+    /// Vetoes (including HTTP 404) are not errors.
+    pub async fn work_on_url_outcome(
+        &self,
+        seed: &mut FileSeed,
+        options: &FullImportOptions,
+        job: &Job,
+    ) -> crate::FileWorkOutcome {
         let mut did_work = false;
         let outcome = self.work(seed, options, job, &mut did_work).await;
-        match outcome {
-            Ok(()) => {}
-            Err(Stop::Veto(note)) if note == "403" && self.had_login(&seed.data) => set_status(
-                seed,
-                SeedStatus::Vetoed,
-                "403 (hydrus logged in to this site with a login script, which hydrus-rs doesn't run: its cookies may need refreshing)".into(),
-            ),
-            Err(Stop::Veto(note)) => set_status(seed, SeedStatus::Vetoed, note),
-            Err(Stop::Error(note)) => set_status(seed, SeedStatus::Error, note),
-            Err(Stop::Failed(e)) => {
-                set_status(seed, SeedStatus::Error, e.to_string());
-                // (a moment's pause before the next, as the reference has)
-                if matches!(e, WorkError::Network(_)) {
-                    tokio::time::sleep(std::time::Duration::from_secs(3)).await;
-                }
+        let error = match outcome {
+            Ok(()) => None,
+            Err(Stop::Veto(note)) if note == "403" && self.had_login(&seed.data) => {
+                set_status(seed, SeedStatus::Vetoed, "403 (hydrus logged in to this site with a login script, which hydrus-rs doesn't run: its cookies may need refreshing)".into());
+                None
             }
+            Err(Stop::Veto(note)) => {
+                set_status(seed, SeedStatus::Vetoed, note);
+                None
+            }
+            Err(Stop::Error(note)) => Some(WorkError::File(note)),
+            Err(Stop::DataMissing(note)) => Some(WorkError::DataMissing(note)),
+            Err(Stop::Failed(error)) => Some(error),
+        };
+        if let Some(error) = &error {
+            set_status(seed, SeedStatus::Error, error.to_string());
         }
-        did_work
+        crate::FileWorkOutcome { did_work, error }
     }
 
     async fn work(
@@ -518,6 +536,8 @@ impl Downloader {
             // the reference's import raised, before the seed took the hash
             return Err(if result.status == hydrus_import::ImportStatus::Vetoed {
                 Stop::Veto(message)
+            } else if result.raised_kind == Some(hydrus_import::ImportFailureKind::DataMissing) {
+                Stop::DataMissing(message)
             } else {
                 Stop::Error(message)
             });

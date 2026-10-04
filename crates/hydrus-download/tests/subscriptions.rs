@@ -104,6 +104,18 @@ async fn post(State(site): State<Arc<Site>>, Path(id): Path<usize>) -> Response 
     ([("content-type", "text/html; charset=utf-8")], html).into_response()
 }
 
+async fn raw_failure(Path(kind): Path<String>) -> Response {
+    match kind.as_str() {
+        "500" => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "synthetic server failure",
+        )
+            .into_response(),
+        "404" => StatusCode::NOT_FOUND.into_response(),
+        _ => ([("content-type", "text/html")], "<html>missing file</html>").into_response(),
+    }
+}
+
 async fn file(Path(name): Path<String>) -> Response {
     let Some(id) = name
         .strip_suffix(".jpg")
@@ -211,6 +223,14 @@ struct Setup {
     store: Arc<Store>,
     site: Arc<Site>,
     _dir: tempfile::TempDir,
+    base: String,
+    server: tokio::task::JoinHandle<()>,
+}
+
+impl Drop for Setup {
+    fn drop(&mut self) {
+        self.server.abort();
+    }
 }
 
 async fn setup() -> Setup {
@@ -219,10 +239,11 @@ async fn setup() -> Setup {
         .route("/search/{tag}/{page}", get(search))
         .route("/post/{id}", get(post))
         .route("/files/{name}", get(file))
+        .route("/raw/{kind}", get(raw_failure))
         .with_state(Arc::clone(&site));
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
     let host = listener.local_addr().unwrap().to_string();
-    tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
+    let server = tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
     let post = class(
@@ -291,6 +312,8 @@ async fn setup() -> Setup {
         store,
         site,
         _dir: dir,
+        base: format!("http://{host}"),
+        server,
     }
 }
 
@@ -788,4 +811,276 @@ async fn a_subscription_shows_what_it_does_in_a_popup_which_can_cancel_it() {
     assert!(sub.settings.no_work_until > now());
     // and its popup goes
     assert!(popups_shown(&s.store).is_empty());
+}
+
+fn pending_seed(url: String) -> queues::NewFileSeed {
+    queues::NewFileSeed {
+        seed_type: queues::SeedType::Url,
+        data: url,
+        source_time: None,
+        referral_url: None,
+        meta: queues::FileSeedMeta::default(),
+    }
+}
+
+fn future_query(name: &str) -> QueryState {
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    QueryState {
+        last_check_time: now,
+        next_check_time: now + 86_400,
+        ..QueryState::new(name)
+    }
+}
+
+fn configure_error_limit(s: &Setup, threshold: Option<u64>) {
+    s.store
+        .write(move |ctx| {
+            let mut settings: hydrus_store::network::NetworkSettings =
+                hydrus_store::settings::get(ctx.conn())?;
+            settings.subscription_file_error_cancel_threshold = threshold;
+            settings.subscription_other_error_delay = 37;
+            settings.process_subs_in_random_order = false;
+            settings.domain_error_number = 100;
+            settings.max_get_attempts = 1;
+            hydrus_store::settings::set(ctx.conn(), &settings)
+        })
+        .unwrap();
+    s.downloader.reload_settings().unwrap();
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn handled_http_and_missing_file_failures_do_not_spend_the_outer_error_budget() {
+    let s = setup().await;
+    configure_error_limit(&s, Some(1));
+    let urls: Vec<_> = ["500", "404", "missing"]
+        .iter()
+        .map(|kind| pending_seed(format!("{}/raw/{kind}", s.base)))
+        .collect();
+    let (id, queue) = s
+        .store
+        .write(move |ctx| {
+            let id = subs::create_subscription(
+                ctx.conn(),
+                "handled failures",
+                &SubscriptionSettings::default(),
+            )?
+            .unwrap();
+            let queue = subs::add_query(ctx.conn(), id, &future_query("0"), 0)?;
+            queues::add_file_seeds(ctx.conn(), queue, &urls, false, 0)?;
+            Ok((id, queue))
+        })
+        .unwrap();
+    let report = s
+        .downloader
+        .run_subscription(id, &Job::new())
+        .await
+        .unwrap();
+    assert_eq!(report.files_worked, 3);
+    assert_eq!(
+        report.file_errors, 0,
+        "WorkOnURL swallows these, like the real reference"
+    );
+    assert!(report.notices.is_empty());
+    let seeds = s
+        .store
+        .read(|conn| queues::file_seeds(conn, queue))
+        .unwrap();
+    assert_eq!(
+        seeds.iter().map(|seed| seed.status).collect::<Vec<_>>(),
+        [SeedStatus::Error, SeedStatus::Vetoed, SeedStatus::Error]
+    );
+    assert_eq!(seeds[1].note, "404");
+    let recorded = hydrus_testkit::fixture_json("subscription_failure_limit.json");
+    for (seed, case) in seeds
+        .iter()
+        .zip(recorded["handled_work_on_url"].as_array().unwrap())
+    {
+        assert_eq!(serde_json::json!(seed.status.code()), case["status"]);
+        assert_eq!(serde_json::json!(report.file_errors), case["file_errors"]);
+    }
+
+    assert_eq!(
+        s.store
+            .read(|conn| subs::subscription(conn, id))
+            .unwrap()
+            .unwrap()
+            .settings
+            .no_work_until,
+        0
+    );
+}
+
+fn fail_query_tag_writes(s: &Setup) {
+    s.store.write(|ctx| {
+        ctx.conn().execute_batch("CREATE TRIGGER fail_outer_tag BEFORE INSERT ON subtags WHEN NEW.subtag = 'outer failure' BEGIN SELECT RAISE(ABORT, 'synthetic outer tag failure'); END;")?;
+        Ok(())
+    }).unwrap();
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn escaped_query_tag_errors_count_across_queries_delay_persist_and_reset_next_run() {
+    let s = setup().await;
+    configure_error_limit(&s, Some(2));
+    fail_query_tag_writes(&s);
+    let base = s.base.clone();
+    let (id, first, second) = s
+        .store
+        .write(move |ctx| {
+            let id = subs::create_subscription(
+                ctx.conn(),
+                "synthetic failures",
+                &SubscriptionSettings::default(),
+            )?
+            .unwrap();
+            let mut query = future_query("0");
+            query.tag_import_options = TagImportOptions {
+                services: vec![(
+                    hex::encode(hydrus_core::service::builtin_keys::MY_TAGS),
+                    ServiceTagImportOptions {
+                        additional_tags: vec!["outer failure".into()],
+                        ..Default::default()
+                    },
+                )],
+                ..Default::default()
+            };
+            let first = subs::add_query(ctx.conn(), id, &query, 0)?;
+            query.query_text = "1".into();
+            let second = subs::add_query(ctx.conn(), id, &query, 0)?;
+            queues::add_file_seeds(
+                ctx.conn(),
+                first,
+                &[pending_seed(format!("{base}/post/12"))],
+                false,
+                0,
+            )?;
+            queues::add_file_seeds(
+                ctx.conn(),
+                second,
+                &[
+                    pending_seed(format!("{base}/post/13")),
+                    pending_seed(format!("{base}/post/14")),
+                ],
+                false,
+                0,
+            )?;
+            Ok((id, first, second))
+        })
+        .unwrap();
+    let before = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    let report = s
+        .downloader
+        .run_subscription(id, &Job::new())
+        .await
+        .unwrap();
+    let after = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    let recorded = hydrus_testkit::fixture_json("subscription_failure_limit.json");
+    assert_eq!(
+        report.file_errors,
+        recorded["cases"][0]["file_errors"].as_u64().unwrap()
+    );
+    assert_eq!(report.files_worked, 2);
+    assert!(
+        after - before >= 10,
+        "two escaped failures have a five-second throttle"
+    );
+    assert_eq!(post_ids(&s.store, first), [(12, SeedStatus::Error)]);
+    assert_eq!(
+        post_ids(&s.store, second),
+        [(13, SeedStatus::Error), (14, SeedStatus::Unknown)]
+    );
+    let persisted = s
+        .store
+        .read(|conn| subs::subscription(conn, id))
+        .unwrap()
+        .unwrap();
+    assert_eq!(
+        persisted.settings.no_work_until_reason,
+        recorded["cases"][0]["reason"]
+    );
+    assert!((after + 36..=after + 38).contains(&persisted.settings.no_work_until));
+    assert!(report.notices[0].contains(recorded["cases"][0]["messages"][1].as_str().unwrap()));
+    s.store
+        .write(move |ctx| {
+            ctx.conn().execute_batch("DROP TRIGGER fail_outer_tag;")?;
+            let mut sub = subs::subscription(ctx.conn(), id)?.unwrap();
+            sub.settings.no_work_until = 0;
+            sub.settings.no_work_until_reason.clear();
+            subs::set_subscription_settings(ctx.conn(), id, &sub.settings)
+        })
+        .unwrap();
+    let next = s
+        .downloader
+        .run_subscription(id, &Job::new())
+        .await
+        .unwrap();
+    assert_eq!(next.file_errors, 0);
+    assert_eq!(next.files_worked, 1);
+    assert_eq!(
+        post_ids(&s.store, second)[1],
+        (14, SeedStatus::SuccessfulAndNew)
+    );
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn none_disables_abandonment_for_real_escaped_store_failures() {
+    let s = setup().await;
+    configure_error_limit(&s, None);
+    fail_query_tag_writes(&s);
+    let base = s.base.clone();
+    let (id, queue) = s
+        .store
+        .write(move |ctx| {
+            let id = subs::create_subscription(
+                ctx.conn(),
+                "unlimited failures",
+                &SubscriptionSettings::default(),
+            )?
+            .unwrap();
+            let mut query = future_query("0");
+            query.tag_import_options = TagImportOptions {
+                services: vec![(
+                    hex::encode(hydrus_core::service::builtin_keys::MY_TAGS),
+                    ServiceTagImportOptions {
+                        additional_tags: vec!["outer failure".into()],
+                        ..Default::default()
+                    },
+                )],
+                ..Default::default()
+            };
+            let queue = subs::add_query(ctx.conn(), id, &query, 0)?;
+            queues::add_file_seeds(
+                ctx.conn(),
+                queue,
+                &[
+                    pending_seed(format!("{base}/post/15")),
+                    pending_seed(format!("{base}/post/16")),
+                    pending_seed(format!("{base}/post/17")),
+                ],
+                false,
+                0,
+            )?;
+            Ok((id, queue))
+        })
+        .unwrap();
+    let report = s
+        .downloader
+        .run_subscription(id, &Job::new())
+        .await
+        .unwrap();
+    assert_eq!((report.files_worked, report.file_errors), (3, 3));
+    assert!(report.notices.is_empty());
+    assert!(
+        post_ids(&s.store, queue)
+            .iter()
+            .all(|(_, status)| *status == SeedStatus::Error)
+    );
+    assert_eq!(
+        s.store
+            .read(|conn| subs::subscription(conn, id))
+            .unwrap()
+            .unwrap()
+            .settings
+            .no_work_until,
+        0
+    );
 }

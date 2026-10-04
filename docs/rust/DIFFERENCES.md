@@ -1558,3 +1558,10 @@ reaches native Manage Tags and shared write-tag labels. The related Qt connector
 fade and separate connector namespace-colour options remain unimplemented:
 native rows still use a single namespace colour for the full label. This text
 control does not complete the broader tag-presentation parent.
+
+The subscription failure budget follows the reference's outer exception boundary;
+an Error file status alone does not spend the budget. Native FFmpeg-no-output
+imports now retain the typed DataMissing identity through the handled-file result.
+The native StoreError set has no general Python DBException/DataMissing wrapper;
+additional native outer DataMissing producers must preserve that identity when
+implemented. Unrelated existing inner import/veto throttle differences remain.

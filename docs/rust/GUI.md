@@ -2362,3 +2362,12 @@ consumer. Options changes remain staged until Apply; Cancel preserves existing
 labels and reopening reads the saved text. The real Qt `sibling_connector.json`
 recording uses actual storage and write-result widgets with unchanged raw tags
 and counts.
+
+Subscription file work now retains handled import error classes and applies its
+failure budget to exceptions that escape per-file option generation or query-tag
+writes. The count spans all queries in one sync and resets on the next sync.
+Reaching the configured threshold saves the failing file status, abandons the
+remaining sync, and persists the configured other-error delay with the reference
+reason. Counted failures wait five seconds; typed DataMissing is excluded. HTTP
+errors handled inside ordinary file work, including 500 and 404, keep their seed
+result and continue without spending this outer budget, as the reference does.

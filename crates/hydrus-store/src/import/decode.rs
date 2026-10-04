@@ -556,6 +556,13 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             int("subscription_network_error_delay").unwrap_or(n.subscription_network_error_delay);
         n.subscription_other_error_delay =
             int("subscription_other_error_delay").unwrap_or(n.subscription_other_error_delay);
+        if let Some(threshold) = options
+            .noneable_integers
+            .get("subscription_file_error_cancel_threshold")
+        {
+            n.subscription_file_error_cancel_threshold =
+                threshold.and_then(|value| u64::try_from(value).ok());
+        }
         n.process_subs_in_random_order =
             boolean("process_subs_in_random_order").unwrap_or(n.process_subs_in_random_order);
         n.max_simultaneous_subscriptions =
@@ -2631,6 +2638,36 @@ mod tests {
             [dump.into_bytes()],
         )
         .unwrap();
+    }
+
+    #[test]
+    fn subscription_file_failure_threshold_imports_none_and_number() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<crate::network::NetworkSettings>(
+                input.settings["network"].clone(),
+            )
+            .unwrap()
+            .subscription_file_error_cancel_threshold
+        };
+        assert_eq!(decoded(), Some(5));
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, 5]]"#,
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, null]]"#,
+            )],
+        );
+        assert_eq!(decoded(), None);
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, null]]"#,
+                r#"[[0, "subscription_file_error_cancel_threshold"], [0, 19]]"#,
+            )],
+        );
+        assert_eq!(decoded(), Some(19));
     }
 
     #[test]

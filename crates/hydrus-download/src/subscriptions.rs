@@ -43,6 +43,8 @@ const CAUGHT_UP_RUN: u64 = 5;
 pub struct RunReport {
     pub new_urls: u64,
     pub files_worked: u64,
+    /// Non-DataMissing errors across this sync, reset for the next run.
+    pub file_errors: u64,
     /// Things the reference would pop up: a paused subscription, a query that
     /// died or found nothing, a gap after hitting the periodic file limit.
     pub notices: Vec<String>,
@@ -932,18 +934,33 @@ impl Downloader {
             let lookup: Vec<&str> = std::iter::once(seed.data.as_str())
                 .chain(seed.referral_url.as_deref())
                 .collect();
-            let options = self.full_options(
+            // WorkOnURL handles its own network/import failures. Only failures
+            // escaping per-file option generation or subsequent query-tag work
+            // spend the subscription's outer error budget.
+            let (presentation, failure) = match self.full_options(
                 CallerType::Subscription,
                 &sub.settings.import_options,
                 &lookup,
-            )?;
-            // (as in the reference, a file's failure is the file's: it
-            // doesn't count towards abandoning the sync)
-            self.work_on_url(&mut seed, &options, job).await;
-            if let Err(e) = self.write_query_tags(&seed, &query.state.tag_import_options) {
-                tracing::error!("adding a query's tags: {e}");
+            ) {
+                Ok(options) => {
+                    self.work_on_url(&mut seed, &options, job).await;
+                    let failure = self
+                        .write_query_tags(&seed, &query.state.tag_import_options)
+                        .err();
+                    (Some(options.presentation), failure)
+                }
+                Err(error) => (None, Some(error.into())),
+            };
+            if let Some(error) = &failure {
+                crate::seeds::set_status(&mut seed, SeedStatus::Error, error.to_string());
+                popup.set_text_2(Some(format!(
+                    "files {}: file failed",
+                    value_range(done, total)
+                )));
+                count_file_failure(report, error);
             }
-            if let Some(hash) = popups::presented_file(self.store(), &seed, &options.presentation)
+            if let Some(presentation) = &presentation
+                && let Some(hash) = popups::presented_file(self.store(), &seed, presentation)
                 && !presented.contains(&hash)
             {
                 presented.push(hash);
@@ -956,6 +973,18 @@ impl Downloader {
                 .write(move |ctx| queues::update_file_seed(ctx.conn(), &saved))?;
             report.files_worked += 1;
             done_work = true;
+            if let Some(error) = failure {
+                if !matches!(error, WorkError::DataMissing(_)) {
+                    tokio::time::sleep(Duration::from_secs(5)).await;
+                }
+                let threshold = self.network.read().subscription_file_error_cancel_threshold;
+                if threshold.is_some_and(|limit| report.file_errors >= limit) {
+                    return Err(RunStop::Failed(format!(
+                        "The subscription {} encountered several errors when downloading files, so it abandoned its sync.",
+                        sub.name
+                    )));
+                }
+            }
         }
         Ok(())
     }
@@ -969,6 +998,16 @@ impl Downloader {
         } else {
             queries.sort_by_cached_key(|q| q.state.human_name().to_owned());
         }
+    }
+}
+
+/// The outer exception budget deliberately excludes only typed DataMissing.
+fn count_file_failure(report: &mut RunReport, error: &WorkError) -> bool {
+    if matches!(error, WorkError::DataMissing(_)) {
+        false
+    } else {
+        report.file_errors += 1;
+        true
     }
 }
 
@@ -1129,6 +1168,44 @@ impl SubscriptionRunner {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn outer_typed_exception_budget_replays_recorded_classes_and_reset() {
+        let recording = hydrus_testkit::fixture_json("subscription_failure_limit.json");
+        for case in recording["cases"].as_array().unwrap() {
+            let mut report = RunReport::default();
+            let mut sleeps = Vec::new();
+            for call in case["calls"].as_array().unwrap() {
+                let kind = call.as_str().unwrap();
+                let error = if kind.starts_with("missing") {
+                    Some(WorkError::DataMissing("synthetic missing data".into()))
+                } else if kind.starts_with("error") || kind.starts_with("other") {
+                    Some(WorkError::File("synthetic outer failure".into()))
+                } else {
+                    None
+                };
+                if let Some(error) = error
+                    && count_file_failure(&mut report, &error)
+                {
+                    sleeps.push(5);
+                }
+            }
+            assert_eq!(serde_json::json!(report.file_errors), case["file_errors"]);
+            let expected = case["sleeps"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|v| **v == 5)
+                .count();
+            assert_eq!(sleeps.len(), expected);
+        }
+        let mut report = RunReport::default();
+        assert!(count_file_failure(
+            &mut report,
+            &WorkError::File("DataMissing is merely text".into())
+        ));
+        assert_eq!(report.file_errors, 1);
+    }
 
     #[test]
     fn presented_files_are_labelled_as_the_reference_labels_them() {
