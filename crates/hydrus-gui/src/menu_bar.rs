@@ -235,6 +235,21 @@ pub(crate) fn bind(window: &MainWindow, hooks: Hooks) -> Rc<dyn Fn()> {
             show();
         }
     });
+    window.on_tab_menu_requested({
+        let open = open.clone();
+        let hooks = hooks.clone();
+        let show = show.clone();
+        move |depth, index, x, y| {
+            let (Ok(depth), Ok(index)) = (usize::try_from(depth), usize::try_from(index)) else {
+                return;
+            };
+            let entries = hooks.pages.borrow().tab_menu(depth, index);
+            if !entries.is_empty() {
+                open.borrow_mut().open_popup(entries, x, y);
+                show();
+            }
+        }
+    });
     // a search page's domain buttons: their menus, below them
     window.on_domain_menu_requested({
         let open = open.clone();
@@ -408,6 +423,19 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
     let store = hooks.pages.borrow().store().clone();
     let change_pages = &hooks.change_pages;
     match command {
+        Command::SortTabs {
+            depth,
+            by,
+            ascending,
+        } => change_pages(&|pages| pages.sort_tabs(depth, by, ascending)),
+        Command::MoveTab {
+            depth,
+            index,
+            movement,
+        } => change_pages(&|pages| {
+            pages.move_tab(depth, index, movement);
+            Ok(())
+        }),
         Command::Copy(text) => crate::copy_to_clipboard(&text),
         Command::Pause(pause) => {
             let done = store.write(move |ctx| {

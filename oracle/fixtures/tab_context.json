@@ -1,0 +1,349 @@
+{
+  "pages": [
+    {
+      "name": "page 10",
+      "files": 2,
+      "progress": [
+        1,
+        7
+      ],
+      "size": 80
+    },
+    {
+      "name": "page 2",
+      "files": 2,
+      "progress": [
+        2,
+        7
+      ],
+      "size": 10
+    },
+    {
+      "name": "Alpha",
+      "files": 5,
+      "progress": [
+        0,
+        0
+      ],
+      "size": 80
+    },
+    {
+      "name": "page 2",
+      "files": 3,
+      "progress": [
+        0,
+        0
+      ],
+      "size": 10
+    },
+    {
+      "name": "page 2",
+      "files": 2,
+      "progress": [
+        2,
+        7
+      ],
+      "size": 10
+    },
+    {
+      "name": "alpha",
+      "files": 0,
+      "progress": [
+        0,
+        0
+      ],
+      "size": 0
+    }
+  ],
+  "selected": 3,
+  "sorts": [
+    {
+      "by": "files",
+      "ascending": false,
+      "order": [
+        2,
+        3,
+        1,
+        4,
+        0,
+        5
+      ],
+      "selected": 3
+    },
+    {
+      "by": "files",
+      "ascending": true,
+      "order": [
+        5,
+        0,
+        1,
+        4,
+        3,
+        2
+      ],
+      "selected": 3
+    },
+    {
+      "by": "size",
+      "ascending": false,
+      "order": [
+        0,
+        2,
+        1,
+        3,
+        4,
+        5
+      ],
+      "selected": 3
+    },
+    {
+      "by": "size",
+      "ascending": true,
+      "order": [
+        5,
+        1,
+        3,
+        4,
+        0,
+        2
+      ],
+      "selected": 3
+    },
+    {
+      "by": "name",
+      "ascending": false,
+      "order": [
+        3,
+        1,
+        4,
+        0,
+        5,
+        2
+      ],
+      "selected": 3
+    },
+    {
+      "by": "name",
+      "ascending": true,
+      "order": [
+        2,
+        5,
+        0,
+        3,
+        1,
+        4
+      ],
+      "selected": 3
+    }
+  ],
+  "moves": [
+    {
+      "movement": "first",
+      "index": 0,
+      "order": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "first",
+      "index": 2,
+      "order": [
+        2,
+        0,
+        1,
+        3,
+        4,
+        5
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "first",
+      "index": 3,
+      "order": [
+        3,
+        0,
+        1,
+        2,
+        4,
+        5
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "first",
+      "index": 5,
+      "order": [
+        5,
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "left",
+      "index": 0,
+      "order": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "left",
+      "index": 2,
+      "order": [
+        0,
+        2,
+        1,
+        3,
+        4,
+        5
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "left",
+      "index": 3,
+      "order": [
+        0,
+        1,
+        3,
+        2,
+        4,
+        5
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "left",
+      "index": 5,
+      "order": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        4
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "right",
+      "index": 0,
+      "order": [
+        1,
+        0,
+        2,
+        3,
+        4,
+        5
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "right",
+      "index": 2,
+      "order": [
+        0,
+        1,
+        3,
+        2,
+        4,
+        5
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "right",
+      "index": 3,
+      "order": [
+        0,
+        1,
+        2,
+        4,
+        3,
+        5
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "right",
+      "index": 5,
+      "order": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "last",
+      "index": 0,
+      "order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        0
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "last",
+      "index": 2,
+      "order": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        2
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "last",
+      "index": 3,
+      "order": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        3
+      ],
+      "selected": 3
+    },
+    {
+      "movement": "last",
+      "index": 5,
+      "order": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "selected": 3
+    }
+  ]
+}

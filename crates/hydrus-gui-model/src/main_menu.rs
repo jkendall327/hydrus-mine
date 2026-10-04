@@ -131,6 +131,18 @@ pub enum Command {
     NudgeSubscriptions,
     /// Close every page (asking first) and load the saved session.
     ClearAndLoadSession(String),
+    /// Reorder the siblings of the clicked tab.
+    SortTabs {
+        depth: usize,
+        by: crate::tab_context::Sort,
+        ascending: bool,
+    },
+    /// Move the clicked tab within its own notebook.
+    MoveTab {
+        depth: usize,
+        index: usize,
+        movement: crate::tab_context::Move,
+    },
     /// Switch a pause on or off.
     Pause(Pause),
     /// Switch automatic clipboard imports for watchers (true) or other recognised URLs.

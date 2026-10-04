@@ -170,7 +170,7 @@ pub use hydrus_gui_model::{
     manage_tags, media_actions, merge_options_editor, notes_editor, options, page_chooser,
     predicate_editors, ratings, ratings_editor, scanbar, search_log, selection, session_saving,
     sidecar_editors, sidecars, simple_downloader, sort, status, string_editors,
-    subscriptions_dedupe, subscriptions_dialog, subscriptions_list, tag_filter_editor,
+    subscriptions_dedupe, subscriptions_dialog, subscriptions_list, tab_context, tag_filter_editor,
     tag_relationships, thumbnail_icons, thumbnail_ratings, times_editor, urls_editor,
 };
 pub use page::SearchPage;

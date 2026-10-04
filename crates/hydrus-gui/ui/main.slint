@@ -205,6 +205,7 @@ component Tab inherits Rectangle {
     in property <string> text;
     in property <bool> selected;
     callback chosen();
+    callback context-menu(length, length);
     // as in the reference, a middle click closes a page
     callback close();
     height: 26px;
@@ -221,6 +222,9 @@ component Tab inherits Rectangle {
     touch := TouchArea {
         clicked => { root.chosen(); }
         pointer-event(event) => {
+            if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
+                root.context-menu(self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
+            }
             if (event.button == PointerEventButton.middle && event.kind == PointerEventKind.up) {
                 root.close();
             }
@@ -685,6 +689,7 @@ export component MainWindow inherits Window {
 
     // a notebook's (level's) tab was chosen
     callback tab-chosen(int, int);
+    callback tab-menu-requested(int, int, length, length);
     // a notebook's tab was middle-clicked
     callback close-tab(int, int);
     // the reference's main window shortcuts: ctrl+t and F9 open a page,
@@ -880,6 +885,7 @@ export component MainWindow inherits Window {
                     text: name;
                     selected: index == row.selected;
                     chosen => { root.tab-chosen(level, index); }
+                    context-menu(x, y) => { root.tab-menu-requested(level, index, x, y); }
                     close => { root.close-tab(level, index); }
                 }
                 // the row's empty space: as the reference's tab bar, a

@@ -1634,3 +1634,56 @@ fn a_local_import_page_shows_and_controls_its_import() {
     ui.invoke_answer(false);
     assert_eq!(bound.pages.borrow().shown().key, key);
 }
+
+#[test]
+fn tab_reordering_keeps_nested_notebooks_and_shown_leaf() {
+    use hydrus_gui::tab_context::{Move, Sort};
+    let (_dirs, store) = store();
+    let search = || PageContent::Search {
+        search: FileSearchContext::default(),
+        synchronised: false,
+        sort: None,
+        lock: None,
+        collect: None,
+    };
+    let left = page("same", search());
+    let right = page("same", search());
+    let nested = page(
+        "z nested",
+        PageContent::Pages(vec![left.clone(), right.clone()]),
+    );
+    let other = page("a", search());
+    store
+        .write(|ctx| {
+            sessions::save(
+                ctx.conn(),
+                &Session {
+                    name: LAST_SESSION.into(),
+                    pages: vec![nested.clone(), other.clone()],
+                },
+                100,
+            )?;
+            sessions::set_page_files(ctx.conn(), &left.key, &[HashId(1)])?;
+            sessions::set_page_files(ctx.conn(), &right.key, &[HashId(2), HashId(3)])
+        })
+        .unwrap();
+    let mut pages = Pages::open(store.clone()).unwrap();
+    pages.select(1, 1);
+    assert_eq!(pages.shown().key, right.key);
+    pages.sort_tabs(0, Sort::Name, true).unwrap();
+    assert_eq!(pages.session().pages[0].key, other.key);
+    assert_eq!(pages.shown().key, right.key);
+    pages.sort_tabs(1, Sort::Name, false).unwrap();
+    assert_eq!(pages.tabs()[1].selected, 0); // equal names: most files first
+    assert_eq!(pages.shown().key, right.key);
+    pages.move_tab(0, 1, Move::First);
+    assert_eq!(pages.session().pages[0].key, nested.key);
+    assert_eq!(pages.shown().key, right.key);
+    pages.move_tab(1, 1, Move::First); // move the unselected sibling
+    assert_eq!(pages.shown().key, right.key);
+    assert_eq!(pages.tabs()[1].selected, 1);
+    pages.sync(200).unwrap();
+    let reopened = Pages::open(store).unwrap();
+    assert_eq!(reopened.shown().key, right.key);
+    assert_eq!(reopened.session().pages, pages.session().pages);
+}

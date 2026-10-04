@@ -322,7 +322,24 @@ impl Pages {
         };
         let progress = match opened {
             Some(opened) => opened.borrow().import_progress(),
-            None => (0, 0),
+            None => match &page.content {
+                PageContent::Downloader { queues, .. } => self
+                    .store
+                    .read(|conn| {
+                        queues.iter().try_fold((0, 0), |(done, total), &queue| {
+                            let (value, range) = hydrus_store::queues::file_log_value_range(
+                                &hydrus_store::queues::file_seed_counts(conn, queue)?,
+                            );
+                            Ok(if value == range {
+                                (done, total)
+                            } else {
+                                (done + value, total + range)
+                            })
+                        })
+                    })
+                    .unwrap_or_default(),
+                _ => (0, 0),
+            },
         };
         let progress = if progress.0 == progress.1 {
             (0, 0)
@@ -1410,6 +1427,83 @@ impl Pages {
             }
         }
         Some(pages)
+    }
+
+    /// Actions on the clicked tab, using that tab row's notebook.
+    pub fn tab_menu(&self, depth: usize, index: usize) -> Vec<crate::main_menu::Entry> {
+        crate::tab_context::menu(
+            depth,
+            index,
+            self.notebook_at(depth).map_or(0, <[Page]>::len),
+        )
+    }
+
+    /// Sort only the notebook at `depth`, retaining the shown leaf and
+    /// descendants' selections. Equal keys keep their original order.
+    pub fn sort_tabs(
+        &mut self,
+        depth: usize,
+        by: crate::tab_context::Sort,
+        ascending: bool,
+    ) -> Result<(), String> {
+        let Some(pages) = self.notebook_at(depth) else {
+            return Ok(());
+        };
+        let summaries = pages
+            .iter()
+            .map(|page| {
+                let (files, progress) = self.file_summary(page);
+                Ok(crate::tab_context::Summary {
+                    name: page.name.clone(),
+                    files,
+                    progress,
+                    size: self.total_file_size(page).map_err(|e| e.to_string())?,
+                })
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        let order = crate::tab_context::order(&summaries, by, ascending);
+        let shown = self.shown().key;
+        let old = self.notebook_mut(depth).clone();
+        *self.notebook_mut(depth) = order.into_iter().map(|i| old[i].clone()).collect();
+        self.show(&shown);
+        Ok(())
+    }
+
+    /// Move a clicked tab within its notebook while keeping the selected
+    /// leaf, including when moving a containing notebook or an unselected tab.
+    pub fn move_tab(&mut self, depth: usize, index: usize, movement: crate::tab_context::Move) {
+        let Some(pages) = self.notebook_at(depth) else {
+            return;
+        };
+        let Some(target) = crate::tab_context::destination(index, pages.len(), movement) else {
+            return;
+        };
+        let shown = self.shown().key;
+        let pages = self.notebook_mut(depth);
+        let page = pages.remove(index);
+        pages.insert(target, page);
+        self.show(&shown);
+    }
+
+    /// The reference reports zero size for a page not initialised yet;
+    /// notebooks sum each child's size, including repeated files on siblings.
+    fn total_file_size(&self, page: &Page) -> hydrus_store::Result<u64> {
+        if let PageContent::Pages(children) = &page.content {
+            return children.iter().try_fold(0_u64, |sum, child| {
+                Ok(sum.saturating_add(self.total_file_size(child)?))
+            });
+        }
+        let Some(open) = self.open.get(&page.key) else {
+            return Ok(0);
+        };
+        let files = open.borrow().files();
+        self.store.read(|conn| {
+            Ok(hydrus_store::media::load_basic(conn, &files)?
+                .iter()
+                .filter_map(|media| media.info.as_ref())
+                .map(|info| info.size)
+                .sum())
+        })
     }
 
     /// The pages opened so far.

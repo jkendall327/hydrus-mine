@@ -62,6 +62,7 @@ pub mod string_editors;
 pub mod subscriptions_dedupe;
 pub mod subscriptions_dialog;
 pub mod subscriptions_list;
+pub mod tab_context;
 pub mod tag_filter_editor;
 pub mod thumbnail_icons;
 pub mod thumbnail_ratings;

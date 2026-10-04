@@ -1089,3 +1089,9 @@ take precedence over preserved auxiliary editor fields when exporting edits.
 Mixed downloader package import accepts URL classes, GUGs and page parsers;
 standalone formulas/content nodes belong in their matching native editors.
 Login scripts and domain metadata packages are explicitly unsupported here.
+
+Tab context menus currently expose move-page and sort-pages submenus. The
+reference's other tab-context actions (rename, duplicate, collapse, send down,
+per-notebook session append/save and batch close/select) remain deferred. As in
+the reference, a page not opened/initialised contributes zero to the size sort;
+kept file counts and persisted importer progress still participate in count sorts.

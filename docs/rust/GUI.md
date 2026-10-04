@@ -1593,3 +1593,11 @@ separate from the read-only legacy reader. `record_downloader_interchange.py`
 checks real reference PNG/JSON -> native encoders -> real reference loads;
 codec/model/GUI regressions cover bounds, unsupported data, cancellation,
 duplicates, stale snapshots and live downloader settings reload.
+
+Tab right-click offers the reference's four move-page destinations and six
+sibling sorts (file count, total size and name, both ways). Actions target the
+clicked notebook row and preserve its selected leaf, including nested notebooks.
+File-count ties include importer total/completed progress; name ties use file
+count descending and exact lexical names. Equal keys remain stable. Recorded
+against actual reference methods on Qt tabs by `oracle/record_tab_context.py`;
+model replay and session GUI tests cover ordering and reopening.
