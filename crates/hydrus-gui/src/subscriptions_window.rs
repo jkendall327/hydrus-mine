@@ -322,12 +322,12 @@ fn write(store: &Store, writes: Vec<Write>) -> hydrus_store::Result<()> {
                                     conn, from, queue,
                                 )?;
                             }
-                            if q.copy_of.is_none() {
-                                if let Some(query) = &q.exchange {
-                                    hydrus_gui_model::subscription_exchange::restore(
-                                        conn, queue, query,
-                                    )?;
-                                }
+                            if q.copy_of.is_none()
+                                && let Some(query) = &q.exchange
+                            {
+                                hydrus_gui_model::subscription_exchange::restore(
+                                    conn, queue, query,
+                                )?;
                             }
                             for &change in &q.logs {
                                 change_log(conn, queue, change, now)?;
@@ -1159,14 +1159,14 @@ pub(crate) fn open(
                 .unwrap_or_default();
             change(&|open| match open.asking.take() {
                 Some(Asking::MissingHistory(subscription, rest)) => {
-                    if index == 0 {
-                        if let Err(error) = hydrus_gui_model::subscription_exchange::stage(
+                    if index == 0
+                        && let Err(error) = hydrus_gui_model::subscription_exchange::stage(
                             &mut open.dialog,
                             vec![*subscription],
-                        ) {
-                            open.asking = Some(Asking::Message(error));
-                            return;
-                        }
+                        )
+                    {
+                        open.asking = Some(Asking::Message(error));
+                        return;
                     }
                     import_next(open, rest);
                 }
