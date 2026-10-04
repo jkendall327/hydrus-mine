@@ -165,6 +165,29 @@ impl NativeCursor {
         self.apply();
         self.schedule();
     }
+    pub(crate) fn menu_starting(self: &Rc<Self>) {
+        if self.closed.get() {
+            return;
+        }
+        self.wait.borrow_mut().motion(self.now(), false);
+        self.apply();
+        self.schedule();
+    }
+    pub(crate) fn menu_returned(self: &Rc<Self>) {
+        let Some(window) = self.window.upgrade() else {
+            return;
+        };
+        if slint::private_unstable_api::re_exports::WindowInner::from_pub(window.window())
+            .active_popups()
+            .is_empty()
+        {
+            // Native menu execution can block Slint's timer loop. Its return
+            // must leave a fresh wait, rather than hiding immediately because
+            // the elapsed menu duration exceeded the timeout. Async Slint
+            // menus retain their actual stack and tick the normal check.
+            self.menu_starting();
+        }
+    }
     pub(crate) fn refresh(self: &Rc<Self>) {
         self.watch_native();
         self.check_at(self.now());

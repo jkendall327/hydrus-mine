@@ -4294,6 +4294,14 @@ fn open_viewer(
         }
     });
     let native_cursor = viewer_cursor::NativeCursor::new(&window, model.borrow().store().clone());
+    window.on_cursor_menu_starting({
+        let native_cursor = native_cursor.clone();
+        move || native_cursor.menu_starting()
+    });
+    window.on_cursor_menu_returned({
+        let native_cursor = native_cursor.clone();
+        move || native_cursor.menu_returned()
+    });
     let native_focus = viewer_focus::NativeFocus::new(&window);
     window.on_presentation_settings_changed({
         let native_cursor = native_cursor.clone();

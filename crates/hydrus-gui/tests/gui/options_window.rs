@@ -3643,6 +3643,18 @@ fn cursor_timeout_reaches_native_motion_timer_focus_and_actual_popup_lifecycle()
             .autohide_ms,
         Some(700)
     );
+    // A synchronous platform menu returns with no Slint popup stack. Exercise
+    // its real callback path after a long elapsed menu interval: return must
+    // establish a fresh wait rather than immediately hide the cursor.
+    viewer.invoke_cursor_menu_starting();
+    let before_menu = cursor.state().touched_ms;
+    cursor.check_at(before_menu + 10_000);
+    assert!(viewer.get_cursor_idle_hidden());
+    viewer.invoke_cursor_menu_returned();
+    assert!(!viewer.get_cursor_idle_hidden());
+    let after_menu = cursor.state().touched_ms;
+    cursor.check_at(after_menu + 1);
+    assert!(!viewer.get_cursor_idle_hidden());
     viewer.invoke_close_requested();
     assert!(
         !cursor.timer_running(),

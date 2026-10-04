@@ -1586,7 +1586,9 @@ Cursor autohide now acts on native cursor visibility through winit and retains
 the same Slint canvas cursor during redraws. Its owner uses the shared desktop
 input/focus routes and an owned Slint timer. The pinned Slint 1.18 popup stack
 supplies actual open/close/cancel state for viewer menus; synchronous native
-popup execution blocks timer dispatch until the menu returns. Native hover and
+popup execution blocks timer dispatch until the menu returns; the actual show
+return starts a fresh wait so that elapsed menu time cannot hide the cursor
+immediately after closing. Native hover and
 volume controls remain eligible for the ordinary pointer instead of hiding it
 while their popup content is being used. Backend-specific MPV widget dragging
 and cursor anchoring remain separate gaps.

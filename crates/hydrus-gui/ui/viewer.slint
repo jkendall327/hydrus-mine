@@ -247,6 +247,8 @@ export component MediaViewerWindow inherits Window {
     // the right-click menu (`src/viewer_menu.rs`): asked for, then shown,
     // its rows' ids chosen
     in property <ThumbnailMenu> context-menu;
+    callback cursor-menu-starting();
+    callback cursor-menu-returned();
     callback context-menu-requested();
     callback menu-chosen(int);
     // home and end: the first file and the last
@@ -938,7 +940,9 @@ export component MediaViewerWindow inherits Window {
                 // and a right click shows the menu
                 if (event.kind == PointerEventKind.down && event.button == PointerEventButton.right) {
                     root.context-menu-requested();
+                    root.cursor-menu-starting();
                     viewer-menu.show({ x: self.mouse-x, y: self.mouse-y });
+                    root.cursor-menu-returned();
                 }
             }
             // as is a (left) double-click, as the reference's default
