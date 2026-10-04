@@ -71,7 +71,7 @@ fn screenshot(rendered: &headless::Windows, index: usize, name: &str, w: &Parser
 }
 #[test]
 fn native_page_content_apply_roundtrip_preserves_subsidiary_and_formula() {
-    let (_dir, store, slots) = setup();
+    let (dir, store, slots) = setup();
     let rendered = headless::init();
     let original = definitions(&store);
     let list = windows::open(&store, &slots, false).unwrap();
@@ -117,7 +117,7 @@ fn native_page_content_apply_roundtrip_preserves_subsidiary_and_formula() {
         original.parsers[0].content_parsers[0].formula
     );
     drop(store);
-    let reopened = Store::open(_dir.path()).unwrap();
+    let reopened = Store::open(dir.path()).unwrap();
     assert_eq!(definitions(&reopened), saved);
 }
 #[test]
