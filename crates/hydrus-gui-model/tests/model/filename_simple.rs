@@ -1,8 +1,8 @@
 //! Actual simple-panel entry/paste and heterogeneous selected-files semantics.
-use hydrus_core::{ServiceKey, search::context::LocationContext, tag::clean_tag_checked};
+use hydrus_core::{ServiceKey, search::context::LocationContext};
 use hydrus_gui_model::{
     filename_tagging::ServiceTagging,
-    write_autocomplete::{TagEntry, WriteAutocomplete},
+    write_autocomplete::{TagEntry, WriteAutocomplete, pasted_tags},
 };
 use hydrus_store::Store;
 use serde_json::{Value, json};
@@ -46,7 +46,7 @@ fn additive_entry_and_selected_union_replay_real_simple_panel_without_spreading_
                     .unwrap()
                     .iter()
                     .map(|v| usize::try_from(v.as_u64().unwrap()).unwrap())
-                    .collect()
+                    .collect();
             }
             "enter_all"
             | "enter_single"
@@ -95,12 +95,7 @@ fn additive_entry_and_selected_union_replay_real_simple_panel_without_spreading_
                 }
             }
             "paste_all" | "paste_single" => {
-                let tags: Vec<_> = step["value"]
-                    .as_str()
-                    .unwrap()
-                    .lines()
-                    .filter_map(clean_tag_checked)
-                    .collect();
+                let tags = pasted_tags(step["value"].as_str().unwrap());
                 if action == "paste_all" {
                     tagging.options.tags_for_all.extend(tags);
                 } else {
@@ -108,7 +103,7 @@ fn additive_entry_and_selected_union_replay_real_simple_panel_without_spreading_
                 }
             }
             "filename_text" => {
-                tagging.options.add_filename = Some(step["value"].as_str().unwrap().into())
+                tagging.options.add_filename = Some(step["value"].as_str().unwrap().into());
             }
             "filename_check" => {
                 if !step["value"].as_bool().unwrap() {

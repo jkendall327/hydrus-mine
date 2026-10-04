@@ -462,10 +462,7 @@ fn bind_tags(window: &FilenameTaggingWindow, state: &Rc<RefCell<State>>, store: 
                     return;
                 }
             };
-            let tags: Vec<_> = raw
-                .lines()
-                .filter_map(hydrus_core::tag::clean_tag_checked)
-                .collect();
+            let tags = crate::write_autocomplete::pasted_tags(&raw);
             if single {
                 let selected = state.selected();
                 state.tab_mut().add_single(&selected, &tags);

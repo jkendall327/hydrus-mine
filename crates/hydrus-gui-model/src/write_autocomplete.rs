@@ -39,6 +39,9 @@ pub enum Paste {
 pub fn pasted_tags(text: &str) -> Vec<String> {
     let mut tags: Vec<_> = text
         .lines()
+        // HydrusText.DeserialiseNewlinedTexts strips clipboard line input
+        // before CleanTags, so a bare colon followed by spaces is empty.
+        .map(|line| line.trim_start_matches('\u{feff}').trim())
         .filter_map(Tag::new)
         .map(|t| t.as_str().to_owned())
         .collect();
