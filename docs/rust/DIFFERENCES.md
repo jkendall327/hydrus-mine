@@ -1025,6 +1025,12 @@ errors use the shared popup queue so they remain visible on downloader and
 notebook pages. The reference watcher policy and toggle resets are replayed from
 `oracle/fixtures/clipboard_urls.json`.
 
+Login script types, bounded JSON/PNG interchange and credential/temporary-variable
+validation are available, but the login management windows and request execution
+are not yet connected. Imported credentials remain in preserved reference data;
+requests continue using their existing cookies until a login execution consumer
+is implemented.
+
 ## Network session and HTTP-header management
 
 Cookie and HTTP-header editing uses detached native drafts with Apply/Cancel;

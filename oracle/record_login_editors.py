@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+"""Record real Qt credential definitions and credential entry validation.
+
+Also record typed login script/step serialization, version upgrades and script
+validation against synthetic domains and harmless dummy credentials only.
+"""
+import json
+import os
+import sys
+import tempfile
+import record_string_converter_editor as recorder
+HERE = os.path.dirname(os.path.abspath(__file__))
+OUT = os.path.join(HERE, 'fixtures/login_editors.json')
+
+def record(session):
+    controller = session.controller
+    gui = controller.gui
+    def qt():
+        from qtpy import QtWidgets as QW
+        from hydrus.client import ClientStrings as S
+        from hydrus.client.networking import ClientNetworkingLogin as L
+        from hydrus.client.gui.networking import ClientGUILogin as G
+        from hydrus.client.gui import ClientGUIDialogsQuick
+        from hydrus.client.parsing import ClientParsing as P
+        from hydrus.core import HydrusConstants as HC, HydrusSerialisable
+        user_match = S.StringMatch(match_type=S.STRING_MATCH_REGEX, match_value=r'^[a-z]+$', min_chars=3, example_string='alice')
+        user = L.LoginCredentialDefinition('username', L.CREDENTIAL_TYPE_TEXT, user_match)
+        password = L.LoginCredentialDefinition('password', L.CREDENTIAL_TYPE_PASS, S.StringMatch(min_chars=4))
+        definition = G.EditLoginCredentialDefinitionPanel(gui, user)
+        before = definition.GetValue().GetSerialisableTuple()
+        definition._name.setText('account')
+        definition._credential_type.SetValue(L.CREDENTIAL_TYPE_PASS)
+        definition._string_match.SetValue(S.StringMatch(match_type=S.STRING_MATCH_FIXED, match_value='token', example_string='token'))
+        after = definition.GetValue().GetSerialisableTuple()
+        definition.deleteLater()
+        panel = G.EditLoginCredentialsPanel(gui, [password, user], {'username': 'a', 'password': ''})
+        questions = []
+        answer = [False]
+        def yes_no(parent, message, **kwargs):
+            questions.append(message)
+            return QW.QDialog.DialogCode.Accepted if answer[0] else QW.QDialog.DialogCode.Rejected
+        ClientGUIDialogsQuick.GetYesNo = yes_no
+        def state():
+            return [{'name': cd.GetName(), 'value': edit.text(), 'hidden': edit.echoMode() == QW.QLineEdit.EchoMode.Password,
+                     'label': label.text(), 'valid': label.property('hydrus_text') == 'valid'} for cd, edit, label in panel._control_data]
+        states = [{'state': state()}]
+        for values, allow in [({'username': 'alice', 'password': 'dummy-pass'}, False), ({'username': '1?!', 'password': 'x'}, False), ({'username': '', 'password': 'x'}, True)]:
+            for cd, edit, label in panel._control_data: edit.setText(values[cd.GetName()])
+            answer[0] = allow; questions.clear()
+            accepted = panel.UserIsOKToOK()
+            states.append({'do': values, 'answer': allow, 'accepted': accepted, 'questions': list(questions), 'state': state(), 'value': panel.GetValue()})
+        panel.deleteLater()
+        cookie = {S.StringMatch(match_type=S.STRING_MATCH_FIXED, match_value='session', example_string='session'): S.StringMatch(match_type=S.STRING_MATCH_FIXED, match_value='ok', example_string='ok')}
+        variable = P.ContentParser(name='csrf variable', content_type=HC.CONTENT_TYPE_VARIABLE, formula=P.ParseFormulaStatic(static_text='dummy-csrf'), additional_info='csrf')
+        first = L.LoginStep('establish session', 'http', 'GET', 'WWW-API7.', 'start')
+        first.SetComplicatedVariables({}, {'lang': 'en'}, {}, {}, [variable])
+        second = L.LoginStep('send credentials', 'http', 'POST', None, '/login')
+        second.SetComplicatedVariables({'username': 'user', 'password': 'pass'}, {'mode': 'login'}, {'csrf': 'token'}, cookie, [])
+        script = L.LoginScriptDomain('synthetic login', required_cookies_info=cookie, credential_definitions=[user, password], login_steps=[first, second], example_domains_info=[('login.example', 0, 'Login required to access any content.')])
+        script.SetLoginScriptKey(bytes(range(32)))
+        checks = []
+        for given in [{}, {'username': 'a', 'password': 'dummy-pass'}, {'username': 'alice', 'password': 'dummy-pass', 'ignored': 'value'}]:
+            try: script.CheckCanLogin(given); error = None
+            except Exception as e: error = str(e)
+            checks.append({'given': given, 'error': error})
+        bad = script.Duplicate(); bad._credential_definitions.clear()
+        try: bad.CheckIsValid(); missing_definitions = None
+        except Exception as e: missing_definitions = str(e)
+        bad = script.Duplicate(); bad._login_steps.reverse()
+        try: bad.CheckIsValid(); missing_variables = None
+        except Exception as e: missing_variables = str(e)
+        old = list(script.GetSerialisableTuple()); old[2] = 1
+        old_info = list(old[3]); old_info[1] = HydrusSerialisable.SerialisableDictionary({'session': S.StringMatch(match_type=S.STRING_MATCH_FIXED, match_value='ok', example_string='ok')}).GetSerialisableTuple(); old[3] = old_info
+        upgraded = HydrusSerialisable.CreateFromSerialisableTuple(old).GetSerialisableTuple()
+        bundle = HydrusSerialisable.SerialisableList([script, script.Duplicate()]).GetSerialisableTuple()
+        return {'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
+                'credential_types': [[i, L.credential_type_str_lookup[i]] for i in [0, 1]], 'access_types': [[i, L.login_access_type_str_lookup[i], L.login_access_type_default_description_lookup[i]] for i in range(4)]}
+    return controller.CallBlockingToQt(gui, qt)
+recorder.record = record
+if __name__ == '__main__':
+    import hydrus_driver
+    if len(sys.argv) > 1 and sys.argv[1] == '--child': recorder.child(sys.argv[2])
+    else:
+        with tempfile.TemporaryDirectory() as work:
+            path = os.path.join(work, 'login.json')
+            hydrus_driver.run_in_subprocess(os.path.abspath(__file__), '--child', path)
+            with open(path) as stream: result = json.load(stream)
+        with open(OUT, 'w') as stream:
+            json.dump(result, stream, indent=1, ensure_ascii=False); stream.write('\n')
+        print(f'wrote {OUT}')

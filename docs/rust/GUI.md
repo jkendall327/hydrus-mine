@@ -1606,6 +1606,13 @@ switches over. The real Qt watcher and URL-routing policy are recorded by
 `oracle/record_clipboard_urls.py`; native tests cover page routing, nested
 notebooks, menu persistence and failure recovery.
 
+Login definitions have typed script, step, credential, cookie and example-domain
+representations. The bounded interchange codec reads/writes reference login script
+JSON and compressed PNG, upgrades old fixed cookie names, and retains matcher
+and formula editor data. `oracle/record_login_editors.py` records the actual Qt
+credential panels and script validation; the user-facing login editors are being
+connected to these types.
+
 ## Network sessions and HTTP headers
 
 Network > data > review session cookies browses persisted domain and imported
