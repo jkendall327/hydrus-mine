@@ -46,6 +46,9 @@ pub fn open(
                 return;
             };
             let m = model.borrow();
+            let (file, tags) = m.input.domain_labels();
+            w.set_file_label(file.into());
+            w.set_tag_label(tags.into());
             let presentation: hydrus_core::tag_presentation::TagPresentation =
                 store.read(hydrus_store::settings::get).unwrap_or_default();
             let colours: hydrus_core::tag_presentation::NamespaceColours =
@@ -92,6 +95,8 @@ pub fn open(
                     action
                 {
                     model.borrow_mut().input.decorate(tab, kind, value);
+                } else if let hydrus_gui_model::write_tag_menu::Action::Domain(choice) = action {
+                    model.borrow_mut().input.choose_domain(choice);
                 }
             }
         }),
@@ -129,6 +134,14 @@ pub fn open(
                 let entries = model.borrow().input.menu(i);
                 tag_menu.open(&entries, x, y);
             }
+        }
+    });
+    window.on_domain_menu({
+        let menu = tag_menu.clone();
+        let model = model.clone();
+        move |tags, x, y| {
+            let entries = model.borrow().input.domain_menu(tags);
+            menu.open(&entries, x, y);
         }
     });
     let editable = Rc::new({

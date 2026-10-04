@@ -491,7 +491,9 @@ fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
     use hydrus_gui_model::write_tag_menu::{Action, Entry};
     fn action(entries: &[Entry], label: &str) -> Option<Action> {
         entries.iter().find_map(|entry| match entry {
-            Entry::Item(text, action) if text == label => Some(action.clone()),
+            Entry::Item(text, action) | Entry::Check(text, action, _) if text == label => {
+                Some(action.clone())
+            }
             Entry::Menu(_, entries) => action(entries, label),
             _ => None,
         })
@@ -526,7 +528,7 @@ fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
             fn paths(entries: &[Entry], prefix: &[String], out: &mut Vec<Vec<String>>) {
                 for entry in entries {
                     match entry {
-                        Entry::Item(label, _) => {
+                        Entry::Item(label, _) | Entry::Check(label, _, _) => {
                             let mut path = prefix.to_vec();
                             path.push(label.clone());
                             out.push(path);
@@ -597,6 +599,9 @@ fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
                 } else {
                     assert_eq!(json!([text]), event["copied"]);
                 }
+            }
+            Action::Domain(..) | Action::Locations(..) => {
+                panic!("unexpected domain action in tag menu replay")
             }
             Action::Relationship { .. } => panic!("unexpected relationship action in menu replay"),
             Action::Launch {
@@ -797,4 +802,89 @@ fn seeded_relationship_editors_replay_service_defaults_memory_and_cancel() {
                 .all(|r| r.pair.1 != "parity:unapplied relation")
         );
     }
+}
+
+#[test]
+fn write_domain_menus_and_interlocks_replay_reference_without_persisting_options() {
+    use hydrus_core::{ServiceKey, service::builtin_keys};
+    use hydrus_gui_model::write_tag_menu::{Action, Entry};
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let (_dir, store) = seeded(&fixture);
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let initial = LocationContext::single(ServiceKey::new(builtin_keys::MY_FILES.to_vec()));
+    let before = serde_json::to_value(
+        store
+            .read(settings::get::<hydrus_store::tag_display_config::AutocompleteWidgetSettings>)
+            .unwrap(),
+    )
+    .unwrap();
+    let mut input = WriteAutocomplete::new(store.clone(), key.clone(), initial.clone());
+    for event in fixture["domains"].as_array().unwrap() {
+        let entries = input.domain_menu(event["tags"].as_bool().unwrap());
+        let actual: Vec<_> = entries
+            .iter()
+            .filter_map(|entry| {
+                if let Entry::Check(label, _, checked) = entry {
+                    Some(json!({"label":label,"checked":checked}))
+                } else {
+                    None
+                }
+            })
+            .collect();
+        assert_eq!(json!(actual), event["rows"]);
+        if let Some(label) = event["choose"].as_str() {
+            let choice = entries
+                .into_iter()
+                .find_map(|entry| {
+                    if let Entry::Check(text, Action::Domain(choice), _) = entry {
+                        (text == label).then_some(choice)
+                    } else {
+                        None
+                    }
+                })
+                .unwrap();
+            input.choose_domain(choice);
+        }
+        let domains = input.domains();
+        let (files, tags) = input.domain_labels();
+        assert_eq!(
+            json!({"current":domains.location.current().iter().map(ServiceKey::to_hex).collect::<Vec<_>>(),"deleted":domains.location.deleted().iter().map(ServiceKey::to_hex).collect::<Vec<_>>(),"service":domains.tags.service.to_hex(),"display":domains.tags.display_service.to_hex(),"current_tags":domains.tags.include_current,"pending_tags":domains.tags.include_pending,"file_label":files,"tag_label":tags}),
+            event["after"]
+        );
+        assert_eq!(
+            serde_json::to_value(store
+                .read(settings::get::<hydrus_store::tag_display_config::AutocompleteWidgetSettings>)
+                .unwrap()).unwrap(),
+            before
+        );
+    }
+    // Per-service drafts survive switching a Manage Tags input; a new widget uses defaults.
+    let previous = input.domains();
+    let other = store
+        .snapshot()
+        .services
+        .by_name("second tags")
+        .unwrap()
+        .key
+        .clone();
+    input.set_context(other, initial.clone());
+    assert_ne!(input.domains(), previous);
+    input.set_context(key.clone(), initial.clone());
+    assert_eq!(input.domains(), previous);
+    let mut reopened = WriteAutocomplete::new(store.clone(), key, initial);
+    assert_ne!(reopened.domains(), previous);
+    reopened.set_text("parity:amb");
+    reopened.fetch();
+    let counted = reopened.rows().iter().filter(|r| r.counted).count();
+    assert!(counted > 0);
+    reopened.choose_domain(hydrus_gui_model::domains::Choice::Location(
+        LocationContext::new([], []),
+    ));
+    assert!(reopened.rows().iter().all(|row| !row.counted));
 }

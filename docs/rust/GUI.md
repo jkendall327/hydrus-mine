@@ -2139,3 +2139,14 @@ excludes closed pages. Disabling the preference suppresses the warning without
 using that boot's allowance; dismissing a warning does not cause it to repeat.
 `oracle/record_session_warning.py` records the threshold, disabled state, seed
 weighting and exact popup messages from the reference's live menu-count updater.
+Every shared write input now has file/tag-domain buttons. Their checked menus
+follow the reference and always offer all known files; choosing that domain
+while searching all tags switches to the first local tag service. Choosing all
+tags while searching all known files restores the default local file domain.
+These domains stay local to the widget and service draft, including across
+Manage Tags service changes, and feed live search, favourites decorators and
+children counts. Multiple/deleted locations opens an owned staged selector;
+Cancel preserves the current input domains and owner close discards the child.
+The recorder drives the real Qt domain buttons and interlocks, and model/native
+regressions verify checked menus, labels, counts, no options writes and child
+cancellation.

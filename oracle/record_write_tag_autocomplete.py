@@ -171,6 +171,25 @@ def record(session):
     # Restore the local counted suggestions before driving the real tag menu.
     fetch('parity:amber old',False,True,True,True,local)
     menu_events=qt(context_menus)
+    def write_domains():
+        from hydrus.client.gui import ClientGUICore as CGC
+        events=[];captured={};old_popup=CGC.core().PopupMenu
+        CGC.core().PopupMenu=lambda win,menu:captured.update(menu=menu)
+        ac._SetLocationContext(location);ctx=ac._tag_context_button.GetValue().Duplicate();ctx.service_key=local;ac._SetTagContext(ctx)
+        def snapshot():
+            context=ac._tag_context_button.GetValue();files=ac._location_context_button.GetValue()
+            return {'current':[key.hex() for key in sorted(files.current_service_keys)],'deleted':[key.hex() for key in sorted(files.deleted_service_keys)],'service':context.service_key.hex(),'display':context.display_service_key.hex(),'current_tags':context.include_current_tags,'pending_tags':context.include_pending_tags,'file_label':ac._location_context_button.text(),'tag_label':ac._tag_context_button.text()}
+        try:
+            for tags,label in [(True,None),(False,None),(True,'all known tags'),(False,'all known files with tags'),(True,'all known tags'),(True,'my tags'),(False,'all files ever imported or deleted')]:
+                button=ac._tag_context_button if tags else ac._location_context_button
+                if tags:button._Edit()
+                else:button._EditLocation()
+                menu=captured['menu'];rows=[{'label':a.text(),'checked':a.isChecked()} for a in menu.actions() if not a.isSeparator()]
+                if label is not None:next(a for a in menu.actions() if a.text()==label).trigger()
+                events.append({'tags':tags,'choose':label,'rows':rows,'after':snapshot()})
+        finally:CGC.core().PopupMenu=old_popup
+        return events
+    domain_events=qt(write_domains)
     # Questions belong to one independently recorded interaction sequence.
     asked.clear()
     paste_events=[]
@@ -243,7 +262,7 @@ def record(session):
         return events
     detached_inputs=qt(detached_tag_lists)
     qt(ac.deleteLater);c.CallToThread=old_thread;c.GetClipboardText=old_clipboard
-    return {'seeded_dialogs':seeded_dialogs,'menus':menu_events,'tabs':tab_events,'children_control':children_control,'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
+    return {'domains':domain_events,'seeded_dialogs':seeded_dialogs,'menus':menu_events,'tabs':tab_events,'children_control':children_control,'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
 def child(out):
     import hydrus_driver,record_api
     result=hydrus_driver.run_client(record_api.unpack_fixture('basic'),record)
