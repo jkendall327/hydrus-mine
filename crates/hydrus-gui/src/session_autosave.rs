@@ -127,10 +127,10 @@ impl slint::winit_030::CustomApplicationHandler for ActivityHandler {
     ) -> slint::winit_030::EventResult {
         match event {
             slint::winit_030::winit::event::WindowEvent::Focused(focused) => {
-                observe_native_focus(window_id, *focused)
+                observe_native_focus(window_id, *focused);
             }
             slint::winit_030::winit::event::WindowEvent::Destroyed => {
-                observe_native_focus(window_id, false)
+                observe_native_focus(window_id, false);
             }
             _ => {}
         }
