@@ -572,7 +572,9 @@ fn selected_export_tags_counts_sort_selection_and_copy_match_actual_panel() {
         .unwrap()
         .id;
     tags.selection.select_many(&[source, link]);
-    tags.refresh(&files[1..2]).unwrap();
+    // The recorded first-file view retains source:fixture but has no link.
+    // The second file contains link, so selecting it would retain both tags.
+    tags.refresh(&files[..1]).unwrap();
     assert!(tags.selection.is_selected(source));
     assert!(!tags.selection.is_selected(link));
     // Each order control remembers its own choice, without changing defaults.
