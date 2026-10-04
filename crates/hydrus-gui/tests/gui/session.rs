@@ -1653,18 +1653,16 @@ fn tab_reordering_keeps_nested_notebooks_and_shown_leaf() {
         PageContent::Pages(vec![left.clone(), right.clone()]),
     );
     let other = page("a", search());
+    let saved = Session {
+        name: LAST_SESSION.into(),
+        pages: vec![nested.clone(), other.clone()],
+    };
+    let (left_key, right_key) = (left.key, right.key);
     store
-        .write(|ctx| {
-            sessions::save(
-                ctx.conn(),
-                &Session {
-                    name: LAST_SESSION.into(),
-                    pages: vec![nested.clone(), other.clone()],
-                },
-                100,
-            )?;
-            sessions::set_page_files(ctx.conn(), &left.key, &[HashId(1)])?;
-            sessions::set_page_files(ctx.conn(), &right.key, &[HashId(2), HashId(3)])
+        .write(move |ctx| {
+            sessions::save(ctx.conn(), &saved, 100)?;
+            sessions::set_page_files(ctx.conn(), &left_key, &[HashId(1)])?;
+            sessions::set_page_files(ctx.conn(), &right_key, &[HashId(2), HashId(3)])
         })
         .unwrap();
     let mut pages = Pages::open(store.clone()).unwrap();
@@ -1702,18 +1700,16 @@ fn historical_session_append_restores_independent_tree_files_and_selection() {
         },
     );
     let notebook = page("nested", PageContent::Pages(vec![leaf.clone()]));
+    let saved = Session {
+        name: LAST_SESSION.into(),
+        pages: vec![notebook],
+    };
+    let leaf_key = leaf.key;
     store
-        .write(|ctx| {
-            sessions::save(
-                ctx.conn(),
-                &Session {
-                    name: LAST_SESSION.into(),
-                    pages: vec![notebook],
-                },
-                1,
-            )?;
-            sessions::set_page_files(ctx.conn(), &leaf.key, &[HashId(1), HashId(2)])?;
-            sessions::set_page_selected(ctx.conn(), &leaf.key, &[HashId(2)])
+        .write(move |ctx| {
+            sessions::save(ctx.conn(), &saved, 1)?;
+            sessions::set_page_files(ctx.conn(), &leaf_key, &[HashId(1), HashId(2)])?;
+            sessions::set_page_selected(ctx.conn(), &leaf_key, &[HashId(2)])
         })
         .unwrap();
     let mut pages = Pages::open(store.clone()).unwrap();
@@ -1793,19 +1789,17 @@ fn tab_size_sort_sums_open_nested_media_and_keeps_stable_ties() {
     let small = page("small", search());
     let tie = page("same as small", search());
     let notebook = page("nested", PageContent::Pages(vec![big.clone()]));
+    let saved = Session {
+        name: LAST_SESSION.into(),
+        pages: vec![small.clone(), notebook.clone(), tie.clone()],
+    };
+    let (big_key, small_key, tie_key) = (big.key, small.key, tie.key);
     store
-        .write(|ctx| {
-            sessions::save(
-                ctx.conn(),
-                &Session {
-                    name: LAST_SESSION.into(),
-                    pages: vec![small.clone(), notebook.clone(), tie.clone()],
-                },
-                100,
-            )?;
-            sessions::set_page_files(ctx.conn(), &big.key, &[largest])?;
-            sessions::set_page_files(ctx.conn(), &small.key, &[smallest])?;
-            sessions::set_page_files(ctx.conn(), &tie.key, &[smallest])
+        .write(move |ctx| {
+            sessions::save(ctx.conn(), &saved, 100)?;
+            sessions::set_page_files(ctx.conn(), &big_key, &[largest])?;
+            sessions::set_page_files(ctx.conn(), &small_key, &[smallest])?;
+            sessions::set_page_files(ctx.conn(), &tie_key, &[smallest])
         })
         .unwrap();
     let mut pages = Pages::open(store).unwrap();
@@ -1859,17 +1853,12 @@ fn bulk_tab_close_matches_reference_and_undo_restores_nested_positions() {
         page("d", search()),
     ];
     for step in fixture["close"].as_array().unwrap() {
+        let saved = Session {
+            name: LAST_SESSION.into(),
+            pages: original.clone(),
+        };
         store
-            .write(|ctx| {
-                sessions::save(
-                    ctx.conn(),
-                    &Session {
-                        name: LAST_SESSION.into(),
-                        pages: original.clone(),
-                    },
-                    100,
-                )
-            })
+            .write(move |ctx| sessions::save(ctx.conn(), &saved, 100))
             .unwrap();
         let mut pages = Pages::open(store.clone()).unwrap();
         pages.select(0, 2);
@@ -1921,17 +1910,12 @@ fn tab_close_focus_settings_and_context_navigation_reach_consumers() {
         .map(|i| page(&format!("page {i}"), search()))
         .collect();
     for step in fixture["navigation"].as_array().unwrap() {
+        let saved = Session {
+            name: LAST_SESSION.into(),
+            pages: original.clone(),
+        };
         store
-            .write(|ctx| {
-                sessions::save(
-                    ctx.conn(),
-                    &Session {
-                        name: LAST_SESSION.into(),
-                        pages: original.clone(),
-                    },
-                    100,
-                )
-            })
+            .write(move |ctx| sessions::save(ctx.conn(), &saved, 100))
             .unwrap();
         let mut pages = Pages::open(store.clone()).unwrap();
         pages.select(0, 2);
@@ -1948,16 +1932,13 @@ fn tab_close_focus_settings_and_context_navigation_reach_consumers() {
         );
     }
     for left in [false, true] {
+        let saved = Session {
+            name: LAST_SESSION.into(),
+            pages: original.clone(),
+        };
         store
-            .write(|ctx| {
-                sessions::save(
-                    ctx.conn(),
-                    &Session {
-                        name: LAST_SESSION.into(),
-                        pages: original.clone(),
-                    },
-                    100,
-                )?;
+            .write(move |ctx| {
+                sessions::save(ctx.conn(), &saved, 100)?;
                 hydrus_store::settings::set(
                     ctx.conn(),
                     &NotebookSettings {
@@ -1999,17 +1980,12 @@ fn tab_popup_bulk_close_cancellation_and_acceptance_are_wired() {
             )
         })
         .collect();
+    let saved = Session {
+        name: LAST_SESSION.into(),
+        pages: original,
+    };
     store
-        .write(|ctx| {
-            sessions::save(
-                ctx.conn(),
-                &Session {
-                    name: LAST_SESSION.into(),
-                    pages: original,
-                },
-                100,
-            )
-        })
+        .write(move |ctx| sessions::save(ctx.conn(), &saved, 100))
         .unwrap();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store).unwrap());
@@ -2076,20 +2052,18 @@ fn send_down_and_rename_prompts_match_reference_including_cancellation() {
         })
         .collect();
     for step in fixture["send"].as_array().unwrap() {
+        let rename_sent_notebooks = step["rename"].as_bool().unwrap();
+        let saved = Session {
+            name: LAST_SESSION.into(),
+            pages: original.clone(),
+        };
         store
-            .write(|ctx| {
-                sessions::save(
-                    ctx.conn(),
-                    &Session {
-                        name: LAST_SESSION.into(),
-                        pages: original.clone(),
-                    },
-                    100,
-                )?;
+            .write(move |ctx| {
+                sessions::save(ctx.conn(), &saved, 100)?;
                 hydrus_store::settings::set(
                     ctx.conn(),
                     &NotebookSettings {
-                        rename_sent_notebooks: step["rename"].as_bool().unwrap(),
+                        rename_sent_notebooks,
                         ..NotebookSettings::default()
                     },
                 )
@@ -2120,7 +2094,12 @@ fn send_down_and_rename_prompts_match_reference_including_cancellation() {
             ui.invoke_answer(step["accepted"].as_bool().unwrap());
         }
         if step["rename"].as_bool().unwrap() {
-            let dialog = bound.tab_name_dialog.borrow().as_ref().unwrap().clone();
+            let dialog = bound
+                .tab_name_dialog
+                .borrow()
+                .as_ref()
+                .unwrap()
+                .clone_strong();
             assert_eq!(
                 dialog.get_message(),
                 step["text"][0]["message"].as_str().unwrap()
@@ -2175,23 +2154,23 @@ fn rename_tab_uses_frozen_key_and_cancellation_preserves_name() {
         .collect();
     let fixture = hydrus_testkit::fixture_json("tab_actions.json");
     for step in fixture["rename"].as_array().unwrap() {
+        let saved = Session {
+            name: LAST_SESSION.into(),
+            pages: original.clone(),
+        };
         store
-            .write(|ctx| {
-                sessions::save(
-                    ctx.conn(),
-                    &Session {
-                        name: LAST_SESSION.into(),
-                        pages: original.clone(),
-                    },
-                    100,
-                )
-            })
+            .write(move |ctx| sessions::save(ctx.conn(), &saved, 100))
             .unwrap();
         let ui = MainWindow::new().unwrap();
         let bound = bind(&ui, Pages::open(store.clone()).unwrap());
         ui.invoke_tab_chosen(0, 2);
         ui.invoke_tab_rename_requested(0, 1);
-        let dialog = bound.tab_name_dialog.borrow().as_ref().unwrap().clone();
+        let dialog = bound
+            .tab_name_dialog
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
         assert_eq!(
             dialog.get_message(),
             step["text"][0]["message"].as_str().unwrap()
@@ -2243,17 +2222,12 @@ fn send_down_keeps_nested_selection_and_open_search_objects() {
     let selected = page("selected", search());
     let nested = page("nested", PageContent::Pages(vec![first, selected.clone()]));
     let other = page("other", search());
+    let saved = Session {
+        name: LAST_SESSION.into(),
+        pages: vec![nested.clone(), other.clone()],
+    };
     store
-        .write(|ctx| {
-            sessions::save(
-                ctx.conn(),
-                &Session {
-                    name: LAST_SESSION.into(),
-                    pages: vec![nested.clone(), other.clone()],
-                },
-                100,
-            )
-        })
+        .write(move |ctx| sessions::save(ctx.conn(), &saved, 100))
         .unwrap();
     let mut pages = Pages::open(store.clone()).unwrap();
     pages.select(1, 1);
@@ -2283,18 +2257,23 @@ fn downloader_backup_and_freshest_load_survive_source_queue_deletion() {
         PageContent::Downloader { queues, .. } => queues[0],
         _ => panic!("URL importer"),
     };
+    let initial_urls: Vec<_> = fixture["initial"]["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|recorded| recorded["url"].as_str().unwrap().to_owned())
+        .collect();
     store
-        .write(|ctx| {
+        .write(move |ctx| {
             queues::set_paused(ctx.conn(), original, Some(true), Some(true))?;
-            for recorded in fixture["initial"]["files"].as_array().unwrap() {
-                let url = recorded["url"].as_str().unwrap();
+            for url in initial_urls {
                 queues::add_file_seeds(
                     ctx.conn(),
                     original,
                     &[NewFileSeed {
                         seed_type: SeedType::Url,
-                        data: url.into(),
-                        data_for_comparison: url.into(),
+                        data: url.clone(),
+                        data_for_comparison: url,
                         source_time: None,
                         referral_url: None,
                         meta: queues::FileSeedMeta::default(),
@@ -2309,16 +2288,17 @@ fn downloader_backup_and_freshest_load_survive_source_queue_deletion() {
     pages.save_session("history", 100).unwrap();
     let later = fixture["source_changed"]["files"][2]["url"]
         .as_str()
-        .unwrap();
+        .unwrap()
+        .to_owned();
     store
-        .write(|ctx| {
+        .write(move |ctx| {
             queues::add_file_seeds(
                 ctx.conn(),
                 original,
                 &[NewFileSeed {
                     seed_type: SeedType::Url,
-                    data: later.into(),
-                    data_for_comparison: later.into(),
+                    data: later.clone(),
+                    data_for_comparison: later,
                     source_time: None,
                     referral_url: None,
                     meta: queues::FileSeedMeta::default(),
@@ -2660,7 +2640,12 @@ fn chooser_new_notebook_name_preference_matches_reference_and_persists() {
         ui.invoke_chooser_pressed(8); // page of pages
         assert_eq!(ui.get_chooser_labels().row_count(), 0);
         if step["prompt"] == true {
-            let dialog = bound.tab_name_dialog.borrow().as_ref().unwrap().clone();
+            let dialog = bound
+                .tab_name_dialog
+                .borrow()
+                .as_ref()
+                .unwrap()
+                .clone_strong();
             assert_eq!(
                 dialog.get_message(),
                 step["asked"][0]["message"].as_str().unwrap()
