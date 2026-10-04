@@ -401,3 +401,28 @@ pub fn hash_label(kind: HashKind) -> &'static str {
         HashKind::Sha512 => "sha512",
     }
 }
+
+/// The actual reference's speed label, based on accepted entries this batch.
+pub fn speed_statement(rows: usize, elapsed: std::time::Duration) -> String {
+    let speed = if rows == 0 {
+        0
+    } else {
+        (rows as f64 / elapsed.as_secs_f64().max(f64::MIN_POSITIVE)) as u64
+    };
+    format!("{speed} rows/s")
+}
+/// Text displayed by the reference job's first status line.
+pub fn event_text(event: hydrus_store::tag_migration::Event, previous_accepted: usize) -> String {
+    use hydrus_store::tag_migration::Event;
+    match event {
+        Event::PreparingSource => "preparing source".into(),
+        Event::PreparingDestination => "preparing destination".into(),
+        Event::BeginningWork => "beginning work".into(),
+        Event::Batch { progress, elapsed } => {
+            speed_statement(progress.accepted.saturating_sub(previous_accepted), elapsed)
+        }
+        Event::CleaningSource => "done, cleaning up source".into(),
+        Event::CleaningDestination => "done, cleaning up destination".into(),
+        Event::Done(_) => "done!".into(),
+    }
+}

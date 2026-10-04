@@ -98,17 +98,42 @@ export component TagMigrationWindow inherits Window {
             }
         }
         if root.question != "": Text { text: root.question; color: Theme.text; wrap: word-wrap; }
-        Text { text: root.progress; color: Theme.text; wrap: word-wrap; }
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         Rectangle { vertical-stretch: 1; }
         HorizontalBox {
             if root.question != "": Button { text: root.last-chance ? "yes" : "looks good"; clicked => {root.answer(true);} }
             if root.question != "": Button { text: root.last-chance ? "no" : "go back"; clicked => {root.answer(false);} }
             if root.question == "" && !root.running: Button { text: "Go!"; clicked => {root.go();} }
-            if root.running: Button { text: root.paused ? "resume" : "pause"; clicked => {root.pause-job();} }
-            if root.running: Button { text: "cancel migration"; clicked => {root.cancel-job();} }
             Rectangle { horizontal-stretch: 1; }
             Button { text: "close"; clicked => {root.close-clicked();} }
+        }
+    }
+}
+
+export component TagMigrationProgressWindow inherits Window {
+    title: "tag migration";
+    width: 500px; height: 190px;
+    background: Theme.window;
+    in property <string> job-title;
+    in property <string> progress;
+    in property <string> error;
+    in property <bool> running;
+    in property <bool> can-control;
+    in property <bool> paused;
+    out property <string> status-text: root.paused ? "paused" : root.progress;
+    callback pause-job();
+    callback cancel-job();
+    callback dismiss();
+    VerticalBox {
+        padding: 12px; spacing: 8px;
+        Text { text: root.job-title; color: Theme.text; wrap: word-wrap; }
+        Text { text: root.status-text; color: Theme.text; wrap: word-wrap; }
+        Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        Rectangle { vertical-stretch: 1; }
+        HorizontalBox {
+            if root.can-control: Button { text: root.paused ? "resume" : "pause"; clicked => { root.pause-job(); } }
+            if root.can-control: Button { text: "cancel"; clicked => { root.cancel-job(); } }
+            if !root.can-control: Button { text: "dismiss"; clicked => { root.dismiss(); } }
         }
     }
 }

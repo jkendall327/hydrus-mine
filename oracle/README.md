@@ -38,6 +38,7 @@ export QT_QPA_PLATFORM=offscreen
 | `record_network_sessions.py` | `fixtures/network_sessions.json`: real Qt session/cookie/header rows, editor validation and clear/delete questions |
 | `record_clipboard_urls.py` | `fixtures/clipboard_urls.json`: real Qt clipboard watcher changes, independent switches, recognition and failure behavior on synthetic domains |
 | `record_tag_archives.py` | `fixtures/tag_archives.json` and `tag_archive_*.db`: real Qt archive inspectors/confirmations, four hash kinds and scope conversion, pair-count gates and actual Python/native-codec/Python SQLite round trips (`--rust-executable`, standalone `archive_exchange_harness.rs` compiled with cached third-party SQLite only) |
+| `record_tag_migration_progress.py` | `fixtures/tag_migration_progress.json`: real MigrationJob, settings panel and Qt popup phases/speed, independent close, pause/cancel/dismiss and strict delayed dismissal |
 | `record_tag_migration_pause.py` | `fixtures/tag_migration_pause.json`: actual MigrationJob and Qt PopupMessage pause/resume/cancel with 11 identical entries in batches of three |
 | `record_tag_migration.py` | `fixtures/tag_migration.json`: real Qt migration controls/questions and reference mapping/pair destination changes |
 | `record_downloader_interchange.py` | `fixtures/downloader_interchange.json` and `.png`: reference definition formats, recent version upgrades and Rust JSON/PNG exports loaded by Python |

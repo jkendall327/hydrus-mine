@@ -1842,9 +1842,13 @@ chain to the terminal ideal; either-side mode disables the individual tests.
 
 The window shows the reference summary and its second confirmation outside
 advanced mode. Migration runs on a worker in bounded atomic batches, with live
-progress, pause/resume and cancellation. Pausing waits after the current committed
-batch; cancellation also wakes paused work. Cancelling retains committed batches; closing a
-running job requests cancellation and waits for its final committed progress.
+progress in an independently retained popup, with the reference preparation,
+rows/s, cleanup and done text. Closing settings leaves its published job running.
+Pausing displays "paused" and waits after the current committed batch; cancellation
+wakes paused work, removes its controls immediately, and retains committed batches.
+A running popup cannot be dismissed; cancelling permits dismissal while cleanup
+finishes. Completed popups disappear after the reference three-second integer
+deadline or can be dismissed manually.
 Services are resolved by key again on every batch. Graph/count publication occurs atomically per batch; displayed tags and review
 counts refresh after completion or cancellation. Reference controls, questions and actual DB mapping
 and pair destinations are recorded in `oracle/fixtures/tag_migration.json`.
@@ -1853,7 +1857,9 @@ confirmations, 32 all-known/selected hash-conversion combinations and eight
 current/deleted domain cases, current/pending count
 gates, and real Python → native SQLite archive codec → Python readback for all
 four mapping kinds and both pair kinds. Pause/resume/cancel uses the real Qt popup
-and MigrationJob in `oracle/fixtures/tag_migration_pause.json`.
+and MigrationJob in `oracle/fixtures/tag_migration_pause.json`. The actual Qt
+popup lifecycle, closing settings independently, exact phases/speed and cancel/
+dismissal states are recorded in `oracle/fixtures/tag_migration_progress.json`.
 
 ## Downloader definition interchange
 

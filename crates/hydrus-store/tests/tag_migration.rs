@@ -1067,3 +1067,97 @@ fn pair_count_gates_observe_reference_concurrent_mapping_changes_between_batches
     assert_eq!(serde_json::json!(pairs), case["pairs"]);
     assert_eq!(done.accepted, pairs.len());
 }
+
+#[test]
+fn published_job_events_match_reference_phases_and_committed_prefixes() {
+    use tag_migration::{Event, Options};
+    let recording = hydrus_testkit::fixture_json("tag_migration_progress.json");
+    for case in recording.as_array().unwrap() {
+        for archive_destination in [false, true] {
+            let (dir, store, request) = setup();
+            let options = Options {
+                destination: archive_destination.then(|| dir.path().join("output.db")),
+                ..Options::default()
+            };
+            let cancel = AtomicBool::new(false);
+            let mut events = Vec::new();
+            let mut accepted = Vec::new();
+            let done = tag_migration::run_job_events(
+                &store,
+                &request,
+                &options,
+                &cancel,
+                &AtomicBool::new(false),
+                3,
+                |event| {
+                    let phase = match event {
+                        Event::PreparingSource => "preparing source",
+                        Event::PreparingDestination => "preparing destination",
+                        Event::BeginningWork => "beginning work",
+                        Event::Batch { progress, .. } => {
+                            accepted.push(progress.accepted);
+                            if case["action"] == "cancel" {
+                                cancel.store(true, Ordering::Release);
+                            }
+                            "batch"
+                        }
+                        Event::CleaningSource => "done, cleaning up source",
+                        Event::CleaningDestination => "done, cleaning up destination",
+                        Event::Done(_) => "done!",
+                    };
+                    events.push(phase.to_owned());
+                },
+            )
+            .unwrap();
+            let expected = case["timeline"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|entry| {
+                    let text = entry["status"].as_str().unwrap();
+                    if text.ends_with("rows/s") {
+                        "batch"
+                    } else {
+                        text
+                    }
+                })
+                .collect::<Vec<_>>();
+            assert_eq!(events, expected);
+            let mut total = 0;
+            let expected = case["speed_inputs"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|entry| {
+                    total += usize::try_from(entry["rows"].as_u64().unwrap()).unwrap();
+                    total
+                })
+                .collect::<Vec<_>>();
+            assert_eq!(accepted, expected);
+            assert_eq!(done.accepted, case["accepted"].as_array().unwrap().len());
+            assert_eq!(done.cancelled, case["cancelled"].as_bool().unwrap());
+            if let Some(path) = &options.destination {
+                let metadata = tag_migration::archive::inspect(path, Content::Mappings).unwrap();
+                assert_eq!(
+                    metadata,
+                    tag_migration::archive::Metadata::Mappings(hydrus_core::HashKind::Sha256)
+                );
+                let rows = rusqlite::Connection::open(path)
+                    .unwrap()
+                    .query_row("SELECT count(*) FROM mappings", [], |row| {
+                        row.get::<_, usize>(0)
+                    })
+                    .unwrap();
+                assert_eq!(rows, done.accepted);
+            } else {
+                assert_eq!(
+                    usize::try_from(count(&store, &request.destination, false)).unwrap(),
+                    done.accepted
+                );
+            }
+            // Both paths release the reservation when the completed call
+            // returns, allowing the next normal migration to finish.
+            tag_migration::run(&store, &request, &AtomicBool::new(false), 3, |_| {}).unwrap();
+        }
+    }
+}

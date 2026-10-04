@@ -11,6 +11,20 @@ use std::{
     sync::atomic::{AtomicBool, Ordering},
 };
 
+/// Reference migration job phases and committed-batch speed inputs.
+#[derive(Debug, Clone, Copy)]
+pub enum Event {
+    PreparingSource,
+    PreparingDestination,
+    BeginningWork,
+    Batch {
+        progress: Progress,
+        elapsed: std::time::Duration,
+    },
+    CleaningSource,
+    CleaningDestination,
+    Done(Progress),
+}
 /// Optional pair filtering against real current and pending storage mappings.
 #[derive(Debug, Clone)]
 pub struct PairCounts {
@@ -331,8 +345,42 @@ pub fn run(
     size: usize,
     mut progress: impl FnMut(Progress),
 ) -> Result<Progress> {
+    run_with_events(store, request, options, cancel, paused, size, |event| {
+        if let Event::Batch { progress: p, .. } | Event::Done(p) = event {
+            progress(p);
+        }
+    })
+}
+/// Publish the reference's phase labels and timing without blocking the UI.
+pub fn run_with_events(
+    store: &Store,
+    request: &Request,
+    options: &Options,
+    cancel: &AtomicBool,
+    paused: &AtomicBool,
+    size: usize,
+    mut event: impl FnMut(Event),
+) -> Result<Progress> {
     if options.source.is_none() && options.destination.is_none() && options.counts.is_none() {
-        return super::run_pausable(store, request, cancel, paused, size, progress);
+        event(Event::PreparingSource);
+        event(Event::PreparingDestination);
+        event(Event::BeginningWork);
+        let mut last = Progress::default();
+        let result = super::run_timed(store, request, cancel, paused, size, |p, elapsed| {
+            if p.scanned > last.scanned {
+                event(Event::Batch {
+                    progress: p,
+                    elapsed,
+                });
+            }
+            last = p;
+        });
+        event(Event::CleaningSource);
+        event(Event::CleaningDestination);
+        if let Ok(done) = &result {
+            event(Event::Done(*done));
+        }
+        return result;
     }
     if !(1..=1024).contains(&size) {
         return Err(StoreError::Invalid(
@@ -349,11 +397,13 @@ pub fn run(
             "source and destination archive paths must differ".into(),
         ));
     }
+    event(Event::PreparingSource);
     let source = options
         .source
         .as_ref()
         .map(|p| Archive::source(p, request.content))
         .transpose()?;
+    event(Event::PreparingDestination);
     let mut destination = options
         .destination
         .as_ref()
@@ -381,7 +431,8 @@ pub fn run(
         .unwrap_or(HashKind::Sha256);
     let request = std::sync::Arc::new(request.clone());
     let options = std::sync::Arc::new(options.clone());
-    store.read(|conn| {
+    event(Event::BeginningWork);
+    let result = store.read(|conn| {
         let (service, _) = endpoints(conn, &request, &options)?;
         let sql = service
             .map(|s| super::source_sql(conn, &request, s))
@@ -398,6 +449,7 @@ pub fn run(
                 done.cancelled = true;
                 break;
             }
+            let started = std::time::Instant::now();
             let entries = if let Some(archive) = &source {
                 archive.read(&mut cursor, size)?
             } else {
@@ -468,12 +520,22 @@ pub fn run(
             }
             done.scanned += scanned;
             done.accepted += accepted;
-            progress(done);
+            event(Event::Batch {
+                progress: done,
+                elapsed: started.elapsed(),
+            });
             while paused.load(Ordering::Acquire) && !cancel.load(Ordering::Acquire) {
                 std::thread::sleep(std::time::Duration::from_millis(25));
             }
         }
-        progress(done);
         Ok(done)
-    })
+    });
+    event(Event::CleaningSource);
+    drop(source);
+    event(Event::CleaningDestination);
+    drop(destination);
+    if let Ok(done) = &result {
+        event(Event::Done(*done));
+    }
+    result
 }

@@ -1,18 +1,12 @@
 //! Service migration controls, confirmations and cancellable background work.
 use crate::TagMigrationWindow;
 use hydrus_core::{HashId, HashKind, ServiceKey};
-use hydrus_gui_model::tag_migration::{self as model, Action, Content, Migration, Progress};
+use hydrus_gui_model::tag_migration::{self as model, Action, Content, Migration};
+mod progress;
 use hydrus_store::Store;
+pub use progress::last_opened as last_progress;
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
-use std::{
-    cell::{Cell, RefCell},
-    rc::Rc,
-    sync::{
-        Arc,
-        atomic::{AtomicBool, Ordering},
-    },
-    time::Duration,
-};
+use std::{cell::RefCell, rc::Rc, sync::Arc};
 /// Retains a migration window while its parent stays open.
 pub type Slot = Rc<RefCell<Option<TagMigrationWindow>>>;
 thread_local! {static LAST: RefCell<Option<slint::Weak<TagMigrationWindow>>>=const {RefCell::new(None)};}
@@ -123,11 +117,9 @@ pub fn open(
     window.set_selected_files(settings.borrow().selected_files);
     window.set_file_label(format!("{} selected files", settings.borrow().files.len()).into());
     show(&window, &settings.borrow());
-    let cancellation = Arc::new(AtomicBool::new(false));
-    let paused = Arc::new(AtomicBool::new(false));
-    let confirmed: Rc<RefCell<Option<(model::Request, model::Options)>>> = Rc::default();
-    let close_requested = Rc::new(Cell::new(false));
-    let timer = Rc::new(slint::Timer::default());
+    let confirmed: Rc<RefCell<Option<(model::Request, model::Options, String)>>> = Rc::default();
+    let job_window: Rc<RefCell<Option<slint::Weak<crate::TagMigrationProgressWindow>>>> =
+        Rc::default();
     let filter_slot = crate::tag_filter_window::Slot::default();
     let location_slot: Rc<RefCell<Option<crate::LocationsWindow>>> = Rc::default();
     window.on_choices_changed({
@@ -319,8 +311,14 @@ pub fn open(
                 };
                 w.set_error(SharedString::new());
                 w.set_last_chance(false);
-                w.set_question(settings.borrow().confirmation().into());
-                *confirmed.borrow_mut() = Some((settings.borrow().request(), options));
+                let confirmation = settings.borrow().confirmation();
+                let title = confirmation
+                    .split("\n\n")
+                    .nth(1)
+                    .unwrap_or("migrate tags")
+                    .to_owned();
+                w.set_question(confirmation.into());
+                *confirmed.borrow_mut() = Some((settings.borrow().request(), options, title));
             }
         }
     });
@@ -328,10 +326,7 @@ pub fn open(
         let confirmed = confirmed.clone();
         let weak = window.as_weak();
         let store = store.clone();
-        let cancellation = cancellation.clone();
-        let paused = paused.clone();
-        let timer = timer.clone();
-        let close_requested = close_requested.clone();
+        let job_window = job_window.clone();
         move |yes| {
             let Some(w) = weak.upgrade() else { return };
             if w.get_question().is_empty() || w.get_running() {
@@ -351,7 +346,7 @@ pub fn open(
                 w.set_question(model::LAST_CHANCE.into());
                 return;
             }
-            let Some((request, options)) = confirmed.borrow_mut().take() else {
+            let Some((request, options, title)) = confirmed.borrow_mut().take() else {
                 w.set_question(SharedString::new());
                 w.set_error("the migration confirmation expired; press Go again".into());
                 return;
@@ -359,116 +354,42 @@ pub fn open(
             w.set_question(SharedString::new());
             w.set_running(true);
             w.set_progress("beginning work".into());
-            cancellation.store(false, Ordering::Release);
-            paused.store(false, Ordering::Release);
-            w.set_paused(false);
-            let store = store.clone();
-            let cancel = cancellation.clone();
-            let paused = paused.clone();
-            let (send, receive) = std::sync::mpsc::channel::<Result<Progress, String>>();
-            std::thread::spawn(move || {
-                let result = hydrus_store::tag_migration::run_job(
-                    &store,
-                    &request,
-                    &options,
-                    &cancel,
-                    &paused,
-                    512,
-                    |p| {
-                        let _ = send.send(Ok(p));
-                    },
-                );
-                let _ = send.send(result.map_err(|e| e.to_string()));
-                // Dropping send is the completion signal, including failures.
-            });
-            let weak = weak.clone();
-            let changed = changed.clone();
-            let weak_timer = Rc::downgrade(&timer);
-            let close_requested = close_requested.clone();
-            timer.start(
-                slint::TimerMode::Repeated,
-                Duration::from_millis(80),
-                move || {
-                    let Some(w) = weak.upgrade() else { return };
-                    loop {
-                        match receive.try_recv() {
-                            Ok(Ok(p)) => {
-                                w.set_progress(
-                                    format!(
-                                        "{}; {} entries scanned, {} accepted",
-                                        if p.cancelled {
-                                            "cancelled (committed batches retained)"
-                                        } else {
-                                            "migrating"
-                                        },
-                                        p.scanned,
-                                        p.accepted
-                                    )
-                                    .into(),
-                                );
-                            }
-                            Ok(Err(e)) => w.set_error(e.into()),
-                            Err(std::sync::mpsc::TryRecvError::Disconnected) => {
-                                if let Some(timer) = weak_timer.upgrade() {
-                                    timer.stop();
-                                }
-                                if w.get_running() {
-                                    w.set_running(false);
-                                    w.set_paused(false);
-                                    if !w.get_progress().starts_with("cancelled")
-                                        && w.get_error().is_empty()
-                                    {
-                                        w.set_progress(
-                                            format!("done! {}", w.get_progress()).into(),
-                                        );
-                                    }
-                                    changed();
-                                }
-                                if close_requested.get() {
-                                    w.invoke_close_clicked();
-                                }
-                                break;
-                            }
-                            Err(std::sync::mpsc::TryRecvError::Empty) => break,
-                        }
-                    }
-                },
-            );
+            match progress::start(
+                store.clone(),
+                request,
+                options,
+                &title,
+                weak.clone(),
+                changed.clone(),
+            ) {
+                Ok(job) => *job_window.borrow_mut() = Some(job.as_weak()),
+                Err(error) => {
+                    w.set_running(false);
+                    w.set_error(error.into());
+                }
+            }
         }
     });
     window.on_pause_job({
-        let paused = paused.clone();
-        let weak = window.as_weak();
+        let job_window = job_window.clone();
         move || {
-            if let Some(w) = weak.upgrade()
-                && w.get_running()
-            {
-                let value = !paused.load(Ordering::Acquire);
-                paused.store(value, Ordering::Release);
-                w.set_paused(value);
+            if let Some(job) = job_window.borrow().as_ref().and_then(slint::Weak::upgrade) {
+                job.invoke_pause_job();
             }
         }
     });
     window.on_cancel_job({
-        let cancellation = cancellation.clone();
+        let job_window = job_window.clone();
         move || {
-            cancellation.store(true, Ordering::Release);
+            if let Some(job) = job_window.borrow().as_ref().and_then(slint::Weak::upgrade) {
+                job.invoke_cancel_job();
+            }
         }
     });
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
-        let timer = timer.clone();
         move || {
-            cancellation.store(true, Ordering::Release);
-            if let Some(w) = weak.upgrade()
-                && w.get_running()
-            {
-                close_requested.set(true);
-                w.set_progress("cancelling… (waiting for current batch)".into());
-                return;
-            }
-            timer.stop();
             let filter = filter_slot
                 .borrow()
                 .as_ref()
@@ -486,17 +407,9 @@ pub fn open(
         }
     };
     window.on_close_clicked(close.clone());
-    window.window().on_close_requested({
-        let weak = window.as_weak();
-        move || {
-            let running = weak.upgrade().is_some_and(|w| w.get_running());
-            close();
-            if running {
-                slint::CloseRequestResponse::KeepWindowShown
-            } else {
-                slint::CloseRequestResponse::HideWindow
-            }
-        }
+    window.window().on_close_requested(move || {
+        close();
+        slint::CloseRequestResponse::HideWindow
     });
     LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));
     *slot.borrow_mut() = Some(window.clone_strong());

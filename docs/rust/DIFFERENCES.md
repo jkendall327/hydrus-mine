@@ -1187,7 +1187,12 @@ reader remains available to the UI. The reservation is released on error or canc
 Display graph/count publication happens after each relationship batch, following
 the existing native immediate-sync design; large graph rebuilds occupy the writer
 but run outside the UI thread. Pause/resume waits after the current atomic batch,
-as the reference does; cancelling or closing also wakes a paused job.
+as the reference does; cancelling also wakes a paused job. Closing the settings
+window leaves its independently retained progress job alive. Native progress is
+a separate window rather than an embedded message-manager popup; it follows the
+reference phase/speed text, paused override, immediate cancel/dismiss controls
+and delayed completion dismissal. The native timer checks the strict integer
+three-second deadline every 80 ms; the reference manager/checker polls it.
 Hydrus Tag Archive/tag-pair archive sources are read-only snapshots, including
 hash-type inference, rather than opening the reference's writable archive job.
 Native archive output uses the actual Python SQLite schemas and commits atomic
@@ -1208,8 +1213,8 @@ source batch, matching the reference's current service counts and ideal chains
 while source pagination remains stable. Repository migration retains
 pending/petitioned content locally; uploading is outside this window's scope.
 The reference's fixed Mass Migration Job reason is offered as an editable petition
-reason in the native window. Progress reports scanned and accepted source entries,
-including destination entries already in the requested state.
+reason in the native window. The speed label counts accepted source entries,
+including destination entries already in the requested state, as the reference does.
 
 Go freezes the entire migration request. Applying an already-open filter or location
 child after the confirmation appears changes only the next job's settings.

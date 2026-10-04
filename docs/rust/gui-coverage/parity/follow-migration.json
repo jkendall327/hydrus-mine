@@ -6,32 +6,62 @@
       "originalID": "audit-media-migration-pause",
       "before": "missing",
       "proposedStatus": "first_pass",
-      "exactBehavior": "Pause/resume controls stop service migration after the current committed atomic batch. Resume keeps the immutable source snapshot and cursor. Cancel and close wake paused work, retain exactly the committed prefix, publish counts/graphs and release the migration reservation.",
+      "exactBehavior": "Independently retained progress jobs survive closing the migration settings panel. Actual reference preparation, accepted-batch rows/s, cleanup and done labels; paused override; pause/resume after committed atomic batches; cancel wakes paused work and immediately removes controls/permits dismissal while cleanup finishes. Committed prefix, graph/count publication and reservation release remain bounded. Completed popups support manual dismissal and strict integer three-second delayed dismissal.",
       "limits": [
-        "Native progress window replaces the reference popup status control."
+        "Native separate progress window replaces the reference message-manager popup; native checks its strict deadline every 80 ms rather than the reference manager/checker polling."
       ],
       "sourceAnchors": [
         {
           "relativepath": "crates/hydrus-store/src/tag_migration.rs",
-          "line": 227,
-          "symbol": "pub fn run_pausable("
+          "symbol": "pub fn run_pausable(",
+          "line": 227
         },
         {
-          "relativepath": "crates/hydrus-gui/src/tag_migration_window.rs",
-          "line": 439,
-          "symbol": "window.on_pause_job("
+          "relativepath": "crates/hydrus-store/src/tag_migration/job.rs",
+          "symbol": "pub fn run_with_events(",
+          "line": 355
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_migration_window/progress.rs",
+          "symbol": "pub(super) fn start(",
+          "line": 42
         }
       ],
       "testAnchors": [
         {
           "relativepath": "crates/hydrus-store/tests/tag_migration.rs",
-          "line": 403,
-          "symbol": "fn pause_waits_after_commit"
+          "symbol": "fn pause_waits_after_commit",
+          "line": 403
+        },
+        {
+          "relativepath": "crates/hydrus-store/tests/tag_migration.rs",
+          "symbol": "fn published_job_events_match",
+          "line": 1072
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_migration.rs",
+          "symbol": "fn migration_popup_speed",
+          "line": 353
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
-          "line": 165,
-          "symbol": "fn closing_a_running_job"
+          "symbol": "fn closing_settings_retains",
+          "line": 165
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
+          "symbol": "fn cancellation_allows_immediate",
+          "line": 415
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
+          "symbol": "fn completed_popup_remains",
+          "line": 473
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
+          "symbol": "fn progress_popup_renders",
+          "line": 509
         }
       ],
       "referenceRecording": {
@@ -45,7 +75,15 @@
         "slintSyntax": true,
         "localCargoBuildsOrTests": false,
         "ci": "Parent runs asynchronous GitHub CI; authored regression tests not claimed locally passed."
-      }
+      },
+      "additionalReferenceRecordings": [
+        {
+          "script": "oracle/record_tag_migration_progress.py",
+          "fixture": "oracle/fixtures/tag_migration_progress.json",
+          "executed": true,
+          "provenance": "Actual unmodified MigrationJob, JobStatus, Qt PopupMessage and MigrateTagsPanel; eleven scripted source rows in batches of three; actual speed helper with pinned elapsed timing; resumed and cancelled runs; settings close, early/manual dismissal and strict delayed deadline."
+        }
+      ]
     },
     {
       "originalID": "migration-archive-source",
@@ -72,7 +110,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/tag_migration_window.rs",
-          "line": 275,
+          "line": 267,
           "symbol": "window.on_choose_archive("
         }
       ],
@@ -147,7 +185,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
-          "line": 286,
+          "line": 301,
           "symbol": "fn archive_controls_inspect"
         }
       ],
@@ -188,12 +226,12 @@
       "sourceAnchors": [
         {
           "relativepath": "crates/hydrus-store/src/tag_migration/job.rs",
-          "line": 159,
+          "line": 173,
           "symbol": "fn convert("
         },
         {
           "relativepath": "crates/hydrus-store/src/tag_migration/job.rs",
-          "line": 252,
+          "line": 266,
           "symbol": "fn filter("
         },
         {
@@ -251,7 +289,7 @@
       "sourceAnchors": [
         {
           "relativepath": "crates/hydrus-store/src/tag_migration/job.rs",
-          "line": 233,
+          "line": 247,
           "symbol": "fn pair_ok("
         },
         {
@@ -278,7 +316,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
-          "line": 286,
+          "line": 301,
           "symbol": "fn archive_controls_inspect"
         },
         {
@@ -316,7 +354,7 @@
     "proposedStatus": "partial",
     "reason": "Concrete archive/hash/count/pause leaves are implemented. Overall dialog/progress/metadata lifecycle retains documented native differences; codec interoperability does not make the broader parent complete.",
     "remainingUserVisibleDifferences": [
-      "Native persistent progress window versus reference popup and dismissal; scanned/accepted progress versus reference speed text.",
+      "Native separate progress windows rather than embedded message-manager popups; native deadline polling every 80 ms rather than reference manager/checker polling.",
       "Read-only source inspection/inference versus reference metadata writeback.",
       "Bounded atomic archive commits versus reference final-cleanup transaction.",
       "Existing alternate-hash destinations pin actual metadata rather than the unsafe recorded reference MD5/SHA256-dropdown mismatch.",

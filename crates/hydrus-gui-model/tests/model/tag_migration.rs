@@ -348,3 +348,65 @@ fn archive_inspection_choices_cancellation_and_count_summaries_match_qt() {
             .contains("where the worse or ideal tag of each pair has count on")
     );
 }
+
+#[test]
+fn migration_popup_speed_and_phase_text_replay_actual_qt_outputs() {
+    use hydrus_store::tag_migration::{Event, Progress};
+    let recording = hydrus_testkit::fixture_json("tag_migration_progress.json");
+    for case in recording.as_array().unwrap() {
+        let mut events = vec![
+            Event::PreparingSource,
+            Event::PreparingDestination,
+            Event::BeginningWork,
+        ];
+        let mut accepted = 0;
+        for input in case["speed_inputs"].as_array().unwrap() {
+            accepted += usize::try_from(input["rows"].as_u64().unwrap()).unwrap();
+            let elapsed = std::time::Duration::from_millis(input["elapsed_ms"].as_u64().unwrap());
+            assert_eq!(
+                tag_migration::speed_statement(
+                    usize::try_from(input["rows"].as_u64().unwrap()).unwrap(),
+                    elapsed
+                ),
+                input["text"].as_str().unwrap()
+            );
+            events.push(Event::Batch {
+                progress: Progress {
+                    scanned: accepted,
+                    accepted,
+                    cancelled: false,
+                },
+                elapsed,
+            });
+        }
+        events.extend([
+            Event::CleaningSource,
+            Event::CleaningDestination,
+            Event::Done(Progress::default()),
+        ]);
+        let mut previous = 0;
+        for (event, expected) in events.into_iter().zip(case["timeline"].as_array().unwrap()) {
+            assert_eq!(
+                tag_migration::event_text(event, previous),
+                expected["status"].as_str().unwrap()
+            );
+            if let Event::Batch { progress, .. } = event {
+                previous = progress.accepted;
+            }
+        }
+    }
+    // Empty filtered batches and fractional rates follow actual Python's int
+    // truncation. Large rates use the raw integer rather than grouped digits.
+    assert_eq!(
+        tag_migration::speed_statement(0, std::time::Duration::ZERO),
+        "0 rows/s"
+    );
+    assert_eq!(
+        tag_migration::speed_statement(2, std::time::Duration::from_millis(1500)),
+        "1 rows/s"
+    );
+    assert_eq!(
+        tag_migration::speed_statement(3000, std::time::Duration::from_secs(1)),
+        "3000 rows/s"
+    );
+}
