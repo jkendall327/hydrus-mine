@@ -164,9 +164,121 @@
         },
         "observed": "Actual popup labels/reserved-name exclusions, 7 save question/invalid/cancel outcomes, serialized children and background append selection."
       }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2052-page-weight-information-advanced",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Advanced-only copyable comma-formatted subtree weight counts each leaf independently, plus twenty per file or gallery seed, including repeated media across children.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "5720be94534067a39a2c793865901193c03ef0a5",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1664,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2185,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "consumer"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_refresh.rs",
+          "line": 138,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "gui_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_tab_refresh.py",
+        "fixture": "oracle/fixtures/tab_refresh.json",
+        "commit": "5720be94534067a39a2c793865901193c03ef0a5"
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2249-refresh-this-page",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Refresh clicked initialized leaf by stable key: paused search resumes, hash-locked search stays fixed, importer re-applies current sort retaining selected files and transfer pause state.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "5720be94534067a39a2c793865901193c03ef0a5",
+      "limits": [
+        "Duplicate sidebar numbers are read on active-page render rather than independent background sidebar jobs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1651,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2185,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "consumer"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_refresh.rs",
+          "line": 68,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "gui_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_tab_refresh.py",
+        "fixture": "oracle/fixtures/tab_refresh.json",
+        "commit": "5720be94534067a39a2c793865901193c03ef0a5"
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2253-refresh-all-this-page-s-pages",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Recursively refresh initialized notebook descendants, skipping unopened descendants; preserve selected outside sibling and notebook selection, omit action for empty notebook.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "5720be94534067a39a2c793865901193c03ef0a5",
+      "limits": [
+        "Duplicate sidebar numbers are read on active-page render rather than independent background sidebar jobs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1651,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2185,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "consumer"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_refresh.rs",
+          "line": 68,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "gui_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_tab_refresh.py",
+        "fixture": "oracle/fixtures/tab_refresh.json",
+        "commit": "5720be94534067a39a2c793865901193c03ef0a5"
+      }
     }
   ],
-  "completedOriginalLeafCount": 3,
+  "completedOriginalLeafCount": 6,
   "validation": {
     "reference": "Real-client recorder completed cleanly.",
     "local": [
@@ -176,7 +288,6 @@
     "cargo": "Deferred to root hosted CI; no local builds or mutation tests."
   },
   "remaining": [
-    "Tab new-page-here/refresh-all/advanced page-weight actions.",
     "GUI session autosave lifecycle/history and imported historical backups.",
     "Remaining page selector and drag workflows."
   ]
