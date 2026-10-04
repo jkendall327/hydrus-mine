@@ -321,3 +321,68 @@ fn listener_address(store: &Store) -> String {
         .unwrap()
         .data
 }
+#[test]
+fn dropping_final_owner_cancels_open_drafts_and_invalidates_child_callbacks() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let _rendered = headless::init();
+    let slots = Slots::default();
+    let browser = windows::open(&store, &slots, false).unwrap();
+    browser.invoke_add_clicked();
+    let child = windows::last_edit_opened().unwrap();
+    let clone = slots.clone();
+    drop(slots);
+    assert!(browser.window().is_visible());
+    assert!(child.window().is_visible());
+    drop(clone);
+    assert!(!browser.window().is_visible());
+    assert!(!child.window().is_visible());
+    child.set_domain("stale.com".into());
+    child.invoke_apply_clicked();
+    browser.invoke_add_clicked();
+    assert!(store.read(network::sessions).unwrap().is_empty());
+    let slots = Slots::default();
+    let headers = windows::open(&store, &slots, true).unwrap();
+    headers.invoke_add_clicked();
+    let child = windows::last_edit_opened().unwrap();
+    child.set_global(true);
+    child.set_name("X-Stale".into());
+    child.set_value("discarded".into());
+    drop(slots);
+    assert!(!headers.window().is_visible());
+    assert!(!child.window().is_visible());
+    child.invoke_apply_clicked();
+    headers.invoke_apply_clicked();
+    assert!(
+        store
+            .read(|c| network::headers(c, &NetworkContext::global()))
+            .unwrap()
+            .iter()
+            .all(|h| h.name != "X-Stale")
+    );
+    let session = NetworkContext::domain("example.com");
+    store
+        .write(move |ctx| network::create_session(ctx.conn(), &session))
+        .unwrap();
+    let slots = Slots::default();
+    let browser = windows::open(&store, &slots, false).unwrap();
+    browser.set_show_empty(true);
+    browser.invoke_filter_changed();
+    browser.invoke_row_clicked(0, false, false);
+    browser.invoke_edit_clicked();
+    let cookies = slots.cookies.borrow().as_ref().unwrap().clone_strong();
+    cookies.invoke_add_clicked();
+    let child = windows::last_edit_opened().unwrap();
+    drop(slots);
+    assert!(!browser.window().is_visible());
+    assert!(!cookies.window().is_visible());
+    assert!(!child.window().is_visible());
+    child.invoke_apply_clicked();
+    cookies.invoke_apply_clicked();
+    assert!(
+        store
+            .read(|c| network::cookies(c, &NetworkContext::domain("example.com")))
+            .unwrap()
+            .is_empty()
+    );
+}

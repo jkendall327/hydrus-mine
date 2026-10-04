@@ -15,12 +15,38 @@ use std::{
     sync::Arc,
 };
 
-/// Retain the network windows for the main window's lifetime.
+/// Retain windows for a bounded main-window lifetime. Callbacks hold weak owners.
 #[derive(Clone, Default)]
 pub struct Slots {
+    owner: Rc<SlotsOwner>,
+}
+/// Windows owned by the final `Slots` handle; dropping it cancels all drafts.
+#[derive(Default)]
+pub struct SlotsOwner {
     pub browser: Rc<RefCell<Option<NetworkDataWindow>>>,
     pub cookies: Rc<RefCell<Option<NetworkDataWindow>>>,
     pub headers: Rc<RefCell<Option<NetworkDataWindow>>>,
+}
+impl std::ops::Deref for Slots {
+    type Target = SlotsOwner;
+    fn deref(&self) -> &Self::Target {
+        &self.owner
+    }
+}
+impl Drop for SlotsOwner {
+    fn drop(&mut self) {
+        for slot in [&self.browser, &self.cookies, &self.headers] {
+            let window = slot.borrow().as_ref().map(ComponentHandle::clone_strong);
+            if let Some(window) = window {
+                window.invoke_cancel_clicked();
+            }
+        }
+    }
+}
+impl std::fmt::Debug for SlotsOwner {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("SlotsOwner").finish_non_exhaustive()
+    }
 }
 impl std::fmt::Debug for Slots {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -208,8 +234,8 @@ fn open_data(
         let weak = window.as_weak();
         let child = child.clone();
         let active = active.clone();
-        let slots = slots.clone();
-        let slot = slot.clone();
+        let owner = Rc::downgrade(&slots.owner);
+        let slot = Rc::downgrade(slot);
         move || {
             if !active.replace(false) {
                 return;
@@ -219,8 +245,10 @@ fn open_data(
                 w.invoke_cancel_clicked();
             }
             if let Some(w) = weak.upgrade() {
-                if w.get_browser() {
-                    let cookie_window = slots
+                if w.get_browser()
+                    && let Some(owner) = owner.upgrade()
+                {
+                    let cookie_window = owner
                         .cookies
                         .borrow()
                         .as_ref()
@@ -231,7 +259,9 @@ fn open_data(
                 }
                 let _ = w.hide();
             }
-            slot.borrow_mut().take();
+            if let Some(slot) = slot.upgrade() {
+                slot.borrow_mut().take();
+            }
         }
     });
     window.on_cancel_clicked({
@@ -286,8 +316,12 @@ fn open_data(
         let child = child.clone();
         let store = store.clone();
         let active = active.clone();
-        let slots = slots.clone();
+        let owner = Rc::downgrade(&slots.owner);
         move |editing| {
+            let Some(owner) = owner.upgrade() else {
+                return;
+            };
+            let slots = Slots { owner };
             let Some(w) = weak.upgrade() else {
                 return;
             };
