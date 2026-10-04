@@ -68,10 +68,13 @@ fn cells(w: &hydrus_gui::DownloaderDisplayWindow) -> Vec<Vec<String>> {
         })
         .collect()
 }
-fn until(mut condition: impl FnMut() -> bool) {
+fn until(operation: &str, mut condition: impl FnMut() -> bool) {
     let start = std::time::Instant::now();
     while !condition() {
-        assert!(start.elapsed() < std::time::Duration::from_secs(5));
+        assert!(
+            start.elapsed() < std::time::Duration::from_secs(5),
+            "viewer did not {operation}"
+        );
         slint::platform::update_timers_and_animations();
         std::thread::sleep(std::time::Duration::from_millis(10));
     }
@@ -253,8 +256,21 @@ fn saved_choices_reach_existing_gallery_and_open_viewer() {
         "https://example.com/".into(),
         "https://other.example/item".into(),
     ];
+    // The imported fixture already has example.com/post/N associations,
+    // which match this deliberately permissive synthetic class as well.
+    // Give the consumer test an exact URL set before asserting exact counts.
+    let services = store.snapshot().services.clone();
+    let old_urls = store
+        .read(|conn| hydrus_store::media::load(conn, &services, None, &[file]))
+        .unwrap()
+        .results
+        .remove(0)
+        .urls;
     store
-        .write_content(move |w| w.add_urls(&[file], &urls))
+        .write_content(move |w| {
+            w.delete_urls(&[file], &old_urls)?;
+            w.add_urls(&[file], &urls)
+        })
         .unwrap();
     ui.invoke_thumbnail_activated(0);
     let viewer = bound
@@ -263,7 +279,7 @@ fn saved_choices_reach_existing_gallery_and_open_viewer() {
         .as_ref()
         .map(slint::ComponentHandle::clone_strong)
         .unwrap();
-    assert!(viewer.get_url_links().row_count() >= 2);
+    assert_eq!(viewer.get_url_links().row_count(), 2);
     assert!(
         (0..viewer.get_url_links().row_count()).any(|i| viewer
             .get_url_links()
@@ -296,7 +312,11 @@ fn saved_choices_reach_existing_gallery_and_open_viewer() {
     editor.invoke_answer(0);
     editor.set_show_unmatched(false);
     editor.invoke_apply_clicked();
-    until(|| viewer.get_url_links().row_count() == 0);
+    assert!(!editor.window().is_visible());
+    assert!(windows::file_links(&store, file).unwrap().is_empty());
+    until("hide all URL links", || {
+        viewer.get_url_links().row_count() == 0
+    });
     let editor = windows::open(&store, &slots).unwrap();
     editor.set_tab(1);
     editor.invoke_tab_changed();
@@ -304,7 +324,14 @@ fn saved_choices_reach_existing_gallery_and_open_viewer() {
     editor.invoke_edit_clicked();
     editor.invoke_answer(1);
     editor.invoke_apply_clicked();
-    until(|| viewer.get_url_links().row_count() == 1);
+    assert!(!editor.window().is_visible());
+    assert_eq!(
+        windows::file_links(&store, file).unwrap(),
+        vec![("example post".into(), "https://example.com/".into())]
+    );
+    until("show exactly the enabled class link", || {
+        viewer.get_url_links().row_count() == 1
+    });
     assert_eq!(
         viewer.get_url_links().row_data(0).unwrap().label,
         "example post"

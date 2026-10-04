@@ -404,6 +404,16 @@ fn cookie_exchange_replays_reference_fields_questions_and_collisions() {
     draft.apply(&store).unwrap();
     let mut stale = CookieDraft::new(&store, session.clone()).unwrap();
     stale.import(cookies).unwrap();
+    let sid_index = stale.cookies.iter().position(|c| c.name == "sid").unwrap();
+    // Re-importing the identical sid is a no-op, so it must preserve a
+    // website response. The stale conflict case must actually edit that key.
+    let mut unchanged_import = CookieDraft::new(&store, session.clone()).unwrap();
+    unchanged_import
+        .import(vec![stale.cookies[sid_index].clone()])
+        .unwrap();
+    let mut edited_sid = stale.cookies[sid_index].clone();
+    edited_sid.value = Some("local-choice".into());
+    stale.edit(Some(sid_index), edited_sid).unwrap();
     store
         .write(move |ctx| {
             let mut c = cookie("sid");
@@ -412,8 +422,19 @@ fn cookie_exchange_replays_reference_fields_questions_and_collisions() {
             network::set_cookie(ctx.conn(), &session, &c)
         })
         .unwrap();
+    unchanged_import.apply(&store).unwrap();
     assert!(stale.apply(&store).is_err());
     let reloaded = CookieDraft::new(&store, NetworkContext::domain("example.com")).unwrap();
+    assert_eq!(
+        reloaded
+            .cookies
+            .iter()
+            .find(|c| c.name == "sid")
+            .unwrap()
+            .value
+            .as_deref(),
+        Some("website-response")
+    );
     assert!(!reloaded.cookies.iter().any(|c| c.name == "other"));
 }
 
