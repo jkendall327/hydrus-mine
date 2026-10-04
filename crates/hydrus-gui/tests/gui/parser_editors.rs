@@ -640,15 +640,8 @@ fn recursive_formula_edits_reach_saved_page_parser_and_consumer() {
     formula.invoke_edit_child(false);
     let first = {
         let children = slots.formula.child.borrow();
-        let w = children
-            .as_ref()
-            .unwrap()
-            .formula
-            .borrow()
-            .as_ref()
-            .unwrap()
-            .clone_strong();
-        w
+        let formula = children.as_ref().unwrap().formula.borrow();
+        formula.as_ref().unwrap().clone_strong()
     };
     first.set_kind(5);
     first.invoke_type_chosen();
@@ -657,29 +650,15 @@ fn recursive_formula_edits_reach_saved_page_parser_and_consumer() {
     formula.invoke_edit_child(true);
     let second = {
         let children = slots.formula.child.borrow();
-        let w = children
-            .as_ref()
-            .unwrap()
-            .formula
-            .borrow()
-            .as_ref()
-            .unwrap()
-            .clone_strong();
-        w
+        let formula = children.as_ref().unwrap().formula.borrow();
+        formula.as_ref().unwrap().clone_strong()
     };
     assert_eq!(second.get_document(), "{\"posts\":[\"edited tag\"]}");
     second.invoke_add();
     let rule = {
         let children = slots.formula.child.borrow();
-        let w = children
-            .as_ref()
-            .unwrap()
-            .rule
-            .borrow()
-            .as_ref()
-            .unwrap()
-            .clone_strong();
-        w
+        let rule = children.as_ref().unwrap().rule.borrow();
+        rule.as_ref().unwrap().clone_strong()
     };
     rule.set_rule_type(1);
     rule.invoke_changed();

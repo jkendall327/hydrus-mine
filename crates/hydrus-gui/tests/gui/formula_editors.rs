@@ -904,15 +904,8 @@ fn scalar_formula_controls_preview_processing_cancel_and_save() {
 
 fn child_formula(slots: &formula_window::Slots) -> hydrus_gui::FormulaWindow {
     let child = slots.child.borrow();
-    let w = child
-        .as_ref()
-        .unwrap()
-        .formula
-        .borrow()
-        .as_ref()
-        .unwrap()
-        .clone_strong();
-    w
+    let formula = child.as_ref().unwrap().formula.borrow();
+    formula.as_ref().unwrap().clone_strong()
 }
 fn embedded_formula() -> hydrus_parse::formula::Formula {
     let mut formula = hydrus_gui::formula_editors::new_formula_kind(2);
@@ -1267,15 +1260,8 @@ fn recursive_owner_cancel_invalidates_every_depth_and_retained_handle() {
     let rule = {
         let child_slots = slots.child.borrow();
         let grandchild_slots = child_slots.as_ref().unwrap().child.borrow();
-        let w = grandchild_slots
-            .as_ref()
-            .unwrap()
-            .rule
-            .borrow()
-            .as_ref()
-            .unwrap()
-            .clone_strong();
-        w
+        let rule = grandchild_slots.as_ref().unwrap().rule.borrow();
+        rule.as_ref().unwrap().clone_strong()
     };
     rule.set_tag("discarded".into());
     rule.invoke_changed();
