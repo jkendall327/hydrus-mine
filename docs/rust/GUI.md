@@ -416,7 +416,11 @@ rate as its number, the reference's words ("errors within") and a time;
 text that may be none has the reference's "none" box. The window opens on
 "gui", or the remembered last panel when enabled; navigation is remembered even
 when edits are canceled. The gui page lets the search appear above or below the
-pages on reopening. Its reference search box ("Search options... (Experimental!)"): as it
+pages on reopening. The gui page also edits the application name (including
+the reference’s empty-name fallback) and exit confirmation. The main title uses
+that name and the Rust version. Exit and the window close button ask the recorded
+yes/no question when enabled, automatically accepting after 15 seconds; declining
+keeps the client open. Its reference search box ("Search options... (Experimental!)"): as it
 is typed in, it suggests box titles, option labels, auxiliary unit/none labels
 and current dropdown text whose text has what
 was typed in it (ignoring case), as "text (page)", ten at a time; the

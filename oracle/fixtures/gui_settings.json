@@ -1,0 +1,56 @@
+{
+  "names": [
+    {
+      "typed": "night library",
+      "saved": "night library",
+      "application_title": "night library 688"
+    },
+    {
+      "typed": "",
+      "saved": "hydrus client",
+      "application_title": "hydrus client 688"
+    },
+    {
+      "typed": "  ",
+      "saved": "  ",
+      "application_title": "   688"
+    }
+  ],
+  "exits": [
+    {
+      "confirm": false,
+      "yes": false,
+      "saved": false,
+      "events": [
+        {
+          "exit_requested": true
+        }
+      ]
+    },
+    {
+      "confirm": true,
+      "yes": false,
+      "saved": true,
+      "events": [
+        {
+          "question": "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)",
+          "auto_yes_time": 15
+        }
+      ]
+    },
+    {
+      "confirm": true,
+      "yes": true,
+      "saved": true,
+      "events": [
+        {
+          "question": "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)",
+          "auto_yes_time": 15
+        },
+        {
+          "exit_requested": true
+        }
+      ]
+    }
+  ]
+}

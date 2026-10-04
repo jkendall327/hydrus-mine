@@ -27,6 +27,7 @@ mod auto_resolution_preview_window;
 mod auto_resolution_review_window;
 mod auto_resolution_rules_window;
 mod checker_options_window;
+mod client_exit;
 pub mod clipboard_monitor;
 pub mod daemon;
 pub mod downloader_definitions_window;
@@ -1123,6 +1124,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let page = page.clone();
         move || page().borrow().selected_files()
     };
+    let exit_confirmation = Rc::new(slint::Timer::default());
     let pending: Rc<RefCell<Option<Asked>>> = Rc::default();
     let ask = {
         let pending = pending.clone();
@@ -1134,6 +1136,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     };
+    client_exit::bind(
+        window,
+        page().borrow().store().clone(),
+        &exit_confirmation,
+        Rc::new({
+            let ask = ask.clone();
+            move |question, then| ask(Asked::Then(question, then))
+        }),
+    );
     // (the status bar counts the selection's inbox)
     let archive_or_inbox = |archive: bool| {
         let page = page.clone();
@@ -1187,12 +1198,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     window.on_answer({
+        let exit_confirmation = exit_confirmation.clone();
         let page = page.clone();
         let weak = window.as_weak();
         let removed = removed.clone();
         let shown = shown.clone();
         let change_pages = change_pages.clone();
         move |yes| {
+            exit_confirmation.stop();
             let asked = pending.borrow_mut().take();
             if let Some(window) = weak.upgrade() {
                 window.set_question(SharedString::new());
@@ -5189,6 +5202,18 @@ pub(crate) fn download_line(line: &hydrus_store::live::JobLine) -> DownloadLine 
 }
 
 fn refresh(window: &MainWindow, page: &SearchPage) {
+    let gui = page
+        .store()
+        .read(hydrus_store::settings::get::<hydrus_store::settings::GuiSettings>)
+        .unwrap_or_default();
+    window.set_window_title(
+        format!(
+            "{} {}",
+            gui.application_display_name,
+            env!("CARGO_PKG_VERSION")
+        )
+        .into(),
+    );
     window.set_note(page.note().unwrap_or_default().into());
     let importer = page.importer();
     window.set_importing(importer.is_some());

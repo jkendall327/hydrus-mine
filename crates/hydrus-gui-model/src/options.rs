@@ -27,7 +27,7 @@ use hydrus_store::file_maintenance::FileMaintenanceSettings;
 use hydrus_store::network::NetworkSettings;
 use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FileHandlingSettings, FileViewingStatistics, FolderSettings,
-    OptionsPreferences, PageSettings, ThumbnailLayout,
+    GuiSettings, OptionsPreferences, PageSettings, ThumbnailLayout,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::trash::TrashSettings;
@@ -75,6 +75,7 @@ settings! {
     file_viewing: FileViewingStatistics,
     folders: FolderSettings,
     gallery: GalleryDefaults,
+    gui: GuiSettings,
     info_line: InfoLineSettings,
     media_viewer: MediaViewerSettings,
     network: NetworkSettings,
@@ -1298,6 +1299,28 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         page(
             "gui",
             vec![
+                boxed(
+                    "main window",
+                    vec![
+                        text(
+                            "Application display name: ",
+                            |s| s.gui.application_display_name.clone(),
+                            |s, value| {
+                                s.gui.application_display_name = if value.is_empty() {
+                                    "hydrus client".into()
+                                } else {
+                                    value.into()
+                                };
+                                Ok(())
+                            },
+                        ),
+                        check(
+                            "Confirm client exit: ",
+                            |s| s.gui.confirm_exit,
+                            |s, value| s.gui.confirm_exit = value,
+                        ),
+                    ],
+                ),
                 boxed(
                     "misc",
                     vec![

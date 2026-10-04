@@ -551,3 +551,41 @@ fn remembered_options_pages_and_auxiliary_search_match_the_reference() {
         assert!(editor.found(suggestion.row));
     }
 }
+
+#[test]
+fn application_names_and_exit_switch_apply_as_the_reference_does() {
+    let recorded = hydrus_testkit::fixture_json("gui_settings.json");
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let mut settings = store.read(Settings::load).unwrap();
+    let pages = pages(&settings);
+    let gui = pages.iter().find(|page| page.name == "gui").unwrap();
+    let options = gui.options();
+    let name = options
+        .iter()
+        .find(|option| option.label == "Application display name: ")
+        .unwrap();
+    for case in recorded["names"].as_array().unwrap() {
+        (name.set)(
+            &mut settings,
+            &Value::Text(case["typed"].as_str().unwrap().into()),
+        )
+        .unwrap();
+        assert_eq!(
+            settings.gui.application_display_name,
+            case["saved"].as_str().unwrap()
+        );
+    }
+    let confirm = options
+        .iter()
+        .find(|option| option.label == "Confirm client exit: ")
+        .unwrap();
+    for case in recorded["exits"].as_array().unwrap() {
+        (confirm.set)(
+            &mut settings,
+            &Value::Check(case["confirm"].as_bool().unwrap()),
+        )
+        .unwrap();
+        assert_eq!(settings.gui.confirm_exit, case["saved"].as_bool().unwrap());
+    }
+}

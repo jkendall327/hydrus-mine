@@ -310,7 +310,10 @@ search.
   files' choice, where the reference's are a dropdown and a cog menu; and a time behind a button in the reference (the downloaders'
   waits after errors) shows its fields in place. Its search suggests only
   the options it has, their boxes, auxiliary labels and initial dropdown values;
-  broader explanatory text on absent pages is unavailable. Search position and
+  broader explanatory text on absent pages is unavailable. Application naming
+  reaches the main-window title; secondary window titles still use their existing
+  captions. Exit confirmation honors the switch and auto-accept timeout; importer
+  activity reasons and shutdown-maintenance questions are not yet included. Search position and
   remembering the last panel are editable. Connection/error-delay ranges follow the saved advanced mode
   when opening the window; changing that mode takes effect on reopening, as in
   the reference. Two options with the same label each go to their own

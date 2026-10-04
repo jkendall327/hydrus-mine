@@ -106,6 +106,27 @@ impl Setting for Pauses {
     const KEY: &'static str = "pauses";
 }
 
+/// Main-window identity and the optional client-exit confirmation.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct GuiSettings {
+    pub application_display_name: String,
+    pub confirm_exit: bool,
+}
+
+impl Default for GuiSettings {
+    fn default() -> Self {
+        Self {
+            application_display_name: "hydrus client".into(),
+            confirm_exit: false,
+        }
+    }
+}
+
+impl Setting for GuiSettings {
+    const KEY: &'static str = "gui_settings";
+}
+
 /// The options window’s opening page and search placement.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

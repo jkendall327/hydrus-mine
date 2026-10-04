@@ -916,3 +916,73 @@ fn options_remember_navigation_and_apply_search_placement() {
     assert!(!preferences.remember_panel);
     assert_eq!(preferences.last_panel, "audio");
 }
+
+#[test]
+fn gui_identity_and_exit_confirmation_reach_the_main_window() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let recorded = hydrus_testkit::fixture_json("gui_settings.json");
+    let close = || {
+        ui.window()
+            .dispatch_event_with_result(slint::platform::WindowEvent::CloseRequested)
+            .unwrap()
+    };
+    for name in recorded["names"].as_array().unwrap() {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "gui");
+        let (row, _) = row(&window, "Application display name: ");
+        window.invoke_text_edited(row, name["typed"].as_str().unwrap().into());
+        window.invoke_apply();
+        assert_eq!(
+            ui.get_window_title(),
+            format!(
+                "{} {}",
+                name["saved"].as_str().unwrap(),
+                env!("CARGO_PKG_VERSION")
+            )
+        );
+    }
+    // A canceled switch leaves the live exit consumer unchanged.
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "gui");
+    let (row, _) = row(&window, "Confirm client exit: ");
+    window.invoke_check_toggled(row, true);
+    window.invoke_cancel();
+    assert!(
+        !store
+            .read(hydrus_store::settings::get::<hydrus_store::settings::GuiSettings>)
+            .unwrap()
+            .confirm_exit
+    );
+    for case in recorded["exits"].as_array().unwrap() {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "gui");
+        let (row, _) = row(&window, "Confirm client exit: ");
+        window.invoke_check_toggled(row, case["confirm"].as_bool().unwrap());
+        window.invoke_apply();
+        ui.show().unwrap();
+        close();
+        let expected_question = case["events"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find_map(|event| event["question"].as_str());
+        if let Some(question) = expected_question {
+            assert!(ui.window().is_visible());
+            assert_eq!(ui.get_question(), question);
+            ui.invoke_answer(case["yes"].as_bool().unwrap());
+        }
+        let exits = case["events"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|event| event["exit_requested"] == true);
+        assert_eq!(!ui.window().is_visible(), exits);
+        assert_eq!(ui.get_question(), "");
+    }
+}

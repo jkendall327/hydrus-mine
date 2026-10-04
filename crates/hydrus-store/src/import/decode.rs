@@ -118,6 +118,19 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     {
         insert_setting(&mut input, &crate::settings::AdvancedMode(advanced))?;
     }
+    let mut gui = crate::settings::GuiSettings::default();
+    if let Some(options) = &options
+        && let Some(value) = options.strings.get("app_display_name")
+    {
+        gui.application_display_name.clone_from(value);
+    }
+    if let Some(value) = legacy_options
+        .get("confirm_client_exit")
+        .and_then(hydrus_legacy::objects::YamlValue::as_bool)
+    {
+        gui.confirm_exit = value;
+    }
+    insert_setting(&mut input, &gui)?;
     let mut preferences = crate::settings::OptionsPreferences::default();
     if let Some(options) = &options {
         if let Some(&value) = options.booleans.get("remember_options_window_panel") {
