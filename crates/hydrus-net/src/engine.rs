@@ -437,6 +437,11 @@ impl Job {
     }
 }
 
+// Counters successfully saved together with the reset generations they observed.
+type BandwidthCheckpoint = (Vec<(NetworkContext, Tracker)>, HistoryResets);
+// Live request handles and the accounting contexts fixed at registration.
+type RegisteredJobs = std::collections::BTreeMap<u64, (Job, Vec<NetworkContext>)>;
+
 /// Makes requests with the client's cookies and headers.
 #[derive(Debug, Clone)]
 pub struct NetEngine {
@@ -450,7 +455,7 @@ pub struct NetEngine {
     bandwidth_settings: Arc<RwLock<BandwidthSettings>>,
     /// Last successfully persisted counts and their reset generations. Serializes
     /// saves without holding the live bandwidth-manager lock across store I/O.
-    saved_bandwidth: Arc<Mutex<(Vec<(NetworkContext, Tracker)>, HistoryResets)>>,
+    saved_bandwidth: Arc<Mutex<BandwidthCheckpoint>>,
     /// When each domain last had serious errors (`DomainOK`).
     domain_errors: Arc<Mutex<std::collections::HashMap<String, Vec<i64>>>>,
     /// When the sleep check last ran, and (after a wake) when requests may
@@ -460,7 +465,7 @@ pub struct NetEngine {
     /// session tracker, `GetMySessionTracker`).
     started: i64,
     session: Arc<Mutex<Tracker>>,
-    jobs: Arc<Mutex<std::collections::BTreeMap<u64, (Job, Vec<NetworkContext>)>>>,
+    jobs: Arc<Mutex<RegisteredJobs>>,
     next_job: Arc<AtomicU64>,
     recent_errors: Arc<Mutex<Vec<network_runtime::JobError>>>,
     epoch: String,
@@ -1389,7 +1394,7 @@ impl NetEngine {
                 result = &mut execution => break result,
                 _ = ticks.tick() => {
                     match owner.lease.pulse(control.state().stage) {
-                        Ok(true) => control.cancel(),
+                        Ok(true) => { control.cancel(); },
                         Ok(false) => {},
                         Err(error) => { control.cancel(); return Err(NetError::Io(error.to_string())); },
                     }
