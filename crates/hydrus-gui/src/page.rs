@@ -1923,7 +1923,11 @@ impl SearchPage {
             .into_iter()
             .find(|c| c.by == by)
             .is_none_or(|c| c.default_ascending);
-        self.sort = PageSort { by, ascending };
+        self.sort = PageSort {
+            tag_context: self.sort.tag_context.clone(),
+            by,
+            ascending,
+        };
         self.sort_changed = true;
         self.sort_changed_search_or_resort();
     }

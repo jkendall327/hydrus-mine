@@ -1651,3 +1651,8 @@ lists show raw spelling without sibling/parent decorations, and native follows
 that boundary. Existing tag-list context-menu switching and richer service-specific
 storage-list decorations remain separate gaps. These two dropdown leaves do not
 complete the broader Tag Presentation parent.
+
+File sorts now preserve independent tag contexts and use their selected service
+for namespace and number-of-tags keys, including fallback sorting and collection
+keys. This backend boundary is recorded by `sort_cogs.json`; the Options-owned
+selector UI is a separate continuation step and is not claimed complete here.

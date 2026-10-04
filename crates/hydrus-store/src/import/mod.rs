@@ -1619,6 +1619,7 @@ pub(crate) mod tests {
         assert_eq!(
             favourite.sort,
             Some(hydrus_core::pages::PageSort {
+                tag_context: hydrus_core::search::context::TagContext::default(),
                 by: hydrus_core::pages::PageSortBy::System(0),
                 ascending: false
             })

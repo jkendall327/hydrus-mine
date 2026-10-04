@@ -237,6 +237,7 @@ fn recorded_rows(store: &Store, recorded: &Json) -> Vec<FavouriteSearch> {
                         _ => PageSortBy::Rating(service_key(store, spec[1].as_str().unwrap())),
                     };
                     Some(PageSort {
+                        tag_context: hydrus_core::search::context::TagContext::default(),
                         by,
                         ascending: spec[2].as_bool().unwrap(),
                     })

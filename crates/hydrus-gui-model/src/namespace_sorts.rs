@@ -54,6 +54,7 @@ impl Editor {
             .map(|(i, sort)| Row {
                 id: u64::try_from(i).unwrap_or(u64::MAX),
                 sort: PageSort {
+                    tag_context: hydrus_core::search::context::TagContext::default(),
                     ascending: true,
                     ..sort.clone()
                 },
@@ -166,6 +167,7 @@ impl Editor {
             return;
         };
         let sort = PageSort {
+            tag_context: hydrus_core::search::context::TagContext::default(),
             ascending: true,
             by: PageSortBy::Namespaces {
                 namespaces: pending.namespaces,

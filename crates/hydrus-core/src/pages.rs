@@ -419,6 +419,10 @@ pub enum DownloaderKind {
 /// How a page sorts its files (the reference's `MediaSort`).
 #[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct PageSort {
+    /// Independent tag service for namespace and number-of-tags sorting.
+    /// Sorting always reads current and pending tags; preserve the full context.
+    #[serde(default)]
+    pub tag_context: crate::search::context::TagContext,
     pub by: PageSortBy,
     pub ascending: bool,
 }
@@ -502,6 +506,7 @@ impl Default for SortSettings {
     /// creator-series-title-volume-chapter-page, as displayed.
     fn default() -> Self {
         let namespaces = |names: [&str; 6]| PageSort {
+            tag_context: crate::search::context::TagContext::default(),
             by: PageSortBy::Namespaces {
                 namespaces: names.iter().map(|&n| n.to_owned()).collect(),
                 tag_display_type: 1,
@@ -510,10 +515,12 @@ impl Default for SortSettings {
         };
         Self {
             default_sort: PageSort {
+                tag_context: crate::search::context::TagContext::default(),
                 by: PageSortBy::System(0),
                 ascending: true,
             },
             fallback_sort: PageSort {
+                tag_context: crate::search::context::TagContext::default(),
                 by: PageSortBy::System(2),
                 ascending: true,
             },
@@ -634,6 +641,7 @@ mod tests {
                         search: FileSearchContext::default(),
                         synchronised: true,
                         sort: Some(PageSort {
+                            tag_context: crate::search::context::TagContext::default(),
                             by: PageSortBy::System(2),
                             ascending: false,
                         }),

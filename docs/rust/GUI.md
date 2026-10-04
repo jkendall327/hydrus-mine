@@ -2499,3 +2499,11 @@ and parents without those filters, and stored tags retain raw mappings and
 spelling. Options edits wait for Apply, Cancel preserves the saved defaults, and
 legacy integer values migrate. `tag_list_display_types.json` records the actual
 Qt choices and both real consumers, including changes after each list opens.
+
+Saved file sorts retain their own full tag context, independently of a page's
+search and collect context. Namespace and number-of-tags keys read the chosen
+service's current and pending display tags; primary and fallback contexts remain
+independent for both files and collections. Older native sorts without this
+field keep the all-known-tags default, and legacy imported contexts retain
+their service, display service and current/pending flags. The Options cog UI
+for choosing those contexts is being wired separately.

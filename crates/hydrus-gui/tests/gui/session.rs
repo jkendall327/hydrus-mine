@@ -73,6 +73,7 @@ fn the_last_session_opens_as_it_was_left() {
             search: search.clone(),
             synchronised: true,
             sort: Some(PageSort {
+                tag_context: hydrus_core::search::context::TagContext::default(),
                 by: PageSortBy::System(0),
                 ascending: false,
             }),

@@ -7,6 +7,7 @@ fn data(value: &serde_json::Value) -> Vec<PageSort> {
         .unwrap()
         .iter()
         .map(|row| PageSort {
+            tag_context: hydrus_core::search::context::TagContext::default(),
             ascending: true,
             by: PageSortBy::Namespaces {
                 namespaces: row[0]
@@ -114,6 +115,7 @@ fn replay_actual_queue_add_edit_escaped_names_views_moves_and_delete_answers() {
 #[test]
 fn duplicate_ids_and_frozen_edits_survive_selection_changes_cancel_and_removal() {
     let sort = PageSort {
+        tag_context: hydrus_core::search::context::TagContext::default(),
         ascending: true,
         by: PageSortBy::Namespaces {
             namespaces: vec!["creator-id".into()],

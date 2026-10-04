@@ -505,6 +505,7 @@ fn the_default_sorts_are_chosen_as_a_pages_sort() {
     assert_eq!(
         after.default_sort,
         PageSort {
+            tag_context: hydrus_core::search::context::TagContext::default(),
             by: system(SortBy::ImportTime),
             ascending: true
         }
@@ -512,6 +513,7 @@ fn the_default_sorts_are_chosen_as_a_pages_sort() {
     assert_eq!(
         after.fallback_sort,
         PageSort {
+            tag_context: hydrus_core::search::context::TagContext::default(),
             by: system(SortBy::FileSize),
             ascending: false
         }
@@ -528,6 +530,7 @@ fn the_default_sorts_are_chosen_as_a_pages_sort() {
     assert_eq!(
         sorts().default_sort,
         PageSort {
+            tag_context: hydrus_core::search::context::TagContext::default(),
             by: system(SortBy::Width),
             ascending: true
         }
@@ -536,6 +539,7 @@ fn the_default_sorts_are_chosen_as_a_pages_sort() {
     assert_eq!(
         sorts().default_sort,
         PageSort {
+            tag_context: hydrus_core::search::context::TagContext::default(),
             by: system(SortBy::Width),
             ascending: false
         }

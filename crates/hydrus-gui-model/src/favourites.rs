@@ -337,6 +337,7 @@ impl Edit {
     /// Choose a sort type using its reference default direction.
     pub fn choose_sort(&mut self, choice: &crate::sort::PageChoice) {
         self.sort = PageSort {
+            tag_context: self.sort.tag_context.clone(),
             by: choice.by.clone(),
             ascending: choice.default_ascending,
         };

@@ -2640,6 +2640,12 @@ fn page_collect(collect: &legacy::MediaCollect) -> hydrus_core::pages::PageColle
 fn page_sort(sort: &legacy::MediaSort) -> PageSort {
     use legacy::MediaSortType;
     PageSort {
+        tag_context: hydrus_core::search::context::TagContext {
+            service: sort.tag_context.service_key.clone(),
+            include_current: sort.tag_context.include_current_tags,
+            include_pending: sort.tag_context.include_pending_tags,
+            display_service: sort.tag_context.display_service_key.clone(),
+        },
         by: match &sort.sort_type {
             MediaSortType::System(code) => PageSortBy::System(*code),
             MediaSortType::Namespaces {
@@ -2665,6 +2671,22 @@ mod tests {
 
     /// The lock password comes across as hydrus stored it (the sha256 of
     /// "hunter2", in the old options' YAML).
+    #[test]
+    fn page_sort_import_preserves_its_independent_full_tag_context() {
+        let encoded = hydrus_legacy::pyjson::PyJson::parse(
+            r#"[49, 3, ["system", 0, 0, [80, 2, ["6c6f63616c2074616773", false, true, "616c6c206b6e6f776e2074616773"]]]]"#,
+        ).unwrap();
+        let legacy = legacy::MediaSort::from_tuple(&encoded).unwrap();
+        let converted = page_sort(&legacy);
+        assert_eq!(converted.tag_context.service.as_bytes(), b"local tags");
+        assert_eq!(
+            converted.tag_context.display_service.as_bytes(),
+            b"all known tags"
+        );
+        assert!(!converted.tag_context.include_current);
+        assert!(converted.tag_context.include_pending);
+    }
+
     #[test]
     fn the_lock_password_converts() {
         let source = hydrus_testkit::legacy_fixture("basic");

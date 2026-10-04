@@ -56,6 +56,7 @@ fn profile(store: Arc<Store>, files: Vec<HashId>, case: &Value) -> SearchPage {
         .key
         .clone();
     let sort = PageSort {
+        tag_context: hydrus_core::search::context::TagContext::default(),
         by: PageSortBy::System(20),
         ascending: case["ascending"].as_bool().unwrap(),
     };

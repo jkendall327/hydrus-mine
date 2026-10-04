@@ -781,6 +781,7 @@ fn a_page_s_fallback_sort_orders_its_sort_s_ties() {
     );
     let snapshot = store.snapshot();
     let system = |by: SortBy, ascending| hydrus_core::pages::PageSort {
+        tag_context: hydrus_core::search::context::TagContext::default(),
         by: hydrus_core::pages::PageSortBy::System(i64::from(by.code())),
         ascending,
     };
@@ -959,6 +960,7 @@ fn pages_collect_as_the_reference_s_pages_collect() {
         .map(|h| id_of(h.as_str().unwrap()))
         .collect();
     let fallback = PageSort {
+        tag_context: hydrus_core::search::context::TagContext::default(),
         by: PageSortBy::System(2),
         ascending: true,
     };
@@ -986,6 +988,7 @@ fn pages_collect_as_the_reference_s_pages_collect() {
             let sort = &s["sort"];
             let data = &sort["data"];
             let sort = PageSort {
+                tag_context: hydrus_core::search::context::TagContext::default(),
                 by: match sort["type"].as_str().unwrap() {
                     "system" => PageSortBy::System(data.as_i64().unwrap()),
                     "namespaces" => PageSortBy::Namespaces {
@@ -1080,6 +1083,7 @@ fn saved_collect_tag_domains_group_files_as_the_reference_does() {
         })
         .collect();
     let sort = PageSort {
+        tag_context: hydrus_core::search::context::TagContext::default(),
         by: PageSortBy::System(0),
         ascending: true,
     };
@@ -1133,4 +1137,138 @@ fn saved_collect_tag_domains_group_files_as_the_reference_does() {
             case["current"]
         );
     }
+}
+
+#[test]
+fn owned_sort_contexts_replay_default_fallback_cogs_for_files_and_collections() {
+    use hydrus_core::pages::{PageCollect, PageMedia, PageSort, PageSortBy};
+    fn recorded(value: &Json) -> PageSort {
+        let context = &value["tag_context"];
+        PageSort {
+            by: match value["type"].as_str().unwrap() {
+                "system" => PageSortBy::System(value["data"].as_i64().unwrap()),
+                "namespaces" => PageSortBy::Namespaces {
+                    namespaces: value["data"]["namespaces"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|v| v.as_str().unwrap().into())
+                        .collect(),
+                    tag_display_type: value["data"]["tag_display_type"].as_i64().unwrap(),
+                },
+                kind => panic!("unexpected recorded sort {kind}"),
+            },
+            ascending: value["order"] == 0,
+            tag_context: TagContext {
+                service: ServiceKey::from_hex(context["service"].as_str().unwrap()).unwrap(),
+                display_service: ServiceKey::from_hex(context["display_service"].as_str().unwrap())
+                    .unwrap(),
+                include_current: context["include_current"].as_bool().unwrap(),
+                include_pending: context["include_pending"].as_bool().unwrap(),
+            },
+        }
+    }
+    let fixture = hydrus_testkit::fixture_json("sort_cogs.json");
+    let store = &SHARED.store;
+    let snapshot = store.snapshot();
+    let files: Vec<HashId> = fixture["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|hash| {
+            store
+                .read(|conn| {
+                    hydrus_store::master::hash_id(conn, &hash.as_str().unwrap().parse().unwrap())
+                })
+                .unwrap()
+                .unwrap()
+        })
+        .collect();
+    let hashes = store
+        .read(|conn| hydrus_store::master::hashes(conn, &files))
+        .unwrap();
+    let search = FileSearchContext {
+        location: LocationContext::single(
+            ServiceKey::from_hex(fixture["location"].as_str().unwrap()).unwrap(),
+        ),
+        tags: TagContext::new(key(builtin_keys::MY_TAGS), false, false),
+        predicates: Vec::new(),
+    };
+    let clock = Clock::system();
+    let mut distinct = HashSet::new();
+    for case in fixture["cases"].as_array().unwrap() {
+        let primary = recorded(&case["primary"]);
+        let fallback = recorded(&case["fallback"]);
+        let items = if case["collected"] == true {
+            let collect = PageCollect {
+                namespaces: vec!["series".into()],
+                ..PageCollect::default()
+            };
+            store
+                .read(|conn| {
+                    Ok(super::collect_page_files(
+                        conn,
+                        &snapshot,
+                        &search,
+                        &files,
+                        &collect,
+                        &primary,
+                        Some(&fallback),
+                        &clock,
+                    ))
+                })
+                .unwrap()
+                .unwrap()
+        } else {
+            store
+                .read(|conn| {
+                    Ok(super::sort_page_files(
+                        conn,
+                        &snapshot,
+                        &search,
+                        &files,
+                        &primary,
+                        Some(&fallback),
+                        &clock,
+                    ))
+                })
+                .unwrap()
+                .unwrap()
+                .into_iter()
+                .map(PageMedia::File)
+                .collect()
+        };
+        let actual: Vec<Json> = items
+            .iter()
+            .map(|item| match item {
+                PageMedia::File(id) => json!(hashes[id].to_string()),
+                PageMedia::Collection(ids) => json!(
+                    ids.iter()
+                        .map(|id| hashes[id].to_string())
+                        .collect::<Vec<_>>()
+                ),
+            })
+            .collect();
+        assert_eq!(
+            json!(actual),
+            case["media"],
+            "{} {} {}",
+            case["role"],
+            case["kind"],
+            case["service_name"]
+        );
+        distinct.insert(json!(actual).to_string());
+    }
+    assert!(
+        distinct.len() > 10,
+        "the recorded service choices produce different real ordering"
+    );
+    let old: PageSort =
+        serde_json::from_value(json!({"by":{"System":0},"ascending":true})).unwrap();
+    assert_eq!(old.tag_context, TagContext::default());
+    let selected = recorded(&fixture["cases"][0]["sort"]);
+    assert_eq!(
+        serde_json::from_value::<PageSort>(serde_json::to_value(&selected).unwrap()).unwrap(),
+        selected
+    );
 }
