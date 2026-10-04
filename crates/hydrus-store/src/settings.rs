@@ -241,6 +241,31 @@ impl Setting for PageInsertion {
     const KEY: &'static str = "gui_page_insertion";
 }
 
+/// File domains offered by the reference's new-page chooser.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct PageChooserSettings {
+    pub show_combined: bool,
+    pub combined_at_top: bool,
+    pub show_storage: bool,
+    pub storage_at_top: bool,
+}
+
+impl Default for PageChooserSettings {
+    fn default() -> Self {
+        Self {
+            show_combined: true,
+            combined_at_top: false,
+            show_storage: false,
+            storage_at_top: false,
+        }
+    }
+}
+
+impl Setting for PageChooserSettings {
+    const KEY: &'static str = "gui_page_chooser";
+}
+
 /// Whether import-options editors hide inappropriate options for each caller.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

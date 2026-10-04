@@ -226,6 +226,32 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         .unwrap_or_default();
     insert_setting(&mut input, &insertion)?;
     insert_setting(&mut input, &notebook_creation)?;
+    let mut page_chooser = crate::settings::PageChooserSettings::default();
+    if let Some(options) = &options {
+        for (key, target) in [
+            (
+                "show_all_my_files_on_page_chooser",
+                &mut page_chooser.show_combined,
+            ),
+            (
+                "show_all_my_files_on_page_chooser_at_top",
+                &mut page_chooser.combined_at_top,
+            ),
+            (
+                "show_local_files_on_page_chooser",
+                &mut page_chooser.show_storage,
+            ),
+            (
+                "show_local_files_on_page_chooser_at_top",
+                &mut page_chooser.storage_at_top,
+            ),
+        ] {
+            if let Some(&value) = options.booleans.get(key) {
+                *target = value;
+            }
+        }
+    }
+    insert_setting(&mut input, &page_chooser)?;
     let import_ui = crate::settings::ImportOptionsUiSettings {
         simple: options
             .as_ref()

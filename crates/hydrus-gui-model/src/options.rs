@@ -94,6 +94,7 @@ settings! {
     notebooks: NotebookSettings,
     notebook_creation: NotebookCreationSettings,
     page_insertion: hydrus_store::settings::PageInsertion,
+    page_chooser: hydrus_store::settings::PageChooserSettings,
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
@@ -1594,6 +1595,26 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                     )
                                     .unwrap_or_default();
                             },
+                        ),
+                        check(
+                            "In new page chooser, show \"combined local file domains\" if appropriate:",
+                            |s| s.page_chooser.show_combined,
+                            |s, v| s.page_chooser.show_combined = v,
+                        ),
+                        check(
+                            "  Put it at the top:",
+                            |s| s.page_chooser.combined_at_top,
+                            |s, v| s.page_chooser.combined_at_top = v,
+                        ),
+                        check(
+                            "In new page chooser, show \"hydrus local file storage\":",
+                            |s| s.page_chooser.show_storage,
+                            |s, v| s.page_chooser.show_storage = v,
+                        ),
+                        check(
+                            "  Put it at the top:",
+                            |s| s.page_chooser.storage_at_top,
+                            |s, v| s.page_chooser.storage_at_top = v,
                         ),
                         choice(
                             "When closing the current tab, move focus: ",
