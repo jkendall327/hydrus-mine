@@ -807,3 +807,63 @@ fn service_bulk_trash_respects_lock_and_restores_all_former_domains() {
     w.assert_domain_invariants();
     w.assert_counts_match_rebuild();
 }
+
+#[test]
+fn service_deleted_record_clear_keeps_trash_history_and_physical_queue() {
+    let w = world();
+    let mut c = w.writer();
+    c.add_files(
+        w.roles.local[0],
+        &[(HashId(1), Some(100)), (HashId(2), Some(200))],
+    )
+    .unwrap();
+    c.add_files(
+        w.second_local,
+        &[(HashId(1), Some(101)), (HashId(2), Some(201))],
+    )
+    .unwrap();
+    c.delete_files(
+        w.roles.combined_local_media,
+        &hashes(&[1, 2]),
+        Some("parity record test"),
+    )
+    .unwrap();
+    c.delete_files(w.roles.local_file_storage, &hashes(&[1]), None)
+        .unwrap();
+    c.finish().unwrap();
+    let before_trash = w.current(w.roles.trash);
+    let preserved = w.deleted(w.second_local)[&HashId(2)];
+    let mut c = w.writer();
+    c.clear_local_delete_records(None).unwrap();
+    c.finish().unwrap();
+    for domain in [
+        w.roles.local[0],
+        w.second_local,
+        w.roles.combined_local_media,
+        w.roles.local_file_storage,
+    ] {
+        assert!(!w.deleted(domain).contains_key(&HashId(1)));
+    }
+    assert_eq!(w.deleted(w.second_local)[&HashId(2)], preserved);
+    assert_eq!(w.current(w.roles.trash), before_trash);
+    let reason_hashes: Vec<HashId> = w
+        .conn
+        .prepare("SELECT hash_id FROM file_deletion_reasons ORDER BY hash_id")
+        .unwrap()
+        .query_map([], |row| row.get(0))
+        .unwrap()
+        .collect::<rusqlite::Result<_>>()
+        .unwrap();
+    assert_eq!(reason_hashes, hashes(&[2]));
+    let queued: Vec<HashId> = w
+        .conn
+        .prepare("SELECT hash_id FROM deferred_physical_deletes ORDER BY hash_id")
+        .unwrap()
+        .query_map([], |row| row.get(0))
+        .unwrap()
+        .collect::<rusqlite::Result<_>>()
+        .unwrap();
+    assert_eq!(queued, hashes(&[1]));
+    w.assert_domain_invariants();
+    w.assert_counts_match_rebuild();
+}

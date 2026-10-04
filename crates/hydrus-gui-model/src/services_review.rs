@@ -12,6 +12,7 @@ use rusqlite::Connection;
 pub enum Action {
     ClearTrash,
     UndeleteTrash,
+    ClearDeletedRecords,
     ClearRatings(hydrus_store::content::RatingClearScope),
 }
 impl Action {
@@ -20,6 +21,7 @@ impl Action {
         match self {
             Self::ClearTrash => "This will completely clear your trash of all its files, deleting them permanently from the client. This operation cannot be undone.\n\nIf you have many files in your trash, it will take some time to complete and for all the files to eventually be deleted.".into(),
             Self::UndeleteTrash => "This will instruct your database to restore all files currently in the trash to all the local file domains they have been in.".into(),
+            Self::ClearDeletedRecords => "This will instruct your database to forget its _entire_ record of locally deleted files, meaning that if it ever encounters any of those files again, it will assume they are new and reimport them. This operation cannot be undone.".into(),
             Self::ClearRatings(scope) => {
                 let population = match scope {
                     hydrus_store::content::RatingClearScope::Deleted => "deleted files",
@@ -30,6 +32,10 @@ impl Action {
             }
         }
     }
+    /// Advanced deleted-record clearing needs this second explicit confirmation.
+    pub fn second_question(self) -> Option<&'static str> {
+        (self == Self::ClearDeletedRecords).then_some("Hey, I am just going to ask again--are you _absolutely_ sure? This is an advanced action that may mess up your downloads/imports in future.")
+    }
     /// Decode the native menu's fixed action values at its boundary.
     pub fn from_index(index: i32) -> Option<Self> {
         use hydrus_store::content::RatingClearScope;
@@ -39,6 +45,7 @@ impl Action {
             2 => Some(Self::ClearRatings(RatingClearScope::Deleted)),
             3 => Some(Self::ClearRatings(RatingClearScope::NonLocal)),
             4 => Some(Self::ClearRatings(RatingClearScope::All)),
+            5 => Some(Self::ClearDeletedRecords),
             _ => None,
         }
     }
@@ -52,6 +59,9 @@ pub fn apply(store: &Store, key: ServiceKey, action: Action) -> Result<()> {
         match (&service.kind, action) {
             (ServiceKind::Trash, Action::ClearTrash) => writer.clear_trash(),
             (ServiceKind::Trash, Action::UndeleteTrash) => writer.undelete_trash(),
+            (ServiceKind::LocalFileStorage, Action::ClearDeletedRecords) => {
+                writer.clear_local_delete_records(None)
+            }
             (
                 ServiceKind::RatingLike(_)
                 | ServiceKind::RatingNumerical(_)
@@ -175,10 +185,10 @@ pub fn rows(store: &Store) -> Result<Vec<Row>> {
             let unavailable = match &service.kind {
                 ServiceKind::TagRepository(_) | ServiceKind::FileRepository(_) | ServiceKind::Ipfs(_) => "Repository synchronisation, IPFS and account administration are not available yet.",
                 ServiceKind::ClientApi(_) => "API request registration uses hydrus api-keys listen; remote account controls are not available yet.",
-                ServiceKind::LocalFileStorage => "Clear deleted files record is not available here yet.",
                 _ => "",
             };
             let actions = match service.kind {
+                ServiceKind::LocalFileStorage => vec![Action::ClearDeletedRecords],
                 ServiceKind::Trash if count(conn, "file_domain_current", service.id)? > 0 => vec![Action::ClearTrash, Action::UndeleteTrash],
                 ServiceKind::RatingLike(_) | ServiceKind::RatingNumerical(_) | ServiceKind::RatingIncDec(_) => (2..=4).filter_map(Action::from_index).collect(),
                 _ => Vec::new(),

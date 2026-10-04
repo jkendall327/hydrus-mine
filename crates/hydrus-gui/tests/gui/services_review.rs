@@ -372,3 +372,184 @@ fn local_bulk_review_replays_confirmations_store_changes_and_reopens() {
     assert!(reopened.get_question().is_empty());
     reopened.invoke_close_clicked();
 }
+
+fn deleted_record_state(
+    store: &hydrus_store::Store,
+    fixture: &serde_json::Value,
+) -> serde_json::Value {
+    let registry = store.snapshot().services.clone();
+    let ids = fixture["corpus"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|hash| {
+            let hash: hydrus_core::Sha256 = hash.as_str().unwrap().parse().unwrap();
+            store
+                .read(|conn| hydrus_store::master::hash_id(conn, &hash))
+                .unwrap()
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let states = store
+        .read(|conn| {
+            ids.iter()
+                .map(|id| hydrus_store::urls::file_state(conn, &registry, *id))
+                .collect::<hydrus_store::Result<Vec<_>>>()
+        })
+        .unwrap();
+    let statuses = states
+        .iter()
+        .map(|state| {
+            hydrus_import::status::describe(state, "", hydrus_core::TimestampMs::now())
+                .0
+                .code()
+        })
+        .collect::<Vec<_>>();
+    serde_json::json!(statuses)
+}
+
+#[test]
+fn deleted_record_review_needs_both_answers_and_reopens_with_import_consumer_changed() {
+    use hydrus_core::{ServiceType, Sha256};
+    use std::{cell::Cell, rc::Rc};
+    let fixture = hydrus_testkit::fixture_json("service_deleted.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    let windows = headless::init();
+    let ids = fixture["corpus"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|hash| {
+            let hash: Sha256 = hash.as_str().unwrap().parse().unwrap();
+            store
+                .read(|conn| hydrus_store::master::hash_id(conn, &hash))
+                .unwrap()
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let registry = store.snapshot().services.clone();
+    let domain = registry
+        .of_type(ServiceType::CombinedLocalFileDomains)
+        .next()
+        .unwrap()
+        .id;
+    let storage = registry
+        .of_type(ServiceType::HydrusLocalFileStorage)
+        .next()
+        .unwrap()
+        .clone();
+    store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::delete_lock::DeleteLock::default(),
+            )
+        })
+        .unwrap();
+    store
+        .write_content(move |writer| {
+            writer.delete_files(domain, &ids, None)?;
+            writer.delete_files(storage.id, &ids[..1], None)
+        })
+        .unwrap();
+    let changed = Rc::new(Cell::new(0));
+    let window = hydrus_gui::services_review_window::open_with_changed(
+        store.clone(),
+        Rc::new({
+            let changed = changed.clone();
+            move || changed.set(changed.get() + 1)
+        }),
+    )
+    .unwrap();
+    let storage = registry
+        .of_type(ServiceType::HydrusLocalFileStorage)
+        .next()
+        .unwrap();
+    let selected = choose_service(&window, &storage.name);
+    assert!(window.get_physical_storage());
+    for event in fixture["events"].as_array().unwrap() {
+        assert_eq!(
+            deleted_record_state(&store, &fixture),
+            event["before"]["import_status"]
+        );
+        window.invoke_maintenance(5);
+        for (index, (decision, question)) in event["decisions"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(event["asked"].as_array().unwrap())
+            .enumerate()
+        {
+            assert_eq!(window.get_question(), question["message"].as_str().unwrap());
+            assert_eq!(
+                window.get_yes_label(),
+                question["yes_label"].as_str().unwrap()
+            );
+            assert_eq!(
+                window.get_no_label(),
+                question["no_label"].as_str().unwrap()
+            );
+            window.invoke_selected_service(0);
+            assert_eq!(window.get_selected(), selected);
+            window.invoke_refresh_clicked();
+            assert_eq!(
+                deleted_record_state(&store, &fixture),
+                event["before"]["import_status"]
+            );
+            if index == 1 && decision.as_bool().unwrap() {
+                let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 700, 440);
+                assert!(pixels.chunks_exact(4).any(|pixel| pixel[3] == 255));
+                assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
+                headless::save_png(
+                    &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                        .join("services-clear-deleted-records.png"),
+                    &pixels,
+                    700,
+                    440,
+                )
+                .unwrap();
+            }
+            window.invoke_answer(decision.as_bool().unwrap());
+        }
+        assert!(window.get_question().is_empty());
+        assert!(window.get_error().is_empty());
+        assert_eq!(
+            deleted_record_state(&store, &fixture),
+            event["after"]["import_status"]
+        );
+        for domain in event["after"]["domains"].as_array().unwrap() {
+            let key = hydrus_core::ServiceKey::from_hex(domain["key"].as_str().unwrap()).unwrap();
+            let id = registry.by_key(&key).unwrap().id;
+            let deleted: i64 = store
+                .read(|conn| {
+                    Ok(conn.query_row(
+                        "SELECT count(*) FROM file_domain_deleted WHERE service_id = ?",
+                        [id],
+                        |row| row.get(0),
+                    )?)
+                })
+                .unwrap();
+            assert_eq!(serde_json::json!(deleted), domain["deleted"]);
+        }
+        let reopened = hydrus_store::Store::open(store.dir()).unwrap();
+        assert_eq!(
+            deleted_record_state(&reopened, &fixture),
+            event["after"]["import_status"]
+        );
+    }
+    assert_eq!(changed.get(), 1);
+    window.invoke_maintenance(5);
+    window.invoke_answer(true);
+    assert!(!window.get_question().is_empty());
+    window.invoke_close_clicked();
+    window.show().unwrap();
+    window.invoke_answer(true);
+    assert_eq!(changed.get(), 1);
+    assert!(window.get_question().is_empty());
+    window.hide().unwrap();
+    let reopened = hydrus_gui::services_review_window::open(store).unwrap();
+    choose_service(&reopened, &storage.name);
+    assert!(reopened.get_physical_storage());
+    assert!(reopened.get_question().is_empty());
+    reopened.invoke_close_clicked();
+}

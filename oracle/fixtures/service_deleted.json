@@ -1,0 +1,254 @@
+{
+  "corpus": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+  ],
+  "events": [
+    {
+      "decisions": [
+        false
+      ],
+      "asked": [
+        {
+          "message": "This will instruct your database to forget its _entire_ record of locally deleted files, meaning that if it ever encounters any of those files again, it will assume they are new and reimport them. This operation cannot be undone.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "before": {
+        "domains": [
+          {
+            "key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+            "name": "art",
+            "deleted": 2
+          },
+          {
+            "key": "6c6f63616c2066696c6573",
+            "name": "my files",
+            "deleted": 7
+          },
+          {
+            "key": "616c6c206c6f63616c206d65646961",
+            "name": "combined local file domains",
+            "deleted": 7
+          },
+          {
+            "key": "616c6c206c6f63616c2066696c6573",
+            "name": "hydrus local file storage",
+            "deleted": 4
+          }
+        ],
+        "import_status": [
+          3,
+          3
+        ],
+        "trash": [
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+          "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428"
+        ]
+      },
+      "after": {
+        "domains": [
+          {
+            "key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+            "name": "art",
+            "deleted": 2
+          },
+          {
+            "key": "6c6f63616c2066696c6573",
+            "name": "my files",
+            "deleted": 7
+          },
+          {
+            "key": "616c6c206c6f63616c206d65646961",
+            "name": "combined local file domains",
+            "deleted": 7
+          },
+          {
+            "key": "616c6c206c6f63616c2066696c6573",
+            "name": "hydrus local file storage",
+            "deleted": 4
+          }
+        ],
+        "import_status": [
+          3,
+          3
+        ],
+        "trash": [
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+          "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428"
+        ]
+      }
+    },
+    {
+      "decisions": [
+        true,
+        false
+      ],
+      "asked": [
+        {
+          "message": "This will instruct your database to forget its _entire_ record of locally deleted files, meaning that if it ever encounters any of those files again, it will assume they are new and reimport them. This operation cannot be undone.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        },
+        {
+          "message": "Hey, I am just going to ask again--are you _absolutely_ sure? This is an advanced action that may mess up your downloads/imports in future.",
+          "yes_label": "yes, I am",
+          "no_label": "no, I am not sure"
+        }
+      ],
+      "before": {
+        "domains": [
+          {
+            "key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+            "name": "art",
+            "deleted": 2
+          },
+          {
+            "key": "6c6f63616c2066696c6573",
+            "name": "my files",
+            "deleted": 7
+          },
+          {
+            "key": "616c6c206c6f63616c206d65646961",
+            "name": "combined local file domains",
+            "deleted": 7
+          },
+          {
+            "key": "616c6c206c6f63616c2066696c6573",
+            "name": "hydrus local file storage",
+            "deleted": 4
+          }
+        ],
+        "import_status": [
+          3,
+          3
+        ],
+        "trash": [
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+          "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428"
+        ]
+      },
+      "after": {
+        "domains": [
+          {
+            "key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+            "name": "art",
+            "deleted": 2
+          },
+          {
+            "key": "6c6f63616c2066696c6573",
+            "name": "my files",
+            "deleted": 7
+          },
+          {
+            "key": "616c6c206c6f63616c206d65646961",
+            "name": "combined local file domains",
+            "deleted": 7
+          },
+          {
+            "key": "616c6c206c6f63616c2066696c6573",
+            "name": "hydrus local file storage",
+            "deleted": 4
+          }
+        ],
+        "import_status": [
+          3,
+          3
+        ],
+        "trash": [
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+          "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428"
+        ]
+      }
+    },
+    {
+      "decisions": [
+        true,
+        true
+      ],
+      "asked": [
+        {
+          "message": "This will instruct your database to forget its _entire_ record of locally deleted files, meaning that if it ever encounters any of those files again, it will assume they are new and reimport them. This operation cannot be undone.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        },
+        {
+          "message": "Hey, I am just going to ask again--are you _absolutely_ sure? This is an advanced action that may mess up your downloads/imports in future.",
+          "yes_label": "yes, I am",
+          "no_label": "no, I am not sure"
+        }
+      ],
+      "before": {
+        "domains": [
+          {
+            "key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+            "name": "art",
+            "deleted": 2
+          },
+          {
+            "key": "6c6f63616c2066696c6573",
+            "name": "my files",
+            "deleted": 7
+          },
+          {
+            "key": "616c6c206c6f63616c206d65646961",
+            "name": "combined local file domains",
+            "deleted": 7
+          },
+          {
+            "key": "616c6c206c6f63616c2066696c6573",
+            "name": "hydrus local file storage",
+            "deleted": 4
+          }
+        ],
+        "import_status": [
+          3,
+          3
+        ],
+        "trash": [
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+          "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428"
+        ]
+      },
+      "after": {
+        "domains": [
+          {
+            "key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+            "name": "art",
+            "deleted": 1
+          },
+          {
+            "key": "6c6f63616c2066696c6573",
+            "name": "my files",
+            "deleted": 3
+          },
+          {
+            "key": "616c6c206c6f63616c206d65646961",
+            "name": "combined local file domains",
+            "deleted": 3
+          },
+          {
+            "key": "616c6c206c6f63616c2066696c6573",
+            "name": "hydrus local file storage",
+            "deleted": 0
+          }
+        ],
+        "import_status": [
+          0,
+          3
+        ],
+        "trash": [
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+          "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428"
+        ]
+      }
+    }
+  ]
+}

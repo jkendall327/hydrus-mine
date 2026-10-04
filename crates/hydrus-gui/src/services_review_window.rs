@@ -20,6 +20,7 @@ fn show(window: &ServicesReviewWindow, rows: &[Row], index: usize) {
         window.set_trash_service(
             row.service_type == hydrus_core::ServiceType::LocalFileTrashDomain.name(),
         );
+        window.set_physical_storage(row.actions.contains(&Action::ClearDeletedRecords));
         window.set_trash_nonempty(row.actions.contains(&Action::ClearTrash));
         window.set_rating_service(
             row.actions
@@ -46,7 +47,9 @@ pub fn open_with_changed(
 ) -> Result<ServicesReviewWindow, String> {
     let window = ServicesReviewWindow::new().map_err(|e| e.to_string())?;
     let active = Rc::new(Cell::new(true));
-    let pending = Rc::new(RefCell::new(None::<(hydrus_core::ServiceKey, Action)>));
+    let pending = Rc::new(RefCell::new(
+        None::<(hydrus_core::ServiceKey, Action, bool)>,
+    ));
     let content_changed = changed.clone();
     let migration_slot = crate::tag_migration_window::Slot::default();
     let slots = crate::client_api_admin_window::Slots::default();
@@ -68,7 +71,7 @@ pub fn open_with_changed(
         let pending = pending.clone();
         move |i| {
             if let (Some(w), Ok(i)) = (weak.upgrade(), usize::try_from(i)) {
-                if let Some((key, _)) = pending.borrow().as_ref() {
+                if let Some((key, _, _)) = pending.borrow().as_ref() {
                     if let Some(index) = rows.borrow().iter().position(|r| &r.key == key) {
                         w.set_selected(i32::try_from(index).unwrap_or(0));
                     }
@@ -196,8 +199,10 @@ pub fn open_with_changed(
             if !row.actions.contains(&action) {
                 return;
             }
-            *pending.borrow_mut() = Some((row.key.clone(), action));
+            *pending.borrow_mut() = Some((row.key.clone(), action, false));
             w.set_rating_menu(false);
+            w.set_yes_label("do it".into());
+            w.set_no_label("forget it".into());
             w.set_question(action.question().into());
         }
     });
@@ -214,9 +219,19 @@ pub fn open_with_changed(
             if !w.window().is_visible() {
                 return;
             }
-            let Some((key, action)) = pending.borrow_mut().take() else {
+            let Some((key, action, second)) = pending.borrow_mut().take() else {
                 return;
             };
+            if accepted
+                && !second
+                && let Some(question) = action.second_question()
+            {
+                *pending.borrow_mut() = Some((key, action, true));
+                w.set_question(question.into());
+                w.set_yes_label("yes, I am".into());
+                w.set_no_label("no, I am not sure".into());
+                return;
+            }
             w.set_question(SharedString::new());
             if accepted {
                 match services_review::apply(&store, key, action) {
