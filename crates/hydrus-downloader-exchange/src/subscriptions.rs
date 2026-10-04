@@ -70,11 +70,7 @@ pub fn update_file_status(query: &mut Query, now: i64) -> Result<()> {
         .take(30)
         .find(|s| matches!(s.status, 1 | 2 | 9))
         .or_else(|| log.file_seeds.iter().find(|s| s.status == 0))
-        .or_else(|| {
-            log.file_seeds
-                .iter()
-                .nth(log.file_seeds.len().saturating_sub(10))
-        });
+        .or_else(|| log.file_seeds.get(log.file_seeds.len().saturating_sub(10)));
     let example = example
         .filter(|s| s.seed_type == 1)
         .map_or(Value::Null, file);
