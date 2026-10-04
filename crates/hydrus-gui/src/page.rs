@@ -27,6 +27,7 @@ use crate::watcher::WatcherView;
 pub struct SearchPage {
     store: Arc<Store>,
     autocomplete: Autocomplete,
+    or_draft: hydrus_gui_model::search_or::Construction,
     /// The page's file and tag domains (its predicates are `predicates`).
     context: FileSearchContext,
     predicates: Vec<Predicate>,
@@ -224,6 +225,7 @@ impl SearchPage {
             store.read(hydrus_store::settings::get).unwrap_or_default();
         Self {
             autocomplete,
+            or_draft: hydrus_gui_model::search_or::Construction::default(),
             store,
             context,
             predicates: Vec::new(),
@@ -2119,21 +2121,39 @@ impl SearchPage {
     /// as typed), and empty the box if that worked; or, for a system
     /// predicate that needs more, ask for its editor.
     pub fn enter(&mut self) {
-        if let Some(i) = self.autocomplete.highlighted()
-            && let Some(blank) = self.autocomplete.suggestions()[i].editor
+        self.enter_or(false);
+    }
+    /// Shift+Enter accumulates without changing the active search.
+    pub fn enter_or(&mut self, shift: bool) {
+        if self.or_draft.terms().is_some()
+            && !self.autocomplete.text().trim().is_empty()
+            && self.autocomplete.tab() == hydrus_gui_model::write_autocomplete::Tab::Tags
+            && self.autocomplete.suggestions().len() == 1
         {
-            self.editor_wanted = Some(blank);
+            let text = self.autocomplete.text().to_owned();
+            self.broadcast_or_text(&text, shift);
             return;
         }
-        if let Some(chosen) = self.autocomplete.chosen()
-            && self.add_predicate(&chosen)
-        {
-            self.autocomplete.clear();
+        if let Some(index) = self.autocomplete.highlighted() {
+            self.choose_or(index, shift);
+        } else if let Some(text) = self.autocomplete.chosen() {
+            self.broadcast_or_text(&text, shift);
         }
     }
-
-    /// A suggestion was clicked.
     pub fn choose(&mut self, index: usize) {
+        self.choose_or(index, false);
+    }
+    pub fn choose_or(&mut self, index: usize, shift: bool) {
+        if self.locked || self.note.is_some() {
+            return;
+        }
+        if index == 0
+            && self.autocomplete.tab() == hydrus_gui_model::write_autocomplete::Tab::Tags
+            && let Some(draft) = self.or_draft.predicate()
+        {
+            self.broadcast_or(vec![draft], shift);
+            return;
+        }
         let Some(suggestion) = self.autocomplete.suggestions().get(index) else {
             return;
         };
@@ -2141,9 +2161,63 @@ impl SearchPage {
             self.editor_wanted = Some(blank);
             return;
         }
-        let predicate = suggestion.predicate.clone();
-        if self.add_predicate(&predicate) {
-            self.autocomplete.clear();
+        let text = suggestion.predicate.clone();
+        self.broadcast_or_text(&text, shift);
+    }
+    fn broadcast_or_text(&mut self, text: &str, shift: bool) {
+        if text.trim().is_empty() {
+            return;
+        }
+        match parse_api_search(&serde_json::json!([text])) {
+            Ok(predicates) => self.broadcast_or(predicates, shift),
+            Err(error) => self.error = Some(error.to_string()),
+        }
+    }
+    fn broadcast_or(&mut self, predicates: Vec<Predicate>, shift: bool) {
+        if self.locked || self.note.is_some() {
+            return;
+        }
+        let text = hydrus_search::TextContext {
+            presentation: None,
+            ..self.text_context()
+        };
+        let committed = self.or_draft.broadcast(predicates, shift, &text);
+        self.sync_or_draft();
+        if !committed.is_empty() {
+            self.add_predicates(&committed);
+        }
+        self.autocomplete.clear();
+    }
+    fn sync_or_draft(&mut self) {
+        let label = self
+            .or_draft
+            .predicate()
+            .map(|predicate| predicate_text(&predicate, &self.text_context()));
+        self.autocomplete.set_or_draft(label);
+    }
+    pub fn or_terms(&self) -> Option<&[Predicate]> {
+        self.or_draft.terms()
+    }
+    /// Rewind or cancel; neither action changes active predicates or queries.
+    pub fn change_or_draft(&mut self, rewind: bool) {
+        if self.locked || self.note.is_some() {
+            return;
+        }
+        if rewind {
+            self.or_draft.rewind();
+        } else {
+            self.or_draft.cancel();
+        }
+        self.sync_or_draft();
+        self.autocomplete.clear();
+    }
+    /// Escape rewinds only an empty input with an active construction.
+    pub fn escape_or(&mut self) -> bool {
+        if self.or_draft.terms().is_some() && self.autocomplete.text().is_empty() && !self.locked {
+            self.change_or_draft(true);
+            true
+        } else {
+            false
         }
     }
 

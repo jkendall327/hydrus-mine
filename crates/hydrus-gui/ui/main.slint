@@ -561,6 +561,10 @@ export component MainWindow inherits Window {
     in property <int> autocomplete-rows: 22;
     in property <int> autocomplete-tab;
     callback autocomplete-tab-chosen(int);
+    in property <bool> or-active;
+    in property <bool> or-rewind-visible;
+    callback search-or-action(int);
+    callback search-or-escape() -> bool;
     in property <bool> float-autocomplete: true;
     in-out property <bool> search-focused;
     // Direct bindings include the first layout; floating popup construction
@@ -1362,6 +1366,10 @@ export component MainWindow inherits Window {
                         changed focus-requests => { if search-sidebar.visible { search.focus(); } }
                         // up and down move through the suggestions, as in the reference
                         capture-key-pressed(event) => {
+                            if event.text == Key.Return && event.modifiers.shift {
+                                root.search-or-action(0); return accept;
+                            }
+                            if event.text == Key.Escape && root.search-or-escape() { return accept; }
                             // ctrl+i: searching as the search changes, or waiting
                             if (event.modifiers.control && (event.text == "i" || event.text == "I")) {
                                 root.flip-synchronised();
@@ -1448,9 +1456,12 @@ export component MainWindow inherits Window {
                         }
                     }
                     if !root.search-locked && !root.float-autocomplete && root.note == "": ReadAutocomplete {
-                        preferred-height: root.autocomplete-preferred-height + 36px;
-                        max-height: root.autocomplete-preferred-height + 36px;
+                        preferred-height: root.autocomplete-preferred-height + (root.or-active ? 72px : 36px);
+                        max-height: root.autocomplete-preferred-height + (root.or-active ? 72px : 36px);
                         tab-index: root.autocomplete-tab;
+            or-active: root.or-active;
+            or-rewind-visible: root.or-rewind-visible;
+            or-action(i) => { root.search-or-action(i); root.search-focus-requests += 1; }
                         tab-chosen(i) => { root.autocomplete-tab-chosen(i); root.search-focus-requests += 1; }
                         suggestions: root.suggestions;
                         highlighted: root.highlighted;
@@ -1977,8 +1988,11 @@ export component MainWindow inherits Window {
             x: root.autocomplete-anchor-x;
             y: root.autocomplete-anchor-y;
             width: root.autocomplete-anchor-width;
-            height: max(62px, min(root.autocomplete-preferred-height + 36px, root.height - self.y - 4px));
+            height: max(62px, min(root.autocomplete-preferred-height + (root.or-active ? 72px : 36px), root.height - self.y - 4px));
             tab-index: root.autocomplete-tab;
+            or-active: root.or-active;
+            or-rewind-visible: root.or-rewind-visible;
+            or-action(i) => { root.search-or-action(i); root.search-focus-requests += 1; }
             tab-chosen(i) => { root.autocomplete-tab-chosen(i); root.search-focus-requests += 1; }
             suggestions: root.suggestions;
             highlighted: root.highlighted;

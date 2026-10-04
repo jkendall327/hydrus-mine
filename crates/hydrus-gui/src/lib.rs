@@ -950,6 +950,31 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     };
+    window.on_search_or_action({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |action| {
+            let current = page();
+            match action {
+                0 => current.borrow_mut().enter_or(true),
+                1 => current.borrow_mut().change_or_draft(true),
+                2 => current.borrow_mut().change_or_draft(false),
+                _ => return,
+            }
+            shown(true);
+        }
+    });
+    window.on_search_or_escape({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            let handled = page().borrow_mut().escape_or();
+            if handled {
+                shown(false);
+            }
+            handled
+        }
+    });
     window.on_search_accepted({
         let page = page.clone();
         let shown = shown.clone();
@@ -5959,6 +5984,8 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
     let autocomplete = page.autocomplete();
     window.set_search_text(autocomplete.text().into());
     window.set_autocomplete_tab(i32::try_from(autocomplete.tab().index()).unwrap_or(0));
+    window.set_or_active(page.or_terms().is_some());
+    window.set_or_rewind_visible(page.or_terms().is_some_and(|terms| terms.len() > 1));
     let suggestions: Vec<ListText> = autocomplete
         .suggestions()
         .iter()

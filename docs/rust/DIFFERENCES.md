@@ -1842,3 +1842,9 @@ Advanced local-domain, trash and physical/clean deletion now uses the action and
 reason picker with the ordered reason queue and remembered accepted choices.
 Remote repository/IPFS actions are outside this local dialog. Copy/move-domain
 confirmation controls are not yet connected. Undelete currently restores immediately.
+
+Read-search OR construction, rewind and cancel now have native consumers. The
+empty-OR child editor and advanced Boolean input are still pending in this slice.
+The shared read autocomplete remains partial: multiple selection, read context
+menus and asynchronous fetch publication are assessed separately. The native
+rewind/cancel controls use text buttons rather than Qt's icon buttons.

@@ -42,6 +42,7 @@ pub struct Autocomplete {
     suggestions: Vec<Suggestion>,
     highlighted: usize,
     tab: Tab,
+    or_draft: Option<String>,
     tab_highlights: [usize; 3],
     context_tags: BTreeSet<String>,
 }
@@ -72,6 +73,7 @@ impl Autocomplete {
             suggestions: Vec::new(),
             highlighted: 0,
             tab: Tab::Tags,
+            or_draft: None,
             tab_highlights: [0; 3],
             context_tags: BTreeSet::new(),
         }
@@ -87,7 +89,7 @@ impl Autocomplete {
     pub fn set_context(&mut self, location: &LocationContext, tags: &TagContext) {
         self.context = (location.clone(), tags.clone());
         self.suggestions = self.search(false).unwrap_or_default();
-        self.highlighted = 0;
+        self.reset_highlight();
     }
 
     pub fn tab(&self) -> Tab {
@@ -149,6 +151,11 @@ impl Autocomplete {
         }
     }
 
+    fn reset_highlight(&mut self) {
+        self.highlighted = usize::from(
+            self.tab == Tab::Tags && self.or_draft.is_some() && self.suggestions.len() > 1,
+        );
+    }
     pub fn clear(&mut self) {
         self.set_text("");
     }
@@ -159,8 +166,8 @@ impl Autocomplete {
         if !text.is_empty() {
             self.tab = Tab::Tags;
         }
-        self.highlighted = 0;
         self.suggestions = self.search(false).unwrap_or_default();
+        self.reset_highlight();
     }
 
     /// How the user has tags shown.
@@ -172,11 +179,33 @@ impl Autocomplete {
 
     /// Explicit fetch, used by Ctrl+Space when automatic fetching is off.
     pub fn fetch(&mut self) {
-        self.highlighted = 0;
         self.suggestions = self.search(true).unwrap_or_default();
+        self.reset_highlight();
     }
 
+    /// The constructed predicate is the first result, including an empty input.
+    pub fn set_or_draft(&mut self, label: Option<String>) {
+        self.or_draft = label;
+        self.suggestions = self.search(false).unwrap_or_default();
+        self.reset_highlight();
+    }
     fn search(&self, manual: bool) -> Option<Vec<Suggestion>> {
+        let mut suggestions = self.search_results(manual).unwrap_or_default();
+        if self.tab == Tab::Tags
+            && let Some(label) = &self.or_draft
+        {
+            suggestions.insert(
+                0,
+                Suggestion {
+                    label: label.clone(),
+                    predicate: String::new(),
+                    editor: None,
+                },
+            );
+        }
+        Some(suggestions)
+    }
+    fn search_results(&self, manual: bool) -> Option<Vec<Suggestion>> {
         if self.tab != Tab::Tags {
             return self.tab_suggestions();
         }

@@ -106,3 +106,5 @@ mod sort_cog;
 mod command_palette;
 
 mod viewing_statistics;
+
+mod search_or;
