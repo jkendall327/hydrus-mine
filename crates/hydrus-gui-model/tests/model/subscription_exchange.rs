@@ -109,3 +109,19 @@ fn unsupported_seed_runtime_data_leaves_the_entire_owner_draft_unchanged() {
     assert!(model::stage(&mut dialog, imported).is_err());
     assert!(dialog.subscriptions.is_empty());
 }
+
+#[test]
+fn missing_history_question_matches_actual_qt_message_title_and_decisions() {
+    let reference = hydrus_testkit::fixture_json("subscription_exchange.json");
+    let question = model::missing_history_question("Artist");
+    let recorded = &reference["questions"][0];
+    assert_eq!(question.title, recorded["title"].as_str().unwrap());
+    assert_eq!(question.message, recorded["message"].as_str().unwrap());
+    assert_eq!(
+        question.choices,
+        [
+            recorded["yes"].as_str().unwrap(),
+            recorded["no"].as_str().unwrap()
+        ]
+    );
+}
