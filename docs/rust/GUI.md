@@ -153,7 +153,9 @@ clipboard flow and reference PNG. Manage subscriptions now exposes the original 
 menus, dispatching to an owned import/export child: clipboard/JSON text or JSON/PNG files are reviewed, imported
 subscriptions remain staged; JSON export asks before overwriting an existing file,
 and multiple JSON or PNG files can be imported as one reviewed selection. Apply
-persists both URL histories and retained header examples. Missing query histories ask the original named confirmation
+persists both URL histories and retained header examples. Reset/retry updates
+file-count and example caches in both staged exports and saved settings; retries
+forget the old file hashes, preserving gallery examples and velocity. Missing query histories ask the original named confirmation
 before that object enters the draft; rejecting leaves it out and accepting
 initialises empty histories on Apply. Cancel invalidates the child and its callbacks.
 

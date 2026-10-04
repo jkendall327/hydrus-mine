@@ -138,3 +138,37 @@ fn missing_history_question_matches_actual_qt_message_title_and_decisions() {
         ]
     );
 }
+
+#[test]
+fn draft_log_changes_export_exact_reference_counts_examples_and_complete_histories() {
+    use hydrus_gui_model::edit_subscription::RetryIgnored;
+    let reference = hydrus_testkit::fixture_json("subscription_exchange.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    for case in reference["log_changes"].as_array().unwrap() {
+        let mut dialog = Subscriptions::new(Vec::new());
+        let incoming = exchange::decode_text(&case["input"].to_string()).unwrap();
+        model::stage(&mut dialog, incoming).unwrap();
+        let query = &mut dialog.subscriptions[0].queries[0];
+        match case["action"].as_str().unwrap() {
+            "reset" => {
+                query.reset();
+            }
+            "retry_failed" => {
+                query.retry_failed();
+            }
+            "retry_ignored" => {
+                query.retry_ignored(RetryIgnored::All);
+            }
+            other => panic!("unknown recorded log action {other}"),
+        }
+        let exported = model::selected(&store, &dialog, 1_700_000_000).unwrap();
+        let mut actual = exchange::tuple(&exported[0]).unwrap();
+        let expected = &case["output"];
+        // The Qt owner and the native staged owner each generate a new log key.
+        actual[2][0][3][1][0][2][0] = expected[2][0][3][1][0][2][0].clone();
+        actual[2][1][2][0][1][1] = expected[2][1][2][0][1][1].clone();
+        assert_eq!(actual, *expected, "{}", case["action"]);
+        assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    }
+}

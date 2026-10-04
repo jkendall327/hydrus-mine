@@ -1385,3 +1385,100 @@ fn actual_subscription_list_transport_choices_dispatch_frozen_packages_and_guard
     hydrus_gui::set_clipper(|_| {});
     drop(windows);
 }
+
+#[test]
+fn subscription_reset_and_retries_refresh_persisted_export_caches_and_forget_file_hashes() {
+    use hydrus_downloader_exchange::subscriptions as exchange;
+    use hydrus_gui_model::subscription_exchange::Headers;
+    fn child(bound: &Bound) -> hydrus_gui::DownloaderExchangeWindow {
+        bound
+            .subscription_exchange
+            .0
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong()
+    }
+    let reference = hydrus_testkit::fixture_json("subscription_exchange.json");
+    let _windows = headless::init();
+    for case in reference["log_changes"].as_array().unwrap() {
+        let (_dirs, store) = store();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        let dialog = open_dialog(&ui, &bound);
+        let input = case["input"].to_string();
+        hydrus_gui::set_paster(move || input.clone());
+        dialog.invoke_exchange_mode(3);
+        child(&bound).invoke_action("accept".into());
+        dialog.invoke_apply();
+        let saved = store.read(subscriptions::subscriptions).unwrap();
+        let id = saved[0].id;
+        let query = store
+            .read(move |conn| subscriptions::queries(conn, id))
+            .unwrap()
+            .remove(0);
+        let queue = query.queue_id;
+        let before = store
+            .read(move |conn| Ok(hydrus_store::settings::get::<Headers>(conn)?.0[&queue].clone()))
+            .unwrap();
+        let dialog = open_dialog(&ui, &bound);
+        dialog.invoke_row_clicked(0, false, false);
+        match case["action"].as_str().unwrap() {
+            "reset" => {
+                dialog.invoke_reset();
+                dialog.invoke_chosen(0);
+            }
+            "retry_failed" => {
+                dialog.invoke_retry_failed();
+            }
+            "retry_ignored" => {
+                dialog.invoke_retry_ignored();
+                dialog.invoke_chosen(0);
+            }
+            other => panic!("unknown recorded log action {other}"),
+        }
+        dialog.invoke_apply();
+        let seeds = store
+            .read(move |conn| queues::file_seeds(conn, queue))
+            .unwrap();
+        let header = store
+            .read(move |conn| Ok(hydrus_store::settings::get::<Headers>(conn)?.0[&queue].clone()))
+            .unwrap();
+        let expected = &case["output"][2][0][3][1][0];
+        assert_eq!(header[2][9][2][1], expected[2][9][2][1]);
+        assert_eq!(header[2][9][2][2], expected[2][9][2][2]);
+        assert_eq!(header[2][13], before[2][13]);
+        assert_eq!(header[2][14], before[2][14]);
+        assert_eq!(header[2][16], before[2][16]);
+        if case["action"] == "reset" {
+            assert!(seeds.is_empty());
+            assert!(header[2][15].is_null());
+        } else {
+            assert_eq!(seeds[0].status, SeedStatus::Unknown);
+            assert!(seeds[0].note.is_empty());
+            assert!(seeds[0].meta.hashes.is_empty());
+            assert_eq!(header[2][15][2][4].as_i64().unwrap(), seeds[0].modified);
+            assert_eq!(header[2][15][2][6], 0);
+            assert_eq!(header[2][15][2][7], "");
+            assert_eq!(header[2][15][2][16], serde_json::json!([]));
+        }
+        let dialog = open_dialog(&ui, &bound);
+        dialog.invoke_row_clicked(0, false, false);
+        dialog.invoke_exchange(false);
+        let exported = exchange::decode_text(child(&bound).get_text().as_str()).unwrap();
+        assert_eq!(
+            exchange::query_header_tuple(&exported[0].queries[0]).unwrap()[2][9],
+            header[2][9]
+        );
+        assert_eq!(
+            exported[0].queries[0]
+                .log
+                .as_ref()
+                .unwrap()
+                .file_seeds
+                .len(),
+            seeds.len()
+        );
+        dialog.invoke_cancel();
+    }
+}

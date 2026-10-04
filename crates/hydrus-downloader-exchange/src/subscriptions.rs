@@ -49,6 +49,49 @@ pub fn rename_history(query: &mut Query, name: String) {
         header[2][velocity + 1] = json!("unknown");
     }
 }
+/// Refresh the reference file-count and example-seed fields after a log edit.
+/// Reset/retry keeps gallery examples and velocity unchanged (`UpdateFileStatus`).
+pub fn update_file_status(query: &mut Query, now: i64) -> Result<()> {
+    let Some(log) = &query.log else {
+        return Ok(());
+    };
+    let mut counts: Vec<(i64, usize)> = Vec::new();
+    for seed in &log.file_seeds {
+        if let Some((_, count)) = counts.iter_mut().find(|(status, _)| *status == seed.status) {
+            *count += 1;
+        } else {
+            counts.push((seed.status, 1));
+        }
+    }
+    let example = log
+        .file_seeds
+        .iter()
+        .rev()
+        .take(30)
+        .find(|s| matches!(s.status, 1 | 2 | 9))
+        .or_else(|| log.file_seeds.iter().find(|s| s.status == 0))
+        .or_else(|| log.file_seeds.iter().rev().take(10).last());
+    let example = example
+        .filter(|s| s.seed_type == 1)
+        .map_or(Value::Null, file);
+    let mut header = query_header_tuple(query)?;
+    if query.reference_header.is_none() {
+        header[2][8] = json!(1);
+    }
+    header[2][9] = json!([
+        89,
+        1,
+        [
+            now,
+            counts,
+            log.file_seeds.iter().map(|s| s.created).max().unwrap_or(0)
+        ]
+    ]);
+    header[2][15] = example;
+    query.reference_header = Some(header);
+    Ok(())
+}
+
 fn tag_tuple(tags: &TagImportOptions) -> Result<Value> {
     let options = import_options::tuple(&ImportOptionsSlice {
         tags: Some(tags.clone()),

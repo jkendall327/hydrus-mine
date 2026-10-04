@@ -134,6 +134,24 @@ def record(session):
                 c.GetClipboardText=lambda value=value:value
                 exchange._ImportFromClipboard()
             out['invalid_final_count']=len(listing.GetData())
+            changes=[]
+            for action in ('reset','retry_failed','retry_ignored'):
+                incoming=json.loads(json.dumps(single))
+                if action=='retry_failed':incoming[2][1][2][0][1][3][1][2][2][0][1][2][6]=4
+                testpanel=G.EditSubscriptionsPanel(c.gui,[])
+                try:
+                    c.GetClipboardText=lambda:json.dumps(incoming)
+                    testpanel._subscriptions_panel._ImportFromClipboard()
+                    current=testpanel._subscriptions.GetData()[0]
+                    headers=current.GetQueryHeaders()
+                    testpanel._subscriptions.SelectDatas([current])
+                    if action=='reset':testpanel._Reset(headers)
+                    elif action=='retry_failed':testpanel._RetryFailed(headers)
+                    else:testpanel._RetryIgnored(headers,None)
+                    testpanel._subscriptions_panel._ExportToClipboard()
+                    changes.append({'action':action,'input':incoming,'output':json.loads(copied[-1][2])})
+                finally:testpanel.deleteLater()
+            out['log_changes']=changes
             out['questions']=questions; out['messages']=messages
             obj=S.CreateFromSerialisableTuple(out['bundle'])
             path=os.path.join(HERE,'fixtures/subscription_exchange.png')

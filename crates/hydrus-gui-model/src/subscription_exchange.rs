@@ -101,6 +101,35 @@ pub fn restore(conn: &rusqlite::Connection, queue: i64, query: &Query) -> hydrus
     headers.0.insert(queue, header);
     settings::set(conn, &headers)
 }
+/// Keep the retained export cache consistent with a committed reset/retry.
+pub fn update_file_status(
+    conn: &rusqlite::Connection,
+    queue: i64,
+    now: i64,
+) -> hydrus_store::Result<()> {
+    let mut headers: Headers = settings::get(conn)?;
+    let Some(header) = headers.0.get(&queue).cloned() else {
+        return Ok(());
+    };
+    let Some(saved) = hydrus_store::subscriptions::query(conn, queue)? else {
+        return Ok(());
+    };
+    let name = header[2][0].as_str().unwrap_or_default().to_owned();
+    let log = history(conn, queue, &name).map_err(hydrus_store::StoreError::Invalid)?;
+    let mut query = Query {
+        state: saved.state,
+        log: Some(log),
+        log_name: name,
+        reference_header: Some(header),
+    };
+    exchange::update_file_status(&mut query, now)
+        .map_err(|e| hydrus_store::StoreError::Invalid(e.to_string()))?;
+    headers
+        .0
+        .insert(queue, query.reference_header.expect("refreshed cache"));
+    settings::set(conn, &headers)
+}
+
 /// Copy cached header metadata while giving the duplicated history a fresh name.
 pub fn copy_header(conn: &rusqlite::Connection, from: i64, to: i64) -> hydrus_store::Result<()> {
     let mut headers: Headers = settings::get(conn)?;
@@ -202,6 +231,7 @@ pub fn selected(
                             if seed.status == 4 {
                                 seed.status = 0;
                                 seed.note.clear();
+                                seed.hashes.clear();
                                 seed.modified = now;
                             }
                         }
@@ -211,11 +241,15 @@ pub fn selected(
                             if seed.status == 7 && which.matches(&seed.note) {
                                 seed.status = 0;
                                 seed.note.clear();
+                                seed.hashes.clear();
                                 seed.modified = now;
                             }
                         }
                     }
                 }
+            }
+            if query.reference_header.is_none() || !draft.log_changes.is_empty() {
+                exchange::update_file_status(&mut query, now).map_err(|e| e.to_string())?;
             }
             queries.push(query);
         }
