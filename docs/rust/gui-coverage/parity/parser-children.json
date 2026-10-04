@@ -12,14 +12,16 @@
     "449c0957e2b5b72dd5f20c527dde2264a707d09e",
     "57e9248907ae4cbaf953421192e4d8ffd087cfc6",
     "38189276a8c5fe2223821f1e3119450470b8dc54",
-    "3d898d7ef54a6dde94eb9449f9af53849287008b"
+    "3d898d7ef54a6dde94eb9449f9af53849287008b",
+    "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
+    "de70266f3f02b2d0bb328ae384462eee67b407e7"
   ],
   "validation": {
-    "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states; real router queues in import/export contexts, six node kinds, exact vetoes, duplication, PNG and sidecar worker output",
+    "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states; real router queues in import/export contexts, six node kinds, exact vetoes, duplication, PNG and sidecar worker output; export-folder four real database query refreshes, states, media IDs/hashes and first-example source strings",
     "formatting": "cargo fmt --all, git diff --check and Python recorder syntax check passed",
     "rust_tests": "authored exact model reference replays, real-store GUI persistence, recursive/stale owner regressions and saved router consumer assertions; root asynchronous CI pending; no local Cargo builds",
     "rendered_ui": "reference screenshot inspected; native headless render assertions authored and pending root CI",
-    "slint_source_check": "passed against merged ea4dc4f7 with cached compiler; no Cargo build"
+    "slint_source_check": "passed with cached Slint compiler after de70266f; no Cargo build"
   },
   "entries": [
     {
@@ -228,8 +230,8 @@
       "before": "missing",
       "proposed_status": "first_pass",
       "proposedStatus": "first_pass",
-      "behavior": "Reusable router example panel shows a source selector and per-object input path/media hash, sorted imported strings, and router-processed strings (literal no changes for inert processors). Actual TXT/JSON sidecar importers and read-only media metadata drive the results, including duplicates, missing sidecars, notes with preserved newlines, URLs, and exact HTML-in-JSON error text. Source processor and JSON formula children receive pre-source-processor texts from the first example; router processors receive every source output from that first example. Owner cancellation invalidates retained children; accepted processing is staged and reaches saved real-store router consumers.",
-      "exactBehavior": "Reusable router example panel shows a source selector and per-object input path/media hash, sorted imported strings, and router-processed strings (literal no changes for inert processors). Actual TXT/JSON sidecar importers and read-only media metadata drive the results, including duplicates, missing sidecars, notes with preserved newlines, URLs, and exact HTML-in-JSON error text. Source processor and JSON formula children receive pre-source-processor texts from the first example; router processors receive every source output from that first example. Owner cancellation invalidates retained children; accepted processing is staged and reaches saved real-store router consumers.",
+      "behavior": "Reusable router example panel shows a source selector and per-object input path/media hash, sorted imported strings, and router-processed strings (literal no changes for inert processors). Actual TXT/JSON sidecar importers and read-only media metadata drive the results, including duplicates, missing sidecars, notes with preserved newlines, URLs, and exact HTML-in-JSON error text. Source processor and JSON formula children receive pre-source-processor texts from the first example; router processors receive every source output from that first example. Owner cancellation invalidates retained children; accepted processing is staged and reaches saved real-store router consumers. Export-folder update test example files runs the current query asynchronously, applies ascending size only when a system limit removes matching results, samples up to 25 stored media results, and passes these to actual router/source processor previews. Exact loading/got-N/reset button states and retained examples after query changes match the reference. Closing the folder/list discards pending publication and invalidates stale Apply/child callbacks; reopening starts empty. The staged query reaches the persisted folder and real search consumer without exporting files.",
+      "exactBehavior": "Reusable router example panel shows a source selector and per-object input path/media hash, sorted imported strings, and router-processed strings (literal no changes for inert processors). Actual TXT/JSON sidecar importers and read-only media metadata drive the results, including duplicates, missing sidecars, notes with preserved newlines, URLs, and exact HTML-in-JSON error text. Source processor and JSON formula children receive pre-source-processor texts from the first example; router processors receive every source output from that first example. Owner cancellation invalidates retained children; accepted processing is staged and reaches saved real-store router consumers. Export-folder update test example files runs the current query asynchronously, applies ascending size only when a system limit removes matching results, samples up to 25 stored media results, and passes these to actual router/source processor previews. Exact loading/got-N/reset button states and retained examples after query changes match the reference. Closing the folder/list discards pending publication and invalidates stale Apply/child callbacks; reopening starts empty. The staged query reaches the persisted folder and real search consumer without exporting files.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/sidecar_editors.rs",
@@ -248,6 +250,18 @@
           "line": 758,
           "commit": "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
           "symbol": "open_router"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/folders.rs",
+          "line": 17,
+          "commit": "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
+          "symbol": "export_test_examples"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/folders_window.rs",
+          "line": 1280,
+          "commit": "de70266f3f02b2d0bb328ae384462eee67b407e7",
+          "symbol": "open_export_folder"
         }
       ],
       "test_anchors": [
@@ -262,23 +276,39 @@
           "line": 632,
           "commit": "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
           "symbol": "router_examples_follow_reference_source_tabs_and_processor_children_without_exports"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/folders.rs",
+          "line": 362,
+          "commit": "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
+          "symbol": "export_folder_examples_use_recorded_queries_limits_and_media_contexts"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 1189,
+          "commit": "de70266f3f02b2d0bb328ae384462eee67b407e7",
+          "symbol": "export_folder_query_examples_refresh_media_and_reach_source_children"
         }
       ],
       "reference_evidence": {
         "recorder": "oracle/record_sidecar_testing.py",
         "fixture": "oracle/fixtures/sidecar_testing.json",
         "visual_reference": "oracle/fixtures/sidecar_testing.png",
-        "actual_recording": "passed: seven real Qt source-table states; generated documents and synthetic sidecars.example media URLs/notes"
+        "actual_recording": "passed: seven real Qt source-table states; generated documents and synthetic sidecars.example media URLs/notes",
+        "export_folder_examples_recorder": "oracle/record_export_folder_examples.py",
+        "export_folder_examples_fixture": "oracle/fixtures/export_folder_examples.json",
+        "export_folder_examples_visual": "oracle/fixtures/export_folder_examples_editor.png",
+        "export_folder_examples_recording": "passed: real Qt query work/publish callbacks against basic database, four unrestricted/limited/nonmatching queries, 25 result bound, exact button states and actual first-media URL strings; scheduler alone deferred for deterministic capture"
       },
       "limitations": [
         "Uses a source selector and table instead of the reference notebook.",
-        "The export-folder parent update-test-example-files search button is not yet implemented; filename tagging, import folders and manual exports supply bounded owner examples.",
-        "General filesystem I/O errors include the operating-system error text; the recorded formula parse error is asserted exactly."
+        "General filesystem I/O errors include the operating-system error text; the recorded formula parse error is asserted exactly.",
+        "Unlimited queries use stable file-id order rather than depending on Python set iteration; limited all-known-file queries use native deterministic size selection rather than reference random sampling when database-level sorting is unavailable."
       ],
       "limits": [
         "Uses a source selector and table instead of the reference notebook.",
-        "The export-folder parent update-test-example-files search button is not yet implemented; filename tagging, import folders and manual exports supply bounded owner examples.",
-        "General filesystem I/O errors include the operating-system error text; the recorded formula parse error is asserted exactly."
+        "General filesystem I/O errors include the operating-system error text; the recorded formula parse error is asserted exactly.",
+        "Unlimited queries use stable file-id order rather than depending on Python set iteration; limited all-known-file queries use native deterministic size selection rather than reference random sampling when database-level sorting is unavailable."
       ]
     },
     {
@@ -377,8 +407,8 @@
       "before": "partial",
       "proposed_status": "partial",
       "proposedStatus": "partial",
-      "behavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content. Selected queue PNG export opens the owned reference title/description/width panel with exact object type/count/size summary and default title. Edited title/description reach the readable header, width reaches the carrier, successful saves remember the directory and decoded payloads retain the recursive wrapper/router. Owner mutations are blocked while the child is open; queue/parser close invalidates retained exports.",
-      "exactBehavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content. Selected queue PNG export opens the owned reference title/description/width panel with exact object type/count/size summary and default title. Edited title/description reach the readable header, width reaches the carrier, successful saves remember the directory and decoded payloads retain the recursive wrapper/router. Owner mutations are blocked while the child is open; queue/parser close invalidates retained exports.",
+      "behavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content. Selected queue PNG export opens the owned reference title/description/width panel with exact object type/count/size summary and default title. Edited title/description reach the readable header, width reaches the carrier, successful saves remember the directory and decoded payloads retain the recursive wrapper/router. Owner mutations are blocked while the child is open; queue/parser close invalidates retained exports. Export-folder update test example files runs the current query asynchronously, applies ascending size only when a system limit removes matching results, samples up to 25 stored media results, and passes these to actual router/source processor previews. Exact loading/got-N/reset button states and retained examples after query changes match the reference. Closing the folder/list discards pending publication and invalidates stale Apply/child callbacks; reopening starts empty. The staged query reaches the persisted folder and real search consumer without exporting files.",
+      "exactBehavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content. Selected queue PNG export opens the owned reference title/description/width panel with exact object type/count/size summary and default title. Edited title/description reach the readable header, width reaches the carrier, successful saves remember the directory and decoded payloads retain the recursive wrapper/router. Owner mutations are blocked while the child is open; queue/parser close invalidates retained exports. Export-folder update test example files runs the current query asynchronously, applies ascending size only when a system limit removes matching results, samples up to 25 stored media results, and passes these to actual router/source processor previews. Exact loading/got-N/reset button states and retained examples after query changes match the reference. Closing the folder/list discards pending publication and invalidates stale Apply/child callbacks; reopening starts empty. The staged query reaches the persisted folder and real search consumer without exporting files.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-downloader-exchange/src/routers.rs",
@@ -433,6 +463,18 @@
           "line": 232,
           "commit": "3d898d7ef54a6dde94eb9449f9af53849287008b",
           "symbol": "open_routers_with_store"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/folders.rs",
+          "line": 17,
+          "commit": "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
+          "symbol": "export_test_examples"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/folders_window.rs",
+          "line": 1280,
+          "commit": "de70266f3f02b2d0bb328ae384462eee67b407e7",
+          "symbol": "open_export_folder"
         }
       ],
       "test_anchors": [
@@ -471,6 +513,18 @@
           "line": 1087,
           "commit": "3d898d7ef54a6dde94eb9449f9af53849287008b",
           "symbol": "router_png_child_has_recorded_parameters_and_closes_with_its_queue_owner"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/folders.rs",
+          "line": 362,
+          "commit": "c05e74e97069e9c24c79aa90aeb2075e491ef4fd",
+          "symbol": "export_folder_examples_use_recorded_queries_limits_and_media_contexts"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 1189,
+          "commit": "de70266f3f02b2d0bb328ae384462eee67b407e7",
+          "symbol": "export_folder_query_examples_refresh_media_and_reach_source_children"
         }
       ],
       "reference_evidence": {
@@ -482,21 +536,25 @@
         "png_parameters_recorder": "oracle/record_parser_png_export.py",
         "png_parameters_fixture": "oracle/fixtures/parser_png_export.json",
         "png_parameters_visual": "oracle/fixtures/parser_png_export_editor.png",
-        "png_parameters_recording": "passed: four real typed single/queue PNG panels, exact summary/title/width defaults, title/description edits, real .png writes, remembered directory and decoded payloads"
+        "png_parameters_recording": "passed: four real typed single/queue PNG panels, exact summary/title/width defaults, title/description edits, real .png writes, remembered directory and decoded payloads",
+        "export_folder_examples_recorder": "oracle/record_export_folder_examples.py",
+        "export_folder_examples_fixture": "oracle/fixtures/export_folder_examples.json",
+        "export_folder_examples_visual": "oracle/fixtures/export_folder_examples_editor.png",
+        "export_folder_examples_recording": "passed: real Qt query work/publish callbacks against basic database, four unrestricted/limited/nonmatching queries, 25 result bound, exact button states and actual first-media URL strings; scheduler alone deferred for deterministic capture"
       },
       "limitations": [
         "The sidecar-router parent remains partial here: no broad parent/descendant completion is inferred from queue exchange.",
         "Unsupported mixed packages are rejected atomically rather than appending a permitted subset with a warning.",
-        "Export-folder query results are still not provided as media examples; existing manual-export/import-folder/filename-tagging examples remain covered.",
         "Non-stub timestamps and unsupported processors are rejected before staging so unrepresentable data is not silently lost.",
-        "Selected queues export as one PNG bundle; the reference export-each-object-to-PNGs dialog remains absent and is not claimed here."
+        "Selected queues export as one PNG bundle; the reference export-each-object-to-PNGs dialog remains absent and is not claimed here.",
+        "Unlimited queries use stable file-id order rather than depending on Python set iteration; limited all-known-file queries use native deterministic size selection rather than reference random sampling when database-level sorting is unavailable."
       ],
       "limits": [
         "The sidecar-router parent remains partial here: no broad parent/descendant completion is inferred from queue exchange.",
         "Unsupported mixed packages are rejected atomically rather than appending a permitted subset with a warning.",
-        "Export-folder query results are still not provided as media examples; existing manual-export/import-folder/filename-tagging examples remain covered.",
         "Non-stub timestamps and unsupported processors are rejected before staging so unrepresentable data is not silently lost.",
-        "Selected queues export as one PNG bundle; the reference export-each-object-to-PNGs dialog remains absent and is not claimed here."
+        "Selected queues export as one PNG bundle; the reference export-each-object-to-PNGs dialog remains absent and is not claimed here.",
+        "Unlimited queries use stable file-id order rather than depending on Python set iteration; limited all-known-file queries use native deterministic size selection rather than reference random sampling when database-level sorting is unavailable."
       ]
     },
     {
