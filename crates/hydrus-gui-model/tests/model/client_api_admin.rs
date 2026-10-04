@@ -207,3 +207,50 @@ fn listener_settings_preserve_unrelated_services_and_imported_flags() {
             .any(|r| r.service.kind == ServiceKind::ClientApi(edited.clone()))
     );
 }
+
+#[test]
+fn browser_url_uses_reported_listener_over_cli_overridden_service_settings() {
+    use hydrus_store::{services::ServerConfig, settings::ClientApiState};
+    let reported = ClientApiState::Listening("127.0.0.1:45990".into());
+    for port in [None, Some(45869)] {
+        let config = ServerConfig {
+            port,
+            ..ServerConfig::default()
+        };
+        assert_eq!(
+            client_api_admin::reported_base_url(&config, &reported).unwrap(),
+            "http://127.0.0.1:45990/"
+        );
+    }
+    let config = ServerConfig {
+        port: Some(45869),
+        ..ServerConfig::default()
+    };
+    for (address, url) in [
+        ("0.0.0.0:45990", "http://127.0.0.1:45990/"),
+        ("[::]:45990", "http://[::1]:45990/"),
+        ("[::1]:45990", "http://[::1]:45990/"),
+        ("192.0.2.3:45990", "http://192.0.2.3:45990/"),
+    ] {
+        assert_eq!(
+            client_api_admin::reported_base_url(
+                &config,
+                &ClientApiState::Listening(address.into())
+            )
+            .unwrap(),
+            url
+        );
+    }
+    assert_eq!(
+        client_api_admin::reported_base_url(&config, &ClientApiState::Off).unwrap(),
+        "http://127.0.0.1:45869/"
+    );
+    assert!(
+        client_api_admin::reported_base_url(&ServerConfig::default(), &ClientApiState::Off)
+            .is_err()
+    );
+    assert!(
+        client_api_admin::reported_base_url(&config, &ClientApiState::Listening("invalid".into()))
+            .is_err()
+    );
+}

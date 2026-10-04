@@ -560,7 +560,14 @@ pub fn open(
                     .map_err(|e| e.to_string())
                     .and_then(|s| {
                         if let ServiceKind::ClientApi(c) = &s.kind {
-                            model::base_url(c)
+                            let status = store
+                                .read(
+                                    hydrus_store::settings::get::<
+                                        hydrus_store::settings::ClientApiStatus,
+                                    >,
+                                )
+                                .map_err(|e| e.to_string())?;
+                            model::reported_base_url(c, &status.state)
                         } else {
                             Err("The selected service is no longer a Client API.".into())
                         }

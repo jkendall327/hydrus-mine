@@ -985,3 +985,7 @@ shown as unsupported preserved values in plain text; unset external URL fields
 read "not set".
 Listener reconfiguration retains the same API state, so session keys continue
 to use the current permissions after rebind; revocation still invalidates them.
+
+The base-URL button prefers the daemon's actual listener over the service's
+configured port to support native CLI overrides. It falls back to the saved
+configuration when the daemon does not report a listening address.

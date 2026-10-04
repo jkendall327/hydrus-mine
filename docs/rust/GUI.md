@@ -1478,3 +1478,7 @@ are corrected; HTTPS reports a failure instead of silently serving HTTP.
 Explicit CLI `--port` and `--bind` overrides retain precedence.
 The local daemon regression additionally mints an authenticated session before
 listener reconfiguration and uses that same session after bind-failure recovery.
+
+Opening the API base URL uses the daemon's reported listening address, so CLI
+port and binding overrides are honored even when the saved service is off.
+Wildcard binds open through loopback; IPv6 URLs retain their brackets.

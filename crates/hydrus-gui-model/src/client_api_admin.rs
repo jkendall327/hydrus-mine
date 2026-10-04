@@ -186,6 +186,27 @@ pub fn base_url(config: &hydrus_store::services::ServerConfig) -> Result<String,
     Ok(format!("http://127.0.0.1:{port}/"))
 }
 
+/// Browser URL for the daemon's actual listener, including CLI port/bind overrides.
+/// Wildcard interfaces use the corresponding loopback address on this computer.
+pub fn reported_base_url(
+    config: &hydrus_store::services::ServerConfig,
+    state: &hydrus_store::settings::ClientApiState,
+) -> Result<String, String> {
+    if let hydrus_store::settings::ClientApiState::Listening(address) = state {
+        let mut address = address.parse::<std::net::SocketAddr>().map_err(|_| {
+            "The daemon reported an invalid Client API listening address.".to_owned()
+        })?;
+        if address.ip().is_unspecified() {
+            address.set_ip(match address.ip() {
+                std::net::IpAddr::V4(_) => std::net::Ipv4Addr::LOCALHOST.into(),
+                std::net::IpAddr::V6(_) => std::net::Ipv6Addr::LOCALHOST.into(),
+            });
+        }
+        return Ok(format!("http://{address}/"));
+    }
+    base_url(config)
+}
+
 /// Which interfaces the local API listener accepts connections on.
 #[derive(Debug, Clone, Copy)]
 pub enum Binding {

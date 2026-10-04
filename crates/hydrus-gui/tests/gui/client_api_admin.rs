@@ -196,6 +196,32 @@ fn sorted_selection_crud_copy_base_url_persistence_and_stale_apply() {
     });
     keys.invoke_open_base_url();
     assert_eq!(launched.borrow().as_slice(), ["http://127.0.0.1:45869/"]);
+    for port in [None, Some(45869)] {
+        store
+            .write_and_refresh(move |ctx| {
+                hydrus_store::services::update_config(
+                    ctx.conn(),
+                    id,
+                    &ServiceKind::ClientApi(ServerConfig {
+                        port,
+                        ..ServerConfig::default()
+                    }),
+                )?;
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_store::settings::ClientApiStatus {
+                        pid: 123,
+                        state: hydrus_store::settings::ClientApiState::Listening(
+                            "127.0.0.1:45990".into(),
+                        ),
+                    },
+                )
+            })
+            .unwrap();
+        keys.invoke_open_base_url();
+        assert_eq!(launched.borrow().last().unwrap(), "http://127.0.0.1:45990/");
+    }
+
     screenshot(&windows, keys_index, "client_api_keys.png", 1000, 560);
     keys.invoke_apply_clicked();
     let stored = store.read(api_permissions::stored_keys).unwrap();
