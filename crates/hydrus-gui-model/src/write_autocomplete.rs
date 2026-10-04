@@ -212,7 +212,11 @@ impl WriteAutocomplete {
                 .then(a.tag.cmp(&b.tag))
         });
         let graph = snapshot.display.get(service);
-        let typed = Tag::new(input.search_text());
+        let typed = if self.text.contains('*') || self.text.starts_with("system:") {
+            None
+        } else {
+            Tag::new(&self.text)
+        };
         if let Some(typed) = &typed {
             let at = matches.iter().position(|m| m.tag == typed.as_str());
             let exact = at.map_or_else(
