@@ -2572,6 +2572,18 @@ mod tests {
                     r#"[[0, "show_system_everything"], [0, true]]"#,
                     r#"[[0, "show_system_everything"], [0, false]]"#,
                 ),
+                (
+                    r#"[[0, "autocomplete_float_main_gui"], [0, true]]"#,
+                    r#"[[0, "autocomplete_float_main_gui"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "active_search_predicates_height_num_chars"], [0, 6]]"#,
+                    r#"[[0, "active_search_predicates_height_num_chars"], [0, 9]]"#,
+                ),
+                (
+                    r#"[[0, "ac_read_list_height_num_chars"], [0, 22]]"#,
+                    r#"[[0, "ac_read_list_height_num_chars"], [0, 24]]"#,
+                ),
             ],
         );
         assert_eq!(
@@ -2579,7 +2591,9 @@ mod tests {
             FileSearchSettings {
                 search_immediately: false,
                 show_system_everything: false,
-                ..FileSearchSettings::default()
+                float_autocomplete: false,
+                active_predicate_rows: 9,
+                autocomplete_rows: 24,
             }
         );
     }
