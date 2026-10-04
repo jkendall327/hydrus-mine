@@ -15,6 +15,13 @@ pub struct Slots {
     pub domains: Rc<RefCell<Option<LoginDomainsWindow>>>,
     pub credentials: crate::login_credential_window::CredentialsSlot,
 }
+impl std::fmt::Debug for Slots {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("LoginDomainSlots")
+            .field("open", &self.domains.borrow().is_some())
+            .finish_non_exhaustive()
+    }
+}
 impl Slots {
     pub fn cancel(&self) {
         let window = self

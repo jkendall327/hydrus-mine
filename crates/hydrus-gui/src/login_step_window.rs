@@ -21,6 +21,13 @@ pub struct Slots {
 }
 /// Accepted step; script persistence still waits for the owner.
 pub type Applied = Rc<dyn Fn(LoginStep) -> Result<(), String>>;
+impl std::fmt::Debug for Slots {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("LoginStepSlots")
+            .field("open", &self.step.borrow().is_some())
+            .finish_non_exhaustive()
+    }
+}
 impl Slots {
     pub fn cancel(&self) {
         let window = self
