@@ -72,6 +72,7 @@ fn replay_reference_pause_wait_apply_cancel_and_original_pause_restoration() {
             Kind::Export
         };
         let paused = case["initially_paused"].as_bool().unwrap();
+        let before_notification = folder_activity::applied_time(store.dir(), kind).unwrap();
         set_pause(&store, paused);
         let worker = case["worker_initially_running"]
             .as_bool()
@@ -113,6 +114,12 @@ fn replay_reference_pause_wait_apply_cancel_and_original_pause_restoration() {
             list.invoke_cancel();
         }
         assert!(slot(&bound, kind).is_none());
+        let after_notification = folder_activity::applied_time(store.dir(), kind).unwrap();
+        if kind == Kind::Import && case["answer"] == "apply" {
+            assert!(after_notification.is_some());
+        } else {
+            assert_eq!(after_notification, before_notification);
+        }
         assert!(!folder_activity::edit_requested(store.dir(), kind).unwrap());
         assert_eq!(
             folder_activity::paused(&store, kind).unwrap(),
@@ -261,6 +268,7 @@ fn failed_folder_commit_closes_owners_and_releases_the_lease_without_partial_wri
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     for kind in [Kind::Import, Kind::Export] {
         let before = store.read(import_folders::import_folders).unwrap();
+        let before_notification = folder_activity::applied_time(store.dir(), kind).unwrap();
         open(&ui, kind);
         let list = slot(&bound, kind).unwrap();
         store.write(move |ctx| {
@@ -274,6 +282,11 @@ fn failed_folder_commit_closes_owners_and_releases_the_lease_without_partial_wri
         list.invoke_apply();
         assert!(slot(&bound, kind).is_none());
         assert!(!folder_activity::edit_requested(store.dir(), kind).unwrap());
+        assert_eq!(
+            folder_activity::applied_time(store.dir(), kind).unwrap(),
+            before_notification,
+            "failed save cannot publish an Apply notification"
+        );
         let after = store.read(import_folders::import_folders).unwrap();
         assert_eq!(after[0].settings, before[0].settings);
         list.invoke_add();

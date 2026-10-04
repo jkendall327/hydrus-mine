@@ -368,6 +368,7 @@ fn open_import_folders_ready(
         let weak = window.as_weak();
         let slots = slots.clone();
         let state = state.clone();
+        let lease = lease.clone();
         move || {
             if state.borrow().closed {
                 return;
@@ -459,6 +460,7 @@ fn open_import_folders_ready(
         let store = store.clone();
         let close = close.clone();
         let slots = slots.clone();
+        let lease = lease.clone();
         move || {
             if state.borrow().closed || slots.import_edit.borrow().is_some() {
                 return;
@@ -472,8 +474,15 @@ fn open_import_folders_ready(
                     asking: None,
                 },
             );
-            if let Err(e) = write_import_folders(&store, open) {
-                eprintln!("could not save the import folders: {e}");
+            match write_import_folders(&store, open) {
+                Ok(()) => {
+                    if let Some(lease) = lease.borrow().as_ref()
+                        && let Err(error) = lease.mark_applied()
+                    {
+                        eprintln!("could not notify the import-folder scheduler: {error}");
+                    }
+                }
+                Err(e) => eprintln!("could not save the import folders: {e}"),
             }
             close();
         }

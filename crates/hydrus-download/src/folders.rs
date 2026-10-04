@@ -779,6 +779,7 @@ impl Downloader {
 pub struct ImportFolderSchedule {
     due: HashMap<i64, i64>,
     started: bool,
+    applied: Option<std::time::SystemTime>,
 }
 
 impl ImportFolderSchedule {
@@ -788,6 +789,16 @@ impl ImportFolderSchedule {
 
     /// Bring the list up to date with the store.
     pub fn refresh(&mut self, store: &Store, now: i64) -> Result<(), StoreError> {
+        let applied = hydrus_store::folder_activity::applied_time(
+            store.dir(),
+            hydrus_store::folder_activity::Kind::Import,
+        )?;
+        if applied != self.applied {
+            // NotifyImportFoldersHaveChanged clears the reference's due cache.
+            self.due.clear();
+            self.started = false;
+            self.applied = applied;
+        }
         let folders = store.read(import_folders::import_folders)?;
         let ids: BTreeSet<i64> = folders.iter().map(ImportFolder::id).collect();
         self.due.retain(|id, _| ids.contains(id));

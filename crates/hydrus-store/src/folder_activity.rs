@@ -33,6 +33,13 @@ impl Kind {
         }
     }
 
+    fn applied_file(self) -> &'static str {
+        match self {
+            Self::Import => "import-folders-applied.marker",
+            Self::Export => "export-folders-applied.marker",
+        }
+    }
+
     pub fn wait_text(self) -> &'static str {
         match self {
             Self::Import => "Waiting for import folders to finish.",
@@ -56,7 +63,16 @@ pub fn edit_requested(dir: &Path, kind: Kind) -> std::io::Result<bool> {
 
 /// Acquisition and release timestamp, for schedulers waiting between runs.
 pub fn change_time(dir: &Path, kind: Kind) -> std::io::Result<Option<SystemTime>> {
-    match std::fs::metadata(dir.join(kind.request_file())) {
+    marker_time(dir, kind.request_file())
+}
+
+/// Successful manager Apply notifications, separate from Cancel/release.
+pub fn applied_time(dir: &Path, kind: Kind) -> std::io::Result<Option<SystemTime>> {
+    marker_time(dir, kind.applied_file())
+}
+
+fn marker_time(dir: &Path, name: &str) -> std::io::Result<Option<SystemTime>> {
+    match std::fs::metadata(dir.join(name)) {
         Ok(metadata) => metadata.modified().map(Some),
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
         Err(error) => Err(error),
@@ -128,6 +144,22 @@ impl Edit {
             self.activity = crate::store::lock(&self.dir, self.kind.activity_file())?;
         }
         Ok(self.activity.is_some())
+    }
+
+    /// Publish only after a successful manager write, while work is excluded.
+    pub fn mark_applied(&self) -> std::io::Result<()> {
+        if self.activity.is_none() {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                "Folder manager must acquire activity before Apply.",
+            ));
+        }
+        std::fs::OpenOptions::new()
+            .create(true)
+            .truncate(false)
+            .write(true)
+            .open(self.dir.join(self.kind.applied_file()))?
+            .set_modified(SystemTime::now())
     }
 }
 
