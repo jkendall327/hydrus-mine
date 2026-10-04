@@ -1710,6 +1710,10 @@ fn read_list_sizes_and_float_policy_reach_rendered_new_pages() {
             !ui.get_float_autocomplete(),
             event["view"]["embedded_in_layout"].as_bool().unwrap()
         );
+        // The reference dropdown contains generated search suggestions; a
+        // pristine new input has no results until its first edit/fetch.
+        ui.invoke_search_edited("".into());
+        assert!(ui.get_suggestions().row_count() > 0);
         ui.set_search_focus_requests(ui.get_search_focus_requests() + 1);
         // Layout publishes geometry from the conditional sidebar. Flush those
         // change handlers, then render its correctly placed overlay.
@@ -2115,7 +2119,7 @@ fn resize_and_seek_options_reach_the_native_viewer_geometry() {
         viewer.window().dispatch_event(WindowEvent::PointerMoved {
             position: LogicalPosition::new(120.0, (600 - height) as f32 + 0.5),
         });
-        let full = headless::render(&drawn, 800, 600);
+        let full = headless::render_snapshot(&drawn, 800, 600);
         let pixel = |pixels: &[u8], x: usize, y: usize| {
             pixels[(y * 800 + x) * 4..(y * 800 + x) * 4 + 3].to_vec()
         };
@@ -2140,7 +2144,7 @@ fn resize_and_seek_options_reach_the_native_viewer_geometry() {
         viewer.window().dispatch_event(WindowEvent::PointerMoved {
             position: LogicalPosition::new(799.0, 200.0),
         });
-        let small = headless::render(&drawn, 800, 600);
+        let small = headless::render_snapshot(&drawn, 800, 600);
         assert_eq!(
             pixel(&small, 120, 599 - hidden_height),
             vec![32, 32, 32],
@@ -2419,12 +2423,8 @@ fn pointer_options_change_real_drag_acceptance_and_cursor_transitions() {
     for (case, event) in fixture["drags"].as_array().unwrap().iter().enumerate() {
         let duration = event["has_duration"].as_bool().unwrap();
         if duration != showing_duration {
-            bound
-                .viewer
-                .borrow()
-                .as_ref()
-                .unwrap()
-                .invoke_close_requested();
+            let previous = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+            previous.invoke_close_requested();
             ui.invoke_thumbnail_activated(i32::try_from(animation_index).unwrap());
             showing_duration = duration;
             drawn = windows.get(windows.count() - 1).unwrap();
@@ -3318,7 +3318,7 @@ fn passive_background_options_paint_independent_copies_behind_opaque_media() {
         viewer.set_media_y(0.0);
         viewer.set_media_width(1000.0);
         viewer.set_media_height(750.0);
-        let pixels = headless::render(&drawn, 1000, 750);
+        let pixels = headless::render_snapshot(&drawn, 1000, 750);
         assert_eq!(
             occupancy(&pixels) > 0,
             event["visible_pixels"].as_u64().unwrap() > 0,
@@ -3354,7 +3354,7 @@ fn passive_background_options_paint_independent_copies_behind_opaque_media() {
             a: 255,
         });
         viewer.set_media(slint::Image::from_rgba8(cover));
-        let pixels = headless::render(&drawn, 1000, 750);
+        let pixels = headless::render_snapshot(&drawn, 1000, 750);
         assert_eq!(
             occupancy(&pixels),
             event["opaque_cover_pixels"].as_u64().unwrap() as usize,

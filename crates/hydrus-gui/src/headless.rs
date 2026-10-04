@@ -58,6 +58,13 @@ pub fn init() -> Windows {
 pub fn render(window: &MinimalSoftwareWindow, width: u32, height: u32) -> Vec<u8> {
     window.set_size(PhysicalSize::new(width, height));
     slint::platform::update_timers_and_animations();
+    render_snapshot(window, width, height)
+}
+
+/// Draw the current state without advancing playback, decoding or other timers.
+/// Settle layout with `render` before isolating a controlled paint snapshot.
+pub fn render_snapshot(window: &MinimalSoftwareWindow, width: u32, height: u32) -> Vec<u8> {
+    window.set_size(PhysicalSize::new(width, height));
     window.request_redraw();
     let mut buffer = vec![PremultipliedRgbaColor::default(); (width * height) as usize];
     window.draw_if_needed(|renderer| {

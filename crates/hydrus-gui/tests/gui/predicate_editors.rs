@@ -819,6 +819,20 @@ fn the_editor_window_shows_what_trees_and_buttons_change() {
 #[test]
 fn more_suggestions_than_fit_scroll_rather_than_spill_over() {
     let (_dirs, store) = store();
+    // Exercise the embedded twelve-row boundary explicitly: the current
+    // reference defaults are a floating, twenty-two-row dropdown.
+    store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::settings::FileSearchSettings {
+                    float_autocomplete: false,
+                    autocomplete_rows: 12,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let _bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
