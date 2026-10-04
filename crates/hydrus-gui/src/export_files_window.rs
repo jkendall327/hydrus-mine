@@ -42,6 +42,7 @@ struct State {
     close_after: bool,
     cancel: Arc<AtomicBool>,
     receiver: Option<std::sync::mpsc::Receiver<Progress>>,
+    tags: export_files::tags::Tags,
 }
 
 /// Open a manual export window over selected local files.
@@ -94,6 +95,8 @@ pub fn open(
         close_after: false,
         cancel: Arc::new(AtomicBool::new(false)),
         receiver: None,
+        tags: export_files::tags::Tags::new(store.clone())
+            .map_err(|error| slint::PlatformError::Other(error.to_string()))?,
     }));
     let refresh: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
@@ -103,7 +106,7 @@ pub fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            let state = state.borrow();
+            let mut state = state.borrow_mut();
             match export_files::preview(
                 &store,
                 &state.files,
@@ -138,16 +141,196 @@ pub fn open(
                 .0
                 .into(),
             );
+            let selected = state.selection.in_order(&state.files);
+            let files = if selected.is_empty() {
+                state.files.clone()
+            } else {
+                selected
+            };
+            if let Err(error) = state.tags.refresh(&files) {
+                window.set_status(error.to_string().into());
+            }
+            window.set_tags(ModelRc::new(VecModel::from(
+                state
+                    .tags
+                    .rows()
+                    .iter()
+                    .map(|row| crate::list_text(&row.text, row.colour))
+                    .collect::<Vec<_>>(),
+            )));
+            window.set_tag_selected(ModelRc::new(VecModel::from(
+                state
+                    .tags
+                    .rows()
+                    .iter()
+                    .map(|row| state.tags.selection.is_selected(row.id))
+                    .collect::<Vec<_>>(),
+            )));
+            window.set_tag_sort_type(
+                i32::try_from(
+                    crate::options::TAG_SORT_TYPES
+                        .iter()
+                        .position(|(_, sort_type)| *sort_type == state.tags.sort.sort_type)
+                        .unwrap_or(0),
+                )
+                .unwrap_or(0),
+            );
+            let (orders, selected) = crate::options::tag_sort_orders(&state.tags.sort);
+            window.set_tag_sort_orders(ModelRc::new(VecModel::from(
+                orders.map(slint::SharedString::from).to_vec(),
+            )));
+            window.set_tag_sort_order(i32::try_from(selected).unwrap_or(0));
+            window.set_tag_sort_group(
+                i32::try_from(
+                    crate::options::TAG_SORT_GROUPS
+                        .iter()
+                        .position(|(_, group)| *group == state.tags.sort.group_by)
+                        .unwrap_or(0),
+                )
+                .unwrap_or(0),
+            );
         }
     });
     refresh();
+    let tags_editable: Rc<dyn Fn() -> bool> = Rc::new({
+        let weak = window.as_weak();
+        let active = active.clone();
+        let sidecars = slots.sidecars.clone();
+        move || {
+            active.get()
+                && sidecars.routers.borrow().is_none()
+                && weak
+                    .upgrade()
+                    .is_some_and(|w| !w.get_working() && !w.get_asking())
+        }
+    });
+    let tag_menu = crate::write_tag_menu::TagMenu::new(
+        store.clone(),
+        tags_editable.clone(),
+        Rc::new(|_| {}),
+        refresh.clone(),
+        Rc::new({
+            let weak = window.as_weak();
+            move |question| {
+                if let Some(w) = weak.upgrade() {
+                    w.set_tag_menu_question(question.into());
+                }
+            }
+        }),
+        Rc::new({
+            let weak = window.as_weak();
+            move |error| {
+                if let Some(w) = weak.upgrade() {
+                    w.set_status(error.into());
+                }
+            }
+        }),
+    );
+    crate::write_tag_menu::bind!(window, tag_menu);
+    window.on_tag_row_clicked({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let editable = tags_editable.clone();
+        let menu = tag_menu.clone();
+        move |index, ctrl, shift| {
+            if editable()
+                && !menu.busy()
+                && let Ok(index) = usize::try_from(index)
+            {
+                state.borrow_mut().tags.click(index, ctrl, shift);
+                refresh();
+            }
+        }
+    });
+    window.on_tag_sort_chosen({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let editable = tags_editable.clone();
+        let menu = tag_menu.clone();
+        move |part, index| {
+            if editable()
+                && !menu.busy()
+                && let (Ok(part), Ok(index)) = (usize::try_from(part), usize::try_from(index))
+            {
+                state.borrow_mut().tags.sort_chosen(part, index);
+                refresh();
+            }
+        }
+    });
+    window.on_tag_copy({
+        let state = state.clone();
+        let editable = tags_editable.clone();
+        let menu = tag_menu.clone();
+        move || {
+            if editable() && !menu.busy() {
+                let text = state.borrow().tags.copy(false, false, false, false);
+                if !text.is_empty() {
+                    crate::copy_to_clipboard(&text);
+                }
+            }
+        }
+    });
+    window.on_tag_select_all({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let editable = tags_editable.clone();
+        let menu = tag_menu.clone();
+        move || {
+            if editable() && !menu.busy() {
+                state.borrow_mut().tags.select_all();
+                refresh();
+            }
+        }
+    });
+    window.on_tag_context_menu({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let editable = tags_editable.clone();
+        let menu = tag_menu.clone();
+        move |index, x, y| {
+            if editable() && !menu.busy() {
+                let mut state = state.borrow_mut();
+                if let Ok(index) = usize::try_from(index)
+                    && let Some(row) = state.tags.rows().get(index)
+                    && !state.tags.selection.is_selected(row.id)
+                {
+                    state.tags.click(index, false, false);
+                }
+                let entries = state.tags.menu();
+                drop(state);
+                refresh();
+                menu.open(&entries, x, y);
+            }
+        }
+    });
+    window.on_tag_middle_clicked({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let editable = tags_editable.clone();
+        let menu = tag_menu.clone();
+        move |index, ctrl, shift| {
+            if editable()
+                && !menu.busy()
+                && let Ok(index) = usize::try_from(index)
+            {
+                state.borrow_mut().tags.click(index, ctrl, shift);
+                refresh();
+                let action = state.borrow().tags.launch(shift);
+                if let Some(action) = action {
+                    menu.choose(Some(crate::popup_menu::Chosen::Action(action)));
+                }
+            }
+        }
+    });
     let close = Rc::new({
         let weak = window.as_weak();
         let slots = slots.clone();
         let state = state.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         move || {
             active.set(false);
+            tag_menu.close();
             state.borrow().cancel.store(true, Ordering::Release);
             slots.timer.stop();
             slots.sidecars.cancel();

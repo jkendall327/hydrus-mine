@@ -290,3 +290,278 @@ fn shared_pattern_shortcuts_copy_without_editing_and_guard_closed_owners() {
         .unwrap();
     assert!(stored.0.is_empty());
 }
+
+fn choose_export_tag_menu(window: &hydrus_gui::ExportFilesWindow, path: &[&str]) {
+    for (pane, label) in path.iter().enumerate() {
+        let lines = window.get_tag_menu_panes().row_data(pane).unwrap().lines;
+        let line = lines.iter().position(|row| row.label == *label).unwrap();
+        window.invoke_tag_menu_clicked(
+            i32::try_from(pane).unwrap(),
+            i32::try_from(line).unwrap(),
+            100.0,
+            50.0,
+            10.0,
+        );
+    }
+}
+fn export_tag_row(window: &hydrus_gui::ExportFilesWindow, tag: &str) -> i32 {
+    i32::try_from(
+        window
+            .get_tags()
+            .iter()
+            .position(|row| row.text.starts_with(&format!("{tag} (")))
+            .unwrap(),
+    )
+    .unwrap()
+}
+
+#[test]
+fn selected_export_tag_sidebar_copies_launches_native_pages_persists_favourites_and_closes() {
+    use hydrus_core::{HashId, Tag, pages::PageContent, search::predicate::Predicate};
+    use hydrus_gui::export_files_window::{self, Slots};
+    use hydrus_store::settings;
+    use std::{cell::RefCell, rc::Rc};
+    let (_dirs, store) = crate::subscriptions::store();
+    let windows = headless::init();
+    let main = MainWindow::new().unwrap();
+    let bound = bind(&main, Pages::open(store.clone()).unwrap());
+    let slots = Slots::default();
+    let window = export_files_window::open(
+        &store,
+        vec![HashId(1), HashId(8), HashId(3)],
+        &slots,
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    let reference = hydrus_testkit::fixture_json("export_selected_tags.json");
+    let expected: Vec<_> = reference["states"][0]["rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|r| !r["tag"].as_str().unwrap().starts_with("parity:"))
+        .map(|r| r["rendered"].as_str().unwrap())
+        .collect();
+    assert_eq!(
+        window
+            .get_tags()
+            .iter()
+            .map(|r| r.text.to_string())
+            .collect::<Vec<_>>(),
+        expected
+    );
+    // With one file selected, rows/counts come from that file. Ctrl deselect
+    // returns to all kept files, as the real panel's _RefreshTags does.
+    window.invoke_row_clicked(0, false, false);
+    let expected: Vec<_> = reference["states"][1]["rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|r| !r["tag"].as_str().unwrap().starts_with("parity:"))
+        .map(|r| r["rendered"].as_str().unwrap())
+        .collect();
+    assert_eq!(
+        window
+            .get_tags()
+            .iter()
+            .map(|r| r.text.to_string())
+            .collect::<Vec<_>>(),
+        expected
+    );
+    window.invoke_row_clicked(0, true, false);
+    let copied = Rc::new(RefCell::new(String::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let hydrus_gui::Clip::Text(text) = clip {
+                copied.borrow_mut().clone_from(text);
+            }
+        }
+    });
+    for (index, tag) in reference["selected"].as_array().unwrap().iter().enumerate() {
+        window.invoke_tag_row_clicked(
+            export_tag_row(&window, tag.as_str().unwrap()),
+            index > 0,
+            false,
+        );
+    }
+    window.invoke_tag_copy();
+    assert_eq!(
+        *copied.borrow(),
+        reference["keyboard_copy"].as_str().unwrap()
+    );
+    let before = bound.pages.borrow().session().pages.len();
+    for (label, or) in [
+        ("open a new search page for 2 selected", false),
+        ("open a new OR search page for 2 selected", true),
+    ] {
+        window.invoke_tag_context_menu(-1, 10.0, 10.0);
+        choose_export_tag_menu(&window, &["open", label]);
+        let pages = bound.pages.borrow();
+        let PageContent::Search { search, .. } = &pages.shown().content else {
+            panic!("native search page");
+        };
+        let tags: Vec<_> = reference["selected"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|t| Predicate::Tag {
+                tag: Tag::new(t.as_str().unwrap()).unwrap(),
+                inclusive: true,
+            })
+            .collect();
+        assert_eq!(
+            search.predicates,
+            if or { vec![Predicate::Or(tags)] } else { tags }
+        );
+        assert_eq!(
+            search.location,
+            hydrus_core::search::context::LocationContext::default()
+        );
+        assert_eq!(
+            search.tags.service,
+            store
+                .read(settings::get::<settings::SearchDefaults>)
+                .unwrap()
+                .tag_service
+        );
+    }
+    window.invoke_tag_context_menu(-1, 10.0, 10.0);
+    choose_export_tag_menu(
+        &window,
+        &["open", "open new search pages for each in selection"],
+    );
+    assert_eq!(bound.pages.borrow().session().pages.len(), before + 4);
+    window.invoke_tag_context_menu(-1, 10.0, 10.0);
+    choose_export_tag_menu(
+        &window,
+        &["open", "open a new duplicate filter page for 2 selected"],
+    );
+    assert!(matches!(
+        bound.pages.borrow().shown().content,
+        PageContent::Duplicates { .. }
+    ));
+    let selected_tag = reference["selected"][0].as_str().unwrap();
+    window.invoke_tag_row_clicked(export_tag_row(&window, selected_tag), false, false);
+    window.invoke_tag_context_menu(-1, 10.0, 10.0);
+    choose_export_tag_menu(
+        &window,
+        &[
+            "favourites",
+            &format!("add \"{selected_tag}\" to favourites"),
+        ],
+    );
+    assert!(
+        store
+            .read(settings::get::<settings::FavouriteTags>)
+            .unwrap()
+            .0
+            .contains(&selected_tag.to_owned())
+    );
+    window.invoke_tag_context_menu(-1, 10.0, 10.0);
+    choose_export_tag_menu(
+        &window,
+        &[
+            "favourites",
+            &format!("remove \"{selected_tag}\" from favourites"),
+        ],
+    );
+    assert_eq!(
+        window.get_tag_menu_question(),
+        format!("Remove \"{selected_tag}\" from the favourites list?")
+    );
+    window.invoke_tag_menu_answered(false);
+    assert!(
+        store
+            .read(settings::get::<settings::FavouriteTags>)
+            .unwrap()
+            .0
+            .contains(&selected_tag.to_owned())
+    );
+    let rendered = headless::render(&windows.get(windows.count() - 1).unwrap(), 1120, 690);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("export_files_tags.png"),
+        &rendered,
+        1120,
+        690,
+    )
+    .unwrap();
+    // A queued removal answer and stale menu callbacks cannot act after close.
+    window.invoke_tag_context_menu(-1, 10.0, 10.0);
+    choose_export_tag_menu(
+        &window,
+        &[
+            "favourites",
+            &format!("remove \"{selected_tag}\" from favourites"),
+        ],
+    );
+    let page_count = bound.pages.borrow().session().pages.len();
+    let clip = copied.borrow().clone();
+    window.invoke_dismissed();
+    window.invoke_tag_menu_answered(true);
+    window.invoke_tag_copy();
+    window.invoke_tag_middle_clicked(0, false, false);
+    window.invoke_tag_context_menu(0, 10.0, 10.0);
+    window.invoke_tag_menu_clicked(0, 0, 100.0, 50.0, 10.0);
+    assert!(slots.window.borrow().is_none());
+    assert_eq!(bound.pages.borrow().session().pages.len(), page_count);
+    assert_eq!(*copied.borrow(), clip);
+    assert!(
+        store
+            .read(settings::get::<settings::FavouriteTags>)
+            .unwrap()
+            .0
+            .contains(&selected_tag.to_owned())
+    );
+    // Reopening reads the immediate favourite setting; a confirmed removal
+    // persists without exporting or changing file mappings.
+    let reopened = export_files_window::open(
+        &store,
+        vec![HashId(1), HashId(8), HashId(3)],
+        &slots,
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    reopened.invoke_tag_row_clicked(export_tag_row(&reopened, selected_tag), false, false);
+    reopened.invoke_tag_context_menu(-1, 10.0, 10.0);
+    choose_export_tag_menu(
+        &reopened,
+        &[
+            "favourites",
+            &format!("remove \"{selected_tag}\" from favourites"),
+        ],
+    );
+    reopened.invoke_tag_menu_answered(true);
+    assert!(
+        !store
+            .read(settings::get::<settings::FavouriteTags>)
+            .unwrap()
+            .0
+            .contains(&selected_tag.to_owned())
+    );
+    // Separate-page dispatch rechecks ownership between each page, since a
+    // launcher may synchronously close the export owner after the first one.
+    reopened.invoke_tag_row_clicked(
+        export_tag_row(&reopened, reference["selected"][1].as_str().unwrap()),
+        true,
+        false,
+    );
+    let launches = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::write_tag_menu::install_search_launcher(Rc::new({
+        let launches = launches.clone();
+        let weak = reopened.as_weak();
+        move |_, _, predicates, _| {
+            launches.borrow_mut().push(predicates);
+            if let Some(owner) = weak.upgrade() {
+                owner.invoke_dismissed();
+            }
+        }
+    }));
+    reopened.invoke_tag_context_menu(-1, 10.0, 10.0);
+    choose_export_tag_menu(
+        &reopened,
+        &["open", "open new search pages for each in selection"],
+    );
+    assert_eq!(launches.borrow().len(), 1);
+    assert!(slots.window.borrow().is_none());
+    hydrus_gui::write_tag_menu::clear_search_launcher();
+}
