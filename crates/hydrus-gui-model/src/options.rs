@@ -83,6 +83,7 @@ settings! {
     folders: FolderSettings,
     gallery: GalleryDefaults,
     gui: GuiSettings,
+    gui_sessions: hydrus_store::settings::GuiSessionSettings,
     info_line: InfoLineSettings,
     media_viewer: MediaViewerSettings,
     network: NetworkSettings,
@@ -1606,12 +1607,27 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "gui sessions",
             vec![boxed(
                 "sessions",
-                vec![int(
-                    "Number of session backups to keep: ",
-                    (1, 32),
-                    |s| s.session_backups.keep as i64,
-                    |s, value| s.session_backups.keep = value as usize,
-                )],
+                vec![
+                    int(
+                        "If 'last session' above, autosave it how often (minutes)?",
+                        (1, 1440),
+                        |s| i64::from(s.gui_sessions.autosave_minutes),
+                        |s, value| {
+                            s.gui_sessions.autosave_minutes = u16::try_from(value).unwrap_or(5)
+                        },
+                    ),
+                    check(
+                        "If 'last session' above, only autosave during idle time?",
+                        |s| s.gui_sessions.only_during_idle,
+                        |s, value| s.gui_sessions.only_during_idle = value,
+                    ),
+                    int(
+                        "Number of session backups to keep: ",
+                        (1, 32),
+                        |s| s.session_backups.keep as i64,
+                        |s, value| s.session_backups.keep = value as usize,
+                    ),
+                ],
             )],
         ),
         page(

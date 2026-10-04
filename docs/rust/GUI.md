@@ -1986,3 +1986,13 @@ option limits children to 40 by default; a staged limit or “show all” reache
 open consumers only after Apply. `oracle/record_write_tag_autocomplete.py`
 drives the real Qt favourites decorator worker, children database query and
 noneable limit control; model and native-window regressions replay their output.
+GUI Sessions now applies the autosave period and idle-only preference to a
+historical save timer alongside live session synchronization. Active idle-only
+saves retry in sixty seconds; eligible saves use the configured one-to-1440-minute
+period. Unchanged session data, including selection-only changes, creates no new
+backup. Main-window key/pointer activity and page commands from the Client API
+feed the imported user/mouse/API idle timeouts, including the initial two-minute
+boot guard. Switching the startup preference away from last session stops the
+scheduled save chain after its next eligible tick. The real controller's cadence,
+unchanged hash suppression, history and idle boundaries are recorded in
+`oracle/record_session_autosave.py`.
