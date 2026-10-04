@@ -284,7 +284,7 @@ search.
   aren't there, and the optional libraries tab lists ffmpeg alone. The
   boot time is in UTC, and there is no hydrus icon over the name.
 - **The options window has only the options hydrus-rs honours** (so far
-  those on twenty pages; the others, and pages with none, aren't there:
+  those on twenty-one pages; the others, and pages with none, aren't there:
   on the connection page, the CA bundle and curl_cffi test; on the
   downloading page, the default download source, the
   number of subscriptions syncing at once and the failed-imports limit; on

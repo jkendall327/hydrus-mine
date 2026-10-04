@@ -118,6 +118,13 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     {
         insert_setting(&mut input, &crate::settings::AdvancedMode(advanced))?;
     }
+    let mut backups = crate::session_backups::SessionBackupSettings::default();
+    if let Some(options) = &options
+        && let Some(value) = options.integers.get("number_of_gui_session_backups")
+    {
+        backups.keep = usize::try_from(*value).unwrap_or(1).clamp(1, 32);
+    }
+    insert_setting(&mut input, &backups)?;
     let mut gui = crate::settings::GuiSettings::default();
     if let Some(options) = &options
         && let Some(value) = options.strings.get("app_display_name")

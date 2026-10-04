@@ -87,6 +87,7 @@ fn the_options_window_applies_its_changes() {
             "files and trash",
             "gui",
             "gui pages",
+            "gui sessions",
             "importing",
             "maintenance and processing",
             "media playback",
@@ -985,4 +986,52 @@ fn gui_identity_and_exit_confirmation_reach_the_main_window() {
         assert_eq!(!ui.window().is_visible(), exits);
         assert_eq!(ui.get_question(), "");
     }
+}
+
+#[test]
+fn applied_session_backup_count_controls_the_next_save() {
+    use hydrus_core::pages::Session;
+    use hydrus_store::session_backups;
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "gui sessions");
+    let (row_index, control) = row(&window, "Number of session backups to keep: ");
+    assert_eq!((control.minimum, control.maximum), (1, 32));
+    window.invoke_number_edited(row_index, 2);
+    window.invoke_apply();
+    let fixture = hydrus_testkit::fixture_json("session_backups.json");
+    for step in fixture["steps"].as_array().unwrap() {
+        let now = step["now"].as_i64().unwrap();
+        store
+            .write(move |ctx| {
+                session_backups::save(
+                    ctx.conn(),
+                    &Session {
+                        name: "options backup test".into(),
+                        pages: Vec::new(),
+                    },
+                    now,
+                )
+            })
+            .unwrap();
+        let backups = store.read(session_backups::names).unwrap();
+        let times = backups
+            .iter()
+            .find(|(name, _)| name == "options backup test")
+            .map(|(_, times)| times.clone())
+            .unwrap_or_default();
+        assert_eq!(serde_json::json!(times), step["backups"]);
+    }
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "gui sessions");
+    assert_eq!(
+        row(&window, "Number of session backups to keep: ").1.number,
+        2
+    );
+    window.invoke_cancel();
 }

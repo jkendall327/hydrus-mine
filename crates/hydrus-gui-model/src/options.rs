@@ -25,6 +25,7 @@ use hydrus_store::duplicates::DuplicateFilterSettings;
 use hydrus_store::duplicates::auto::AutoResolutionSettings;
 use hydrus_store::file_maintenance::FileMaintenanceSettings;
 use hydrus_store::network::NetworkSettings;
+use hydrus_store::session_backups::SessionBackupSettings;
 use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FileHandlingSettings, FileViewingStatistics, FolderSettings,
     GuiSettings, OptionsPreferences, PageSettings, ThumbnailLayout,
@@ -82,6 +83,7 @@ settings! {
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
+    session_backups: SessionBackupSettings,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
     sorts: SortSettings,
@@ -1394,6 +1396,18 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     ],
                 ),
             ],
+        ),
+        page(
+            "gui sessions",
+            vec![boxed(
+                "sessions",
+                vec![int(
+                    "Number of session backups to keep: ",
+                    (1, 32),
+                    |s| s.session_backups.keep as i64,
+                    |s, value| s.session_backups.keep = value as usize,
+                )],
+            )],
         ),
         page(
             "importing",

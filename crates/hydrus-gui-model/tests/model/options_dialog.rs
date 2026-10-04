@@ -589,3 +589,38 @@ fn application_names_and_exit_switch_apply_as_the_reference_does() {
         assert_eq!(settings.gui.confirm_exit, case["saved"].as_bool().unwrap());
     }
 }
+
+#[test]
+fn session_backup_count_matches_recorded_control_and_clamps() {
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let mut settings = store.read(Settings::load).unwrap();
+    let reference = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "gui sessions")
+        .unwrap();
+    let mut rows = Vec::new();
+    recorded_rows(reference["items"].as_array().unwrap(), &[], &mut rows);
+    let control = &rows
+        .iter()
+        .find(|row| row.label == "Number of session backups to keep: ")
+        .unwrap()
+        .control;
+    let pages = pages(&settings);
+    let ours = pages
+        .iter()
+        .find(|page| page.name == "gui sessions")
+        .unwrap();
+    assert!(page_problems(ours, &reference["items"], &settings, &store).is_empty());
+    let options = ours.options();
+    let option = options[0];
+    for (input, boundary) in [(0, "min"), (100, "max")] {
+        (option.set)(&mut settings, &Value::Int(input)).unwrap();
+        assert_eq!(
+            settings.session_backups.keep as i64,
+            control[boundary].as_i64().unwrap()
+        );
+    }
+}

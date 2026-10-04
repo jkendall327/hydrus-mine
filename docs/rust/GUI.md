@@ -386,7 +386,7 @@ hydrus lists them (by name, "advanced" last), the page chosen on the
 right, each option its label and then its control, in the page's titled
 boxes, as the reference's dialog lays them out (checked against the
 running reference's dialog, recorded by `oracle/record_options_dialog.py`).
-It has the options hydrus-rs honours, so far on twenty pages: audio,
+It has the options hydrus-rs honours, so far on twenty-one pages: audio,
 connection (retries, timeouts, job limits, the halt on a domain's errors,
 HTTPS checks and proxies), downloading (gallery, subscription and watcher
 waits, the default file limit, highlighting, the pause and stop
@@ -437,6 +437,8 @@ it). The daemon picks up the connection, downloading, maintenance and
 thumbnail options within a second of "apply". Connection limits and the three
 downloader error delays use the reference’s normal or advanced ranges when the
 window opens (`oracle/record_options_ranges.py` records both modes and clamps).
+The gui sessions page sets the number of rolling backups to keep (1–32);
+the next session save uses that limit.
 A "checker options"
 button opens the checker options editor (`hydrus-gui-model/src/checker_options.rs`,
 checked against the reference's `EditCheckerOptions`, recorded by
