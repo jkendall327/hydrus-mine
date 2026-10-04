@@ -218,6 +218,21 @@ impl Setting for PageInsertion {
     const KEY: &'static str = "gui_page_insertion";
 }
 
+/// Whether import-options editors hide inappropriate options for each caller.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ImportOptionsUiSettings {
+    pub simple: bool,
+}
+impl Default for ImportOptionsUiSettings {
+    fn default() -> Self {
+        Self { simple: true }
+    }
+}
+impl Setting for ImportOptionsUiSettings {
+    const KEY: &'static str = "import_options_ui";
+}
+
 /// Startup and periodic last-session saving, as GUI Sessions edits it.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

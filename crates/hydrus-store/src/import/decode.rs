@@ -198,6 +198,14 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         .unwrap_or_default();
     insert_setting(&mut input, &insertion)?;
     insert_setting(&mut input, &notebook_creation)?;
+    let import_ui = crate::settings::ImportOptionsUiSettings {
+        simple: options
+            .as_ref()
+            .and_then(|options| options.booleans.get("import_options_simple_mode"))
+            .copied()
+            .unwrap_or(true),
+    };
+    insert_setting(&mut input, &import_ui)?;
     let mut lifecycle = crate::settings::GuiSessionSettings::default();
     if let Some(value) = legacy_options.get("default_gui_session") {
         lifecycle.startup = value
