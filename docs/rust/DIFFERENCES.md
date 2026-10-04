@@ -1759,3 +1759,9 @@ result rows gain focus on click; the editor retains its own selection/clipboard
 engine. Shared search autocomplete tabs/OR controls and asynchronous loading
 remain separate workflows; this keyboard slice does not promote their parent
 coverage entries.
+
+Write-autocomplete result deselection and reversible mouse ranges now share the
+reference's add/remove mode, including inherited rows and retained drafts. The
+native result list uses a persistent pointer surface across refreshes. The recorded mouse paths
+cover displayed rows; continuous dragging outside the viewport is not covered
+by this recording.

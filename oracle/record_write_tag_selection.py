@@ -11,7 +11,9 @@ the database repair job is intercepted at dispatch, not run by this recorder.
 Ctrl+V events use the real QLineEdit clipboard handler and selection range to
 record normal paste after declining the multiline-tag question. Real result-list
 key events also record logical wrap/range/navigation and selected clipboard
-output, with an explicit three-physical-row page size.
+output, with an explicit three-physical-row page size. Focused Escape events
+and actual mouse press/move/release handlers record deselection and reversible
+add/remove dragging, including an inherited parent row.
 """
 import json,os,sys,tempfile
 HERE=os.path.dirname(os.path.abspath(__file__));sys.path.insert(0,HERE)
@@ -142,7 +144,36 @@ def record(session):
                 box.keyPressEvent(event)
                 keyboard.append(snapshot('key',key=name,ctrl=ctrl,shift=shift,copied=list(copies)))
         finally:c.pub=old_pub
-        return dict(tags=tags,rows=rows,steps=steps,menus=menus,normal_paste=paste_events,keyboard=dict(page_rows=3,steps=keyboard))
+        from qtpy import QtWidgets
+        ac.show();box.show();box.setFocus();QtWidgets.QApplication.processEvents()
+        assert box.hasFocus(), 'real result widget did not receive focus'
+        escape=[snapshot('initial',focused=box.hasFocus())]
+        for _ in range(2):
+            event=QtGui.QKeyEvent(QtCore.QEvent.Type.KeyPress,QtCore.Qt.Key.Key_Escape,QtCore.Qt.KeyboardModifier.NoModifier)
+            box.keyPressEvent(event)
+            escape.append(snapshot('escape',accepted=event.isAccepted(),focused=box.hasFocus()))
+        box.SetPredicates([]);box.SetPredicates(captured['matches']);box.verticalScrollBar().setValue(0)
+        drag=[snapshot('initial')]
+        from hydrus.client.gui import QtPorting as QP
+        height=box.fontMetrics().height()
+        for action,physical,ctrl in [('press',0,False),('drag',6,False),('drag',2,False),('release',2,False),('select_all',0,False),('press',1,True),('drag',6,False),('drag',3,False),('release',3,False)]:
+            if action=='select_all':
+                box.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.Type.KeyPress,QtCore.Qt.Key.Key_A,QtCore.Qt.KeyboardModifier.ControlModifier,'a'))
+                drag.append(snapshot(action));continue
+            modifiers=QtCore.Qt.KeyboardModifier.ControlModifier if ctrl else QtCore.Qt.KeyboardModifier.NoModifier
+            kind={'press':QtCore.QEvent.Type.MouseButtonPress,'drag':QtCore.QEvent.Type.MouseMove,'release':QtCore.QEvent.Type.MouseButtonRelease}[action]
+            y=physical*height+height//2
+            if action=='drag':y-=QP.ScrollAreaVisibleRect(box).y()
+            button=QtCore.Qt.MouseButton.NoButton if action=='drag' else QtCore.Qt.MouseButton.LeftButton
+            buttons=QtCore.Qt.MouseButton.NoButton if action=='release' else QtCore.Qt.MouseButton.LeftButton
+            event=QtGui.QMouseEvent(kind,QtCore.QPointF(2,y),QtCore.QPointF(2,y),button,buttons,modifiers)
+            logical=box._GetLogicalIndexUnderMouse(event)
+            expected,_=box._GetLogicalIndicesFromPositionalIndex(physical)
+            assert logical==expected,(action,physical,logical,expected)
+            if action=='drag':box.mouseMoveEvent(event)
+            else:QtWidgets.QApplication.sendEvent(box.widget(),event)
+            drag.append(snapshot(action,physical=physical,ctrl=ctrl,deselection=box._this_drag_is_a_deselection if action=='drag' else None))
+        return dict(tags=tags,rows=rows,steps=steps,menus=menus,normal_paste=paste_events,keyboard=dict(page_rows=3,steps=keyboard),escape=escape,drag=drag)
     try:out=qt(replay)
     finally:c.CallToThread=old_thread
     return dict(files=[h.hex() for h in hashes],corpus=[dict(tag=t,hashes=[h.hex() for h in fs]) for t,fs in corpus],siblings=siblings,parents=parents,**out)

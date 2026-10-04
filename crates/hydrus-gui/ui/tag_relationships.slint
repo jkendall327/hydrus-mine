@@ -90,7 +90,7 @@ export component TagRelationshipsWindow inherits Window {
     FocusScope {
         capture-key-pressed(event) => {
             if event.text == Key.Escape {
-                if root.question != "" { root.answered(false); } else { root.cancel(); }
+                if root.question != "" { root.answered(false); } else if !left-entry.escape-results() && !right-entry.escape-results() { root.cancel(); }
                 return accept;
             }
             if root.question != "" { return accept; }

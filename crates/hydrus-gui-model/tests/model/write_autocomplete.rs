@@ -1421,6 +1421,39 @@ fn check_recorded_keyboard(input: &mut WriteAutocomplete, fixture: &Value) {
         assert_eq!(json!(logical), step["last_hit"], "{step}");
         assert_eq!(input.text(), "parity:multi");
     }
+    for step in fixture["escape"].as_array().unwrap() {
+        if step["action"] == "escape" {
+            assert_eq!(input.deselect(), step["accepted"].as_bool().unwrap());
+        }
+        assert_eq!(json!(input.selected_tags()), step["selected"]);
+    }
+    input.clear();
+    input.set_text("parity:multi");
+    for step in fixture["drag"].as_array().unwrap() {
+        let action = step["action"].as_str().unwrap();
+        if action == "select_all" {
+            input.select_all();
+        } else if action == "press" || action == "drag" {
+            input.click(
+                usize::try_from(step["physical"].as_u64().unwrap()).unwrap(),
+                if action == "drag" {
+                    step["deselection"].as_bool().unwrap()
+                } else {
+                    step["ctrl"].as_bool().unwrap()
+                },
+                action == "drag",
+            );
+        }
+        assert_eq!(json!(input.selected_tags()), step["selected"], "{step}");
+        let physical = input.highlighted().unwrap();
+        let logical = input.rows()[..=physical]
+            .iter()
+            .filter(|row| !row.parent_row)
+            .count()
+            - 1;
+        assert_eq!(json!(logical), step["last_hit"], "{step}");
+    }
+    input.select_all();
     let all = input.copy_selection(false).unwrap();
     assert!(input.deselect());
     assert_eq!(input.copy_selection(false).unwrap(), all);

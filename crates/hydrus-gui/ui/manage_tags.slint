@@ -72,7 +72,7 @@ export component ManageTagsWindow inherits Window {
     FocusScope {
         capture-key-pressed(event) => {
             if (event.text == Key.Escape) {
-                if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else { root.cancel(); }
+                if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else if !input.escape-results() { root.cancel(); }
                 return accept;
             }
             reject

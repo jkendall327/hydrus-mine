@@ -2673,3 +2673,10 @@ Ctrl+C, with deduplicated parents on Ctrl+Shift+C; selected text in the editor
 keeps native text copying. Keyboard movement scrolls its last hit into view,
 without entering tags or changing the draft. The real Qt keyboard sequence and
 clipboard payloads are recorded in `write_tag_selection.json`.
+
+A focused write-autocomplete result list consumes the first Escape to clear its
+selection, retaining its draft and owner; a second Escape reaches the editor's
+Cancel. Mouse dragging adds a reversible range, or removes one when its initial
+Ctrl-click deselected the starting tag. Expanded parent rows share their tag's
+range position. The drag surface survives suggestion refreshes, and both Escape
+and actual mouse handlers are recorded in `write_tag_selection.json`.

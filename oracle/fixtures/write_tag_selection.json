@@ -392,8 +392,8 @@
           ],
           "deleted": [],
           "predicates": [
-            "parity:multi gamma",
             "parity:multi beta",
+            "parity:multi gamma",
             "parity:multi alpha"
           ]
         }
@@ -426,7 +426,7 @@
           ],
           "deleted": [],
           "predicates": [
-            "parity:multi gamma"
+            "parity:multi beta"
           ]
         },
         {
@@ -436,7 +436,7 @@
           ],
           "deleted": [],
           "predicates": [
-            "parity:multi beta"
+            "parity:multi gamma"
           ]
         },
         {
@@ -462,8 +462,8 @@
           ],
           "deleted": [],
           "predicates": [
-            "parity:multi gamma",
             "parity:multi beta",
+            "parity:multi gamma",
             "parity:multi alpha"
           ]
         }
@@ -514,7 +514,7 @@
       "answer": false,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste one\nparity:paste two",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste two\nparity:paste one",
           "title": "Want to paste everything?"
         }
       ],
@@ -532,7 +532,7 @@
       "answer": false,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste one\nparity:paste two",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste two\nparity:paste one",
           "title": "Want to paste everything?"
         }
       ],
@@ -563,7 +563,7 @@
       "answer": true,
       "asked": [
         {
-          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste one\nparity:paste two",
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste two\nparity:paste one",
           "title": "Want to paste everything?"
         }
       ],
@@ -810,5 +810,146 @@
         "copied": []
       }
     ]
-  }
+  },
+  "escape": [
+    {
+      "action": "initial",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha",
+        "parity:multi alpha old",
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 4,
+      "focused": true
+    },
+    {
+      "action": "escape",
+      "selected": [],
+      "last_hit": 4,
+      "accepted": true,
+      "focused": true
+    },
+    {
+      "action": "escape",
+      "selected": [],
+      "last_hit": 4,
+      "accepted": false,
+      "focused": true
+    }
+  ],
+  "drag": [
+    {
+      "action": "initial",
+      "selected": [
+        "parity:multi"
+      ],
+      "last_hit": 0
+    },
+    {
+      "action": "press",
+      "selected": [
+        "parity:multi"
+      ],
+      "last_hit": 0,
+      "physical": 0,
+      "ctrl": false,
+      "deselection": null
+    },
+    {
+      "action": "drag",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha",
+        "parity:multi alpha old",
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 4,
+      "physical": 6,
+      "ctrl": false,
+      "deselection": false
+    },
+    {
+      "action": "drag",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha"
+      ],
+      "last_hit": 1,
+      "physical": 2,
+      "ctrl": false,
+      "deselection": false
+    },
+    {
+      "action": "release",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha"
+      ],
+      "last_hit": 1,
+      "physical": 2,
+      "ctrl": false,
+      "deselection": null
+    },
+    {
+      "action": "select_all",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha",
+        "parity:multi alpha old",
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 1
+    },
+    {
+      "action": "press",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha old",
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 1,
+      "physical": 1,
+      "ctrl": true,
+      "deselection": null
+    },
+    {
+      "action": "drag",
+      "selected": [
+        "parity:multi"
+      ],
+      "last_hit": 4,
+      "physical": 6,
+      "ctrl": false,
+      "deselection": true
+    },
+    {
+      "action": "drag",
+      "selected": [
+        "parity:multi",
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 2,
+      "physical": 3,
+      "ctrl": false,
+      "deselection": true
+    },
+    {
+      "action": "release",
+      "selected": [
+        "parity:multi",
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 2,
+      "physical": 3,
+      "ctrl": false,
+      "deselection": null
+    }
+  ]
 }

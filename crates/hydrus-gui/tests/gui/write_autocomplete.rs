@@ -1490,8 +1490,98 @@ fn keyboard_result_selection_copy_and_native_text_copy_use_their_own_focus() {
         assert_eq!(child.get_text(), "parity:multi");
         assert_eq!(child.get_tags().row_count(), 0);
     }
+    // First Escape consumes selection; it must not cancel its owner or alter the draft.
+    native.dispatch_event(WindowEvent::KeyPressed {
+        text: Key::Escape.into(),
+    });
+    native.dispatch_event(WindowEvent::KeyReleased {
+        text: Key::Escape.into(),
+    });
+    assert!(slot.borrow().is_some());
+    assert!(child.get_selected().iter().all(|selected| !selected));
+    assert_eq!(child.get_text(), "parity:multi");
+    // Show all physical rows for the recorded mouse path, independent of page-key sizing.
+    store
+        .write(|ctx| {
+            let mut prefs: TagEditingSettings = settings::get(ctx.conn())?;
+            prefs.autocomplete_list_height = 11;
+            settings::set(ctx.conn(), &prefs)
+        })
+        .unwrap();
+    child.invoke_edited("".into());
+    child.invoke_edited("parity:multi".into());
+    headless::render(&native, 460, 600);
+    for step in fixture["drag"].as_array().unwrap() {
+        let action = step["action"].as_str().unwrap();
+        if action == "select_all" {
+            native.dispatch_event(WindowEvent::KeyPressed {
+                text: Key::Control.into(),
+            });
+            native.dispatch_event(WindowEvent::KeyPressed { text: "a".into() });
+            native.dispatch_event(WindowEvent::KeyReleased { text: "a".into() });
+            native.dispatch_event(WindowEvent::KeyReleased {
+                text: Key::Control.into(),
+            });
+        } else if action != "initial" {
+            let physical = step["physical"].as_u64().unwrap();
+            let position = slint::LogicalPosition::new(
+                child.get_results_x() + 10.0,
+                child.get_results_y() + 2.0 + physical as f32 * 22.0 + 11.0,
+            );
+            let ctrl = step["ctrl"].as_bool().unwrap();
+            if ctrl {
+                native.dispatch_event(WindowEvent::KeyPressed {
+                    text: Key::Control.into(),
+                });
+            }
+            let event = match action {
+                "press" => WindowEvent::PointerPressed {
+                    position,
+                    button: slint::platform::PointerEventButton::Left,
+                },
+                "release" => WindowEvent::PointerReleased {
+                    position,
+                    button: slint::platform::PointerEventButton::Left,
+                },
+                "drag" => WindowEvent::PointerMoved { position },
+                _ => panic!("unrecorded mouse action {action}"),
+            };
+            native.dispatch_event(event);
+            if ctrl {
+                native.dispatch_event(WindowEvent::KeyReleased {
+                    text: Key::Control.into(),
+                });
+            }
+            headless::render(&native, 460, 600);
+        }
+        let mut selected = Vec::new();
+        for (i, row) in fixture["rows"].as_array().unwrap().iter().enumerate() {
+            if child.get_selected().row_data(i).unwrap() {
+                let tag = row["tag"].as_str().unwrap();
+                if !selected.contains(&tag) {
+                    selected.push(tag);
+                }
+            }
+        }
+        assert_eq!(json!(selected), step["selected"], "{step}");
+        assert_eq!(child.get_text(), "parity:multi");
+        assert_eq!(child.get_tags().row_count(), 0);
+    }
     let before = copies.borrow().clone();
-    child.invoke_cancel();
+    native.dispatch_event(WindowEvent::KeyPressed {
+        text: Key::Escape.into(),
+    });
+    native.dispatch_event(WindowEvent::KeyReleased {
+        text: Key::Escape.into(),
+    });
+    assert!(slot.borrow().is_some());
+    assert!(child.get_selected().iter().all(|selected| !selected));
+    native.dispatch_event(WindowEvent::KeyPressed {
+        text: Key::Escape.into(),
+    });
+    native.dispatch_event(WindowEvent::KeyReleased {
+        text: Key::Escape.into(),
+    });
     child.invoke_navigate(0, false, false);
     assert!(!child.invoke_results_action(1));
     child.invoke_entered();

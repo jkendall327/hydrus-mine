@@ -40,6 +40,7 @@ pub(crate) fn results_action(
                 false
             }
         }
+        3 => input.deselect(),
         _ => false,
     }
 }

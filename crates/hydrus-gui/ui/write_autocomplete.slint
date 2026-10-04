@@ -27,11 +27,17 @@ export component WriteTagInput inherits FocusScope {
     in property <string> file-label;
     in property <string> tag-label;
     callback paste(bool) -> bool;
+    out property <length> results-x: result-keys.absolute-position.x;
+    out property <length> results-y: result-keys.absolute-position.y;
+    public function escape-results() -> bool { root.enabled && result-keys.has-focus && root.results-action(3) }
     public function focus-results() { result-keys.focus(); }
     public function normal-paste() { input.paste(); }
     public function undo-input() { input.undo(); }
     public function redo-input() { input.redo(); }
     public function select-input(anchor: int, cursor: int) { input.set-selection-offsets(anchor, cursor); }
+    property <int> drag-start: -1;
+    property <int> drag-last: -1;
+    property <bool> drag-deselection;
     forward-focus: input;
     capture-key-pressed(event) => {
         if event.modifiers.control && event.text == " " { root.fetch(); return accept; }
@@ -97,27 +103,49 @@ export component WriteTagInput inherits FocusScope {
                     }
                 }
                 scroll := ScrollView {
-                    VerticalLayout {
-                        padding: 2px;
-                        alignment: start;
-                        for suggestion[i] in root.suggestions: Rectangle {
-                            height: 22px;
-                            background: root.selected[i] ? Theme.highlight : transparent;
-                            Text {
-                                x: 4px;
-                                text: suggestion.text;
-                                color: root.selected[i] ? Theme.highlight-text : suggestion.colour;
-                                vertical-alignment: center;
-                                overflow: elide;
-                                width: parent.width - 8px;
-                            }
-                            TouchArea {
-                                enabled: root.enabled;
-                                double-clicked => { root.chosen(i); }
-                                pointer-event(event) => {
-                                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.right { result-keys.focus(); root.context-menu(i, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y); }
-                                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.left { result-keys.focus(); root.selection-clicked(i, event.modifiers.control, event.modifiers.shift); }
+                    Rectangle {
+                        min-height: root.suggestions.length * 22px + 4px;
+                        VerticalLayout {
+                            padding: 2px;
+                            alignment: start;
+                            for suggestion[i] in root.suggestions: Rectangle {
+                                height: 22px;
+                                background: root.selected[i] ? Theme.highlight : transparent;
+                                Text {
+                                    x: 4px;
+                                    text: suggestion.text;
+                                    color: root.selected[i] ? Theme.highlight-text : suggestion.colour;
+                                    vertical-alignment: center;
+                                    overflow: elide;
+                                    width: parent.width - 8px;
                                 }
+                            }
+                        }
+                        // Stay alive when a selection refresh replaces the repeated rows.
+                        touch := TouchArea {
+                            x: 2px; y: 2px;
+                            width: parent.width - 4px;
+                            height: root.suggestions.length * 22px;
+                            enabled: root.enabled;
+                            double-clicked => { root.chosen(floor(self.mouse-y / 22px)); }
+                            moved => {
+                                if self.pressed && root.drag-start >= 0 {
+                                    let physical = max(0, min(root.suggestions.length - 1, floor(self.mouse-y / 22px)));
+                                    if root.drag-last < 0 { root.drag-deselection = !root.selected[root.drag-start]; }
+                                    if physical != root.drag-last {
+                                        root.drag-last = physical;
+                                        root.selection-clicked(physical, root.drag-deselection, true);
+                                    }
+                                }
+                            }
+                            pointer-event(event) => {
+                                let physical = floor(self.mouse-y / 22px);
+                                if event.kind == PointerEventKind.down && event.button == PointerEventButton.right { result-keys.focus(); root.context-menu(physical, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y); }
+                                if event.kind == PointerEventKind.down && event.button == PointerEventButton.left {
+                                    result-keys.focus(); root.drag-start = physical; root.drag-last = -1;
+                                    root.selection-clicked(physical, event.modifiers.control, event.modifiers.shift);
+                                }
+                                if event.kind == PointerEventKind.up { root.drag-start = -1; }
                             }
                         }
                     }
@@ -190,6 +218,8 @@ export component WriteTagsWindow inherits Window {
     in property <int> list-height: 11;
     in property <string> question;
     in property <string> error;
+    out property <length> results-x: input.results-x;
+    out property <length> results-y: input.results-y;
     public function focus-results() { input.focus-results(); }
     public function normal-paste() { input.normal-paste(); }
     public function undo-input() { input.undo-input(); }
@@ -216,7 +246,7 @@ export component WriteTagsWindow inherits Window {
     forward-focus: input;
     FocusScope {
         capture-key-pressed(event) => {
-            if event.text == Key.Escape { if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else { root.cancel(); } return accept; }
+            if event.text == Key.Escape { if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else if !input.escape-results() { root.cancel(); } return accept; }
             reject
         }
         VerticalLayout {
