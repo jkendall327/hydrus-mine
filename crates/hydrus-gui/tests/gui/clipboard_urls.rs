@@ -198,8 +198,16 @@ fn empty_nested_notebooks_select_their_first_child_and_keep_both_destinations_in
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store).unwrap());
     (bound.open_page)(&page_chooser::NewPage::Pages);
+    // Ordinary notebook creation supplies a blank search child. Close it
+    // explicitly to exercise clipboard routing into an empty notebook.
+    bound.pages.borrow_mut().close_shown().unwrap();
     (bound.open_page)(&page_chooser::NewPage::Pages);
+    bound.pages.borrow_mut().close_shown().unwrap();
     let notebook = bound.pages.borrow().shown().key;
+    assert!(matches!(
+        &bound.pages.borrow().shown().content,
+        PageContent::Pages(children) if children.is_empty()
+    ));
     hydrus_gui::set_paster(|| "https://watch.example/1\nhttps://file.example/1.jpg".into());
     bound.clipboard_monitor.toggle(true);
     bound.clipboard_monitor.toggle(false);

@@ -2251,8 +2251,13 @@ fn downloader_backup_and_freshest_load_survive_source_queue_deletion() {
     use hydrus_store::queues::{self, NewFileSeed, SeedStatus, SeedType};
     let (_dirs, store) = store();
     let fixture = hydrus_testkit::fixture_json("session_importers.json");
-    let mut pages = Pages::open(store.clone()).unwrap();
+    // Match the reference recorder's source: a session containing just
+    // the URL importer. Session insertion selects the first saved child.
+    let mut pages = Pages::single(hydrus_gui::SearchPage::new(store.clone()));
     pages.new_page(&NewPage::Urls).unwrap();
+    pages.close(0, 0).unwrap();
+    pages.forget_closed();
+    assert_eq!(pages.session().pages.len(), 1);
     let original = match &pages.shown().content {
         PageContent::Downloader { queues, .. } => queues[0],
         _ => panic!("URL importer"),
