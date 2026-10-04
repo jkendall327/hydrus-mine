@@ -565,7 +565,7 @@ pub fn open(
                 FormulaChild::Sub
             } else {
                 FormulaChild::Main
-            })
+            });
         }
     });
     w.on_member_exchange({

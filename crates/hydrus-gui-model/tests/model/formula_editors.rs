@@ -411,7 +411,7 @@ fn scalar_formula_controls_match_reference() {
         };
         match &mut e.formula.kind {
             FormulaKind::ContextVariable { variable } => {
-                *variable = case["variable"].as_str().unwrap().into()
+                *variable = case["variable"].as_str().unwrap().into();
             }
             FormulaKind::Static { text, count } => {
                 *text = case["text"].as_str().unwrap().into();
@@ -649,7 +649,7 @@ fn six_kind_chooser_defaults_match_reference() {
                 assert_eq!(json!(formulae.len()), case["children"]);
             }
             FormulaKind::ContextVariable { variable } => {
-                assert_eq!(variable, case["variable"].as_str().unwrap())
+                assert_eq!(variable, case["variable"].as_str().unwrap());
             }
             FormulaKind::Static { text, count } => {
                 assert_eq!(text, case["text"].as_str().unwrap());
