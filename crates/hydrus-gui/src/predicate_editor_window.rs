@@ -144,12 +144,15 @@ impl State {
         for i in 0..panel.fields.len() {
             let row = field_row(panel, i);
             let old = model.row_data(i);
-            // (what was typed or chosen shows already)
+            // The active input already shows what was typed. A button also
+            // synchronizes cached text before freezing or cleaning that draft.
             let redrawn = matches!(panel.fields[i], Field::Ticks { .. } | Field::Tree { .. });
             let changed = (redrawn && Some(i) == set)
-                || old
-                    .as_ref()
-                    .is_none_or(|old| old.shown != row.shown || old.enabled != row.enabled);
+                || old.as_ref().is_none_or(|old| {
+                    old.shown != row.shown
+                        || old.enabled != row.enabled
+                        || (set.is_none() && old.text != row.text)
+                });
             if changed {
                 model.set_row_data(i, row);
             }
@@ -493,6 +496,11 @@ pub(crate) fn open(
         let state = state.clone();
         let finish = finish.clone();
         move |p| {
+            if weak.upgrade().is_none_or(|window| {
+                !window.window().is_visible() || !window.get_question().is_empty()
+            }) {
+                return;
+            }
             let made = {
                 let state = state.borrow();
                 let Some(panel) = state.panels().get(index(p)) else {

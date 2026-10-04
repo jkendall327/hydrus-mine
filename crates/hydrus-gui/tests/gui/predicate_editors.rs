@@ -759,13 +759,19 @@ fn the_editor_window_shows_what_trees_and_buttons_change() {
         window.get_error()
     );
     assert!(window.get_error().contains("\"not a hash\""));
+    assert_eq!(
+        field(&window, 0, 2).text,
+        boundaries["hash"][0]["text"].as_str().unwrap()
+    );
     window.invoke_pressed(0, 4);
     assert_eq!(
         window.get_question(),
         boundaries["hash"][0]["questions"][0].as_str().unwrap()
     );
     window.invoke_text_edited(0, 2, "changed while question pending".into());
+    let frozen_error = window.get_error();
     window.invoke_ok(0);
+    assert_eq!(window.get_error(), frozen_error);
     assert!(bound.predicate_editor.borrow().is_some());
     assert!(field(&window, 0, 2).text.contains("not a hash"));
     window.invoke_answer(false);
