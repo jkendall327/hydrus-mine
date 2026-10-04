@@ -1226,11 +1226,14 @@ fn subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_pr
         .iter()
         .find(|c| c["action"] == "add_nested")
         .unwrap();
-    let object = hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(
-        &recorded["tuple"].to_string(),
-    )
-    .unwrap();
-    let imported = hydrus_legacy::objects::parsers::page_parser(&object).unwrap();
+    // The exchange consumer attaches the auxiliary reference tuple recursively;
+    // the legacy decoder intentionally returns only the executable fields.
+    let imported = hydrus_downloader_exchange::decode_text(&recorded["tuple"].to_string())
+        .unwrap()
+        .remove(0);
+    let hydrus_downloader_exchange::Native::Page(imported) = imported.native else {
+        panic!("recorded page parser");
+    };
     store
         .write_and_refresh(move |ctx| {
             let mut definitions: Downloaders = settings::get(ctx.conn())?;
@@ -1240,17 +1243,17 @@ fn subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_pr
         .unwrap();
     let before = definitions(&store);
     assert!(
-        before.parsers[0].subsidiary[0]
+        before.parsers[0].subsidiary[1]
             .parser
             .reference_auxiliary
             .is_some()
     );
-    assert_eq!(before.parsers[0].subsidiary[0].parser.subsidiary.len(), 1);
+    assert_eq!(before.parsers[0].subsidiary[1].parser.subsidiary.len(), 1);
     let list = windows::open(&store, &slots, false).unwrap();
     list.invoke_row_clicked(0, false, false);
     list.invoke_action("edit".into());
     let page = child(&slots.page);
-    page.invoke_subsidiary_clicked(0, false, false);
+    page.invoke_subsidiary_clicked(1, false, false);
     page.invoke_action("edit-subsidiary".into());
     let (_, subsidiary) = recursive_child(&slots);
     subsidiary.invoke_own_sort_changed(true);
@@ -1265,8 +1268,8 @@ fn subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_pr
     page.invoke_action("apply".into());
     list.invoke_action("apply".into());
     let saved = definitions(&store);
-    let old = &before.parsers[0].subsidiary[0];
-    let new = &saved.parsers[0].subsidiary[0];
+    let old = &before.parsers[0].subsidiary[1];
+    let new = &saved.parsers[0].subsidiary[1];
     assert_eq!(new.parser.key, old.parser.key);
     assert_eq!(
         new.parser.reference_auxiliary,
@@ -1290,6 +1293,9 @@ fn subsidiary_queue_exchange_is_staged_preserves_wrappers_and_reaches_saved_pars
     let rendered = headless::init();
     let mut saved = definitions(&store);
     saved.parsers[0].content_parsers.clear();
+    // This recording starts with an empty subsidiary queue; setup() deliberately
+    // seeds one for unrelated preservation tests.
+    saved.parsers[0].subsidiary.clear();
     store
         .write_and_refresh(move |ctx| settings::set(ctx.conn(), &saved))
         .unwrap();

@@ -394,9 +394,11 @@ fn selected_export_tag_sidebar_copies_launches_native_pages_persists_favourites_
         ("open a new search page for 2 selected", false),
         ("open a new OR search page for 2 selected", true),
     ] {
+        let page_count = bound.pages.borrow().session().pages.len();
         window.invoke_tag_context_menu(-1, 10.0, 10.0);
         choose_export_tag_menu(&window, &["open", label]);
         let pages = bound.pages.borrow();
+        assert_eq!(pages.session().pages.len(), page_count + 1);
         let PageContent::Search { search, .. } = &pages.shown().content else {
             panic!("native search page");
         };
