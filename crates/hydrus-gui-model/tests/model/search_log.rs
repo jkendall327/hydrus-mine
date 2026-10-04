@@ -176,8 +176,8 @@ fn exchange_questions_replay_actual_reference_answers_and_complete_objects() {
     let s = GallerySeed {
         url: recorded["png"]["payload"].as_str().unwrap().into(),
         can_generate_more_pages: false,
-        created: 1700000000,
-        modified: 1700000100,
+        created: 1_700_000_000,
+        modified: 1_700_000_100,
         note: "note 日本".into(),
         referral_url: Some("https://gallery-exchange.example/ref".into()),
         meta: GallerySeedMeta {

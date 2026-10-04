@@ -50,7 +50,7 @@ impl Control {
     }
 }
 
-fn node(item: &(&'static str, Action)) -> PopupNode<'_, (&'static str, Action), Action> {
+fn node<'a>(item: &'a (&'static str, Action)) -> PopupNode<'a, (&'static str, Action), Action> {
     PopupNode::Item(item.0, &item.1)
 }
 
