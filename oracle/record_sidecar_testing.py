@@ -13,7 +13,7 @@ sys.path.insert(0, HERE)
 def record(session):
     def qt():
         from qtpy import QtWidgets as QW
-        from hydrus.client.gui.metadata import ClientGUIMetadataMigration as G, ClientGUIMetadataMigrationTest as T
+        from hydrus.client.gui.metadata import ClientGUIMetadataMigration as G, ClientGUIMetadataMigrationTest as T, ClientGUIMetadataMigrationImporters as GI
         from hydrus.client.metadata import ClientMetadataMigration as R, ClientMetadataMigrationImporters as I, ClientMetadataMigrationExporters as E
         from hydrus.client import ClientStrings as S
         from hydrus.client.parsing import ClientParsing as P
@@ -37,7 +37,13 @@ def record(session):
                 for i, source in enumerate(panel._importers_list.GetData()):
                     tables.append({'source':i,'rows':[list(panel._ConvertTestRowToDisplayTuple((source,path))) for path in factory.GetTestObjects()]})
                 data=panel._GetExampleStringProcessorTestData()
-                output.append({'case':name,'tuple':panel._GetValue().GetSerialisableTuple(),'tables':tables,'processor_texts':data.texts,'processor_context':data.parsing_context,'documents':dict(documents)})
+                source_inputs=[]
+                for source in panel._importers_list.GetData():
+                    source_panel=GI.EditSingleFileMetadataImporterPanel(session.controller.gui,source,[type(source)],factory)
+                    source_data=source_panel._GetExampleTestData()
+                    source_inputs.append({'texts':source_data.texts,'context':source_data.parsing_context})
+                    source_panel.deleteLater()
+                output.append({'case':name,'tuple':panel._GetValue().GetSerialisableTuple(),'tables':tables,'processor_texts':data.texts,'processor_context':data.parsing_context,'source_inputs':source_inputs,'documents':dict(documents)})
             snapshot('human_sort')
             panel._string_processor_button.SetValue(S.StringProcessor())
             snapshot('no_changes')
