@@ -111,27 +111,28 @@ impl PageChooser {
         let settings = store
             .read(hydrus_store::settings::get::<hydrus_store::settings::PageChooserSettings>)
             .unwrap_or_default();
-        if domains.len() > 1 && settings.show_combined {
-            if let Ok(service) = services.builtin(builtin_keys::COMBINED_LOCAL_FILE_DOMAINS) {
-                let entry = (service.key.clone(), service.name.clone());
-                if settings.combined_at_top {
-                    domains.insert(0, entry);
-                } else {
-                    domains.push(entry);
-                }
+        if domains.len() > 1
+            && settings.show_combined
+            && let Ok(service) = services.builtin(builtin_keys::COMBINED_LOCAL_FILE_DOMAINS)
+        {
+            let entry = (service.key.clone(), service.name.clone());
+            if settings.combined_at_top {
+                domains.insert(0, entry);
+            } else {
+                domains.push(entry);
             }
         }
         if let Ok(service) = services.builtin(builtin_keys::TRASH) {
             domains.push((service.key.clone(), service.name.clone()));
         }
-        if settings.show_storage {
-            if let Ok(service) = services.builtin(builtin_keys::HYDRUS_LOCAL_FILE_STORAGE) {
-                let entry = (service.key.clone(), service.name.clone());
-                if settings.storage_at_top {
-                    domains.insert(0, entry);
-                } else {
-                    domains.push(entry);
-                }
+        if settings.show_storage
+            && let Ok(service) = services.builtin(builtin_keys::HYDRUS_LOCAL_FILE_STORAGE)
+        {
+            let entry = (service.key.clone(), service.name.clone());
+            if settings.storage_at_top {
+                domains.insert(0, entry);
+            } else {
+                domains.push(entry);
             }
         }
         let mut repositories: Vec<_> = services
