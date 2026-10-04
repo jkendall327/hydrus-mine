@@ -24,23 +24,15 @@ pub fn last_opened() -> Option<ImportOptionsPanelWindow> {
 pub fn editing_window() -> Option<ImportOptionsWindow> {
     LAST.with(|last| last.borrow().as_ref().and_then(Weak::upgrade))
         .and_then(|owner| {
-            let window = owner
-                .editor
-                .borrow()
-                .as_ref()
-                .map(slint::ComponentHandle::clone_strong);
-            window
+            let editor = owner.editor.borrow();
+            editor.as_ref().map(slint::ComponentHandle::clone_strong)
         })
 }
 pub fn overwrite_window() -> Option<crate::ImportOptionsOverwriteWindow> {
     LAST.with(|last| last.borrow().as_ref().and_then(Weak::upgrade))
         .and_then(|owner| {
-            let window = owner
-                .overwrite
-                .borrow()
-                .as_ref()
-                .map(slint::ComponentHandle::clone_strong);
-            window
+            let overwrite = owner.overwrite.borrow();
+            overwrite.as_ref().map(slint::ComponentHandle::clone_strong)
         })
 }
 pub fn cancel(slot: &Slot) {
@@ -551,8 +543,8 @@ pub fn open(
             move || {
                 let owner = owner.upgrade()?;
                 let target = owner.one(list)?;
-                let current = owner.state.borrow().own(&target);
-                current
+                let state = owner.state.borrow();
+                state.own(&target)
             }
         });
         let apply = Rc::new({

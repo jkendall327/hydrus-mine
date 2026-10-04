@@ -50,7 +50,7 @@ fn kind(window: &ImportOptionsWindow, name: &str) {
         .iter()
         .position(|label| label.contains(name))
         .unwrap();
-    window.invoke_page_chosen(i32::try_from(index).unwrap());
+    window.invoke_kind_clicked(i32::try_from(index).unwrap());
 }
 fn synthetic_classes() -> Vec<UrlClass> {
     [
