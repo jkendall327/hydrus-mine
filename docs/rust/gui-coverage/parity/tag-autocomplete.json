@@ -5,9 +5,10 @@
     "1b81bd15fce1ab176660460c0d1524e744e82503",
     "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
     "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
-    "33e9b58f6226f10d8122313c5333c8f0d302df4f"
+    "33e9b58f6226f10d8122313c5333c8f0d302df4f",
+    "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
   ],
-  "implementation_leaf_count": 6,
+  "implementation_leaf_count": 7,
   "partial_improvements": 4,
   "validation": "Real Qt recording and Python syntax, cargo fmt and git diff --check passed. Root GitHub CI pending; no local Cargo build/tests or mutation tests.",
   "claims": [
@@ -17,7 +18,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "Default false checkbox; when enabled skips raw/countless tags and expanded-parent rows to highlight the first counted logical suggestion. Typed/ideal tags preserve actual counts. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
-      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because favourites/children tabs and context menus are not yet implemented.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because full context menus are not yet implemented.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -104,7 +105,8 @@
       "consumer_commits": [
         "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
         "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
-        "33e9b58f6226f10d8122313c5333c8f0d302df4f"
+        "33e9b58f6226f10d8122313c5333c8f0d302df4f",
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
       ]
     },
     {
@@ -113,7 +115,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "Default false checkbox; two or more cleaned distinct pasted tags ask the recorded question. Enabled bypasses it; explicit paste button always adds tags without asking. Paste is add-only and staged. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
-      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because favourites/children tabs and context menus are not yet implemented.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because full context menus are not yet implemented.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -200,7 +202,8 @@
       "consumer_commits": [
         "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
         "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
-        "33e9b58f6226f10d8122313c5333c8f0d302df4f"
+        "33e9b58f6226f10d8122313c5333c8f0d302df4f",
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
       ]
     },
     {
@@ -209,7 +212,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "Default true checkbox controls the parent-count suffix when parent rows are collapsed; expanding parents shows transitive named rows belonging to the source tag. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
-      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because favourites/children tabs and context menus are not yet implemented.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because full context menus are not yet implemented.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -296,7 +299,8 @@
       "consumer_commits": [
         "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
         "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
-        "33e9b58f6226f10d8122313c5333c8f0d302df4f"
+        "33e9b58f6226f10d8122313c5333c8f0d302df4f",
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
       ]
     },
     {
@@ -305,7 +309,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "Default true checkbox controls expanded transitive parent rows versus the collapsed parent-count suffix. Clicking an expanded parent row enters its originating tag. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
-      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because favourites/children tabs and context menus are not yet implemented.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because full context menus are not yet implemented.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -392,7 +396,8 @@
       "consumer_commits": [
         "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
         "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
-        "33e9b58f6226f10d8122313c5333c8f0d302df4f"
+        "33e9b58f6226f10d8122313c5333c8f0d302df4f",
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
       ]
     },
     {
@@ -401,7 +406,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "Default true checkbox controls the ideal-sibling arrow decoration using the edited/display service even when counting all known tags. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
-      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because favourites/children tabs and context menus are not yet implemented.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because full context menus are not yet implemented.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -488,7 +493,8 @@
       "consumer_commits": [
         "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
         "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
-        "33e9b58f6226f10d8122313c5333c8f0d302df4f"
+        "33e9b58f6226f10d8122313c5333c8f0d302df4f",
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
       ]
     },
     {
@@ -497,7 +503,7 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "exact_behavior": "Integer control 1\u2013128, default 11; visible Manage Tags suggestion rows use the setting, scrolling retains every result beyond that height and the old twelve-result cap is removed. Settings stage until options Apply, persist, import legacy values, and remain compatible with older settings. The reusable consumer now runs in Manage Tags, both sibling/parent sides, and detached import additional-tags/whitelist editors.",
-      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because favourites/children tabs and context menus are not yet implemented.",
+      "limits": "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because full context menus are not yet implemented.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -584,7 +590,8 @@
       "consumer_commits": [
         "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
         "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
-        "33e9b58f6226f10d8122313c5333c8f0d302df4f"
+        "33e9b58f6226f10d8122313c5333c8f0d302df4f",
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
       ]
     },
     {
@@ -592,8 +599,8 @@
       "previous_status": "partial",
       "proposed_status": "partial",
       "change_kind": "implementation",
-      "exact_behavior": "Replaced capped storage suggestions with shared zero-count aware, domain/service aware write search; raw/ideal elevation, counts, parent/sibling decorations, click/highlight entry, manual fetch, multiline/add-only clipboard questions and height controls.",
-      "limits": "Favourite/children panels and context menus remain absent; declined multiline paste leaves native input unchanged. Not a completed implementation leaf.",
+      "exact_behavior": "Replaced capped storage suggestions with shared zero-count aware, domain/service aware write search; raw/ideal elevation, counts, parent/sibling decorations, click/highlight entry, manual fetch, multiline/add-only clipboard questions and height controls. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs.",
+      "limits": "Full context menus remain outstanding; declined multiline paste leaves native input unchanged. Not a completed implementation leaf.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -622,6 +629,9 @@
           "symbol": "def record",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
         }
+      ],
+      "consumer_commits": [
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
       ]
     },
     {
@@ -629,8 +639,8 @@
       "previous_status": "missing",
       "proposed_status": "partial",
       "change_kind": "implementation",
-      "exact_behavior": "Both sides now use real count/domain/service-aware write autocomplete, typed/ideal elevation, parent and sibling decorations, visible-height preference, keyboard highlight/selected/click entry, manual fetch, confirmed or skipped multiline paste. Paste only adds and removes the entered tag from the opposite side; each service preserves independent input drafts. Closing owner invalidates pending paste answers and stale Apply.",
-      "limits": "Full Qt context menus, favourites/children tabs, per-widget domain buttons and service-tab default preference remain absent. This is a substantive missing-to-partial implementation, excluded from completion leaf count.",
+      "exact_behavior": "Both sides now use real count/domain/service-aware write autocomplete, typed/ideal elevation, parent and sibling decorations, visible-height preference, keyboard highlight/selected/click entry, manual fetch, confirmed or skipped multiline paste. Paste only adds and removes the entered tag from the opposite side; each service preserves independent input drafts. Closing owner invalidates pending paste answers and stale Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs.",
+      "limits": "Full Qt context menus, per-widget domain buttons and service-tab default preference remain outstanding. This is a substantive missing-to-partial implementation, excluded from completion leaf count.",
       "implementation_commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
       "anchors": [
         {
@@ -677,6 +687,9 @@
           "symbol": "\"relationship_inputs\"",
           "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
         }
+      ],
+      "consumer_commits": [
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
       ]
     },
     {
@@ -684,8 +697,8 @@
       "previous_status": "missing",
       "proposed_status": "partial",
       "change_kind": "implementation",
-      "exact_behavior": "Both sides now use real count/domain/service-aware write autocomplete, typed/ideal elevation, parent and sibling decorations, visible-height preference, keyboard highlight/selected/click entry, manual fetch, confirmed or skipped multiline paste. Paste only adds and removes the entered tag from the opposite side; each service preserves independent input drafts. Closing owner invalidates pending paste answers and stale Apply.",
-      "limits": "Full Qt context menus, favourites/children tabs, per-widget domain buttons and service-tab default preference remain absent. This is a substantive missing-to-partial implementation, excluded from completion leaf count.",
+      "exact_behavior": "Both sides now use real count/domain/service-aware write autocomplete, typed/ideal elevation, parent and sibling decorations, visible-height preference, keyboard highlight/selected/click entry, manual fetch, confirmed or skipped multiline paste. Paste only adds and removes the entered tag from the opposite side; each service preserves independent input drafts. Closing owner invalidates pending paste answers and stale Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs.",
+      "limits": "Full Qt context menus, per-widget domain buttons and service-tab default preference remain outstanding. This is a substantive missing-to-partial implementation, excluded from completion leaf count.",
       "implementation_commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
       "anchors": [
         {
@@ -732,6 +745,9 @@
           "symbol": "\"relationship_inputs\"",
           "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
         }
+      ],
+      "consumer_commits": [
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
       ]
     },
     {
@@ -739,8 +755,8 @@
       "previous_status": "partial",
       "proposed_status": "partial",
       "change_kind": "implementation",
-      "exact_behavior": "Per-service import additional tags open a detached write-tag child using that service; whitelist uses all known tags. Typed entry toggles, paste only adds, duplicate pastes retain existing tags. Accepted lists update only the captured parent draft field; cancelling child or owner discards edits, native child close unlocks parent, pending child blocks parent Apply.",
-      "limits": "Native controls retain raw multiline fields and differ from Qt modal layout; full shared context menus/favourites/children tabs are absent. Whitelist is shared adjacent implementation, not counted as an invented standalone leaf.",
+      "exact_behavior": "Per-service import additional tags open a detached write-tag child using that service; whitelist uses all known tags. Typed entry toggles, paste only adds, duplicate pastes retain existing tags. Accepted lists update only the captured parent draft field; cancelling child or owner discards edits, native child close unlocks parent, pending child blocks parent Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs.",
+      "limits": "Native controls retain raw multiline fields and differ from Qt modal layout; full shared context menus remain outstanding. Whitelist is shared adjacent implementation, not counted as an invented standalone leaf.",
       "implementation_commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
       "anchors": [
         {
@@ -780,6 +796,82 @@
           "line": 2,
           "symbol": "\"detached_inputs\"",
           "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
+        }
+      ],
+      "consumer_commits": [
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+      ]
+    },
+    {
+      "reference_id": "audit-options-tag-autocomplete-tabs-children-tags-how-many-tags-to-show-in-the-children-tab",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Real Tag autocomplete tabs / children tags noneable control uses exact label, default 40, range 1..1000000, show all None. Options draft cancellation leaves persisted limit unchanged; Apply saves it and existing shared children consumers immediately requery. Local and combined tag service descendants exclude selected tags, keep zero-count known children, order by actual display counts and present countless rows. Legacy option is decoded and missing setting defaults remain compatible.",
+      "limits": "Native tab dropdown and layout differ from Qt; full write autocomplete parent leaves remain partial while context menus and per-widget domain controls are outstanding.",
+      "implementation_commit": "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1838,
+          "symbol": "\"tag autocomplete tabs\"",
+          "commit": "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 35,
+          "symbol": "pub struct TagAutocompleteTabs",
+          "commit": "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 174,
+          "symbol": "let mut autocomplete_tabs",
+          "commit": "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/autocomplete/search.rs",
+          "line": 427,
+          "symbol": "pub fn count_tags",
+          "commit": "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 269,
+          "symbol": "Tab::Children",
+          "commit": "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 358,
+          "symbol": "fn favourite_and_count_ordered_children_tabs",
+          "commit": "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 446,
+          "symbol": "fn children_limit_option_matches_reference",
+          "commit": "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 286,
+          "symbol": "fn favourite_children_tabs_and_applied_cap",
+          "commit": "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 81,
+          "symbol": "def tabs",
+          "commit": "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        },
+        {
+          "relativepath": "oracle/fixtures/write_tag_autocomplete.json",
+          "line": 2,
+          "symbol": "\"children_control\"",
+          "commit": "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
         }
       ]
     }
