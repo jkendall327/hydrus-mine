@@ -37,7 +37,7 @@ fn step(text: &str, mut fit: TabFit, measured: f32, room: f32) -> TabFit {
 }
 
 pub(crate) fn bind_names(window: &MainWindow) {
-    let names = window.global::<TabNames>();
+    let names = window.global::<TabNames<'_>>();
     names.on_begin(|text| begin(&text));
     names.on_middle(|text, count| {
         hydrus_gui_model::tab_presentation::middle_name(&text, usize::try_from(count).unwrap_or(0))
