@@ -5,6 +5,14 @@ offline map of the Rust reimplementation of Hydrus. JSON, styles and code are
 embedded; there are no external assets, runtime requests or server requirements.
 Source links open GitHub only when clicked.
 
+If a managed browser blocks `file://`, serve the same artifact locally:
+
+```sh
+python3 -m http.server 8765 --bind 127.0.0.1 --directory docs/rust
+```
+
+Then open `http://127.0.0.1:8765/gui-progress.html`. Stop the server when finished.
+
 The default reference view contains 250 selected user-visible features. The
 optional native view contains 340 menu entries and native window/component
 occurrences. These are different inventories with different granularity, not
