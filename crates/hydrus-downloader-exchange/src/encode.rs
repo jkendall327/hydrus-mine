@@ -43,7 +43,7 @@ pub(crate) fn string_match(m: &StringMatch) -> Value {
         json!([kind, value, m.min_chars, m.max_chars, m.example]),
     )
 }
-fn converter(c: &StringConverter) -> Result<Value> {
+pub(crate) fn converter(c: &StringConverter) -> Result<Value> {
     let conversions = c
         .conversions
         .iter()
