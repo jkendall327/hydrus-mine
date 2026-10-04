@@ -188,7 +188,10 @@ export component SubscriptionsWindow inherits Window {
 
     forward-focus: keys;
     keys := FocusScope {
-        enabled: !root.gallery-open;
+        capture-key-pressed(event) => {
+            if root.gallery-open { return accept; }
+            reject
+        }
         key-pressed(event) => {
             if (event.text == Key.Escape) {
                 if (root.asking) {
@@ -227,10 +230,10 @@ export component SubscriptionsWindow inherits Window {
                 rows: root.rows;
                 sort-column: root.sort-column;
                 ascending: root.ascending;
-                sort(column, ascending) => { root.sort(column, ascending); }
-                row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
-                row-activated(row) => { if !root.asking { root.row-activated(row); } }
-                delete-pressed => { if root.any-selected { root.delete(); } }
+                sort(column, ascending) => { if !root.gallery-open { root.sort(column, ascending); } }
+                row-clicked(row, ctrl, shift) => { if !root.gallery-open { root.row-clicked(row, ctrl, shift); } }
+                row-activated(row) => { if !root.asking && !root.gallery-open { root.row-activated(row); } }
+                delete-pressed => { if root.any-selected && !root.gallery-open { root.delete(); } }
             }
             // the reference's button rows, as far as hydrus-rs has them
             HorizontalLayout {
@@ -238,23 +241,23 @@ export component SubscriptionsWindow inherits Window {
                 alignment: end;
                 Button {
                     text: "add";
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.gallery-open;
                     clicked => { root.add(); }
                 }
                 Button {
                     text: "edit";
-                    enabled: root.one-selected && !root.asking;
+                    enabled: root.one-selected && !root.asking && !root.gallery-open;
                     clicked => { root.edit(); }
                 }
                 Button {
                     text: "delete";
-                    enabled: root.any-selected && !root.asking;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open;
                     clicked => { root.delete(); }
                 }
                 Rectangle { width: 12px; }
                 Button {
                     text: "duplicate";
-                    enabled: root.any-selected && !root.asking;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open;
                     clicked => { root.duplicate(); }
                 }
             }
@@ -263,53 +266,53 @@ export component SubscriptionsWindow inherits Window {
                 alignment: end;
                 Button {
                     text: "merge";
-                    enabled: root.can-merge && !root.asking;
+                    enabled: root.can-merge && !root.asking && !root.gallery-open;
                     clicked => { root.merge(); }
                 }
                 Button {
                     text: "separate";
-                    enabled: root.can-separate && !root.asking;
+                    enabled: root.can-separate && !root.asking && !root.gallery-open;
                     clicked => { root.separate(); }
                 }
                 Button {
                     text: "deduplicate";
-                    enabled: root.can-dedupe && !root.asking;
+                    enabled: root.can-dedupe && !root.asking && !root.gallery-open;
                     clicked => { root.deduplicate(); }
                 }
                 Button {
                     text: "lowercase";
-                    enabled: root.can-lowercase && !root.asking;
+                    enabled: root.can-lowercase && !root.asking && !root.gallery-open;
                     clicked => { root.lowercase(); }
                 }
                 Rectangle { width: 12px; }
                 Button {
                     text: "pause/resume";
-                    enabled: root.any-selected && !root.asking;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open;
                     clicked => { root.pause-resume(); }
                 }
                 Button {
                     text: "scrub delays";
-                    enabled: root.can-scrub-delays && !root.asking;
+                    enabled: root.can-scrub-delays && !root.asking && !root.gallery-open;
                     clicked => { root.scrub-delays(); }
                 }
                 Button {
                     text: "check queries now";
-                    enabled: root.can-check-now && !root.asking;
+                    enabled: root.can-check-now && !root.asking && !root.gallery-open;
                     clicked => { root.check-now(); }
                 }
                 if root.can-retry-failed: Button {
                     text: "retry failed";
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.gallery-open;
                     clicked => { root.retry-failed(); }
                 }
                 if root.can-retry-ignored: Button {
                     text: "retry ignored";
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.gallery-open;
                     clicked => { root.retry-ignored(); }
                 }
                 Button {
                     text: "reset";
-                    enabled: root.can-reset && !root.asking;
+                    enabled: root.can-reset && !root.asking && !root.gallery-open;
                     clicked => { root.reset(); }
                 }
             }
@@ -318,17 +321,17 @@ export component SubscriptionsWindow inherits Window {
                 alignment: end;
                 Button {
                     text: "select subscriptions";
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.gallery-open;
                     clicked => { root.select-subscriptions(); }
                 }
                 Button {
                     text: "overwrite downloader";
-                    enabled: root.any-selected && !root.asking;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open;
                     clicked => { root.overwrite-downloader(); }
                 }
                 Button {
                     text: "overwrite checker options";
-                    enabled: root.any-selected && !root.asking;
+                    enabled: root.any-selected && !root.asking && !root.gallery-open;
                     clicked => { root.overwrite-checker(); }
                 }
             }
@@ -348,11 +351,12 @@ export component SubscriptionsWindow inherits Window {
                 spacing: 6px;
                 Button {
                     text: "apply";
-                    enabled: !root.asking;
+                    enabled: !root.asking && !root.gallery-open;
                     clicked => { root.apply(); }
                 }
                 Button {
                     text: "cancel";
+                    enabled: !root.gallery-open;
                     clicked => { root.cancel(); }
                 }
             }
