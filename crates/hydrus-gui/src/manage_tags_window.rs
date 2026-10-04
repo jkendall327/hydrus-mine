@@ -48,6 +48,9 @@ pub(crate) fn open(
                 )
                 .unwrap_or(11),
             );
+            window.set_deleted_count_label(model.deleted_count_label().into());
+            window.set_deleted_count_visible(model.deleted_count() > 0);
+            window.set_show_deleted(model.show_deleted());
             window.set_service_index(i32::try_from(model.service()).unwrap_or(0));
             let tags: Vec<ListText> = model
                 .display_rows()
@@ -156,16 +159,19 @@ pub(crate) fn open(
             menu.open(&entries, x, y);
         }
     });
+    let preference_timer = Rc::new(slint::Timer::default());
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
         let active = active.clone();
         let pending_paste = pending_paste.clone();
         let tag_menu = tag_menu.clone();
+        let preference_timer = preference_timer.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
+            preference_timer.stop();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -232,6 +238,47 @@ pub(crate) fn open(
             close();
         }
     };
+    window.on_flip_show_deleted({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
+        move || {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+                return;
+            }
+            if let Err(error) = model.borrow().flip_show_deleted()
+                && let Some(window) = weak.upgrade()
+            {
+                window.set_error(
+                    format!("could not remember the deleted-mapping display: {error}").into(),
+                );
+            }
+            refresh();
+        }
+    });
+    // Other owners of this store observe the global preference too. The timer
+    // holds only a weak window; close stops it before a retained handle can act.
+    preference_timer.start(
+        slint::TimerMode::Repeated,
+        std::time::Duration::from_millis(200),
+        {
+            let weak = window.as_weak();
+            let model = model.clone();
+            let refresh = refresh.clone();
+            let active = active.clone();
+            move || {
+                if active.get()
+                    && let Some(window) = weak.upgrade()
+                    && window.get_show_deleted() != model.borrow().show_deleted()
+                {
+                    refresh();
+                }
+            }
+        },
+    );
     window.on_service_chosen({
         let model = model.clone();
         let refresh = refresh.clone();

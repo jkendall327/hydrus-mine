@@ -2820,3 +2820,11 @@ active search alone. `oracle/fixtures/system_or_activation.json` records 18
 actual Qt cases in the main read input and basic OR child, including accepted
 system recents surviving outer Cancel. Both callers use the original activation intent. Authored model replay and
 the native 18-case consumer replay await hosted CI; no native render is claimed.
+Manage Tags now reads deleted mappings separately for each selected local tag
+service. The count measures tag–file mappings, hides at zero, and follows staged
+deletions and re-additions. Show/hide is an immediately saved global preference
+that survives Cancel and reaches other open owners. Rows combine current `(n)`
+and deleted `(Xn)` counts, including current counts when every selected file has
+the tag. Apply commits the private mapping draft; Cancel and callbacks retained
+after closure cannot change it. The real Qt recording
+`manage_tag_counts_incremental.json` covers two local services and reopening.

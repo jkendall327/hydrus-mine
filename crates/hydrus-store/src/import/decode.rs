@@ -275,6 +275,31 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &tag_editing)?;
+    let mut manage_tags = crate::tag_editing::ManageTagsSettings::default();
+    if let Some(options) = &options {
+        if let Some(&value) = options.booleans.get("manage_tags_show_deleted_mappings") {
+            manage_tags.show_deleted = value;
+        }
+        for (key, field) in [
+            (
+                "last_incremental_tagging_namespace",
+                &mut manage_tags.incremental_namespace,
+            ),
+            (
+                "last_incremental_tagging_prefix",
+                &mut manage_tags.incremental_prefix,
+            ),
+            (
+                "last_incremental_tagging_suffix",
+                &mut manage_tags.incremental_suffix,
+            ),
+        ] {
+            if let Some(value) = options.strings.get(key) {
+                field.clone_from(value);
+            }
+        }
+    }
+    insert_setting(&mut input, &manage_tags)?;
     let mut autocomplete_tabs = crate::settings::TagAutocompleteTabs::default();
     if let Some(value) = options.as_ref().and_then(|o| {
         o.noneable_integers
@@ -3078,6 +3103,30 @@ mod tests {
         )
         .unwrap();
         assert_eq!(pauses, before, "import does not apply a boot action");
+    }
+
+    #[test]
+    fn manage_tags_live_display_and_incremental_fields_import() {
+        use crate::tag_editing::ManageTagsSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "manage_tags_show_deleted_mappings"], [0, false]]"#,
+                    r#"[[0, "manage_tags_show_deleted_mappings"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "last_incremental_tagging_namespace"], [0, "page"]]"#,
+                    r#"[[0, "last_incremental_tagging_namespace"], [0, "sequence"]]"#,
+                ),
+            ],
+        );
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let imported: ManageTagsSettings =
+            serde_json::from_value(input.settings["manage_tags"].clone()).unwrap();
+        assert!(imported.show_deleted);
+        assert_eq!(imported.incremental_namespace, "sequence");
     }
 
     #[test]
