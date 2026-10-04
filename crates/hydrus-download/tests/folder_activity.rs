@@ -24,7 +24,16 @@ fn active_import_finishes_its_commit_before_the_manager_reads_and_stops_before_n
     let source = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../oracle/fixtures/import_folder/a.png");
     for name in ["lease-a.png", "lease-b.png"] {
-        std::fs::copy(&source, work.path().join(name)).unwrap();
+        let target = work.path().join(name);
+        std::fs::copy(&source, &target).unwrap();
+        // Even zero grace requires mtime strictly before the integer clock.
+        // Fresh copies may be newer than that boundary throughout this run.
+        std::fs::File::options()
+            .write(true)
+            .open(&target)
+            .unwrap()
+            .set_modified(std::time::UNIX_EPOCH + Duration::from_secs(1_600_000_000))
+            .unwrap();
     }
     let mut folder = store
         .read(|conn| import_folders::find_import_folder(conn, "drop box"))

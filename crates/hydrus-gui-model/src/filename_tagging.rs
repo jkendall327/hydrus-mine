@@ -62,6 +62,11 @@ impl ServiceTagging {
     /// Tags entered for the selected files.
     pub fn add_single(&mut self, selected: &[usize], tags: &[String]) {
         let tags: Vec<String> = tags.iter().filter_map(|t| clean_tag_checked(t)).collect();
+        // SimplePanel.EnterTagsSingle does not touch per-path storage when
+        // there are no tags. An unchanged owned child must preserve that too.
+        if tags.is_empty() {
+            return;
+        }
         for &i in selected {
             self.single
                 .entry(i)
