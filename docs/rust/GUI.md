@@ -2717,3 +2717,10 @@ enters its predicate in the actual search; removing a predicate updates children
 Typing returns to results, while choosing a tab preserves the draft. Options
 Cancel/Apply and restored-page consumers are covered against
 `oracle/fixtures/read_tag_tabs.json`. Empty tabs retain the tab selector.
+
+Files and Trash now saves the confirmation preferences for trash and multi-file
+archive/inbox operations. Thumbnail shortcuts and menu actions read the applied
+preferences; the viewer also skips a simple local deletion question when trash
+confirmation is disabled. Multiple actionable local domains and physical deletion
+continue to ask. Cancelling Options leaves these preferences unchanged.
+The real Qt inputs and questions are recorded in `files_trash.json`.

@@ -1805,3 +1805,9 @@ snapshot; Qt schedules work/publish with stale-domain checks. This slice records
 the typing/tab-switch pending state separately from final query results. Read
 result multi-selection/context menus, interactive OR construction and advanced
 OR input remain distinct gaps, so the search-autocomplete parent stays partial.
+
+Files and Trash confirmation preferences now reach thumbnail and viewer local
+file operations. The native deletion question still presents one action rather
+than the reference's complete service/action picker; advanced deletion reasons,
+remembered actions, custom-reason queue and copy/move-domain confirmation controls
+are not yet connected. Undelete currently restores immediately.

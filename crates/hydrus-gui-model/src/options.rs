@@ -78,6 +78,7 @@ settings! {
     checker_defaults: CheckerDefaults,
     command_palette: CommandPaletteSettings,
     delete_lock: DeleteLock,
+    deletion: hydrus_store::settings::DeletionPreferences,
     downloader_pages: DownloaderPageSettings,
     duplicate_filter: DuplicateFilterSettings,
     export: ExportSettings,
@@ -1666,6 +1667,16 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         page(
             "files and trash",
             vec![
+                check(
+                    "Confirm sending files to trash: ",
+                    |s| s.deletion.confirm_trash,
+                    |s, v| s.deletion.confirm_trash = v,
+                ),
+                check(
+                    "Confirm sending more than one file to archive or inbox: ",
+                    |s| s.deletion.confirm_archive,
+                    |s, v| s.deletion.confirm_archive = v,
+                ),
                 check(
                     "When copying file hashes, prefix with booru-friendly hash type: ",
                     |s| s.file_handling.prefix_hash_when_copying,
