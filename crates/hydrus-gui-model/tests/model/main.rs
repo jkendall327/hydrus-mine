@@ -92,3 +92,5 @@ mod subscription_quality;
 mod viewer_closing;
 
 mod viewer_cursor;
+
+mod tag_list_display_types;

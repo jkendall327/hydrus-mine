@@ -1603,3 +1603,11 @@ and cursor anchoring remain separate gaps.
 existing common item styling. Out-of-range values supplied to the
 native options model are clamped to 1–1000 when applied, matching the reference
 spinbox's clamping and keeping the stored limit inside the visible bounds.
+
+The two advanced tag-list display defaults now reach real native page sidebars
+and media viewers, preserving their opening modes and the reference's raw,
+display and independently filtered tag sets. The recorded all-known-tags storage
+lists show raw spelling without sibling/parent decorations, and native follows
+that boundary. Existing tag-list context-menu switching and richer service-specific
+storage-list decorations remain separate gaps. These two dropdown leaves do not
+complete the broader Tag Presentation parent.

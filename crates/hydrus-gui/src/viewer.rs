@@ -13,6 +13,8 @@ pub struct MediaViewer {
     location: hydrus_search::LocationContext,
     /// Where each random file was gone to from, latest last.
     random_history: Vec<usize>,
+    /// Display mode captured when this viewer's tag list opens.
+    tag_display_type: hydrus_core::tag_presentation::TagDisplayType,
 }
 
 impl std::fmt::Debug for MediaViewer {
@@ -27,6 +29,8 @@ impl std::fmt::Debug for MediaViewer {
 impl MediaViewer {
     /// View `files` from the one at `index`; `None` if there is none.
     pub fn new(store: Arc<Store>, files: Vec<HashId>, index: usize) -> Option<Self> {
+        let presentation: hydrus_core::tag_presentation::TagPresentation =
+            store.read(hydrus_store::settings::get).unwrap_or_default();
         (index < files.len()).then_some(Self {
             store,
             files,
@@ -35,6 +39,7 @@ impl MediaViewer {
                 hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
             )),
             random_history: Vec::new(),
+            tag_display_type: presentation.viewer_display_type,
         })
     }
 
@@ -159,11 +164,15 @@ impl MediaViewer {
         still(&self.store, self.current())
     }
 
-    /// The current file's tags as the tags hover frame lists them, each
-    /// with its colour: display tags, less those the single media filters
-    /// hide, in the media viewer's tag sort, pending ones marked `(+)`.
+    /// The tag display mode captured when this viewer's list opened.
+    pub fn tag_display_type(&self) -> hydrus_core::tag_presentation::TagDisplayType {
+        self.tag_display_type
+    }
+
+    /// The current file's tag rows in the captured display mode, with their
+    /// namespace colours and pending/petitioned markers.
     pub fn tag_rows(&self) -> Vec<(String, [u8; 3])> {
-        hover_tags(&self.store, self.current())
+        hover_tags(&self.store, self.current(), self.tag_display_type)
     }
 
     /// The current file's type and resolution, for zooming it.
@@ -304,13 +313,23 @@ pub(crate) fn still_of(
 }
 
 /// A file's tags as the tags hover frame lists them, each with its colour.
-pub(crate) fn hover_tags(store: &Store, id: HashId) -> Vec<(String, [u8; 3])> {
+fn hover_tags(
+    store: &Store,
+    id: HashId,
+    display_type: hydrus_core::tag_presentation::TagDisplayType,
+) -> Vec<(String, [u8; 3])> {
     let colours: hydrus_core::tag_presentation::NamespaceColours =
         store.read(hydrus_store::settings::get).unwrap_or_default();
-    crate::page::tag_rows(store, &[id], None, crate::page::TagList::MediaViewer)
-        .into_iter()
-        .map(|(tag, row)| (row, colours.tag(&tag)))
-        .collect()
+    crate::page::tag_rows(
+        store,
+        &[id],
+        None,
+        crate::page::TagList::MediaViewer,
+        display_type,
+    )
+    .into_iter()
+    .map(|(tag, row)| (row, colours.tag(&tag)))
+    .collect()
 }
 
 /// A file's frames, if the reference plays its kind with its own player:

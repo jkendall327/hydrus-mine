@@ -1973,6 +1973,25 @@ fn tag_presentation(
     {
         out.unselected_tag_limit = limit.map(|limit| limit.clamp(0, 10_000_000) as u32);
     }
+    for (key, target) in [
+        (
+            "tag_list_tag_display_type_sidebar",
+            &mut out.sidebar_display_type,
+        ),
+        (
+            "tag_list_tag_display_type_media_viewer_hover",
+            &mut out.viewer_display_type,
+        ),
+    ] {
+        if let Some(mode) = options
+            .integers
+            .get(key)
+            .copied()
+            .and_then(hydrus_core::tag_presentation::TagDisplayType::from_code)
+        {
+            *target = mode;
+        }
+    }
     if let Some(connector) = options.strings.get("sibling_connector") {
         out.sibling_connector.clone_from(connector);
     }
@@ -3427,6 +3446,49 @@ mod tests {
             }
         );
         assert_eq!(converted.media_viewer_sort, TagSort::DEFAULT);
+    }
+
+    #[test]
+    fn tag_list_opening_modes_import_independently_and_ignore_unknown_codes() {
+        use hydrus_core::tag_presentation::TagDisplayType;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let db = LegacyDb::open(source.path()).unwrap();
+        let mut options = db.client_options().unwrap().unwrap();
+        let before = tag_presentation(&options);
+        assert_eq!(before.sidebar_display_type, TagDisplayType::SelectionList);
+        assert_eq!(before.viewer_display_type, TagDisplayType::SingleMedia);
+        for mode in TagDisplayType::CHOICES {
+            options
+                .integers
+                .insert("tag_list_tag_display_type_sidebar".into(), mode.code());
+            assert_eq!(
+                tag_presentation(&options),
+                hydrus_core::tag_presentation::TagPresentation {
+                    sidebar_display_type: mode,
+                    ..before.clone()
+                }
+            );
+        }
+        options
+            .integers
+            .insert("tag_list_tag_display_type_sidebar".into(), -1);
+        for mode in TagDisplayType::CHOICES {
+            options.integers.insert(
+                "tag_list_tag_display_type_media_viewer_hover".into(),
+                mode.code(),
+            );
+            assert_eq!(
+                tag_presentation(&options),
+                hydrus_core::tag_presentation::TagPresentation {
+                    viewer_display_type: mode,
+                    ..before.clone()
+                }
+            );
+        }
+        options
+            .integers
+            .insert("tag_list_tag_display_type_media_viewer_hover".into(), 4);
+        assert_eq!(tag_presentation(&options), before);
     }
 
     #[test]

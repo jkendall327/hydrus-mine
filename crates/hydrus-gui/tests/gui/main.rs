@@ -115,3 +115,5 @@ mod write_autocomplete;
 mod network_job_control;
 
 mod gallery_source;
+
+mod tag_list_display_types;

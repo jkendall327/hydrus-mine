@@ -2431,3 +2431,13 @@ stops its timer, and weak native registrations ignore other windows and release
 closed owners. Apply/Cancel and legacy migration reach this consumer. The fresh
 `viewer_cursor_options.json` recording captures actual Qt cursor shapes and
 timer intervals, including an actual QMenu nested execution loop.
+
+Tag Presentation > default taglist display type now saves independent defaults
+for new page sidebars and new media viewers. Both dropdowns offer the reference's
+multiple-media view, single-media view, display-tag and stored-tag choices. Each
+new list captures its opening value; Apply does not change an existing list.
+The two filtered views use their own display filters, display tags apply siblings
+and parents without those filters, and stored tags retain raw mappings and
+spelling. Options edits wait for Apply, Cancel preserves the saved defaults, and
+legacy integer values migrate. `tag_list_display_types.json` records the actual
+Qt choices and both real consumers, including changes after each list opens.
