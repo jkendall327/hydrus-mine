@@ -81,5 +81,5 @@ pub mod network_sessions;
 pub mod network_data;
 pub mod tag_migration;
 
-pub mod regex_favourites;
 pub mod downloader_display;
+pub mod regex_favourites;

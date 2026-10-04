@@ -93,7 +93,7 @@ mod tag_migration;
 mod regex_favourites;
 mod tag_filter_favourites;
 
-mod favourite_search_editor;
 mod downloader_display;
+mod favourite_search_editor;
 
 mod tag_dialog_defaults;
