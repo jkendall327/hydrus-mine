@@ -193,6 +193,24 @@ fn widget_options_gate_gui_queries_only() {
     use hydrus_store::autocomplete::{AutocompleteInput, AutocompleteRules};
     use hydrus_store::tag_display_config::AutocompleteOptions;
     let key = hydrus_core::ServiceKey::new(hydrus_core::service::builtin_keys::MY_TAGS.to_vec());
+    let fixture = hydrus_testkit::fixture_json("tag_display.json");
+    for case in fixture["exact_search"].as_array().unwrap() {
+        let options = AutocompleteOptions::for_service(&key);
+        let rules = AutocompleteRules {
+            unnamespaced_search_gives_any_namespace_wildcards: case["any_namespace"]
+                .as_bool()
+                .unwrap(),
+            namespace_bare_fetch_all_allowed: true,
+            ..Default::default()
+        };
+        let input = AutocompleteInput::parse(case["text"].as_str().unwrap());
+        let query = options.query(&input, &rules, false).unwrap();
+        assert_eq!(
+            !query.text.contains('*'),
+            case["exact"].as_bool().unwrap(),
+            "{case}"
+        );
+    }
     let mut options = AutocompleteOptions::for_service(&key);
     let rules = AutocompleteRules::default();
     let input = AutocompleteInput::parse("ab");
@@ -304,4 +322,84 @@ fn write_autocomplete_uses_override_or_launcher_domain_and_rejects_tag_locations
     assert!(editor.apply().is_err());
     let settings: AutocompleteWidgetSettings = store.read(settings::get).unwrap();
     assert!(!settings.options(&mine.key).override_location);
+}
+
+#[test]
+fn deleting_the_last_applied_source_preserves_disabled_self_rules() {
+    use hydrus_store::{services, services_management};
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let key = hydrus_core::ServiceKey::new(vec![91; 16]);
+    let new_key = key.clone();
+    store
+        .write_and_refresh(move |ctx| {
+            services::insert(
+                ctx.conn(),
+                &new_key,
+                "deletable rules",
+                &services::ServiceKind::LocalTags,
+            )?;
+            Ok(())
+        })
+        .unwrap();
+    let snap = store.snapshot();
+    let own = snap.services.by_name("my tags").unwrap().id;
+    let source = snap.services.by_key(&key).unwrap().id;
+    for (service, good) in [(own, "self rule"), (source, "source rule")] {
+        tag_relations::apply(
+            &store,
+            RelationKind::Siblings,
+            vec![RelationUpdate {
+                service,
+                left: Tag::new("alias").unwrap(),
+                right: Tag::new(good).unwrap(),
+                action: RelationAction::Add,
+            }],
+        )
+        .unwrap();
+    }
+    let bad = store
+        .read(|c| hydrus_store::master::intern_tag(c, &Tag::new("alias").unwrap()))
+        .unwrap();
+    let mut editor = TagDisplayEditor::new(store.clone()).unwrap();
+    let i = editor
+        .services()
+        .iter()
+        .position(|s| s.name == "my tags")
+        .unwrap();
+    editor.choose(i);
+    editor.current_mut().siblings = vec![key.clone()];
+    editor.apply().unwrap();
+    let original = store
+        .snapshot()
+        .services
+        .all()
+        .map(|s| s.as_ref().clone())
+        .collect::<Vec<_>>();
+    let desired = original
+        .iter()
+        .filter(|s| s.id != source)
+        .cloned()
+        .collect();
+    services_management::apply(&store, original, desired).unwrap();
+    assert_eq!(store.snapshot().display.get(own).ideal(bad), bad);
+    assert!(
+        store
+            .read(|c| load_application(c, &store.snapshot().services))
+            .unwrap()
+            .sources(RelationKind::Siblings, own)
+            .is_empty()
+    );
+    let daemon = Store::open(dir.path()).unwrap();
+    assert_eq!(daemon.snapshot().display.get(own).ideal(bad), bad);
+    let reopened = TagDisplayEditor::new(store).unwrap();
+    assert!(
+        reopened
+            .services()
+            .iter()
+            .find(|s| s.name == "my tags")
+            .unwrap()
+            .siblings
+            .is_empty()
+    );
 }

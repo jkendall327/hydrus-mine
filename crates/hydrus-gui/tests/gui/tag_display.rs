@@ -96,8 +96,19 @@ fn dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer() {
     mine(&w);
     w.invoke_filter(false);
     let nested = hydrus_gui::tag_filter_window::last_opened().unwrap();
+    assert!(w.get_child_open());
+    let chosen = w.get_service_index();
+    let revision = store.snapshot().revision;
+    w.invoke_apply();
+    w.invoke_service_chosen(i32::from(chosen == 0));
+    w.invoke_rule_changed(4, true);
+    assert_eq!(w.get_service_index(), chosen);
+    assert_eq!(store.snapshot().revision, revision);
+    assert!(!w.get_fetch_all());
+    assert!(bound.tag_display.borrow().is_some());
     nested.invoke_typed(2, "display lane own".into());
     nested.invoke_apply();
+    assert!(!w.get_child_open());
     assert!(w.get_single_label().contains("display lane own"));
     w.invoke_filter(true);
     let cancelled_child = hydrus_gui::tag_filter_window::last_opened().unwrap();
@@ -146,6 +157,13 @@ fn dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer() {
     assert_eq!(w3.get_threshold(), 0);
     assert!(w3.get_fetch_all());
     // Clearing a native filter must remove the persisted blacklist.
+    w3.invoke_location();
+    let location = hydrus_gui::locations_window::last_opened().unwrap();
+    assert!(w3.get_child_open());
+    w3.invoke_apply();
+    assert!(bound.tag_display.borrow().is_some());
+    location.invoke_cancel();
+    assert!(!w3.get_child_open());
     w3.invoke_filter(false);
     let nested = hydrus_gui::tag_filter_window::last_opened().unwrap();
     assert_eq!(nested.get_exclude_rows().row_count(), 1);
@@ -212,5 +230,13 @@ fn dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer() {
     mine(&w6);
     assert_eq!(w6.get_sibling_rows().row_count(), 0);
     w6.invoke_cancel();
+    let w7 = open(&ui, &bound, false);
+    mine(&w7);
+    w7.invoke_location();
+    let child = hydrus_gui::locations_window::last_opened().unwrap();
+    w7.invoke_cancel();
+    assert!(!child.window().is_visible());
+    child.invoke_apply();
+    assert!(bound.tag_display.borrow().is_none());
     viewer.invoke_close_requested();
 }

@@ -512,6 +512,16 @@ pub fn update_config(conn: &Connection, id: ServiceId, kind: &ServiceKind) -> Re
 /// Delete a service row and its per-service tables. Callers must first remove
 /// the service's content from shared tables (file domains, ratings, ...).
 pub fn delete(conn: &Connection, id: ServiceId) -> Result<()> {
+    // A surviving explicit queue must not become absent/default when its last
+    // source is deleted. Zero is the application's explicit-empty marker.
+    conn.execute(
+        "UPDATE tag_display_application AS a SET source_service_id=0
+         WHERE source_service_id=?1 AND display_service_id!=?1
+         AND NOT EXISTS (SELECT 1 FROM tag_display_application AS b
+                         WHERE b.display_service_id=a.display_service_id
+                         AND b.kind=a.kind AND b.source_service_id!=?1)",
+        [id],
+    )?;
     conn.execute("DELETE FROM services WHERE service_id = ?", [id])?;
     conn.execute("DELETE FROM tag_display_application WHERE display_service_id = ?1 OR source_service_id = ?1", [id])?;
     schema::drop_tag_service_tables(conn, id)?;

@@ -4,7 +4,7 @@
 //! reference's `_ClearSurplusServices` does, and "apply" searching what is
 //! ticked.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -15,6 +15,15 @@ use hydrus_store::Store;
 
 use crate::domains::{self, Tick};
 use crate::{LocationTick, LocationsWindow};
+
+thread_local! {
+    static LAST: RefCell<Option<slint::Weak<LocationsWindow>>> = const { RefCell::new(None) };
+}
+/// Most recently opened visible location selector, for widget regression tests.
+pub fn last_opened() -> Option<LocationsWindow> {
+    LAST.with(|last| last.borrow().as_ref().and_then(slint::Weak::upgrade))
+        .filter(|w| w.window().is_visible())
+}
 
 /// Whether each tick box is ticked, for `location`.
 fn ticked_for(ticks: &[Tick], location: &LocationContext) -> Vec<bool> {
@@ -95,19 +104,32 @@ pub(crate) fn open(
             show();
         }
     });
+    let active = Rc::new(Cell::new(true));
     let close = {
+        let active = active.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
         move || {
-            if let Some(window) = weak.upgrade() {
+            if !active.replace(false) {
+                return;
+            }
+            let window = weak.upgrade();
+            if let Some(window) = &window {
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
+            if let Some(window) = window {
+                window.invoke_closed();
+            }
         }
     };
     window.on_apply({
+        let active = active.clone();
         let close = close.clone();
         move || {
+            if !active.get() {
+                return;
+            }
             let chosen_location = location();
             close();
             chosen(chosen_location);
@@ -125,6 +147,7 @@ pub(crate) fn open(
         }
     });
     window.show().map_err(|e| e.to_string())?;
+    LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));
     *slot.borrow_mut() = Some(window);
     Ok(())
 }

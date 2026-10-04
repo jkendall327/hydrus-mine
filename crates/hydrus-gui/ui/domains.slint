@@ -20,6 +20,7 @@ export component LocationsWindow inherits Window {
     callback toggled(int, bool);
     callback apply();
     callback cancel();
+    callback closed();
 
     forward-focus: keys;
     keys := FocusScope {

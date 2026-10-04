@@ -288,6 +288,21 @@ impl ManageTags {
         } else {
             &self.location
         };
+        // The reference avoids all-known files × all-known tags for writes.
+        let local_storage;
+        let location = if location.is_all_known_files()
+            && options.write_tag_service.as_bytes()
+                == hydrus_core::service::builtin_keys::COMBINED_TAG
+        {
+            local_storage = hydrus_core::search::context::LocationContext::single(
+                hydrus_core::ServiceKey::new(
+                    hydrus_core::service::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE.to_vec(),
+                ),
+            );
+            &local_storage
+        } else {
+            location
+        };
         let domains = crate::autocomplete::count_domains(registry, location);
         let scope = TagSearchScope {
             domains,

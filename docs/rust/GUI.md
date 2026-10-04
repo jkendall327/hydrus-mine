@@ -1423,7 +1423,8 @@ file/tag domains. Domain changes use the native location selector. Ctrl+Space
 fetches search/manage-tags suggestions manually. The advanced `manage where tag
 siblings and parents apply` window edits ordered source queues in ListTable;
 empty queues disable that relationship kind. Both dialogs stage changes until
-Apply, close owned nested editors on cancel and preserve unrelated settings.
+Apply, disable parent editing while a nested editor is open, close owned nested
+editors on cancel and preserve unrelated settings.
 Applying updates selection tags on all open pages (including locked pages),
 viewer tags, search suggestions, graphs and counts. The real reference panels
 and checkbox interlocks are recorded in `oracle/record_tag_display.py`; pure model

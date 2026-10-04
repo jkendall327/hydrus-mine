@@ -207,6 +207,78 @@
       ]
     }
   ],
+  "exact_search": [
+    {
+      "text": "a",
+      "any_namespace": false,
+      "exact": true
+    },
+    {
+      "text": "ab",
+      "any_namespace": false,
+      "exact": true
+    },
+    {
+      "text": "abc",
+      "any_namespace": false,
+      "exact": false
+    },
+    {
+      "text": "series:a",
+      "any_namespace": false,
+      "exact": true
+    },
+    {
+      "text": "series:",
+      "any_namespace": false,
+      "exact": false
+    },
+    {
+      "text": "a*",
+      "any_namespace": false,
+      "exact": false
+    },
+    {
+      "text": "*:a",
+      "any_namespace": false,
+      "exact": false
+    },
+    {
+      "text": "a",
+      "any_namespace": true,
+      "exact": false
+    },
+    {
+      "text": "ab",
+      "any_namespace": true,
+      "exact": false
+    },
+    {
+      "text": "abc",
+      "any_namespace": true,
+      "exact": false
+    },
+    {
+      "text": "series:a",
+      "any_namespace": true,
+      "exact": true
+    },
+    {
+      "text": "series:",
+      "any_namespace": true,
+      "exact": false
+    },
+    {
+      "text": "a*",
+      "any_namespace": true,
+      "exact": false
+    },
+    {
+      "text": "*:a",
+      "any_namespace": true,
+      "exact": false
+    }
+  ],
   "application_labels": [
     "THIS IS COMPLICATED, THINK CAREFULLY",
     "While a tag service normally only applies its own siblings and parents to itself, it does not have to. You can have other services' rules apply (e.g. putting the PTR's siblings on your \"my tags\"), or no siblings/parents at all.\n\nIf you apply multiple services and there are conflicts (e.g. disagreements on where siblings go, or loops), the services at the top of the list have precedence. If you want to overwrite some PTR rules, then make what you want on a local service and then put it above the PTR here. Also, siblings apply first, then parents.\n\nIf you make big changes here, it will take a long time for the client to recalculate everything. Sibling and parent chains will be broken apart and rearranged live, and for a brief period, some sibling or parent suggestions or presentation may be unusual. Check the sync progress panel under _tags->sync->review current sibling/parent sync_ to see how it is going. If your client gets too laggy doing the recalc, turn it off during \"normal time\".",

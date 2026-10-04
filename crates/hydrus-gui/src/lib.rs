@@ -47,7 +47,7 @@ pub mod headless;
 mod import_options_window;
 mod import_window;
 mod importer_list_menu;
-mod locations_window;
+pub mod locations_window;
 mod manage_notes_window;
 mod manage_ratings_window;
 pub(crate) mod manage_tags_window;

@@ -36,10 +36,13 @@ impl AutocompleteOptions {
         }
         let mut query = input.tag_query(rules)?;
         let text = input.search_text();
+        let subtag = hydrus_core::tag::split_tag(&text).1;
         if !text.contains('*')
+            && (!rules.unnamespaced_search_gives_any_namespace_wildcards || text.contains(':'))
+            && !subtag.is_empty()
             && self
                 .exact_match_threshold
-                .is_some_and(|n| text.chars().count() <= usize::from(n))
+                .is_some_and(|n| subtag.chars().count() <= usize::from(n))
         {
             query.text = text;
             query.search_namespaces_into_full_tags = false;

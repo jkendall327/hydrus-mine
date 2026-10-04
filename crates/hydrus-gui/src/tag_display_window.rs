@@ -30,12 +30,26 @@ pub(crate) fn open(
     let selected = Rc::new([Cell::new(usize::MAX), Cell::new(usize::MAX)]);
     let filter_slot = crate::tag_filter_window::Slot::default();
     let location_slot = Rc::new(RefCell::new(None::<crate::LocationsWindow>));
+    let alive = Rc::new(Cell::new(true));
+    let can_edit: Rc<dyn Fn() -> bool> = Rc::new({
+        let weak = window.as_weak();
+        let alive = alive.clone();
+        move || {
+            alive.get()
+                && weak
+                    .upgrade()
+                    .is_some_and(|w| w.window().is_visible() && !w.get_child_open())
+        }
+    });
     let refresh: Rc<dyn Fn()> = Rc::new({
+        let filter_slot = filter_slot.clone();
+        let location_slot = location_slot.clone();
         let weak = window.as_weak();
         let model = model.clone();
         let selected = selected.clone();
         move || {
             let Some(w) = weak.upgrade() else { return };
+            w.set_child_open(filter_slot.borrow().is_some() || location_slot.borrow().is_some());
             let m = model.borrow();
             let s = m.current();
             w.set_services(ModelRc::new(VecModel::from(
@@ -110,7 +124,6 @@ pub(crate) fn open(
             w.set_parent_rows(rows(true));
         }
     });
-    let alive = Rc::new(Cell::new(true));
     let close: Rc<dyn Fn()> = Rc::new({
         let alive = alive.clone();
         let weak = window.as_weak();
@@ -121,11 +134,19 @@ pub(crate) fn open(
             if !alive.replace(false) {
                 return;
             }
-            if let Some(w) = filters.borrow_mut().take() {
-                let _ = w.hide();
+            let filter = filters
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(w) = filter {
+                w.invoke_cancel();
             }
-            if let Some(w) = locations.borrow_mut().take() {
-                let _ = w.hide();
+            let location = locations
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(w) = location {
+                w.invoke_cancel();
             }
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
@@ -134,10 +155,14 @@ pub(crate) fn open(
         }
     });
     window.on_service_chosen({
+        let can_edit = can_edit.clone();
         let model = model.clone();
         let refresh = refresh.clone();
         let selected = selected.clone();
         move |i| {
+            if !can_edit() {
+                return;
+            }
             model
                 .borrow_mut()
                 .choose(usize::try_from(i).unwrap_or(usize::MAX));
@@ -146,9 +171,13 @@ pub(crate) fn open(
         }
     });
     window.on_rule_changed({
+        let can_edit = can_edit.clone();
         let model = model.clone();
         let refresh = refresh.clone();
         move |i, on| {
+            if !can_edit() {
+                return;
+            }
             model
                 .borrow_mut()
                 .set_rule(usize::try_from(i).unwrap_or(usize::MAX), on);
@@ -156,9 +185,13 @@ pub(crate) fn open(
         }
     });
     window.on_options_changed({
+        let can_edit = can_edit.clone();
         let model = model.clone();
         let weak = window.as_weak();
         move || {
+            if !can_edit() {
+                return;
+            }
             let Some(w) = weak.upgrade() else { return };
             let mut m = model.borrow_mut();
             let key = m
@@ -175,11 +208,15 @@ pub(crate) fn open(
         }
     });
     window.on_filter({
+        let can_edit = can_edit.clone();
         let model = model.clone();
         let refresh = refresh.clone();
         let weak = window.as_weak();
         let slot = filter_slot.clone();
         move |selection| {
+            if !can_edit() {
+                return;
+            }
             if slot.borrow().is_some() {
                 return;
             }
@@ -211,17 +248,30 @@ pub(crate) fn open(
                 &slot,
                 callback,
             ) {
-                Ok(w) => *slot.borrow_mut() = Some(w),
+                Ok(w) => {
+                    w.on_closed({
+                        let refresh = refresh.clone();
+                        move || refresh()
+                    });
+                    *slot.borrow_mut() = Some(w);
+                    if let Some(w) = weak.upgrade() {
+                        w.set_child_open(true);
+                    }
+                }
                 Err(e) => eprintln!("could not open tag filter: {e}"),
             }
         }
     });
     window.on_location({
+        let can_edit = can_edit.clone();
         let model = model.clone();
         let refresh = refresh.clone();
         let weak = window.as_weak();
         let slot = location_slot.clone();
         move || {
+            if !can_edit() {
+                return;
+            }
             let m = model.borrow();
             let key = m.current().key.clone();
             let callback = Rc::new({
@@ -249,14 +299,26 @@ pub(crate) fn open(
                 callback,
             ) {
                 eprintln!("could not open location selector: {e}");
+            } else if let Some(child) = slot.borrow().as_ref() {
+                child.on_closed({
+                    let refresh = refresh.clone();
+                    move || refresh()
+                });
+                if let Some(w) = weak.upgrade() {
+                    w.set_child_open(true);
+                }
             }
         }
     });
     window.on_source_add({
+        let can_edit = can_edit.clone();
         let model = model.clone();
         let refresh = refresh.clone();
         let weak = window.as_weak();
         move |parents| {
+            if !can_edit() {
+                return;
+            }
             let Some(w) = weak.upgrade() else { return };
             let key = model
                 .borrow()
@@ -274,18 +336,26 @@ pub(crate) fn open(
         }
     });
     window.on_source_click({
+        let can_edit = can_edit.clone();
         let selected = selected.clone();
         let refresh = refresh.clone();
         move |parents, i| {
+            if !can_edit() {
+                return;
+            }
             selected[usize::from(parents)].set(usize::try_from(i).unwrap_or(usize::MAX));
             refresh();
         }
     });
     window.on_source_change({
+        let can_edit = can_edit.clone();
         let model = model.clone();
         let selected = selected.clone();
         let refresh = refresh.clone();
         move |parents, by| {
+            if !can_edit() {
+                return;
+            }
             model.borrow_mut().change_source(
                 parents,
                 selected[usize::from(parents)].get(),
@@ -296,11 +366,15 @@ pub(crate) fn open(
         }
     });
     window.on_apply({
+        let can_edit = can_edit.clone();
         let alive = alive.clone();
         let model = model.clone();
         let weak = window.as_weak();
         let close = close.clone();
         move || {
+            if !can_edit() {
+                return;
+            }
             if !alive.get() {
                 return;
             }

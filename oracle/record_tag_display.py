@@ -37,6 +37,16 @@ def record(session):
         panel._exact_match_character_threshold.SetValue(None)
         state('manual fetch, always autocomplete')
         out['autocomplete_steps'] = steps
+        from hydrus.client.gui.search import ClientGUIACDropdown as AC
+        from hydrus.client.search import ClientSearchAutocomplete as S
+        exact = []
+        for any_namespace in [False, True]:
+            options = T.TagAutocompleteOptions(services[0].GetServiceKey())
+            options.SetUnnamespacedSearchGivesAnyNamespaceWildcards(any_namespace)
+            for text in ['a', 'ab', 'abc', 'series:a', 'series:', 'a*', '*:a']:
+                parsed = S.ParsedAutocompleteText(text, options, True)
+                exact.append({'text': text, 'any_namespace': any_namespace, 'exact': AC.ShouldDoExactSearch(parsed)})
+        out['exact_search'] = exact
         keys = [s.GetServiceKey() for s in services]
         application = A.EditTagDisplayApplication(controller.gui, {keys[0]: keys}, {keys[0]: []})
         first = application._tag_services.widget(0)

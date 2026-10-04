@@ -940,7 +940,8 @@ non-local behavior.
 Tag display configuration uses immediate atomic graph/count publication instead
 of the reference's background sibling/parent sync. The native application table
 uses a zero source id solely to represent an explicitly empty queue; absent queues
-retain the default of applying the service's own rules. Native settings preserve
+retain the default of applying the service's own rules. Deleting the last source
+from an explicit queue preserves its empty intent. Native settings preserve
 unknown JSON fields and unedited service settings. The application
 window uses ordered native lists and an inline source selector. Display/search
 uses a numeric zero for the reference's nullable "always autocomplete" threshold.
