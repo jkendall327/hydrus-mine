@@ -162,6 +162,7 @@ export component OptionsWindow inherits Window {
     callback favourite-tags-clicked();
     callback import-options-clicked();
     callback namespace-sorts-clicked();
+    callback banner-clicked(int);
     in property <[TableRow]> provider-rows;
     in property <[string]> provider-missing;
     in property <bool> provider-has-selection;
@@ -348,6 +349,10 @@ export component OptionsWindow inherits Window {
                             if row.kind == 17: Button {
                                 text: row.text;
                                 clicked => { root.favourite-tags-clicked(); }
+                            }
+                            if row.kind == 27: Button {
+                                text: row.text;
+                                clicked => { root.banner-clicked(i); }
                             }
                             if row.kind == 21: Button {
                                 text: row.text;

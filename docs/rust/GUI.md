@@ -2865,8 +2865,12 @@ use physical storage membership, so a file still in trash remains local.
 Counts refresh on acceptance and survive reopening. Each question captures its
 service/action, blocks replacement and selection, and retires with its owner.
 
-Tag-banner editing now has a detached model for appearance, cleaned examples and
-ordered namespace rows. A fresh Qt recording drives all three actual Options
-buttons, child Apply/Cancel, namespace CRUD/movement and live preview. Native
-window/Options wiring follows in the next slice.
+
+Options > tag presentation now opens a detached editor for each thumbnail and
+media-viewer tag banner. It edits enabled state, RGBA colours, separators, ordered
+namespace prefixes and separators, and cleaned example tags with live preview.
+Child Apply stages the generator; parent Apply saves all three and refreshes
+thumbnail banners and the title of an already-open viewer. Cancelling either
+owner discards its draft and invalidates retained child callbacks. The Qt oracle
+drives all three reference buttons, namespace CRUD/movement and live preview.
 

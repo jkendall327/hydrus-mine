@@ -4984,3 +4984,350 @@ fn advanced_deletion_queue_stages_custom_reason_cancel_and_real_consumer() {
     );
     assert!(preferences().last_action.is_some());
 }
+
+fn banner_questions(window: &hydrus_gui::TagBannerWindow, answers: [&str; 3]) {
+    for (message, answer) in ["Edit namespace.", "Edit prefix.", "Edit separator."]
+        .into_iter()
+        .zip(answers)
+    {
+        assert!(window.get_asking());
+        assert_eq!(window.get_message(), message);
+        window.set_prompt_text(answer.into());
+        window.invoke_prompt_accepted();
+    }
+    assert!(!window.get_asking());
+}
+
+fn replay_banner_events(window: &hydrus_gui::TagBannerWindow, events: &[serde_json::Value]) {
+    for event in events {
+        match event["action"].as_str().unwrap() {
+            "appearance/examples" => {
+                for (channel, value) in [12, 34, 56, 78].into_iter().enumerate() {
+                    window.invoke_colour_edited(false, channel as i32, value);
+                }
+                for (channel, value) in [210, 180, 140, 120].into_iter().enumerate() {
+                    window.invoke_colour_edited(true, channel as i32, value);
+                }
+                window.set_separator(" / ".into());
+                window.set_examples(" CREATOR:Alpha \ncreator:alpha\ntitle:Beta\npage:10\npage:2\npage:3\npage:alpha\n blue_eyes \n".into());
+                window.invoke_changed();
+            }
+            "hide" | "show" => {
+                window.set_showing(event["action"] == "show");
+                window.invoke_changed();
+            }
+            "add namespace" => {
+                window.invoke_action("add".into());
+                banner_questions(window, ["page", "p=", ".."]);
+                let last = window.get_rows().row_count() - 1;
+                window.invoke_row_clicked(last as i32, false, false);
+            }
+            "move up" => window.invoke_action("up".into()),
+            "move down" => window.invoke_action("down".into()),
+            "edit namespace" => {
+                window.invoke_action("edit".into());
+                banner_questions(window, ["", "plain=", " + "]);
+            }
+            "cancel namespace" => {
+                window.invoke_action("edit".into());
+                window.set_prompt_text("discard this namespace".into());
+                window.invoke_prompt_accepted();
+                window.invoke_prompt_cancelled();
+            }
+            "cancel delete" | "delete" => {
+                window.invoke_action("delete".into());
+                assert_eq!(window.get_message(), "Remove 1 selected?");
+                window.invoke_answer(event["action"] == "delete");
+            }
+            other => panic!("{other}"),
+        }
+        assert_eq!(
+            window.get_preview(),
+            event["preview"].as_str().unwrap(),
+            "{event}"
+        );
+        let value: hydrus_core::tag_summary::TagSummaryGenerator =
+            serde_json::from_value(event["value"].clone()).unwrap();
+        assert_eq!(window.get_showing(), value.show);
+        assert_eq!(window.get_separator(), value.separator);
+        let rows = window.get_rows();
+        assert_eq!(rows.row_count(), value.namespace_info.len());
+        for (i, info) in value.namespace_info.into_iter().enumerate() {
+            let expected = hydrus_gui_model::tag_banner::Row {
+                id: 0,
+                info,
+                selected: false,
+            }
+            .label();
+            assert_eq!(
+                rows.row_data(i).unwrap().cells.row_data(0).unwrap(),
+                expected
+            );
+        }
+        for (channels, expected) in [
+            (window.get_background_channels(), value.background),
+            (window.get_text_channels(), value.text),
+        ] {
+            assert_eq!(
+                (0..channels.row_count())
+                    .map(|i| channels.row_data(i).unwrap())
+                    .collect::<Vec<_>>(),
+                expected.map(i32::from)
+            );
+        }
+    }
+}
+
+#[test]
+fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer() {
+    use hydrus_core::{ContentStatus, ServiceKey, Tag, tag_summary::TagSummaries};
+    use hydrus_store::{content::MappingAction, settings};
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("tag_banner_editors.json");
+    let file = store
+        .read(|conn| {
+            hydrus_store::master::hash_id(
+                conn,
+                &fixture["consumers"]["file"]
+                    .as_str()
+                    .unwrap()
+                    .parse()
+                    .unwrap(),
+            )
+        })
+        .unwrap()
+        .unwrap();
+    let snapshot = store.snapshot();
+    let existing = store
+        .read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, &[file]))
+        .unwrap()
+        .results
+        .remove(0)
+        .tags;
+    let service = snapshot
+        .services
+        .by_key(&ServiceKey::new(
+            hydrus_core::service::builtin_keys::MY_TAGS.to_vec(),
+        ))
+        .unwrap()
+        .id;
+    let tags: Vec<Tag> = fixture["consumers"]["tags"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|tag| Tag::new(tag.as_str().unwrap()).unwrap())
+        .collect();
+    store
+        .write_content(move |writer| {
+            for (service, tags) in existing {
+                for (status, ids) in tags.by_status {
+                    let action = match status {
+                        ContentStatus::Current => MappingAction::Delete,
+                        ContentStatus::Pending => MappingAction::RescindPend,
+                        _ => continue,
+                    };
+                    for tag in ids {
+                        writer.update_mappings(service, &action, tag, &[file])?;
+                    }
+                }
+            }
+            for tag in tags {
+                let id = hydrus_store::master::intern_tag(writer.conn(), &tag)?;
+                let action = if tag.as_str() == "title:pending" {
+                    MappingAction::Pend
+                } else {
+                    MappingAction::Add
+                };
+                writer.update_mappings(service, &action, id, &[file])?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let index = bound
+        .current
+        .borrow()
+        .borrow()
+        .results()
+        .iter()
+        .position(|id| *id == file)
+        .unwrap();
+    let thumbnail = || {
+        (0..bound.rows.row_count())
+            .find_map(|row| {
+                let data = bound.rows.row_data(row).unwrap();
+                let first = usize::try_from(data.first).unwrap();
+                (index >= first && index < first + data.thumbnails.row_count())
+                    .then(|| data.thumbnails.row_data(index - first).unwrap())
+            })
+            .unwrap()
+    };
+    let cached_before = thumbnail();
+    ui.invoke_thumbnail_activated(index as i32);
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let title_before = viewer.get_tag_banner();
+    let viewer_adapter = windows.get(windows.count() - 1).unwrap();
+    let before: TagSummaries = store.read(settings::get).unwrap();
+    open(&ui);
+    let mut options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "tag presentation");
+    let events = fixture["events"].as_array().unwrap();
+    let mut old_children = Vec::new();
+    for (index, route) in fixture["routes"].as_array().unwrap().iter().enumerate() {
+        let label = match route["key"].as_str().unwrap() {
+            "thumbnail_top" => "On thumbnail top:",
+            "thumbnail_bottom_right" => "On thumbnail bottom-right:",
+            "media_viewer_top" => "On media viewer top:",
+            other => panic!("{other}"),
+        };
+        let (at, button) = row(&options, label);
+        assert_eq!(button.kind, 27);
+        options.invoke_banner_clicked(at);
+        let child = hydrus_gui::tag_banner_window::last_opened().unwrap();
+        replay_banner_events(&child, &events[index * 10..(index + 1) * 10]);
+        options.invoke_apply();
+        assert!(options.window().is_visible(), "parent waits for its child");
+        assert_eq!(store.read(settings::get::<TagSummaries>).unwrap(), before);
+        if index == 0 {
+            child.invoke_action("cancel".into());
+            assert_eq!(row(&options, label).1.text, button.text);
+        } else {
+            child.invoke_action("apply".into());
+            assert_eq!(
+                row(&options, label).1.text,
+                route["label"].as_str().unwrap()
+            );
+            if index == 1 {
+                // Accepted child changes are still discarded by parent Cancel.
+                options.invoke_cancel();
+                assert_eq!(store.read(settings::get::<TagSummaries>).unwrap(), before);
+                open(&ui);
+                options = bound.options.borrow().as_ref().unwrap().clone_strong();
+                show_page(&options, "tag presentation");
+                options.invoke_banner_clicked(row(&options, label).0);
+                let again = hydrus_gui::tag_banner_window::last_opened().unwrap();
+                replay_banner_events(&again, &events[10..20]);
+                again.invoke_action("apply".into());
+                old_children.push(again);
+            }
+        }
+        assert!(!child.window().is_visible());
+        old_children.push(child);
+    }
+    assert_eq!(
+        thumbnail().top,
+        cached_before.top,
+        "staging retains cached banner"
+    );
+    assert_eq!(
+        viewer.get_tag_banner(),
+        title_before,
+        "staging retains live viewer title"
+    );
+    options.invoke_apply();
+    let saved: TagSummaries = serde_json::from_value(fixture["saved"].clone()).unwrap();
+    assert_eq!(store.read(settings::get::<TagSummaries>).unwrap(), saved);
+    let refreshed = thumbnail();
+    assert_eq!(
+        refreshed.top,
+        fixture["consumers"]["thumbnail_top"].as_str().unwrap()
+    );
+    assert_eq!(
+        refreshed.bottom,
+        fixture["consumers"]["thumbnail_bottom_right"]
+            .as_str()
+            .unwrap()
+    );
+    assert_ne!(refreshed.top, cached_before.top);
+    assert_eq!(
+        viewer.get_tag_banner(),
+        fixture["consumers"]["viewer_title"].as_str().unwrap()
+    );
+    assert_ne!(viewer.get_tag_banner(), title_before);
+    assert_eq!(
+        ui.get_banner_top_background(),
+        slint::Color::from_argb_u8(78, 12, 34, 56)
+    );
+    assert_eq!(
+        ui.get_banner_bottom_text(),
+        slint::Color::from_argb_u8(120, 210, 180, 140)
+    );
+    let viewer_pixels = headless::render(&viewer_adapter, 900, 640);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("tag_banner_viewer.png"),
+        &viewer_pixels,
+        900,
+        640,
+    )
+    .unwrap();
+    let main_pixels = headless::render(&windows.get(0).unwrap(), 900, 640);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("tag_banner_thumbnails.png"),
+        &main_pixels,
+        900,
+        640,
+    )
+    .unwrap();
+    open(&ui);
+    let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&reopened, "tag presentation");
+    reopened.invoke_banner_clicked(row(&reopened, "On media viewer top:").0);
+    let reopened_child = hydrus_gui::tag_banner_window::last_opened().unwrap();
+    assert_eq!(
+        reopened_child.get_preview(),
+        events[39]["preview"].as_str().unwrap()
+    );
+    let adapter = windows.get(windows.count() - 1).unwrap();
+    let pixels = headless::render(&adapter, 780, 670);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("tag_banner_editor.png"),
+        &pixels,
+        780,
+        670,
+    )
+    .unwrap();
+    for child in old_children {
+        child.set_showing(false);
+        child.invoke_changed();
+        child.invoke_action("apply".into());
+        child.invoke_row_clicked(0, false, false);
+        child.invoke_action("delete".into());
+        child.invoke_answer(true);
+    }
+    assert!(
+        reopened_child.window().is_visible(),
+        "stale children cannot clear a fresh owner slot"
+    );
+    reopened_child.set_showing(false);
+    reopened_child.invoke_changed();
+    assert_eq!(reopened_child.get_preview(), "not showing");
+    reopened.invoke_cancel();
+    assert!(!reopened_child.window().is_visible());
+    reopened_child.invoke_action("apply".into());
+    assert_eq!(store.read(settings::get::<TagSummaries>).unwrap(), saved);
+    assert_eq!(
+        viewer.get_tag_banner(),
+        fixture["consumers"]["viewer_title"].as_str().unwrap()
+    );
+    // Enabled state reaches both already-open consumers on the next parent Apply.
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "tag presentation");
+    for label in ["On thumbnail top:", "On media viewer top:"] {
+        options.invoke_banner_clicked(row(&options, label).0);
+        let child = hydrus_gui::tag_banner_window::last_opened().unwrap();
+        child.set_showing(false);
+        child.invoke_changed();
+        child.invoke_action("apply".into());
+    }
+    options.invoke_apply();
+    assert!(thumbnail().top.is_empty());
+    assert!(viewer.get_tag_banner().is_empty());
+}

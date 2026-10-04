@@ -100,3 +100,47 @@ fn detached_banner_drafts_match_actual_qt_queue_and_live_preview() {
         }
     }
 }
+
+#[test]
+fn option_banner_children_stage_by_original_target_and_save_only_with_parent() {
+    use hydrus_gui_model::{options, tag_banner::Target};
+    let dir = tempfile::tempdir().unwrap();
+    let store = hydrus_store::Store::open(dir.path()).unwrap();
+    let before = store.read(options::Settings::load).unwrap();
+    let mut owner = options::Editor::new(before.clone());
+    let page = owner
+        .page_names()
+        .iter()
+        .position(|name| *name == "tag presentation")
+        .unwrap();
+    owner.show_page(page);
+    let row = owner.rows().iter().position(|row| matches!(row, options::Row::Opt {option,..} if matches!(option.kind, options::Kind::TagBanner(Target::ThumbnailTop)))).unwrap();
+    let (target, initial) = owner.edited_banner(row).unwrap();
+    assert_eq!(initial, before.tag_summaries.thumbnail_top);
+    let mut child = Editor::new(&initial, before.tag_presentation.clone());
+    child.show = false;
+    child.separator = " | ".into();
+    let draft = child.value();
+    owner.show_page(0);
+    owner.set_banner(target, draft.clone());
+    assert_eq!(store.read(options::Settings::load).unwrap(), before);
+    let (after, saved_before, problems) = owner.applied();
+    assert!(problems.is_empty(), "{problems:?}");
+    assert_eq!(after.tag_summaries.thumbnail_top, draft);
+    assert_eq!(
+        after.tag_summaries.thumbnail_bottom_right,
+        before.tag_summaries.thumbnail_bottom_right
+    );
+    let saved_before = saved_before.clone();
+    store
+        .write(move |ctx| after.save(ctx.conn(), &saved_before))
+        .unwrap();
+    assert_eq!(
+        store
+            .read(options::Settings::load)
+            .unwrap()
+            .tag_summaries
+            .thumbnail_top,
+        draft
+    );
+}

@@ -393,6 +393,7 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
                 | Kind::GallerySource
                 | Kind::ImportOptions
                 | Kind::NamespaceSorts
+                | Kind::TagBanner(_)
                 | Kind::ProviderOrder
         ) {
             continue;

@@ -109,6 +109,7 @@ pub mod string_processor_window;
 mod subscription_quality_control;
 mod subscriptions_window;
 mod tab_context_window;
+pub mod tag_banner_window;
 pub(crate) mod tag_display_window;
 pub mod tag_filter_window;
 pub mod tag_migration_window;

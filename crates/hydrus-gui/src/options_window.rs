@@ -261,6 +261,13 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 (Kind::ProviderOrder, Value::ProviderOrder(_)) => {
                     out.kind = 22;
                 }
+                (Kind::TagBanner(_), Value::TagBanner(value)) => {
+                    out.kind = 27;
+                    let presentation = store.read(hydrus_store::settings::get).unwrap_or_default();
+                    out.text = hydrus_gui_model::tag_banner::Editor::new(value, presentation)
+                        .preview()
+                        .into();
+                }
                 (Kind::NamespaceSorts, Value::NamespaceSorts(_)) => {
                     out.kind = 21;
                     out.text = "edit namespace sorting schemes".into();
@@ -343,6 +350,7 @@ pub(crate) fn open(
     let tag_slot: crate::write_tag_window::Slot = Rc::default();
     let import_slot: crate::import_options_panel_window::Slot = Rc::default();
     let namespace_slot: crate::namespace_sorts_window::Slot = Rc::default();
+    let banner_slot: crate::tag_banner_window::Slot = Rc::default();
     let active = Rc::new(Cell::new(true));
     let cog_target: Rc<RefCell<Option<SortCogTarget>>> = Rc::default();
     let names: Vec<StandardListViewItem> = editor
@@ -402,6 +410,7 @@ pub(crate) fn open(
         let slot = slot.clone();
         let import_slot = import_slot.clone();
         let namespace_slot = namespace_slot.clone();
+        let banner_slot = banner_slot.clone();
         let regex_slot = regex_slot.clone();
         let gallery_slot = gallery_slot.clone();
         let location_slot = location_slot.clone();
@@ -425,6 +434,7 @@ pub(crate) fn open(
             cancel_frames();
             crate::import_options_panel_window::cancel(&import_slot);
             crate::namespace_sorts_window::cancel(&namespace_slot);
+            crate::tag_banner_window::cancel(&banner_slot);
             crate::locations_window::cancel(&location_slot);
             crate::regex_favourites_window::cancel(&regex_slot);
             crate::gallery_source_window::cancel(&gallery_slot);
@@ -605,6 +615,40 @@ pub(crate) fn open(
                 crate::regex_favourites_window::open(&favourites, &regex_slot, applied)
             {
                 eprintln!("could not open regex favourites: {error}");
+            }
+        }
+    });
+    window.on_banner_clicked({
+        let editor = editor.clone();
+        let slot = banner_slot.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        let store = store.clone();
+        move |row| {
+            if !active.get() || slot.borrow().is_some() {
+                return;
+            }
+            let Some((target, value)) = usize::try_from(row)
+                .ok()
+                .and_then(|row| editor.borrow().edited_banner(row))
+            else {
+                return;
+            };
+            let presentation = store.read(hydrus_store::settings::get).unwrap_or_default();
+            let applied = Rc::new({
+                let editor = editor.clone();
+                let active = active.clone();
+                let show_page = show_page.clone();
+                move |value| {
+                    if active.get() {
+                        editor.borrow_mut().set_banner(target, value);
+                        show_page();
+                    }
+                }
+            });
+            if let Err(error) = crate::tag_banner_window::open(&value, presentation, &slot, applied)
+            {
+                eprintln!("could not open tag banner: {error}");
             }
         }
     });
@@ -1057,6 +1101,7 @@ pub(crate) fn open(
         let frames_open = frame_table.has_open.clone();
         let import_slot = import_slot.clone();
         let namespace_slot = namespace_slot.clone();
+        let banner_slot = banner_slot.clone();
         let active = active.clone();
         let tag_slot = tag_slot.clone();
         let editor = editor.clone();
@@ -1069,6 +1114,7 @@ pub(crate) fn open(
                 || tag_slot.borrow().is_some()
                 || import_slot.borrow().is_some()
                 || namespace_slot.borrow().is_some()
+                || banner_slot.borrow().is_some()
             {
                 return;
             }

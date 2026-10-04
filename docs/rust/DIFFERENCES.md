@@ -1917,8 +1917,12 @@ from the database immediately, while cached media ratings refresh through their
 existing viewer/page lifecycle. The service review parent remains partial;
 this slice covers only the two local bulk-maintenance leaves.
 
-The tag-banner draft model and fresh child-editor oracle are implemented; native
-editor widgets and Options routes are still pending. Existing summary generation
-now preserves repeated namespace rows without duplicating their underlying tags,
-and numeric collapse accepts the reference's Unicode decimal subtags.
+
+Tag-banner editors use RGBA spin boxes with swatches instead of Qt's alpha-colour
+picker, and owned inline namespace questions instead of three separate text-entry
+dialogs. The colour-picker and deeper child-window hierarchy remain partial.
+Generator colours affect thumbnails only, as in Qt; the viewer title uses its
+normal information text colour. Repeated namespace rows retain their existing
+summary semantics; Unicode decimal numeric collapse is now supported. Authored
+native owner/consumer regressions and rendered PNGs await hosted CI.
 

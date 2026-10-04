@@ -136,6 +136,7 @@ settings! {
     slideshow: SlideshowSettings,
     sorts: SortSettings,
     tag_presentation: TagPresentation,
+    tag_summaries: hydrus_core::tag_summary::TagSummaries,
     thumbnails: ThumbnailSettings,
     thumbnail_layout: ThumbnailLayout,
     thumbnail_ratings: ThumbnailRatingSettings,
@@ -201,6 +202,7 @@ pub enum Value {
     FavouriteTags(FavouriteTags),
     ImportOptions(crate::import_options_panel::Value),
     NamespaceSorts(Vec<PageSort>),
+    TagBanner(hydrus_core::tag_summary::TagSummaryGenerator),
     ProviderOrder(Vec<Provider>),
     TagService(hydrus_core::ServiceKey),
     Location(hydrus_core::search::context::LocationContext),
@@ -279,6 +281,7 @@ pub enum Kind {
     /// The transactional manager page, including simple-mode presentation.
     ImportOptions,
     NamespaceSorts,
+    TagBanner(crate::tag_banner::Target),
     /// Inline staged command-palette provider queue.
     ProviderOrder,
     /// Real tag services, optionally including all known tags.
@@ -2795,6 +2798,49 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "tag presentation",
             vec![
                 boxed(
+                    "tag banners",
+                    vec![
+                        opt(
+                            "On thumbnail top:",
+                            Kind::TagBanner(crate::tag_banner::Target::ThumbnailTop),
+                            Rc::new(|s| Value::TagBanner(s.tag_summaries.thumbnail_top.clone())),
+                            Rc::new(|s, value| match value {
+                                Value::TagBanner(value) => {
+                                    s.tag_summaries.thumbnail_top.clone_from(value);
+                                    Ok(())
+                                }
+                                _ => Err("not a tag banner".into()),
+                            }),
+                        ),
+                        opt(
+                            "On thumbnail bottom-right:",
+                            Kind::TagBanner(crate::tag_banner::Target::ThumbnailBottomRight),
+                            Rc::new(|s| {
+                                Value::TagBanner(s.tag_summaries.thumbnail_bottom_right.clone())
+                            }),
+                            Rc::new(|s, value| match value {
+                                Value::TagBanner(value) => {
+                                    s.tag_summaries.thumbnail_bottom_right.clone_from(value);
+                                    Ok(())
+                                }
+                                _ => Err("not a tag banner".into()),
+                            }),
+                        ),
+                        opt(
+                            "On media viewer top:",
+                            Kind::TagBanner(crate::tag_banner::Target::MediaViewerTop),
+                            Rc::new(|s| Value::TagBanner(s.tag_summaries.media_viewer_top.clone())),
+                            Rc::new(|s, value| match value {
+                                Value::TagBanner(value) => {
+                                    s.tag_summaries.media_viewer_top.clone_from(value);
+                                    Ok(())
+                                }
+                                _ => Err("not a tag banner".into()),
+                            }),
+                        ),
+                    ],
+                ),
+                boxed(
                     "selection tags",
                     vec![noneable(
                         "Max number of thumbnails to compute tags for when none are selected: ",
@@ -3616,6 +3662,36 @@ impl Editor {
             if matches!(value, Value::ImportOptions(_)) {
                 *value = Value::ImportOptions(draft);
                 return;
+            }
+        }
+    }
+
+    pub fn edited_banner(
+        &self,
+        row: usize,
+    ) -> Option<(
+        crate::tag_banner::Target,
+        hydrus_core::tag_summary::TagSummaryGenerator,
+    )> {
+        let index = self.option_at(row)?;
+        match (self.kind(index), &self.values[self.page][index]) {
+            (Kind::TagBanner(target), Value::TagBanner(value)) => Some((*target, value.clone())),
+            _ => None,
+        }
+    }
+
+    /// A child can apply after its parent changes page; identify the original button.
+    pub fn set_banner(
+        &mut self,
+        target: crate::tag_banner::Target,
+        draft: hydrus_core::tag_summary::TagSummaryGenerator,
+    ) {
+        for (page, values) in self.pages.iter().zip(&mut self.values) {
+            for (option, value) in page.options().iter().zip(values) {
+                if matches!(option.kind, Kind::TagBanner(found) if found == target) {
+                    *value = Value::TagBanner(draft);
+                    return;
+                }
             }
         }
     }
