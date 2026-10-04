@@ -11,7 +11,8 @@
     "importer_snapshots": "a4e885fd",
     "snapshot_api_repair": "0783f8a9",
     "nested_close_repair": "7a87ded9",
-    "duplicate_collapse": "9b8e4247"
+    "duplicate_collapse": "9b8e4247",
+    "chooser_creation_consumer": "7afcbf78"
   },
   "completed_existing_leaf_count": 28,
   "validation": {
@@ -21,7 +22,8 @@
       "reference Qt notebook method recording",
       "reference real-client session backup recording",
       "reference real-client tab action and ordered-media harvest recordings",
-      "reference real-client independent importer backup recording"
+      "reference real-client independent importer backup recording",
+      "reference real-client chooser creation prompt recording"
     ],
     "cargo_tests": "Deferred to root asynchronous CI by coordination instructions."
   },
@@ -763,6 +765,12 @@
           "line": 1,
           "commit": "1807f758",
           "kind": "reference_fixture"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1644,
+          "commit": "7a87ded9",
+          "kind": "nested_notebook_repair"
         }
       ],
       "limitations": [
@@ -800,6 +808,12 @@
           "line": 1,
           "commit": "1807f758",
           "kind": "reference_fixture"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1644,
+          "commit": "7a87ded9",
+          "kind": "nested_notebook_repair"
         }
       ],
       "limitations": [
@@ -837,6 +851,12 @@
           "line": 1,
           "commit": "1807f758",
           "kind": "reference_fixture"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1644,
+          "commit": "7a87ded9",
+          "kind": "nested_notebook_repair"
         }
       ],
       "limitations": [
@@ -874,6 +894,12 @@
           "line": 1,
           "commit": "1807f758",
           "kind": "reference_fixture"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1644,
+          "commit": "7a87ded9",
+          "kind": "nested_notebook_repair"
         }
       ],
       "limitations": [
@@ -1315,5 +1341,45 @@
     "Startup/autosave lifecycle settings remain deferred.",
     "Backup snapshots are independent for all native importer kinds; imported historical snapshots and old experimental native backups without importer data remain unsupported.",
     "Collapse uses native My Files default local domain."
+  ],
+  "dependencies": [
+    {
+      "commit": "abfdf902",
+      "agent": "overnight-options",
+      "reason": "NotebookCreationSettings definition, legacy import and exact option checkbox consumed by 7afcbf78."
+    }
+  ],
+  "related_cross_agent_work": [
+    {
+      "owner": "overnight-options",
+      "behavior": "Chooser notebook rename preference consumer: after creation with initial blank files page, prompt on enabled option; accept changes frozen created notebook, cancel retains pages notebook. Leaf claimed only in options manifest.",
+      "consumer_commit": "7afcbf78",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 913,
+          "commit": "7afcbf78",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 2621,
+          "commit": "7afcbf78",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_notebook_creation.py",
+          "line": 1,
+          "commit": "7afcbf78",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/notebook_creation.json",
+          "line": 1,
+          "commit": "7afcbf78",
+          "kind": "reference_fixture"
+        }
+      ]
+    }
   ]
 }
