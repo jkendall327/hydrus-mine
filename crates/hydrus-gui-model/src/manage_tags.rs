@@ -295,6 +295,12 @@ impl ManageTags {
     pub fn fetch(&mut self) {
         self.input.fetch();
     }
+    pub fn write_input(&self) -> &WriteAutocomplete {
+        &self.input
+    }
+    pub fn write_input_mut(&mut self) -> &mut WriteAutocomplete {
+        &mut self.input
+    }
     pub fn autocomplete_tab(&self) -> crate::write_autocomplete::Tab {
         self.input.tab()
     }

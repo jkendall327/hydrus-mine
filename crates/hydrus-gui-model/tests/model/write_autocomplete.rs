@@ -484,3 +484,182 @@ fn children_limit_option_matches_reference_and_persists_only_accepted_drafts() {
         json!({"value":40,"min":1,"max":1_000_000})
     );
 }
+
+#[test]
+fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
+    use hydrus_core::ServiceKey;
+    use hydrus_gui_model::write_tag_menu::{Action, Entry};
+    fn action(entries: &[Entry], label: &str) -> Option<Action> {
+        entries.iter().find_map(|entry| match entry {
+            Entry::Item(text, action) if text == label => Some(action.clone()),
+            Entry::Menu(_, entries) => action(entries, label),
+            _ => None,
+        })
+    }
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let (_dir, store) = seeded(&fixture);
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &settings::FavouriteTags(vec![
+                    "parity:root".into(),
+                    "parity:amber old".into(),
+                    "parity:favorite new".into(),
+                ]),
+            )
+        })
+        .unwrap();
+    let original: TagEditingSettings = store.read(settings::get).unwrap();
+    let mut input = WriteAutocomplete::new(store.clone(), key.clone(), LocationContext::default());
+    input.set_text("parity:amber old");
+    input.fetch();
+    for event in fixture["menus"].as_array().unwrap() {
+        if event["action"] == "open" {
+            continue;
+        }
+        let favourite = event["action"] == "favourite";
+        if favourite {
+            input.set_text("parity:menu new");
+        } else if event["action"] == "decorator" {
+            input.set_text("parity:amber old");
+        }
+        let row = input
+            .rows()
+            .iter()
+            .position(|row| {
+                row.tag
+                    == if favourite {
+                        "parity:menu new"
+                    } else {
+                        "parity:amber old"
+                    }
+            })
+            .unwrap();
+        let chosen = action(&input.menu(row), event["label"].as_str().unwrap()).unwrap();
+        match chosen {
+            Action::Copy(text) => {
+                if event["label"].as_str().unwrap().ends_with("and 2 parents") {
+                    // Qt stores parent tags as a set; only that set's order is unspecified.
+                    let mut actual: Vec<_> = text.lines().collect();
+                    let expected = event["copied"][0].as_str().unwrap();
+                    let mut expected: Vec<_> = expected.lines().collect();
+                    assert_eq!(actual[0], expected[0]);
+                    actual[1..].sort_unstable();
+                    expected[1..].sort_unstable();
+                    assert_eq!(actual, expected);
+                } else {
+                    assert_eq!(json!([text]), event["copied"]);
+                }
+            }
+            Action::Launch {
+                location,
+                context,
+                predicates,
+                duplicate,
+            } => {
+                let actual = &event["launched"][0];
+                assert_eq!(
+                    json!(
+                        location
+                            .current()
+                            .iter()
+                            .map(ServiceKey::to_hex)
+                            .collect::<Vec<_>>()
+                    ),
+                    actual["current"]
+                );
+                assert_eq!(
+                    json!(
+                        location
+                            .deleted()
+                            .iter()
+                            .map(ServiceKey::to_hex)
+                            .collect::<Vec<_>>()
+                    ),
+                    actual["deleted"]
+                );
+                assert_eq!(
+                    json!(if duplicate {
+                        "new_page_duplicates"
+                    } else {
+                        "new_page_query"
+                    }),
+                    actual["topic"]
+                );
+                assert_eq!(
+                    predicates,
+                    vec![hydrus_core::search::predicate::Predicate::Tag {
+                        tag: Tag::new("parity:amber old").unwrap(),
+                        inclusive: true
+                    }]
+                );
+                let defaults: settings::SearchDefaults = store.read(settings::get).unwrap();
+                assert_eq!(context.service, defaults.tag_service);
+            }
+            Action::Decorate { tab, kind, value } => {
+                input.decorate(tab, kind, value);
+                let labels: Vec<_> = input
+                    .menu(row.min(input.rows().len() - 1))
+                    .into_iter()
+                    .filter_map(|e| {
+                        if let Entry::Item(label, _) = e {
+                            Some(label)
+                        } else {
+                            None
+                        }
+                    })
+                    .collect();
+                for path in event["paths"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .filter(|p| p.as_array().unwrap().len() == 1)
+                {
+                    let label = path[0].as_str().unwrap();
+                    if label.contains("decorators") || label.contains("parent rows") {
+                        assert!(labels.iter().any(|s| s == label), "{event}");
+                    }
+                }
+                assert_eq!(
+                    store.read(settings::get::<TagEditingSettings>).unwrap(),
+                    original
+                );
+            }
+            action @ Action::Favourite { .. } => {
+                let asked = event["asked"].as_array().unwrap();
+                assert_eq!(
+                    action.question(),
+                    asked.first().and_then(|q| q["message"].as_str())
+                );
+                if action.question().is_none() || event["answer"] == true {
+                    action.persist(&store).unwrap();
+                }
+                let favourites: settings::FavouriteTags = store.read(settings::get).unwrap();
+                assert_eq!(json!(favourites.0), event["favourites"]);
+                let tabs: settings::TagAutocompleteTabs = store.read(settings::get).unwrap();
+                assert_eq!(
+                    json!(
+                        tabs.most_used
+                            .get(&key.to_hex())
+                            .cloned()
+                            .unwrap_or_default()
+                    ),
+                    event["most_used"]
+                );
+            }
+        }
+    }
+    let mut reopened = WriteAutocomplete::new(store.clone(), key, LocationContext::default());
+    reopened.set_text("parity:amber old");
+    reopened.fetch();
+    assert!(reopened.rows().iter().any(|r| r.parent_row));
+    assert!(reopened.rows().iter().any(|r| r.label.contains('→')));
+}

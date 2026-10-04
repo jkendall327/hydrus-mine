@@ -18,6 +18,8 @@ pub struct Suggestion {
     pub label: String,
     pub colour_tag: String,
     pub counted: bool,
+    pub count: CountRange,
+    pub parents: Vec<String>,
     /// Expanded parent rows belong to their originating tag, as in the Qt list.
     pub parent_row: bool,
 }
@@ -96,6 +98,7 @@ pub struct WriteAutocomplete {
     highlighted: usize,
     tab: Tab,
     context_tags: std::collections::BTreeSet<String>,
+    decorations: [[Option<bool>; 3]; 3],
 }
 impl std::fmt::Debug for WriteAutocomplete {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -118,10 +121,35 @@ impl WriteAutocomplete {
             highlighted: 0,
             tab: Tab::Tags,
             context_tags: std::collections::BTreeSet::new(),
+            decorations: [[None; 3]; 3],
         }
     }
+    pub fn store(&self) -> &Arc<Store> {
+        &self.store
+    }
     pub fn options(&self) -> TagEditingSettings {
-        self.store.read(settings::get).unwrap_or_default()
+        let mut options: TagEditingSettings = self.store.read(settings::get).unwrap_or_default();
+        let [parents, expanded, siblings] = self.decorations[self.tab.index()];
+        if let Some(value) = parents {
+            options.autocomplete_show_parents = value;
+        }
+        if let Some(value) = expanded {
+            options.autocomplete_expand_parents = value;
+        }
+        if let Some(value) = siblings {
+            options.autocomplete_show_siblings = value;
+        }
+        options
+    }
+    pub fn decorate(&mut self, tab: Tab, kind: crate::write_tag_menu::Decoration, value: bool) {
+        use crate::write_tag_menu::Decoration;
+        let index = match kind {
+            Decoration::Parents => 0,
+            Decoration::Expanded => 1,
+            Decoration::Siblings => 2,
+        };
+        self.decorations[tab.index()][index] = Some(value);
+        self.refresh(true);
     }
     pub fn set_context(&mut self, service: ServiceKey, location: LocationContext) {
         self.service = service;
@@ -375,6 +403,8 @@ impl WriteAutocomplete {
                     label: presentation.render(&m.tag),
                     tag: m.tag,
                     counted: false,
+                    count: CountRange::default(),
+                    parents: Vec::new(),
                     parent_row: false,
                 });
                 continue;
@@ -423,14 +453,19 @@ impl WriteAutocomplete {
                 colour_tag: m.tag.clone(),
                 label,
                 counted: m.count.max_current > 0 || m.count.max_pending > 0,
+                count: m.count,
+                parents: parents.clone(),
                 parent_row: false,
             });
-            if prefs.autocomplete_expand_parents {
+            if prefs.autocomplete_expand_parents && prefs.autocomplete_show_parents {
+                let all_parents = parents.clone();
                 rows.extend(parents.into_iter().map(|parent| Suggestion {
                     tag: m.tag.clone(),
                     label: format!("    {}", presentation.render(&parent)),
                     colour_tag: parent,
                     counted: m.count.max_current > 0 || m.count.max_pending > 0,
+                    count: m.count,
+                    parents: all_parents.clone(),
                     parent_row: true,
                 }));
             }

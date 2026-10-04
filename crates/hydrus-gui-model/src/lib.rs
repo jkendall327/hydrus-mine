@@ -90,3 +90,4 @@ pub mod regex_favourites;
 pub mod write_autocomplete;
 
 pub mod network_job_control;
+pub mod write_tag_menu;

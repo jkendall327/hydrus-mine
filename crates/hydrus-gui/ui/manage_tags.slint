@@ -5,11 +5,20 @@
 // "apply") applies them, escape (or "cancel") forgets them.
 
 import { Button, ComboBox, ListView } from "std-widgets.slint";
-import { WriteTagInput } from "write_autocomplete.slint";
+import { WriteTagInput, TagMenuOverlay } from "write_autocomplete.slint";
 import { Question } from "favourites.slint";
+import { MenuPane } from "main_menu.slint";
 import { ListText, Theme } from "theme.slint";
 
 export component ManageTagsWindow inherits Window {
+    in property <[MenuPane]> tag-menu-panes;
+    in property <string> tag-menu-question;
+    callback tag-menu-hovered(int,int,length,length,length);
+    callback tag-menu-clicked(int,int,length,length,length);
+    callback tag-menu-placed(int,length,length,length);
+    callback tag-menu-dismissed();
+    callback tag-menu-answered(bool);
+
     // ("manage tags for 3 files" from the thumbnails, as the reference has it)
     in property <string> window-title: "manage tags";
     title: root.window-title;
@@ -35,6 +44,7 @@ export component ManageTagsWindow inherits Window {
     callback refresh-autocomplete();
     callback entered();
     callback suggestion-chosen(int);
+    callback context-menu(int,length,length);
     callback paste-requested(bool) -> bool;
     callback paste-answered(bool);
     callback move-highlight(int);
@@ -47,7 +57,7 @@ export component ManageTagsWindow inherits Window {
     FocusScope {
         capture-key-pressed(event) => {
             if (event.text == Key.Escape) {
-                root.cancel();
+                if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else { root.cancel(); }
                 return accept;
             }
             reject
@@ -96,6 +106,7 @@ export component ManageTagsWindow inherits Window {
                 fetch => { root.fetch(); }
                 move-highlight(by) => { root.move-highlight(by); }
                 chosen(i) => { root.suggestion-chosen(i); }
+                context-menu(i,x,y) => { root.context-menu(i,x,y); }
                 paste(button) => { root.paste-requested(button) }
             }
             if root.question != "": Text { text: "Want to paste everything?"; color: Theme.text; }
@@ -119,6 +130,16 @@ export component ManageTagsWindow inherits Window {
                     clicked => { root.cancel(); }
                 }
             }
+        }
+
+        if root.tag-menu-panes.length > 0 || root.tag-menu-question != "": TagMenuOverlay {
+            width: root.width; height: root.height;
+            panes: root.tag-menu-panes; question: root.tag-menu-question;
+            hovered(p,l,r,t,x) => { root.tag-menu-hovered(p,l,r,t,x); }
+            clicked(p,l,r,t,x) => { root.tag-menu-clicked(p,l,r,t,x); }
+            placed(p,x,y,w) => { root.tag-menu-placed(p,x,y,w); }
+            dismissed => { root.tag-menu-dismissed(); }
+            answered(yes) => { root.tag-menu-answered(yes); }
         }
     }
 }
