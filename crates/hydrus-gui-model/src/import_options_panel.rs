@@ -464,7 +464,7 @@ impl Editor {
                 }
             }
             Reset::UrlClasses => {
-                self.manager.borrow_mut().url_class_defaults = defaults.url_class_defaults
+                self.manager.borrow_mut().url_class_defaults = defaults.url_class_defaults;
             }
             Reset::Favourites => self.manager.borrow_mut().favourites = defaults.favourites,
         }

@@ -164,9 +164,7 @@ pub fn listed_kinds(caller: CallerType, simple: bool, slice: &ImportOptionsSlice
 /// kind already present. Importer buttons keep their existing broader lists.
 pub fn default_kinds(caller: CallerType, simple: bool, own: &ImportOptionsSlice) -> Vec<Kind> {
     use Kind as K;
-    let mut kinds = if !simple {
-        K::ALL.to_vec()
-    } else {
+    let mut kinds = if simple {
         match caller {
             CallerType::LocalImport => vec![
                 K::FileFiltering,
@@ -197,6 +195,8 @@ pub fn default_kinds(caller: CallerType, simple: bool, own: &ImportOptionsSlice)
             CallerType::ClientApi => vec![K::FileFiltering, K::Locations],
             _ => K::ALL.to_vec(),
         }
+    } else {
+        K::ALL.to_vec()
     };
     for kind in K::ALL {
         if kind.is_set(own) && !kinds.contains(&kind) {
