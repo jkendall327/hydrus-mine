@@ -207,7 +207,7 @@ fn favourite_controls_replay_reference_domain_sort_collect_and_predicate_values(
         json!({"namespaces":["series"],"ratings":[],"collect_unmatched":false}),
     )
     .unwrap();
-    assert_eq!(old.tag_context, Default::default());
+    assert_eq!(old.tag_context, hydrus_search::TagContext::default());
     let roundtrip: PageSort =
         serde_json::from_str(&serde_json::to_string(&edit.sort).unwrap()).unwrap();
     assert_eq!(roundtrip, edit.sort);
