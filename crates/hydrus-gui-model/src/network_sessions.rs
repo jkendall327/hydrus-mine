@@ -276,33 +276,40 @@ impl HeaderDraft {
                 .map(|r| (r.context.clone(), r.header.name.to_ascii_lowercase()))
                 .collect();
             for (context, name) in keys {
-                let old = draft
+                let old: Vec<_> = draft
                     .original
                     .iter()
-                    .find(|r| r.context == context && r.header.name.eq_ignore_ascii_case(&name));
-                let new = draft
+                    .filter(|r| r.context == context && r.header.name.eq_ignore_ascii_case(&name))
+                    .collect();
+                let new: Vec<_> = draft
                     .rows
                     .iter()
-                    .find(|r| r.context == context && r.header.name.eq_ignore_ascii_case(&name));
+                    .filter(|r| r.context == context && r.header.name.eq_ignore_ascii_case(&name))
+                    .collect();
                 if old == new {
                     continue;
                 }
-                if network::headers(conn, &context)?
-                    .iter()
-                    .find(|h| h.name.eq_ignore_ascii_case(&name))
-                    != old.map(|r| &r.header)
+                let current: Vec<_> = network::headers(conn, &context)?
+                    .into_iter()
+                    .filter(|h| h.name.eq_ignore_ascii_case(&name))
+                    .collect();
+                if current.iter().collect::<Vec<_>>()
+                    != old.iter().map(|r| &r.header).collect::<Vec<_>>()
                 {
                     return Err(StoreError::Invalid(
                         "A changed header was modified by another editor. Reopen HTTP headers."
                             .into(),
                     ));
                 }
-                if let Some(old) = old
-                    && new.is_none_or(|r| r.header.name != old.header.name)
-                {
-                    network::delete_header(conn, &context, &old.header.name)?;
+                for row in &old {
+                    if !new.iter().any(|r| r.header.name == row.header.name) {
+                        network::delete_header(conn, &context, &row.header.name)?;
+                    }
                 }
-                if let Some(row) = new {
+                for row in new {
+                    if old.iter().any(|r| r.header == row.header) {
+                        continue;
+                    }
                     network::set_header(
                         conn,
                         &context,
@@ -311,8 +318,6 @@ impl HeaderDraft {
                         Some(row.header.approval),
                         Some(&row.header.reason),
                     )?;
-                } else {
-                    network::delete_header(conn, &context, &name)?;
                 }
             }
             Ok(())

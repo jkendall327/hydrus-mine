@@ -276,3 +276,64 @@ fn cleared_session_draft_preserves_a_later_request_cookie() {
         .unwrap();
     assert!(draft.apply(&store).is_err());
 }
+#[test]
+fn header_case_groups_delete_exact_rows_and_reject_concurrent_variant_insertions() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    store
+        .write(|ctx| {
+            let c = NetworkContext::domain("example.com");
+            network::set_header(ctx.conn(), &c, "X-Token", Some("first"), None, None)?;
+            network::set_header(ctx.conn(), &c, "x-token", Some("effective"), None, None)
+        })
+        .unwrap();
+    let mut draft = HeaderDraft::new(&store).unwrap();
+    draft.rows.retain(|r| r.header.name != "x-token");
+    draft.apply(&store).unwrap();
+    let headers = store
+        .read(|c| network::headers(c, &NetworkContext::domain("example.com")))
+        .unwrap();
+    assert_eq!(headers.len(), 1);
+    assert_eq!(headers[0].name, "X-Token");
+    let mut draft = HeaderDraft::new(&store).unwrap();
+    let i = draft
+        .rows
+        .iter()
+        .position(|r| r.header.name == "X-Token")
+        .unwrap();
+    draft.edit(Some(i), row("X-Token", "gui")).unwrap();
+    store
+        .write(|ctx| {
+            network::set_header(
+                ctx.conn(),
+                &NetworkContext::domain("example.com"),
+                "x-token",
+                Some("api"),
+                None,
+                None,
+            )
+        })
+        .unwrap();
+    assert!(draft.apply(&store).is_err());
+    let headers = store
+        .read(|c| network::headers(c, &NetworkContext::domain("example.com")))
+        .unwrap();
+    assert_eq!(headers.len(), 2);
+    assert_eq!(headers[0].value, "first");
+    assert_eq!(headers[1].value, "api");
+    let mut draft = HeaderDraft::new(&store).unwrap();
+    draft.rows.retain(|r| r.header.name != "x-token");
+    let i = draft
+        .rows
+        .iter()
+        .position(|r| r.header.name == "X-Token")
+        .unwrap();
+    draft.edit(Some(i), row("x-Token", "resolved")).unwrap();
+    draft.apply(&store).unwrap();
+    let headers = store
+        .read(|c| network::headers(c, &NetworkContext::domain("example.com")))
+        .unwrap();
+    assert_eq!(headers.len(), 1);
+    assert_eq!(headers[0].name, "x-Token");
+    assert_eq!(headers[0].value, "resolved");
+}
