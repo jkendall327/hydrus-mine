@@ -1436,6 +1436,7 @@ fn json_object_names_use_staged_text_children_and_saved_router_worker() {
         .unwrap()
     };
     let node = open();
+    let node_window = windows.get(windows.count() - 1).unwrap();
     *slots.node.borrow_mut() = Some(node.clone_strong());
     let reference = hydrus_testkit::fixture_json("sidecar_json_names.json");
     for state in reference["states"].as_array().unwrap() {
@@ -1523,7 +1524,9 @@ fn json_object_names_use_staged_text_children_and_saved_router_worker() {
         );
         assert!(slots.object_name.borrow().is_none());
     }
-    let rendered = headless::render(&windows.get(windows.count() - 1).unwrap(), 640, 560);
+    // Later text-entry windows are retired; render the still-open JSON editor.
+    let rendered = headless::render(&node_window, 640, 560);
+    assert!(rendered.chunks_exact(4).any(|pixel| pixel[3] != 0));
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("sidecar_json_names.png"),
         &rendered,
