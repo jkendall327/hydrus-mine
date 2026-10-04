@@ -2032,3 +2032,14 @@ open submenu hands selected raw predicates to the main window's weak search/
 duplicate launcher. The real Qt menu actions, copy payloads, questions and page
 publications are recorded by `oracle/record_write_tag_autocomplete.py`; model
 replay and native-window lifecycle regressions cover these boundaries.
+
+The login HTTP module runs ordered GET/POST steps through NetEngine and the normal
+persisted cookie store. Static arguments, credentials and temporary variables
+follow the reference's precedence. POST sends form data and a previous-step
+Referer/Origin, response parsers transfer variables or veto, and step/final cookie
+matchers decide success. Results retain each raw URL/body preview, downloaded text,
+new variables/cookies and status. `oracle/record_login_execution.py` actually runs
+the reference HTTP jobs on a loopback-only dummy site and records success, missing
+cookies/variables, veto, final mismatch, HTTP 401 and cancellation. Native scoped
+HTTP regressions replay those results, inspect wire requests, reopen session cookies
+and cancel an active request. The native GUI test/run consumer is being connected.

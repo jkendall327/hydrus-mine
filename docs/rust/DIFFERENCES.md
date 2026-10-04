@@ -1321,3 +1321,17 @@ clipboard parse-error message sequence. Imports preserve the reference’s first
 source type, URL-class normalization, duplicate handling and immediate writes.
 Selected-URL searches use the same exact-match OR predicates and local location;
 opening the page does not explicitly raise the desktop window.
+
+Login HTTP execution is implemented as a reusable NetEngine consumer; its GUI
+run/test controls are still being connected. Login requests bypass bandwidth
+waiting while using ordinary cookies, custom headers, redirect and retry behavior.
+The executor waits the reference two seconds after successful steps and observes
+cancellation during requests and waits. Session-cookie descriptions match the
+reference; persistent-cookie result descriptions currently use raw expiry seconds.
+Native POST form parameters are sorted on the wire, while the reference preserves
+its dictionary order; previews sort them as the reference does. Domain cookie
+lookup accepts a port on synthetic local fixtures; the reference cookie lookup
+requires the bare domain. Unsupported non-VARIABLE/VETO imported response parser
+kinds are preserved but ignored by the login executor. Network/cancellation outcomes
+apply the reference four-hour domain delay, guarded by the script key; verification
+errors set invalidity and successful login sets validity without altering activation.
