@@ -38,6 +38,21 @@ count: properties are not automatically turned into user-facing leaves, repeated
 widgets/actions may need grouping, and runtime-generated rows need review of
 their Rust model and consumers.
 
+For a component with several modes, keep one physical-window entry and group
+the mutually exclusive controls beneath it. Follow shared custom components
+into their definitions and link their established editor assessments. Recursive
+owned children reuse that window component: record recursive ownership as a
+relationship, never a self `parent_id` or a second physical-window count. Review
+the explicit owner slots, child blocking, accepted callbacks, cancellation and
+retired handles alongside the Slint controls. A source census cannot establish
+those behaviors. New hierarchy groups remain Partial until their exact scope is
+reviewed; an authored native-component descriptor is a proposal, not approval.
+
+Rebuild the candidate after repairs land. The final source SHA, all supplied
+anchor hashes, edited-ID lists and patch/census fingerprints must describe that
+same checkpoint. Green individual CI jobs at an earlier SHA remain historical
+evidence until the final source's complete run succeeds.
+
 The reviewer creates a curated patch using the existing `gui_coverage.py` patch
 schema. Its `baseline_git_head` must be the full source SHA. Reference additions
 and all inventory deletions are forbidden. Every source/evidence anchor supplied
