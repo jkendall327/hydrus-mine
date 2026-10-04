@@ -96,10 +96,9 @@
     {
       "originalID": "audit-network-download-control-errors",
       "before": "missing",
-      "proposedStatus": "partial",
-      "exactBehavior": "Native page controls and shared Control/Errors support reference show/copy and explicit owner clear, retaining an error after a job leaves, hiding after clear without journal resurrection. Actual engine failures populate owning controls via context+request-role journal; show preserves Network Error title and text, copy preserves exact text. No visible clear menu item.",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Native page controls and shared Control/Errors support reference show/copy and explicit owner clear, retaining an error after a job leaves, hiding after clear without journal resurrection. Actual engine failures populate owning controls via context+request-role journal; show preserves Network Error title and text, copy preserves exact text. No visible clear menu item. The page-parser example-fetch owner clears only after validating a new URL, sets completed failure text after removing the live job, preserves the error for empty URL/raw test-panel fetch, and closes error descendants when its editor closes.",
       "limits": [
-        "Parser fetch owner integration is pending in the parser agent slice; reference ClearError is called there before a new fetch.",
         "Native error display is a scrollable window instead of a modal critical message box.",
         "Failure journal retains 128 requests per daemon epoch and displays the reference long-text prefix."
       ],
@@ -128,6 +127,12 @@
           "relativepath": "crates/hydrus-gui/src/network_data_window.rs",
           "symbol": "fn control_action(&self",
           "line": 1040
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "line": 435,
+          "symbol": "fn open_editor(",
+          "commit": "af7f5321"
         }
       ],
       "testAnchors": [
@@ -170,6 +175,12 @@
           "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
           "symbol": "fn current_jobs_cog",
           "line": 498
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 275,
+          "symbol": "fn page_fetch_error_menu_retains_completed_failure_and_clears_at_next_request",
+          "commit": "af7f5321"
         }
       ],
       "referenceRecording": {
@@ -182,6 +193,12 @@
         "diffCheck": true,
         "localCargoBuildsOrTests": false,
         "ci": "Parent runs asynchronous GitHub CI; tests authored but not claimed locally passed."
+      },
+      "ownerReferenceRecording": {
+        "script": "oracle/record_parser_fetch_errors.py",
+        "fixture": "oracle/fixtures/parser_fetch_errors.json",
+        "executed": true,
+        "commit": "af7f5321"
       }
     }
   ]

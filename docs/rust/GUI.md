@@ -1939,7 +1939,10 @@ A failed request leaves a last-error button on the owning page control. Its menu
 has only **show error** and **copy error**. The error window uses the reference
 **Network Error** title and preserves the text. Removing a finished job keeps its
 error; the owner's explicit clear hides the button and suppresses replay of the
-same stored failure. Parser fetch ownership is being connected separately.
+same stored failure. The page-parser example-fetch owner clears after validating
+a new URL and retains the completed failure after removing its live job. Empty
+URLs and raw test-panel fetches preserve the owner’s error; closing its editor
+closes the error window.
 
 Importer option editors now expose reference container copy/paste and the shared
 custom overwrite chooser. The chooser shows current, pasted/loaded and result
