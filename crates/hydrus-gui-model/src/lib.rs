@@ -75,6 +75,7 @@ pub mod urls_editor;
 pub mod tag_relationships;
 
 pub mod parser_editors;
+pub mod parser_test_data;
 pub mod tag_display;
 
 pub mod client_api_admin;

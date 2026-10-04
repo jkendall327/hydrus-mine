@@ -59,6 +59,7 @@ mod tag_relationships;
 mod services_editor;
 
 mod parser_editors;
+mod parser_test_data;
 mod tag_display;
 
 mod client_api_admin;
