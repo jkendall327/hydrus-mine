@@ -143,8 +143,10 @@ as Qt's do; a press anywhere else closes them. What works so far:
   (which adds hydrus's advanced entries).
 
 The subscription exchange codec reads and writes complete modern reference
-containers, and imports legacy type3 versions8–10 with embedded histories and old
-import options converted through the reference rules. Fresh history identities
+containers, and imports legacy type3 versions1–10 with embedded histories and old
+import options converted through the reference rules. Historical single-query
+subscriptions acquire checker settings; obsolete gallery identifiers become a
+paused unknown downloader, with the original version-specific limit defaults. Fresh history identities
 invalidate cached velocity exactly as the reference does. Modern containers retain
 settings, query headers, cached example/velocity data and both URL histories. `oracle/record_subscription_exchange.py` records the actual Qt list
 clipboard flow and reference PNG. Manage subscriptions now exposes the original clipboard/JSON/PNG transport

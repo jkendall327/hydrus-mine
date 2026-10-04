@@ -3,33 +3,128 @@ use crate::{Error, Result, encode, subscriptions};
 use hydrus_core::subscriptions::SeedTime;
 use serde_json::{Value, json};
 
-pub(crate) fn convert(value: &Value, now: i64) -> Result<subscriptions::Subscription> {
-    let object = subscriptions::object(value)?;
-    if !matches!(object.version, 8..=10) {
-        return Err(Error::Unsupported(format!(
-            "legacy subscription version {}",
-            object.version
-        )));
-    }
-    let name = object
-        .name
-        .ok_or_else(|| Error::Invalid("Legacy subscription has no name.".into()))?;
+fn empty_tags() -> Value {
+    json!([
+        6,
+        9,
+        [
+            false,
+            false,
+            [150, 1, [[44, 1, []], []]],
+            [151, 1, []],
+            false
+        ]
+    ])
+}
+
+fn upgrade_info(value: &Value, version: u32) -> Result<Vec<Value>> {
     let mut info = value[3]
         .as_array()
         .cloned()
         .ok_or_else(|| Error::Invalid("Malformed legacy subscription.".into()))?;
-    let expected = usize::try_from(object.version).unwrap_or(0) + 5;
+    let expected = match version {
+        1 | 8 => 13,
+        2 | 6 | 7 | 9 => 14,
+        3 => 16,
+        4 => 12,
+        5 => 11,
+        10 => 15,
+        _ => {
+            return Err(Error::Unsupported(format!(
+                "legacy subscription version {version}"
+            )));
+        }
+    };
     if info.len() != expected {
         return Err(Error::Invalid(
             "Malformed legacy subscription fields.".into(),
         ));
     }
-    if object.version == 8 {
+    if version == 1 {
+        info.insert(11, json!(false));
+    }
+    if version <= 2 {
+        info.insert(13, json!(0));
+        info.insert(14, json!(""));
+    }
+    if version <= 3 {
+        let period = info[3]
+            .as_i64()
+            .filter(|p| *p > 0)
+            .ok_or_else(|| Error::Invalid("Invalid legacy subscription period.".into()))?;
+        let slow = period
+            .checked_mul(10)
+            .ok_or_else(|| Error::Invalid("Legacy subscription period is too large.".into()))?;
+        let query = json!([
+            54,
+            3,
+            [
+                info[2],
+                null,
+                false,
+                info[10],
+                0,
+                false,
+                0,
+                [67, 1, [26, 3, []]],
+                info[15],
+                empty_tags()
+            ]
+        ]);
+        info = vec![
+            info[0].clone(),
+            info[1].clone(),
+            json!([query]),
+            json!([52, 1, [5, period / 5, slow, [1, slow]]]),
+            info[4].clone(),
+            info[5].clone(),
+            info[6].clone(),
+            info[7].clone(),
+            info[8].clone(),
+            info[9].clone(),
+            info[13].clone(),
+            info[14].clone(),
+        ];
+    }
+    if version <= 4 {
+        info.remove(4);
+    }
+    if version <= 5 {
+        info.extend([json!(true), json!(false), json!(true)]);
+    }
+    if version <= 6 {
+        for limit in &mut info[4..=5] {
+            if limit.is_null() || limit.as_i64().is_some_and(|n| n > 1000) {
+                *limit = json!(1000);
+            }
+        }
+    }
+    if version <= 7 {
+        drop(info.drain(0..2));
+        info.insert(
+            0,
+            json!([
+                hydrus_core::pages::PageKey::random().to_hex(),
+                "unknown downloader"
+            ]),
+        );
+        info[5] = json!(true);
+    }
+    if version <= 8 {
         info.insert(10, json!(true));
     }
-    if object.version <= 9 {
+    if version <= 9 {
         info.insert(13, Value::Null);
     }
+    Ok(info)
+}
+
+pub(crate) fn convert(value: &Value, now: i64) -> Result<subscriptions::Subscription> {
+    let object = subscriptions::object(value)?;
+    let name = object
+        .name
+        .ok_or_else(|| Error::Invalid("Legacy subscription has no name.".into()))?;
+    let mut info = upgrade_info(value, object.version)?;
     let legacy_queries = info[1]
         .as_array()
         .ok_or_else(|| Error::Invalid("Malformed legacy query list.".into()))?;
@@ -59,17 +154,7 @@ pub(crate) fn convert(value: &Value, now: i64) -> Result<subscriptions::Subscrip
         }
         if object.version <= 2 {
             q.insert(1, Value::Null);
-            q.push(json!([
-                6,
-                9,
-                [
-                    false,
-                    false,
-                    [150, 1, [[44, 1, []], []]],
-                    [151, 1, []],
-                    false
-                ]
-            ]));
+            q.push(empty_tags());
         }
         let log_name = hydrus_core::pages::PageKey::random().to_hex();
         headers.push(json!([
