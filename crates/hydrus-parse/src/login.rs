@@ -252,3 +252,68 @@ impl LoginScript {
         Ok(())
     }
 }
+
+/// The last known validation outcome for a domain's login.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Validity {
+    Valid,
+    Untested,
+    Invalid,
+}
+impl Validity {
+    pub const fn code(self) -> i64 {
+        match self {
+            Self::Valid => 0,
+            Self::Untested => 1,
+            Self::Invalid => 2,
+        }
+    }
+    pub const fn label(self) -> &'static str {
+        match self {
+            Self::Valid => "valid",
+            Self::Untested => "untested",
+            Self::Invalid => "invalid",
+        }
+    }
+    pub const fn from_code(code: i64) -> Option<Self> {
+        match code {
+            0 => Some(Self::Valid),
+            1 => Some(Self::Untested),
+            2 => Some(Self::Invalid),
+            _ => None,
+        }
+    }
+}
+/// The script selection, credentials, activation and delay for a login domain.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DomainLogin {
+    pub script_key: String,
+    pub script_name: String,
+    pub credentials: BTreeMap<String, String>,
+    pub access: Access,
+    pub description: String,
+    pub active: bool,
+    pub validity: Validity,
+    pub validity_error: String,
+    pub no_work_until: i64,
+    pub delay_reason: String,
+}
+/// Login preferences preserve scripts and domain credentials together.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+pub struct LoginManager {
+    pub scripts: Vec<LoginScript>,
+    pub domains: BTreeMap<String, DomainLogin>,
+}
+impl LoginManager {
+    /// Resolve a domain's script by stable key, falling back to its saved name.
+    pub fn script(&self, login: &DomainLogin) -> Option<&LoginScript> {
+        self.scripts
+            .iter()
+            .find(|script| script.key == login.script_key)
+            .or_else(|| {
+                self.scripts
+                    .iter()
+                    .find(|script| script.name == login.script_name)
+            })
+    }
+}

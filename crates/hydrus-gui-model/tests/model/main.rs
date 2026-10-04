@@ -22,6 +22,7 @@ mod formula_editors;
 mod import_options_editor;
 mod importer_menu;
 mod local_import_dialog;
+mod login_workflows;
 mod main_menu;
 mod manage_notes;
 mod merge_options_editor;

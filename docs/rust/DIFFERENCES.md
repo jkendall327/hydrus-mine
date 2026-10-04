@@ -1029,10 +1029,15 @@ notebook pages. The reference watcher policy and toggle resets are replayed from
 `oracle/fixtures/clipboard_urls.json`.
 
 Login script types, bounded JSON/PNG interchange and credential/temporary-variable
-validation are available, but the login management windows and request execution
-are not yet connected. Imported credentials remain in preserved reference data;
-requests continue using their existing cookies until a login execution consumer
-is implemented.
+validation are available through the native login script list and credential
+definition/entry windows. Native script management stages changes until Apply;
+questions appear inline instead of in Qt modal dialogs. Credential checks in the
+script window validate the entered values without making network requests. Step,
+cookie and example-domain editing, domain credential management, test results and
+HTTP login execution remain unimplemented. Full preserved domain credentials are
+loaded without discarding their fields, and script-list Apply preserves concurrent
+domain changes. Requests continue using their existing cookies until a login
+execution consumer is implemented.
 
 ## Network session and HTTP-header management
 

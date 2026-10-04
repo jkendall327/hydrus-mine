@@ -73,7 +73,36 @@ def record(session):
         old_info = list(old[3]); old_info[1] = HydrusSerialisable.SerialisableDictionary({'session': S.StringMatch(match_type=S.STRING_MATCH_FIXED, match_value='ok', example_string='ok')}).GetSerialisableTuple(); old[3] = old_info
         upgraded = HydrusSerialisable.CreateFromSerialisableTuple(old).GetSerialisableTuple()
         bundle = HydrusSerialisable.SerialisableList([script, script.Duplicate()]).GetSerialisableTuple()
-        return {'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
+        manager = L.NetworkLoginManager()
+        manager._login_scripts = HydrusSerialisable.SerialisableList([script])
+        manager._domains_to_login_info = {'login.example': ((script.GetLoginScriptKey(), script.GetName()), {'username': 'alice', 'password': 'dummy-pass'}, 0, 'Login required to access any content.', True, 1, '', 0, '')}
+        script_panel = G.EditLoginScriptPanel(gui, script)
+        def table(control):
+            model = control.model()
+            return [[model.data(model.index(row, col)) for col in range(model.columnCount())] for row in range(model.rowCount())]
+        script_rows = {'credentials': table(script_panel._credential_definitions), 'examples': table(script_panel._example_domains_info)}
+        script_panel.deleteLater()
+        scripts_panel = G.EditLoginScriptsPanel(gui, [script])
+        def script_list_state():
+            return {'rows': table(scripts_panel._login_scripts), 'keys': [item.GetLoginScriptKey().hex() for item in scripts_panel.GetValue()], 'names': [item.GetName() for item in scripts_panel.GetValue()]}
+        script_list = [{'state': script_list_state()}]
+        from hydrus.core import HydrusData
+        HydrusData.GenerateKey = lambda: bytes([119]) * 32
+        scripts_panel._AddLoginScript(script.Duplicate())
+        script_list.append({'do': 'import duplicate', 'state': script_list_state()})
+        scripts_panel._login_scripts.SelectDatas([scripts_panel.GetValue()[-1]], deselect_others=True)
+        class ScriptDialog(QW.QWidget):
+            def __init__(self, *args, **kwargs): super().__init__(gui)
+            def __enter__(self): return self
+            def __exit__(self, *args): return False
+            def SetPanel(self, panel): self.panel = panel
+            def exec(self): self.panel._name.setText('renamed script'); return QW.QDialog.DialogCode.Accepted
+        G.ClientGUITopLevelWindowsPanels.DialogEdit = ScriptDialog
+        scripts_panel._Edit()
+        script_list.append({'do': 'rename duplicate', 'state': script_list_state()})
+        scripts_panel.deleteLater()
+
+        return {'manager': manager.GetSerialisableTuple(), 'script_rows': script_rows, 'script_list': script_list, 'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
                 'credential_types': [[i, L.credential_type_str_lookup[i]] for i in [0, 1]], 'access_types': [[i, L.login_access_type_str_lookup[i], L.login_access_type_default_description_lookup[i]] for i in range(4)]}
     return controller.CallBlockingToQt(gui, qt)
 recorder.record = record

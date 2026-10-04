@@ -223,6 +223,61 @@ pub fn login_script(object: &SerialisableObject) -> DecodeResult<hydrus_parse::l
     })
 }
 
+/// Decode preserved scripts and domain credentials without discarding fields.
+pub fn manager(object: &SerialisableObject) -> DecodeResult<hydrus_parse::login::LoginManager> {
+    use hydrus_parse::login::{Access, DomainLogin, LoginManager, Validity};
+    let k = MANAGER;
+    expect(object, k, &[1])?;
+    let info = object.info();
+    let [scripts, domains] = tuple::<2>(k, &info, "login manager")?;
+    let PyJson::Object(domains) = domains else {
+        return Err(malformed(k, "login domains are not a dictionary"));
+    };
+    let domains = domains
+        .iter()
+        .map(|(domain, value)| {
+            let [
+                script,
+                credentials,
+                access,
+                description,
+                active,
+                validity,
+                error,
+                until,
+                reason,
+            ] = tuple::<9>(k, value, "domain login")?;
+            let [key, name] = tuple::<2>(k, script, "login script key and name")?;
+            let access = Access::from_code(super::util::int(k, access, "access")?)
+                .ok_or_else(|| malformed(k, "unknown access type"))?;
+            let validity = Validity::from_code(super::util::int(k, validity, "validity")?)
+                .ok_or_else(|| malformed(k, "unknown validity"))?;
+            Ok((
+                domain.clone(),
+                DomainLogin {
+                    script_key: hex::encode(super::util::hex_bytes(k, key, "script key")?),
+                    script_name: string(k, name, "script name")?,
+                    credentials: text_map(k, credentials, "credentials")?,
+                    access,
+                    description: string(k, description, "access description")?,
+                    active: boolean(k, active, "active")?,
+                    validity,
+                    validity_error: string(k, error, "validity error")?,
+                    no_work_until: super::util::int(k, until, "delay time")?,
+                    delay_reason: string(k, reason, "delay reason")?,
+                },
+            ))
+        })
+        .collect::<DecodeResult<_>>()?;
+    Ok(LoginManager {
+        scripts: super::domain::nested_list(k, scripts, "login scripts")?
+            .iter()
+            .map(login_script)
+            .collect::<DecodeResult<_>>()?,
+        domains,
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

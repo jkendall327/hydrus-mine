@@ -119,6 +119,41 @@ pub fn open_steps(
     )
 }
 
+/// Share a bounded reference login script package from its owning list draft.
+pub fn open_login_scripts(
+    slots: &Slots,
+    importing: bool,
+    scripts: Vec<hydrus_parse::login::LoginScript>,
+    preview: Preview<hydrus_parse::login::LoginScript>,
+    applied: Apply<hydrus_parse::login::LoginScript>,
+) -> Result<DownloaderExchangeWindow, String> {
+    use hydrus_downloader_exchange::logins;
+    let window = open_objects(
+        slots,
+        importing,
+        scripts,
+        preview,
+        applied,
+        Codec {
+            encode_text: logins::encode_text,
+            decode_text: logins::decode_text,
+            encode_png: logins::encode_png,
+            decode_png: logins::decode_png,
+            processing: false,
+        },
+    )?;
+    window.set_window_title(
+        if importing {
+            "import login scripts"
+        } else {
+            "export login scripts"
+        }
+        .into(),
+    );
+    window.set_instructions(if importing { "Paste reference login script text or open a hydrus PNG. Review the scripts before adding them." } else { "Copy selected login scripts or save a hydrus PNG to share them." }.into());
+    Ok(window)
+}
+
 fn open_objects<T: Clone + 'static>(
     slots: &Slots,
     importing: bool,

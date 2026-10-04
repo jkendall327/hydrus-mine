@@ -1612,8 +1612,15 @@ Login definitions have typed script, step, credential, cookie and example-domain
 representations. The bounded interchange codec reads/writes reference login script
 JSON and compressed PNG, upgrades old fixed cookie names, and retains matcher
 and formula editor data. `oracle/record_login_editors.py` records the actual Qt
-credential panels and script validation; the user-facing login editors are being
-connected to these types.
+credential panels, script-list import/rename and script validation. Network >
+logins > login scripts opens a staged script list with add/edit/delete, extended
+selection and JSON/PNG exchange. Script edits preserve their keys; additions and
+imports regenerate keys and make names unique. Credential definitions expose their
+name, normal/password presentation and shared permitted-input matcher. Credential
+entry masks passwords, validates live and reproduces the advisory acceptance
+question for blank or invalid values. Child edits wait for the owning script and
+script-list Apply; closing a parent cancels its children. Existing step, cookie
+and example-domain rows are preserved and shown, but remain read-only in this slice.
 
 ## Network sessions and HTTP headers
 

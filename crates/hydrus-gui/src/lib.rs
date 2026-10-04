@@ -52,6 +52,8 @@ mod import_options_window;
 mod import_window;
 mod importer_list_menu;
 pub mod locations_window;
+pub mod login_credential_window;
+pub mod login_workflows_window;
 mod manage_notes_window;
 mod manage_ratings_window;
 pub(crate) mod manage_tags_window;
@@ -240,6 +242,8 @@ pub struct Bound {
     pub subscription_gallery: Rc<RefCell<Option<SubscriptionGalleryWindow>>>,
     /// URL class and gallery URL generator definition editors.
     pub downloader_definitions: downloader_definitions_window::Slots,
+    /// Login script lists and their staged descendants.
+    pub login_workflows: login_workflows_window::Slots,
     /// Native parser and URL-class link windows.
     pub parser_editors: parser_editors_window::Slots,
     pub network_sessions: network_sessions_window::Slots,
@@ -1300,6 +1304,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
     let subscription_gallery: Rc<RefCell<Option<SubscriptionGalleryWindow>>> = Rc::default();
     let downloader_definitions = downloader_definitions_window::Slots::default();
+    let login_workflows = login_workflows_window::Slots::default();
     let parser_editors = parser_editors_window::Slots::default();
     let network_sessions = network_sessions_window::Slots::default();
     let edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>> = Rc::default();
@@ -1528,6 +1533,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let store = pages.borrow().store().clone();
                     if let Err(e) = downloader_display_window::open(&store, &slots) {
                         eprintln!("could not open downloader display: {e}");
+                    }
+                })
+            },
+            manage_login_scripts: {
+                let pages = pages.clone();
+                let slots = login_workflows.clone();
+                Rc::new(move || {
+                    let store = pages.borrow().store().clone();
+                    if let Err(error) = login_workflows_window::open_scripts(&store, &slots) {
+                        eprintln!("could not open login scripts: {error}");
                     }
                 })
             },
@@ -3217,6 +3232,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         subscriptions,
         subscription_gallery,
         downloader_definitions,
+        login_workflows,
         parser_editors,
         network_sessions,
         edit_subscription,
