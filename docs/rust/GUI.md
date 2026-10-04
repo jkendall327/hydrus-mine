@@ -2772,3 +2772,12 @@ preferences; the viewer also skips a simple local deletion question when trash
 confirmation is disabled. Multiple actionable local domains and physical deletion
 continue to ask. Cancelling Options leaves these preferences unchanged.
 The real Qt inputs and questions are recorded in `files_trash.json`.
+
+Read autocomplete now constructs an OR with Shift+Enter without changing the
+active search. Its sorted, deduplicated draft appears first in results; ordinary
+activation of another term commits the completed OR, while choosing a one-term
+draft commits that term alone. Rewind and empty-input Escape remove the final
+sorted term, then cancel the remaining draft. Cancel clears the input and leaves
+the active search alone. Committed OR predicates query real files and survive
+favourite-search persistence; draft state is never saved with a search. The
+actual Qt state and query count are recorded in `read_or.json`.

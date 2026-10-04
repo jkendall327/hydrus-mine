@@ -1840,3 +1840,9 @@ file operations. The native deletion question still presents one action rather
 than the reference's complete service/action picker; advanced deletion reasons,
 remembered actions, custom-reason queue and copy/move-domain confirmation controls
 are not yet connected. Undelete currently restores immediately.
+
+Read-search OR construction, rewind and cancel now have native consumers. The
+empty-OR child editor and advanced Boolean input are still pending in this slice.
+The shared read autocomplete remains partial: multiple selection, read context
+menus and asynchronous fetch publication are assessed separately. The native
+rewind/cancel controls use text buttons rather than Qt's icon buttons.

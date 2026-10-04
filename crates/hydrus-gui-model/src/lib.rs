@@ -111,3 +111,5 @@ pub mod command_palette;
 mod palette_calculator;
 
 pub mod viewing_statistics;
+
+pub mod search_or;

@@ -1,5 +1,5 @@
 // The same read tabs in embedded and floating search-page autocomplete.
-import { ComboBox } from "std-widgets.slint";
+import { ComboBox, Button } from "std-widgets.slint";
 import { ReadSuggestions } from "read_suggestions.slint";
 import { ListText, Theme } from "theme.slint";
 
@@ -10,6 +10,9 @@ export component ReadAutocomplete inherits Rectangle {
     out property <bool> has-focus: tabs.has-focus;
     callback tab-chosen(int);
     callback chosen(int);
+    in property <bool> or-active;
+    in property <bool> or-rewind-visible;
+    callback or-action(int);
     background: Theme.panel;
     VerticalLayout {
         spacing: 4px;
@@ -17,6 +20,10 @@ export component ReadAutocomplete inherits Rectangle {
             model: ["results", "favourites", "children"];
             current-index: root.tab-index;
             selected => { root.tab-chosen(self.current-index); }
+        }
+        if root.or-active: HorizontalLayout {
+            if root.or-rewind-visible: Button { text: "↶"; clicked => { root.or-action(1); } }
+            Button { text: "cancel OR"; clicked => { root.or-action(2); } }
         }
         ReadSuggestions {
             vertical-stretch: 1;
