@@ -1407,6 +1407,15 @@ Recorded by `oracle/record_downloader_definitions.py`; replayed by model and
 GUI `downloader_definitions` tests, including real native-store reopen and
 cancel checks.
 
+Timestamp content parsers offer the reference's single **source time** choice.
+Saving normalises unset or obsolete timestamp types to modified-domain/source
+time while preserving the formula, processing steps and auxiliary data. The
+actual parser returns typed timestamp metadata; date conversions, earliest-time
+selection and future-time clamping feed the downloader's real file-seed source
+time. `oracle/record_content_time.py` records the control and metadata, including
+unset/obsolete inputs and date-converted documents. Apply stages through the
+content owner; stale callbacks cannot change a saved parser after closure.
+
 ## Size
 
 The reference GUI (`hydrus/client/gui`) is 225 files, about 179k lines of
