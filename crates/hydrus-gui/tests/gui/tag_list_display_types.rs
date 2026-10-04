@@ -170,7 +170,7 @@ fn options_apply_cancel_new_sidebar_and_viewer_replay_raw_display_and_filters() 
         assert_eq!(page.tag_display_type(), mode);
         assert_eq!(rows(page.tag_rows().into_iter()), expected(case, "sidebar"));
         *bound.current.borrow().borrow_mut() = page;
-        ui.invoke_refresh_tags();
+        ui.invoke_refresh_page();
         let tags: Vec<String> = ui
             .get_tags()
             .iter()
@@ -285,7 +285,7 @@ fn sidebar_and_viewer_opening_modes_are_independent_after_gui_apply() {
         expected(&recorded["cases"][3], "sidebar")
     );
     *bound.current.borrow().borrow_mut() = page;
-    ui.invoke_refresh_tags();
+    ui.invoke_refresh_page();
     ui.invoke_thumbnail_activated(0);
     let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
     let tags: Vec<String> = viewer
