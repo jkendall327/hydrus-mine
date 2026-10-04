@@ -2528,20 +2528,30 @@ fn duplicate_and_collapse_menus_replay_real_ordered_media_and_cancellation() {
                 } else {
                     original[1].key
                 };
+                let copied_files = store
+                    .read(|conn| sessions::page_files(conn, &copied_media))
+                    .unwrap();
+                assert!(!copied_files.is_empty());
                 bound.pages.borrow_mut().close(0, index as usize).unwrap();
                 bound.pages.borrow_mut().forget_closed();
+                // Direct Pages mutations bypass the GUI's change_pages sync.
+                // Persist the reduced live session to retire source media rows.
+                bound.pages.borrow_mut().sync(201).unwrap();
                 assert!(
                     store
                         .read(|conn| sessions::page_files(conn, &original_media))
                         .unwrap()
                         .is_empty()
                 );
-                assert!(
-                    !store
+                assert_eq!(
+                    store
                         .read(|conn| sessions::page_files(conn, &copied_media))
-                        .unwrap()
-                        .is_empty()
+                        .unwrap(),
+                    copied_files
                 );
+                let mut reopened = Pages::open(store.clone()).unwrap();
+                assert_eq!(reopened.shown().key, copied_media);
+                assert_eq!(reopened.current().borrow().files(), copied_files);
             } else if step["accepted"] == true {
                 let replacement = bound.pages.borrow().shown().key;
                 assert!(matches!(
