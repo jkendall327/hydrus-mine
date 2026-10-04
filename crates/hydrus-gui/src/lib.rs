@@ -4054,6 +4054,18 @@ pub(crate) fn pick(kind: Pick, title: &str) -> Vec<std::path::PathBuf> {
     }
 }
 
+/// Pick several reference exchange files with the original format filter.
+pub(crate) fn pick_exchange_files(title: &str, extension: &str) -> Vec<std::path::PathBuf> {
+    if let Some(picker) = PICKER.with(|p| p.borrow().clone()) {
+        return picker(Pick::Files, title);
+    }
+    rfd::FileDialog::new()
+        .set_title(title)
+        .add_filter(extension, &[extension])
+        .pick_files()
+        .unwrap_or_default()
+}
+
 /// Read pasted text from `paster` rather than the clipboard (for tests),
 /// on this thread.
 pub fn set_paster(paster: impl Fn() -> String + 'static) {

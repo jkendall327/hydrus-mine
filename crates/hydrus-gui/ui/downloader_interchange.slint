@@ -16,23 +16,41 @@ export component DownloaderExchangeWindow inherits Window {
     in property <bool> active;
     in property <bool> png-enabled;
     in property <bool> png-child;
+    in property <bool> json-enabled;
+    in property <string> overwrite-question;
     callback export-png();
     callback action(string);
     callback closed();
     VerticalLayout {
         padding: 12px; spacing: 8px;
         Text { text: root.instructions; color: Theme.text; wrap: word-wrap; }
-        TextEdit { vertical-stretch: 1; text <=> root.text; read-only: root.text-read-only; enabled: !root.ready && !root.png-child; }
+        TextEdit { vertical-stretch: 1; text <=> root.text; read-only: root.text-read-only; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; }
         HorizontalLayout {
-            Button { text: root.importing ? "paste" : "copy"; enabled: !root.ready && !root.png-child; clicked => { root.action(root.importing ? "paste" : "copy"); } }
-            if root.importing: Button { text: "review text"; enabled: !root.ready && !root.png-child; clicked => { root.action("review"); } }
+            Button { text: root.importing ? "paste" : "copy"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action(root.importing ? "paste" : "copy"); } }
+            if root.importing: Button { text: "review text"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action("review"); } }
+        }
+        if root.json-enabled && root.importing: HorizontalLayout {
+            Button { text: "from json files"; enabled: !root.ready; clicked => { root.action("import-jsons"); } }
+            Button { text: "from png files"; enabled: !root.ready; clicked => { root.action("import-pngs"); } }
         }
         if !root.png-enabled || root.importing: HorizontalLayout {
-            LineEdit { horizontal-stretch: 1; text <=> root.path; placeholder-text: "PNG or text file path"; enabled: !root.ready && !root.png-child; }
-            Button { text: "browse"; enabled: !root.ready && !root.png-child; clicked => { root.action("browse"); } }
-            Button { text: root.importing ? "open file" : "save PNG"; enabled: !root.ready && !root.png-child; clicked => { root.action(root.importing ? "open" : "save"); } }
+            LineEdit { horizontal-stretch: 1; text <=> root.path; placeholder-text: "PNG or text file path"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; }
+            Button { text: "browse"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action("browse"); } }
+            Button { text: root.importing ? "open file" : "save PNG"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action(root.importing ? "open" : "save"); } }
         }
-        if root.png-enabled && !root.importing: Button { text: "export to png"; enabled: !root.png-child; clicked => { root.export-png(); } }
+        if root.json-enabled && !root.importing: HorizontalLayout {
+            LineEdit { horizontal-stretch: 1; text <=> root.path; placeholder-text: "JSON file path"; enabled: !root.png-child && root.overwrite-question == ""; }
+            Button { text: "browse json"; enabled: !root.png-child && root.overwrite-question == ""; clicked => { root.action("browse-json"); } }
+            Button { text: "export to json file"; enabled: !root.png-child && root.overwrite-question == ""; clicked => { root.action("save-json"); } }
+        }
+        if root.overwrite-question != "": VerticalLayout {
+            Text { text: root.overwrite-question; wrap: word-wrap; color: Theme.text; }
+            HorizontalLayout {
+                Button { text: "yes"; clicked => { root.action("yes-json"); } }
+                Button { text: "no"; clicked => { root.action("no-json"); } }
+            }
+        }
+        if root.png-enabled && !root.importing: Button { text: "export to png"; enabled: !root.png-child && root.overwrite-question == ""; clicked => { root.export-png(); } }
         if root.review != "": TextEdit { height: 140px; text: root.review; read-only: true; }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         HorizontalLayout {

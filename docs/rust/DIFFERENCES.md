@@ -644,9 +644,12 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   `hydrus serve` within five minutes.**
 - **Full subscription exchange transport** supports modern reference container 90
   JSON and PNG without dropping query history or cached header metadata. Legacy
-  subscription type 3, exact menu/file-picker modes and original missing-history
+  subscription type 3, original list-popup placement and missing-history
   confirmation remain pending. The list owner now stages modern imports and
-  persists both histories, but this slice does not complete subscriptions-exchange.
+  persists both histories. JSON file export/overwrite and multi-file JSON/PNG
+  import are wired, with atomic review of each selection. The reference can keep
+  earlier valid objects when a later file/type fails; native rejects that complete
+  selection before staging. This slice does not complete subscriptions-exchange.
 - **The manage subscriptions dialog is a first pass.** It lists the
   subscriptions and can delete, pause/resume, scrub delays, check
   queries now and select by query text, add and edit subscriptions,
