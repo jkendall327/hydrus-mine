@@ -1,0 +1,318 @@
+{
+  "schema_version": 1,
+  "task": "Manage Notes live cog preferences, cursor initialization and viewer-hover copying",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "source_commit": "85a8914a4b128983c8c540d713408fb8fa53fa55",
+  "validation": {
+    "reference": "Actual modal Qt recording executed successfully and PNG inspected",
+    "source_checks": "Formatter, git diff --check, Python syntax and cached warning-aware Slint source compiler passed",
+    "rust_tests": "Authored model/store/native regressions await root hosted CI; no local Cargo"
+  },
+  "eligible_concrete_first_pass_count": 3,
+  "parent_promotions": 0,
+  "entries": [
+    {
+      "reference_id": "audit-options-notes-start-editing-notes-with-the-text-cursor-at-the-end-of-the-document",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Options Notes exposes the actual start-at-end checkbox, stages until Apply, discards on Cancel, imports/persists/reopens its typed value, and drives the actual multiline note input cursor. New and pasted note controls use the current saved choice; existing tabs retain their real cursor/selection across switching, renaming, copying and live cog flips.",
+      "exactBehavior": "Options Notes exposes the actual start-at-end checkbox, stages until Apply, discards on Cancel, imports/persists/reopens its typed value, and drives the actual multiline note input cursor. New and pasted note controls use the current saved choice; existing tabs retain their real cursor/selection across switching, renaming, copying and live cog flips.",
+      "reference_source": {
+        "path": "hydrus/client/gui/panels/options/NotesPanel.py",
+        "line": 34,
+        "line_sha256": "7c1b8e2977dc44a18175f8053b148d857e1d99013b42b26bd0284526f6a101c6"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1168,
+          "symbol": "pub struct NotePreferences",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 607,
+          "symbol": "let mut note_preferences",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_notes_window.rs",
+          "line": 549,
+          "symbol": "window.on_cog_chosen",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_notes_window.rs",
+          "line": 156,
+          "symbol": "if !active.replace(false)",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_notes_window.rs",
+          "line": 38,
+          "symbol": "fn initial_selection",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_notes_window.rs",
+          "line": 47,
+          "symbol": "fn remember_selection",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/note_text_edit.slint",
+          "line": 8,
+          "symbol": "out property <int> cursor",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2724,
+          "symbol": "\"Start editing notes with the text cursor at the end of the document: \"",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/notes_preferences.rs",
+          "line": 20,
+          "symbol": "fn actual_cog_copy_variants",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/notes_preferences.rs",
+          "line": 97,
+          "symbol": "fn options_cog_cursor_copy",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 3040,
+          "symbol": "fn four_note_preferences_import",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_notes_preferences.py",
+        "fixture": "oracle/fixtures/notes_preferences.json",
+        "screenshots": [
+          "oracle/fixtures/notes_preferences.png"
+        ],
+        "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55",
+        "executed": true,
+        "executed_at": "2026-10-04 23:31:06\u201323:31:09 UTC",
+        "result": "Successful actual offscreen Qt v688 recording through serialized with-oracle on a fresh basic fixture; clean shutdown and PNG inspected. Real NotesPanel checks stage until UpdateOptions, serialize/reopen and discard an abandoned draft. Actual Manage Notes menu is materialized from its own cog template; real QAction checks invert actual CheckboxManagerOptions. Unicode cursors survive tab switches and a live initial-cursor flip; real Paste creates a future editor, then real key input inserts at the new start. Six real copy-button variants cover all/current JSON/human text, natural name ordering and empty-current behavior. Actual NotePanel name middle mouse events publish text-only/title-and-text. Both real modal DialogEdit Cancel buttons close owners through recorded dirty-note confirmations while retaining all four changed global preferences, then a new dialog/serialization confirms the final choices. Clipboard input/publication and notifications are supplied/observed; no note handlers or registered content are replaced or committed."
+      },
+      "limits": [
+        "Broader Manage Notes, viewer-note interaction and Notes Options parents remain Partial; no parent completion or aliases counted. Viewer note left-click edit and right-click hide, keyboard Apply shortcut and add-on-empty-tab double-click remain unimplemented.",
+        "The note editor uses an owned native multiline TextInput and inline naming/cancel questions. Its cursor/anchor use UTF-8 bytes while Qt uses UTF-16 positions; regression translates offsets and compares actual Unicode keyboard insertion. Cog entries/separator are source-declared real Slint MenuItems; no unsupported materialized OS-menu introspection claimed.",
+        "Native Options writes only changed fields and retains unedited concurrent preferences, while cog changes use an atomic read/edit/write of the latest typed setting. Retired owner and unanswered child guards, frozen file target, reopen/import and no file-note changes on Cancel are authored native boundaries. No reference parity is claimed for programmatic concurrent dialogs beyond the recorded reachable workflows.",
+        "Rust model/store/native regressions are authored for hosted CI, not run locally. Formatter, git diff --check, Python py_compile and cached warning-aware Slint source compiler passed; no local Cargo builds/tests, mutation tests, pushes or remote/IPFS work."
+      ]
+    },
+    {
+      "reference_id": "audit-options-notes-when-middle-clicking-a-note-hover-only-copy-the-text",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Options Notes exposes the actual hover-copy checkbox with staged Apply/Cancel and typed import/persistence/reopen. Actual viewer-note middle-button presses copy either raw note body or name plus two newlines plus body using the latest saved preference, including an already-open viewer; the note hover stays visible while its child owns pointer input and retired/hidden viewer callbacks do not copy.",
+      "exactBehavior": "Options Notes exposes the actual hover-copy checkbox with staged Apply/Cancel and typed import/persistence/reopen. Actual viewer-note middle-button presses copy either raw note body or name plus two newlines plus body using the latest saved preference, including an already-open viewer; the note hover stays visible while its child owns pointer input and retired/hidden viewer callbacks do not copy.",
+      "reference_source": {
+        "path": "hydrus/client/gui/panels/options/NotesPanel.py",
+        "line": 35,
+        "line_sha256": "03a2290b9014ea09c2d1ad040070bd0318e62e775a9c29411add20676d2bd889"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1168,
+          "symbol": "pub struct NotePreferences",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 607,
+          "symbol": "let mut note_preferences",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_notes_window.rs",
+          "line": 549,
+          "symbol": "window.on_cog_chosen",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_notes_window.rs",
+          "line": 156,
+          "symbol": "if !active.replace(false)",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/notes_editor.rs",
+          "line": 323,
+          "symbol": "pub fn hover_copy",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 4811,
+          "symbol": "window.on_note_copy_requested",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/note_hover_copy.slint",
+          "line": 15,
+          "symbol": "if event.kind",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/viewer.slint",
+          "line": 189,
+          "symbol": "out property <bool> notes-showing",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2729,
+          "symbol": "\"When middle-clicking a note hover, only copy the text: \"",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/notes_preferences.rs",
+          "line": 20,
+          "symbol": "fn actual_cog_copy_variants",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/notes_preferences.rs",
+          "line": 97,
+          "symbol": "fn options_cog_cursor_copy",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 3040,
+          "symbol": "fn four_note_preferences_import",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_notes_preferences.py",
+        "fixture": "oracle/fixtures/notes_preferences.json",
+        "screenshots": [
+          "oracle/fixtures/notes_preferences.png"
+        ],
+        "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55",
+        "executed": true,
+        "executed_at": "2026-10-04 23:31:06\u201323:31:09 UTC",
+        "result": "Successful actual offscreen Qt v688 recording through serialized with-oracle on a fresh basic fixture; clean shutdown and PNG inspected. Real NotesPanel checks stage until UpdateOptions, serialize/reopen and discard an abandoned draft. Actual Manage Notes menu is materialized from its own cog template; real QAction checks invert actual CheckboxManagerOptions. Unicode cursors survive tab switches and a live initial-cursor flip; real Paste creates a future editor, then real key input inserts at the new start. Six real copy-button variants cover all/current JSON/human text, natural name ordering and empty-current behavior. Actual NotePanel name middle mouse events publish text-only/title-and-text. Both real modal DialogEdit Cancel buttons close owners through recorded dirty-note confirmations while retaining all four changed global preferences, then a new dialog/serialization confirms the final choices. Clipboard input/publication and notifications are supplied/observed; no note handlers or registered content are replaced or committed."
+      },
+      "limits": [
+        "Broader Manage Notes, viewer-note interaction and Notes Options parents remain Partial; no parent completion or aliases counted. Viewer note left-click edit and right-click hide, keyboard Apply shortcut and add-on-empty-tab double-click remain unimplemented.",
+        "The note editor uses an owned native multiline TextInput and inline naming/cancel questions. Its cursor/anchor use UTF-8 bytes while Qt uses UTF-16 positions; regression translates offsets and compares actual Unicode keyboard insertion. Cog entries/separator are source-declared real Slint MenuItems; no unsupported materialized OS-menu introspection claimed.",
+        "Native Options writes only changed fields and retains unedited concurrent preferences, while cog changes use an atomic read/edit/write of the latest typed setting. Retired owner and unanswered child guards, frozen file target, reopen/import and no file-note changes on Cancel are authored native boundaries. No reference parity is claimed for programmatic concurrent dialogs beyond the recorded reachable workflows.",
+        "Rust model/store/native regressions are authored for hosted CI, not run locally. Formatter, git diff --check, Python py_compile and cached warning-aware Slint source compiler passed; no local Cargo builds/tests, mutation tests, pushes or remote/IPFS work."
+      ]
+    },
+    {
+      "reference_id": "audit-media-notes-missing-cog",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Manage Notes offers four actual checked cog menu actions and the separator in reference order: copy all/current, JSON/human text, future-editor start cursor and viewer-hover text-only. Each immediately updates the latest durable typed preference and survives editor Cancel/reopen. Actual copy uses the live choices, Python JSON escaping or natural name ordering, cleaned notes and exact notices; current empty notes copy their name with empty text. Unanswered children block settings/Apply, existing file target stays frozen, and retired callbacks neither write nor clear a successor.",
+      "exactBehavior": "Manage Notes offers four actual checked cog menu actions and the separator in reference order: copy all/current, JSON/human text, future-editor start cursor and viewer-hover text-only. Each immediately updates the latest durable typed preference and survives editor Cancel/reopen. Actual copy uses the live choices, Python JSON escaping or natural name ordering, cleaned notes and exact notices; current empty notes copy their name with empty text. Unanswered children block settings/Apply, existing file target stays frozen, and retired callbacks neither write nor clear a successor.",
+      "reference_source": {
+        "path": "hydrus/client/gui/panels/ClientGUIScrolledPanelsEdit.py",
+        "line": 896,
+        "line_sha256": "ae1e31bb13f2a1794990fa068a0fe4b61f9ba0ba422ca486fe0fea1ef7a4f89c"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1168,
+          "symbol": "pub struct NotePreferences",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 607,
+          "symbol": "let mut note_preferences",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_notes_window.rs",
+          "line": 549,
+          "symbol": "window.on_cog_chosen",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_notes_window.rs",
+          "line": 156,
+          "symbol": "if !active.replace(false)",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/manage_notes.slint",
+          "line": 134,
+          "symbol": "cog := ContextMenuArea",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/notes_editor.rs",
+          "line": 129,
+          "symbol": "pub fn copy_with",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 1436,
+          "symbol": "if let Some(existing) = manage_notes.borrow().as_ref()",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/notes_preferences.rs",
+          "line": 20,
+          "symbol": "fn actual_cog_copy_variants",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/notes_preferences.rs",
+          "line": 97,
+          "symbol": "fn options_cog_cursor_copy",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 3040,
+          "symbol": "fn four_note_preferences_import",
+          "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_notes_preferences.py",
+        "fixture": "oracle/fixtures/notes_preferences.json",
+        "screenshots": [
+          "oracle/fixtures/notes_preferences.png"
+        ],
+        "commit": "85a8914a4b128983c8c540d713408fb8fa53fa55",
+        "executed": true,
+        "executed_at": "2026-10-04 23:31:06\u201323:31:09 UTC",
+        "result": "Successful actual offscreen Qt v688 recording through serialized with-oracle on a fresh basic fixture; clean shutdown and PNG inspected. Real NotesPanel checks stage until UpdateOptions, serialize/reopen and discard an abandoned draft. Actual Manage Notes menu is materialized from its own cog template; real QAction checks invert actual CheckboxManagerOptions. Unicode cursors survive tab switches and a live initial-cursor flip; real Paste creates a future editor, then real key input inserts at the new start. Six real copy-button variants cover all/current JSON/human text, natural name ordering and empty-current behavior. Actual NotePanel name middle mouse events publish text-only/title-and-text. Both real modal DialogEdit Cancel buttons close owners through recorded dirty-note confirmations while retaining all four changed global preferences, then a new dialog/serialization confirms the final choices. Clipboard input/publication and notifications are supplied/observed; no note handlers or registered content are replaced or committed."
+      },
+      "limits": [
+        "Broader Manage Notes, viewer-note interaction and Notes Options parents remain Partial; no parent completion or aliases counted. Viewer note left-click edit and right-click hide, keyboard Apply shortcut and add-on-empty-tab double-click remain unimplemented.",
+        "The note editor uses an owned native multiline TextInput and inline naming/cancel questions. Its cursor/anchor use UTF-8 bytes while Qt uses UTF-16 positions; regression translates offsets and compares actual Unicode keyboard insertion. Cog entries/separator are source-declared real Slint MenuItems; no unsupported materialized OS-menu introspection claimed.",
+        "Native Options writes only changed fields and retains unedited concurrent preferences, while cog changes use an atomic read/edit/write of the latest typed setting. Retired owner and unanswered child guards, frozen file target, reopen/import and no file-note changes on Cancel are authored native boundaries. No reference parity is claimed for programmatic concurrent dialogs beyond the recorded reachable workflows.",
+        "Rust model/store/native regressions are authored for hosted CI, not run locally. Formatter, git diff --check, Python py_compile and cached warning-aware Slint source compiler passed; no local Cargo builds/tests, mutation tests, pushes or remote/IPFS work."
+      ]
+    }
+  ]
+}
