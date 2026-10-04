@@ -1,0 +1,45 @@
+// Shared embedded/floating read autocomplete; keyboard highlight stays visible.
+import { ScrollView } from "std-widgets.slint";
+import { ListText, Theme } from "theme.slint";
+
+export component ReadSuggestions inherits Rectangle {
+    in property <[ListText]> suggestions;
+    in property <int> highlighted: -1;
+    callback chosen(int);
+    border-width: 1px;
+    border-color: Theme.border;
+    background: Theme.panel;
+    min-height: 26px;
+    property <int> kept-in-view: root.highlighted;
+    changed kept-in-view => {
+        if (self.kept-in-view >= 0) {
+            if (self.kept-in-view * 22px < -scroll.content-y) {
+                scroll.content-y = -self.kept-in-view * 22px;
+            } else if ((self.kept-in-view + 1) * 22px > scroll.visible-height - scroll.content-y) {
+                scroll.content-y = scroll.visible-height - (self.kept-in-view + 1) * 22px;
+            }
+        }
+    }
+    scroll := ScrollView {
+        x: 2px;
+        y: 2px;
+        width: parent.width - 4px;
+        height: parent.height - 4px;
+        VerticalLayout {
+            alignment: start;
+            for suggestion[i] in root.suggestions: Rectangle {
+                height: 22px;
+                background: i == root.highlighted ? Theme.highlight : pick.has-hover ? Theme.hover : transparent;
+                Text {
+                    x: 4px;
+                    text: suggestion.text;
+                    color: i == root.highlighted ? Theme.highlight-text : suggestion.colour;
+                    vertical-alignment: center;
+                    overflow: elide;
+                    width: parent.width - 8px;
+                }
+                pick := TouchArea { clicked => { root.chosen(i); } }
+            }
+        }
+    }
+}

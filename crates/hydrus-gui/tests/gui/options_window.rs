@@ -1636,3 +1636,100 @@ fn default_local_location_child_draft_drives_blank_pages_and_tag_fallback() {
             .collect::<Vec<_>>()
     );
 }
+
+#[test]
+fn read_list_sizes_and_float_policy_reach_rendered_new_pages() {
+    use hydrus_core::ServiceKey;
+    use hydrus_core::service::builtin_keys;
+    use hydrus_gui::page_chooser::NewPage;
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("file_search_presentation.json");
+    ui.show().unwrap();
+    let main = windows.get(0).unwrap();
+    main.dispatch_event(slint::platform::WindowEvent::WindowActiveChanged(true));
+    let mut first = None;
+    let mut floated_tags_y = None;
+    for (index, event) in fixture["events"].as_array().unwrap().iter().enumerate() {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "file search");
+        let (active_row, active) = row(&window, "Active Search Predicates list height:");
+        let (suggestion_row, suggestions) = row(&window, "Autocomplete list height:");
+        assert_eq!((active.minimum, active.maximum), (1, 128));
+        assert_eq!((suggestions.minimum, suggestions.maximum), (1, 128));
+        let (float_row, _) = row(
+            &window,
+            "Autocomplete dropdown floats over file search pages:",
+        );
+        window.invoke_number_edited(active_row, event["active_rows"].as_i64().unwrap() as i32);
+        window.invoke_number_edited(
+            suggestion_row,
+            event["autocomplete_rows"].as_i64().unwrap() as i32,
+        );
+        window.invoke_check_toggled(float_row, event["floating"].as_bool().unwrap());
+        window.invoke_apply();
+        (bound.open_page)(&NewPage::Search {
+            domain: ServiceKey::new(builtin_keys::MY_FILES.to_vec()),
+            name: "synthetic search presentation recording".into(),
+        });
+        let page = bound.pages.borrow_mut().current();
+        let original = first.get_or_insert_with(|| page.clone());
+        let config = original
+            .borrow()
+            .autocomplete()
+            .presentation_settings()
+            .clone();
+        assert_eq!(
+            config.active_predicate_rows,
+            event["first_view"]["active"]["rows"].as_u64().unwrap() as u32
+        );
+        assert_eq!(
+            config.autocomplete_rows,
+            event["first_view"]["autocomplete"]["rows"]
+                .as_u64()
+                .unwrap() as u32
+        );
+        assert_eq!(
+            config.float_autocomplete,
+            event["first_view"]["floating"].as_bool().unwrap()
+        );
+        assert_eq!(
+            ui.get_active_predicate_rows(),
+            event["view"]["active"]["rows"].as_i64().unwrap() as i32
+        );
+        assert_eq!(
+            ui.get_autocomplete_rows(),
+            event["view"]["autocomplete"]["rows"].as_i64().unwrap() as i32
+        );
+        assert_eq!(
+            !ui.get_float_autocomplete(),
+            event["view"]["embedded_in_layout"].as_bool().unwrap()
+        );
+        ui.set_search_focus_requests(ui.get_search_focus_requests() + 1);
+        let pixels = headless::render(&main, 1100, 1500);
+        assert!(pixels.iter().any(|pixel| *pixel != 0));
+        assert!(ui.get_active_predicate_list_height() >= 28.0);
+        assert!(
+            ui.get_active_predicate_list_height() <= ui.get_active_predicate_preferred_height()
+        );
+        if index == 0 {
+            assert!(ui.get_search_focused());
+            assert!(ui.get_autocomplete_overlay_visible());
+            floated_tags_y = Some(ui.get_search_tags_y());
+        } else if index == 1 {
+            assert!(!ui.get_autocomplete_overlay_visible());
+            assert!(
+                ui.get_search_tags_y() > floated_tags_y.unwrap() + 200.0,
+                "embedded results must occupy sidebar layout space; floating results overlay it"
+            );
+        }
+        ui.set_search_focused(false);
+        assert!(
+            !ui.get_autocomplete_overlay_visible(),
+            "floating results hide without input focus"
+        );
+    }
+}

@@ -1851,3 +1851,9 @@ and visible list height (1–128 rows). Clipboard paste adds cleaned unique tags
 without toggling existing tags off; its question and all staged tags are dropped
 when the owner is cancelled or closed. The running Qt client's synthetic corpus,
 rendered rows and paste decisions are in `write_tag_autocomplete.json`.
+
+Read autocomplete now captures the File Search active-predicate height (6 rows
+by default), results height (22 rows), and floating policy when each page is
+created. Both heights accept 1–128 text rows and scroll additional entries. The
+active predicates appear above the search input. Floating results overlay the
+page while the input is focused; embedded results reserve sidebar space.

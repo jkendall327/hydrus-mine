@@ -3,6 +3,7 @@
 
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, ScrollView, VerticalBox } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
+import { ReadSuggestions } from "read_suggestions.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 import { DownloadLine, DownloadControl, ImporterBoxes, LocalImportBox } from "importing.slint";
 import { SimpleParsingBox } from "simple_downloader.slint";
@@ -550,6 +551,15 @@ export component MainWindow inherits Window {
     in property <[ListText]> predicates;
     in property <[ListText]> tags;
     in property <[ListText]> suggestions;
+    in property <int> active-predicate-rows: 6;
+    in property <int> autocomplete-rows: 22;
+    in property <bool> float-autocomplete: true;
+    in-out property <bool> search-focused;
+    out property <length> search-tags-y: search-tags.absolute-position.y;
+    out property <length> active-predicate-list-height: active-predicate-list.height;
+    out property <length> active-predicate-preferred-height: max(1, min(128, root.active-predicate-rows)) * 22px + 6px;
+    out property <length> autocomplete-preferred-height: max(1, min(128, root.autocomplete-rows)) * 22px + 4px;
+    out property <bool> autocomplete-overlay-visible: root.float-autocomplete && root.search-focused && !root.search-locked && root.note == "" && root.question == "" && root.suggestions.length > 0 && root.menu-panes.length == 0 && root.chooser-labels.length == 0;
     in property <int> highlighted: -1;
     in property <[ThumbnailRow]> thumbnail-rows;
     // a thumbnail's cell: the thumbnail bounding box and its border; and
@@ -1234,8 +1244,33 @@ export component MainWindow inherits Window {
                             }
                         }
                     }
-                    if !root.search-locked: FocusScope {
-                        height: search-row.preferred-height;
+                    active-predicate-list := Rectangle {
+                        visible: !root.search-locked;
+                        border-width: 1px;
+                        border-color: Theme.border;
+                        background: Theme.panel;
+                        preferred-height: root.search-locked ? 0px : root.active-predicate-preferred-height;
+                        max-height: root.search-locked ? 0px : root.active-predicate-preferred-height;
+                        min-height: root.search-locked ? 0px : 28px;
+                        // Configured ideal height; additional predicates scroll.
+                        ScrollView {
+                            x: 3px;
+                            y: 3px;
+                            width: parent.width - 6px;
+                            height: parent.height - 6px;
+                            VerticalLayout {
+                                alignment: start;
+                                for predicate[i] in root.predicates: Predicate {
+                                    text: predicate.text;
+                                    colour: predicate.colour;
+                                    remove => { root.remove-predicate(i); }
+                                }
+                            }
+                        }
+                    }
+                    search-anchor := FocusScope {
+                        visible: !root.search-locked;
+                        height: root.search-locked ? 0px : search-row.preferred-height;
                         property <int> focus-requests: root.search-focus-requests;
                         changed focus-requests => { search.focus(); }
                         // up and down move through the suggestions, as in the reference
@@ -1262,6 +1297,7 @@ export component MainWindow inherits Window {
                                 horizontal-stretch: 1;
                                 placeholder-text: "search";
                                 changed has-focus => {
+                                    root.search-focused = self.has-focus;
                                     if (self.has-focus) {
                                         root.last-focus = 1;
                                     }
@@ -1323,75 +1359,19 @@ export component MainWindow inherits Window {
                             clicked => { root.domain-menu-requested(1, self.absolute-position.x, self.absolute-position.y + self.height); }
                         }
                     }
-                    if root.suggestions.length > 0 && !root.search-locked: Rectangle {
-                        border-width: 1px;
-                        border-color: Theme.border;
-                        background: Theme.panel;
-                        height: min(root.suggestions.length, 12) * 22px + 4px;
-                        // (more than twelve scroll, as the reference's
-                        // dropdown does, the highlighted one kept in view)
-                        property <int> kept-in-view: root.highlighted;
-                        changed kept-in-view => {
-                            if (self.kept-in-view >= 0) {
-                                if (self.kept-in-view * 22px < -suggestion-scroll.content-y) {
-                                    suggestion-scroll.content-y = -self.kept-in-view * 22px;
-                                } else if ((self.kept-in-view + 1) * 22px > suggestion-scroll.visible-height - suggestion-scroll.content-y) {
-                                    suggestion-scroll.content-y = suggestion-scroll.visible-height - (self.kept-in-view + 1) * 22px;
-                                }
-                            }
-                        }
-                        suggestion-scroll := ScrollView {
-                            x: 2px;
-                            y: 2px;
-                            width: parent.width - 4px;
-                            height: parent.height - 4px;
-                            VerticalLayout {
-                            alignment: start;
-                            for suggestion[i] in root.suggestions: Rectangle {
-                                height: 22px;
-                                background: i == root.highlighted ? Theme.highlight : pick.has-hover ? Theme.hover : transparent;
-                                Text {
-                                    x: 4px;
-                                    text: suggestion.text;
-                                    color: i == root.highlighted ? Theme.highlight-text : suggestion.colour;
-                                    vertical-alignment: center;
-                                    overflow: elide;
-                                    width: parent.width - 8px;
-                                }
-                                pick := TouchArea {
-                                    clicked => { root.suggestion-chosen(i); }
-                                }
-                            }
-                            }
-                        }
+                    if root.suggestions.length > 0 && !root.search-locked && !root.float-autocomplete: ReadSuggestions {
+                        preferred-height: root.autocomplete-preferred-height;
+                        max-height: root.autocomplete-preferred-height;
+                        suggestions: root.suggestions;
+                        highlighted: root.highlighted;
+                        chosen(index) => { root.suggestion-chosen(index); }
                     }
                     if root.error != "": Text {
                         text: root.error;
                         color: Theme.error;
                         wrap: word-wrap;
                     }
-                    if !root.search-locked: Rectangle {
-                        border-width: 1px;
-                        border-color: Theme.border;
-                        background: Theme.panel;
-                        height: min(max(root.predicates.length, 1) * 22px, 154px) + 6px;
-                        // (more than seven scroll)
-                        ScrollView {
-                            x: 3px;
-                            y: 3px;
-                            width: parent.width - 6px;
-                            height: parent.height - 6px;
-                            VerticalLayout {
-                                alignment: start;
-                                for predicate[i] in root.predicates: Predicate {
-                                    text: predicate.text;
-                                    colour: predicate.colour;
-                                    remove => { root.remove-predicate(i); }
-                                }
-                            }
-                        }
-                    }
-                    TagList {
+                    search-tags := TagList {
                         tags: root.tags;
                         activated(i) => { root.tag-activated(i); }
                     }
@@ -1898,6 +1878,15 @@ export component MainWindow inherits Window {
                     }
                 }
             }
+        }
+        if root.autocomplete-overlay-visible: ReadSuggestions {
+            x: search-anchor.absolute-position.x;
+            y: search-anchor.absolute-position.y + search-anchor.height;
+            width: search-anchor.width;
+            height: max(26px, min(root.autocomplete-preferred-height, root.height - self.y - 4px));
+            suggestions: root.suggestions;
+            highlighted: root.highlighted;
+            chosen(index) => { root.suggestion-chosen(index); }
         }
         if root.chooser-labels.length > 0: Rectangle {
             background: Theme.shade;

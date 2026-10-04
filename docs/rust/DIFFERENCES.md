@@ -1217,3 +1217,9 @@ Declining a multiline paste leaves the existing text draft intact; Qt returns
 that event to its line editor's normal paste handling. The relationship and
 import-options text inputs have not yet adopted this shared widget. Expanded
 parent rows enter their originating child, matching Qt's logical-list selection.
+
+File Search list heights and floating policy reach new-page presentation;
+existing pages retain the values captured at construction, as in the reference.
+Native list rows use the desktop client's 22-pixel text-row spacing rather than
+Qt's platform font-metric size hint. Floating results share their highlighting,
+scrolling and selection behavior with embedded results.
