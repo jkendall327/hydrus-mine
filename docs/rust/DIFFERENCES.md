@@ -646,8 +646,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   subscriptions and can delete, pause/resume, scrub delays, check
   queries now and select by query text, add and edit subscriptions,
   merge, separate, lowercase, retry, reset, and overwrite downloader and
-  checker options, and deduplicate. It has no "export"/"import"
-  or import options (copy, paste, clear) buttons yet. "merge" merges each group
+  checker options, and deduplicate. Import options can be copied as the
+  reference JSON container, pasted and cleared within the dialog's draft.
+  Subscription "export"/"import" buttons remain absent. "merge" merges each group
   as its questions are answered (cancelling a later group's questions
   leaves the earlier merged, where the reference merges none). It doesn't reckon bandwidth waits (the
   error/delay column is empty unless the subscription is delayed). It
@@ -752,10 +753,11 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   are greyed out); its "additional urls" don't show the URL a URL class
   would actually fetch or refer from; trying a previously deleted file
   again doesn't offer to clear its deletion record.
-- **The import options editor** takes the tag filtering whitelist,
-  additional tags and note names as typed lines (the reference has a
-  tags input with autocomplete, and list editors; its note renames
-  are a two-column list, typed here as "parser name -> saved name").
+- **The import options editor** keeps typed-line fields for the tag filtering
+  whitelist and additional tags, with a detached shared write-tag autocomplete
+  editor for both lists. The reference embeds its tag inputs. Note names remain
+  typed lines, and note renames use "parser name -> saved name" rather than the
+  reference's two-column list.
   The tags page's "set a filter for already-exist test" isn't there.
   Locations take one destination (the reference's takes several), and
   presentation's location is all my files or all local files. It has no
