@@ -353,3 +353,448 @@ fn detached_import_tag_lists_replay_reference_and_never_mutate_caller() {
         assert_eq!(caller, ["parity:caller initial"]);
     }
 }
+
+#[test]
+fn favourite_and_count_ordered_children_tabs_replay_reference_caps_and_context() {
+    use hydrus_gui_model::write_autocomplete::Tab;
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let (_dir, store) = seeded(&fixture);
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let mut input = WriteAutocomplete::new(store.clone(), key.clone(), LocationContext::default());
+    for event in fixture["tabs"].as_array().unwrap() {
+        let data = event.clone();
+        let display = key.clone();
+        let count_key = store
+            .snapshot()
+            .services
+            .by_name(event["service"].as_str().unwrap_or("my tags"))
+            .unwrap()
+            .key
+            .clone();
+        store
+            .write(move |ctx| {
+                let mut widgets: hydrus_store::tag_display_config::AutocompleteWidgetSettings =
+                    settings::get(ctx.conn())?;
+                let mut options = widgets.options(&display);
+                options.write_tag_service = count_key;
+                widgets.services.insert(display.to_hex(), options);
+                settings::set(ctx.conn(), &widgets)?;
+                if data["tab"] == "favourites" {
+                    settings::set(
+                        ctx.conn(),
+                        &settings::FavouriteTags(
+                            serde_json::from_value(data["tags"].clone()).unwrap(),
+                        ),
+                    )?;
+                } else {
+                    let mut tabs: settings::TagAutocompleteTabs = settings::get(ctx.conn())?;
+                    tabs.children_limit =
+                        data["limit"].as_u64().map(|n| usize::try_from(n).unwrap());
+                    settings::set(ctx.conn(), &tabs)?;
+                }
+                Ok(())
+            })
+            .unwrap();
+        if event["tab"] == "favourites" {
+            input.set_tab(Tab::Favourites);
+        } else {
+            input.set_context_tags(
+                event["context"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|t| t.as_str().unwrap().to_owned()),
+            );
+            input.set_tab(Tab::Children);
+        }
+        let mut actual: Vec<Value> = Vec::new();
+        for row in input.rows() {
+            if row.parent_row {
+                actual.last_mut().unwrap()["rows"]
+                    .as_array_mut()
+                    .unwrap()
+                    .push(json!(row.label));
+            } else {
+                actual.push(json!({"tag":row.tag,"rows":[row.label]}));
+            }
+        }
+        let mut expected = event["rows"].clone();
+        // Favourite String terms store parents in Python sets. Their base row/order
+        // is exact; the unordered expanded-parent group is compared as a sorted set.
+        if event["tab"] == "favourites" {
+            for row in &mut actual {
+                let rows = row["rows"].as_array_mut().unwrap();
+                rows[1..].sort_by(|a, b| a.as_str().cmp(&b.as_str()));
+            }
+            for row in expected.as_array_mut().unwrap() {
+                let rows = row["rows"].as_array_mut().unwrap();
+                rows[1..].sort_by(|a, b| a.as_str().cmp(&b.as_str()));
+            }
+        }
+        assert_eq!(json!(actual), expected, "{event}");
+        assert!(input.rows().iter().all(|row| !row.counted));
+    }
+}
+
+#[test]
+fn children_limit_option_matches_reference_and_persists_only_accepted_drafts() {
+    use hydrus_gui_model::options::{Editor, Row, Settings, Value};
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let (_dir, store) = seeded(&fixture);
+    let original = store.read(Settings::load).unwrap();
+    assert_eq!(original.tag_autocomplete_tabs.children_limit, Some(40));
+    let mut editor = Editor::new(original.clone());
+    let page = editor
+        .page_names()
+        .iter()
+        .position(|n| *n == "tag autocomplete tabs")
+        .unwrap();
+    editor.show_page(page);
+    let row = editor.rows().iter().position(|r| matches!(r, Row::Opt { option, .. } if option.label == "How many tags to show in the children tab: ")).unwrap();
+    assert!(matches!(
+        editor.rows()[row],
+        Row::Opt {
+            value: Value::Noneable(Some(40)),
+            ..
+        }
+    ));
+    editor.number(row, 1);
+    assert_eq!(
+        editor.applied().0.tag_autocomplete_tabs.children_limit,
+        Some(1)
+    );
+    let stored: settings::TagAutocompleteTabs = store.read(settings::get).unwrap();
+    assert_eq!(stored.children_limit, Some(40));
+    editor.none(row, true);
+    let (accepted, _, _) = editor.applied();
+    assert_eq!(accepted.tag_autocomplete_tabs.children_limit, None);
+    store
+        .write(move |ctx| accepted.save(ctx.conn(), &original))
+        .unwrap();
+    let persisted: settings::TagAutocompleteTabs = store.read(settings::get).unwrap();
+    assert_eq!(persisted.children_limit, None);
+    assert_eq!(
+        fixture["children_control"],
+        json!({"value":40,"min":1,"max":1_000_000})
+    );
+}
+
+#[test]
+fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
+    use hydrus_core::ServiceKey;
+    use hydrus_gui_model::write_tag_menu::{Action, Entry};
+    fn action(entries: &[Entry], label: &str) -> Option<Action> {
+        entries.iter().find_map(|entry| match entry {
+            Entry::Item(text, action) if text == label => Some(action.clone()),
+            Entry::Menu(_, entries) => action(entries, label),
+            _ => None,
+        })
+    }
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let (_dir, store) = seeded(&fixture);
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &settings::FavouriteTags(vec![
+                    "parity:root".into(),
+                    "parity:amber old".into(),
+                    "parity:favorite new".into(),
+                ]),
+            )
+        })
+        .unwrap();
+    let original: TagEditingSettings = store.read(settings::get).unwrap();
+    let mut input = WriteAutocomplete::new(store.clone(), key.clone(), LocationContext::default());
+    input.set_text("parity:amber old");
+    input.fetch();
+    for event in fixture["menus"].as_array().unwrap() {
+        if event["action"] == "open" {
+            fn paths(entries: &[Entry], prefix: &[String], out: &mut Vec<Vec<String>>) {
+                for entry in entries {
+                    match entry {
+                        Entry::Item(label, _) => {
+                            let mut path = prefix.to_vec();
+                            path.push(label.clone());
+                            out.push(path);
+                        }
+                        Entry::Menu(label, entries) => {
+                            let mut path = prefix.to_vec();
+                            path.push(label.clone());
+                            paths(entries, &path, out);
+                        }
+                        Entry::Separator => {}
+                    }
+                }
+            }
+            let row = input
+                .rows()
+                .iter()
+                .position(|r| r.tag == "parity:amber old")
+                .unwrap();
+            let mut actual = Vec::new();
+            paths(&input.menu(row), &[], &mut actual);
+            for path in event["paths"].as_array().unwrap() {
+                let first = path[0].as_str().unwrap();
+                if first.contains("siblings") || first.contains("parents") {
+                    let path: Vec<_> = path
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|s| s.as_str().unwrap().to_owned())
+                        .collect();
+                    assert!(
+                        actual.contains(&path),
+                        "missing recorded relationship path {path:?}"
+                    );
+                }
+            }
+            continue;
+        }
+        let favourite = event["action"] == "favourite";
+        if favourite {
+            input.set_text("parity:menu new");
+        } else if event["action"] == "decorator" {
+            input.set_text("parity:amber old");
+        }
+        let row = input
+            .rows()
+            .iter()
+            .position(|row| {
+                row.tag
+                    == if favourite {
+                        "parity:menu new"
+                    } else {
+                        "parity:amber old"
+                    }
+            })
+            .unwrap();
+        let chosen = action(&input.menu(row), event["label"].as_str().unwrap()).unwrap();
+        match chosen {
+            Action::Copy(text) => {
+                if event["label"].as_str().unwrap().ends_with("and 2 parents") {
+                    // Qt stores parent tags as a set; only that set's order is unspecified.
+                    let mut actual: Vec<_> = text.lines().collect();
+                    let expected = event["copied"][0].as_str().unwrap();
+                    let mut expected: Vec<_> = expected.lines().collect();
+                    assert_eq!(actual[0], expected[0]);
+                    actual[1..].sort_unstable();
+                    expected[1..].sort_unstable();
+                    assert_eq!(actual, expected);
+                } else {
+                    assert_eq!(json!([text]), event["copied"]);
+                }
+            }
+            Action::Relationship { .. } => panic!("unexpected relationship action in menu replay"),
+            Action::Launch {
+                location,
+                context,
+                predicates,
+                duplicate,
+            } => {
+                let actual = &event["launched"][0];
+                assert_eq!(
+                    json!(
+                        location
+                            .current()
+                            .iter()
+                            .map(ServiceKey::to_hex)
+                            .collect::<Vec<_>>()
+                    ),
+                    actual["current"]
+                );
+                assert_eq!(
+                    json!(
+                        location
+                            .deleted()
+                            .iter()
+                            .map(ServiceKey::to_hex)
+                            .collect::<Vec<_>>()
+                    ),
+                    actual["deleted"]
+                );
+                assert_eq!(
+                    json!(if duplicate {
+                        "new_page_duplicates"
+                    } else {
+                        "new_page_query"
+                    }),
+                    actual["topic"]
+                );
+                assert_eq!(
+                    predicates,
+                    vec![hydrus_core::search::predicate::Predicate::Tag {
+                        tag: Tag::new("parity:amber old").unwrap(),
+                        inclusive: true
+                    }]
+                );
+                let defaults: settings::SearchDefaults = store.read(settings::get).unwrap();
+                assert_eq!(context.service, defaults.tag_service);
+            }
+            Action::Decorate { tab, kind, value } => {
+                input.decorate(tab, kind, value);
+                let labels: Vec<_> = input
+                    .menu(row.min(input.rows().len() - 1))
+                    .into_iter()
+                    .filter_map(|e| {
+                        if let Entry::Item(label, _) = e {
+                            Some(label)
+                        } else {
+                            None
+                        }
+                    })
+                    .collect();
+                for path in event["paths"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .filter(|p| p.as_array().unwrap().len() == 1)
+                {
+                    let label = path[0].as_str().unwrap();
+                    if label.contains("decorators") || label.contains("parent rows") {
+                        assert!(labels.iter().any(|s| s == label), "{event}");
+                    }
+                }
+                assert_eq!(
+                    store.read(settings::get::<TagEditingSettings>).unwrap(),
+                    original
+                );
+            }
+            action @ Action::Favourite { .. } => {
+                let asked = event["asked"].as_array().unwrap();
+                assert_eq!(
+                    action.question(),
+                    asked.first().and_then(|q| q["message"].as_str())
+                );
+                if action.question().is_none() || event["answer"] == true {
+                    action.persist(&store).unwrap();
+                }
+                let favourites: settings::FavouriteTags = store.read(settings::get).unwrap();
+                assert_eq!(json!(favourites.0), event["favourites"]);
+                let tabs: settings::TagAutocompleteTabs = store.read(settings::get).unwrap();
+                assert_eq!(
+                    json!(
+                        tabs.most_used
+                            .get(&key.to_hex())
+                            .cloned()
+                            .unwrap_or_default()
+                    ),
+                    event["most_used"]
+                );
+            }
+        }
+    }
+    let mut reopened = WriteAutocomplete::new(store.clone(), key, LocationContext::default());
+    reopened.set_text("parity:amber old");
+    reopened.fetch();
+    assert!(reopened.rows().iter().any(|r| r.parent_row));
+    assert!(reopened.rows().iter().any(|r| r.label.contains('→')));
+}
+
+#[test]
+fn seeded_relationship_editors_replay_service_defaults_memory_and_cancel() {
+    use hydrus_gui_model::tag_relationships::{RelationKind, Relationships};
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let (_dir, store) = seeded(&fixture);
+    let my_tags = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    for event in fixture["seeded_dialogs"].as_array().unwrap() {
+        let kind = if event["kind"] == "siblings" {
+            RelationKind::Siblings
+        } else {
+            RelationKind::Parents
+        };
+        let key = my_tags.clone();
+        store
+            .write(move |ctx| {
+                let mut prefs: TagEditingSettings = settings::get(ctx.conn())?;
+                prefs.default_service = key;
+                prefs.remember_service = true;
+                settings::set(ctx.conn(), &prefs)
+            })
+            .unwrap();
+        let mut model =
+            Relationships::new_with_tags(store.clone(), kind, &["parity:amber old".into()])
+                .unwrap();
+        assert_eq!(
+            model.service_names()[model.service()],
+            event["initial"].as_str().unwrap()
+        );
+        for seed in event["seeds"].as_array().unwrap() {
+            let service = model
+                .service_names()
+                .iter()
+                .position(|s| s == seed["service"].as_str().unwrap())
+                .unwrap();
+            model.choose_service(service);
+            assert_eq!(json!(model.inputs().0), seed["tags"]);
+            assert!(model.inputs().1.is_empty());
+        }
+        let remembered = model
+            .service_names()
+            .iter()
+            .position(|s| s == event["remembered"].as_str().unwrap())
+            .unwrap();
+        model.choose_service_remembered(remembered).unwrap();
+        let prefs: TagEditingSettings = store.read(settings::get).unwrap();
+        assert_eq!(
+            prefs.default_service,
+            model.service_key(remembered).unwrap()
+        );
+        store
+            .write(|ctx| {
+                let mut prefs: TagEditingSettings = settings::get(ctx.conn())?;
+                prefs.remember_service = false;
+                settings::set(ctx.conn(), &prefs)
+            })
+            .unwrap();
+        let mine = model
+            .service_names()
+            .iter()
+            .position(|s| s == "my tags")
+            .unwrap();
+        model.choose_service_remembered(mine).unwrap();
+        let prefs: TagEditingSettings = store.read(settings::get).unwrap();
+        assert_eq!(
+            store
+                .snapshot()
+                .services
+                .by_key(&prefs.default_service)
+                .unwrap()
+                .name,
+            event["disabled_memory"].as_str().unwrap()
+        );
+        model.enter_tags(true, "parity:unapplied relation").unwrap();
+        model.add(&[]).unwrap();
+        drop(model);
+        let reopened = Relationships::new(store.clone(), kind).unwrap();
+        assert_eq!(
+            reopened.service_names()[reopened.service()],
+            event["disabled_memory"].as_str().unwrap()
+        );
+        assert!(
+            reopened
+                .rows()
+                .iter()
+                .all(|r| r.pair.1 != "parity:unapplied relation")
+        );
+    }
+}

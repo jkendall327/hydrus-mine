@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "agent": "search-options",
+  "baseline_git_head": "d50df26b",
+  "claims": [
+    {
+      "id": "audit-options-media-playback-zoom-and-position-re-center-media-on-window-resize",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact checkbox defaults true. Apply persists the resize policy read live by an already-open media viewer. False retains its current detail zoom/pan and compensates a top-left window resize to preserve absolute screen position; true reinitializes the native default zoom and centered position. Cancel does not change the live policy. Legacy preference migrates.",
+      "limits": [
+        "The native default zoom implementation has its existing limitations; reference per-filetype zoom-lock controls are separate unclaimed leaves."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-store/src/settings.rs::ViewerCanvasSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui/src/zoom.rs::Zoom::resize_with_policy/Zoomed::resized",
+        "crates/hydrus-gui/src/lib.rs::open_viewer"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::viewer_canvas_controls_match_reference_and_stage_bounded_values",
+        "crates/hydrus-gui/tests/gui/options_window.rs::resize_and_seek_options_reach_the_native_viewer_geometry",
+        "crates/hydrus-gui/tests/gui/zoom.rs::resizing_preserves_or_recenters_the_recorded_zoom_and_pan",
+        "crates/hydrus-store/src/import/decode.rs::viewer_canvas_options_convert_user_values"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_canvas_options.py",
+        "fixture": "oracle/fixtures/viewer_canvas_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T11:15:10Z",
+        "reference": "Real MediaPlaybackPanel/MediaViewerPanel Apply, CanvasMediaListBrowser resize, StaticImage paint and AnimationBar mouse seek/geometry; synthetic basic fixture."
+      },
+      "implementationCommit": "7e934952294c88ca01cb923981497d41d27e3da8"
+    },
+    {
+      "id": "audit-options-media-playback-transparency-draw-image-transparency-as-checkerboard",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact checkbox defaults false and stages until Apply. Existing viewer and later files consult actual FileFlags::TRANSPARENCY metadata. Enabled transparent media receives alternating 16-logical-pixel RGB237/222 tiles aligned to the media box; disabled or opaque media uses its ordinary canvas background. Only visible tiles are created when zoomed. Persist/reopen, Cancel and legacy import are covered.",
+      "limits": [
+        "The unchecked native canvas retains its existing dark colour, while reference normal backgrounds follow its configurable palette. Preview and duplicate-filter transparency policies remain separate leaves."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-store/src/settings.rs::ViewerCanvasSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/ui/transparency_backdrop.slint::TransparencyBackdrop",
+        "crates/hydrus-gui/src/lib.rs::open_viewer/options Apply callback"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::viewer_canvas_controls_match_reference_and_stage_bounded_values",
+        "crates/hydrus-gui/tests/gui/options_window.rs::canvas_options_apply_to_the_open_viewer_and_cancel_discards_the_draft",
+        "crates/hydrus-store/src/import/decode.rs::viewer_canvas_options_convert_user_values"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_canvas_options.py",
+        "fixture": "oracle/fixtures/viewer_canvas_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T11:15:10Z",
+        "reference": "Real MediaPlaybackPanel/MediaViewerPanel Apply, CanvasMediaListBrowser resize, StaticImage paint and AnimationBar mouse seek/geometry; synthetic basic fixture."
+      },
+      "implementationCommit": "7e934952294c88ca01cb923981497d41d27e3da8"
+    },
+    {
+      "id": "audit-options-media-playback-transparency-instead-of-checkerboard-use-a-bright-greenscreen",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact subordinate checkbox defaults false, stages until Apply and migrates legacy preferences. When checkerboard is enabled for transparent media, this preference selects reference RGB34/255/0 greenscreen. When checkerboard is disabled or media opaque it leaves the ordinary background. All four checkbox combinations are recorded and rendered, including open-viewer refresh, Cancel and reopen.",
+      "limits": [
+        "The unchecked native canvas retains its existing dark colour rather than the reference configurable palette. Preview and backend-specific policies are unclaimed."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-store/src/settings.rs::ViewerCanvasSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/ui/transparency_backdrop.slint::TransparencyBackdrop"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::viewer_canvas_controls_match_reference_and_stage_bounded_values",
+        "crates/hydrus-gui/tests/gui/options_window.rs::canvas_options_apply_to_the_open_viewer_and_cancel_discards_the_draft",
+        "crates/hydrus-store/src/import/decode.rs::viewer_canvas_options_convert_user_values"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_canvas_options.py",
+        "fixture": "oracle/fixtures/viewer_canvas_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T11:15:10Z",
+        "reference": "Real MediaPlaybackPanel/MediaViewerPanel Apply, CanvasMediaListBrowser resize, StaticImage paint and AnimationBar mouse seek/geometry; synthetic basic fixture."
+      },
+      "implementationCommit": "7e934952294c88ca01cb923981497d41d27e3da8"
+    },
+    {
+      "id": "audit-options-media-viewer-animation-audio-seek-bar-seek-bar-height",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact Seek bar height numeric control defaults20 and clamps1..255 pixels. Apply changes an open native animation viewer and persists/migrates the preference. The actual seek-bar and companion volume-control geometry use the configured full height when near the pointer or a popup/drag is active. Cancel keeps the applied height.",
+      "limits": [
+        "The reference focus requirement is a separate unimplemented control; no focus-policy completion is claimed."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-store/src/settings.rs::ViewerCanvasSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow seek bar/volume-box"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::viewer_canvas_controls_match_reference_and_stage_bounded_values",
+        "crates/hydrus-gui/tests/gui/options_window.rs::resize_and_seek_options_reach_the_native_viewer_geometry",
+        "crates/hydrus-store/src/import/decode.rs::viewer_canvas_options_convert_user_values"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_canvas_options.py",
+        "fixture": "oracle/fixtures/viewer_canvas_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T11:15:10Z",
+        "reference": "Real MediaPlaybackPanel/MediaViewerPanel Apply, CanvasMediaListBrowser resize, StaticImage paint and AnimationBar mouse seek/geometry; synthetic basic fixture."
+      },
+      "implementationCommit": "7e934952294c88ca01cb923981497d41d27e3da8"
+    },
+    {
+      "id": "audit-options-media-viewer-animation-audio-seek-bar-seek-bar-height-when-mouse-away",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact noneable Seek bar height when mouse away control defaultsSome5 and clamps1..255 pixels with reference phrase no, hide it completely. Apply changes collapsed native seek/volume geometry live; None renders no bar while away and restores the full configured height near it. Numeric/None cases, actual Qt visibility, persistence, Cancel and legacy migration are covered.",
+      "limits": [
+        "Qt computes a5px ideal rectangle even when None hides its widget; native uses zero visible height. The recorder includes both reference geometry and actual visibility. Focus requirement is a separate unclaimed control."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-store/src/settings.rs::ViewerCanvasSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui/src/viewer_presentation.rs::refresh",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow seek-hidden-height"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::viewer_canvas_controls_match_reference_and_stage_bounded_values",
+        "crates/hydrus-gui/tests/gui/options_window.rs::resize_and_seek_options_reach_the_native_viewer_geometry",
+        "crates/hydrus-store/src/import/decode.rs::viewer_canvas_options_convert_user_values"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_canvas_options.py",
+        "fixture": "oracle/fixtures/viewer_canvas_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T11:15:10Z",
+        "reference": "Real MediaPlaybackPanel/MediaViewerPanel Apply, CanvasMediaListBrowser resize, StaticImage paint and AnimationBar mouse seek/geometry; synthetic basic fixture."
+      },
+      "implementationCommit": "7e934952294c88ca01cb923981497d41d27e3da8"
+    },
+    {
+      "id": "audit-options-media-viewer-animation-audio-seek-bar-seek-bar-nub-width",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact Seek bar nub width numeric control defaults10 and clamps1..63 pixels. Apply updates the current viewer. Nub drawing uses floor((bar width minus nub width)*progress), with the reference endpoint/midpoint positions. Both animation frame seeking and player time seeking compensate clicks/drags by half the configured nub width and divide by the available width. Fresh reference mouse\u2192frame targets and physical native nub pixels are asserted. Persist, Cancel and migration covered.",
+      "limits": [
+        "Widths smaller than the nub are bounded safely by native rendering/seek arithmetic; no backend-specific playback option completion is claimed."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-store/src/settings.rs::ViewerCanvasSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/scanbar.rs::Scanbar::frame_at_with_nub/seek_to_with_nub",
+        "crates/hydrus-gui/src/lib.rs::open_viewer on_scan",
+        "crates/hydrus-gui/ui/viewer.slint::MediaViewerWindow seek-nub-width"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::viewer_canvas_controls_match_reference_and_stage_bounded_values",
+        "crates/hydrus-gui/tests/gui/options_window.rs::resize_and_seek_options_reach_the_native_viewer_geometry",
+        "crates/hydrus-gui/tests/gui/scanbar.rs::configured_nub_width_seeks_the_recorded_animation_frames",
+        "crates/hydrus-store/src/import/decode.rs::viewer_canvas_options_convert_user_values"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_viewer_canvas_options.py",
+        "fixture": "oracle/fixtures/viewer_canvas_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-04T11:15:10Z",
+        "reference": "Real MediaPlaybackPanel/MediaViewerPanel Apply, CanvasMediaListBrowser resize, StaticImage paint and AnimationBar mouse seek/geometry; synthetic basic fixture."
+      },
+      "implementationCommit": "7e934952294c88ca01cb923981497d41d27e3da8"
+    }
+  ],
+  "summary": {
+    "concrete_implementation_leaves": 6,
+    "parent_or_alias_completions": 0,
+    "evidence_only_reassessments": 0
+  },
+  "validation": {
+    "reference_recording": "executed successfully",
+    "formatter": "cargo fmt --all passed",
+    "python_compile": "passed",
+    "diff_check": "passed",
+    "native_tests": "Added; execution delegated to root GitHub CI. No local Cargo builds."
+  }
+}

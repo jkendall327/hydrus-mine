@@ -1,0 +1,479 @@
+{
+  "initial": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "events": [
+    {
+      "values": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "stored": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "ideals": [
+        {
+          "resize": false,
+          "size": [
+            200,
+            750
+          ],
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            199,
+            99
+          ],
+          "position": [
+            801,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            200,
+            40
+          ],
+          "position": [
+            800,
+            101
+          ]
+        }
+      ],
+      "draws": [
+        {
+          "x": 917,
+          "y": 732,
+          "text": "1562.50% - 1/2"
+        }
+      ],
+      "canvas": [
+        1000,
+        750
+      ],
+      "index": "1/2",
+      "zoom": 15.625
+    },
+    {
+      "values": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "stored": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "ideals": [
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        }
+      ],
+      "draws": [],
+      "canvas": [
+        1000,
+        750
+      ],
+      "index": "1/2",
+      "zoom": 15.625
+    },
+    {
+      "values": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "stored": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "ideals": [
+        {
+          "resize": false,
+          "size": [
+            200,
+            750
+          ],
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        }
+      ],
+      "draws": [],
+      "canvas": [
+        1000,
+        750
+      ],
+      "index": "1/2",
+      "zoom": 15.625
+    },
+    {
+      "values": [
+        false,
+        true,
+        false,
+        false
+      ],
+      "stored": [
+        true,
+        false,
+        true,
+        false
+      ],
+      "ideals": [
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            199,
+            99
+          ],
+          "position": [
+            801,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        }
+      ],
+      "draws": [],
+      "canvas": [
+        1000,
+        750
+      ],
+      "index": "1/2",
+      "zoom": 15.625
+    },
+    {
+      "values": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "stored": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "ideals": [
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            200,
+            40
+          ],
+          "position": [
+            800,
+            101
+          ]
+        }
+      ],
+      "draws": [],
+      "canvas": [
+        1000,
+        750
+      ],
+      "index": "1/2",
+      "zoom": 15.625
+    },
+    {
+      "values": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "stored": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ideals": [
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        }
+      ],
+      "draws": [
+        {
+          "x": 917,
+          "y": 732,
+          "text": "1562.50% - 1/2"
+        }
+      ],
+      "canvas": [
+        1000,
+        750
+      ],
+      "index": "1/2",
+      "zoom": 15.625
+    },
+    {
+      "values": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "stored": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "ideals": [
+        {
+          "resize": false,
+          "size": [
+            200,
+            750
+          ],
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            199,
+            99
+          ],
+          "position": [
+            801,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            200,
+            40
+          ],
+          "position": [
+            800,
+            101
+          ]
+        }
+      ],
+      "draws": [],
+      "canvas": [
+        1000,
+        750
+      ],
+      "index": "1/2",
+      "zoom": 15.625
+    },
+    {
+      "values": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "stored": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ideals": [
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "resize": false,
+          "size": [
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0
+          ]
+        }
+      ],
+      "draws": [
+        {
+          "x": 917,
+          "y": 732,
+          "text": "1562.50% - 1/2"
+        }
+      ],
+      "canvas": [
+        1000,
+        750
+      ],
+      "index": "1/2",
+      "zoom": 15.625
+    }
+  ],
+  "notes": {
+    "details": "synthetic viewer hover note"
+  }
+}

@@ -31,7 +31,8 @@ use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FileHandlingSettings, FileSearchSettings, FileViewingStatistics,
     FolderSettings, GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings,
-    SearchDefaults, ThumbnailLayout,
+    SearchDefaults, TagAutocompleteTabs, ThumbnailLayout, ViewerCanvasSettings,
+    ViewerHoverSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -83,6 +84,7 @@ settings! {
     folders: FolderSettings,
     gallery: GalleryDefaults,
     gui: GuiSettings,
+    gui_sessions: hydrus_store::settings::GuiSessionSettings,
     info_line: InfoLineSettings,
     media_viewer: MediaViewerSettings,
     network: NetworkSettings,
@@ -97,6 +99,7 @@ settings! {
     search_defaults: SearchDefaults,
     file_search: FileSearchSettings,
     tag_editing: TagEditingSettings,
+    tag_autocomplete_tabs: TagAutocompleteTabs,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
     sorts: SortSettings,
@@ -107,6 +110,8 @@ settings! {
     trash: TrashSettings,
     url_classes: UrlClassSettings,
     windows: WindowSettings,
+    viewer_canvas: ViewerCanvasSettings,
+    viewer_hovers: ViewerHoverSettings,
 }
 
 /// An option's value as its control holds it.
@@ -120,6 +125,7 @@ pub enum Value {
     Float(String),
     /// The index of the item chosen.
     Choice(usize),
+    SavedSession(Option<String>),
     Text(String),
     /// Text, or none (the reference's `NoneableTextCtrl`); the text is
     /// kept while none, as its text box keeps it.
@@ -167,6 +173,8 @@ pub enum Kind {
         max: f64,
     },
     Choice(&'static [&'static str]),
+    /// Named GUI sessions plus the blank-page startup choice.
+    SavedSession,
     Text,
     NoneableText {
         none_phrase: &'static str,
@@ -906,6 +914,25 @@ fn signed(n: Option<u64>) -> Option<i64> {
     n.map(|n| i64::try_from(n).unwrap_or(i64::MAX))
 }
 
+/// Choice order from GUISessionsPanel: blank first, ensure last session exists.
+pub fn session_choices(store: &hydrus_store::Store) -> Vec<(Option<String>, String)> {
+    let mut names = store
+        .read(hydrus_store::sessions::names)
+        .unwrap_or_default()
+        .into_iter()
+        .map(|(name, _)| name)
+        .collect::<Vec<_>>();
+    if !names
+        .iter()
+        .any(|name| name == hydrus_store::sessions::LAST_SESSION)
+    {
+        names.insert(0, hydrus_store::sessions::LAST_SESSION.into());
+    }
+    let mut choices = vec![(None, "just a blank page".into())];
+    choices.extend(names.into_iter().map(|name| (Some(name.clone()), name)));
+    choices
+}
+
 fn unsigned(n: Option<i64>) -> Option<u64> {
     n.map(|n| u64::try_from(n).unwrap_or(0))
 }
@@ -1289,7 +1316,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             (1, 128),
                             |settings| i64::from(settings.file_search.active_predicate_rows),
                             |settings, value| {
-                                settings.file_search.active_predicate_rows = value as u32
+                                settings.file_search.active_predicate_rows = value as u32;
                             },
                         ),
                         opt(
@@ -1350,7 +1377,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             },
                             |settings, value| {
                                 settings.file_search.implicit_limit =
-                                    value.map(|value| value as u64)
+                                    value.map(|value| value as u64);
                             },
                         ),
                         check(
@@ -1532,10 +1559,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 hydrus_store::settings::PageInsertion::FarRight => 3,
                             },
                             |s, value| {
-                                s.page_insertion = hydrus_store::settings::PageInsertion::from_code(
-                                    i64::try_from(value).unwrap_or(3),
-                                )
-                                .unwrap_or_default()
+                                s.page_insertion =
+                                    hydrus_store::settings::PageInsertion::from_code(
+                                        i64::try_from(value).unwrap_or(3),
+                                    )
+                                    .unwrap_or_default();
                             },
                         ),
                         choice(
@@ -1605,12 +1633,39 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "gui sessions",
             vec![boxed(
                 "sessions",
-                vec![int(
-                    "Number of session backups to keep: ",
-                    (1, 32),
-                    |s| s.session_backups.keep as i64,
-                    |s, value| s.session_backups.keep = value as usize,
-                )],
+                vec![
+                    opt(
+                        "Default session on startup: ",
+                        Kind::SavedSession,
+                        Rc::new(|s| Value::SavedSession(s.gui_sessions.startup.clone())),
+                        Rc::new(|s, value| match value {
+                            Value::SavedSession(name) => {
+                                s.gui_sessions.startup.clone_from(name);
+                                Ok(())
+                            }
+                            _ => Err(wrong("Default session on startup: ")),
+                        }),
+                    ),
+                    int(
+                        "If 'last session' above, autosave it how often (minutes)?",
+                        (1, 1440),
+                        |s| i64::from(s.gui_sessions.autosave_minutes),
+                        |s, value| {
+                            s.gui_sessions.autosave_minutes = u16::try_from(value).unwrap_or(5);
+                        },
+                    ),
+                    check(
+                        "If 'last session' above, only autosave during idle time?",
+                        |s| s.gui_sessions.only_during_idle,
+                        |s, value| s.gui_sessions.only_during_idle = value,
+                    ),
+                    int(
+                        "Number of session backups to keep: ",
+                        (1, 32),
+                        |s| s.session_backups.keep as i64,
+                        |s, value| s.session_backups.keep = value as usize,
+                    ),
+                ],
             )],
         ),
         page(
@@ -1733,119 +1788,198 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             },
                             |s, i| s.media_viewer.default_zoom_type = ZOOM_TYPE_ORDER[i],
                         ),
+                        check(
+                            "Re-center media on window resize:",
+                            |settings| settings.viewer_canvas.recenter_on_resize,
+                            |settings, value| settings.viewer_canvas.recenter_on_resize = value,
+                        ),
                     ],
                 ),
                 boxed(
                     "transparency",
-                    vec![choice(
-                        "Consider a file as \"having transparency\" when:",
-                        TRANSPARENCY,
-                        |s| {
-                            2_usize.saturating_sub(usize::from(
-                                s.file_handling.transparency_strictness,
-                            ))
-                        },
-                        |s, i| s.file_handling.transparency_strictness = 2 - i.min(2) as u8,
-                    )],
+                    vec![
+                        choice(
+                            "Consider a file as \"having transparency\" when:",
+                            TRANSPARENCY,
+                            |s| {
+                                2_usize.saturating_sub(usize::from(
+                                    s.file_handling.transparency_strictness,
+                                ))
+                            },
+                            |s, i| s.file_handling.transparency_strictness = 2 - i.min(2) as u8,
+                        ),
+                        check(
+                            "Draw image transparency as checkerboard:",
+                            |settings| settings.viewer_canvas.transparency_checkerboard,
+                            |settings, value| {
+                                settings.viewer_canvas.transparency_checkerboard = value
+                            },
+                        ),
+                        check(
+                            "--Instead of checkerboard, use a bright greenscreen:",
+                            |settings| settings.viewer_canvas.transparency_greenscreen,
+                            |settings, value| {
+                                settings.viewer_canvas.transparency_greenscreen = value
+                            },
+                        ),
+                    ],
                 ),
             ],
         ),
         page(
             "media viewer",
-            vec![boxed(
-                "slideshows",
-                vec![
-                    text(
-                        "Slideshow durations:",
-                        |s| numbers_text(&s.slideshow.durations),
-                        |s, t| {
-                            // (none above zero: left as they were)
-                            let durations = parse_numbers(t, "slideshow durations")?;
-                            if !durations.is_empty() {
-                                s.slideshow.durations = durations;
-                            }
-                            Ok(())
-                        },
-                    ),
-                    check(
-                        "Always play media once through before moving on:",
-                        |s| s.slideshow.once_through,
-                        |s, v| s.slideshow.once_through = v,
-                    ),
-                    noneable(
-                        "Slideshow short-media skip seconds threshold:",
-                        none("do not use", 10, (1, 86400), Some("s")),
-                        |s| s.slideshow.short_loop_seconds,
-                        |s, v| s.slideshow.short_loop_seconds = v,
-                    ),
-                    noneable(
-                        "Slideshow short-media skip percentage threshold:",
-                        none("do not use", 20, (1, 99), Some("%")),
-                        |s| s.slideshow.short_loop_percentage,
-                        |s, v| s.slideshow.short_loop_percentage = v,
-                    ),
-                    noneable(
-                        "Slideshow shorter-media cutoff percentage threshold:",
-                        none("do not use", 75, (1, 99), Some("%")),
-                        |s| s.slideshow.short_cutoff_percentage,
-                        |s, v| s.slideshow.short_cutoff_percentage = v,
-                    ),
-                    noneable(
-                        "Slideshow long-media allowed delay percentage threshold:",
-                        none("do not use", 50, (1, 500), Some("%")),
-                        |s| s.slideshow.long_overspill_percentage,
-                        |s, v| s.slideshow.long_overspill_percentage = v,
-                    ),
-                ],
-            )],
+            vec![
+                boxed(
+                    "animation/audio seek bar",
+                    vec![
+                        int(
+                            "Seek bar height:",
+                            (1, 255),
+                            |settings| i64::from(settings.viewer_canvas.seek_height),
+                            |settings, value| settings.viewer_canvas.seek_height = value as u32,
+                        ),
+                        noneable(
+                            "Seek bar height when mouse away:",
+                            none("no, hide it completely", 5, (1, 255), Some("px")),
+                            |settings| settings.viewer_canvas.seek_hidden_height.map(i64::from),
+                            |settings, value| {
+                                settings.viewer_canvas.seek_hidden_height =
+                                    value.map(|height| height as u32)
+                            },
+                        ),
+                        int(
+                            "Seek bar nub width:",
+                            (1, 63),
+                            |settings| i64::from(settings.viewer_canvas.seek_nub_width),
+                            |settings, value| settings.viewer_canvas.seek_nub_width = value as u32,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "slideshows",
+                    vec![
+                        text(
+                            "Slideshow durations:",
+                            |s| numbers_text(&s.slideshow.durations),
+                            |s, t| {
+                                // (none above zero: left as they were)
+                                let durations = parse_numbers(t, "slideshow durations")?;
+                                if !durations.is_empty() {
+                                    s.slideshow.durations = durations;
+                                }
+                                Ok(())
+                            },
+                        ),
+                        check(
+                            "Always play media once through before moving on:",
+                            |s| s.slideshow.once_through,
+                            |s, v| s.slideshow.once_through = v,
+                        ),
+                        noneable(
+                            "Slideshow short-media skip seconds threshold:",
+                            none("do not use", 10, (1, 86400), Some("s")),
+                            |s| s.slideshow.short_loop_seconds,
+                            |s, v| s.slideshow.short_loop_seconds = v,
+                        ),
+                        noneable(
+                            "Slideshow short-media skip percentage threshold:",
+                            none("do not use", 20, (1, 99), Some("%")),
+                            |s| s.slideshow.short_loop_percentage,
+                            |s, v| s.slideshow.short_loop_percentage = v,
+                        ),
+                        noneable(
+                            "Slideshow shorter-media cutoff percentage threshold:",
+                            none("do not use", 75, (1, 99), Some("%")),
+                            |s| s.slideshow.short_cutoff_percentage,
+                            |s, v| s.slideshow.short_cutoff_percentage = v,
+                        ),
+                        noneable(
+                            "Slideshow long-media allowed delay percentage threshold:",
+                            none("do not use", 50, (1, 500), Some("%")),
+                            |s| s.slideshow.long_overspill_percentage,
+                            |s, v| s.slideshow.long_overspill_percentage = v,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "media viewer hovers",
-            vec![boxed(
-                "top hover file summary",
-                vec![
-                    check(
-                        "Show archived status: ",
-                        |s| s.info_line.archived_interesting,
-                        |s, v| s.info_line.archived_interesting = v,
-                    ),
-                    check(
-                        "Show archived time: ",
-                        |s| s.info_line.archived_time_interesting,
-                        |s, v| s.info_line.archived_time_interesting = v,
-                    ),
-                    check(
-                        "Show file services: ",
-                        |s| s.info_line.file_services_interesting,
-                        |s, v| s.info_line.file_services_interesting = v,
-                    ),
-                    check(
-                        "Show file service add times: ",
-                        |s| s.info_line.file_services_import_times_interesting,
-                        |s, v| s.info_line.file_services_import_times_interesting = v,
-                    ),
-                    check(
-                        "Show file trash times: ",
-                        |s| s.info_line.trash_time_interesting,
-                        |s, v| s.info_line.trash_time_interesting = v,
-                    ),
-                    check(
-                        "Show file trash reasons: ",
-                        |s| s.info_line.trash_reason_interesting,
-                        |s, v| s.info_line.trash_reason_interesting = v,
-                    ),
-                    check(
-                        "Hide uninteresting modified times: ",
-                        |s| s.info_line.hide_uninteresting_modified_time,
-                        |s, v| s.info_line.hide_uninteresting_modified_time = v,
-                    ),
-                    check(
-                        "Swap in common resolution labels:",
-                        |s| s.info_line.nice_resolutions,
-                        |s, v| s.info_line.nice_resolutions = v,
-                    ),
-                ],
-            )],
+            vec![
+                boxed(
+                    "background",
+                    vec![check(
+                        "Draw index text (bottom-right) in the viewer background:",
+                        |settings| settings.viewer_hovers.index_background,
+                        |settings, value| settings.viewer_hovers.index_background = value,
+                    )],
+                ),
+                boxed(
+                    "hover windows",
+                    vec![
+                        check(
+                            "Pop-in tags (left) hover window on mouseover:",
+                            |settings| settings.viewer_hovers.tags,
+                            |settings, value| settings.viewer_hovers.tags = value,
+                        ),
+                        check(
+                            "Pop-in ratings and locations (top-right) hover window on mouseover:",
+                            |settings| settings.viewer_hovers.ratings,
+                            |settings, value| settings.viewer_hovers.ratings = value,
+                        ),
+                        check(
+                            "Pop-in notes (right) hover window on mouseover:",
+                            |settings| settings.viewer_hovers.notes,
+                            |settings, value| settings.viewer_hovers.notes = value,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "top hover file summary",
+                    vec![
+                        check(
+                            "Show archived status: ",
+                            |s| s.info_line.archived_interesting,
+                            |s, v| s.info_line.archived_interesting = v,
+                        ),
+                        check(
+                            "Show archived time: ",
+                            |s| s.info_line.archived_time_interesting,
+                            |s, v| s.info_line.archived_time_interesting = v,
+                        ),
+                        check(
+                            "Show file services: ",
+                            |s| s.info_line.file_services_interesting,
+                            |s, v| s.info_line.file_services_interesting = v,
+                        ),
+                        check(
+                            "Show file service add times: ",
+                            |s| s.info_line.file_services_import_times_interesting,
+                            |s, v| s.info_line.file_services_import_times_interesting = v,
+                        ),
+                        check(
+                            "Show file trash times: ",
+                            |s| s.info_line.trash_time_interesting,
+                            |s, v| s.info_line.trash_time_interesting = v,
+                        ),
+                        check(
+                            "Show file trash reasons: ",
+                            |s| s.info_line.trash_reason_interesting,
+                            |s, v| s.info_line.trash_reason_interesting = v,
+                        ),
+                        check(
+                            "Hide uninteresting modified times: ",
+                            |s| s.info_line.hide_uninteresting_modified_time,
+                            |s, v| s.info_line.hide_uninteresting_modified_time = v,
+                        ),
+                        check(
+                            "Swap in common resolution labels:",
+                            |s| s.info_line.nice_resolutions,
+                            |s, v| s.info_line.nice_resolutions = v,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "ratings",
@@ -1928,6 +2062,18 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         |s, v| s.network.wake_delay_period = v as u64,
                     ),
                 ],
+            )],
+        ),
+        page(
+            "tag autocomplete tabs",
+            vec![boxed(
+                "children tags",
+                vec![noneable(
+                    "How many tags to show in the children tab: ",
+                    none("show all", 40, (1, 1_000_000), None),
+                    |s| s.tag_autocomplete_tabs.children_limit.map(|n| n as i64),
+                    |s, n| s.tag_autocomplete_tabs.children_limit = n.map(|n| n as usize),
+                )],
             )],
         ),
         page(
@@ -2241,6 +2387,9 @@ pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Sug
                     if let Some(text) = items.get(*index) {
                         labels.push(*text);
                     }
+                }
+                (Kind::SavedSession, Value::SavedSession(name)) => {
+                    labels.push(name.as_deref().unwrap_or("just a blank page"))
                 }
                 (
                     Kind::Noneable {
@@ -2580,6 +2729,14 @@ impl Editor {
                 *value = Value::Location(location);
                 return;
             }
+        }
+    }
+
+    pub fn saved_session(&mut self, row: usize, name: Option<String>) {
+        if let Some(index) = self.option_at(row)
+            && matches!(self.kind(index), Kind::SavedSession)
+        {
+            self.values[self.page][index] = Value::SavedSession(name);
         }
     }
 

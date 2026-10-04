@@ -281,3 +281,414 @@ fn import_whitelist_child_unlocks_on_cancel_and_closes_with_its_parent() {
     assert!(bound.folders.import_options.borrow().is_none());
     assert!(!child.window().is_visible());
 }
+
+#[test]
+fn favourite_children_tabs_and_applied_cap_feed_manage_tags_and_import_tag_child() {
+    use hydrus_core::Tag;
+    use hydrus_store::{
+        content::tag_relations::{self, RelationAction, RelationUpdate},
+        display::RelationKind,
+    };
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let service = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .clone();
+    let id = service.id;
+    let file = store
+        .read(|c| {
+            Ok(c.query_row("SELECT hash_id FROM files LIMIT 1", [], |r| {
+                r.get::<_, hydrus_core::HashId>(0)
+            })?)
+        })
+        .unwrap();
+    store
+        .write_content(move |w| {
+            let tag =
+                hydrus_store::master::intern_tag(w.conn(), &Tag::new("parity:gui root").unwrap())?;
+            w.update_mappings(id, &hydrus_store::content::MappingAction::Add, tag, &[file])?;
+            Ok(())
+        })
+        .unwrap();
+    tag_relations::apply(
+        &store,
+        RelationKind::Parents,
+        [
+            "parity:gui child1",
+            "parity:gui child2",
+            "parity:gui child3",
+        ]
+        .into_iter()
+        .map(|tag| RelationUpdate {
+            service: id,
+            left: Tag::new(tag).unwrap(),
+            right: Tag::new("parity:gui root").unwrap(),
+            action: RelationAction::Add,
+        })
+        .collect(),
+    )
+    .unwrap();
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &settings::FavouriteTags(vec!["parity:gui favourite".into()]),
+            )
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    let w = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    w.invoke_tab_chosen(1);
+    assert_eq!(
+        w.get_suggestions().row_data(0).unwrap().text,
+        "parity:gui favourite"
+    );
+    w.invoke_suggestion_chosen(0);
+    assert!(
+        w.get_tags()
+            .iter()
+            .any(|row| row.text == "parity:gui favourite")
+    );
+    w.invoke_tab_chosen(2);
+    assert_eq!(w.get_suggestions().row_count(), 3);
+    // The real options dialog stages the cap, then the already-open consumer reads Apply.
+    ui.invoke_menu_title_pressed(0, 20.0, 22.0);
+    let pane = ui.get_menu_panes().row_data(0).unwrap();
+    let index = pane
+        .lines
+        .iter()
+        .position(|row| row.label == "options\u{2026}")
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(index).unwrap(), 0.0, 0.0, 0.0);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    let page = options
+        .get_pages()
+        .iter()
+        .position(|row| row.text == "tag autocomplete tabs")
+        .unwrap();
+    options.invoke_page_chosen(i32::try_from(page).unwrap());
+    let row = options
+        .get_rows()
+        .iter()
+        .position(|row| row.label == "How many tags to show in the children tab: ")
+        .unwrap();
+    let control = options.get_rows().row_data(row).unwrap();
+    assert_eq!(
+        (control.minimum, control.maximum, control.number),
+        (1, 1_000_000, 40)
+    );
+    assert_eq!(control.none_phrase, "show all");
+    options.invoke_number_edited(i32::try_from(row).unwrap(), 1);
+    w.invoke_fetch();
+    assert_eq!(w.get_suggestions().row_count(), 3);
+    options.invoke_apply();
+    w.invoke_fetch();
+    assert_eq!(w.get_suggestions().row_count(), 1);
+    assert_eq!(
+        w.get_suggestions().row_data(0).unwrap().text,
+        "parity:gui child1"
+    );
+    w.invoke_cancel();
+    let child_slot = hydrus_gui::write_tag_window::Slot::default();
+    let child = hydrus_gui::write_tag_window::open(
+        &store,
+        service.key,
+        &["parity:gui root".into()],
+        "edit tags",
+        &child_slot,
+        Rc::new(|_| {}),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    child.invoke_tab_chosen(2);
+    assert_eq!(child.get_suggestions().row_count(), 1);
+    child.invoke_chosen(0);
+    assert!(
+        child
+            .get_tags()
+            .iter()
+            .any(|row| row.text == "parity:gui child1")
+    );
+    child.invoke_tab_chosen(1);
+    assert_eq!(
+        child.get_suggestions().row_data(0).unwrap().text,
+        "parity:gui favourite"
+    );
+    child.invoke_cancel();
+}
+
+fn choose_write_tag_menu(window: &hydrus_gui::WriteTagsWindow, path: &[&str]) {
+    for (pane, label) in path.iter().enumerate() {
+        let lines = window.get_tag_menu_panes().row_data(pane).unwrap().lines;
+        let line = lines.iter().position(|row| row.label == *label).unwrap();
+        window.invoke_tag_menu_clicked(
+            i32::try_from(pane).unwrap(),
+            i32::try_from(line).unwrap(),
+            100.0,
+            50.0,
+            10.0,
+        );
+    }
+}
+
+#[test]
+fn shared_tag_menu_favourites_questions_copy_launch_and_owner_lifetime() {
+    use hydrus_core::{Tag, search::context::LocationContext, search::predicate::Predicate};
+    use std::cell::Cell;
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let applied = Rc::new(Cell::new(0));
+    let copies = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_clipper({
+        let copies = copies.clone();
+        move |clip| copies.borrow_mut().push(clip.clone())
+    });
+    let launched = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::write_tag_menu::install_search_launcher(Rc::new({
+        let launched = launched.clone();
+        move |location, context, predicates, duplicate| {
+            launched
+                .borrow_mut()
+                .push((location, context, predicates, duplicate))
+        }
+    }));
+    let w = hydrus_gui::write_tag_window::open(
+        &store,
+        key.clone(),
+        &[],
+        "edit tags",
+        &slot,
+        Rc::new({
+            let applied = applied.clone();
+            move |_| applied.set(applied.get() + 1)
+        }),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    w.invoke_edited("parity:menu new".into());
+    w.invoke_context_menu(0, 10.0, 10.0);
+    choose_write_tag_menu(&w, &["copy", "menu_new"]);
+    assert_eq!(
+        *copies.borrow(),
+        vec![hydrus_gui::Clip::Text("menu_new".into())]
+    );
+    w.invoke_context_menu(0, 10.0, 10.0);
+    choose_write_tag_menu(&w, &["favourites", "add \"parity:menu new\" to favourites"]);
+    let favourites: settings::FavouriteTags = store.read(settings::get).unwrap();
+    assert!(favourites.0.iter().any(|t| t == "parity:menu new"));
+    w.invoke_tab_chosen(1);
+    let row = w
+        .get_suggestions()
+        .iter()
+        .position(|r| r.text == "parity:menu new")
+        .unwrap();
+    w.invoke_context_menu(i32::try_from(row).unwrap(), 10.0, 10.0);
+    choose_write_tag_menu(
+        &w,
+        &["favourites", "remove \"parity:menu new\" from favourites"],
+    );
+    assert_eq!(
+        w.get_tag_menu_question(),
+        "Remove \"parity:menu new\" from the favourites list?"
+    );
+    w.invoke_apply();
+    assert!(slot.borrow().is_some());
+    assert_eq!(applied.get(), 0);
+    w.invoke_tag_menu_answered(false);
+    assert!(w.get_tag_menu_question().is_empty());
+    let favourites: settings::FavouriteTags = store.read(settings::get).unwrap();
+    assert!(favourites.0.iter().any(|t| t == "parity:menu new"));
+    w.invoke_context_menu(i32::try_from(row).unwrap(), 10.0, 10.0);
+    choose_write_tag_menu(&w, &["open", "open a new search page for parity:menu new"]);
+    let defaults: settings::SearchDefaults = store.read(settings::get).unwrap();
+    assert_eq!(launched.borrow().len(), 1);
+    let actual = launched.borrow()[0].clone();
+    assert_eq!(actual.0, LocationContext::default());
+    assert_eq!(actual.1.service, defaults.tag_service);
+    assert_eq!(
+        actual.2,
+        vec![Predicate::Tag {
+            tag: Tag::new("parity:menu new").unwrap(),
+            inclusive: true
+        }]
+    );
+    assert!(!actual.3);
+    w.invoke_context_menu(i32::try_from(row).unwrap(), 10.0, 10.0);
+    choose_write_tag_menu(
+        &w,
+        &["favourites", "remove \"parity:menu new\" from favourites"],
+    );
+    w.window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    w.invoke_tag_menu_answered(true);
+    w.invoke_apply();
+    w.invoke_context_menu(0, 10.0, 10.0);
+    w.invoke_tag_menu_clicked(0, 0, 100.0, 50.0, 10.0);
+    assert!(slot.borrow().is_none());
+    assert_eq!(applied.get(), 0);
+    assert_eq!(launched.borrow().len(), 1);
+    let favourites: settings::FavouriteTags = store.read(settings::get).unwrap();
+    assert!(favourites.0.iter().any(|t| t == "parity:menu new"));
+    // Reopen, then a confirmed removal re-reads concurrent settings instead of replacing them.
+    let w = hydrus_gui::write_tag_window::open(
+        &store,
+        key,
+        &[],
+        "edit tags",
+        &slot,
+        Rc::new(|_| {}),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    w.invoke_tab_chosen(1);
+    let row = w
+        .get_suggestions()
+        .iter()
+        .position(|r| r.text == "parity:menu new")
+        .unwrap();
+    w.invoke_context_menu(i32::try_from(row).unwrap(), 10.0, 10.0);
+    choose_write_tag_menu(
+        &w,
+        &["favourites", "remove \"parity:menu new\" from favourites"],
+    );
+    store
+        .write(|ctx| {
+            let mut favourites: settings::FavouriteTags = settings::get(ctx.conn())?;
+            favourites.0.push("parity:other window".into());
+            settings::set(ctx.conn(), &favourites)
+        })
+        .unwrap();
+    w.invoke_tag_menu_answered(true);
+    let favourites: settings::FavouriteTags = store.read(settings::get).unwrap();
+    assert!(!favourites.0.iter().any(|t| t == "parity:menu new"));
+    assert!(favourites.0.iter().any(|t| t == "parity:other window"));
+    assert!(
+        !w.get_suggestions()
+            .iter()
+            .any(|r| r.text == "parity:menu new")
+    );
+    w.invoke_cancel();
+    hydrus_gui::write_tag_menu::clear_search_launcher();
+}
+
+#[test]
+fn tag_menu_launches_native_search_and_duplicate_pages_with_recorded_predicates() {
+    use hydrus_core::{Tag, pages::PageContent, search::predicate::Predicate};
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let window = hydrus_gui::write_tag_window::open(
+        &store,
+        key,
+        &[],
+        "edit tags",
+        &slot,
+        Rc::new(|_| {}),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    *slot.borrow_mut() = Some(window.clone_strong());
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let launches = fixture["menus"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|event| event["action"] == "launch");
+    let mut count = bound.pages.borrow().session().pages.len();
+    for event in launches {
+        let expected = &event["launched"][0];
+        let tag = expected["predicates"][0].as_str().unwrap();
+        window.invoke_edited(tag.into());
+        let row = window
+            .get_suggestions()
+            .iter()
+            .position(|row| row.text.starts_with(tag))
+            .unwrap();
+        window.invoke_context_menu(i32::try_from(row).unwrap(), 10.0, 10.0);
+        // This store has no parent links; the action's payload is the same recorded child tag.
+        let duplicate = expected["topic"] == "new_page_duplicates";
+        let label = format!(
+            "open a new {} page for {tag}",
+            if duplicate {
+                "duplicate filter"
+            } else {
+                "search"
+            }
+        );
+        choose_write_tag_menu(&window, &["open", &label]);
+        count += 1;
+        let pages = bound.pages.borrow();
+        assert_eq!(pages.session().pages.len(), count);
+        assert_eq!(pages.shown().name, expected["page_name"].as_str().unwrap());
+        let predicate = Predicate::Tag {
+            tag: Tag::new(tag).unwrap(),
+            inclusive: true,
+        };
+        let context = match &pages.shown().content {
+            PageContent::Search { search, .. } => search,
+            PageContent::Duplicates { duplicates, .. } => {
+                assert_eq!(duplicates.search.search_1, duplicates.search.search_2);
+                &duplicates.search.search_1
+            }
+            content => panic!("unexpected launched page: {content:?}"),
+        };
+        assert_eq!(context.predicates, vec![predicate]);
+        assert_eq!(
+            context.tags.service,
+            store
+                .read(settings::get::<settings::SearchDefaults>)
+                .unwrap()
+                .tag_service
+        );
+        assert_eq!(
+            context
+                .location
+                .current()
+                .iter()
+                .map(|key| hex::encode(key.as_bytes()))
+                .collect::<Vec<_>>(),
+            expected["current"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|key| key.as_str().unwrap())
+                .collect::<Vec<_>>()
+        );
+    }
+    window.invoke_cancel();
+    window.invoke_context_menu(0, 10.0, 10.0);
+    window.invoke_tag_menu_clicked(0, 0, 100.0, 50.0, 10.0);
+    assert_eq!(bound.pages.borrow().session().pages.len(), count);
+    bound.pages.borrow_mut().sync(1_700_200_000).unwrap();
+    let reopened = Pages::open(store).unwrap();
+    assert_eq!(reopened.session().pages.len(), count);
+    assert!(matches!(
+        reopened.shown().content,
+        PageContent::Duplicates { .. }
+    ));
+}

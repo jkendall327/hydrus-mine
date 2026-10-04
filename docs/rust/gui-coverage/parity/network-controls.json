@@ -20,7 +20,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/network_job_control.rs",
-          "line": 314,
+          "line": 344,
           "symbol": "fn action(&self"
         },
         {
@@ -30,8 +30,13 @@
         },
         {
           "relativepath": "crates/hydrus-net/src/engine.rs",
-          "line": 604,
+          "line": 615,
           "symbol": "pub fn runtime_command("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs",
+          "symbol": "fn control_action(&self",
+          "line": 1040
         }
       ],
       "testAnchors": [
@@ -52,12 +57,12 @@
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
-          "line": 247,
+          "line": 253,
           "symbol": "fn page_override"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
-          "line": 347,
+          "line": 366,
           "symbol": "fn auto_policy"
         },
         {
@@ -69,6 +74,11 @@
           "relativepath": "crates/hydrus-net/tests/engine.rs",
           "line": 1211,
           "symbol": "fn runtime_cog_gallery"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
+          "symbol": "fn current_jobs_cog",
+          "line": 498
         }
       ],
       "referenceRecording": {
@@ -86,10 +96,9 @@
     {
       "originalID": "audit-network-download-control-errors",
       "before": "missing",
-      "proposedStatus": "partial",
-      "exactBehavior": "Native page controls and shared Control/Errors support reference show/copy and explicit owner clear, retaining an error after a job leaves, hiding after clear without journal resurrection. Actual engine failures populate owning controls via context+request-role journal; show preserves Network Error title and text, copy preserves exact text. No visible clear menu item.",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Native page controls and shared Control/Errors support reference show/copy and explicit owner clear, retaining an error after a job leaves, hiding after clear without journal resurrection. Actual engine failures populate owning controls via context+request-role journal; show preserves Network Error title and text, copy preserves exact text. No visible clear menu item. The page-parser example-fetch owner clears only after validating a new URL, sets completed failure text after removing the live job, preserves the error for empty URL/raw test-panel fetch, and closes error descendants when its editor closes.",
       "limits": [
-        "Parser fetch owner integration is pending in the parser agent slice; reference ClearError is called there before a new fetch.",
         "Native error display is a scrollable window instead of a modal critical message box.",
         "Failure journal retains 128 requests per daemon epoch and displays the reference long-text prefix."
       ],
@@ -101,7 +110,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/network_job_control.rs",
-          "line": 314,
+          "line": 344,
           "symbol": "fn action(&self"
         },
         {
@@ -111,8 +120,19 @@
         },
         {
           "relativepath": "crates/hydrus-net/src/engine.rs",
-          "line": 604,
+          "line": 615,
           "symbol": "pub fn runtime_command("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs",
+          "symbol": "fn control_action(&self",
+          "line": 1040
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "line": 435,
+          "symbol": "fn open_editor(",
+          "commit": "af7f5321"
         }
       ],
       "testAnchors": [
@@ -133,12 +153,12 @@
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
-          "line": 247,
+          "line": 253,
           "symbol": "fn page_override"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
-          "line": 347,
+          "line": 366,
           "symbol": "fn auto_policy"
         },
         {
@@ -150,6 +170,17 @@
           "relativepath": "crates/hydrus-net/tests/engine.rs",
           "line": 1211,
           "symbol": "fn runtime_cog_gallery"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
+          "symbol": "fn current_jobs_cog",
+          "line": 498
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 275,
+          "symbol": "fn page_fetch_error_menu_retains_completed_failure_and_clears_at_next_request",
+          "commit": "af7f5321"
         }
       ],
       "referenceRecording": {
@@ -162,6 +193,160 @@
         "diffCheck": true,
         "localCargoBuildsOrTests": false,
         "ci": "Parent runs asynchronous GitHub CI; tests authored but not claimed locally passed."
+      },
+      "ownerReferenceRecording": {
+        "script": "oracle/record_parser_fetch_errors.py",
+        "fixture": "oracle/fixtures/parser_fetch_errors.json",
+        "executed": true,
+        "commit": "af7f5321"
+      }
+    },
+    {
+      "originalID": "audit-network-file-log-clipboard-import",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Enabled actual whole-log clipboard import in open file logs and downloader list menus. Nonblank/BOM/newline source parsing, active URL-class request/storage normalization, first-line batch URL/path type including mixed batches, durable duplicate skipping without retrying failed seeds, queue nudge and reread. Empty or unavailable clipboard displays an acknowledgement; cancel/acknowledge changes nothing. Reopened log sees persisted imports; closed/replaced owners reject stale callbacks.",
+      "limits": [
+        "Native acknowledgement/page error presentation replaces Qt clipboard parse-error dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/file_log.rs",
+          "line": 85,
+          "symbol": "pub fn pasted_sources("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
+          "line": 288,
+          "symbol": "        Action::ImportFromClipboard => {"
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_log.rs",
+          "line": 133,
+          "symbol": "fn clipboard_source_batches_match_actual_reference_imports"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
+          "line": 192,
+          "symbol": "fn clipboard_import_persists_deduplicates_and_handles_empty_or_missing_text"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_file_log_exchange.py",
+        "fixture": "oracle/fixtures/file_log_exchange.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; scoped tests authored and not claimed locally passed."
+      }
+    },
+    {
+      "originalID": "audit-network-file-log-search-urls",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Enabled selected-row search for URLs. Opens a native url search page in combined local file domains containing one OR container of has-url exact-match predicates for selected request URLs beginning http. Existing search engine consumes predicates and reaches files from either OR branch; session save/reopen preserves the page. Opening does not explicitly raise the desktop window.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/file_log.rs",
+          "line": 140,
+          "symbol": "pub fn url_search("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
+          "line": 307,
+          "symbol": "        Action::SearchUrls => {"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 919,
+          "symbol": "                let predicates = crate::file_log::url_search(&urls);"
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_log.rs",
+          "line": 155,
+          "symbol": "fn selected_urls_are_one_exact_match_or_container"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
+          "line": 267,
+          "symbol": "fn selected_url_search_opens_a_local_or_search_and_reaches_matching_files"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_file_log_exchange.py",
+        "fixture": "oracle/fixtures/file_log_exchange.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; scoped tests authored and not claimed locally passed."
+      }
+    },
+    {
+      "originalID": "audit-network-file-log-png",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Actual from-png importer uses native picker and bounded reference compressed UTF-8 carrier decode, active source normalization/deduplication and durable queue append/nudge. Cancel leaves log unchanged; malformed and empty payloads display Could not import. Actual to-png action opens reusable owned export panel with title, readonly payload description, description, width100\u20134096/path controls, path/title validation, automatic .png suffix, readable header/compressed payload, brief done state and persistent successful last directory. Frozen payload and parent-close/stale-callback guards preserve owner boundaries.",
+      "limits": [
+        "Native SVG fonts/wrapping and decorative header pixels differ from Qt.",
+        "Export panel is an owned native window rather than a modal Qt dialog.",
+        "16 MiB carrier/payload limit and 4096-character title/description limit. Failed writes do not update the remembered directory."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
+          "line": 315,
+          "symbol": "        Action::ImportFromPng =>"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/png_export_window.rs",
+          "line": 70,
+          "symbol": "pub fn open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/png_export.rs",
+          "line": 58,
+          "symbol": "pub fn encode("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/png_export.slint",
+          "line": 4,
+          "symbol": "export component PngExportWindow"
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_log.rs",
+          "line": 178,
+          "symbol": "fn source_png_carriers_import_actual_qt_exports_and_render_custom_headers"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
+          "line": 349,
+          "symbol": "fn source_png_dialogs_cancel_validate_import_export_and_close_with_the_log"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_file_log_png.py",
+        "fixture": "oracle/fixtures/file_log_png.json",
+        "binaryFixture": "oracle/fixtures/file_log_sources.png",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; tests authored and not claimed locally passed."
       }
     }
   ]

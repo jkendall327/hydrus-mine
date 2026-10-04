@@ -1629,8 +1629,13 @@ imports regenerate keys and make names unique. Credential definitions expose the
 name, normal/password presentation and shared permitted-input matcher. Credential
 entry masks passwords, validates live and reproduces the advisory acceptance
 question for blank or invalid values. Child edits wait for the owning script and
-script-list Apply; closing a parent cancels its children. Existing step, cookie
-and example-domain rows are preserved and shown, but remain read-only in this slice.
+script-list Apply; closing a parent cancels its children. The step queue supports add/edit/delete and order changes. Each step edits name,
+scheme, method, optional subdomain and path, with the reference subdomain/path
+cleanup. Its response content list supports extended selection, unique named
+VARIABLE/VETO nodes, shared formula/live preview, delete confirmation and reviewed
+JSON/PNG exchange. Parent cancellation discards every nested formula/parser.
+Request argument dictionaries, required-cookie matchers and script example-domain
+rows are preserved and shown, but remain read-only in this slice.
 
 ## Network sessions and HTTP headers
 
@@ -1938,10 +1943,166 @@ A failed request leaves a last-error button on the owning page control. Its menu
 has only **show error** and **copy error**. The error window uses the reference
 **Network Error** title and preserves the text. Removing a finished job keeps its
 error; the owner's explicit clear hides the button and suppresses replay of the
-same stored failure. Parser fetch ownership is being connected separately.
+same stored failure. The page-parser example-fetch owner clears after validating
+a new URL and retains the completed failure after removing its live job. Empty
+URLs and raw test-panel fetches preserve the owner’s error; closing its editor
+closes the error window.
+
+Importer option editors now expose reference container copy/paste and the shared
+custom overwrite chooser. The chooser shows current, pasted/loaded and result
+columns, with merge, fill-in-gaps and replace presets plus per-kind checkboxes.
+Applying the child replaces only the parent draft; closing either owner cancels
+uncommitted edits and retained callbacks cannot apply twice. Non-full replacement
+of global options is rejected with the reference information message.
+
+When several controls review the same request, each automatic override has its
+own owner. Closing or unchecking one control leaves another control's policy
+intact. The override also skips a data-speed wait after five seconds and counts
+the transferred data normally.
+
+The current-network-jobs review shows the same selected-job control, including
+context rules, applicable retry/wait actions, and show/copy for a failure retained
+after the selected request disappears. Its automatic policy has an independent
+owner, so unchecking a page control does not disable the review's policy.
 
 Page parser example-data fetching retains its network failure after the job ends.
 The error menu shows the full native diagnostic or copies it unchanged; the next
 validated example request clears the retained failure. Closing the parser also
 closes its error popup and invalidates retained callbacks. Raw formula/content
 URL fetching uses its own test text, as in the reference.
+
+
+Network > logins > logins opens preserved or saved domain entries. Edit credentials
+uses the script's definition order and masks passwords, with the recorded live
+labels and advisory invalid/blank confirmation. Accepted values reset delays and
+validity, deactivate invalid credentials and ask before activating a valid inactive
+domain. Domain Apply saves its draft while preserving concurrent script edits;
+Cancel closes credential children and ignores stale handles. Flip active, scrub
+delays and scrub invalidity work on extended selection. Adding domains, changing
+scripts, logged-in cookie status/reset and executing login attempts are still absent.
+
+Shared write-tag inputs now offer tags, favourites and children in Manage Tags,
+both sibling/parent inputs, and detached import additional-tags/whitelist
+editors. Favourites use the configured count service's sibling/parent
+decorations. Children follow the current selected tags, remove already-present
+tags, sort by display counts and show countless rows. The Tag autocomplete tabs
+option limits children to 40 by default; a staged limit or “show all” reaches
+open consumers only after Apply. `oracle/record_write_tag_autocomplete.py`
+drives the real Qt favourites decorator worker, children database query and
+noneable limit control; model and native-window regressions replay their output.
+GUI Sessions now applies the autosave period and idle-only preference to a
+historical save timer alongside live session synchronization. Active idle-only
+saves retry in sixty seconds; eligible saves use the configured one-to-1440-minute
+period. Unchanged session data, including selection-only changes, creates no new
+backup. Main-window key/pointer activity and page commands from the Client API
+feed the imported user/mouse/API idle timeouts, including the initial two-minute
+boot guard. Switching the startup preference away from last session stops the
+scheduled save chain after its next eligible tick. The real controller's cadence,
+unchanged hash suppression, history and idle boundaries are recorded in
+`oracle/record_session_autosave.py`.
+Media playback Options now control whether a resized viewer restores its default
+fit or keeps the current detail zoom and pan. Transparent media can show the
+reference's 16-pixel checkerboard or bright green background; opaque files keep
+the ordinary canvas background. Media viewer Options set the seek bar's full
+height (1–255 pixels), mouse-away height (1–255 pixels or completely hidden),
+and nub width (1–63 pixels). Apply refreshes an open viewer; Cancel discards the
+draft. The configured nub width also determines where clicks and drags seek.
+Legacy preferences migrate with the reference's defaults. These controls and
+native pixels/geometry are recorded in `viewer_canvas_options.json`.
+The file log’s **ADVANCED: import new sources > from clipboard** imports
+nonblank lines immediately, applies the active URL classes, and skips duplicate
+seeds without retrying failed ones. The first line determines URL or path type
+for the whole batch, as in the reference. Empty, unavailable, or inaccessible
+clipboard text displays an error and preserves the existing log. Closing or
+replacing a log invalidates its old callbacks.
+
+The selected-row **search for URLs** action opens a **url search** page in local
+file domains with one OR container of exact URL predicates. It uses the selected
+seeds’ request URLs and executes the search through the existing search engine;
+the page and its predicates can be saved in a session.
+
+Shared write-tag suggestion lists now have a right-click menu for copying raw
+tags, subtags, underscores, counts, all list tags and tags with parents. Parent
+and sibling display toggles affect only the current widget/tab and reset on
+reopening. The favourites submenu persists additions immediately and asks before
+removing a favourite or a service-specific most-used tag; declining or closing
+the owner leaves settings unchanged. Menu questions block owner Apply, and
+confirmed writes reread settings to preserve changes from other windows. The
+open submenu hands selected raw predicates to the main window's weak search/
+duplicate launcher. The real Qt menu actions, copy payloads, questions and page
+publications are recorded by `oracle/record_write_tag_autocomplete.py`; model
+replay and native-window lifecycle regressions cover these boundaries.
+
+The login HTTP module runs ordered GET/POST steps through NetEngine and the normal
+persisted cookie store. Static arguments, credentials and temporary variables
+follow the reference's precedence. POST sends form data and a previous-step
+Referer/Origin, response parsers transfer variables or veto, and step/final cookie
+matchers decide success. Results retain each raw URL/body preview, downloaded text,
+new variables/cookies and status. `oracle/record_login_execution.py` actually runs
+the reference HTTP jobs on a loopback-only dummy site and records success, missing
+cookies/variables, veto, final mismatch, HTTP 401 and cancellation. Native scoped
+HTTP regressions replay those results, inspect wire requests, reopen session cookies
+and cancel an active request. The native GUI test/run consumer is being connected.
+
+Import-option editors now have the reference favourites/profiles star menu:
+load, custom load, copy, edit/add and confirmed deletion. Favourite editors
+include their name and template description; they permit loading and copying
+other profiles while preventing recursive profile edits. Save-current prompts
+for a name, and collisions follow Hydrus's suffix rules. Saves and deletions
+persist immediately, preserving other owners' defaults. Custom load and profile
+editing lock the parent draft; Cancel or owner closure invalidates retained child
+callbacks. The real Qt menu tree, prompts, editor outputs and acceptance/cancel
+paths are recorded in `subscription_import_options.json`.
+
+GUI Sessions also selects the default session on startup: a blank page, last
+session or any saved name. Choices remain fixed while the options window is
+open, and Cancel leaves the startup preference unchanged. A missing session
+name falls back to a blank page. Named sessions restore their saved tree, ordered
+media, selection and independent importer state before the main window opens;
+`oracle/record_session_startup.py` records the four ordinary startup outcomes.
+File-log source PNG exchange now imports reference carriers through **from png**
+and exports the frozen source lines through **to png**. The shared **export to
+png** panel has title, payload description, description, width (100–4096) and
+path controls, validates the path/title before writing, appends `.png`, shows
+**done!** briefly, and remembers the successful export directory. Exports have a
+readable image header and compressed UTF-8 payload compatible with the reference.
+Cancelling an import picker or closing an export leaves the log unchanged;
+malformed or oversized input displays an error. The export child closes with its
+log and rejects callbacks through a retained old handle.
+
+Media viewer hovers Options now independently enable or disable the tags,
+ratings/locations, and notes pop-in panels. The passive bottom-right index
+preference draws the current zoom and index as “zoom - index”, three pixels from
+the canvas edge, underneath the media. All four checkboxes default enabled, as in
+hydrus; Apply updates the current viewer, while Cancel retains its settings.
+The reference recording `viewer_hover_options.json` covers the actual hover
+layout gates and background draw calls, including independent combinations.
+The shared suggestion menu also shows sibling ideals and parent/child lookups
+from all real tag services, grouped by common service membership with the
+reference's ten-item display cap. Add siblings/parents opens an owned relationship
+editor seeded on every service tab. Those dialogs now select the configured
+default service and remember real tab changes immediately, including after
+Cancel; disabling memory preserves the configured default. Closing the write-tag
+owner cancels its relationship child and prevents stale Apply. The reference
+recorder runs the actual relationship lookup and initialization workers and
+records all service seeds and preference changes; model and native child tests
+check graph publication, cancellation and owner lifetimes.
+
+Write-tag menus now open real search or duplicate-filter pages through the main
+window. The selected raw tag predicates, file domain, default tag service and
+reference page names reach their query consumers and persist in sessions.
+Parent decorations remain display text and are not silently added to searches.
+The launcher holds weak owner handles; closing a tag input invalidates its menu.
+
+Idle activity now also follows native input events in auxiliary windows. Mouse
+movement updates the mouse timer; keys, clicks, scrolling and opening/focusing
+an editor update the user timer. Rendering and losing focus do not reset either
+timer. The reference's independent dialog, mouse and API timestamp updates are
+recorded by `oracle/record_session_activity.py`.
+and cancel an active request. The script editor now has a domain field, run/cancel
+controls, current HTTP status, final result and a results table. Run asks for its
+credential values and uses a fresh cookie store, leaving the client sessions and
+staged definitions unchanged. Applying while a test runs is blocked. Review opens
+read-only URL/body/data/variable/cookie/result fields; the data preview contains
+at most 1024 Unicode characters, and copy transfers the complete response.
+Closing the owner cancels the run and its result review, and stale actions do nothing.

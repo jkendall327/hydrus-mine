@@ -1064,7 +1064,7 @@ pub fn folder_test_objects(folder: &str) -> Vec<TestObject> {
             entry.path().is_file()
                 && tools
                     .detect_mime(&entry.path())
-                    .is_ok_and(|mime| hydrus_media::mimes::is_allowed(mime))
+                    .is_ok_and(hydrus_media::mimes::is_allowed)
         })
         .map(|entry| TestObject::File(entry.path().to_string_lossy().into_owned()))
         .collect()

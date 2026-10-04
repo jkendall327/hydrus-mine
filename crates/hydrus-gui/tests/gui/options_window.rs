@@ -1827,3 +1827,538 @@ fn implicit_limit_options_reach_queries_and_limited_sort_refresh() {
         "larger explicit limit overrides the implicit limit"
     );
 }
+
+#[test]
+fn canvas_options_apply_to_the_open_viewer_and_cancel_discards_the_draft() {
+    use hydrus_store::media::FileFlags;
+    use hydrus_store::settings::{self, ViewerCanvasSettings};
+    let fixture = hydrus_testkit::fixture_json("viewer_canvas_options.json");
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let basic = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &files))
+        .unwrap();
+    let alpha = basic
+        .iter()
+        .position(|file| {
+            file.info.as_ref().is_some_and(|info| {
+                info.mime == hydrus_core::Mime::ImagePng && info.flags.has(FileFlags::TRANSPARENCY)
+            })
+        })
+        .unwrap();
+    let opaque = basic
+        .iter()
+        .position(|file| {
+            file.info
+                .as_ref()
+                .is_some_and(|info| info.mime == hydrus_core::Mime::ImageJpeg)
+        })
+        .unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(alpha).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 800, 600);
+    assert_eq!(viewer.get_transparency_mode(), 0);
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media playback");
+    options.invoke_check_toggled(
+        row(&options, "Draw image transparency as checkerboard:").0,
+        true,
+    );
+    options.invoke_check_toggled(row(&options, "Re-center media on window resize:").0, false);
+    assert_eq!(viewer.get_transparency_mode(), 0, "draft does not repaint");
+    options.invoke_cancel();
+    assert_eq!(
+        store.read(settings::get::<ViewerCanvasSettings>).unwrap(),
+        ViewerCanvasSettings::default()
+    );
+    for event in fixture["backgrounds"].as_array().unwrap() {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media playback");
+        let checker = event["checker"].as_bool().unwrap();
+        let green = event["green"].as_bool().unwrap();
+        options.invoke_check_toggled(
+            row(&options, "Draw image transparency as checkerboard:").0,
+            checker,
+        );
+        options.invoke_check_toggled(
+            row(
+                &options,
+                "--Instead of checkerboard, use a bright greenscreen:",
+            )
+            .0,
+            green,
+        );
+        options.invoke_apply();
+        assert_eq!(
+            viewer.get_transparency_mode(),
+            if checker {
+                if green { 2 } else { 1 }
+            } else {
+                0
+            }
+        );
+        // An empty transparent image isolates the background pixels while the
+        // real viewer's metadata and Options callback decide its brush mode.
+        viewer.set_media(slint::Image::default());
+        viewer.set_sharp_shown(false);
+        viewer.set_sharp(slint::Image::default());
+        viewer.set_media_x(0.0);
+        viewer.set_media_y(0.0);
+        viewer.set_media_width(800.0);
+        viewer.set_media_height(600.0);
+        let pixels = headless::render(&drawn, 800, 600);
+        for (reference, x, y) in [
+            ("0,0", 32_usize, 128_usize),
+            ("16,0", 48, 128),
+            ("0,16", 32, 144),
+            ("16,16", 48, 144),
+            ("32,0", 64, 128),
+        ] {
+            let at = (y * 800 + x) * 4;
+            let expected: Vec<u8> = if checker {
+                event["pixels"][reference]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|value| u8::try_from(value.as_u64().unwrap()).unwrap())
+                    .collect()
+            } else {
+                vec![32, 32, 32]
+            };
+            assert_eq!(
+                &pixels[at..at + 3],
+                expected.as_slice(),
+                "{event:?}: {reference}"
+            );
+        }
+    }
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media playback");
+    assert!(
+        row(&options, "Draw image transparency as checkerboard:")
+            .1
+            .checked
+    );
+    assert!(
+        row(
+            &options,
+            "--Instead of checkerboard, use a bright greenscreen:"
+        )
+        .1
+        .checked
+    );
+    options.invoke_check_toggled(
+        row(&options, "Draw image transparency as checkerboard:").0,
+        false,
+    );
+    options.invoke_cancel();
+    assert_eq!(viewer.get_transparency_mode(), 2);
+    viewer.invoke_close_requested();
+    ui.invoke_thumbnail_activated(i32::try_from(opaque).unwrap());
+    let opaque_viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        opaque_viewer.get_transparency_mode(),
+        0,
+        "opaque metadata uses the ordinary canvas background"
+    );
+    opaque_viewer.invoke_close_requested();
+}
+
+#[test]
+#[allow(clippy::float_cmp)] // logical pixel geometry is exact
+fn resize_and_seek_options_reach_the_native_viewer_geometry() {
+    use hydrus_store::settings::{self, ViewerCanvasSettings};
+    use slint::{LogicalPosition, platform::WindowEvent};
+    let fixture = hydrus_testkit::fixture_json("viewer_canvas_options.json");
+    let (_dirs, store) = store();
+    let animation =
+        hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new())
+            .import_path(
+                &hydrus_testkit::fixture_path("media/webp_anim.webp"),
+                &hydrus_import::FileImportOptions::default(),
+            )
+            .unwrap()
+            .hash
+            .unwrap();
+    let animation_id = store
+        .read(|conn| hydrus_store::master::hash_id(conn, &animation))
+        .unwrap()
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let basic = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &files))
+        .unwrap();
+    let jpeg = basic
+        .iter()
+        .position(|file| {
+            file.info
+                .as_ref()
+                .is_some_and(|info| info.mime == hydrus_core::Mime::ImageJpeg)
+        })
+        .unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(jpeg).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 1000, 750);
+    viewer.invoke_zoom(0, false, 0.0, 0.0);
+    viewer.invoke_zoom(1, false, 0.0, 0.0);
+    viewer.invoke_drag(37.0, -19.0);
+    let rect = || {
+        (
+            viewer.get_media_x(),
+            viewer.get_media_y(),
+            viewer.get_media_width(),
+            viewer.get_media_height(),
+        )
+    };
+    let before = rect();
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media playback");
+    options.invoke_check_toggled(row(&options, "Re-center media on window resize:").0, false);
+    options.invoke_apply();
+    headless::render(&drawn, 800, 600);
+    assert_eq!(rect(), before, "live resize policy preserves the zoom/pan");
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media playback");
+    options.invoke_check_toggled(row(&options, "Re-center media on window resize:").0, true);
+    options.invoke_apply();
+    headless::render(&drawn, 600, 450);
+    let info = basic[jpeg].info.as_ref().unwrap();
+    let expected = hydrus_gui::zoom::Zoom::new(
+        hydrus_core::media_viewer::MediaViewerSettings::default(),
+        info.mime,
+        Some((info.width.unwrap(), info.height.unwrap())),
+        (600, 450),
+        1.0,
+    )
+    .rect();
+    assert_eq!(
+        rect(),
+        (
+            expected.0 as f32,
+            expected.1 as f32,
+            expected.2 as f32,
+            expected.3 as f32
+        )
+    );
+    viewer.invoke_close_requested();
+    let index = files.iter().position(|file| *file == animation_id).unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert!(
+        viewer.get_scanbar_shown(),
+        "native animation has a seek bar"
+    );
+    viewer.invoke_toggle_pause();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 800, 600);
+    for event in fixture["seek"].as_array().unwrap() {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer");
+        options.invoke_number_edited(
+            row(&options, "Seek bar height:").0,
+            event["height"].as_i64().unwrap() as i32,
+        );
+        let hidden = row(&options, "Seek bar height when mouse away:").0;
+        options.invoke_none_toggled(hidden, event["hidden_height"].is_null());
+        if let Some(height) = event["hidden_height"].as_i64() {
+            options.invoke_number_edited(hidden, height as i32);
+        }
+        options.invoke_number_edited(
+            row(&options, "Seek bar nub width:").0,
+            event["nub"].as_i64().unwrap() as i32,
+        );
+        options.invoke_apply();
+        let height = event["height"].as_u64().unwrap() as usize;
+        let hidden_height = event["hidden_height"].as_u64().unwrap_or(0) as usize;
+        let nub = event["nub"].as_u64().unwrap() as usize;
+        assert_eq!(viewer.get_seek_height(), height as f32);
+        assert_eq!(viewer.get_seek_hidden_height(), hidden_height as f32);
+        assert_eq!(viewer.get_seek_nub_width(), nub as f32);
+        assert_eq!(
+            event["hidden_visible"].as_bool().unwrap(),
+            hidden_height > 0
+        );
+        viewer.set_media(slint::Image::default());
+        viewer.set_sharp_shown(false);
+        viewer.set_media_x(0.0);
+        viewer.set_media_y(0.0);
+        viewer.set_media_width(128.0);
+        viewer.set_media_height(600.0);
+        viewer.set_scanbar_progress(0.5);
+        viewer.set_scanbar_text("".into());
+        viewer.window().dispatch_event(WindowEvent::PointerMoved {
+            position: LogicalPosition::new(120.0, (600 - height) as f32 + 0.5),
+        });
+        let full = headless::render(&drawn, 800, 600);
+        let pixel = |pixels: &[u8], x: usize, y: usize| {
+            pixels[(y * 800 + x) * 4..(y * 800 + x) * 4 + 3].to_vec()
+        };
+        assert_eq!(
+            pixel(&full, 120, 600 - height),
+            vec![96, 96, 96],
+            "full seek height {height}"
+        );
+        assert_ne!(pixel(&full, 120, 599 - height), vec![96, 96, 96]);
+        if height > 2 {
+            let left = event["nub_x"][2].as_u64().unwrap() as usize;
+            assert_eq!(pixel(&full, left, 600 - height + 1), vec![176, 176, 176]);
+            assert_eq!(
+                pixel(&full, left + nub - 1, 600 - height + 1),
+                vec![176, 176, 176]
+            );
+            assert_ne!(
+                pixel(&full, left + nub, 600 - height + 1),
+                vec![176, 176, 176]
+            );
+        }
+        viewer.window().dispatch_event(WindowEvent::PointerMoved {
+            position: LogicalPosition::new(799.0, 200.0),
+        });
+        let small = headless::render(&drawn, 800, 600);
+        assert_eq!(
+            pixel(&small, 120, 599 - hidden_height),
+            vec![32, 32, 32],
+            "outside collapsed bar"
+        );
+        if hidden_height > 0 {
+            assert_eq!(pixel(&small, 120, 600 - hidden_height), vec![96, 96, 96]);
+        } else {
+            assert_eq!(
+                pixel(&small, 120, 599),
+                vec![32, 32, 32],
+                "None hides the bar completely"
+            );
+        }
+    }
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer");
+    assert_eq!(row(&options, "Seek bar height:").1.number, 37);
+    assert_eq!(row(&options, "Seek bar nub width:").1.number, 19);
+    options.invoke_number_edited(row(&options, "Seek bar height:").0, 255);
+    options.invoke_cancel();
+    assert_eq!(viewer.get_seek_height(), 37.0);
+    assert_eq!(
+        store
+            .read(settings::get::<ViewerCanvasSettings>)
+            .unwrap()
+            .seek_height,
+        37
+    );
+    viewer.invoke_close_requested();
+}
+
+#[test]
+fn hover_options_apply_to_actual_mouseover_panels_and_passive_index_text() {
+    use hydrus_store::settings::{self, ViewerHoverSettings};
+    use slint::{LogicalPosition, platform::WindowEvent};
+    let fixture = hydrus_testkit::fixture_json("viewer_hover_options.json");
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let basic = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &files))
+        .unwrap();
+    let index = basic
+        .iter()
+        .position(|file| {
+            file.info
+                .as_ref()
+                .is_some_and(|info| info.mime == hydrus_core::Mime::ImageJpeg)
+        })
+        .unwrap();
+    let id = files[index];
+    store
+        .write_content(move |writer| writer.set_note(id, "details", "synthetic viewer hover note"))
+        .unwrap();
+    let mut tags = hydrus_gui::manage_tags::ManageTags::new(store.clone(), vec![id]).unwrap();
+    let mine = tags
+        .service_names()
+        .iter()
+        .position(|name| name == "my tags")
+        .unwrap();
+    tags.choose_service(mine).unwrap();
+    tags.enter("synthetic viewer hover").unwrap();
+    tags.apply().unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 1000, 750);
+    // Finish the initial asynchronous image before isolating background pixels.
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
+    while !viewer.get_sharp_shown() && std::time::Instant::now() < deadline {
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+    assert!(viewer.get_sharp_shown(), "initial JPEG image arrived");
+    assert!(viewer.get_tags().row_count() > 0);
+    assert!(viewer.get_ratings().row_count() > 0);
+    assert!(viewer.get_notes().row_count() > 0);
+    let notes_y = (60..740)
+        .step_by(10)
+        .find(|&y| {
+            viewer.window().dispatch_event(WindowEvent::PointerMoved {
+                position: LogicalPosition::new(980.0, y as f32),
+            });
+            viewer.get_notes_showing()
+        })
+        .expect("notes hover has a reachable region below the ratings");
+    let labels = [
+        "Pop-in tags (left) hover window on mouseover:",
+        "Pop-in ratings and locations (top-right) hover window on mouseover:",
+        "Pop-in notes (right) hover window on mouseover:",
+        "Draw index text (bottom-right) in the viewer background:",
+    ];
+    let move_to = |x: f32, y: f32| {
+        viewer.window().dispatch_event(WindowEvent::PointerMoved {
+            position: LogicalPosition::new(x, y),
+        })
+    };
+    for event in fixture["events"].as_array().unwrap() {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer hovers");
+        for (i, label) in labels.iter().enumerate() {
+            options.invoke_check_toggled(
+                row(&options, label).0,
+                event["values"][i].as_bool().unwrap(),
+            );
+        }
+        options.invoke_apply();
+        let settings = store.read(settings::get::<ViewerHoverSettings>).unwrap();
+        assert_eq!(
+            serde_json::json!([
+                settings.tags,
+                settings.ratings,
+                settings.notes,
+                settings.index_background
+            ]),
+            event["values"]
+        );
+        // Reference disabled hover layouts have no hit region; native gates
+        // its existing panels at the same mouseover points.
+        for (i, (x, y)) in [(40.0, 300.0), (980.0, 5.0), (980.0, notes_y as f32)]
+            .into_iter()
+            .enumerate()
+        {
+            move_to(x, y);
+            let showing = [
+                viewer.get_tags_showing(),
+                viewer.get_ratings_showing(),
+                viewer.get_notes_showing(),
+            ][i];
+            assert_eq!(
+                showing,
+                event["ideals"][i]["size"][0].as_u64().unwrap() > 0,
+                "hover {i}: {event:?}"
+            );
+        }
+        // Isolate the passive index region from the real media and hovers.
+        // The current caption/zoom are controlled by recorded viewer values.
+        move_to(500.0, 400.0);
+        viewer.set_caption(event["index"].as_str().unwrap().into());
+        viewer.set_zoom_text(
+            hydrus_gui::viewer_menu::zoom_percentage(event["zoom"].as_f64().unwrap()).into(),
+        );
+        viewer.set_media(slint::Image::default());
+        viewer.set_sharp_shown(false);
+        viewer.set_media_x(350.0);
+        viewer.set_media_y(250.0);
+        viewer.set_media_width(100.0);
+        viewer.set_media_height(100.0);
+        let pixels = headless::render(&drawn, 1000, 750);
+        let expected = event["draws"]
+            .as_array()
+            .unwrap()
+            .first()
+            .and_then(|draw| draw["text"].as_str())
+            .unwrap_or("");
+        assert_eq!(viewer.get_index_background_text(), expected);
+        let ink = (700_usize..747)
+            .flat_map(|y| (700_usize..997).map(move |x| (y * 1000 + x) * 4))
+            .filter(|&at| pixels[at] > 100 && pixels[at + 1] > 100 && pixels[at + 2] > 100)
+            .count();
+        assert_eq!(
+            ink > 0,
+            !expected.is_empty(),
+            "passive index is painted only when enabled"
+        );
+        if !expected.is_empty() {
+            // It is canvas background text: opaque media painted over the
+            // same region covers it, as Qt child media cover their parent.
+            let mut image = slint::SharedPixelBuffer::<slint::Rgba8Pixel>::new(4, 3);
+            for pixel in image.make_mut_bytes().chunks_exact_mut(4) {
+                pixel.copy_from_slice(&[32, 32, 32, 255]);
+            }
+            viewer.set_media(slint::Image::from_rgba8(image));
+            viewer.set_media_x(0.0);
+            viewer.set_media_y(0.0);
+            viewer.set_media_width(1000.0);
+            viewer.set_media_height(750.0);
+            let covered = headless::render(&drawn, 1000, 750);
+            let ink = (700_usize..747)
+                .flat_map(|y| (700_usize..997).map(move |x| (y * 1000 + x) * 4))
+                .filter(|&at| covered[at] > 100 && covered[at + 1] > 100 && covered[at + 2] > 100)
+                .count();
+            assert_eq!(ink, 0, "media covers passive canvas text");
+        }
+    }
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer hovers");
+    for label in labels {
+        options.invoke_check_toggled(row(&options, label).0, true);
+    }
+    options.invoke_cancel();
+    let settings = store.read(settings::get::<ViewerHoverSettings>).unwrap();
+    assert_eq!(
+        settings,
+        ViewerHoverSettings {
+            tags: false,
+            ratings: false,
+            notes: false,
+            index_background: true
+        }
+    );
+    assert!(!viewer.get_hover_tags_enabled());
+    assert!(!viewer.get_hover_ratings_enabled());
+    assert!(!viewer.get_hover_notes_enabled());
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer hovers");
+    assert!(!row(&options, labels[0]).1.checked);
+    assert!(row(&options, labels[3]).1.checked);
+    options.invoke_cancel();
+    viewer.invoke_close_requested();
+}

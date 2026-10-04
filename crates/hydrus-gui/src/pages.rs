@@ -169,6 +169,35 @@ impl std::fmt::Debug for Pages {
 }
 
 impl Pages {
+    /// Boot using the configured startup session; a missing name falls back to
+    /// the default-domain blank page. Ordinary reopen keeps the live session.
+    pub fn open_startup(store: Arc<Store>) -> hydrus_store::Result<Self> {
+        let settings: hydrus_store::settings::GuiSessionSettings =
+            store.read(hydrus_store::settings::get)?;
+        let mut pages = Self::open(store)?;
+        if settings.startup.as_deref() == Some(LAST_SESSION) {
+            return Ok(pages);
+        }
+        if let Some(name) = settings.startup
+            && pages
+                .store
+                .read(|conn| sessions::load(conn, &name))?
+                .is_some()
+        {
+            pages
+                .clear_and_load(&name)
+                .map_err(hydrus_store::StoreError::Corrupt)?;
+            return Ok(pages);
+        }
+        for index in (0..pages.session.pages.len()).rev() {
+            pages
+                .close(0, index)
+                .map_err(hydrus_store::StoreError::Corrupt)?;
+        }
+        pages.forget_closed();
+        Ok(pages)
+    }
+
     /// The last session, as the reference starts with it; with none (or an
     /// empty one), a single empty search page.
     pub fn open(store: Arc<Store>) -> hydrus_store::Result<Self> {
@@ -905,6 +934,17 @@ impl Pages {
         predicates: Vec<hydrus_search::Predicate>,
         name: &str,
     ) {
+        self.open_search_with_context(location, None, predicates, name);
+    }
+
+    /// Preserve an explicit tag context from an owning tag-list action.
+    pub fn open_search_with_context(
+        &mut self,
+        location: hydrus_search::LocationContext,
+        tags: Option<hydrus_search::TagContext>,
+        predicates: Vec<hydrus_search::Predicate>,
+        name: &str,
+    ) {
         let mut page = new_search_page_on(&self.store, location);
         name.clone_into(&mut page.name);
         let PageContent::Search {
@@ -917,6 +957,9 @@ impl Pages {
             unreachable!("a search page");
         };
         search.predicates = predicates;
+        if let Some(tags) = tags {
+            search.tags = tags;
+        }
         let mut opened = SearchPage::restored(
             self.store.clone(),
             search.clone(),
@@ -928,6 +971,27 @@ impl Pages {
         opened.refresh();
         self.open.insert(page.key, Rc::new(RefCell::new(opened)));
         self.add(page);
+    }
+
+    /// Open the selected predicates as the two searches of a duplicate page.
+    pub fn open_duplicates_with_context(
+        &mut self,
+        location: hydrus_search::LocationContext,
+        tags: hydrus_search::TagContext,
+        predicates: Vec<hydrus_search::Predicate>,
+        name: &str,
+    ) {
+        let mut duplicates = new_duplicates_page(location, predicates);
+        duplicates.search.search_1.tags = tags.clone();
+        duplicates.search.search_2.tags = tags;
+        self.add(Page {
+            key: PageKey::random(),
+            name: name.into(),
+            content: PageContent::Duplicates {
+                duplicates,
+                sort: None,
+            },
+        });
     }
 
     /// Open a new duplicates page searching `location` for potential pairs

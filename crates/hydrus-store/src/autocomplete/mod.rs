@@ -17,7 +17,7 @@ use hydrus_core::ServiceKey;
 
 pub use input::{AutocompleteInput, AutocompleteRules, TagQuery};
 pub use search::{
-    CountDomain, CountRange, TagDisplayType, TagMatch, TagSearchScope, search_tags,
+    CountDomain, CountRange, TagDisplayType, TagMatch, TagSearchScope, count_tags, search_tags,
     search_tags_for_write,
 };
 

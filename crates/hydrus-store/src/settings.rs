@@ -29,6 +29,25 @@ impl Setting for FavouriteTags {
     const KEY: &'static str = "favourite_tags";
 }
 
+/// Shared tag-autocomplete tabs: the children result cap and service-specific most-used tags.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct TagAutocompleteTabs {
+    pub children_limit: Option<usize>,
+    pub most_used: std::collections::BTreeMap<String, Vec<String>>,
+}
+impl Default for TagAutocompleteTabs {
+    fn default() -> Self {
+        Self {
+            children_limit: Some(40),
+            most_used: std::collections::BTreeMap::new(),
+        }
+    }
+}
+impl Setting for TagAutocompleteTabs {
+    const KEY: &'static str = "tag_autocomplete_tabs";
+}
+
 /// File viewing statistics: whether they are recorded, and which viewers'
 /// statistics count as "views" and "view time" when a search or sort does
 /// not name viewers (the reference's `file_viewing_statistics_active` and
@@ -197,6 +216,54 @@ impl PageInsertion {
 
 impl Setting for PageInsertion {
     const KEY: &'static str = "gui_page_insertion";
+}
+
+/// Startup and periodic last-session saving, as GUI Sessions edits it.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct GuiSessionSettings {
+    pub startup: Option<String>,
+    pub autosave_minutes: u16,
+    pub only_during_idle: bool,
+    pub warn_large_session: bool,
+}
+
+impl Default for GuiSessionSettings {
+    fn default() -> Self {
+        Self {
+            startup: Some(crate::sessions::LAST_SESSION.into()),
+            autosave_minutes: 5,
+            only_during_idle: false,
+            warn_large_session: true,
+        }
+    }
+}
+
+impl Setting for GuiSessionSettings {
+    const KEY: &'static str = "gui_sessions";
+}
+
+/// Idle eligibility from the reference's user-action and mouse timers.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct GuiIdleSettings {
+    pub enabled: bool,
+    pub user_seconds: Option<u64>,
+    pub mouse_seconds: Option<u64>,
+    pub api_seconds: Option<u64>,
+}
+impl Default for GuiIdleSettings {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            user_seconds: Some(1800),
+            mouse_seconds: Some(600),
+            api_seconds: None,
+        }
+    }
+}
+impl Setting for GuiIdleSettings {
+    const KEY: &'static str = "gui_idle";
 }
 
 /// Which recognised URL types the desktop watches for in changed clipboard text.
@@ -436,6 +503,56 @@ impl Default for FileSearchSettings {
 
 impl Setting for FileSearchSettings {
     const KEY: &'static str = "file_search";
+}
+
+/// Native media canvas presentation (`media playback` and `media viewer`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerCanvasSettings {
+    pub recenter_on_resize: bool,
+    pub transparency_checkerboard: bool,
+    pub transparency_greenscreen: bool,
+    pub seek_height: u32,
+    pub seek_hidden_height: Option<u32>,
+    pub seek_nub_width: u32,
+}
+impl Default for ViewerCanvasSettings {
+    fn default() -> Self {
+        Self {
+            recenter_on_resize: true,
+            transparency_checkerboard: false,
+            transparency_greenscreen: false,
+            seek_height: 20,
+            seek_hidden_height: Some(5),
+            seek_nub_width: 10,
+        }
+    }
+}
+impl Setting for ViewerCanvasSettings {
+    const KEY: &'static str = "viewer_canvas";
+}
+
+/// Pop-in hover panels and the passive bottom-right index in the media viewer.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerHoverSettings {
+    pub tags: bool,
+    pub ratings: bool,
+    pub notes: bool,
+    pub index_background: bool,
+}
+impl Default for ViewerHoverSettings {
+    fn default() -> Self {
+        Self {
+            tags: true,
+            ratings: true,
+            notes: true,
+            index_background: true,
+        }
+    }
+}
+impl Setting for ViewerHoverSettings {
+    const KEY: &'static str = "viewer_hovers";
 }
 
 /// Export folders.

@@ -1,0 +1,106 @@
+{
+  "steps": [
+    {
+      "startup": null,
+      "tree": [
+        {
+          "name": "files"
+        }
+      ],
+      "shown": "files",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    },
+    {
+      "startup": "missing startup",
+      "tree": [
+        {
+          "name": "files"
+        }
+      ],
+      "shown": "files",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    },
+    {
+      "startup": "last session",
+      "tree": [
+        {
+          "name": "last inside"
+        }
+      ],
+      "shown": "last inside",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    },
+    {
+      "startup": "startup work",
+      "tree": [
+        {
+          "name": "saved notebook",
+          "children": [
+            {
+              "name": "inside one"
+            }
+          ]
+        },
+        {
+          "name": "saved outside"
+        }
+      ],
+      "shown": "inside one",
+      "calls": [
+        {
+          "delay": 0.25,
+          "label": "load initial session"
+        },
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ]
+    }
+  ],
+  "named_tree": [
+    {
+      "name": "saved notebook",
+      "children": [
+        {
+          "name": "inside one"
+        }
+      ]
+    },
+    {
+      "name": "saved outside"
+    }
+  ],
+  "last_tree": [
+    {
+      "name": "last inside"
+    }
+  ]
+}

@@ -56,6 +56,8 @@ mod search_lock;
 mod search_log;
 mod search_page;
 mod session;
+mod session_autosave;
+mod session_startup;
 mod sidecars;
 mod simple_downloader;
 mod slideshow;

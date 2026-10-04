@@ -51,6 +51,27 @@ jobs:
       - name: parity ratchet
         run: cargo xtask ratchet --check
 
+  # Keep exact-reference backend/model replays moving when GUI compilation
+  # needs a repair. This lane is only for the owner's continuing parity work.
+  parity-models:
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'codex/parity-')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.94'
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          cache-workspace-crates: true
+      - name: install media tools
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: reference and backend tests
+        env:
+          CARGO_BUILD_JOBS: 2
+        run: cargo test -p hydrus-downloader-exchange -p hydrus-gui-model -p hydrus-net -p hydrus-search -p hydrus-store --locked --no-fail-fast
+
   # hydrus-rs should build and pass its tests on Windows and macOS too; the
   # Linux job above is the full check (lints and the parity ratchet).
   other-platforms:

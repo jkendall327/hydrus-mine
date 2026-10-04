@@ -5,7 +5,7 @@
 //! programs is edited here (that can be set to custom, from its default,
 //! or back). "apply" gives the importer's options to `done`.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -145,12 +145,15 @@ fn set_text(get: impl Fn() -> SharedString, set: impl Fn(SharedString), text: St
 
 struct State {
     editor: Editor,
+    manager: ImportOptionsManager,
     services: Arc<hydrus_store::store::Snapshot>,
     /// The allowed filetypes' groups showing their filetypes.
     filetype_expanded: [bool; 7],
     /// A tag filter being edited.
     tag_filter: crate::tag_filter_window::Slot,
     write_tags: crate::write_tag_window::Slot,
+    overwrite: crate::import_options_overwrite_window::Slot,
+    favourites: Option<Rc<crate::import_options_favourites_window::Controller>>,
 }
 
 /// Show the editor whole: the list and the shown kind's page.
@@ -458,30 +461,92 @@ pub(crate) fn open(
     slot: &Rc<RefCell<Option<ImportOptionsWindow>>>,
     done: Rc<dyn Fn(ImportOptionsSlice)>,
 ) -> Result<ImportOptionsWindow, String> {
+    open_inner(
+        store,
+        caller,
+        own,
+        slot,
+        None,
+        Rc::new(move |_, value| done(value)),
+        Rc::new(|| {}),
+    )
+}
+
+pub(crate) fn open_named(
+    store: &Arc<Store>,
+    own: &ImportOptionsSlice,
+    slot: &Rc<RefCell<Option<ImportOptionsWindow>>>,
+    name: &str,
+    done: Rc<dyn Fn(String, ImportOptionsSlice)>,
+    closed: Rc<dyn Fn()>,
+) -> Result<ImportOptionsWindow, String> {
+    open_inner(
+        store,
+        CallerType::Favourites,
+        own,
+        slot,
+        Some(name),
+        done,
+        closed,
+    )
+}
+
+fn open_inner(
+    store: &Arc<Store>,
+    caller: CallerType,
+    own: &ImportOptionsSlice,
+    slot: &Rc<RefCell<Option<ImportOptionsWindow>>>,
+    name: Option<&str>,
+    done: Rc<dyn Fn(String, ImportOptionsSlice)>,
+    closed: Rc<dyn Fn()>,
+) -> Result<ImportOptionsWindow, String> {
     let manager: ImportOptionsManager = store
         .read(hydrus_store::settings::get)
         .map_err(|e| e.to_string())?;
     // (the reference's "import options simple mode", on as a new client
     // has it; hydrus-rs has no such option yet)
     let editor = Editor::new(&manager, caller, true, own);
+    let active = Rc::new(Cell::new(true));
     let window = ImportOptionsWindow::new().map_err(|e| e.to_string())?;
-    window.set_description(DESCRIPTION.into());
+    window.set_favourite_editor(caller == CallerType::Favourites);
+    window.set_favourite_name(name.unwrap_or_default().into());
+    if caller == CallerType::Favourites {
+        window.set_window_title("edit favourite import options".into());
+        window.set_description("You are editing \"favourites template\".\n\nThis is a template you can load and paste wherever you need it.".into());
+    } else {
+        window.set_description(DESCRIPTION.into());
+    }
     window.set_downloader(!matches!(
         caller,
         CallerType::LocalImport | CallerType::LocalImportFolder | CallerType::ClientApi
     ));
     let state = Rc::new(RefCell::new(State {
         editor,
+        manager,
         services: store.snapshot(),
         filetype_expanded: [false; 7],
         tag_filter: Rc::default(),
         write_tags: Rc::default(),
+        overwrite: Rc::default(),
+        favourites: None,
     }));
     let close = {
+        let active = active.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
         let state = state.clone();
         move || {
+            if !active.replace(false) {
+                return;
+            }
+            let favourites = state.borrow().favourites.clone();
+            if let Some(favourites) = favourites {
+                favourites.close();
+            }
+            let overwrite = state.borrow().overwrite.borrow_mut().take();
+            if let Some(overwrite) = overwrite {
+                overwrite.invoke_cancel();
+            }
             let child = state.borrow().write_tags.borrow_mut().take();
             if let Some(child) = child {
                 child.invoke_cancel();
@@ -490,6 +555,7 @@ pub(crate) fn open(
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
+            closed();
         }
     };
     // the tag filters, each edited in the tag filter editor
@@ -501,6 +567,9 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if window.get_favourite_child_open() {
+                return;
+            }
             let (filter, slot) = {
                 let state = state.borrow();
                 let values = &state.editor.values;
@@ -597,6 +666,9 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if window.get_favourite_child_open() {
+                return;
+            }
             if !window.window().is_visible() {
                 return;
             }
@@ -707,6 +779,9 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if window.get_favourite_child_open() {
+                return;
+            }
             if let Ok(i) = usize::try_from(i) {
                 state.borrow_mut().editor.shown = i;
             }
@@ -721,6 +796,9 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if window.get_favourite_child_open() {
+                return;
+            }
             {
                 let mut state = state.borrow_mut();
                 if let Some(e) = usize::try_from(group)
@@ -740,6 +818,9 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if window.get_favourite_child_open() {
+                return;
+            }
             if let Some(o) = &mut state.borrow_mut().editor.values.file_filtering {
                 o.filetypes = crate::filetype_tree::tick(
                     &o.filetypes,
@@ -758,6 +839,9 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if window.get_favourite_child_open() {
+                return;
+            }
             read(&window, &mut state.borrow_mut());
             show(&window, &state.borrow());
         }
@@ -769,6 +853,9 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if window.get_favourite_child_open() {
+                return;
+            }
             {
                 let mut state = state.borrow_mut();
                 let services = tag_services(&state.services.services);
@@ -800,6 +887,9 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if window.get_favourite_child_open() {
+                return;
+            }
             {
                 let mut state = state.borrow_mut();
                 let services = tag_services(&state.services.services);
@@ -821,6 +911,9 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if window.get_favourite_child_open() {
+                return;
+            }
             {
                 let mut state = state.borrow_mut();
                 if let Some(o) = &mut state.editor.values.file_filtering {
@@ -843,6 +936,9 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if window.get_favourite_child_open() {
+                return;
+            }
             {
                 let mut state = state.borrow_mut();
                 if let Some(o) = &mut state.editor.values.file_filtering {
@@ -858,14 +954,167 @@ pub(crate) fn open(
             show(&window, &state.borrow());
         }
     });
+    let favourites = crate::import_options_favourites_window::Controller::new(
+        store.clone(),
+        caller,
+        Rc::new({
+            let state = Rc::downgrade(&state);
+            let active = active.clone();
+            move || {
+                if !active.get() {
+                    return None;
+                }
+                state.upgrade().map(|state| state.borrow().editor.value())
+            }
+        }),
+        Rc::new({
+            let state = Rc::downgrade(&state);
+            let weak = window.as_weak();
+            let active = active.clone();
+            move |options| {
+                if !active.get() {
+                    return;
+                }
+                let Some(state) = state.upgrade() else {
+                    return;
+                };
+                let mut state = state.borrow_mut();
+                let caller = state.editor.caller;
+                state.editor = Editor::new(&state.manager, caller, true, &options);
+                if let Some(window) = weak.upgrade() {
+                    show(&window, &state);
+                    show_tag_services(&window, &state);
+                }
+            }
+        }),
+        Rc::new({
+            let weak = window.as_weak();
+            move |error| {
+                if let Some(window) = weak.upgrade() {
+                    window.set_clipboard_error(error.into());
+                }
+            }
+        }),
+        Rc::new({
+            let weak = window.as_weak();
+            move |busy| {
+                if let Some(window) = weak.upgrade() {
+                    window.set_favourite_child_open(busy);
+                }
+            }
+        }),
+    );
+    state.borrow_mut().favourites = Some(favourites.clone());
+    let refresh_favourites = Rc::new({
+        let favourites = favourites.clone();
+        let weak = window.as_weak();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            match favourites.rows() {
+                Ok(rows) => window.set_favourites(ModelRc::new(VecModel::from(rows))),
+                Err(error) => window.set_clipboard_error(error.into()),
+            }
+        }
+    });
+    window.on_refresh_favourites({
+        let refresh = refresh_favourites.clone();
+        move || refresh()
+    });
+    window.on_favourite({
+        let refresh = refresh_favourites.clone();
+        move |action, name| {
+            favourites.choose(action, name.as_str());
+            refresh();
+        }
+    });
+    refresh_favourites();
+    window.on_copy_options({
+        let active = active.clone();
+        let state = state.clone();
+        let weak = window.as_weak();
+        move || {
+            if !active.get() {
+                return;
+            }
+            let result = hydrus_downloader_exchange::import_options::encode_text(
+                &state.borrow().editor.value(),
+            );
+            match result {
+                Ok(text) => crate::to_clipboard(&crate::Clip::Text(text)),
+                Err(error) => {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_clipboard_error(error.to_string().into());
+                    }
+                }
+            }
+        }
+    });
+    window.on_paste_options({
+        let active = active.clone(); let state = state.clone(); let weak = window.as_weak(); let store = store.clone();
+        move |index| {
+            if !active.get() || state.borrow().overwrite.borrow().is_some() || state.borrow().favourites.as_ref().is_some_and(|owner| owner.busy()) { return; }
+            let Some(window) = weak.upgrade() else { return; };
+            let result = crate::from_clipboard().and_then(|text| hydrus_downloader_exchange::import_options::decode_text(&text).map_err(|e| e.to_string()));
+            let incoming = match result { Ok(options) => options, Err(error) => { window.set_clipboard_error(format!("Could not understand the clipboard as JSON-serialised Import Options Container.\n\n{error}").into()); return; } };
+            if index == 2 && caller == CallerType::Global && Kind::ALL.into_iter().any(|kind| !kind.is_set(&incoming)) {
+                window.set_clipboard_error("Hey, you tried to paste a non-full import options container into the \"global\" entry. Did you mean to do a merge-paste instead?".into());
+                return;
+            }
+            window.set_clipboard_error("".into());
+            let apply: Rc<dyn Fn(ImportOptionsSlice)> = {
+                let active = active.clone(); let state = state.clone(); let weak = weak.clone();
+                Rc::new(move |options| {
+                    if !active.get() { return; }
+                    let mut state = state.borrow_mut();
+                    let caller = state.editor.caller;
+                    state.editor = Editor::new(&state.manager, caller, true, &options);
+                    if let Some(window) = weak.upgrade() { show(&window, &state); show_tag_services(&window, &state); }
+                })
+            };
+            let draft = hydrus_gui_model::import_options_overwrite::Overwrite::new(caller, true, state.borrow().editor.value(), incoming);
+            if index == 3 {
+                let slot = state.borrow().overwrite.clone();
+                let closed: Rc<dyn Fn()> = { let weak = weak.clone(); Rc::new(move || { if let Some(window) = weak.upgrade() { window.set_overwrite_open(false); } }) };
+                match crate::import_options_overwrite_window::open(&store, draft, &slot, apply, closed) {
+                    Ok(child) => { *slot.borrow_mut() = Some(child); window.set_overwrite_open(true); }
+                    Err(error) => window.set_clipboard_error(error.into()),
+                }
+            } else {
+                let mut draft = draft;
+                let preset = match index { 0 => hydrus_gui_model::import_options_overwrite::Preset::Merge, 1 => hydrus_gui_model::import_options_overwrite::Preset::FillIn, 2 => hydrus_gui_model::import_options_overwrite::Preset::Replace, _ => return };
+                draft.preset(preset);
+                apply(draft.value());
+            }
+        }
+    });
     window.on_apply({
+        let weak = window.as_weak();
+        let active = active.clone();
         let state = state.clone();
         let close = close.clone();
         move || {
-            if state.borrow().write_tags.borrow().is_some() {
+            if !active.get()
+                || state.borrow().write_tags.borrow().is_some()
+                || state.borrow().overwrite.borrow().is_some()
+                || state
+                    .borrow()
+                    .favourites
+                    .as_ref()
+                    .is_some_and(|owner| owner.busy())
+            {
                 return;
             }
-            done(state.borrow().editor.value());
+            let name = weak.upgrade().map_or_else(String::new, |window| {
+                window.get_favourite_name().to_string()
+            });
+            let name = if name.is_empty() {
+                "favourite".into()
+            } else {
+                name
+            };
+            done(name, state.borrow().editor.value());
             close();
         }
     });

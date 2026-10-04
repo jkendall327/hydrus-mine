@@ -471,3 +471,42 @@ fn zooming_to_max_is_as_the_reference_s() {
         exact.zoom()
     );
 }
+
+#[test]
+fn resizing_preserves_or_recenters_the_recorded_zoom_and_pan() {
+    let fixture = hydrus_testkit::fixture_json("viewer_canvas_options.json");
+    let resolution = &fixture["media_resolution"];
+    for event in fixture["resizes"].as_array().unwrap() {
+        let mut zoom = Zoom::new(
+            MediaViewerSettings {
+                media_zooms: vec![1.0, 2.0],
+                ..MediaViewerSettings::default()
+            },
+            Mime::ImageJpeg,
+            Some((
+                resolution[0].as_u64().unwrap() as u32,
+                resolution[1].as_u64().unwrap() as u32,
+            )),
+            (1000, 750),
+            1.0,
+        );
+        zoom.switch(None);
+        // A direct two-times step matches the reference's _TryToChangeZoom(2).
+        zoom.zoom_in(None);
+        assert_eq!(zoom.zoom(), event["before"]["zoom"].as_f64().unwrap());
+        zoom.drag((37, -19));
+        let recorded_rect = |key: &str| {
+            let values = event[key]["rect"].as_array().unwrap();
+            (
+                values[0].as_i64().unwrap() as i32,
+                values[1].as_i64().unwrap() as i32,
+                values[2].as_i64().unwrap() as i32,
+                values[3].as_i64().unwrap() as i32,
+            )
+        };
+        assert_eq!(zoom.rect(), recorded_rect("before"));
+        zoom.resize_with_policy((800, 600), 1.0, event["recenter"].as_bool().unwrap());
+        assert_eq!(zoom.rect(), recorded_rect("after"));
+        assert_eq!(zoom.zoom(), event["after"]["zoom"].as_f64().unwrap());
+    }
+}

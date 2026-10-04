@@ -65,16 +65,17 @@ impl ManageTags {
                     .is_ok_and(|s| s.key == preference.default_service)
             })
             .unwrap_or(0);
-        let stored = services
+        let stored: Vec<BTreeMap<String, BTreeSet<HashId>>> = services
             .iter()
             .map(|(service, _)| current_tags(&store, *service, &files))
             .collect();
         let location = hydrus_core::search::context::LocationContext::default();
-        let input = WriteAutocomplete::new(
+        let mut input = WriteAutocomplete::new(
             store.clone(),
             snapshot.services.get(services[service].0).ok()?.key.clone(),
             location.clone(),
         );
+        input.set_context_tags(stored[service].keys().cloned());
         Some(Self {
             staged: vec![BTreeMap::new(); services.len()],
             store,
@@ -142,6 +143,7 @@ impl ManageTags {
                 .write(move |ctx| hydrus_store::tag_editing::remember_service(ctx.conn(), &key))?;
             self.service = index;
             if let Some(key) = self.migration_service_key() {
+                self.input.set_context_tags(self.tags().into_keys());
                 self.input.set_context(key, self.location.clone());
             }
         }
@@ -215,6 +217,7 @@ impl ManageTags {
         } else {
             staged.insert(tag, true);
         }
+        self.input.set_context_tags(self.tags().into_keys());
         self.input.clear();
         Ok(())
     }
@@ -292,6 +295,22 @@ impl ManageTags {
     pub fn fetch(&mut self) {
         self.input.fetch();
     }
+    pub fn write_input(&self) -> &WriteAutocomplete {
+        &self.input
+    }
+    pub fn write_input_mut(&mut self) -> &mut WriteAutocomplete {
+        &mut self.input
+    }
+    pub fn autocomplete_tab(&self) -> crate::write_autocomplete::Tab {
+        self.input.tab()
+    }
+    pub fn choose_autocomplete_tab(&mut self, tab: crate::write_autocomplete::Tab) {
+        self.input.set_context_tags(self.tags().into_keys());
+        self.input.set_tab(tab);
+    }
+    pub fn suggestion_rows(&self) -> &[crate::write_autocomplete::Suggestion] {
+        self.input.rows()
+    }
     pub fn autocomplete_options(&self) -> hydrus_store::tag_editing::TagEditingSettings {
         self.input.options()
     }
@@ -306,6 +325,7 @@ impl ManageTags {
                 self.enter(tag.as_str())?;
             }
         }
+        self.input.set_context_tags(self.tags().into_keys());
         self.input.clear();
         Ok(())
     }

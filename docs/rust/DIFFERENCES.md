@@ -1036,9 +1036,17 @@ Login script types, bounded JSON/PNG interchange and credential/temporary-variab
 validation are available through the native login script list and credential
 definition/entry windows. Native script management stages changes until Apply;
 questions appear inline instead of in Qt modal dialogs. Credential checks in the
-script window validate the entered values without making network requests. Step,
-cookie and example-domain editing, domain credential management, test results and
-HTTP login execution remain unimplemented. Full preserved domain credentials are
+script window validate the entered values without making network requests. Step request
+identity and VARIABLE/VETO response parsers are editable; request argument
+dictionaries and cookie requirements remain read-only. Script cookie/example-domain
+editing, domain add/script-choice and session-status/reset controls, test results and HTTP
+login execution remain unimplemented. Existing domain credentials are editable
+from the native menu; accepted edits reproduce validity/delay/activation behavior
+and wait for domain Apply. The domain list currently omits logged-in cookie status
+and uses a raw expiry timestamp for a future delay. Native map storage does not
+preserve arbitrary imported credential dictionary iteration order; credential
+entry and its first validation error follow the recorded normal-before-hidden
+control order. Full preserved domain credentials are
 loaded without discarding their fields, and script-list Apply preserves concurrent
 domain changes. Requests continue using their existing cookies until a login
 execution consumer is implemented.
@@ -1170,8 +1178,12 @@ retained `_next_new_page_index` after a cancelled chooser, native cancellation
 clears that pending position so it cannot affect a subsequent page creation.
 
 Named GUI session saves now retain selectable immutable snapshots; automatic
-`last session` synchronization still writes the live session without historical
-backups, and startup/autosave lifecycle settings remain deferred. Historical
+`last session` synchronization writes the live session; a separate historical
+autosave timer now observes the configured period and idle-only preference and
+suppresses unchanged saves. Idle input tracking covers the main window and
+Client API page commands; auxiliary windows and other Client API request kinds
+do not yet reset its activity timestamps. Startup session selection remains
+deferred. Historical
 backups from imported legacy databases are not migrated; the current imported
 session is retained as the first backup when overwritten. Backup loads start fresh transfer/live-job state while retaining saved queue
 settings and file/gallery logs. Early native snapshots without importer-state
@@ -1234,8 +1246,7 @@ shortcuts before that same multi-domain selector.
 
 Manage Tags' write autocomplete now has storage counts, typed/ideal elevation,
 parent and sibling rows, manual fetch, a scrollable suggestions list, multiline
-paste and all six Tag Editing autocomplete preferences. The reference's
-favourite/children suggestion tabs and tag context menus are still absent.
+paste and all six Tag Editing autocomplete preferences. Favourites and children now use the shared tabs; maintenance and multiple-selection context actions remain outstanding.
 Declining a multiline paste leaves the existing text draft intact; Qt returns
 that event to its line editor's normal paste handling. Import additional-tags and whitelist fields now open a detached shared write-tag editor; their raw multiline fields remain available as well. Expanded
 parent rows enter their originating child, matching Qt's logical-list selection.
@@ -1263,8 +1274,14 @@ current subset. The executor's existing explicit-limit semantics are preserved.
 The import tag child uses the shared write-input behavior and detached Apply/
 Cancel transaction. Its lists and button layout differ from Qt's input-tags
 modal dialog, and the parent still offers its existing raw multiline fields.
-Full autocomplete context menus, favourite and child tabs remain outstanding
-across the write inputs. Expanded-row viewport height uses native fixed row
+Shared write context menus now copy tags/counts/parents, toggle local decorations,
+manage favourites/most-used with removal questions and launch new search/duplicate
+pages. Relationship lookup and owned seeded sibling/parent editors now work across the
+write inputs. Maintenance/admin actions, multiple-tag selection menus and
+per-widget file/tag-domain buttons remain outstanding.
+The native tab selector is a compact dropdown rather than Qt tab buttons.
+Children and favourites use the real service and domain contexts; unknown
+favourites remain selectable and zero-count known children remain in the list. Expanded-row viewport height uses native fixed row
 pixels rather than Qt's font-metric character height.
 
 Downloader cog actions now reach the daemon through request/epoch-scoped local
@@ -1277,6 +1294,88 @@ parser fetch owner, whose hook is a separate slice. The native error dialog is a
 scrollable window rather than Qt's critical message box. No explicit clear menu
 item is added: `ClearError` belongs to the owner, while `ClearNetworkJob` keeps it.
 
+The shared import-options overwrite and clipboard paths are connected to native
+importer editors. Their clipboard errors use the native inline error presentation.
+Favourite naming and overwrite semantics have reference recordings and model
+replays; the favourites popup and durable save/edit/delete GUI remain pending,
+so the broad favourites item is not yet complete.
+
 Page-parser network error popups use native Rust failure diagnostics and response
 text instead of Python traceback frames. Error ownership, show/copy, completion
 retention and clearing on the next example request match the recorded Qt owner.
+The native viewer's resize-recentering, checkerboard/greenscreen transparency,
+and seek-bar height/hidden-height/nub-width preferences have real canvas
+consumers. The unchecked transparency preference uses the native viewer's
+existing dark canvas colour rather than the reference client's configurable
+palette. Checkerboard tiles and greenscreen RGB values match the reference.
+The recenter setting controls the native viewer's existing default zoom rules;
+the reference's additional per-filetype zoom-lock policies remain separate gaps.
+The seek-bar focus requirement, preview canvas preferences, and MPV-specific
+presentation preferences are outside this slice. A hidden-height value of None
+hides the native bar completely when the pointer is away; Qt internally retains
+a five-pixel ideal rectangle for its hidden widget. The recorder includes both
+that rectangle and the actual Qt visibility decision.
+File-log clipboard import errors use the log’s native acknowledgement panel
+(or the downloader page’s error message for a closed-log menu) rather than Qt’s
+clipboard parse-error message sequence. Imports preserve the reference’s first
+source type, URL-class normalization, duplicate handling and immediate writes.
+Selected-URL searches use the same exact-match OR predicates and local location;
+opening the page does not explicitly raise the desktop window.
+
+Login HTTP execution is implemented as a reusable NetEngine consumer with script
+editor test controls and result review. Test runs use fresh cookie sessions while
+copying request preferences and custom headers. Results populate after the run
+finishes; the reference inserts them as each step finishes. Native copy feedback
+stays visible until the review closes. Domain-manager real execution controls are
+still absent. Login requests bypass bandwidth
+waiting while using ordinary cookies, custom headers, redirect and retry behavior.
+The executor waits the reference two seconds after successful steps and observes
+cancellation during requests and waits. Session-cookie descriptions match the
+reference; persistent-cookie result descriptions currently use raw expiry seconds.
+Native POST form parameters are sorted on the wire, while the reference preserves
+its dictionary order; previews sort them as the reference does. Domain cookie
+lookup accepts a port on synthetic local fixtures; the reference cookie lookup
+requires the bare domain. Unsupported non-VARIABLE/VETO imported response parser
+kinds are preserved but ignored by the login executor. Network/cancellation outcomes
+apply the reference four-hour domain delay, guarded by the script key; verification
+errors set invalidity and successful login sets validity without altering activation.
+
+The import-options favourites editor uses the native import-options window and
+popup presentation. Menu actions, names, prompts, staged parent loading and
+immediate profile persistence have reference recordings and native regression
+coverage. The earlier pending favourites-popup limitation is resolved for these
+editors. Subscription copy-options menus and the standalone defaults manager
+still need the same favourites integration before the broad shared feature is
+complete. External-program editing remains its separate existing gap.
+Historical GUI-session autosaves now run alongside the manual notebook menus.
+Legacy historical snapshot import remains deferred.
+
+Startup sessions load before showing the native main window; the reference
+defers its initial load by a quarter second. Ordinary blank, missing, last and
+named-session outcomes match the recorded reference. The reference's bad-shutdown
+recovery question and large-session warning are still deferred. Loading an empty
+saved tree retains the native single blank search page.
+Source PNG exports use native SVG fonts and wrapping for their readable header;
+the text placement and decorative icon differ from Qt, while the grayscale
+carrier/header-height and compressed UTF-8 payload format are compatible. The
+native export panel is an owned window rather than a modal Qt panel. Input PNGs
+and payloads are bounded to 16 MiB; title and description are each bounded to 4096
+characters. Successful exports remember the last directory; a failed write does
+not change that preference.
+
+The tags, ratings/locations, and notes hover enable switches and passive
+bottom-right zoom/index background switch now have native consumers. Native
+hover panels retain their existing layout and contents; the reference's separate
+focus requirement and other passive background copies are still unimplemented.
+The passive index uses native text styling and palette rather than Qt font
+metrics. Its text format, bottom-right three-pixel inset, and placement behind
+media follow the reference. Preview and duplicate-filter hover preferences are
+separate unclaimed controls.
+
+Write-tag open-search and duplicate-page actions now have a main-window consumer
+and real session/query contexts. The optional reference setting that raises the
+main window on tag-search activation is still absent; its default is off.
+
+Native idle tracking covers input in every desktop window through the event-loop
+handler. The reference also polls the operating system's global cursor position;
+movement outside native application windows does not yet reset the mouse timer.

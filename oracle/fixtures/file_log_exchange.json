@@ -1,0 +1,162 @@
+{
+ "imports": [
+  {
+   "name": "urls",
+   "raw": "﻿ https://clipboard.example/a b#frag\r\n\nhttps://clipboard.example/a%20b\nhttps://clipboard.example/日",
+   "seeds": [
+    [
+     1,
+     "https://clipboard.example/a%20b",
+     "https://clipboard.example/a%20b",
+     0
+    ],
+    [
+     1,
+     "https://clipboard.example/%E6%97%A5",
+     "https://clipboard.example/%E6%97%A5",
+     0
+    ]
+   ]
+  },
+  {
+   "name": "paths",
+   "raw": "/synthetic/a.jpg\n/synthetic/a.jpg\n /synthetic/b.jpg ",
+   "seeds": [
+    [
+     0,
+     "/synthetic/a.jpg",
+     "/synthetic/a.jpg",
+     0
+    ],
+    [
+     0,
+     "/synthetic/b.jpg",
+     "/synthetic/b.jpg",
+     0
+    ]
+   ]
+  },
+  {
+   "name": "url_first_mixed",
+   "raw": "https://clipboard.example/a\n/synthetic/a.jpg",
+   "seeds": [
+    [
+     1,
+     "https://clipboard.example/a",
+     "https://clipboard.example/a",
+     0
+    ],
+    [
+     1,
+     "/synthetic/a.jpg",
+     "/synthetic/a.jpg",
+     0
+    ]
+   ]
+  },
+  {
+   "name": "path_first_mixed",
+   "raw": "/synthetic/a.jpg\nhttps://clipboard.example/a b",
+   "seeds": [
+    [
+     0,
+     "/synthetic/a.jpg",
+     "/synthetic/a.jpg",
+     0
+    ],
+    [
+     0,
+     "https://clipboard.example/a%20b",
+     "https://clipboard.example/a%20b",
+     0
+    ]
+   ]
+  },
+  {
+   "name": "empty",
+   "raw": " \n\t",
+   "seeds": []
+  }
+ ],
+ "errors": [
+  [
+   "Lines of URLs or file paths",
+   "IndexError"
+  ],
+  [
+   "Lines of URLs or file paths",
+   "IndexError"
+  ],
+  [
+   "Problem pasting!",
+   "synthetic clipboard unavailable"
+  ]
+ ],
+ "search": [
+  {
+   "topic": "new_page_query",
+   "location": [
+    103,
+    1,
+    [
+     [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     []
+    ]
+   ],
+   "predicates": [
+    [
+     14,
+     8,
+     [
+      30,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          14,
+          8,
+          [
+           28,
+           [
+            true,
+            "exact_match",
+            "https://clipboard.example/a",
+            "has url https://clipboard.example/a"
+           ],
+           true
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          14,
+          8,
+          [
+           28,
+           [
+            true,
+            "exact_match",
+            "https://clipboard.example/b",
+            "has url https://clipboard.example/b"
+           ],
+           true
+          ]
+         ]
+        ]
+       ]
+      ],
+      true
+     ]
+    ]
+   ],
+   "name": "url search",
+   "activate": false
+  }
+ ]
+}

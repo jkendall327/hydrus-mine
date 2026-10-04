@@ -58,11 +58,12 @@ pub fn open(
             )));
             w.set_suggestions(ModelRc::new(VecModel::from(
                 m.input
-                    .suggestions()
+                    .rows()
                     .iter()
-                    .map(|(tag, label)| crate::list_text(label, colours.tag(tag)))
+                    .map(|r| crate::list_text(&r.label, colours.tag(&r.colour_tag)))
                     .collect::<Vec<_>>(),
             )));
+            w.set_tab_index(i32::try_from(m.input.tab().index()).unwrap_or(0));
             w.set_highlighted(
                 m.input
                     .highlighted()
@@ -81,15 +82,71 @@ pub fn open(
         let pending = pending.clone();
         move || active.get() && pending.borrow().is_none()
     });
+    let tag_menu = crate::write_tag_menu::TagMenu::new(
+        store.clone(),
+        editable.clone(),
+        Rc::new({
+            let model = model.clone();
+            move |action| {
+                if let hydrus_gui_model::write_tag_menu::Action::Decorate { tab, kind, value } =
+                    action
+                {
+                    model.borrow_mut().input.decorate(tab, kind, value);
+                }
+            }
+        }),
+        Rc::new({
+            let model = model.clone();
+            let refresh = refresh.clone();
+            move || {
+                model.borrow_mut().input.fetch();
+                refresh();
+            }
+        }),
+        Rc::new({
+            let weak = window.as_weak();
+            move |question| {
+                if let Some(w) = weak.upgrade() {
+                    w.set_tag_menu_question(question.into());
+                }
+            }
+        }),
+        Rc::new({
+            let weak = window.as_weak();
+            move |error| {
+                if let Some(w) = weak.upgrade() {
+                    w.set_error(error.into());
+                }
+            }
+        }),
+    );
+    crate::write_tag_menu::bind!(window, tag_menu);
+    window.on_context_menu({
+        let tag_menu = tag_menu.clone();
+        let model = model.clone();
+        move |i, x, y| {
+            if let Ok(i) = usize::try_from(i) {
+                let entries = model.borrow().input.menu(i);
+                tag_menu.open(&entries, x, y);
+            }
+        }
+    });
+    let editable = Rc::new({
+        let editable = editable.clone();
+        let tag_menu = tag_menu.clone();
+        move || editable() && !tag_menu.busy()
+    });
     let close = Rc::new({
         let active = active.clone();
         let pending = pending.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
+        let tag_menu = tag_menu.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
+            tag_menu.close();
             pending.borrow_mut().take();
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
@@ -107,6 +164,22 @@ pub fn open(
                 return;
             }
             model.borrow_mut().input.set_text(&text);
+            refresh();
+        }
+    });
+    window.on_tab_chosen({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let editable = editable.clone();
+        move |i| {
+            if !editable() {
+                return;
+            }
+            model.borrow_mut().input.set_tab(
+                hydrus_gui_model::write_autocomplete::Tab::from_index(
+                    usize::try_from(i).unwrap_or(0),
+                ),
+            );
             refresh();
         }
     });

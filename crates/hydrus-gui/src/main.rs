@@ -31,6 +31,8 @@ fn main() -> Result<()> {
     let lock: LockPassword = store
         .read(hydrus_store::settings::get)
         .context("reading the lock password")?;
+    hydrus_gui::session_autosave::install_activity_backend()
+        .context("initializing desktop input activity")?;
     let client: Rc<RefCell<Option<Client>>> = Rc::default();
     let failed: Rc<RefCell<Option<anyhow::Error>>> = Rc::default();
     let open = {
@@ -124,7 +126,7 @@ impl Client {
                 say(state);
             }
         });
-        let pages = Pages::open(store).context("opening the last session")?;
+        let pages = Pages::open_startup(store).context("opening the startup session")?;
         let bound = bind(&window, pages);
         // the last session kept as it changes (the reference saves it every
         // five minutes), and what the Client API asks of the pages done

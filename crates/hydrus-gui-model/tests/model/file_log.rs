@@ -128,3 +128,101 @@ fn the_file_log_is_the_references() {
     let paths = facts(std::slice::from_ref(&path));
     assert_eq!(tree(&row_menu(&[&path], &paths)), row_menus[2]["menu"]);
 }
+
+#[test]
+fn clipboard_source_batches_match_actual_reference_imports() {
+    let fixture = hydrus_testkit::fixture_json("file_log_exchange.json");
+    let classes = hydrus_core::url::UrlClasses::new(hydrus_core::url::UrlClassSettings::default());
+    for case in fixture["imports"].as_array().unwrap() {
+        let parsed =
+            hydrus_gui_model::file_log::pasted_sources(case["raw"].as_str().unwrap(), &classes);
+        if case["name"] == "empty" {
+            assert!(parsed.unwrap_err().contains("Lines of URLs or file paths"));
+            continue;
+        }
+        let mut seen = std::collections::HashSet::new();
+        let values: Vec<Json> = parsed
+            .unwrap()
+            .into_iter()
+            .filter(|s| seen.insert((s.seed_type as i64, s.data_for_comparison.clone())))
+            .map(|s| json!([s.seed_type as i64, s.data, s.data_for_comparison, 0]))
+            .collect();
+        assert_eq!(json!(values), case["seeds"], "{}", case["name"]);
+    }
+}
+
+#[test]
+fn selected_urls_are_one_exact_match_or_container() {
+    use hydrus_core::search::predicate::{Predicate, SystemPredicate, UrlRule};
+    let urls = vec![
+        "https://clipboard.example/a".into(),
+        "/synthetic/a.jpg".into(),
+        "https://clipboard.example/b".into(),
+    ];
+    assert_eq!(
+        hydrus_gui_model::file_log::url_search(&urls),
+        vec![Predicate::Or(vec![
+            Predicate::System(SystemPredicate::KnownUrl {
+                has: true,
+                rule: UrlRule::ExactMatch(urls[0].clone())
+            }),
+            Predicate::System(SystemPredicate::KnownUrl {
+                has: true,
+                rule: UrlRule::ExactMatch(urls[2].clone())
+            }),
+        ])]
+    );
+}
+
+#[test]
+fn source_png_carriers_import_actual_qt_exports_and_render_custom_headers() {
+    use hydrus_gui_model::png_export;
+    let fixture = hydrus_testkit::fixture_json("file_log_png.json");
+    let payload = fixture["export"]["payload"].as_str().unwrap();
+    let bytes = std::fs::read(hydrus_testkit::fixture_path("file_log_sources.png")).unwrap();
+    assert_eq!(
+        hydrus_downloader_exchange::text_png::decode(&bytes).unwrap(),
+        payload
+    );
+    assert_eq!(
+        png_export::payload_description(payload),
+        fixture["export"]["initial"]["summary"]
+    );
+    assert_eq!(
+        png_export::validate("", "title", 512).unwrap_err(),
+        fixture["export"]["initial"]["button"]
+    );
+    let dir = tempfile::tempdir().unwrap();
+    assert!(
+        png_export::validate(dir.path().join("sources").to_str().unwrap(), "title", 100).is_ok()
+    );
+    assert!(
+        png_export::validate("", "", 99)
+            .unwrap_err()
+            .contains("set a title")
+    );
+    assert!(png_export::encode(payload, 4097, "title", "").is_err());
+    let image = png_export::encode(
+        payload,
+        256,
+        "Synthetic source list <title>",
+        "Shared source lines",
+    )
+    .unwrap();
+    assert_eq!(
+        hydrus_downloader_exchange::text_png::decode(&image).unwrap(),
+        payload
+    );
+    let raster = hydrus_media::decode_image(&image).unwrap();
+    assert_eq!(raster.width(), 256);
+    let channels = usize::from(raster.channels());
+    let grey: Vec<u8> = raster.data().chunks_exact(channels).map(|p| p[0]).collect();
+    let height = usize::from(u16::from_be_bytes([grey[0], grey[1]]));
+    assert!(height > 50 && height < raster.height() as usize);
+    assert!(
+        grey[2..height * 256].iter().filter(|p| **p < 128).count() > 50,
+        "header contains readable text pixels"
+    );
+    assert!(hydrus_downloader_exchange::text_png::encode("text", 2, &[255]).is_err());
+    assert!(hydrus_downloader_exchange::text_png::decode(b"invalid PNG").is_err());
+}

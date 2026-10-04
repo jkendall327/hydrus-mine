@@ -236,3 +236,26 @@ fn a_file_that_plays_seeks_by_its_bar_and_by_key() {
     assert!(video.get_caption().starts_with("1/"), "not moved on");
     video.invoke_close_requested();
 }
+
+#[test]
+fn configured_nub_width_seeks_the_recorded_animation_frames() {
+    let fixture = hydrus_testkit::fixture_json("viewer_canvas_options.json");
+    let bar = Scanbar::new(Some(1000), Some(5)).unwrap();
+    for event in fixture["seek"].as_array().unwrap() {
+        let nub = event["nub"].as_u64().unwrap() as f32;
+        for (x, expected) in event["click_x"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(event["frame_targets"].as_array().unwrap())
+        {
+            assert_eq!(
+                bar.frame_at_with_nub(x.as_u64().unwrap() as f32, 128.0, nub),
+                expected.as_u64().unwrap() as usize
+            );
+        }
+        assert_eq!(bar.seek_to_with_nub(nub / 2.0, 128.0, nub), 0.0);
+        assert_eq!(bar.seek_to_with_nub(64.0, 128.0, nub), 500.0);
+        assert_eq!(bar.seek_to_with_nub(128.0 - nub / 2.0, 128.0, nub), 1000.0);
+    }
+}

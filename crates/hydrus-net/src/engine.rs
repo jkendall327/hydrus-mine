@@ -216,6 +216,7 @@ pub struct Job {
     skip_wait: Arc<Mutex<Option<WaitReason>>>,
     override_gallery: Arc<AtomicBool>,
     auto_override_at: Arc<std::sync::atomic::AtomicI64>,
+    auto_override_owners: Arc<Mutex<std::collections::HashSet<u64>>>,
 }
 
 /// What a job is doing.
@@ -371,11 +372,21 @@ impl Job {
     }
     /// Apply/remove the control's five-second policy for this active request.
     pub fn auto_override_bandwidth(&self, enabled: bool) {
+        self.auto_override_bandwidth_for(0, enabled);
+    }
+    /// Turning off one control leaves another control's policy in effect.
+    pub fn auto_override_bandwidth_for(&self, owner: u64, enabled: bool) {
+        let mut owners = self.auto_override_owners.lock();
+        if enabled {
+            owners.insert(owner);
+        } else {
+            owners.remove(&owner);
+        }
         self.auto_override_at.store(
-            if enabled {
-                self.state.lock().created.saturating_add(5)
-            } else {
+            if owners.is_empty() {
                 0
+            } else {
+                self.state.lock().created.saturating_add(5)
             },
             Ordering::Relaxed,
         );
@@ -630,10 +641,13 @@ impl NetEngine {
             }
             network_runtime::JobAction::OverrideGalleryWait => job.override_gallery_wait(),
             network_runtime::JobAction::ScrubDomainErrors => {
-                self.scrub_domain_errors(&job.state().url)
+                self.scrub_domain_errors(&job.state().url);
             }
             network_runtime::JobAction::AutoOverrideBandwidth(enabled) => {
-                job.auto_override_bandwidth(enabled)
+                job.auto_override_bandwidth(enabled);
+            }
+            network_runtime::JobAction::AutoOverrideBandwidthFor { owner, enabled } => {
+                job.auto_override_bandwidth_for(owner, enabled);
             }
         }
         true
@@ -1169,6 +1183,7 @@ impl NetEngine {
             job.override_bandwidth.store(false, Ordering::Relaxed);
             job.override_gallery.store(false, Ordering::Relaxed);
             job.auto_override_at.store(0, Ordering::Relaxed);
+            job.auto_override_owners.lock().clear();
             job.skip_wait.lock().take();
             job.set_wait(WaitReason::Engine);
             id = self.next_job.fetch_add(1, Ordering::Relaxed);
@@ -1977,6 +1992,19 @@ mod reload_tests {
         assert!(job.bandwidth_overridden(106));
         job.auto_override_at.store(0, Ordering::Relaxed);
         assert!(job.bandwidth_overridden(107));
+    }
+
+    #[test]
+    fn independent_auto_override_owners_do_not_disable_each_other() {
+        let job = Job::new();
+        job.state.lock().created = now();
+        job.auto_override_bandwidth_for(1, true);
+        job.auto_override_bandwidth_for(2, true);
+        job.auto_override_bandwidth_for(1, false);
+        assert!(job.auto_override_at.load(Ordering::Relaxed) > 0);
+        job.auto_override_bandwidth_for(2, false);
+        assert_eq!(job.auto_override_at.load(Ordering::Relaxed), 0);
+        assert!(!job.override_bandwidth.load(Ordering::Relaxed));
     }
 
     #[tokio::test]

@@ -8,7 +8,7 @@ pub fn decode_png(bytes: &[u8]) -> Result<Vec<Definition>> {
     decode_text(&decode_payload(bytes)?)
 }
 
-pub(super) fn decode_payload(bytes: &[u8]) -> Result<String> {
+pub fn decode_payload(bytes: &[u8]) -> Result<String> {
     if bytes.len() > MAX_BYTES {
         return Err(Error::Limit);
     }
@@ -74,7 +74,7 @@ pub(super) fn decode_payload(bytes: &[u8]) -> Result<String> {
         }
     }
     let text = std::str::from_utf8(&decoded)
-        .map_err(|_| Error::Invalid("PNG payload is not compressed or plain UTF-8 JSON.".into()))?;
+        .map_err(|_| Error::Invalid("PNG payload is not compressed or plain UTF-8 text.".into()))?;
     Ok(text.to_owned())
 }
 /// Export the reference's grayscale PNG format with a small white header.
@@ -83,7 +83,21 @@ pub fn encode_png(definitions: &[Definition]) -> Result<Vec<u8>> {
 }
 
 pub(super) fn encode_payload(text: &str) -> Result<Vec<u8>> {
-    if text.len() > MAX_BYTES {
+    encode_payload_with_header(text, 512, &vec![255; 512])
+}
+
+/// Write compressed UTF-8 text in the reference grayscale PNG carrier, using
+/// an already rendered header. Its first two pixels encode the header height.
+pub fn encode_payload_with_header(text: &str, width: u32, header: &[u8]) -> Result<Vec<u8>> {
+    let width = usize::try_from(width).map_err(|_| Error::Limit)?;
+    if width < 2 || header.is_empty() || !header.len().is_multiple_of(width) {
+        return Err(Error::Invalid(
+            "PNG header must contain complete grayscale rows.".into(),
+        ));
+    }
+    let header_rows = header.len() / width;
+    let height = u16::try_from(header_rows).map_err(|_| Error::Limit)?;
+    if text.len() > MAX_BYTES || header.len() > MAX_BYTES {
         return Err(Error::Limit);
     }
     let mut compressor = ZlibEncoder::new(Vec::new(), Compression::best());
@@ -93,23 +107,28 @@ pub(super) fn encode_payload(text: &str) -> Result<Vec<u8>> {
     let payload = compressor
         .finish()
         .map_err(|e| Error::Invalid(e.to_string()))?;
-    let width = 512usize;
     let rows = (payload.len() + 4).div_ceil(width);
-    if width
-        .checked_mul(rows + 1)
-        .is_none_or(|size| size > MAX_BYTES)
-    {
-        return Err(Error::Limit);
-    }
-    let mut pixels = vec![255; width];
-    pixels[0] = 0;
-    pixels[1] = 1;
-    pixels.extend_from_slice(&(payload.len() as u32).to_be_bytes());
+    let total_rows = rows.checked_add(header_rows).ok_or(Error::Limit)?;
+    let size = width
+        .checked_mul(total_rows)
+        .filter(|size| *size <= MAX_BYTES)
+        .ok_or(Error::Limit)?;
+    let mut pixels = header.to_vec();
+    pixels[..2].copy_from_slice(&height.to_be_bytes());
+    pixels.extend_from_slice(
+        &u32::try_from(payload.len())
+            .map_err(|_| Error::Limit)?
+            .to_be_bytes(),
+    );
     pixels.extend_from_slice(&payload);
-    pixels.resize(width * (rows + 1), 0);
+    pixels.resize(size, 0);
     let mut output = Vec::new();
     {
-        let mut encoder = png::Encoder::new(&mut output, width as u32, (rows + 1) as u32);
+        let mut encoder = png::Encoder::new(
+            &mut output,
+            u32::try_from(width).map_err(|_| Error::Limit)?,
+            u32::try_from(total_rows).map_err(|_| Error::Limit)?,
+        );
         encoder.set_color(png::ColorType::Grayscale);
         encoder.set_depth(png::BitDepth::Eight);
         let mut writer = encoder

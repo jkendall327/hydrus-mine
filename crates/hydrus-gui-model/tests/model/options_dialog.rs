@@ -165,6 +165,19 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
             (theirs_items != *items || theirs["choice"] != items[*i])
                 .then(|| format!("choice {:?} of {items:?}", items[*i]))
         }
+        (Kind::SavedSession, Value::SavedSession(name)) => {
+            let choices = hydrus_gui_model::options::session_choices(store);
+            let ours: Vec<_> = choices.iter().map(|(_, label)| label.as_str()).collect();
+            let theirs_items: Vec<_> = theirs["items"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|item| item.as_str().unwrap())
+                .collect();
+            (ours != theirs_items
+                || theirs["choice"] != name.as_deref().unwrap_or("just a blank page"))
+            .then(|| format!("session {name:?} of {ours:?}"))
+        }
         (Kind::TagService { combined }, Value::TagService(key)) => {
             let choices = hydrus_gui_model::options::tag_service_choices(store, *combined);
             let names = choices
@@ -1125,5 +1138,185 @@ fn file_search_limit_controls_stage_and_clamp_reference_values() {
     );
     editor.none(limit, true);
     assert!(editor.applied().0.file_search.implicit_limit.is_none());
+    assert_eq!(store.read(Settings::load).unwrap(), settings);
+}
+
+#[test]
+fn viewer_canvas_controls_match_reference_and_stage_bounded_values() {
+    use hydrus_gui_model::options::{Editor, Row as EditorRow};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("viewer_canvas_options.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    for name in ["media playback", "media viewer"] {
+        let registry = pages(&settings);
+        let page = registry.iter().find(|page| page.name == name).unwrap();
+        let reference = recorded["pages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|page| page["page"] == name)
+            .unwrap();
+        let problems = page_problems(page, &reference["items"], &settings, &store);
+        assert!(problems.is_empty(), "{problems:?}");
+    }
+    assert_eq!(
+        settings.viewer_canvas.recenter_on_resize,
+        fixture["initial"]["media_viewer_recenter_media_on_window_resize"]
+            .as_bool()
+            .unwrap()
+    );
+    assert_eq!(
+        settings.viewer_canvas.seek_height,
+        fixture["initial"]["animated_scanbar_height"]
+            .as_u64()
+            .unwrap() as u32
+    );
+    assert_eq!(
+        settings.viewer_canvas.seek_nub_width,
+        fixture["initial"]["animated_scanbar_nub_width"]
+            .as_u64()
+            .unwrap() as u32
+    );
+    let mut editor = Editor::new(settings.clone());
+    let page = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "media viewer")
+        .unwrap();
+    editor.show_page(page);
+    let indices: Vec<usize> = [
+        "Seek bar height:",
+        "Seek bar height when mouse away:",
+        "Seek bar nub width:",
+    ]
+    .iter()
+    .map(|label| {
+        editor
+            .rows()
+            .iter()
+            .position(|row| matches!(row, EditorRow::Opt { option, .. } if option.label == *label))
+            .unwrap()
+    })
+    .collect();
+    for event in fixture["seek"].as_array().unwrap() {
+        editor.number(indices[0], event["height"].as_i64().unwrap());
+        editor.none(indices[1], event["hidden_height"].is_null());
+        if let Some(height) = event["hidden_height"].as_i64() {
+            editor.number(indices[1], height);
+        }
+        editor.number(indices[2], event["nub"].as_i64().unwrap());
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty(), "{problems:?}");
+        assert_eq!(
+            applied.viewer_canvas.seek_height,
+            event["height"].as_u64().unwrap() as u32
+        );
+        assert_eq!(
+            applied.viewer_canvas.seek_hidden_height,
+            event["hidden_height"].as_u64().map(|value| value as u32)
+        );
+        assert_eq!(
+            applied.viewer_canvas.seek_nub_width,
+            event["nub"].as_u64().unwrap() as u32
+        );
+    }
+    editor.number(indices[0], 0);
+    editor.none(indices[1], false);
+    editor.number(indices[1], 256);
+    editor.number(indices[2], 64);
+    let applied = editor.applied().0.viewer_canvas;
+    assert_eq!(
+        (
+            applied.seek_height,
+            applied.seek_hidden_height,
+            applied.seek_nub_width
+        ),
+        (1, Some(255), 63)
+    );
+    assert_eq!(
+        store.read(Settings::load).unwrap(),
+        settings,
+        "all edits remain drafts"
+    );
+}
+
+#[test]
+fn viewer_hover_controls_replay_reference_enabled_states() {
+    use hydrus_gui_model::options::{Editor, Row as EditorRow};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("viewer_hover_options.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    let registry = pages(&settings);
+    let page = registry
+        .iter()
+        .find(|page| page.name == "media viewer hovers")
+        .unwrap();
+    let reference = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "media viewer hovers")
+        .unwrap();
+    let problems = page_problems(page, &reference["items"], &settings, &store);
+    assert!(problems.is_empty(), "{problems:?}");
+    let initial = &settings.viewer_hovers;
+    assert_eq!(
+        serde_json::json!([
+            initial.tags,
+            initial.ratings,
+            initial.notes,
+            initial.index_background
+        ]),
+        fixture["initial"]
+    );
+    let mut editor = Editor::new(settings.clone());
+    let index = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "media viewer hovers")
+        .unwrap();
+    editor.show_page(index);
+    let labels = [
+        "Pop-in tags (left) hover window on mouseover:",
+        "Pop-in ratings and locations (top-right) hover window on mouseover:",
+        "Pop-in notes (right) hover window on mouseover:",
+        "Draw index text (bottom-right) in the viewer background:",
+    ];
+    let rows: Vec<usize> = labels
+        .iter()
+        .map(|label| {
+            editor
+                .rows()
+                .iter()
+                .position(|row| matches!(row,EditorRow::Opt {option,..} if option.label == *label))
+                .unwrap()
+        })
+        .collect();
+    for event in fixture["events"].as_array().unwrap() {
+        for (i, row) in rows.iter().enumerate() {
+            editor.check(*row, event["values"][i].as_bool().unwrap());
+        }
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty(), "{problems:?}");
+        let hovers = applied.viewer_hovers;
+        assert_eq!(
+            serde_json::json!([
+                hovers.tags,
+                hovers.ratings,
+                hovers.notes,
+                hovers.index_background
+            ]),
+            event["values"]
+        );
+        for i in 0..3 {
+            assert_eq!(
+                event["stored"][i].as_bool().unwrap(),
+                !event["values"][i].as_bool().unwrap()
+            );
+        }
+        assert_eq!(event["stored"][3], event["values"][3]);
+    }
     assert_eq!(store.read(Settings::load).unwrap(), settings);
 }

@@ -1281,3 +1281,48 @@ async fn runtime_cog_gallery_override_does_not_release_other_gallery_waiters() {
     drop(waiting);
     assert!(engine.runtime_snapshot().jobs.is_empty());
 }
+
+#[tokio::test]
+async fn runtime_cog_connection_override_releases_only_the_current_retry() {
+    use hydrus_store::network_runtime::{Command, JobAction, WaitReason};
+    let s = setup(|_| Vec::new()).await;
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let request = Request::get(format!(
+        "http://{}/unavailable",
+        listener.local_addr().unwrap()
+    ));
+    drop(listener); // a real loopback connection refusal, without external traffic
+    let engine = NetEngine::new(
+        s.store.clone(),
+        NetOptions {
+            connection_error_wait_time: 60,
+            max_connection_attempts: 3,
+            domain_error_number: 0,
+            ..s.engine.options()
+        },
+    )
+    .unwrap();
+    let job = Job::new();
+    let mut fetch = Box::pin(engine.fetch(&request, &job));
+    let start = std::time::Instant::now();
+    loop {
+        tokio::select! { _ = &mut fetch => panic!("connection delay was skipped"), () = tokio::time::sleep(std::time::Duration::from_millis(10)) => {} }
+        if job.state().wait == WaitReason::Connection {
+            break;
+        }
+        assert!(start.elapsed() < std::time::Duration::from_secs(2));
+    }
+    let snapshot = engine.runtime_snapshot();
+    assert!(engine.runtime_command(&Command {
+        epoch: snapshot.epoch,
+        job: snapshot.jobs[0].id,
+        action: JobAction::OverrideConnectionWait
+    }));
+    let error = tokio::time::timeout(std::time::Duration::from_secs(1), fetch)
+        .await
+        .unwrap()
+        .unwrap_err();
+    assert!(matches!(error, NetError::Connection(_)));
+    assert!(engine.runtime_snapshot().jobs.is_empty());
+    assert_eq!(engine.runtime_snapshot().errors.len(), 1);
+}

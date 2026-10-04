@@ -92,7 +92,9 @@ impl Relationships {
         let snapshot = store.snapshot();
         let mut services = Vec::new();
         for ty in [ServiceType::LocalTag, ServiceType::TagRepository] {
-            for service in snapshot.services.of_type(ty) {
+            let mut ordered: Vec<_> = snapshot.services.of_type(ty).collect();
+            ordered.sort_by_cached_key(|service| service.name.to_lowercase());
+            for service in ordered {
                 let state = load(&store, kind, service.id)?;
                 services.push(Service {
                     id: service.id,
@@ -116,16 +118,42 @@ impl Relationships {
                 "there are no editable tag services".into(),
             ));
         }
+        let preferences: hydrus_store::tag_editing::TagEditingSettings =
+            store.read(hydrus_store::settings::get)?;
+        let selected = snapshot
+            .services
+            .by_key(&preferences.default_service)
+            .ok()
+            .and_then(|preferred| services.iter().position(|s| s.id == preferred.id))
+            .unwrap_or(0);
         Ok(Self {
             store,
             kind,
             services,
-            service: 0,
+            service: selected,
             sort: 2,
             ascending: true,
         })
     }
 
+    /// Seed the selected tags on every service page, as context-menu relationship editors do.
+    pub fn new_with_tags(
+        store: Arc<Store>,
+        kind: RelationKind,
+        tags: &[String],
+    ) -> hydrus_store::Result<Self> {
+        let mut model = Self::new(store, kind)?;
+        let tags: BTreeSet<_> = tags
+            .iter()
+            .filter_map(|tag| Tag::new(tag))
+            .map(|tag| tag.as_str().to_owned())
+            .collect();
+        for service in &mut model.services {
+            service.left = tags.clone();
+            service.workspace.extend(tags.iter().cloned());
+        }
+        Ok(model)
+    }
     /// Store whose graph and tag presentation are being edited.
     pub fn store(&self) -> &Arc<Store> {
         &self.store
@@ -155,6 +183,16 @@ impl Relationships {
         if index < self.services.len() {
             self.service = index;
         }
+    }
+    /// A real tab change remembers its service independently of the staged relationship draft.
+    pub fn choose_service_remembered(&mut self, index: usize) -> hydrus_store::Result<()> {
+        let Some(key) = self.service_key(index) else {
+            return Ok(());
+        };
+        self.store
+            .write(move |ctx| hydrus_store::tag_editing::remember_service(ctx.conn(), &key))?;
+        self.choose_service(index);
+        Ok(())
     }
     /// Explain which services apply these relationships and when changes appear.
     pub fn sync_status(&self) -> hydrus_store::Result<String> {

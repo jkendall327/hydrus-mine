@@ -46,6 +46,7 @@ export { ServicesEditorWindow, EditServiceWindow, ServiceColourRow } from "servi
 export { ServicesReviewWindow } from "services_review.slint";
 export { AboutWindow } from "about.slint";
 export { SimpleFormulaeWindow } from "simple_formulae.slint";
+export { PngExportWindow } from "png_export.slint";
 export { DownloaderExchangeWindow } from "downloader_interchange.slint";
 export { FormulaWindow, FormulaRuleWindow } from "formula_editors.slint";
 export { ConversionWindow, StringConverterWindow, StringProcessorWindow, StringStepWindow } from "string_processor.slint";
@@ -719,6 +720,8 @@ export component MainWindow inherits Window {
     // the reference's main window shortcuts: ctrl+t and F9 open a page,
     // ctrl+w closes the page shown
     callback new-page();
+    callback session-user-activity();
+    callback session-mouse-activity();
     callback tab-new-page-requested(string, string);
     callback close-page();
     callback unclose-page();
@@ -801,11 +804,21 @@ export component MainWindow inherits Window {
     out property <int> grid-columns: grid.columns;
     changed grid-columns => { root.columns-changed(self.grid-columns); }
 
+    // Capture motion before forwarding input to the interactive children.
+    activity := TouchArea {
+        width: 100%;
+        height: 100%;
+        changed mouse-x => { root.session-mouse-activity(); }
+        changed mouse-y => { root.session-mouse-activity(); }
+        pointer-event(event) => {
+            if event.kind == PointerEventKind.down { root.session-user-activity(); }
+        }
     // the main window's shortcuts, whatever has the keyboard
     FocusScope {
         width: 100%;
         height: 100%;
         capture-key-pressed(event) => {
+            root.session-user-activity();
             // an open menu takes every key, and alt and a letter opens one
             if (root.menu-panes.length > 0) {
                 root.menu-key(event.text, event.modifiers.alt);
@@ -1072,7 +1085,6 @@ export component MainWindow inherits Window {
                         cog: root.search-cog;
                         control-action(id) => { root.control-action(true, id); }
                         control-menu => { root.control-menu(true); }
-                        open-menu => { root.control-menu(true); }
                         jobs: root.simple-jobs;
                         any-job-selected: root.simple-job-selected;
                         formulae: root.simple-formulae;
@@ -1968,6 +1980,7 @@ export component MainWindow inherits Window {
             dismiss => { root.menu-dismissed(); }
         }
     }
+    }
 }
 
 export { ParserListWindow, ParserEditWindow } from "parser_editors.slint";
@@ -1979,3 +1992,12 @@ export { LoginScriptsWindow, LoginScriptWindow } from "login_workflows.slint";
 export { LoginCredentialDefinitionWindow, LoginCredentialsWindow, LoginCredentialRow } from "login_credentials.slint";
 export { RegexFavouritesWindow } from "regex_favourites.slint";
 export { DownloaderDisplayWindow } from "downloader_display.slint";
+
+export { LoginStepWindow } from "login_step.slint";
+export { ImportOptionsOverwriteWindow, ImportOverwriteRow } from "import_options_overwrite.slint";
+
+
+export { LoginDomainsWindow } from "login_domains.slint";
+
+export { ImportFavouriteRow, ImportFavouritePromptWindow } from "import_options_favourites.slint";
+export { LoginTestResultWindow } from "login_result.slint";

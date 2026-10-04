@@ -1,0 +1,54 @@
+import { Button, CheckBox, ComboBox, LineEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+export component LoginStepWindow inherits Window {
+    title: "edit login step";
+    preferred-width: 880px;
+    preferred-height: 680px;
+    background: Theme.window;
+    in-out property <string> name;
+    in-out property <int> scheme;
+    in-out property <int> method;
+    in-out property <bool> has-subdomain;
+    in-out property <string> subdomain;
+    in-out property <string> path;
+    in property <[TableRow]> variables;
+    in property <[TableRow]> cookies;
+    in property <[TableRow]> content;
+    in property <bool> one-selected;
+    in property <bool> any-selected;
+    in property <bool> child-open;
+    in property <bool> deleting;
+    in property <string> error;
+    out property <length> footer-y: footer.y;
+    out property <length> footer-height: footer.height;
+    callback content-clicked(int, bool, bool);
+    callback content-activated(int);
+    callback action(string);
+    callback closed();
+    VerticalLayout { padding: 12px; spacing: 6px;
+        HorizontalLayout { Text { text: "name: "; color: Theme.text; vertical-alignment: center; } LineEdit { text <=> root.name; enabled: !root.child-open && !root.deleting; } }
+        HorizontalLayout { spacing: 6px;
+            Text { text: "scheme: "; color: Theme.text; vertical-alignment: center; } ComboBox { model: ["http", "https"]; current-index <=> root.scheme; enabled: !root.child-open && !root.deleting; }
+            Text { text: "method: "; color: Theme.text; vertical-alignment: center; } ComboBox { model: ["GET", "POST"]; current-index <=> root.method; enabled: !root.child-open && !root.deleting; }
+        }
+        HorizontalLayout { Text { text: "subdomain (replaces www, if present): "; color: Theme.text; vertical-alignment: center; } CheckBox { text: "set"; checked <=> root.has-subdomain; enabled: !root.child-open && !root.deleting; } LineEdit { text <=> root.subdomain; enabled: root.has-subdomain && !root.child-open && !root.deleting; } }
+        HorizontalLayout { Text { text: "path: "; color: Theme.text; vertical-alignment: center; } LineEdit { text <=> root.path; enabled: !root.child-open && !root.deleting; } }
+        Text { text: "variables to send"; color: Theme.text; font-weight: 700; }
+        ListTable { vertical-stretch: 1; columns: [{title: "kind", width: 180px}, {title: "name", width: 250px}, {title: "value / parameter name", width: 350px, stretch: true}]; rows: root.variables; }
+        Text { text: "cookies required to consider step successful"; color: Theme.text; font-weight: 700; }
+        ListTable { vertical-stretch: 1; columns: [{title: "cookie name", width: 350px}, {title: "permitted value", width: 450px, stretch: true}]; rows: root.cookies; }
+        Text { text: "content parsers"; color: Theme.text; font-weight: 700; }
+        ListTable { vertical-stretch: 1; columns: [{title: "name", width: 350px}, {title: "produces", width: 450px, stretch: true}]; rows: root.content; row-clicked(i,c,s) => { if !root.child-open && !root.deleting { root.content-clicked(i,c,s); } } row-activated(i) => { if !root.child-open && !root.deleting { root.content-activated(i); } } delete-pressed => { if !root.child-open && !root.deleting { root.action("delete-content"); } } }
+        HorizontalLayout { spacing: 6px;
+            Button { text: "add"; enabled: !root.child-open && !root.deleting; clicked => { root.action("add-content"); } }
+            Button { text: "edit"; enabled: root.one-selected && !root.child-open && !root.deleting; clicked => { root.action("edit-content"); } }
+            Button { text: "delete"; enabled: root.any-selected && !root.child-open && !root.deleting; clicked => { root.action("delete-content"); } }
+            Button { text: "import"; enabled: !root.child-open && !root.deleting; clicked => { root.action("import-content"); } }
+            Button { text: "export selected"; enabled: root.any-selected && !root.child-open && !root.deleting; clicked => { root.action("export-content"); } }
+        }
+        if root.deleting: HorizontalLayout { spacing: 6px; Text { text: "Remove all selected?"; color: Theme.text; vertical-alignment: center; } Button { text: "yes"; clicked => { root.action("confirm-delete"); } } Button { text: "no"; clicked => { root.action("back"); } } }
+        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        footer := HorizontalLayout { alignment: end; spacing: 6px; Button { text: "apply"; enabled: !root.child-open && !root.deleting; clicked => { root.action("apply"); } } Button { text: "cancel"; clicked => { root.action("cancel"); } } }
+    }
+}

@@ -30,6 +30,12 @@ struct Binding {
 }
 
 impl Binding {
+    fn sync_context(&mut self) {
+        let (left, right) = self.model.inputs();
+        let pair = &mut self.inputs[self.model.service()];
+        pair.0.set_context_tags(left);
+        pair.1.set_context_tags(right);
+    }
     fn input_mut(&mut self, right: bool) -> &mut WriteAutocomplete {
         let pair = &mut self.inputs[self.model.service()];
         if right { &mut pair.1 } else { &mut pair.0 }
@@ -80,7 +86,8 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            let binding = binding.borrow();
+            let mut binding = binding.borrow_mut();
+            binding.sync_context();
             let model = &binding.model;
             let presentation: hydrus_core::tag_presentation::TagPresentation = model
                 .store()
@@ -116,12 +123,14 @@ pub(crate) fn open(
             let suggestions = |input: &WriteAutocomplete| {
                 ModelRc::new(VecModel::from(
                     input
-                        .suggestions()
+                        .rows()
                         .iter()
-                        .map(|(t, label)| crate::list_text(label, colours.tag(t)))
+                        .map(|r| crate::list_text(&r.label, colours.tag(&r.colour_tag)))
                         .collect::<Vec<_>>(),
                 ))
             };
+            window.set_left_tab(i32::try_from(left_input.tab().index()).unwrap_or(0));
+            window.set_right_tab(i32::try_from(right_input.tab().index()).unwrap_or(0));
             window.set_left_suggestions(suggestions(left_input));
             window.set_right_suggestions(suggestions(right_input));
             window.set_left_highlighted(
@@ -160,16 +169,87 @@ pub(crate) fn open(
             }
         }
     });
+    let menu_target = Rc::new(Cell::new((0usize, false)));
+    let tag_menu = crate::write_tag_menu::TagMenu::new(
+        binding.borrow().model.store().clone(),
+        Rc::new({
+            let active = active.clone();
+            let binding = binding.clone();
+            move || active.get() && binding.borrow().operation.is_none()
+        }),
+        Rc::new({
+            let binding = binding.clone();
+            let target = menu_target.clone();
+            move |action| {
+                if let hydrus_gui_model::write_tag_menu::Action::Decorate { tab, kind, value } =
+                    action
+                {
+                    let (service, right) = target.get();
+                    let mut binding = binding.borrow_mut();
+                    let pair = &mut binding.inputs[service];
+                    let input = if right { &mut pair.1 } else { &mut pair.0 };
+                    input.decorate(tab, kind, value);
+                }
+            }
+        }),
+        Rc::new({
+            let binding = binding.clone();
+            let refresh = refresh.clone();
+            move || {
+                {
+                    let mut binding = binding.borrow_mut();
+                    let service = binding.model.service();
+                    let pair = &mut binding.inputs[service];
+                    pair.0.fetch();
+                    pair.1.fetch();
+                }
+                refresh();
+            }
+        }),
+        Rc::new({
+            let weak = window.as_weak();
+            move |question| {
+                if let Some(w) = weak.upgrade() {
+                    w.set_tag_menu_question(question.into());
+                }
+            }
+        }),
+        Rc::new({
+            let weak = window.as_weak();
+            move |error| {
+                if let Some(w) = weak.upgrade() {
+                    w.set_error(error.into());
+                }
+            }
+        }),
+    );
+    crate::write_tag_menu::bind!(window, tag_menu);
+    window.on_context_menu({
+        let tag_menu = tag_menu.clone();
+        let binding = binding.clone();
+        let target = menu_target.clone();
+        move |right, i, x, y| {
+            if let Ok(i) = usize::try_from(i) {
+                let mut binding = binding.borrow_mut();
+                target.set((binding.model.service(), right));
+                let entries = binding.input_mut(right).menu(i);
+                drop(binding);
+                tag_menu.open(&entries, x, y);
+            }
+        }
+    });
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slot = slot.clone();
         let active = active.clone();
         let binding = binding.clone();
+        let tag_menu = tag_menu.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
             binding.borrow_mut().operation = None;
+            tag_menu.close();
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
             }
@@ -272,8 +352,9 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let run = run.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         move |op| {
-            if !active.get() || binding.borrow().operation.is_some() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
                 return;
             }
             if let Some(w) = weak.upgrade() {
@@ -307,8 +388,9 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let run = run.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         move |yes| {
-            if !active.get() || binding.borrow().operation.is_none() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_none() {
                 return;
             }
             let Some(w) = weak.upgrade() else {
@@ -334,8 +416,9 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let refresh = refresh.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         move |i| {
-            if !active.get() || binding.borrow().operation.is_some() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
                 return;
             }
             let Some(w) = weak.upgrade() else {
@@ -345,8 +428,12 @@ pub(crate) fn open(
             let previous = b.model.service();
             b.inputs[previous].0.set_text(w.get_left_input().as_str());
             b.inputs[previous].1.set_text(w.get_right_input().as_str());
-            b.model
-                .choose_service(usize::try_from(i).unwrap_or(usize::MAX));
+            if let Err(e) = b
+                .model
+                .choose_service_remembered(usize::try_from(i).unwrap_or(usize::MAX))
+            {
+                w.set_error(format!("could not remember tag service: {e}").into());
+            }
             drop(b);
             refresh();
         }
@@ -356,8 +443,9 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let refresh = refresh.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         move |right, text| {
-            if !active.get() || binding.borrow().operation.is_some() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
                 return;
             }
             let Some(w) = weak.upgrade() else {
@@ -384,11 +472,29 @@ pub(crate) fn open(
         let binding = binding.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         move |right, text| {
-            if !active.get() || binding.borrow().operation.is_some() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
                 return;
             }
             binding.borrow_mut().input_mut(right).set_text(&text);
+            refresh();
+        }
+    });
+    window.on_autocomplete_tab({
+        let binding = binding.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let tag_menu = tag_menu.clone();
+        move |right, i| {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
+                return;
+            }
+            binding.borrow_mut().input_mut(right).set_tab(
+                hydrus_gui_model::write_autocomplete::Tab::from_index(
+                    usize::try_from(i).unwrap_or(0),
+                ),
+            );
             refresh();
         }
     });
@@ -396,8 +502,9 @@ pub(crate) fn open(
         let binding = binding.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         move |right| {
-            if !active.get() || binding.borrow().operation.is_some() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
                 return;
             }
             binding.borrow_mut().input_mut(right).fetch();
@@ -408,8 +515,9 @@ pub(crate) fn open(
         let binding = binding.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         move |right, by| {
-            if !active.get() || binding.borrow().operation.is_some() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
                 return;
             }
             binding
@@ -423,9 +531,10 @@ pub(crate) fn open(
         let binding = binding.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         let weak = window.as_weak();
         move |right, i| {
-            if !active.get() || binding.borrow().operation.is_some() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
                 return;
             }
             let mut b = binding.borrow_mut();
@@ -445,10 +554,11 @@ pub(crate) fn open(
         let binding = binding.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         let start = start.clone();
         let weak = window.as_weak();
         move |right, button| {
-            if !active.get() || binding.borrow().operation.is_some() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
                 return true;
             }
             let text = match crate::from_clipboard() {
@@ -490,8 +600,9 @@ pub(crate) fn open(
         let binding = binding.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         move |right, i| {
-            if !active.get() || binding.borrow().operation.is_some() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
                 return;
             }
             let mut b = binding.borrow_mut();
@@ -510,8 +621,9 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let refresh = refresh.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         move || {
-            if !active.get() || binding.borrow().operation.is_some() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
                 return;
             }
             if let Some(w) = weak.upgrade() {
@@ -528,8 +640,9 @@ pub(crate) fn open(
         let binding = binding.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         move || {
-            if !active.get() || binding.borrow().operation.is_some() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
                 return;
             }
             binding.borrow_mut().model.wipe_workspace();
@@ -540,8 +653,9 @@ pub(crate) fn open(
         let binding = binding.clone();
         let refresh = refresh.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         move |i, ctrl, shift| {
-            if !active.get() || binding.borrow().operation.is_some() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
                 return;
             }
             binding
@@ -555,8 +669,9 @@ pub(crate) fn open(
         let binding = binding.clone();
         let start = start.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         move |i| {
-            if !active.get() || binding.borrow().operation.is_some() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
                 return;
             }
             binding.borrow_mut().model.click(
@@ -572,8 +687,9 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let refresh = refresh.clone();
         let active = active.clone();
+        let tag_menu = tag_menu.clone();
         move |c, asc| {
-            if !active.get() || binding.borrow().operation.is_some() {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
                 return;
             }
             binding

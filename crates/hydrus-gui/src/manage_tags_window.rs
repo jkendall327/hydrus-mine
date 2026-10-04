@@ -51,10 +51,12 @@ pub(crate) fn open(
                 .map(|(tag, row)| list_text(row, colours.tag(tag)))
                 .collect();
             window.set_tags(ModelRc::new(VecModel::from(tags)));
+            window
+                .set_autocomplete_tab(i32::try_from(model.autocomplete_tab().index()).unwrap_or(0));
             let suggestions: Vec<ListText> = model
-                .suggestions()
+                .suggestion_rows()
                 .iter()
-                .map(|(tag, label)| list_text(label, colours.tag(tag)))
+                .map(|r| list_text(&r.label, colours.tag(&r.colour_tag)))
                 .collect();
             window.set_suggestions(ModelRc::new(VecModel::from(suggestions)));
             window.set_highlighted(
@@ -70,11 +72,68 @@ pub(crate) fn open(
     };
     let active = Rc::new(Cell::new(true));
     let pending_paste: Rc<RefCell<Option<Vec<String>>>> = Rc::default();
+    let tag_menu = crate::write_tag_menu::TagMenu::new(
+        model.borrow().store().clone(),
+        Rc::new({
+            let active = active.clone();
+            let pending = pending_paste.clone();
+            move || active.get() && pending.borrow().is_none()
+        }),
+        Rc::new({
+            let model = model.clone();
+            move |action| {
+                if let hydrus_gui_model::write_tag_menu::Action::Decorate { tab, kind, value } =
+                    action
+                {
+                    model
+                        .borrow_mut()
+                        .write_input_mut()
+                        .decorate(tab, kind, value);
+                }
+            }
+        }),
+        Rc::new({
+            let model = model.clone();
+            let refresh = refresh.clone();
+            move || {
+                model.borrow_mut().fetch();
+                refresh();
+            }
+        }),
+        Rc::new({
+            let weak = window.as_weak();
+            move |question| {
+                if let Some(w) = weak.upgrade() {
+                    w.set_tag_menu_question(question.into());
+                }
+            }
+        }),
+        Rc::new({
+            let weak = window.as_weak();
+            move |error| {
+                if let Some(w) = weak.upgrade() {
+                    w.set_error(error.into());
+                }
+            }
+        }),
+    );
+    crate::write_tag_menu::bind!(window, tag_menu);
+    window.on_context_menu({
+        let tag_menu = tag_menu.clone();
+        let model = model.clone();
+        move |i, x, y| {
+            if let Ok(i) = usize::try_from(i) {
+                let entries = model.borrow().write_input().menu(i);
+                tag_menu.open(&entries, x, y);
+            }
+        }
+    });
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
         let active = active.clone();
         let pending_paste = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
         move || {
             if !active.replace(false) {
                 return;
@@ -82,6 +141,7 @@ pub(crate) fn open(
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
+            tag_menu.close();
             pending_paste.borrow_mut().take();
             slot.borrow_mut().take();
         }
@@ -129,8 +189,9 @@ pub(crate) fn open(
         let close = close.clone();
         let active = active.clone();
         let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
         move || {
-            if !active.get() || pending.borrow().is_some() {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
                 return;
             }
             if let Err(e) = model.borrow().apply() {
@@ -149,8 +210,9 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let active = active.clone();
         let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
         move |i| {
-            if !active.get() || pending.borrow().is_some() {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
                 return;
             }
             if let Err(error) = model
@@ -168,8 +230,9 @@ pub(crate) fn open(
         let refresh = refresh.clone();
         let active = active.clone();
         let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
         move || {
-            if !active.get() || pending.borrow().is_some() {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
                 return;
             }
             let mut model = model.borrow_mut();
@@ -179,13 +242,32 @@ pub(crate) fn open(
             refresh();
         }
     });
+    window.on_tab_chosen({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
+        move |i| {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
+                return;
+            }
+            model.borrow_mut().choose_autocomplete_tab(
+                hydrus_gui_model::write_autocomplete::Tab::from_index(
+                    usize::try_from(i).unwrap_or(0),
+                ),
+            );
+            refresh();
+        }
+    });
     window.on_fetch({
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
         let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
         move || {
-            if !active.get() || pending.borrow().is_some() {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
                 return;
             }
             model.borrow_mut().fetch();
@@ -197,8 +279,9 @@ pub(crate) fn open(
         let refresh = refresh.clone();
         let active = active.clone();
         let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
         move |text| {
-            if !active.get() || pending.borrow().is_some() {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
                 return;
             }
             model.borrow_mut().set_text(&text);
@@ -210,8 +293,9 @@ pub(crate) fn open(
         let refresh = refresh.clone();
         let active = active.clone();
         let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
         move |by| {
-            if !active.get() || pending.borrow().is_some() {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
                 return;
             }
             model.borrow_mut().move_highlight(by as isize);
@@ -225,8 +309,9 @@ pub(crate) fn open(
         let apply = apply.clone();
         let active = active.clone();
         let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
         move || {
-            if !active.get() || pending.borrow().is_some() {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
                 return;
             }
             // (enter with nothing typed applies, as in the reference)
@@ -247,8 +332,9 @@ pub(crate) fn open(
         let refresh = refresh.clone();
         let active = active.clone();
         let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
         move |i| {
-            if !active.get() || pending.borrow().is_some() {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
                 return;
             }
             model
@@ -262,8 +348,9 @@ pub(crate) fn open(
         let refresh = refresh.clone();
         let active = active.clone();
         let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
         move |i| {
-            if !active.get() || pending.borrow().is_some() {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
                 return;
             }
             let _ = model
@@ -277,9 +364,10 @@ pub(crate) fn open(
         let refresh = refresh.clone();
         let active = active.clone();
         let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
         let weak = window.as_weak();
         move |button| {
-            if !active.get() || pending.borrow().is_some() {
+            if !active.get() || pending.borrow().is_some() || tag_menu.busy() {
                 return true;
             }
             let Some(w) = weak.upgrade() else {

@@ -78,12 +78,8 @@ impl Worker {
                 if let Some(result) = result {
                     let _ = events.send(Event::Written(result));
                 }
-                if events
-                    .send(Event::Review(Review::load(&store, now())))
-                    .is_err()
-                {
-                    break;
-                }
+                // A closing view can still have an owner-release command queued.
+                let _ = events.send(Event::Review(Review::load(&store, now())));
             }
         });
         let _ = send.send(Operation::Refresh);
@@ -860,6 +856,17 @@ pub fn open_rules(store: Arc<Store>, slots: &Slots, context: NetworkContext) -> 
 }
 
 struct Jobs {
+    store: Arc<Store>,
+    rules: Slots,
+    control_owner: u64,
+    auto_override: Cell<bool>,
+    auto_sent: RefCell<Option<(String, u64, bool)>>,
+    cog_job: RefCell<Option<(String, u64)>>,
+    cog_actions:
+        RefCell<std::collections::HashMap<i32, hydrus_gui_model::network_job_control::Action>>,
+    last_job: RefCell<Option<(String, u64)>>,
+    last_error: RefCell<Option<String>>,
+    error_window: crate::network_job_control::Errors,
     window: NetworkJobsWindow,
     owner: std::rc::Weak<RefCell<Option<Rc<Jobs>>>>,
     worker: Worker,
@@ -907,6 +914,70 @@ impl Jobs {
             .borrow()
             .one()
             .and_then(|id| jobs.iter().find(|j| j.id == id));
+        if let Some(job) = selected {
+            *self.last_job.borrow_mut() = Some((review.runtime.epoch.clone(), job.id));
+        }
+        if let Some(error) = self.last_job.borrow().as_ref().and_then(|(epoch, id)| {
+            if review.runtime.epoch != *epoch {
+                return None;
+            }
+            review.runtime.errors.iter().rev().find(|e| e.id == *id)
+        }) {
+            *self.last_error.borrow_mut() = Some(error.text.clone());
+        }
+        let line = selected
+            .map(|job| {
+                hydrus_store::live::JobLive {
+                    url: job.url.clone(),
+                    status: job.status.clone(),
+                    speed: job.speed,
+                    bytes_read: job.bytes_read,
+                    bytes_to_read: job.bytes_total,
+                    done: false,
+                    error: false,
+                }
+                .line()
+            })
+            .unwrap_or_default();
+        self.window.set_download(crate::download_line(&line));
+        let mut cog = self.window.get_cog();
+        cog.auto_override = self.auto_override.get();
+        cog.has_error = self.last_error.borrow().is_some();
+        self.window.set_cog(cog);
+        let selected = selected.filter(|_| review.runtime.fresh(now()));
+        let next = selected.map(|job| {
+            (
+                review.runtime.epoch.clone(),
+                job.id,
+                self.auto_override.get(),
+            )
+        });
+        if *self.auto_sent.borrow() != next {
+            if let Some((epoch, id, true)) = self.auto_sent.borrow().as_ref()
+                && review.runtime.epoch == *epoch
+                && review.runtime.jobs.iter().any(|j| j.id == *id)
+            {
+                let _ = self.worker.send.send(Operation::Job(Command {
+                    epoch: epoch.clone(),
+                    job: *id,
+                    action: JobAction::AutoOverrideBandwidthFor {
+                        owner: self.control_owner,
+                        enabled: false,
+                    },
+                }));
+            }
+            if let Some((epoch, id, true)) = &next {
+                let _ = self.worker.send.send(Operation::Job(Command {
+                    epoch: epoch.clone(),
+                    job: *id,
+                    action: JobAction::AutoOverrideBandwidthFor {
+                        owner: self.control_owner,
+                        enabled: true,
+                    },
+                }));
+            }
+            *self.auto_sent.borrow_mut() = next;
+        }
         self.window.set_detail(
             selected
                 .map_or_else(String::new, |job| {
@@ -933,6 +1004,80 @@ impl Jobs {
             }
             .into(),
         );
+    }
+    fn menu(&self) {
+        let review = self.review.borrow();
+        let Some(review) = review.as_ref() else {
+            return;
+        };
+        let selected = self
+            .selection
+            .borrow()
+            .one()
+            .and_then(|id| review.runtime.jobs.iter().find(|j| j.id == id));
+        let job = selected
+            .filter(|_| review.runtime.fresh(now()))
+            .and_then(|job| {
+                review
+                    .runtime
+                    .controls
+                    .iter()
+                    .find(|c| c.id == job.id)
+                    .map(|meta| (job, meta))
+            });
+        let menu = hydrus_gui_model::network_job_control::cog(
+            review,
+            job,
+            self.auto_override.get(),
+            now(),
+        );
+        let (menu, actions) =
+            crate::network_job_control::menu_data(menu, self.last_error.borrow().is_some());
+        *self.cog_job.borrow_mut() = job.map(|(job, _)| (review.runtime.epoch.clone(), job.id));
+        *self.cog_actions.borrow_mut() = actions;
+        self.window.set_cog(menu);
+    }
+    fn control_action(&self, id: i32) {
+        if id == 7 {
+            self.auto_override.set(!self.auto_override.get());
+            self.show();
+            self.menu();
+            return;
+        }
+        if matches!(id, 8 | 9) {
+            if let Some(text) = self.last_error.borrow().as_ref() {
+                if id == 8 {
+                    let _ = self.error_window.show(text);
+                } else {
+                    crate::copy_to_clipboard(text);
+                }
+            }
+            return;
+        }
+        match self.cog_actions.borrow().get(&id) {
+            Some(hydrus_gui_model::network_job_control::Action::CopyUrl(url)) => {
+                crate::copy_to_clipboard(url)
+            }
+            Some(hydrus_gui_model::network_job_control::Action::Rules(context)) => {
+                let _ = open_rules(self.store.clone(), &self.rules, context.clone());
+            }
+            Some(hydrus_gui_model::network_job_control::Action::Job(action)) => {
+                if let Some((epoch, id)) = self.cog_job.borrow().as_ref()
+                    && self.review.borrow().as_ref().is_some_and(|r| {
+                        r.runtime.fresh(now())
+                            && r.runtime.epoch == *epoch
+                            && r.runtime.jobs.iter().any(|j| j.id == *id)
+                    })
+                {
+                    let _ = self.worker.send.send(Operation::Job(Command {
+                        epoch: epoch.clone(),
+                        job: *id,
+                        action: *action,
+                    }));
+                }
+            }
+            _ => {}
+        }
     }
     fn poll(&self) {
         for event in self.worker.receive.try_iter() {
@@ -985,6 +1130,16 @@ impl Jobs {
         self.manual.set(true);
     }
     fn close(&self) {
+        if let Some((epoch, job, true)) = self.auto_sent.borrow_mut().take() {
+            let _ = self.worker.send.send(Operation::Job(Command {
+                epoch,
+                job,
+                action: JobAction::AutoOverrideBandwidthFor {
+                    owner: self.control_owner,
+                    enabled: false,
+                },
+            }));
+        }
         self.timer.stop();
         let _ = self.worker.send.send(Operation::Stop);
         let _ = self.window.hide();
@@ -1013,6 +1168,19 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
         ("progress", 110.0),
     ]));
     let state = Rc::new(Jobs {
+        store: store.clone(),
+        rules: Slots {
+            bandwidth: slots.bandwidth.clone(),
+            jobs: Rc::default(),
+        },
+        control_owner: crate::network_job_control::new_control_owner(),
+        auto_override: Cell::new(false),
+        auto_sent: RefCell::default(),
+        cog_job: RefCell::default(),
+        cog_actions: RefCell::default(),
+        last_job: RefCell::default(),
+        last_error: RefCell::default(),
+        error_window: crate::network_job_control::Errors::default(),
         window: window.clone_strong(),
         owner: Rc::downgrade(&slots.jobs),
         worker: Worker::start(store),
@@ -1051,6 +1219,22 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
             if let Some(s) = state.upgrade() {
                 s.manual.set(true);
                 let _ = s.worker.send.send(Operation::Refresh);
+            }
+        }
+    });
+    window.on_control_menu({
+        let state = Rc::downgrade(&state);
+        move || {
+            if let Some(s) = state.upgrade() {
+                s.menu();
+            }
+        }
+    });
+    window.on_control_action({
+        let state = Rc::downgrade(&state);
+        move |id| {
+            if let Some(s) = state.upgrade() {
+                s.control_action(id);
             }
         }
     });

@@ -78,6 +78,99 @@ def record(session):
         queries.append(qt(show))
     fetch('parity:amb');fetch('parity:amb',True);fetch('parity:am');fetch('parity:amber old',False,False);fetch('parity:amber old',False,False,False,False)
     fetch('parity:amb',False,False,True,True,CC.COMBINED_TAG_SERVICE_KEY)
+    def tabs():
+        from hydrus.client.gui import ClientGUIAsync
+        from hydrus.client.gui.panels.options.TagsPanel import TagsPanel
+        events=[]
+        favourite_tags=['parity:root','parity:amber old','parity:favorite new']
+        c.new_options.SetStringList('favourite_tags',favourite_tags)
+        def rows(box):
+            result=[]
+            for term in box._ordered_terms:
+                texts=term.GetRowsOfPresentationTextsWithNamespaces(True,box._show_sibling_decorators,' → ',None,box._show_parent_decorators,box._extra_parent_rows_allowed)
+                result.append({'tag':term.GetTag() if hasattr(term,'GetTag') else term.GetPredicate().GetValue(),'rows':[''.join(t[0] for t in row) for row in texts]})
+            return result
+        old_threads=c.CallToThread
+        favourite_box=ac._favourites_list
+        c.CallToThread=lambda func,*args,**kw:None if getattr(getattr(func,'__self__',None),'_win',None) is favourite_box else old_threads(func,*args,**kw)
+        try:
+            for service in (local,CC.COMBINED_TAG_SERVICE_KEY):
+                favourite_box.SetTagServiceKey(service);ac.RefreshFavouriteTags()
+                with favourite_box._async_text_info_lock:favourite_box._pending_async_text_info_terms.update(favourite_box._ordered_terms)
+                updater=favourite_box._async_text_info_updater
+                updater._publish_callable(updater._work_callable(updater._pre_work_callable()))
+                events.append({'tab':'favourites','service':c.services_manager.GetName(service),'tags':favourite_tags,'rows':rows(favourite_box)})
+        finally:c.CallToThread=old_threads
+        # Run the real children worker/publisher synchronously, so no thread race
+        # changes the snapshot. It still performs real descendants/count DB reads.
+        old_start=ClientGUIAsync.AsyncQtJob.start
+        ClientGUIAsync.AsyncQtJob.start=lambda job:job._publish_callable(job._work_callable())
+        try:
+            ac._children_list.SetTagServiceKey(local)
+            for context,limit in [(['parity:root'],40),(['parity:root'],1),(['parity:root'],None),(['parity:root','parity:colour'],40)]:
+                c.new_options.SetNoneableInteger('num_to_show_in_ac_dropdown_children_tab',limit)
+                ac._children_list.NotifyNeedsUpdating();ac._children_list.UpdateChildrenIfNeeded(context)
+                events.append({'tab':'children','context':context,'limit':limit,'rows':rows(ac._children_list)})
+        finally:ClientGUIAsync.AsyncQtJob.start=old_start
+        c.new_options.SetNoneableInteger('num_to_show_in_ac_dropdown_children_tab',40)
+        panel=TagsPanel(c.gui,c.new_options)
+        control=panel._num_to_show_in_ac_dropdown_children_tab
+        bounds={'value':control.GetValue(),'min':control._number_value.minimum(),'max':control._number_value.maximum()}
+        panel.deleteLater()
+        return events,bounds
+    tab_events,children_control=qt(tabs)
+    def context_menus():
+        from qtpy import QtCore
+        from hydrus.client.gui import ClientGUICore as CGC, ClientGUIAsync
+        from hydrus.client.gui.lists import ClientGUIListBoxes as L
+        events=[]; captured={}; copied=[]
+        box=ac._search_results_list
+        box.SetParentDecoratorsAllowed(True);box.SetExtraParentRowsAllowed(True);box.SetSiblingDecoratorsAllowed(True)
+        old_popup=CGC.core().PopupMenu
+        old_start=ClientGUIAsync.AsyncQtJob.start
+        ClientGUIAsync.AsyncQtJob.start=lambda job:job._publish_callable(job._work_callable())
+        old_pub=c.pub
+        CGC.core().PopupMenu=lambda win,menu:captured.update(menu=menu)
+        launches=[]
+        def publish(topic,*args,**kw):
+            if topic == 'clipboard':copied.append(args[1])
+            elif topic in ('new_page_query','new_page_duplicates'):
+                launches.append({'topic':topic,'current':[key.hex() for key in sorted(args[0].current_service_keys)],'deleted':[key.hex() for key in sorted(args[0].deleted_service_keys)],'predicates':[p.ToString() for p in kw['initial_predicates']],'page_name':kw['page_name'],'activate_window':kw['activate_window']})
+            else:old_pub(topic,*args,**kw)
+        c.pub=publish
+        def paths(menu,prefix=()):
+            result=[]
+            for action in menu.actions():
+                if action.isSeparator():continue
+                path=prefix+(action.text(),)
+                result.extend(paths(action.menu(),path) if action.menu() is not None else [(path,action)])
+            return result
+        try:
+            term=next(t for t in box._ordered_terms if t.GetPredicate().GetValue() == 'parity:amber old')
+            box._selected_terms={term}
+            box.ShowMenuFromSignal(QtCore.QPoint(0,0))
+            menu=captured['menu'];actions=paths(menu)
+            events.append({'action':'open','paths':[list(path) for path,action in actions]})
+            for label in ['parity:amber old','amber old','amber_old','parity:amber old with counts','amber old with counts','parity:amber old and 2 parents','all tags','all subtags']:
+                action=next(action for path,action in actions if path == ('copy',label));copied.clear();action.trigger()
+                events.append({'action':'copy','label':label,'copied':list(copied)})
+            for prefix in ['open a new search page for ','open a new duplicate filter page for ']:
+                path,action=next((path,action) for path,action in actions if path[0] == 'open' and path[-1].startswith(prefix));label=path[-1];launches.clear();action.trigger()
+                events.append({'action':'launch','label':label,'launched':list(launches)})
+            def fav_menu():
+                menu=W.QMenu(box);L.AddTagFavouritesMenu(box,menu,'parity:menu new');return menu
+            for label,yes in [('add "parity:menu new" to favourites',False),('remove "parity:menu new" from favourites',False),('remove "parity:menu new" from favourites',True),('add "parity:menu new" to most used for "my tags"',False),('remove "parity:menu new" from most used for "my tags"',False),('remove "parity:menu new" from most used for "my tags"',True)]:
+                answer['yes']=yes;asked.clear();menu=fav_menu();action=next(action for path,action in paths(menu) if path[-1] == label);action.trigger()
+                events.append({'action':'favourite','label':label,'answer':yes,'asked':list(asked),'favourites':c.new_options.GetStringList('favourite_tags'),'most_used':sorted(c.new_options.GetSuggestedTagsMostUsed(local))})
+            for label,setter,flag in [('collapse parent rows',box.SetExtraParentRowsAllowed,False),('hide parent decorators',box.SetParentDecoratorsAllowed,False),('hide sibling decorators',box.SetSiblingDecoratorsAllowed,False)]:
+                menu=captured['menu'];action=next(action for path,action in paths(menu) if path == (label,));action.trigger();box.ShowMenuFromSignal(QtCore.QPoint(0,0))
+                events.append({'action':'decorator','label':label,'paths':[list(path) for path,action in paths(captured['menu'])]})
+        finally:
+            c.pub=old_pub;CGC.core().PopupMenu=old_popup;ClientGUIAsync.AsyncQtJob.start=old_start
+        return events
+    # Restore the local counted suggestions before driving the real tag menu.
+    fetch('parity:amber old',False,True,True,True,local)
+    menu_events=qt(context_menus)
     paste_events=[]
     for text,skip,yes,button in [(' Parity:Amber \nparity:new\nparity:new\n\n',False,False,False),(' Parity:Amber \nparity:new\nparity:new\n\n',False,True,False),('parity:skip a\nparity:skip b',True,False,False),('parity:button a\nparity:button b',False,False,True),('parity:single',False,False,False)]:
         clipboard['text']=text;answer['yes']=yes;qt(lambda:c.new_options.SetBoolean('skip_yesno_on_write_autocomplete_multiline_paste',skip))
@@ -105,6 +198,33 @@ def record(session):
             panel.deleteLater()
         return results
     relationship_inputs=qt(relation_inputs)
+    def seeded_relationship_dialogs():
+        from hydrus.client.gui.metadata.ClientGUIManageTagSiblings import ManageTagSiblings
+        from hydrus.client.gui.metadata.ClientGUIManageTagParents import ManageTagParents
+        from hydrus.client.gui import ClientGUIAsync
+        events=[];old_after=c.CallAfterQtSafe;old_start=ClientGUIAsync.AsyncQtJob.start
+        ClientGUIAsync.AsyncQtJob.start=lambda job:job._publish_callable(job._work_callable())
+        c.CallAfterQtSafe=lambda target,func,*args,**kw:func(*args,**kw) if getattr(func,'__name__','') == 'setCurrentWidget' else old_after(target,func,*args,**kw)
+        try:
+            for kind,cls in [('siblings',ManageTagSiblings),('parents',ManageTagParents)]:
+                c.new_options.SetKey('default_tag_service_tab',local);c.new_options.SetBoolean('save_default_tag_service_tab_on_change',True)
+                panel=cls(c.gui,['parity:amber old']);notebook=panel._tag_services
+                initial=c.services_manager.GetName(notebook.currentWidget().GetServiceKey())
+                seeds=[]
+                for i in range(notebook.count()):
+                    page=notebook.widget(i);box=page._old_siblings if kind == 'siblings' else page._children
+                    seeds.append({'service':c.services_manager.GetName(page.GetServiceKey()),'tags':sorted(box.GetTags())})
+                other=next(i for i in range(notebook.count()) if notebook.widget(i).GetServiceKey() != local)
+                notebook.setCurrentIndex(other)
+                remembered=c.services_manager.GetName(c.new_options.GetKey('default_tag_service_tab'))
+                c.new_options.SetBoolean('save_default_tag_service_tab_on_change',False)
+                notebook.setCurrentIndex(next(i for i in range(notebook.count()) if notebook.widget(i).GetServiceKey() == local))
+                events.append({'kind':kind,'initial':initial,'seeds':seeds,'remembered':remembered,'disabled_memory':c.services_manager.GetName(c.new_options.GetKey('default_tag_service_tab'))})
+                panel.deleteLater()
+        finally:
+            ClientGUIAsync.AsyncQtJob.start=old_start;c.CallAfterQtSafe=old_after;c.new_options.SetKey('default_tag_service_tab',local);c.new_options.SetBoolean('save_default_tag_service_tab_on_change',True)
+        return events
+    seeded_dialogs=qt(seeded_relationship_dialogs)
     def detached_tag_lists():
         from hydrus.client.gui import ClientGUIDialogs
         from hydrus.client.metadata import ClientTags
@@ -121,7 +241,7 @@ def record(session):
         return events
     detached_inputs=qt(detached_tag_lists)
     qt(ac.deleteLater);c.CallToThread=old_thread;c.GetClipboardText=old_clipboard
-    return {'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
+    return {'seeded_dialogs':seeded_dialogs,'menus':menu_events,'tabs':tab_events,'children_control':children_control,'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
 def child(out):
     import hydrus_driver,record_api
     result=hydrus_driver.run_client(record_api.unpack_fixture('basic'),record)
