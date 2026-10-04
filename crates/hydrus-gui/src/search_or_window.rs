@@ -216,8 +216,8 @@ pub fn open(
     *slot.nested.borrow_mut() = Some(state.nested.clone());
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
-        let slot = Rc::downgrade(&slot.window);
         let nested = Rc::downgrade(&slot.nested);
+        let slot = Rc::downgrade(&slot.window);
         let state = state.clone();
         move || {
             state.watch_owner.stop();

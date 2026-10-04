@@ -216,12 +216,7 @@ fn cnf(expr: &Expr, negate: bool) -> Result<Vec<BTreeSet<String>>, String> {
         Expr::And(a, b) | Expr::Or(a, b) => {
             let left = cnf(a, negate)?;
             let right = cnf(b, negate)?;
-            if matches!(expr, Expr::And(..)) != negate {
-                if left.len() + right.len() > 4096 {
-                    return Err("This expression expands to too many search rules.".into());
-                }
-                Ok(left.into_iter().chain(right).collect())
-            } else {
+            if matches!(expr, Expr::And(..)) == negate {
                 if left.len().saturating_mul(right.len()) > 4096 {
                     return Err("This expression expands to too many search rules.".into());
                 }
@@ -229,6 +224,11 @@ fn cnf(expr: &Expr, negate: bool) -> Result<Vec<BTreeSet<String>>, String> {
                     .iter()
                     .flat_map(|a| right.iter().map(move |b| a.union(b).cloned().collect()))
                     .collect())
+            } else {
+                if left.len() + right.len() > 4096 {
+                    return Err("This expression expands to too many search rules.".into());
+                }
+                Ok(left.into_iter().chain(right).collect())
             }
         }
     }
