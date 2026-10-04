@@ -46,15 +46,19 @@ async fn handler(
     let method = request.method().to_string();
     let path = request.uri().path_and_query().unwrap().to_string();
     let route = request.uri().path().to_owned();
-    let header_value = |name| {
-        request
-            .headers()
-            .get(name)
-            .map(|value| value.to_str().unwrap().to_owned())
+    let (referer, origin, cookie) = {
+        let header_value = |name| {
+            request
+                .headers()
+                .get(name)
+                .map(|value| value.to_str().unwrap().to_owned())
+        };
+        (
+            header_value("referer"),
+            header_value("origin"),
+            header_value("cookie"),
+        )
     };
-    let referer = header_value("referer");
-    let origin = header_value("origin");
-    let cookie = header_value("cookie");
     let body = String::from_utf8(
         to_bytes(request.into_body(), 1_000_000)
             .await
@@ -62,7 +66,10 @@ async fn handler(
             .to_vec(),
     )
     .unwrap();
-    requests.lock().unwrap().push(json!({"method":method,"path":path,"body":body,"referer":referer,"origin":origin,"cookie":cookie}));
+    {
+        let mut recorded = requests.lock().unwrap();
+        recorded.push(json!({"method":method,"path":path,"body":body,"referer":referer,"origin":origin,"cookie":cookie}));
+    }
     let (status, data, cookie) = if route == "/unauthorised" {
         (StatusCode::UNAUTHORIZED, "credentials denied", None)
     } else if route == "/stall" {
