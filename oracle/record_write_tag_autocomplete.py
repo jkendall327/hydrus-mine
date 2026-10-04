@@ -105,8 +105,23 @@ def record(session):
             panel.deleteLater()
         return results
     relationship_inputs=qt(relation_inputs)
+    def detached_tag_lists():
+        from hydrus.client.gui import ClientGUIDialogs
+        from hydrus.client.metadata import ClientTags
+        events=[]
+        for kind,key,display in [('additional',local,ClientTags.TAG_DISPLAY_STORAGE),('whitelist',CC.COMBINED_TAG_SERVICE_KEY,ClientTags.TAG_DISPLAY_DISPLAY_ACTUAL)]:
+            initial=['parity:caller initial']
+            dialog=ClientGUIDialogs.DialogInputTags(c.gui,key,display,initial)
+            def snapshot(action):events.append({'kind':kind,'action':action,'tags':sorted(dialog.GetTags()),'caller':list(initial)})
+            snapshot('initial')
+            clipboard['text']='parity:caller initial\nparity:child new';dialog._tag_autocomplete._Paste();snapshot('paste')
+            dialog._tag_autocomplete._Paste();snapshot('repeat_paste')
+            dialog.EnterTags({'parity:caller initial'});snapshot('typed_toggle')
+            dialog.reject();snapshot('cancel');dialog.deleteLater()
+        return events
+    detached_inputs=qt(detached_tag_lists)
     qt(ac.deleteLater);c.CallToThread=old_thread;c.GetClipboardText=old_clipboard
-    return {'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
+    return {'detached_inputs':detached_inputs,'relationship_inputs':relationship_inputs,'controls':option_controls,'corpus':[{'tag':tag,'hashes':[h.hex() for h in hs]} for tag,hs in corpus],'queries':queries,'paste':paste_events}
 def child(out):
     import hydrus_driver,record_api
     result=hydrus_driver.run_client(record_api.unpack_fixture('basic'),record)

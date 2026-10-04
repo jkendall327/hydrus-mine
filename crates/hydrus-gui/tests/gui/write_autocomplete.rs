@@ -157,3 +157,127 @@ fn relationship_autocomplete_preserves_service_drafts_and_cancels_paste_with_own
         w.invoke_cancel();
     }
 }
+
+#[test]
+fn detached_write_tag_child_commits_once_and_discards_closed_owner_answers() {
+    use hydrus_gui::write_tag_window;
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let caller = Rc::new(RefCell::new(vec!["parity:caller initial".to_owned()]));
+    let slot = write_tag_window::Slot::default();
+    let commits = Rc::new(std::cell::Cell::new(0));
+    let closed = Rc::new(std::cell::Cell::new(0));
+    let service = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let open = || {
+        write_tag_window::open(
+            &store,
+            service.clone(),
+            &caller.borrow(),
+            "edit additional tags",
+            &slot,
+            Rc::new({
+                let caller = caller.clone();
+                let commits = commits.clone();
+                move |tags| {
+                    *caller.borrow_mut() = tags;
+                    commits.set(commits.get() + 1);
+                }
+            }),
+            Rc::new({
+                let closed = closed.clone();
+                move || closed.set(closed.get() + 1)
+            }),
+        )
+        .unwrap()
+    };
+    hydrus_gui::set_paster(|| "parity:caller initial\nparity:child new".into());
+    let w = open();
+    assert!(w.invoke_paste(false));
+    w.invoke_answered(false);
+    assert_eq!(w.get_tags().row_count(), 1);
+    assert!(w.invoke_paste(true));
+    assert_eq!(w.get_tags().row_count(), 2);
+    assert!(w.invoke_paste(true));
+    assert_eq!(w.get_tags().row_count(), 2);
+    assert_eq!(caller.borrow().as_slice(), ["parity:caller initial"]);
+    w.invoke_apply();
+    assert_eq!(commits.get(), 1);
+    assert_eq!(closed.get(), 1);
+    assert!(slot.borrow().is_none());
+    w.invoke_apply();
+    assert_eq!(commits.get(), 1);
+    let accepted = caller.borrow().clone();
+    let w = open();
+    w.invoke_edited("cancelled child tag".into());
+    w.invoke_entered();
+    assert!(w.invoke_paste(false));
+    w.window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    w.invoke_answered(true);
+    w.invoke_apply();
+    assert_eq!(*caller.borrow(), accepted);
+    assert_eq!(commits.get(), 1);
+    assert_eq!(closed.get(), 2);
+    let w = open();
+    assert!(
+        !w.get_tags()
+            .iter()
+            .any(|row| row.text == "cancelled child tag")
+    );
+    w.invoke_cancel();
+}
+
+#[test]
+fn import_whitelist_child_unlocks_on_cancel_and_closes_with_its_parent() {
+    use slint::platform::WindowAdapter as _;
+    let (_dirs, store) = crate::subscriptions::store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store).unwrap());
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(6);
+    ui.invoke_page_import_options();
+    let parent = bound
+        .folders
+        .import_options
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let kind = parent
+        .get_labels()
+        .iter()
+        .position(|row| row.starts_with("default tag filtering"))
+        .unwrap();
+    parent.invoke_kind_clicked(i32::try_from(kind).unwrap());
+    parent.set_custom_index(1);
+    parent.invoke_changed();
+    parent.set_tag_whitelist("parity:caller initial".into());
+    parent.invoke_changed();
+    let count = windows.count();
+    parent.invoke_edit_whitelist();
+    assert!(parent.get_tag_child_open());
+    assert_eq!(windows.count(), count + 1);
+    let child = windows.get(count).unwrap();
+    child
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(!parent.get_tag_child_open());
+    assert_eq!(parent.get_tag_whitelist(), "parity:caller initial");
+    parent.invoke_edit_whitelist();
+    let child = windows.get(count + 1).unwrap();
+    parent.invoke_apply();
+    assert!(bound.folders.import_options.borrow().is_some());
+    parent
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(bound.folders.import_options.borrow().is_none());
+    assert!(!child.window().is_visible());
+}

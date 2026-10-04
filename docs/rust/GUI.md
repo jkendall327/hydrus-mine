@@ -1825,3 +1825,10 @@ fetch, and pasted tags only add to selections. Pasting a tag on the opposite
 side removes it from the original side. A pending paste cannot apply the
 relationship editor; closing its owner invalidates subsequent answers. The real
 Qt sibling/parent preview selections are recorded alongside write suggestions.
+
+Import options' additional-tags and file whitelist lists can also be edited in
+a detached shared write-tag window. It uses the additional-tags service or all
+known tags for whitelist suggestions. Typed entry toggles a listed tag, paste
+only adds, and Apply returns the accepted list to the parent options draft.
+Child Cancel/native close preserves the caller's list, unlocks the parent, and
+parent closure cancels the child and invalidates its pending answers.

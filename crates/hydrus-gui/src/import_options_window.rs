@@ -150,6 +150,7 @@ struct State {
     filetype_expanded: [bool; 7],
     /// A tag filter being edited.
     tag_filter: crate::tag_filter_window::Slot,
+    write_tags: crate::write_tag_window::Slot,
 }
 
 /// Show the editor whole: the list and the shown kind's page.
@@ -474,11 +475,17 @@ pub(crate) fn open(
         services: store.snapshot(),
         filetype_expanded: [false; 7],
         tag_filter: Rc::default(),
+        write_tags: Rc::default(),
     }));
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let state = state.clone();
         move || {
+            let child = state.borrow().write_tags.borrow_mut().take();
+            if let Some(child) = child {
+                child.invoke_cancel();
+            }
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -579,6 +586,118 @@ pub(crate) fn open(
     window.on_edit_get_tags_filter(move |i| {
         if let Ok(i) = usize::try_from(i) {
             edit_filter(Some(i));
+        }
+    });
+    // Detached write-autocomplete lists return only their accepted tags to this draft.
+    let edit_tags = {
+        let state = state.clone();
+        let store = store.clone();
+        let weak = window.as_weak();
+        move |service: Option<usize>| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if !window.window().is_visible() {
+                return;
+            }
+            let (key, initial, child_slot) = {
+                let mut state = state.borrow_mut();
+                read(&window, &mut state);
+                match service {
+                    None => {
+                        let Some(options) = &state.editor.values.tag_filtering else {
+                            return;
+                        };
+                        (
+                            ServiceKey::new(builtin_keys::COMBINED_TAG.to_vec()),
+                            options.whitelist.clone(),
+                            state.write_tags.clone(),
+                        )
+                    }
+                    Some(i) => {
+                        let services = tag_services(&state.services.services);
+                        let Some((hex_key, _)) = services.get(i) else {
+                            return;
+                        };
+                        let Some(options) = &state.editor.values.tags else {
+                            return;
+                        };
+                        let Ok(key) = hex::decode(hex_key) else {
+                            return;
+                        };
+                        (
+                            ServiceKey::new(key),
+                            options
+                                .service(hex_key)
+                                .map(|s| s.additional_tags.clone())
+                                .unwrap_or_default(),
+                            state.write_tags.clone(),
+                        )
+                    }
+                }
+            };
+            let applied = Rc::new({
+                let state = state.clone();
+                let weak = window.as_weak();
+                let target = service.map(|_| key.to_hex());
+                move |tags| {
+                    let Some(w) = weak.upgrade() else {
+                        return;
+                    };
+                    if !w.window().is_visible() {
+                        return;
+                    }
+                    let mut state = state.borrow_mut();
+                    match &target {
+                        None => {
+                            if let Some(options) = &mut state.editor.values.tag_filtering {
+                                options.whitelist = tags;
+                            }
+                        }
+                        Some(key) => {
+                            if let Some(options) = &mut state.editor.values.tags {
+                                service_options(options, key).additional_tags = tags;
+                            }
+                        }
+                    }
+                    show(&w, &state);
+                    show_tag_services(&w, &state);
+                }
+            });
+            let closed = Rc::new({
+                let weak = window.as_weak();
+                move || {
+                    if let Some(w) = weak.upgrade() {
+                        w.set_tag_child_open(false);
+                    }
+                }
+            });
+            let title = if service.is_some() {
+                "edit additional tags"
+            } else {
+                "edit file whitelist"
+            };
+            match crate::write_tag_window::open(
+                &store,
+                key,
+                &initial,
+                title,
+                &child_slot,
+                applied,
+                closed,
+            ) {
+                Ok(_) => window.set_tag_child_open(true),
+                Err(e) => eprintln!("could not open write tag editor: {e}"),
+            }
+        }
+    };
+    window.on_edit_whitelist({
+        let edit_tags = edit_tags.clone();
+        move || edit_tags(None)
+    });
+    window.on_edit_additional_tags(move |i| {
+        if let Ok(i) = usize::try_from(i) {
+            edit_tags(Some(i));
         }
     });
     window.on_kind_clicked({
@@ -743,6 +862,9 @@ pub(crate) fn open(
         let state = state.clone();
         let close = close.clone();
         move || {
+            if state.borrow().write_tags.borrow().is_some() {
+                return;
+            }
             done(state.borrow().editor.value());
             close();
         }
