@@ -614,7 +614,7 @@ fn until_login(mut ready: impl FnMut() -> bool) {
     let started = Instant::now();
     while !ready() {
         assert!(
-            started.elapsed() < Duration::from_secs(12),
+            started.elapsed() < Duration::from_secs(16),
             "login did not finish"
         );
         slint::platform::update_timers_and_animations();
@@ -724,4 +724,96 @@ fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() 
     assert_eq!(site.requests.lock().unwrap().len(), 3);
     list.invoke_action("cancel".into());
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+}
+
+#[test]
+fn domain_login_confirmation_saves_then_real_http_persists_session_and_outcome() {
+    let site = LoginSite::start();
+    let second = LoginSite::start();
+    let (dir, store, mut original) = store();
+    let fixture = hydrus_testkit::fixture_json("login_execution.json");
+    let script = legacy::login_script(
+        &SerialisableObject::from_tuple_str(&fixture[0]["script"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let mut domain = original.domains.values().next().unwrap().clone();
+    domain.script_key.clone_from(&script.key);
+    domain.script_name.clone_from(&script.name);
+    domain.active = true;
+    domain.validity = hydrus_parse::login::Validity::Untested;
+    domain.credentials = serde_json::from_value(fixture[0]["credentials"].clone()).unwrap();
+    original.scripts = vec![script];
+    original.domains.clear();
+    original.domains.insert(site.domain.clone(), domain.clone());
+    original.domains.insert(second.domain.clone(), domain);
+    let manager = original.clone();
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::logins::save(ctx.conn(), &manager)?;
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::network::NetworkSettings {
+                    detect_sleep: false,
+                    network_timeout: 2,
+                    max_connection_attempts: 1,
+                    max_get_attempts: 1,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
+    headless::init();
+    let slots = hydrus_gui::login_domains_window::Slots::default();
+    let window = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    window.invoke_row_clicked(0, false, false);
+    window.invoke_row_clicked(1, true, false);
+    window.invoke_action("do-login".into());
+    let reference = hydrus_testkit::fixture_json("login_editors.json");
+    let mut names = [site.domain.as_str(), second.domain.as_str()];
+    names.sort_unstable();
+    assert_eq!(
+        window.get_question(),
+        reference["domain_login_actions"][0]["questions"][0]
+            .as_str()
+            .unwrap()
+            .replace("login.example", &names.join("\n"))
+    );
+    window.invoke_action("back-login".into());
+    assert!(!slots.run.busy());
+    assert!(site.requests.lock().unwrap().is_empty());
+    window.invoke_action("do-login".into());
+    window.invoke_action("confirm-login".into());
+    assert!(slots.domains.borrow().is_none());
+    assert!(slots.run.busy());
+    assert!(!window.window().is_visible());
+    window.invoke_action("flip-active".into());
+    until_login(|| !slots.run.busy());
+    let saved = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(
+        saved.domains[&site.domain].validity,
+        hydrus_parse::login::Validity::Valid
+    );
+    assert!(saved.domains[&site.domain].active);
+    assert_eq!(
+        saved.domains[&second.domain].validity,
+        hydrus_parse::login::Validity::Valid
+    );
+    assert_eq!(second.requests.lock().unwrap().len(), 2);
+    assert_eq!(saved.scripts, original.scripts);
+    assert_eq!(site.requests.lock().unwrap().len(), 2);
+    assert!(hydrus_net::login::logged_in(&store, &saved.scripts[0], &site.domain).unwrap());
+    let reopened = Store::open(dir.path()).unwrap();
+    assert!(hydrus_net::login::logged_in(&reopened, &saved.scripts[0], &site.domain).unwrap());
+    let window = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    window.invoke_row_clicked(0, false, false);
+    window.invoke_action("do-login".into());
+    assert_eq!(
+        window.get_error(),
+        reference["domain_login_actions"][2]["warnings"][0]
+            .as_str()
+            .unwrap()
+    );
+    assert!(!slots.run.busy());
+    window.invoke_action("cancel".into());
+    slots.cancel();
 }

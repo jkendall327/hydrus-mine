@@ -1,4 +1,40 @@
 {
+ "domain_login_actions": [
+  {
+   "mode": "eligible",
+   "accepted": false,
+   "questions": [
+    "It looks like the following domains can log in:\n\nlogin.example\n\nThe dialog will ok and the login attempts will start. Is this ok?"
+   ],
+   "warnings": [],
+   "okayed": [],
+   "domains": []
+  },
+  {
+   "mode": "eligible",
+   "accepted": true,
+   "questions": [
+    "It looks like the following domains can log in:\n\nlogin.example\n\nThe dialog will ok and the login attempts will start. Is this ok?"
+   ],
+   "warnings": [],
+   "okayed": [
+    true
+   ],
+   "domains": [
+    "login.example"
+   ]
+  },
+  {
+   "mode": "ineligible",
+   "accepted": true,
+   "questions": [],
+   "warnings": [
+    "Unfortunately, none of the selected domains appear able to log in. Do you need to activate or scrub something somewhere?"
+   ],
+   "okayed": [],
+   "domains": []
+  }
+ ],
  "domain_states": [
   {
    "state": {

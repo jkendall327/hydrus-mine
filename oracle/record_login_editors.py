@@ -163,8 +163,24 @@ def record(session):
             domains_panel._EditCredentials()
             domain_states.append({'do': values, 'accepted': accept, 'questions': list(questions), 'state': domain_state()})
         domains_panel.deleteLater()
+        login_actions = []
+        warnings = []
+        G.ClientGUIDialogsMessage.ShowWarning = lambda parent, text: warnings.append(text)
+        pristine = HydrusSerialisable.CreateFromSerialisableTuple(original_manager)._domains_to_login_info
+        original_info = next(iter(pristine.values()))
+        for mode, allow in [('eligible', False), ('eligible', True), ('ineligible', True)]:
+            info = list(original_info)
+            if mode == 'ineligible': info[4] = False
+            route = G.EditLoginsPanel(gui, controller.network_engine, [script], {'login.example': tuple(info)})
+            route._domains_and_login_info.SelectDatas(route._domains_and_login_info.GetData(), deselect_others=True)
+            okayed = []
+            route._OKParent = lambda: okayed.append(True)
+            questions.clear(); warnings.clear(); answer[0] = allow
+            route._DoLogin()
+            login_actions.append({'mode': mode, 'accepted': allow, 'questions': list(questions), 'warnings': list(warnings), 'okayed': list(okayed), 'domains': route._domains_to_login_after_ok})
+            route.deleteLater()
 
-        return {'domain_states': domain_states, 'step_states': step_states, 'permitted_content_types': permitted, 'manager': original_manager, 'script_rows': script_rows, 'script_list': script_list, 'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
+        return {'domain_login_actions': login_actions, 'domain_states': domain_states, 'step_states': step_states, 'permitted_content_types': permitted, 'manager': original_manager, 'script_rows': script_rows, 'script_list': script_list, 'definition': {'before': before, 'after': after}, 'credentials': states, 'script': script.GetSerialisableTuple(), 'legacy_script': old, 'upgraded_script': upgraded, 'bundle': bundle, 'checks': checks, 'missing_definitions': missing_definitions, 'missing_variables': missing_variables,
                 'credential_types': [[i, L.credential_type_str_lookup[i]] for i in [0, 1]], 'access_types': [[i, L.login_access_type_str_lookup[i], L.login_access_type_default_description_lookup[i]] for i in range(4)]}
     return controller.CallBlockingToQt(gui, qt)
 recorder.record = record

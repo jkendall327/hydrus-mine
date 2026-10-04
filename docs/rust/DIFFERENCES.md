@@ -1040,7 +1040,7 @@ script window validate the entered values without making network requests. Step 
 identity and VARIABLE/VETO response parsers are editable; request argument
 dictionaries and cookie requirements remain read-only. Script cookie/example-domain
 editing, domain add/script-choice and session-status/reset controls, test results and HTTP
-login execution remain unimplemented. Existing domain credentials are editable
+global cookie/example-domain editors remain unimplemented. Existing domain credentials are editable
 from the native menu; accepted edits reproduce validity/delay/activation behavior
 and wait for domain Apply. The domain list currently omits logged-in cookie status
 and uses a raw expiry timestamp for a future delay. Native map storage does not
@@ -1326,8 +1326,11 @@ Login HTTP execution is implemented as a reusable NetEngine consumer with script
 editor test controls and result review. Test runs use fresh cookie sessions while
 copying request preferences and custom headers. Results populate after the run
 finishes; the reference inserts them as each step finishes. Native copy feedback
-stays visible until the review closes. Domain-manager real execution controls are
-still absent. Login requests bypass bandwidth
+stays visible until the review closes. Domain-manager confirmed execution now saves/closes the draft then runs the selected
+eligible queue through the shared persisted cookie store. Its progress/cancel
+controls appear when the manager is reopened; it does not share the reference's
+global login process monitor or automatically log in on ordinary downloader demand.
+Login requests bypass bandwidth
 waiting while using ordinary cookies, custom headers, redirect and retry behavior.
 The executor waits the reference two seconds after successful steps and observes
 cancellation during requests and waits. Session-cookie descriptions match the

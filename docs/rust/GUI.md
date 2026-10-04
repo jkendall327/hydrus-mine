@@ -1979,7 +1979,13 @@ validity, deactivate invalid credentials and ask before activating a valid inact
 domain. Domain Apply saves its draft while preserving concurrent script edits;
 Cancel closes credential children and ignores stale handles. Flip active, scrub
 delays and scrub invalidity work on extended selection. Adding domains, changing
-scripts, logged-in cookie status/reset and executing login attempts are still absent.
+scripts and logged-in cookie status/reset are still absent. Do login now filters
+selected active, non-invalid, existing-script domains whose required cookies are
+missing, asks the recorded confirmation, saves the domain draft and closes the
+manager before attempting its sorted queue. Attempts use the existing cookie store;
+key-guarded results update validity or network delays. Reopening the manager shows
+HTTP/final status and can cancel the queue. Canceling the application owner stops
+remaining attempts.
 
 Shared write-tag inputs now offer tags, favourites and children in Manage Tags,
 both sibling/parent inputs, and detached import additional-tags/whitelist
