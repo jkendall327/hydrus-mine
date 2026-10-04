@@ -1157,7 +1157,8 @@ One migration runs per open Store; a second job is rejected promptly so a normal
 reader remains available to the UI. The reservation is released on error or cancel.
 Display graph/count publication happens after each relationship batch, following
 the existing native immediate-sync design; large graph rebuilds occupy the writer
-but run outside the UI thread. Cancellation is available; pausing is deferred.
+but run outside the UI thread. Pause/resume waits after the current atomic batch,
+as the reference does; cancelling or closing also wakes a paused job.
 Hydrus Tag Archive/tag-pair archive import/export and non-SHA256 conversion remain
 unimplemented. Pair left/right filters are available; the reference's optional
 "side/ideal has mappings count" gates are deferred. Repository migration retains

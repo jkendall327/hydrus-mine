@@ -95,6 +95,7 @@ pub fn open(
     window.set_file_label(format!("{} selected files", settings.borrow().files.len()).into());
     show(&window, &settings.borrow());
     let cancellation = Arc::new(AtomicBool::new(false));
+    let paused = Arc::new(AtomicBool::new(false));
     let confirmed: Rc<RefCell<Option<model::Request>>> = Rc::default();
     let close_requested = Rc::new(Cell::new(false));
     let timer = Rc::new(slint::Timer::default());
@@ -230,6 +231,7 @@ pub fn open(
         let weak = window.as_weak();
         let store = store.clone();
         let cancellation = cancellation.clone();
+        let paused = paused.clone();
         let timer = timer.clone();
         let close_requested = close_requested.clone();
         move |yes| {
@@ -260,14 +262,23 @@ pub fn open(
             w.set_running(true);
             w.set_progress("beginning work".into());
             cancellation.store(false, Ordering::Release);
+            paused.store(false, Ordering::Release);
+            w.set_paused(false);
             let store = store.clone();
             let cancel = cancellation.clone();
+            let paused = paused.clone();
             let (send, receive) = std::sync::mpsc::channel::<Result<Progress, String>>();
             std::thread::spawn(move || {
-                let result =
-                    hydrus_store::tag_migration::run(&store, &request, &cancel, 512, |p| {
+                let result = hydrus_store::tag_migration::run_pausable(
+                    &store,
+                    &request,
+                    &cancel,
+                    &paused,
+                    512,
+                    |p| {
                         let _ = send.send(Ok(p));
-                    });
+                    },
+                );
                 let _ = send.send(result.map_err(|e| e.to_string()));
                 // Dropping send is the completion signal, including failures.
             });
@@ -304,6 +315,7 @@ pub fn open(
                                 }
                                 if w.get_running() {
                                     w.set_running(false);
+                                    w.set_paused(false);
                                     if !w.get_progress().starts_with("cancelled")
                                         && w.get_error().is_empty()
                                     {
@@ -323,6 +335,19 @@ pub fn open(
                     }
                 },
             );
+        }
+    });
+    window.on_pause_job({
+        let paused = paused.clone();
+        let weak = window.as_weak();
+        move || {
+            if let Some(w) = weak.upgrade()
+                && w.get_running()
+            {
+                let value = !paused.load(Ordering::Acquire);
+                paused.store(value, Ordering::Release);
+                w.set_paused(value);
+            }
         }
     });
     window.on_cancel_job({

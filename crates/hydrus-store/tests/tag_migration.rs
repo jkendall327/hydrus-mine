@@ -398,3 +398,58 @@ fn overlapping_migration_is_rejected_without_waiting_for_a_reader() {
     tag_migration::run(&store, &request, &AtomicBool::new(false), 3, |_| {}).unwrap();
     assert_eq!(count(&store, &request.destination, false), 11);
 }
+
+#[test]
+fn pause_waits_after_commit_resume_continues_and_cancel_wakes_without_next_batch() {
+    let recording = hydrus_testkit::fixture_json("tag_migration_pause.json");
+    for case in recording.as_array().unwrap() {
+        let (_dir, store, request) = setup();
+        let paused = std::sync::Arc::new(AtomicBool::new(false));
+        let cancel = std::sync::Arc::new(AtomicBool::new(false));
+        let (send, receive) = std::sync::mpsc::channel();
+        let worker = {
+            let store = store.clone();
+            let request = request.clone();
+            let paused = paused.clone();
+            let cancel = cancel.clone();
+            std::thread::spawn(move || {
+                tag_migration::run_pausable(&store, &request, &cancel, &paused, 3, |p| {
+                    if p.scanned == 3 {
+                        paused.store(true, Ordering::Release);
+                    }
+                    send.send(p).unwrap();
+                })
+                .unwrap()
+            })
+        };
+        let first = receive
+            .recv_timeout(std::time::Duration::from_secs(5))
+            .unwrap();
+        assert_eq!(first.accepted, 3);
+        assert_eq!(count(&store, &request.destination, false), 3);
+        assert!(
+            receive
+                .recv_timeout(std::time::Duration::from_millis(100))
+                .is_err()
+        );
+        assert!(case["paused"]["paused"].as_bool().unwrap());
+        if case["action"] == "cancel" {
+            cancel.store(true, Ordering::Release);
+        } else {
+            paused.store(false, Ordering::Release);
+        }
+        // Completion is bounded even when cancellation leaves paused=true.
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+        while !worker.is_finished() && std::time::Instant::now() < deadline {
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+        assert!(worker.is_finished());
+        let done = worker.join().unwrap();
+        assert_eq!(done.cancelled, case["cancelled"].as_bool().unwrap());
+        assert_eq!(done.accepted, if done.cancelled { 3 } else { 11 });
+        assert_eq!(
+            count(&store, &request.destination, false),
+            i64::try_from(done.accepted).unwrap()
+        );
+    }
+}

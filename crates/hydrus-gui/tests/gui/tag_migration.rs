@@ -185,6 +185,12 @@ fn closing_a_running_job_refreshes_committed_state_before_hiding() {
     window.invoke_answer(true);
     window.invoke_answer(true);
     assert!(window.get_running());
+    window.invoke_pause_job();
+    assert!(window.get_paused());
+    window.invoke_pause_job();
+    assert!(!window.get_paused());
+    window.invoke_pause_job();
+    assert!(window.get_paused());
     window.invoke_close_clicked();
     assert!(window.window().is_visible());
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(15);
@@ -194,6 +200,7 @@ fn closing_a_running_job_refreshes_committed_state_before_hiding() {
     }
     assert!(!window.window().is_visible());
     assert!(!window.get_running());
+    assert!(!window.get_paused());
     assert!(changed.get() > 0);
     assert!(slot.borrow().is_none());
 }

@@ -1,0 +1,51 @@
+{
+  "agent": "follow-migration",
+  "baseline": "4356918f",
+  "claims": [
+    {
+      "originalID": "audit-media-migration-pause",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Pause/resume controls stop service migration after the current committed atomic batch. Resume keeps the immutable source snapshot and cursor. Cancel and close wake paused work, retain exactly the committed prefix, publish counts/graphs and release the migration reservation.",
+      "limits": [
+        "Native progress window replaces the reference popup status control."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/tag_migration.rs",
+          "line": 223,
+          "symbol": "pub fn run_pausable("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_migration_window.rs",
+          "line": 340,
+          "symbol": "window.on_pause_job("
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/tests/tag_migration.rs",
+          "line": 403,
+          "symbol": "fn pause_waits_after_commit"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
+          "line": 165,
+          "symbol": "fn closing_a_running_job"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_tag_migration_pause.py",
+        "fixture": "oracle/fixtures/tag_migration_pause.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintSyntax": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; authored regression tests not claimed locally passed."
+      }
+    }
+  ]
+}

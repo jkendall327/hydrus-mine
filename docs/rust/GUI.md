@@ -1795,7 +1795,8 @@ Mappings and each side of pairs use the reusable tag-filter editor.
 
 The window shows the reference summary and its second confirmation outside
 advanced mode. Migration runs on a worker in bounded atomic batches, with live
-progress and cancellation. Cancelling retains committed batches; closing a
+progress, pause/resume and cancellation. Pausing waits after the current committed
+batch; cancellation also wakes paused work. Cancelling retains committed batches; closing a
 running job requests cancellation and waits for its final committed progress.
 Services are resolved by key again on every batch. Graph/count publication occurs atomically per batch; displayed tags and review
 counts refresh after completion or cancellation. Reference controls, questions and actual DB mapping

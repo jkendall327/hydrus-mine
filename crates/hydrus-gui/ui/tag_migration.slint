@@ -21,6 +21,7 @@ export component TagMigrationWindow inherits Window {
     in-out property <string> reason: "Mass Migration Job";
     in property <bool> petition;
     in property <bool> running;
+    in property <bool> paused;
     in property <string> progress;
     in property <string> error;
     in property <string> question;
@@ -31,6 +32,7 @@ export component TagMigrationWindow inherits Window {
     callback go();
     callback answer(bool);
     callback cancel-job();
+    callback pause-job();
     callback close-clicked();
     VerticalBox {
         padding: 16px; spacing: 10px;
@@ -72,6 +74,7 @@ export component TagMigrationWindow inherits Window {
             if root.question != "": Button { text: root.last-chance ? "yes" : "looks good"; clicked => {root.answer(true);} }
             if root.question != "": Button { text: root.last-chance ? "no" : "go back"; clicked => {root.answer(false);} }
             if root.question == "" && !root.running: Button { text: "Go!"; clicked => {root.go();} }
+            if root.running: Button { text: root.paused ? "resume" : "pause"; clicked => {root.pause-job();} }
             if root.running: Button { text: "cancel migration"; clicked => {root.cancel-job();} }
             Rectangle { horizontal-stretch: 1; }
             Button { text: "close"; clicked => {root.close-clicked();} }

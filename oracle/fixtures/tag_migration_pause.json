@@ -1,0 +1,34 @@
+[
+  {
+    "action": "resume",
+    "paused": {
+      "pausable": true,
+      "paused": true,
+      "batches": 1
+    },
+    "batches": 2,
+    "cancelled": false,
+    "done": true,
+    "cleanup": [
+      "source",
+      "destination"
+    ],
+    "text": "done!"
+  },
+  {
+    "action": "cancel",
+    "paused": {
+      "pausable": true,
+      "paused": true,
+      "batches": 1
+    },
+    "batches": 1,
+    "cancelled": true,
+    "done": true,
+    "cleanup": [
+      "source",
+      "destination"
+    ],
+    "text": "done!"
+  }
+]

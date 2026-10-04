@@ -207,6 +207,25 @@ pub fn run(
     request: &Request,
     cancel: &AtomicBool,
     batch_size: usize,
+    progress: impl FnMut(Progress),
+) -> Result<Progress> {
+    run_pausable(
+        store,
+        request,
+        cancel,
+        &AtomicBool::new(false),
+        batch_size,
+        progress,
+    )
+}
+/// Run with the reference's pause/resume boundary after each committed batch.
+/// Cancellation wakes a paused job and retains its committed prefix.
+pub fn run_pausable(
+    store: &Store,
+    request: &Request,
+    cancel: &AtomicBool,
+    paused: &AtomicBool,
+    batch_size: usize,
     mut progress: impl FnMut(Progress),
 ) -> Result<Progress> {
     if !(1..=1024).contains(&batch_size) {
@@ -293,6 +312,9 @@ pub fn run(
             // changes may leave an entry's existing state untouched.
             done.accepted += accepted;
             progress(done);
+            while paused.load(Ordering::Acquire) && !cancel.load(Ordering::Acquire) {
+                std::thread::sleep(std::time::Duration::from_millis(25));
+            }
         }
         progress(done);
         Ok(done)
