@@ -91,5 +91,5 @@ mod gallery_source;
 mod subscription_quality;
 mod viewer_closing;
 
-mod viewer_cursor;
 mod namespace_sorts;
+mod viewer_cursor;
