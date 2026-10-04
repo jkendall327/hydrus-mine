@@ -1411,66 +1411,6 @@
         "b5ebaf2b2748082ce100cc6b24c84bc8a198c922",
         "244c9da991fba59587a83e13ab8ffc150eee041f"
       ]
-    },
-    {
-      "baseline": "2388372d",
-      "implementation_commit": "ef8edac0",
-      "reference_ids": [
-        "audit-media-tags-autocomplete",
-        "siblings-autocomplete",
-        "parents-autocomplete"
-      ],
-      "status": "partial",
-      "exact_behavior": "Real result-keyboard sequence: logical arrow wrapping; reversible Shift/Ctrl+Shift selection; Home/End endpoints; physical-row PageUp/PageDown including expanded parent rows; CtrlP/N; focused result CtrlA; ordered CtrlC and deduplicated parents on CtrlShiftC. Native selected editor text keeps its own copy engine. All three owner callbacks guard pending operations and closed owners; navigation keeps draft unchanged and scrolls to last hit.",
-      "limits": "Native tab dropdown/layout and synchronous fetch remain different; Escape/result drag and read-search favourite/children/OR controls are not claimed in this slice. No new completed original IDs or validated counts.",
-      "source_anchors": [
-        "crates/hydrus-gui-model/src/write_autocomplete.rs::WriteAutocomplete::navigate",
-        "crates/hydrus-gui-model/src/write_autocomplete.rs::WriteAutocomplete::copy_selection",
-        "crates/hydrus-gui/ui/write_autocomplete.slint::WriteTagInput::capture-key-pressed",
-        "crates/hydrus-gui/ui/write_tag_line_edit.slint::WriteTagLineEdit",
-        "crates/hydrus-gui/src/write_tag_menu.rs::results_action",
-        "crates/hydrus-gui/src/manage_tags_window.rs::on_navigate",
-        "crates/hydrus-gui/src/tag_relationships_window.rs::on_autocomplete_navigate",
-        "crates/hydrus-gui/src/write_tag_window.rs::on_results_action"
-      ],
-      "test_anchors": [
-        "crates/hydrus-gui-model/tests/model/write_autocomplete.rs::check_recorded_keyboard",
-        "crates/hydrus-gui/tests/gui/write_autocomplete.rs::keyboard_result_selection_copy_and_native_text_copy_use_their_own_focus"
-      ],
-      "reference_recording": [
-        "oracle/record_write_tag_selection.py",
-        "oracle/fixtures/write_tag_selection.json::keyboard"
-      ],
-      "executed_validation": "Executed actual Qt keyboard/result-list/clipboard recording via shared with-oracle lock, 2026-10-04 18:03 UTC. Basic fixture client API could not listen under sandbox; local Qt sequence and recorder completed successfully. Warning-free cached Slint source compilation, Python syntax, fmt and diff checks passed. Model/native regressions authored for root asynchronous GitHub CI, not executed locally. No Cargo/mutation tests."
-    },
-    {
-      "baseline": "2388372d",
-      "implementation_commit": "a6fc4a30",
-      "reference_ids": [
-        "audit-media-tags-autocomplete",
-        "siblings-autocomplete",
-        "parents-autocomplete"
-      ],
-      "status": "partial",
-      "exact_behavior": "Focused Escape clears selected results without entering tags/changing draft/cancelling owner; second Escape propagates cancellation. All three native owner key-capture layers delegate after their popup/pending guards. A persistent non-repeated pointer surface records and consumes real press/move/release: range addition/reversal, inherited parent origin, Ctrl deselection start and reversible removal/restoration. Pointer handlers survive replaced suggestions models.",
-      "limits": "Recording covers displayed physical rows; continuous dragging outside viewport not asserted. Native tab dropdown/layout and synchronous query differ. No new completed/validated original IDs or parent promotions.",
-      "source_anchors": [
-        "crates/hydrus-gui/ui/write_autocomplete.slint::WriteTagInput::escape-results",
-        "crates/hydrus-gui/ui/write_autocomplete.slint::WriteTagInput::touch",
-        "crates/hydrus-gui/ui/manage_tags.slint::capture-key-pressed",
-        "crates/hydrus-gui/ui/tag_relationships.slint::capture-key-pressed",
-        "crates/hydrus-gui/src/write_tag_menu.rs::results_action"
-      ],
-      "test_anchors": [
-        "crates/hydrus-gui-model/tests/model/write_autocomplete.rs::check_recorded_keyboard",
-        "crates/hydrus-gui/tests/gui/write_autocomplete.rs::keyboard_result_selection_copy_and_native_text_copy_use_their_own_focus"
-      ],
-      "reference_recording": [
-        "oracle/record_write_tag_selection.py",
-        "oracle/fixtures/write_tag_selection.json::escape",
-        "oracle/fixtures/write_tag_selection.json::drag"
-      ],
-      "executed_validation": "Executed actual Qt focused Escape and actual mouse-event handlers with resolved inherited-row origin assertions, via shared with-oracle lock 2026-10-04 18:25 UTC. Warning-free cached Slint source compilation, Python syntax, fmt and diff checks passed. Model/native key+pointer regressions authored for root async CI; no local Cargo/mutation tests."
     }
   ],
   "continuations": [
@@ -1564,6 +1504,68 @@
         "oracle/fixtures/write_tag_selection.json::normal_paste"
       ],
       "executed_validation": "Actual Qt Ctrl+V events, cursor/selected text replacement, accepted clipboard tag signal and Undo/Redo recording rerun via with-oracle lock. Cached Slint source compiler, fmt, Python syntax, diff checks passed. Native/model tests authored for root async hosted CI; no local Cargo or mutation tests."
+    }
+  ],
+  "continuation_evidence": [
+    {
+      "baseline": "2388372d",
+      "implementation_commit": "ef8edac0",
+      "reference_ids": [
+        "audit-media-tags-autocomplete",
+        "siblings-autocomplete",
+        "parents-autocomplete"
+      ],
+      "status": "partial",
+      "exact_behavior": "Real result-keyboard sequence: logical arrow wrapping; reversible Shift/Ctrl+Shift selection; Home/End endpoints; physical-row PageUp/PageDown including expanded parent rows; CtrlP/N; focused result CtrlA; ordered CtrlC and deduplicated parents on CtrlShiftC. Native selected editor text keeps its own copy engine. All three owner callbacks guard pending operations and closed owners; navigation keeps draft unchanged and scrolls to last hit.",
+      "limits": "Native tab dropdown/layout and synchronous fetch remain different; Escape/result drag and read-search favourite/children/OR controls are not claimed in this slice. No new completed original IDs or validated counts.",
+      "source_anchors": [
+        "crates/hydrus-gui-model/src/write_autocomplete.rs::WriteAutocomplete::navigate",
+        "crates/hydrus-gui-model/src/write_autocomplete.rs::WriteAutocomplete::copy_selection",
+        "crates/hydrus-gui/ui/write_autocomplete.slint::WriteTagInput::capture-key-pressed",
+        "crates/hydrus-gui/ui/write_tag_line_edit.slint::WriteTagLineEdit",
+        "crates/hydrus-gui/src/write_tag_menu.rs::results_action",
+        "crates/hydrus-gui/src/manage_tags_window.rs::on_navigate",
+        "crates/hydrus-gui/src/tag_relationships_window.rs::on_autocomplete_navigate",
+        "crates/hydrus-gui/src/write_tag_window.rs::on_results_action"
+      ],
+      "test_anchors": [
+        "crates/hydrus-gui-model/tests/model/write_autocomplete.rs::check_recorded_keyboard",
+        "crates/hydrus-gui/tests/gui/write_autocomplete.rs::keyboard_result_selection_copy_and_native_text_copy_use_their_own_focus"
+      ],
+      "reference_recording": [
+        "oracle/record_write_tag_selection.py",
+        "oracle/fixtures/write_tag_selection.json::keyboard"
+      ],
+      "executed_validation": "Executed actual Qt keyboard/result-list/clipboard recording via shared with-oracle lock, 2026-10-04 18:03 UTC. Basic fixture client API could not listen under sandbox; local Qt sequence and recorder completed successfully. Warning-free cached Slint source compilation, Python syntax, fmt and diff checks passed. Model/native regressions authored for root asynchronous GitHub CI, not executed locally. No Cargo/mutation tests."
+    },
+    {
+      "baseline": "2388372d",
+      "implementation_commit": "a6fc4a30",
+      "reference_ids": [
+        "audit-media-tags-autocomplete",
+        "siblings-autocomplete",
+        "parents-autocomplete"
+      ],
+      "status": "partial",
+      "exact_behavior": "Focused Escape clears selected results without entering tags/changing draft/cancelling owner; second Escape propagates cancellation. All three native owner key-capture layers delegate after their popup/pending guards. A persistent non-repeated pointer surface records and consumes real press/move/release: range addition/reversal, inherited parent origin, Ctrl deselection start and reversible removal/restoration. Pointer handlers survive replaced suggestions models.",
+      "limits": "Recording covers displayed physical rows; continuous dragging outside viewport not asserted. Native tab dropdown/layout and synchronous query differ. No new completed/validated original IDs or parent promotions.",
+      "source_anchors": [
+        "crates/hydrus-gui/ui/write_autocomplete.slint::WriteTagInput::escape-results",
+        "crates/hydrus-gui/ui/write_autocomplete.slint::WriteTagInput::touch",
+        "crates/hydrus-gui/ui/manage_tags.slint::capture-key-pressed",
+        "crates/hydrus-gui/ui/tag_relationships.slint::capture-key-pressed",
+        "crates/hydrus-gui/src/write_tag_menu.rs::results_action"
+      ],
+      "test_anchors": [
+        "crates/hydrus-gui-model/tests/model/write_autocomplete.rs::check_recorded_keyboard",
+        "crates/hydrus-gui/tests/gui/write_autocomplete.rs::keyboard_result_selection_copy_and_native_text_copy_use_their_own_focus"
+      ],
+      "reference_recording": [
+        "oracle/record_write_tag_selection.py",
+        "oracle/fixtures/write_tag_selection.json::escape",
+        "oracle/fixtures/write_tag_selection.json::drag"
+      ],
+      "executed_validation": "Executed actual Qt focused Escape and actual mouse-event handlers with resolved inherited-row origin assertions, via shared with-oracle lock 2026-10-04 18:25 UTC. Warning-free cached Slint source compilation, Python syntax, fmt and diff checks passed. Model/native key+pointer regressions authored for root async CI; no local Cargo/mutation tests."
     }
   ]
 }
